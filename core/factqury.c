@@ -758,7 +758,7 @@ static QUERY_TEMPLATE *FormChain(
   {
    Deftemplate *templatePtr;
    QUERY_TEMPLATE *head,*bot,*tmp;
-   long i; /* 6.04 Bug Fix */
+   size_t i; /* 6.04 Bug Fix */
    const char *templateName;
    int count;
 

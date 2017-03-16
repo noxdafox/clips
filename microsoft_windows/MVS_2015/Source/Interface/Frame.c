@@ -513,7 +513,7 @@ static void mainframe_OnCommand(
      {
       case ID_APP_EXIT:
         mainframe_OnExit(hwnd);
-        EnvExitRouter(GlobalEnv,EXIT_SUCCESS);
+        ExitRouter(GlobalEnv,EXIT_SUCCESS);
         QuitDDE();
         return ;
 

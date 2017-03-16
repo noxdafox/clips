@@ -184,10 +184,10 @@ HDDEDATA CALLBACK DDECallBack(
         TheData = (char *) genalloc ( GlobalEnv,(unsigned) size );
         DdeGetData ( hData, (LPBYTE) TheData, (DWORD) size, 0 );
         
-        EnvPrintRouter(theEnv,WPROMPT,TheData);
-        EnvPrintRouter(theEnv,WPROMPT,"\n");
+        PrintString(theEnv,STDOUT,TheData);
+        PrintString(theEnv,STDOUT,"\n");
         
-        EnvEval(theEnv,TheData,&DDE_RV);
+        Eval(theEnv,TheData,&DDE_RV);
         
         if (DDE_RV.header->type != VOID_TYPE)
           {
@@ -195,8 +195,8 @@ HDDEDATA CALLBACK DDECallBack(
 
            CLIPSToUDFValue(&DDE_RV,&converted);
 
-           PrintDataObject(GlobalEnv,"stdout",&converted);
-           EnvPrintRouter(GlobalEnv,"stdout","\n");
+           PrintUDFValue(GlobalEnv,STDOUT,&converted);
+           PrintString(GlobalEnv,STDOUT,"\n");
           }
         
         PrintPrompt(GlobalEnv);

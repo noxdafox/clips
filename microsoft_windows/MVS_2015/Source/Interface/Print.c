@@ -29,6 +29,7 @@
 #include "Edit.h"
 #include "Text.h"
 #include "Status.h"
+#include "StatusData.h"
 #include "display.h"
 #include "resource.h"
 #include "MDI.h"
@@ -383,9 +384,13 @@ static BOOL PrintIt(
                  }
               }
 			else if (((ATOM) GetClassLong(hwnd,GCW_ATOM)) == StatusAtomClass)
-              {                  
+              {     
+               StringBuilder *sb;
+                            
                iLineNum = iLinesPerPage * iPage;
                iLine = 0;
+
+               sb = CreateStringBuilder(GlobalEnv,100);
                for (valuePtr = (*theStatusData->getNextValue)(GlobalEnv,NULL), count = 0;
                     valuePtr != NULL;
                     valuePtr = (*theStatusData->getNextValue)(GlobalEnv,valuePtr), count++)
@@ -394,12 +399,16 @@ static BOOL PrintIt(
                   if (count > (iLineNum + iLinesPerPage)) break;
                   if (count > iTotalLines) break;
                   
-                  (*theStatusData->getPPForm)(valuePtr,(char *) pstrBuffer,(unsigned) iCharsPerLine);
+                  //(*theStatusData->getPPForm)(valuePtr,(char *) pstrBuffer,(unsigned) iCharsPerLine);
+                  (*theStatusData->getPPForm)(valuePtr,sb);
 
-                  TextOut(PrintDialog.hDC,0,yChar * iLine,pstrBuffer,(int) strlen(pstrBuffer));
+                  //TextOut(PrintDialog.hDC,0,yChar * iLine,pstrBuffer,(int) strlen(pstrBuffer));
+                  TextOut(PrintDialog.hDC,0,yChar * iLine,sb->contents,(int) sb->length);
                   
                   iLine++;
                  }  
+
+               SBDispose(sb);
               }
 			else if (((ATOM) GetClassLong(hwnd,GCW_ATOM)) == DisplayAtomClass)
               {                  

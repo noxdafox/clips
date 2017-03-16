@@ -36,7 +36,7 @@
 +------------------------*/
 
 #include "setup.h"
-
+#include "entities.h"
 #include "classcom.h"
 #include "classexm.h"
 #include "classinf.h"
@@ -53,13 +53,15 @@
 #include "prntutil.h"
 #include "router.h"
 #include "rulebsc.h"
-#include "rulecom.h"
+//#include "rulecom.h"
 #include "tmpltbsc.h"
 #include "tmpltdef.h"
 
 /*------------------------+
 | Interface Include Files |
 +------------------------*/
+
+#include "CLIPSGlue.h"
 
 #include "initialization.h"
 #include "resource.h"
@@ -189,7 +191,7 @@ INT_PTR CALLBACK DeffactsManager(
       case WM_INITDIALOG:
         count=0;
         hSaveCursor = SetCursor(hHourGlass);
-        while ((deffactPtr = EnvGetNextDeffacts(theEnv,deffactPtr )) != NULL)
+        while ((deffactPtr = GetNextDeffacts(theEnv,deffactPtr )) != NULL)
           {  
            count ++;
            SendMessage(hListBox, LB_ADDSTRING, 0,(LPARAM)(LPCSTR) DeffactsName (deffactPtr));
@@ -236,7 +238,7 @@ INT_PTR CALLBACK DeffactsManager(
                     
              SendMessage(hListBox, LB_GETTEXT, index,(LPARAM)((LPSTR) string) );
 
-             deffactPtr = EnvFindDeffacts(theEnv,string );
+             deffactPtr = FindDeffacts(theEnv,string );
 
              /*----------------+
              | Remove Deffacts |
@@ -251,9 +253,9 @@ INT_PTR CALLBACK DeffactsManager(
                 sprintf(DialogName,"Deffacts Manager - %4d Items",count);
                 SetWindowText(hDlg,(LPSTR) DialogName);
 
-                EnvPrintRouter(theEnv,WPROMPT,"(undeffacts ");
-                EnvPrintRouter(theEnv,WPROMPT,string );
-                EnvPrintRouter(theEnv,WPROMPT,")\n");
+                PrintString(theEnv,STDOUT,"(undeffacts ");
+                PrintString(theEnv,STDOUT,string );
+                PrintString(theEnv,STDOUT,")\n");
                 PrintPrompt(theEnv);
                 SetFocus(hListBox);
                 //InvalidateRect (WinDialog.hWnd, NULL, TRUE );
@@ -268,10 +270,10 @@ INT_PTR CALLBACK DeffactsManager(
              
              if (wParam == IDC_PBUTTON4)
                {  
-                EnvPrintRouter(theEnv,WPROMPT, "(ppdeffacts ");
-                EnvPrintRouter(theEnv,WPROMPT, string );
-                EnvPrintRouter(theEnv,WPROMPT, ")\n");
-                EnvPrintRouter(theEnv,WPROMPT, DeffactsPPForm(deffactPtr ));
+                PrintString(theEnv,STDOUT, "(ppdeffacts ");
+                PrintString(theEnv,STDOUT, string );
+                PrintString(theEnv,STDOUT, ")\n");
+                PrintString(theEnv,STDOUT, DeffactsPPForm(deffactPtr ));
                 PrintPrompt (theEnv);
                 //InvalidateRect (WinDialog.hWnd, NULL, TRUE );
                 SetFocus(hListBox);
@@ -315,7 +317,7 @@ INT_PTR CALLBACK DeftemplateManager(
       case WM_INITDIALOG:
         hSaveCursor = SetCursor(hHourGlass);
         
-        while ((deftemplatePtr = EnvGetNextDeftemplate(theEnv,deftemplatePtr )) != NULL)
+        while ((deftemplatePtr = GetNextDeftemplate(theEnv,deftemplatePtr )) != NULL)
           {  
            count ++;
            SendMessage(hListBox, LB_ADDSTRING, 0,(LPARAM)(LPCSTR) DeftemplateName (deftemplatePtr));
@@ -358,7 +360,7 @@ INT_PTR CALLBACK DeftemplateManager(
                
              string = (char *) GlobalLock(hString );
              SendMessage( hListBox, LB_GETTEXT, index,(LPARAM)((LPSTR) string) );
-             deftemplatePtr = EnvFindDeftemplate(theEnv,string );
+             deftemplatePtr = FindDeftemplate(theEnv,string );
 
              /*-------------------+
              | Remove Deftemplate |
@@ -373,9 +375,9 @@ INT_PTR CALLBACK DeftemplateManager(
                 sprintf(DialogName,"Deftemplate Manager - %4d Items",count);
                 SetWindowText(hDlg, (LPSTR)DialogName );
 
-                EnvPrintRouter(theEnv,WPROMPT, "(undeftemplate ");
-                EnvPrintRouter(theEnv,WPROMPT, string );
-                EnvPrintRouter(theEnv,WPROMPT, ")\n");
+                PrintString(theEnv,STDOUT, "(undeftemplate ");
+                PrintString(theEnv,STDOUT, string );
+                PrintString(theEnv,STDOUT, ")\n");
                 PrintPrompt (theEnv);
                 //InvalidateRect(WinDialog.hWnd, NULL, TRUE );
                 SetFocus(hListBox);
@@ -390,10 +392,10 @@ INT_PTR CALLBACK DeftemplateManager(
              
              if (wParam == IDC_PBUTTON4)
                {
-                EnvPrintRouter(theEnv,WPROMPT, "(ppdeftemplate ");
-                EnvPrintRouter(theEnv,WPROMPT, string );
-                EnvPrintRouter(theEnv,WPROMPT, ")\n");
-                EnvPrintRouter(theEnv,WPROMPT, DeftemplatePPForm(deftemplatePtr));
+                PrintString(theEnv,STDOUT, "(ppdeftemplate ");
+                PrintString(theEnv,STDOUT, string );
+                PrintString(theEnv,STDOUT, ")\n");
+                PrintString(theEnv,STDOUT, DeftemplatePPForm(deftemplatePtr));
                 PrintPrompt(theEnv);
                 //InvalidateRect(WinDialog.hWnd, NULL, TRUE );
                 SetFocus(hListBox);
@@ -451,7 +453,7 @@ INT_PTR CALLBACK DeffunctionManager(
      {  
       case WM_INITDIALOG:        
         hSaveCursor = SetCursor(hHourGlass);
-        while ((DeffunctionPtr = EnvGetNextDeffunction(theEnv,DeffunctionPtr)) != NULL)
+        while ((DeffunctionPtr = GetNextDeffunction(theEnv,DeffunctionPtr)) != NULL)
           {  
            count ++;
            //WinRunEvent();
@@ -492,7 +494,7 @@ INT_PTR CALLBACK DeffunctionManager(
 
              string = (char *) GlobalLock(hString );
              SendMessage( hListBox, LB_GETTEXT, index,(LPARAM)((LPSTR) string) );
-             DeffunctionPtr = EnvFindDeffunction(theEnv,string );
+             DeffunctionPtr = FindDeffunction(theEnv,string );
 
              /*-------------------+
              | Remove Deffunction |
@@ -507,9 +509,9 @@ INT_PTR CALLBACK DeffunctionManager(
                 sprintf(DialogName,"Deffunction Manager - %4d Items",count);
                 SetWindowText(hDlg,(LPSTR)DialogName );
 
-                EnvPrintRouter(theEnv,WPROMPT,"(undeffunction ");
-                EnvPrintRouter(theEnv,WPROMPT,string );
-                EnvPrintRouter(theEnv,WPROMPT,")\n");
+                PrintString(theEnv,STDOUT,"(undeffunction ");
+                PrintString(theEnv,STDOUT,string );
+                PrintString(theEnv,STDOUT,")\n");
                 PrintPrompt(theEnv);
                 //InvalidateRect(WinDialog.hWnd,NULL,TRUE);
                 SetFocus(hListBox);
@@ -524,10 +526,10 @@ INT_PTR CALLBACK DeffunctionManager(
              
              if (wParam == IDC_PBUTTON4)
                {  
-                EnvPrintRouter(theEnv,WPROMPT, "(ppdeffunction ");
-                EnvPrintRouter(theEnv,WPROMPT, string );
-                EnvPrintRouter(theEnv,WPROMPT, ")\n");
-                EnvPrintRouter(theEnv,WPROMPT, DeffunctionPPForm(DeffunctionPtr ));
+                PrintString(theEnv,STDOUT, "(ppdeffunction ");
+                PrintString(theEnv,STDOUT, string );
+                PrintString(theEnv,STDOUT, ")\n");
+                PrintString(theEnv,STDOUT, DeffunctionPPForm(DeffunctionPtr ));
                 PrintPrompt (theEnv);
                 //InvalidateRect (WinDialog.hWnd, NULL, TRUE);
                 SetFocus(hListBox );
@@ -576,10 +578,10 @@ INT_PTR CALLBACK DefmethodsManager(
    unsigned theMethod = 0;
    int count=0;
    char buffer[100];
-   char Name[100];
    unsigned index;
    HCURSOR hSaveCursor;
    Environment *theEnv = GlobalEnv;
+   StringBuilder *sb;
 
    switch (message)
      {  
@@ -587,18 +589,20 @@ INT_PTR CALLBACK DefmethodsManager(
         defgenericPtr = (Defgeneric *) lParam;
         SetWindowText(GetDlgItem (hDlg, NIDC_TEXT), "Methods for - ");
         hSaveCursor = SetCursor(hHourGlass);
-        while ((theMethod = EnvGetNextDefmethod(theEnv,defgenericPtr, theMethod )) != 0)
+        sb = CreateStringBuilder(theEnv,100);
+        while ((theMethod = GetNextDefmethod(defgenericPtr, theMethod )) != 0)
           {  
-           DefmethodDescription(Name,50,defgenericPtr,theMethod);
-           index = (unsigned) SendMessage(hListBox,LB_ADDSTRING,0,(LPARAM)(LPCSTR) Name);
+           DefmethodDescription(defgenericPtr,theMethod,sb);
+           index = (unsigned) SendMessage(hListBox,LB_ADDSTRING,0,(LPARAM)(LPCSTR) sb->contents);
            SendMessage(hListBox,LB_SETITEMDATA,index,(LPARAM) theMethod);
            //WinRunEvent();
            count++;
           }
+        SBDispose(sb);
         SetCursor(hSaveCursor);
         SendMessage(hListBox,LB_SETCURSEL,0,0L);
         sprintf(DialogName,"Defmethod-Handler Manager - %4d Items (in precedence order)",count);
-        SetWindowText(hDlg,(LPSTR)DialogName);
+        SetWindowText(hDlg,(LPSTR) DialogName);
 
         sprintf(buffer,"Methods for - <%s>", DefgenericName (defgenericPtr));
         SetWindowText(GetDlgItem (hDlg, NIDC_TEXT), buffer);
@@ -646,11 +650,11 @@ INT_PTR CALLBACK DefmethodsManager(
                 SendMessage (hListBox, LB_DELETESTRING, index, 0L );
                 ClearCommandFromDisplay(DialogWindow,theEnv);
                 FlushCommandString(theEnv);
-                EnvPrintRouter(theEnv,WPROMPT, "(undefmethod ");
-                EnvPrintRouter(theEnv,WPROMPT, DefgenericName(defgenericPtr));
-                EnvPrintRouter(theEnv,WPROMPT," ");
-                PrintLongInteger (theEnv,"wclips", (long int) theMethod);
-                EnvPrintRouter(theEnv,WPROMPT, ")\n");
+                PrintString(theEnv,STDOUT, "(undefmethod ");
+                PrintString(theEnv,STDOUT, DefgenericName(defgenericPtr));
+                PrintString(theEnv,STDOUT," ");
+                PrintInteger (theEnv,STDOUT, (long long) theMethod);
+                PrintString(theEnv,STDOUT, ")\n");
                 PrintPrompt (theEnv);
                 Undefmethod (defgenericPtr,theMethod,NULL);
                 //InvalidateRect(WinDialog.hWnd, NULL, TRUE );
@@ -666,12 +670,12 @@ INT_PTR CALLBACK DefmethodsManager(
                {  
                 ClearCommandFromDisplay(DialogWindow,theEnv);
                 FlushCommandString(theEnv);
-                EnvPrintRouter(theEnv,WPROMPT, "(ppdefmethod ");
-                EnvPrintRouter(theEnv,WPROMPT, DefgenericName(defgenericPtr));
-                EnvPrintRouter(theEnv,WPROMPT," ");
-                PrintLongInteger (theEnv,"wclips", (long int) theMethod);
-                EnvPrintRouter(theEnv,WPROMPT, ")\n");
-                EnvPrintRouter(theEnv,WPROMPT, DefmethodPPForm(defgenericPtr, theMethod ));
+                PrintString(theEnv,STDOUT, "(ppdefmethod ");
+                PrintString(theEnv,STDOUT, DefgenericName(defgenericPtr));
+                PrintString(theEnv,STDOUT," ");
+                PrintInteger (theEnv,STDOUT, (long long) theMethod);
+                PrintString(theEnv,STDOUT, ")\n");
+                PrintString(theEnv,STDOUT, DefmethodPPForm(defgenericPtr, theMethod ));
                 PrintPrompt (theEnv);
                 //InvalidateRect(WinDialog.hWnd, NULL, TRUE );
                 SetFocus (hListBox);
@@ -724,7 +728,7 @@ INT_PTR CALLBACK DefinstancesManager(
      {  
       case WM_INITDIALOG:
         hSaveCursor = SetCursor(hHourGlass);
-        while ((definstancesPtr = EnvGetNextDefinstances(theEnv,definstancesPtr )) != NULL)
+        while ((definstancesPtr = GetNextDefinstances(theEnv,definstancesPtr )) != NULL)
           {  
            count ++;
            //WinRunEvent();
@@ -766,7 +770,7 @@ INT_PTR CALLBACK DefinstancesManager(
              string = (char *) GlobalLock(hString);
 
              SendMessage(hListBox,LB_GETTEXT,index,(LPARAM)((LPSTR) string) );
-             definstancesPtr = EnvFindDefinstances(theEnv,string);
+             definstancesPtr = FindDefinstances(theEnv,string);
 
              /*--------------------+
              | Remove Definstances |
@@ -781,9 +785,9 @@ INT_PTR CALLBACK DefinstancesManager(
                 sprintf(DialogName,"Definstances Manager - %4d Items",count);
                 SetWindowText(hDlg, (LPSTR)DialogName );
 
-                EnvPrintRouter(theEnv,WPROMPT, "(undefinstances ");
-                EnvPrintRouter(theEnv,WPROMPT, string );
-                EnvPrintRouter(theEnv,WPROMPT, ")\n");
+                PrintString(theEnv,STDOUT, "(undefinstances ");
+                PrintString(theEnv,STDOUT, string );
+                PrintString(theEnv,STDOUT, ")\n");
                 PrintPrompt(theEnv);
                 //InvalidateRect( WinDialog.hWnd, NULL, TRUE );
                 GlobalUnlock( hString );
@@ -798,10 +802,10 @@ INT_PTR CALLBACK DefinstancesManager(
              
              if (wParam == IDC_PBUTTON4)
                { 
-                EnvPrintRouter(theEnv,WPROMPT, "(ppdefinstances ");
-                EnvPrintRouter(theEnv,WPROMPT, string );
-                EnvPrintRouter(theEnv,WPROMPT, ")\n");
-                EnvPrintRouter(theEnv,WPROMPT, DefinstancesPPForm(definstancesPtr ));
+                PrintString(theEnv,STDOUT, "(ppdefinstances ");
+                PrintString(theEnv,STDOUT, string );
+                PrintString(theEnv,STDOUT, ")\n");
+                PrintString(theEnv,STDOUT, DefinstancesPPForm(definstancesPtr ));
                 PrintPrompt (theEnv);
                 //InvalidateRect(WinDialog.hWnd, NULL, TRUE );
                 SetFocus(hListBox );
@@ -847,7 +851,7 @@ INT_PTR CALLBACK DefclassManager(
      {  
       case WM_INITDIALOG: 
         hSaveCursor = SetCursor(hHourGlass);
-        while ((defclassPtr = EnvGetNextDefclass(theEnv,defclassPtr)) != NULL)
+        while ((defclassPtr = GetNextDefclass(theEnv,defclassPtr)) != NULL)
           {  
            count ++;
            //WinRunEvent();
@@ -900,7 +904,7 @@ INT_PTR CALLBACK DefclassManager(
 
              string = (char *) GlobalLock(hString );
              SendMessage( hListBox, LB_GETTEXT, index,(LPARAM)((LPSTR) string));
-             defclassPtr = EnvFindDefclass(theEnv,string );
+             defclassPtr = FindDefclass(theEnv,string );
 
              /*------------------+
              | Remove Defclasses |
@@ -915,9 +919,9 @@ INT_PTR CALLBACK DefclassManager(
                 sprintf(DialogName,"Defclasss Manager - %4d Items",count);
                 SetWindowText(hDlg,(LPSTR) DialogName );
 
-                EnvPrintRouter(theEnv,WPROMPT, "(undefclass ");
-                EnvPrintRouter(theEnv,WPROMPT, string );
-                EnvPrintRouter(theEnv,WPROMPT, ")\n");
+                PrintString(theEnv,STDOUT, "(undefclass ");
+                PrintString(theEnv,STDOUT, string );
+                PrintString(theEnv,STDOUT, ")\n");
                 PrintPrompt (theEnv);
                 //InvalidateRect(WinDialog.hWnd, NULL, TRUE );
                 SetFocus(hListBox );
@@ -932,10 +936,10 @@ INT_PTR CALLBACK DefclassManager(
              
              if (wParam == IDC_PBUTTON2)
                {  
-                EnvPrintRouter(theEnv,WPROMPT, "(describe-class ");
-                EnvPrintRouter(theEnv,WPROMPT, string );
-                EnvPrintRouter(theEnv,WPROMPT, ")\n");
-                DescribeClass ("wclips", defclassPtr );
+                PrintString(theEnv,STDOUT, "(describe-class ");
+                PrintString(theEnv,STDOUT, string );
+                PrintString(theEnv,STDOUT, ")\n");
+                DescribeClass (defclassPtr,STDOUT);
                 PrintPrompt (theEnv);
                 //InvalidateRect(WinDialog.hWnd, NULL, TRUE );
                }
@@ -946,10 +950,10 @@ INT_PTR CALLBACK DefclassManager(
              
              if (wParam == IDC_PBUTTON3)
                {
-                EnvPrintRouter(theEnv,WPROMPT, "(browse-classes ");
-                EnvPrintRouter(theEnv,WPROMPT, string );
-                EnvPrintRouter(theEnv,WPROMPT, ")\n");
-                BrowseClasses ("wclips" ,defclassPtr );
+                PrintString(theEnv,STDOUT, "(browse-classes ");
+                PrintString(theEnv,STDOUT, string );
+                PrintString(theEnv,STDOUT, ")\n");
+                BrowseClasses(defclassPtr,STDOUT);
                 PrintPrompt (theEnv);
                 //InvalidateRect(WinDialog.hWnd, NULL, TRUE );
                }
@@ -960,10 +964,10 @@ INT_PTR CALLBACK DefclassManager(
              
              if (wParam == IDC_PBUTTON4)
                { 
-                EnvPrintRouter(theEnv,WPROMPT, "(ppdefclass ");
-                EnvPrintRouter(theEnv,WPROMPT, string );
-                EnvPrintRouter(theEnv,WPROMPT, ")\n");
-                EnvPrintRouter(theEnv,WPROMPT, DefclassPPForm(defclassPtr ));
+                PrintString(theEnv,STDOUT, "(ppdefclass ");
+                PrintString(theEnv,STDOUT, string );
+                PrintString(theEnv,STDOUT, ")\n");
+                PrintString(theEnv,STDOUT, DefclassPPForm(defclassPtr ));
                 PrintPrompt (theEnv);
                 //InvalidateRect(WinDialog.hWnd, NULL, TRUE );
                }
@@ -1009,7 +1013,7 @@ INT_PTR CALLBACK DefclassManager(
                }
              ShowButtons(hDlg,DefclassIsDeletable(defclassPtr),ENABLE,ENABLE,
                          (DefclassPPForm(defclassPtr)!= NULL),
-                         (EnvGetNextDefmessageHandler(theEnv,defclassPtr,0) != 0),
+                         (GetNextDefmessageHandler(defclassPtr,0) != 0),
                          HIDE,instances,slots,ENABLE);
            
              GlobalUnlock(hString );
@@ -1046,9 +1050,9 @@ INT_PTR CALLBACK DefmessageHandlerManager(
    switch (message)
      {  
       case WM_INITDIALOG:
-        defclassPtr = (void *)lParam;
+        defclassPtr = (Defclass *) lParam;
         hSaveCursor = SetCursor(hHourGlass);
-        while ((handlerIndex = EnvGetNextDefmessageHandler(theEnv,defclassPtr,handlerIndex)) != 0)
+        while ((handlerIndex = GetNextDefmessageHandler(defclassPtr,handlerIndex)) != 0)
           {          
            sprintf(Name,"%s (%s)",
            DefmessageHandlerName (defclassPtr, handlerIndex),
@@ -1121,14 +1125,14 @@ INT_PTR CALLBACK DefmessageHandlerManager(
            
              if (wParam == IDC_PBUTTON4 )
                {  
-                EnvPrintRouter(theEnv,WPROMPT, "(ppdefmessage-handler ");
-                EnvPrintRouter(theEnv,WPROMPT, DefclassName(defclassPtr));
-                EnvPrintRouter(theEnv,WPROMPT," ");
-                EnvPrintRouter(theEnv,WPROMPT, DefmessageHandlerName(defclassPtr, handlerIndex));
-                EnvPrintRouter(theEnv,WPROMPT," ");
-                EnvPrintRouter(theEnv,WPROMPT, DefmessageHandlerType(defclassPtr, handlerIndex));
-                EnvPrintRouter(theEnv,WPROMPT, ")\n");
-                EnvPrintRouter(theEnv,WPROMPT, DefmessageHandlerPPForm(defclassPtr, handlerIndex ));
+                PrintString(theEnv,STDOUT, "(ppdefmessage-handler ");
+                PrintString(theEnv,STDOUT, DefclassName(defclassPtr));
+                PrintString(theEnv,STDOUT," ");
+                PrintString(theEnv,STDOUT, DefmessageHandlerName(defclassPtr,handlerIndex));
+                PrintString(theEnv,STDOUT," ");
+                PrintString(theEnv,STDOUT, DefmessageHandlerType(defclassPtr,handlerIndex));
+                PrintString(theEnv,STDOUT, ")\n");
+                PrintString(theEnv,STDOUT, DefmessageHandlerPPForm(defclassPtr,handlerIndex));
                 PrintPrompt (theEnv);
                 //InvalidateRect(WinDialog.hWnd, NULL, TRUE );
                 SetFocus (hListBox);
@@ -1171,10 +1175,10 @@ INT_PTR CALLBACK AgendaManager(
    HWND hListBox = GetDlgItem(hDlg, IDC_LISTBOX);
    Activation *activationPtr = NULL;
    int count=0;
-   char Buffer[200];
    unsigned index; 
    HCURSOR hSaveCursor;
    Environment *theEnv = GlobalEnv;
+   StringBuilder *sb;
 
    switch (message)
      {  
@@ -1184,14 +1188,17 @@ INT_PTR CALLBACK AgendaManager(
         SetWindowText(GetDlgItem(hDlg,IDC_PBUTTON4),"&Fire");
 
         hSaveCursor = SetCursor(hHourGlass);
-        while((activationPtr=EnvGetNextActivation(theEnv,activationPtr)) != NULL)
+        sb = CreateStringBuilder(theEnv,200);
+        while((activationPtr = GetNextActivation(theEnv,activationPtr)) != NULL)
           {  
-           ActivationPPForm(activationPtr,Buffer,199);
-           index = (unsigned) SendMessage(hListBox, LB_ADDSTRING, 0,(LPARAM)(LPCSTR) Buffer);
+           ActivationPPForm(activationPtr,sb);
+           index = (unsigned) SendMessage(hListBox, LB_ADDSTRING, 0,(LPARAM)(LPCSTR) sb->contents);
            SendMessage(hListBox, LB_SETITEMDATA, (WPARAM)index, (LPARAM)activationPtr );
            //WinRunEvent();
            count++;
           }
+
+        SBDispose(sb);
         SetCursor(hSaveCursor);
         SendMessage(hListBox, LB_SETCURSEL, 0, 0L);
         sprintf(DialogName,"Agenda Manager - %4d Items",count);
@@ -1226,7 +1233,7 @@ INT_PTR CALLBACK AgendaManager(
              if (wParam == IDC_PBUTTON1)
                {  
                 SendMessage (hListBox, LB_DELETESTRING, (WPARAM)index, 0L );
-                ActivationDelete(activationPtr,theEnv);
+                DeleteActivation(activationPtr);
 
                 count = (int) SendMessage(hListBox, LB_GETCOUNT, 0, 0);
                 sprintf(DialogName,"Agenda Manager - %4d Items",count);
@@ -1244,10 +1251,10 @@ INT_PTR CALLBACK AgendaManager(
                 MoveActivationToTop(theEnv,activationPtr );
                 //InvalidateRect(WinAgenda.hWnd, NULL, TRUE );
                 ClearCommandFromDisplay(DialogWindow,theEnv);
-                EnvSetAgendaChanged (theEnv,FALSE);
+                SetAgendaChanged (theEnv,FALSE);
                 FlushCommandString(theEnv);
                 SetCommandString (theEnv,"(run 1)\n");
-                EnvPrintRouter (theEnv,"stdout","(run 1)\n");
+                PrintString (theEnv,STDOUT,"(run 1)\n");
                 SendMessage(hDlg, WM_COMMAND, IDC_PBUTTON6, 0L );
                 break;
                }
@@ -1288,7 +1295,7 @@ INT_PTR CALLBACK DefglobalManager(
      {  
       case WM_INITDIALOG:  
         hSaveCursor = SetCursor(hHourGlass);
-        while ((Ptr = EnvGetNextDefglobal(theEnv,Ptr )) != NULL)
+        while ((Ptr = GetNextDefglobal(theEnv,Ptr )) != NULL)
           {  
            count ++;
            SendMessage(hListBox, LB_ADDSTRING, 0,(LPARAM)(LPCSTR) DefglobalName (Ptr));
@@ -1328,7 +1335,7 @@ INT_PTR CALLBACK DefglobalManager(
 
              string =  (char *) GlobalLock(hString );
              SendMessage( hListBox, LB_GETTEXT, index,(LPARAM)((LPSTR) string) );
-             Ptr = EnvFindDefglobal(theEnv,string );
+             Ptr = FindDefglobal(theEnv,string );
 
              if (Ptr == NULL) break;
              
@@ -1345,9 +1352,9 @@ INT_PTR CALLBACK DefglobalManager(
                 sprintf(DialogName,"Defglobal Manager - %4d Items",count);
                 SetWindowText(hDlg, (LPSTR)DialogName );
 
-                EnvPrintRouter(theEnv,WPROMPT, "(undefglobal ");
-                EnvPrintRouter(theEnv,WPROMPT, string );
-                EnvPrintRouter(theEnv,WPROMPT, ")\n");
+                PrintString(theEnv,STDOUT, "(undefglobal ");
+                PrintString(theEnv,STDOUT, string );
+                PrintString(theEnv,STDOUT, ")\n");
                 PrintPrompt (theEnv);
                 //InvalidateRect (WinDialog.hWnd, NULL, TRUE );
                 SetFocus (hListBox);
@@ -1362,10 +1369,10 @@ INT_PTR CALLBACK DefglobalManager(
            
              if (wParam == IDC_PBUTTON4)
                {  
-                EnvPrintRouter(theEnv,WPROMPT, "(ppdefglobal ");
-                EnvPrintRouter(theEnv,WPROMPT, string );
-                EnvPrintRouter(theEnv,WPROMPT, ")\n");
-                EnvPrintRouter(theEnv,WPROMPT, DefglobalPPForm(Ptr ));
+                PrintString(theEnv,STDOUT, "(ppdefglobal ");
+                PrintString(theEnv,STDOUT, string );
+                PrintString(theEnv,STDOUT, ")\n");
+                PrintString(theEnv,STDOUT, DefglobalPPForm(Ptr ));
                 PrintPrompt (theEnv);
                 //InvalidateRect (WinDialog.hWnd, NULL, TRUE );
                 SetFocus (hListBox);
@@ -1408,7 +1415,6 @@ INT_PTR CALLBACK DefruleManager(
    HANDLE hString;
    char *string;
    HCURSOR hSaveCursor;
-   CLIPSValue result;
    Environment *theEnv = GlobalEnv;
    
    switch (message)
@@ -1416,7 +1422,7 @@ INT_PTR CALLBACK DefruleManager(
       case WM_INITDIALOG:
         { 
          hSaveCursor = SetCursor(hHourGlass);
-         while ((defrulePtr = EnvGetNextDefrule(theEnv,defrulePtr )) != NULL)
+         while ((defrulePtr = GetNextDefrule(theEnv,defrulePtr )) != NULL)
            {  
             count ++;
             SendMessage(hListBox,LB_ADDSTRING,0,(LPARAM)(LPCSTR) DefruleName (defrulePtr));
@@ -1464,7 +1470,7 @@ INT_PTR CALLBACK DefruleManager(
 
              string = (char *) GlobalLock(hString);
              SendMessage(hListBox,LB_GETTEXT,index,(LPARAM)((LPSTR) string));
-             defrulePtr = EnvFindDefrule(theEnv,string);
+             defrulePtr = FindDefrule(theEnv,string);
 
              if (defrulePtr == NULL) break;
              
@@ -1481,9 +1487,9 @@ INT_PTR CALLBACK DefruleManager(
                 sprintf(DialogName,"Defrule Manager - %4d Items",count);
                 SetWindowText(hDlg,(LPSTR) DialogName);
 
-                EnvPrintRouter(theEnv,WPROMPT, "(undefrule ");
-                EnvPrintRouter(theEnv,WPROMPT, string );
-                EnvPrintRouter(theEnv,WPROMPT, ")\n");
+                PrintString(theEnv,STDOUT, "(undefrule ");
+                PrintString(theEnv,STDOUT, string );
+                PrintString(theEnv,STDOUT, ")\n");
                 PrintPrompt (theEnv);
                 //InvalidateRect (WinDialog.hWnd, NULL, TRUE );
                 SetFocus(hListBox);
@@ -1498,12 +1504,11 @@ INT_PTR CALLBACK DefruleManager(
              
              if (wParam == IDC_PBUTTON2)
                {  
-                DefruleRefresh(defrulePtr);
-                EnvPrintRouter(theEnv,WPROMPT, "(refresh ");
-                EnvPrintRouter(theEnv,WPROMPT, string );
-                EnvPrintRouter(theEnv,WPROMPT, ")\n");
+                Refresh(defrulePtr);
+                PrintString(theEnv,STDOUT, "(refresh ");
+                PrintString(theEnv,STDOUT, string );
+                PrintString(theEnv,STDOUT, ")\n");
                 PrintPrompt (theEnv);
-                //InvalidateRect (WinDialog.hWnd, NULL, TRUE );
                 SetFocus(hListBox);
                }
 
@@ -1513,12 +1518,7 @@ INT_PTR CALLBACK DefruleManager(
              
              if (wParam == IDC_PBUTTON3)
                {  
-                EnvPrintRouter(theEnv,WPROMPT,"(matches ");
-                EnvPrintRouter(theEnv,WPROMPT,string );
-                EnvPrintRouter(theEnv,WPROMPT,")\n");
-                DefruleMatches(defrulePtr,VERBOSE,&result);
-                PrintPrompt(theEnv);
-                //InvalidateRect(WinDialog.hWnd,NULL,TRUE);
+                MatchesAction(defrulePtr,string);
                 SetFocus(hListBox);
                }
 
@@ -1528,12 +1528,11 @@ INT_PTR CALLBACK DefruleManager(
              
              if (wParam == IDC_PBUTTON4)
                {  
-                EnvPrintRouter(theEnv,WPROMPT, "(ppdefrule ");
-                EnvPrintRouter(theEnv,WPROMPT, string );
-                EnvPrintRouter(theEnv,WPROMPT, ")\n");
-                EnvPrintRouter(theEnv,WPROMPT, DefrulePPForm(defrulePtr ));
+                PrintString(theEnv,STDOUT, "(ppdefrule ");
+                PrintString(theEnv,STDOUT, string );
+                PrintString(theEnv,STDOUT, ")\n");
+                PrintString(theEnv,STDOUT, DefrulePPForm(defrulePtr ));
                 PrintPrompt(theEnv);
-                //InvalidateRect(WinDialog.hWnd,NULL,TRUE);
                 SetFocus(hListBox);
                }
 
@@ -1545,18 +1544,19 @@ INT_PTR CALLBACK DefruleManager(
                {  
                 if (DefruleHasBreakpoint(defrulePtr))
                   {  
-                   DefruleRemoveBreak(defrulePtr);
-                   EnvPrintRouter(theEnv,WPROMPT, "(remove-break ");
+                   RemoveBreak(defrulePtr);
+                   PrintString(theEnv,STDOUT, "(remove-break ");
                   }
                 else
                   {  
-                   DefruleSetBreak(defrulePtr);
-                   EnvPrintRouter(theEnv,WPROMPT, "(set-break ");
+                   SetBreak(defrulePtr);
+                   PrintString(theEnv,STDOUT, "(set-break ");
                   }
                
-                EnvPrintRouter(theEnv,WPROMPT, string );
-                EnvPrintRouter(theEnv,WPROMPT, ")\n");
+                PrintString(theEnv,STDOUT,string);
+                PrintString(theEnv,STDOUT, ")\n");
                 PrintPrompt(theEnv);
+
                 SetFocus(hListBox);
                }
 
@@ -1625,7 +1625,7 @@ INT_PTR CALLBACK DefgenericManager(
      {  
       case WM_INITDIALOG:
         hSaveCursor = SetCursor(hHourGlass);
-        while ((defPtr = EnvGetNextDefgeneric(theEnv,defPtr )) != NULL)
+        while ((defPtr = GetNextDefgeneric(theEnv,defPtr )) != NULL)
           {  
            count ++;
            //WinRunEvent();
@@ -1671,7 +1671,7 @@ INT_PTR CALLBACK DefgenericManager(
 
              string = (char *) GlobalLock(hString );
              SendMessage( hListBox, LB_GETTEXT, index,(LPARAM)((LPSTR) string));
-             defPtr = EnvFindDefgeneric(theEnv,string );
+             defPtr = FindDefgeneric(theEnv,string );
 
              /*------------------+
              | Remove Defgeneric |
@@ -1686,9 +1686,9 @@ INT_PTR CALLBACK DefgenericManager(
                 sprintf(DialogName,"Defgenerics Manager - %4d Items",count);
                 SetWindowText(hDlg, (LPSTR)DialogName );
 
-                EnvPrintRouter(theEnv,WPROMPT, "(undefgeneric ");
-                EnvPrintRouter(theEnv,WPROMPT, string );
-                EnvPrintRouter(theEnv,WPROMPT, ")\n");
+                PrintString(theEnv,STDOUT, "(undefgeneric ");
+                PrintString(theEnv,STDOUT, string );
+                PrintString(theEnv,STDOUT, ")\n");
                 PrintPrompt (theEnv);
                 //InvalidateRect(WinDialog.hWnd, NULL, TRUE );
                 SetFocus( hListBox );
@@ -1703,10 +1703,10 @@ INT_PTR CALLBACK DefgenericManager(
              
              if (wParam == IDC_PBUTTON4)
                {  
-                EnvPrintRouter(theEnv,WPROMPT, "(ppdefgeneric ");
-                EnvPrintRouter(theEnv,WPROMPT, string );
-                EnvPrintRouter(theEnv,WPROMPT, ")\n");
-                EnvPrintRouter(theEnv,WPROMPT, DefgenericPPForm(defPtr ));
+                PrintString(theEnv,STDOUT, "(ppdefgeneric ");
+                PrintString(theEnv,STDOUT, string );
+                PrintString(theEnv,STDOUT, ")\n");
+                PrintString(theEnv,STDOUT, DefgenericPPForm(defPtr ));
                 PrintPrompt (theEnv);
                 //InvalidateRect(WinDialog.hWnd, NULL, TRUE );
                }
@@ -1737,7 +1737,7 @@ INT_PTR CALLBACK DefgenericManager(
              
              ShowButtons(hDlg,DefgenericIsDeletable(defPtr), HIDE, HIDE,
                          (DefgenericPPForm(defPtr)!= NULL),
-                         (EnvGetNextDefmethod(theEnv,defPtr,0) != 0),
+                         (GetNextDefmethod(defPtr,0) != 0),
                          DefgenericGetWatch(defPtr),HIDE,HIDE,ENABLE);
              GlobalUnlock(hString );
              GlobalFree(hString );

@@ -758,7 +758,7 @@ struct expr *ConvertValueToExpression(
   Environment *theEnv,
   UDFValue *theValue)
   {
-   long i;
+   size_t i;
    struct expr *head = NULL, *last = NULL, *newItem;
 
    if (theValue->header->type != MULTIFIELD_TYPE)

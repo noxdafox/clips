@@ -100,7 +100,7 @@ INT_PTR CALLBACK ExecDlg(
         SendDlgItemMessage(hDlg, IDC_EXE_STRATEGY, CB_ADDSTRING,0,(LPARAM)((LPSTR) "Simplicity"));
         SendDlgItemMessage(hDlg, IDC_EXE_STRATEGY, CB_ADDSTRING,0,(LPARAM)((LPSTR) "Random"));
 
-        switch (EnvGetStrategy(GlobalEnv))
+        switch (GetStrategy(GlobalEnv))
           {   
            case DEPTH_STRATEGY:
              item = (WPARAM) SendDlgItemMessage(hDlg,IDC_EXE_STRATEGY,CB_FINDSTRING,0,(LPARAM)((LPSTR)"Depth"));
@@ -141,7 +141,7 @@ INT_PTR CALLBACK ExecDlg(
         SendDlgItemMessage (hDlg, IDC_EXE_SALIENCE, CB_ADDSTRING,0,(LPARAM)((LPSTR) "When Activated"));
         SendDlgItemMessage (hDlg, IDC_EXE_SALIENCE, CB_ADDSTRING,0,(LPARAM)((LPSTR) "Every Cycle"));
 
-        switch (EnvGetSalienceEvaluation(GlobalEnv))
+        switch (GetSalienceEvaluation(GlobalEnv))
           {   
            case WHEN_DEFINED:
              item = (WPARAM) SendDlgItemMessage (hDlg, IDC_EXE_SALIENCE, CB_FINDSTRING,0,(LPARAM)((LPSTR) "When Defined"));
@@ -163,22 +163,22 @@ INT_PTR CALLBACK ExecDlg(
         /* if any rules are in the system.     */
         /*=====================================*/
         
-        if (EnvGetNextDefrule (theEnv,NULL) != NULL)
+        if (GetNextDefrule (theEnv,NULL) != NULL)
           { EnableWindow(GetDlgItem(hDlg, IDC_WATCH_ALL ), TRUE); }
 
         /*==============================*/
         /* Initalize Other Check Boxes. */
         /*==============================*/
         
-        SetCheckBox(hDlg,IDC_EXE_DYNAMIC,EnvGetDynamicConstraintChecking(theEnv));
+        SetCheckBox(hDlg,IDC_EXE_DYNAMIC,GetDynamicConstraintChecking(theEnv));
 #if DEFGLOBAL_CONSTRUCT
-        SetCheckBox(hDlg,IDC_EXE_GLOBAL,EnvGetResetGlobals(theEnv));
+        SetCheckBox(hDlg,IDC_EXE_GLOBAL,GetResetGlobals(theEnv));
 #endif
 #if DEFTEMPLATE_CONSTRUCT
-        SetCheckBox(hDlg,IDC_EXE_FACT,EnvGetFactDuplication(theEnv));
+        SetCheckBox(hDlg,IDC_EXE_FACT,GetFactDuplication(theEnv));
 #endif
 #if (!RUN_TIME)
-        SetCheckBox(hDlg,IDC_EXE_SEQUENCE,EnvGetSequenceOperatorRecognition(theEnv));
+        SetCheckBox(hDlg,IDC_EXE_SEQUENCE,GetSequenceOperatorRecognition(theEnv));
 #endif
         return (TRUE);
       
@@ -196,11 +196,11 @@ INT_PTR CALLBACK ExecDlg(
              SendDlgItemMessage(hDlg,IDC_EXE_SALIENCE,CB_GETLBTEXT,value,(LPARAM) Msg );
 
              if (strcmp(Msg,"When Defined") == 0)
-               { EnvSetSalienceEvaluation(GlobalEnv,WHEN_DEFINED); }
+               { SetSalienceEvaluation(GlobalEnv,WHEN_DEFINED); }
              else if (strcmp(Msg, "When Activated" ) == 0)
-               { EnvSetSalienceEvaluation(GlobalEnv,WHEN_ACTIVATED); }
+               { SetSalienceEvaluation(GlobalEnv,WHEN_ACTIVATED); }
              else
-               { EnvSetSalienceEvaluation(GlobalEnv,EVERY_CYCLE); }
+               { SetSalienceEvaluation(GlobalEnv,EVERY_CYCLE); }
 
              /*===========================*/
              /* Decode Strategy Combo Box */
@@ -210,37 +210,37 @@ INT_PTR CALLBACK ExecDlg(
              SendDlgItemMessage (hDlg, IDC_EXE_STRATEGY, CB_GETLBTEXT, value,(LPARAM) Msg );
 
              if ( strcmp (Msg, "Depth"  ) == 0 )
-               { EnvSetStrategy(GlobalEnv,DEPTH_STRATEGY); }
+               { SetStrategy(GlobalEnv,DEPTH_STRATEGY); }
              else if (strcmp(Msg, "Breadth" ) == 0)
-               { EnvSetStrategy(GlobalEnv,BREADTH_STRATEGY); }
+               { SetStrategy(GlobalEnv,BREADTH_STRATEGY); }
              else if (strcmp(Msg, "LEX") == 0 )
-               { EnvSetStrategy(GlobalEnv,LEX_STRATEGY); }
+               { SetStrategy(GlobalEnv,LEX_STRATEGY); }
              else if (strcmp(Msg, "MEA") == 0 )
-               { EnvSetStrategy(GlobalEnv,MEA_STRATEGY); }
+               { SetStrategy(GlobalEnv,MEA_STRATEGY); }
              else if (strcmp(Msg, "Complexity") == 0 )
-               { EnvSetStrategy(GlobalEnv,COMPLEXITY_STRATEGY); }
+               { SetStrategy(GlobalEnv,COMPLEXITY_STRATEGY); }
              else if (strcmp(Msg, "Simplicity") == 0 )
-               { EnvSetStrategy(GlobalEnv,SIMPLICITY_STRATEGY); }
+               { SetStrategy(GlobalEnv,SIMPLICITY_STRATEGY); }
              else
-               { EnvSetStrategy(GlobalEnv,RANDOM_STRATEGY); }
+               { SetStrategy(GlobalEnv,RANDOM_STRATEGY); }
 
              /*==========================*/
              /* Decode Other Check Boxes */
              /*==========================*/
              
-             EnvSetDynamicConstraintChecking(theEnv,(int) IsDlgButtonChecked(hDlg,IDC_EXE_DYNAMIC));
+             SetDynamicConstraintChecking(theEnv,(int) IsDlgButtonChecked(hDlg,IDC_EXE_DYNAMIC));
 
 #if DEFGLOBAL_CONSTRUCT
-             EnvSetResetGlobals(theEnv,(int) IsDlgButtonChecked(hDlg,IDC_EXE_GLOBAL));
+             SetResetGlobals(theEnv,(int) IsDlgButtonChecked(hDlg,IDC_EXE_GLOBAL));
 #endif
 #if DEFTEMPLATE_CONSTRUCT
-             EnvSetFactDuplication(theEnv,(int) IsDlgButtonChecked(hDlg,IDC_EXE_FACT));
+             SetFactDuplication(theEnv,(int) IsDlgButtonChecked(hDlg,IDC_EXE_FACT));
 #endif
 #if INCREMENTAL_RESET & (! RUN_TIME )
-             EnvSetIncrementalReset(theEnv,(int) IsDlgButtonChecked(hDlg,IDC_EXE_RESET));
+             SetIncrementalReset(theEnv,(int) IsDlgButtonChecked(hDlg,IDC_EXE_RESET));
 #endif
 #if ( ! RUN_TIME )
-             EnvSetSequenceOperatorRecognition(theEnv,(int) IsDlgButtonChecked(hDlg,IDC_EXE_SEQUENCE));
+             SetSequenceOperatorRecognition(theEnv,(int) IsDlgButtonChecked(hDlg,IDC_EXE_SEQUENCE));
 #endif
              SaveExecutionInformation();
              EndDialog(hDlg,IDOK);
@@ -353,20 +353,20 @@ INT_PTR CALLBACK WatchDlgProc(
      {  
       case WM_INITDIALOG:  
         count = 0;
-        count += SetCheckBox(hDlg, IDC_WATCH_COMPILE,    EnvGetWatchItem(theEnv,"compilations"));
-        count += SetCheckBox(hDlg, IDC_WATCH_FACTS,      EnvGetWatchItem(theEnv,"facts"));
-        count += SetCheckBox(hDlg, IDC_WATCH_INSTANCE,   EnvGetWatchItem(theEnv,"instances"));
-        count += SetCheckBox(hDlg, IDC_WATCH_RULES,      EnvGetWatchItem(theEnv,"rules"));
-        count += SetCheckBox(hDlg, IDC_WATCH_GENERIC,    EnvGetWatchItem(theEnv,"generic-functions"));
-        count += SetCheckBox(hDlg, IDC_WATCH_MESSAGE,    EnvGetWatchItem(theEnv,"messages"));
-        count += SetCheckBox(hDlg, IDC_WATCH_DEFFUN,     EnvGetWatchItem(theEnv,"deffunctions"));
-        count += SetCheckBox(hDlg, IDC_WATCH_STATS,      EnvGetWatchItem(theEnv,"statistics"));
-        count += SetCheckBox(hDlg, IDC_WATCH_GLOBAL,     EnvGetWatchItem(theEnv,"globals"));
-        count += SetCheckBox(hDlg, IDC_WATCH_SLOT,       EnvGetWatchItem(theEnv,"slots"));
-        count += SetCheckBox(hDlg, IDC_WATCH_ACTIVE,     EnvGetWatchItem(theEnv,"activations"));
-        count += SetCheckBox(hDlg, IDC_WATCH_METHOD,     EnvGetWatchItem(theEnv,"methods"));
-        count += SetCheckBox(hDlg, IDC_WATCH_FOCUS,      EnvGetWatchItem(theEnv,"focus"));
-        count += SetCheckBox(hDlg, IDC_WATCH_MSGHANDLER, EnvGetWatchItem(theEnv,"message-handlers"));
+        count += SetCheckBox(hDlg, IDC_WATCH_COMPILE,    GetWatchItem(theEnv,"compilations"));
+        count += SetCheckBox(hDlg, IDC_WATCH_FACTS,      GetWatchItem(theEnv,"facts"));
+        count += SetCheckBox(hDlg, IDC_WATCH_INSTANCE,   GetWatchItem(theEnv,"instances"));
+        count += SetCheckBox(hDlg, IDC_WATCH_RULES,      GetWatchItem(theEnv,"rules"));
+        count += SetCheckBox(hDlg, IDC_WATCH_GENERIC,    GetWatchItem(theEnv,"generic-functions"));
+        count += SetCheckBox(hDlg, IDC_WATCH_MESSAGE,    GetWatchItem(theEnv,"messages"));
+        count += SetCheckBox(hDlg, IDC_WATCH_DEFFUN,     GetWatchItem(theEnv,"deffunctions"));
+        count += SetCheckBox(hDlg, IDC_WATCH_STATS,      GetWatchItem(theEnv,"statistics"));
+        count += SetCheckBox(hDlg, IDC_WATCH_GLOBAL,     GetWatchItem(theEnv,"globals"));
+        count += SetCheckBox(hDlg, IDC_WATCH_SLOT,       GetWatchItem(theEnv,"slots"));
+        count += SetCheckBox(hDlg, IDC_WATCH_ACTIVE,     GetWatchItem(theEnv,"activations"));
+        count += SetCheckBox(hDlg, IDC_WATCH_METHOD,     GetWatchItem(theEnv,"methods"));
+        count += SetCheckBox(hDlg, IDC_WATCH_FOCUS,      GetWatchItem(theEnv,"focus"));
+        count += SetCheckBox(hDlg, IDC_WATCH_MSGHANDLER, GetWatchItem(theEnv,"message-handlers"));
   
         if (count == IDC_WATCH_COUNT)
           { EnableWindow(GetDlgItem(hDlg,IDC_WATCH_ALL ),FALSE); }
@@ -378,31 +378,31 @@ INT_PTR CALLBACK WatchDlgProc(
         switch (wParam)
           {  
            case IDC_OK:
-             EnvSetWatchItem (GlobalEnv,"compilations",     IsDlgButtonChecked (hDlg, IDC_WATCH_COMPILE),NULL);
-             EnvSetWatchItem (GlobalEnv,"statistics",       IsDlgButtonChecked (hDlg, IDC_WATCH_STATS),NULL);
+             SetWatchItem (GlobalEnv,"compilations",     IsDlgButtonChecked (hDlg, IDC_WATCH_COMPILE),NULL);
+             SetWatchItem (GlobalEnv,"statistics",       IsDlgButtonChecked (hDlg, IDC_WATCH_STATS),NULL);
 #if DEFTEMPLATE_CONSTRUCT
-			 EnvSetWatchItem(GlobalEnv, "facts", IsDlgButtonChecked(hDlg, IDC_WATCH_FACTS), NULL);
+			 SetWatchItem(GlobalEnv, "facts", IsDlgButtonChecked(hDlg, IDC_WATCH_FACTS), NULL);
 #endif
 #if OBJECT_SYSTEM
-			 EnvSetWatchItem(GlobalEnv, "instances", IsDlgButtonChecked(hDlg, IDC_WATCH_INSTANCE), NULL);
-			 EnvSetWatchItem(GlobalEnv, "slots", IsDlgButtonChecked(hDlg, IDC_WATCH_SLOT), NULL);
-			 EnvSetWatchItem(GlobalEnv, "messages", IsDlgButtonChecked(hDlg, IDC_WATCH_MESSAGE), NULL);
-			 EnvSetWatchItem(GlobalEnv, "message-handlers", IsDlgButtonChecked(hDlg, IDC_WATCH_MSGHANDLER), NULL);
+			 SetWatchItem(GlobalEnv, "instances", IsDlgButtonChecked(hDlg, IDC_WATCH_INSTANCE), NULL);
+			 SetWatchItem(GlobalEnv, "slots", IsDlgButtonChecked(hDlg, IDC_WATCH_SLOT), NULL);
+			 SetWatchItem(GlobalEnv, "messages", IsDlgButtonChecked(hDlg, IDC_WATCH_MESSAGE), NULL);
+			 SetWatchItem(GlobalEnv, "message-handlers", IsDlgButtonChecked(hDlg, IDC_WATCH_MSGHANDLER), NULL);
 #endif
 #if DEFFUNCTION_CONSTRUCT
-			 EnvSetWatchItem(GlobalEnv, "deffunctions", IsDlgButtonChecked(hDlg, IDC_WATCH_DEFFUN), NULL);
+			 SetWatchItem(GlobalEnv, "deffunctions", IsDlgButtonChecked(hDlg, IDC_WATCH_DEFFUN), NULL);
 #endif
 #if DEFRULE_CONSTRUCT
-			 EnvSetWatchItem(GlobalEnv, "rules", IsDlgButtonChecked(hDlg, IDC_WATCH_RULES), NULL);
-			 EnvSetWatchItem(GlobalEnv, "activations", IsDlgButtonChecked(hDlg, IDC_WATCH_ACTIVE), NULL);
-			 EnvSetWatchItem(GlobalEnv, "focus", IsDlgButtonChecked(hDlg, IDC_WATCH_FOCUS), NULL);
+			 SetWatchItem(GlobalEnv, "rules", IsDlgButtonChecked(hDlg, IDC_WATCH_RULES), NULL);
+			 SetWatchItem(GlobalEnv, "activations", IsDlgButtonChecked(hDlg, IDC_WATCH_ACTIVE), NULL);
+			 SetWatchItem(GlobalEnv, "focus", IsDlgButtonChecked(hDlg, IDC_WATCH_FOCUS), NULL);
 #endif
 #if DEFGENERIC_CONSTRUCT
-			 EnvSetWatchItem(GlobalEnv, "generic-functions", IsDlgButtonChecked(hDlg, IDC_WATCH_GENERIC), NULL);
-			 EnvSetWatchItem(GlobalEnv, "methods", IsDlgButtonChecked(hDlg, IDC_WATCH_METHOD), NULL);
+			 SetWatchItem(GlobalEnv, "generic-functions", IsDlgButtonChecked(hDlg, IDC_WATCH_GENERIC), NULL);
+			 SetWatchItem(GlobalEnv, "methods", IsDlgButtonChecked(hDlg, IDC_WATCH_METHOD), NULL);
 #endif
 #if DEFGLOBAL_CONSTRUCT
-			 EnvSetWatchItem(GlobalEnv, "globals", IsDlgButtonChecked(hDlg, IDC_WATCH_GLOBAL), NULL);
+			 SetWatchItem(GlobalEnv, "globals", IsDlgButtonChecked(hDlg, IDC_WATCH_GLOBAL), NULL);
 #endif
              SaveWatchInformation();
              EndDialog(hDlg,IDOK);

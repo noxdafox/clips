@@ -124,7 +124,8 @@ void SortFunction(
   UDFContext *context,
   UDFValue *returnValue)
   {
-   long argumentCount, i, j, k = 0;
+   long argumentCount, i, k = 0;
+   size_t j;
    UDFValue *theArguments, *theArguments2;
    UDFValue theArg;
    Multifield *theMultifield, *tempMultifield;

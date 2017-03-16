@@ -652,7 +652,7 @@ int ConstraintCheckDataObject(
   UDFValue *theData,
   CONSTRAINT_RECORD *theConstraints)
   {
-   long i; /* 6.04 Bug Fix */
+   size_t i; /* 6.04 Bug Fix */
    int rv;
    CLIPSValue *theMultifield;
 

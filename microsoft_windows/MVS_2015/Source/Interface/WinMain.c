@@ -69,19 +69,19 @@
 
 #include <winuser.h>
 
-void UserFunctions(void);
-
 /***************************************/
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
    static void                    SetUpRouters(void *);
-   static bool                    QueryInterfaceRouter(Environment *,const char *);
-   static void                    PrintInterfaceRouter(Environment *,const char *,const char *);
-   static void                    ExitInterfaceRouter(Environment *,int);
-   static int                     GetcInterfaceRouter(Environment *,const char *);
+   static bool                    QueryInterfaceRouter(Environment *,const char *,void *);
+   static void                    PrintInterfaceRouter(Environment *,const char *,const char *,void *);
+   static void                    ExitInterfaceRouter(Environment *,int,void *);
+   static int                     GetcInterfaceRouter(Environment *,const char *,void *);
    static int                     InterfaceEventFunction(void *);
-   static void                    WinRunEvent(void *);
+   static void                    WinPeriodicEvent(Environment *,void *);
+   static void                    WinRunEvent(Environment *,Activation *,void *);
+   static void                    WinEventAction(void);
 
    Environment                   *GlobalEnv;
 
@@ -129,9 +129,9 @@ int WINAPI WinMain(
    /* and execution of procedural code.  */
    /*====================================*/
    
-   EnvAddPeriodicFunction(theEnv,"status_wnd",WinRunEvent,0);
+   AddPeriodicFunction(theEnv,"status_wnd",WinPeriodicEvent,0,NULL);
 #if DEFRULE_CONSTRUCT
-   EnvAddRunFunction(theEnv,"run_function",WinRunEvent,0);
+   AddAfterRuleFiresFunction(theEnv,"run_function",WinRunEvent,0,NULL);
 #endif
 
    /*==================================================*/
@@ -146,7 +146,7 @@ int WINAPI WinMain(
    /* the display to be cleared.         */
    /*====================================*/
   
-   EnvAddUDF(theEnv,"clear-window","v",0,0,NULL,ClearWindowCommand,"ClearWindowCommand",NULL);
+   AddUDF(theEnv,"clear-window","v",0,0,NULL,ClearWindowCommand,"ClearWindowCommand",NULL);
                       
    /*======================================*/
    /* Set the focus to the display window. */
@@ -196,8 +196,8 @@ int WINAPI WinMain(
 static void SetUpRouters(
   void *theEnv)
   {  
-   EnvAddRouter(theEnv,"InterfaceExit",60,NULL,NULL,NULL,NULL,ExitInterfaceRouter);
-   EnvAddRouter(theEnv,"InterfaceStdIO",10,QueryInterfaceRouter,PrintInterfaceRouter,GetcInterfaceRouter,NULL,NULL);
+   AddRouter(theEnv,"InterfaceExit",60,NULL,NULL,NULL,NULL,ExitInterfaceRouter,NULL);
+   AddRouter(theEnv,"InterfaceStdIO",10,QueryInterfaceRouter,PrintInterfaceRouter,GetcInterfaceRouter,NULL,NULL,NULL);
   }
 
 /**************************************************/
@@ -207,9 +207,10 @@ static void SetUpRouters(
 /**************************************************/
 static void ExitInterfaceRouter(
   Environment *theEnv,
-  int num)
+  int num,
+  void *context)
   {   
-  MSG msg;
+   MSG msg;
    if (num >= 0) return;
    
    //DoQuit();
@@ -226,16 +227,13 @@ static void ExitInterfaceRouter(
 /**********************************************************/
 static bool QueryInterfaceRouter(
   Environment *theEnv,
-  const char *logicalName)
+  const char *logicalName,
+  void *context)
   {
-   if ( (strcmp(logicalName,"stdout") == 0) ||
-        (strcmp(logicalName,"stdin") == 0) ||
-        (strcmp(logicalName,WPROMPT) == 0) ||
-        (strcmp(logicalName,WTRACE) == 0) ||
+   if ( (strcmp(logicalName,STDOUT) == 0) ||
+        (strcmp(logicalName,STDIN) == 0) ||
         (strcmp(logicalName,WERROR) == 0) ||
-        (strcmp(logicalName,WWARNING) == 0) ||
-        (strcmp(logicalName,WDISPLAY) == 0) ||
-        (strcmp(logicalName,WDIALOG) == 0) )
+        (strcmp(logicalName,WWARNING) == 0) )
      { return(TRUE); }
 
     return(FALSE);
@@ -248,7 +246,8 @@ static bool QueryInterfaceRouter(
 static void PrintInterfaceRouter(
   Environment *theEnv,
   const char *logicalName,
-  const char *str)
+  const char *str,
+  void *context)
   {
    FILE *fptr;
 
@@ -266,7 +265,8 @@ static void PrintInterfaceRouter(
 /*******************************************/
 static int GetcInterfaceRouter(
   Environment *theEnv,
-  const char *logicalName)
+  const char *logicalName,
+  void *context)
   { 
    FILE *fptr;
    MSG msg;
@@ -362,13 +362,10 @@ static int InterfaceEventFunction(
    return(TRUE);
   }
   
-/******************************************************/
-/* WinRunEvent: Function which is called periodically */
-/*   to update the interface while rules are firing   *
-/*   or procedural code is executing.                 */
-/******************************************************/
-static void WinRunEvent(
-  void *theEnv)
+/******************/
+/* WinEventAction */
+/******************/
+static void WinEventAction()
   {  
    MSG msg;
 
@@ -380,8 +377,34 @@ static void WinRunEvent(
       if (! TranslateAccelerator(hMainFrame,haccel,&msg))
         {  
          TranslateMessage(&msg);
-	     DispatchMessage(&msg);
+	      DispatchMessage(&msg);
         }
      }
   }
+
+/***********************************************************/
+/* WinPeriodicEvent: Function which is called periodically */
+/*   to update the interface while rules are firing or     */
+/*   procedural code is executing.                         */
+/***********************************************************/
+static void WinPeriodicEvent(
+  Environment *theEnv,
+  void *context)
+  { 
+   WinEventAction(); 
+   }
+  
+/******************************************************/
+/* WinRunEvent: Function which is called periodically */
+/*   to update the interface while rules are firing   */
+/*   or procedural code is executing.                 */
+/******************************************************/
+static void WinRunEvent(
+  Environment *theEnv,
+  Activation *activation,
+  void *context)
+  {  
+   WinEventAction(); 
+  }
+
   

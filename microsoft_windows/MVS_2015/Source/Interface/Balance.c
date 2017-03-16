@@ -379,7 +379,7 @@ void LoadBatchBufferSelection(
    else
      {  
       ClearCommandFromDisplay(DialogWindow,theEnv);
-      EnvPrintRouter(theEnv,WPROMPT,"Loading Selection...\n");
+      PrintString(theEnv,STDOUT,"Loading Selection...\n");
       FlushCommandString(theEnv);
       OpenStringSource(theEnv,"clipread",fullText,0);
       SetPrintWhileLoading(theEnv,TRUE);

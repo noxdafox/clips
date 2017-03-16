@@ -145,20 +145,20 @@ void SaveWatchInformation()
                       KEY_READ | KEY_WRITE,NULL,&hKey,&lpdwDisposition) != ERROR_SUCCESS)
      { return; }
               
-   watchInfo.compilations = (boolean) EnvGetWatchItem(theEnv,"compilations");
-   watchInfo.facts = (boolean) EnvGetWatchItem(theEnv,"facts");
-   watchInfo.instances = (boolean) EnvGetWatchItem(theEnv,"instances");
-   watchInfo.rules = (boolean) EnvGetWatchItem(theEnv,"rules");
-   watchInfo.genericFunctions = (boolean) EnvGetWatchItem(theEnv,"generic-functions");
-   watchInfo.messages = (boolean) EnvGetWatchItem(theEnv,"messages");
-   watchInfo.deffunctions = (boolean) EnvGetWatchItem(theEnv,"deffunctions");
-   watchInfo.statistics = (boolean) EnvGetWatchItem(theEnv,"statistics");
-   watchInfo.globals = (boolean) EnvGetWatchItem(theEnv,"globals");
-   watchInfo.slots = (boolean) EnvGetWatchItem(theEnv,"slots");
-   watchInfo.activations = (boolean) EnvGetWatchItem(theEnv,"activations");
-   watchInfo.methods = (boolean) EnvGetWatchItem(theEnv,"methods");
-   watchInfo.focus = (boolean) EnvGetWatchItem(theEnv,"focus");
-   watchInfo.messageHandlers = (boolean) EnvGetWatchItem(theEnv,"message-handlers");
+   watchInfo.compilations = (boolean) GetWatchItem(theEnv,"compilations");
+   watchInfo.facts = (boolean) GetWatchItem(theEnv,"facts");
+   watchInfo.instances = (boolean) GetWatchItem(theEnv,"instances");
+   watchInfo.rules = (boolean) GetWatchItem(theEnv,"rules");
+   watchInfo.genericFunctions = (boolean) GetWatchItem(theEnv,"generic-functions");
+   watchInfo.messages = (boolean) GetWatchItem(theEnv,"messages");
+   watchInfo.deffunctions = (boolean) GetWatchItem(theEnv,"deffunctions");
+   watchInfo.statistics = (boolean) GetWatchItem(theEnv,"statistics");
+   watchInfo.globals = (boolean) GetWatchItem(theEnv,"globals");
+   watchInfo.slots = (boolean) GetWatchItem(theEnv,"slots");
+   watchInfo.activations = (boolean) GetWatchItem(theEnv,"activations");
+   watchInfo.methods = (boolean) GetWatchItem(theEnv,"methods");
+   watchInfo.focus = (boolean) GetWatchItem(theEnv,"focus");
+   watchInfo.messageHandlers = (boolean) GetWatchItem(theEnv,"message-handlers");
 
    if (RegSetValueEx(hKey,"Watch",0,REG_BINARY,(BYTE *) &watchInfo,
                      sizeof(struct WatchInformation)) != ERROR_SUCCESS)
@@ -184,12 +184,12 @@ void SaveExecutionInformation()
                       KEY_READ | KEY_WRITE,NULL,&hKey,&lpdwDisposition) != ERROR_SUCCESS)
      { return; }
               
-   executionInfo.salienceEvaluation = EnvGetSalienceEvaluation(GlobalEnv);
-   executionInfo.strategy = EnvGetStrategy(GlobalEnv);
-   executionInfo.dynamicConstraintChecking = (boolean) EnvGetDynamicConstraintChecking(GlobalEnv);
-   executionInfo.resetGlobals = (boolean) EnvGetResetGlobals(GlobalEnv);
-   executionInfo.factDuplication = (boolean) EnvGetFactDuplication(GlobalEnv);
-   executionInfo.sequenceOperatorRecognition = (boolean) EnvGetSequenceOperatorRecognition(GlobalEnv);
+   executionInfo.salienceEvaluation = GetSalienceEvaluation(GlobalEnv);
+   executionInfo.strategy = GetStrategy(GlobalEnv);
+   executionInfo.dynamicConstraintChecking = (boolean) GetDynamicConstraintChecking(GlobalEnv);
+   executionInfo.resetGlobals = (boolean) GetResetGlobals(GlobalEnv);
+   executionInfo.factDuplication = (boolean) GetFactDuplication(GlobalEnv);
+   executionInfo.sequenceOperatorRecognition = (boolean) GetSequenceOperatorRecognition(GlobalEnv);
 
    if (RegSetValueEx(hKey,"Execution",0,REG_BINARY,(BYTE *) &executionInfo,
                      sizeof(struct ExecutionInformation)) != ERROR_SUCCESS)
@@ -276,20 +276,20 @@ static void RestoreWatchInformation()
       return;
      }
 
-   EnvSetWatchItem(GlobalEnv,"compilations",watchInfo.compilations,NULL);
-   EnvSetWatchItem(GlobalEnv, "facts", watchInfo.facts, NULL);
-   EnvSetWatchItem(GlobalEnv, "instances", watchInfo.instances, NULL);
-   EnvSetWatchItem(GlobalEnv, "rules", watchInfo.rules, NULL);
-   EnvSetWatchItem(GlobalEnv, "generic-functions", watchInfo.genericFunctions, NULL);
-   EnvSetWatchItem(GlobalEnv, "messages", watchInfo.messages, NULL);
-   EnvSetWatchItem(GlobalEnv, "deffunctions", watchInfo.deffunctions, NULL);
-   EnvSetWatchItem(GlobalEnv, "statistics", watchInfo.statistics, NULL);
-   EnvSetWatchItem(GlobalEnv, "globals", watchInfo.globals, NULL);
-   EnvSetWatchItem(GlobalEnv, "slots", watchInfo.slots, NULL);
-   EnvSetWatchItem(GlobalEnv, "activations", watchInfo.activations, NULL);
-   EnvSetWatchItem(GlobalEnv, "methods", watchInfo.methods, NULL);
-   EnvSetWatchItem(GlobalEnv, "focus", watchInfo.focus, NULL);
-   EnvSetWatchItem(GlobalEnv, "message-handlers", watchInfo.messageHandlers, NULL);
+   SetWatchItem(GlobalEnv,"compilations",watchInfo.compilations,NULL);
+   SetWatchItem(GlobalEnv, "facts", watchInfo.facts, NULL);
+   SetWatchItem(GlobalEnv, "instances", watchInfo.instances, NULL);
+   SetWatchItem(GlobalEnv, "rules", watchInfo.rules, NULL);
+   SetWatchItem(GlobalEnv, "generic-functions", watchInfo.genericFunctions, NULL);
+   SetWatchItem(GlobalEnv, "messages", watchInfo.messages, NULL);
+   SetWatchItem(GlobalEnv, "deffunctions", watchInfo.deffunctions, NULL);
+   SetWatchItem(GlobalEnv, "statistics", watchInfo.statistics, NULL);
+   SetWatchItem(GlobalEnv, "globals", watchInfo.globals, NULL);
+   SetWatchItem(GlobalEnv, "slots", watchInfo.slots, NULL);
+   SetWatchItem(GlobalEnv, "activations", watchInfo.activations, NULL);
+   SetWatchItem(GlobalEnv, "methods", watchInfo.methods, NULL);
+   SetWatchItem(GlobalEnv, "focus", watchInfo.focus, NULL);
+   SetWatchItem(GlobalEnv, "message-handlers", watchInfo.messageHandlers, NULL);
 
    RegCloseKey(hKey);
   }
@@ -317,12 +317,12 @@ static void RestoreExecutionInformation()
       return;
      }
 
-   EnvSetSalienceEvaluation(GlobalEnv,executionInfo.salienceEvaluation);
-   EnvSetStrategy(GlobalEnv,executionInfo.strategy);
-   EnvSetDynamicConstraintChecking(GlobalEnv,executionInfo.dynamicConstraintChecking);
-   EnvSetResetGlobals(GlobalEnv,executionInfo.resetGlobals);
-   EnvSetFactDuplication(GlobalEnv,executionInfo.factDuplication);
-   EnvSetSequenceOperatorRecognition(GlobalEnv,executionInfo.sequenceOperatorRecognition);
+   SetSalienceEvaluation(GlobalEnv,executionInfo.salienceEvaluation);
+   SetStrategy(GlobalEnv,executionInfo.strategy);
+   SetDynamicConstraintChecking(GlobalEnv,executionInfo.dynamicConstraintChecking);
+   SetResetGlobals(GlobalEnv,executionInfo.resetGlobals);
+   SetFactDuplication(GlobalEnv,executionInfo.factDuplication);
+   SetSequenceOperatorRecognition(GlobalEnv,executionInfo.sequenceOperatorRecognition);
 
    RegCloseKey(hKey);
   }

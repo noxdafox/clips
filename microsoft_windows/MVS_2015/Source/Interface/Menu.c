@@ -55,11 +55,6 @@
 #include "router.h"
 #include "tmpltdef.h"
 
-#undef GetFocus
-/*
-#include "evaluatn.h"
-*/
-
 /*------------------------+
 | Interface Include Files |
 +------------------------*/
@@ -120,12 +115,12 @@ void DoExecutionChoice(
              { break; }
           }
         ClearCommandFromDisplay(DialogWindow,theEnv);
-        EnvPrintRouter(theEnv,WPROMPT,"(clear)\n");
+        PrintString(theEnv,STDOUT,"(clear)\n");
         SetCommandString(theEnv,"(clear)\n");
         break;
 
       case ID_EXECUTION_RESET:
-        if ((EnvGetNextActivation(theEnv,NULL) != NULL) && Warnings)
+        if ((GetNextActivation(theEnv,NULL) != NULL) && Warnings)
           {
            if (MessageBox(hwnd,"There are activations on the agenda. OK to reset the CLIPS environment?",
                                  "",MB_ICONQUESTION | MB_YESNO) == IDNO)
@@ -133,13 +128,13 @@ void DoExecutionChoice(
           }
           
         ClearCommandFromDisplay(DialogWindow,theEnv);
-        EnvPrintRouter(theEnv,WPROMPT,"(reset)\n");
+        PrintString(theEnv,STDOUT,"(reset)\n");
         SetCommandString(theEnv,"(reset)\n");
         break;
 
        case ID_EXECUTION_RUN:   
         ClearCommandFromDisplay(DialogWindow,theEnv);
-        EnvPrintRouter(theEnv,WPROMPT,"(run)\n");
+        PrintString(theEnv,STDOUT,"(run)\n");
         SetCommandString(theEnv,"(run)\n");
         break;
 
@@ -147,21 +142,21 @@ void DoExecutionChoice(
         ClearCommandFromDisplay(DialogWindow,theEnv);
         sprintf(buffer,"(run %d)\n",RuleStep);
         SetCommandString(theEnv,buffer);
-        EnvPrintRouter(theEnv,WPROMPT,buffer);
+        PrintString(theEnv,STDOUT,buffer);
         break;
 
       case ID_EXECUTION_HALT:
-        if (EngineData(GlobalEnv)->ExecutingRule != NULL)
-          { EngineData(GlobalEnv)->HaltRules = TRUE; }
+        if (EngineData(theEnv)->ExecutingRule != NULL)
+          { EngineData(theEnv)->HaltRules = true; }
         else
           {
-           EnvSetHaltExecution(theEnv,TRUE);
+           SetHaltExecution(theEnv,true);
            CloseAllBatchSources(theEnv);
           }
         break;
 
       case ID_EXECUTION_HALT_NOW:
-        EnvSetHaltExecution(theEnv,TRUE);
+        SetHaltExecution(theEnv,TRUE);
         CloseAllBatchSources(theEnv);
         break;
      }
@@ -356,15 +351,15 @@ void DoHelpChoice(
         break;
 
 	  case ID_HELP_HOME_PAGE:
-		ShellExecute(NULL, "open", "http://clipsrules.sourceforge.net/", NULL, NULL, SW_SHOWNORMAL);
+		ShellExecute(NULL, "open", "http://www.clipsrules.net", NULL, NULL, SW_SHOWNORMAL);
 		break; 
 
       case ID_HELP_DOCUMENTATION: 
-		ShellExecute(NULL, "open", "http://clipsrules.sourceforge.net/OnlineDocs.html", NULL, NULL, SW_SHOWNORMAL); 
+		ShellExecute(NULL, "open", "http://www.clipsrules.net/?q=Documentation", NULL, NULL, SW_SHOWNORMAL); 
         break;
 
       case ID_HELP_EXAMPLES: 
-		ShellExecute(NULL, "open", "https://sourceforge.net/p/clipsrules/code/HEAD/tree/examples/", NULL, NULL, SW_SHOWNORMAL); 
+		ShellExecute(NULL, "open", "https://sourceforge.net/p/clipsrules/code/HEAD/tree/branches/64x/examples/", NULL, NULL, SW_SHOWNORMAL); 
         break;
 
 	  case ID_HELP_CLIPSESG:
@@ -393,7 +388,7 @@ void DoModuleChoice(
    char moduleName[255];
    
    GetMenuString(hMenu,wParam,(LPSTR) &moduleName,255,MF_BYCOMMAND);
-   EnvSetCurrentModule(theEnv,EnvFindDefmodule(theEnv,(char *) moduleName));
+   SetCurrentModule(theEnv,FindDefmodule(theEnv,(char *) moduleName));
   }
   
 /***********************************************/
@@ -406,7 +401,7 @@ void UpdateModuleMenu(
    Environment *theEnv = GlobalEnv;
    char moduleTitle[255];
    unsigned position;
-   struct defmodule *theModule;
+   Defmodule *theModule;
    int value = GetMenuItemCount(ModuleMenu);
 
    /*=================================================*/
@@ -423,14 +418,14 @@ void UpdateModuleMenu(
    /* Create a new menu item for each defined module. */
    /*=================================================*/
    
-   for (theModule = (struct defmodule *) EnvGetNextDefmodule(theEnv,NULL), position = IDM_MODULE_ONE;
+   for (theModule = GetNextDefmodule(theEnv,NULL), position = IDM_MODULE_ONE;
         theModule != NULL;
-        theModule = (struct defmodule *) EnvGetNextDefmodule(theEnv,theModule),position++)
+        theModule = GetNextDefmodule(theEnv,theModule),position++)
      {  
       strncpy ((char *)moduleTitle,DefmoduleName(theModule),255);
       moduleTitle[254] = '\0';
       InsertMenu(ModuleMenu,(unsigned) GetMenuItemCount(ModuleMenu),MF_BYPOSITION|MF_STRING,position,moduleTitle);
-      if (theModule == EnvGetCurrentModule(theEnv))
+      if (theModule == GetCurrentModule(theEnv))
         { CheckMenuItem (ModuleMenu, position, MF_BYCOMMAND|MF_CHECKED); }
      }
   }
@@ -446,7 +441,7 @@ void UpdateMenu(
    HMENU hMenu = GetMenu(hwnd);
    static int value = 0;
    
-   if (EnvDribbleActive(theEnv))
+   if (DribbleActive(theEnv))
      { ModifyMenu(hMenu,ID_FILE_DRIBBLE,MF_BYCOMMAND,ID_FILE_DRIBBLE,"Turn &Dribble Off"); }
    else
      { ModifyMenu(hMenu,ID_FILE_DRIBBLE,MF_BYCOMMAND,ID_FILE_DRIBBLE,"Turn &Dribble On..."); }
@@ -580,7 +575,7 @@ void UpdateMenu(
       | AGENDA Menu Item |
       +-----------------*/
       
-      if (EnvGetNextActivation(theEnv,NULL) != NULL )
+      if (GetNextActivation(theEnv,NULL) != NULL )
         { EnableMenuItem(hMenu,ID_BROWSE_AGENDA,MF_BYCOMMAND|MF_ENABLED); }
       else
         { EnableMenuItem(hMenu,ID_BROWSE_AGENDA,MF_BYCOMMAND|MF_GRAYED); }
@@ -589,7 +584,7 @@ void UpdateMenu(
        /*------------------+
        | DEFFACT Menu Item |
        +------------------*/
-       if ( EnvGetNextDefglobal (theEnv,NULL) != NULL)
+       if (GetNextDefglobal (theEnv,NULL) != NULL)
       EnableMenuItem(hMenu,ID_BROWSE_GLOBAL,MF_BYCOMMAND|MF_ENABLED);
        else
       EnableMenuItem(hMenu,ID_BROWSE_GLOBAL,MF_BYCOMMAND|MF_GRAYED);
@@ -599,7 +594,7 @@ void UpdateMenu(
        /*------------------+
        | DEFFACT Menu Item |
        +------------------*/
-       if ( EnvGetNextDeffacts (theEnv,NULL) != NULL)
+       if (GetNextDeffacts (theEnv,NULL) != NULL)
       EnableMenuItem(hMenu,ID_BROWSE_FACTS,MF_BYCOMMAND|MF_ENABLED);
        else
       EnableMenuItem(hMenu,ID_BROWSE_FACTS,MF_BYCOMMAND|MF_GRAYED);
@@ -609,7 +604,7 @@ void UpdateMenu(
        /*------------------+
        | DEFRULE Menu Item |
        +------------------*/
-       if (EnvGetNextDefrule(theEnv,NULL)!=NULL)
+       if (GetNextDefrule(theEnv,NULL)!=NULL)
       EnableMenuItem(hMenu,ID_BROWSE_RULE,MF_BYCOMMAND|MF_ENABLED);
        else
       EnableMenuItem(hMenu,ID_BROWSE_RULE,MF_BYCOMMAND|MF_GRAYED);
@@ -619,7 +614,7 @@ void UpdateMenu(
        /*----------------------+
        | DEFTEMPLATE Menu Item |
        +----------------------*/
-       if (EnvGetNextDeftemplate(theEnv,NULL) != NULL)
+       if (GetNextDeftemplate(theEnv,NULL) != NULL)
       EnableMenuItem(hMenu,ID_BROWSE_TEMPLATE, MF_BYCOMMAND|MF_ENABLED);
        else
       EnableMenuItem(hMenu,ID_BROWSE_TEMPLATE, MF_BYCOMMAND|MF_GRAYED);
@@ -629,7 +624,7 @@ void UpdateMenu(
        /*----------------------+
        | DEFFUNCTION Menu Item |
        +----------------------*/
-       if (EnvGetNextDeffunction(theEnv,NULL) != NULL)
+       if (GetNextDeffunction(theEnv,NULL) != NULL)
       EnableMenuItem(hMenu,ID_BROWSE_FUNCTION, MF_BYCOMMAND|MF_ENABLED);
        else
       EnableMenuItem(hMenu,ID_BROWSE_FUNCTION, MF_BYCOMMAND|MF_GRAYED);
@@ -639,7 +634,7 @@ void UpdateMenu(
        /*---------------------+
        | DEFGENERIC Menu Item |
        +---------------------*/
-       if ( EnvGetNextDefgeneric(theEnv,NULL)!= NULL)
+       if (GetNextDefgeneric(theEnv,NULL)!= NULL)
       EnableMenuItem(hMenu,ID_BROWSE_GENERIC,  MF_BYCOMMAND|MF_ENABLED);
        else
       EnableMenuItem(hMenu,ID_BROWSE_GENERIC,  MF_BYCOMMAND|MF_GRAYED);
@@ -650,7 +645,7 @@ void UpdateMenu(
        /*----------------------+
        | DEFINSTANCE Menu Item |
        +----------------------*/
-       if (EnvGetNextDefinstances (theEnv,NULL) != NULL )
+       if (GetNextDefinstances (theEnv,NULL) != NULL )
       EnableMenuItem(hMenu,ID_BROWSE_INSTANCES,MF_BYCOMMAND|MF_ENABLED);
        else
       EnableMenuItem(hMenu,ID_BROWSE_INSTANCES,MF_BYCOMMAND|MF_GRAYED);
@@ -659,7 +654,7 @@ void UpdateMenu(
        /*-------------------+
        | DEFCLASS Menu Item |
        +-------------------*/
-       if ( EnvGetNextDefclass(theEnv,NULL) != NULL )
+       if (GetNextDefclass(theEnv,NULL) != NULL )
       EnableMenuItem(hMenu,ID_BROWSE_CLASS,    MF_BYCOMMAND|MF_ENABLED);
        else
       EnableMenuItem(hMenu,ID_BROWSE_CLASS,    MF_BYCOMMAND|MF_GRAYED);

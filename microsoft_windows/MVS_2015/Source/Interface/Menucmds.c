@@ -156,7 +156,7 @@ void DoLoad(
       
    AppendCommandString(theEnv,ofn.lpstrFile );
    AppendCommandString(theEnv,"\")\n");
-   EnvPrintRouter(theEnv,WPROMPT,GetCommandString(theEnv));
+   PrintString(theEnv,STDOUT,GetCommandString(theEnv));
   }
 
 /*******************************************/
@@ -225,7 +225,7 @@ void OpenDribbleFile(
    Environment *theEnv = GlobalEnv;
    HMENU hMenu = GetMenu(hMain);
 
-   if (! EnvDribbleActive(theEnv))
+   if (! DribbleActive(theEnv))
      {  
       sprintf(File,"dribble.txt");
       memset ( &ofn,0, sizeof (OPENFILENAME));
@@ -279,7 +279,7 @@ void OpenDribbleFile(
       SetCommandString(theEnv,"(dribble-on \"");  
       AppendCommandString(theEnv,ofn.lpstrFile);
       AppendCommandString(theEnv,"\")\n");
-      EnvPrintRouter(theEnv,WPROMPT,GetCommandString(theEnv));
+      PrintString(theEnv,STDOUT,GetCommandString(theEnv));
      }
    else
      {  
@@ -290,7 +290,7 @@ void OpenDribbleFile(
       ModifyMenu(hMenu,wParam,MF_BYCOMMAND,wParam,"Turn Dribble On...");  
       ClearCommandFromDisplay(DialogWindow,theEnv);
       SetCommandString(theEnv,"(dribble-off)\n");  
-      EnvPrintRouter(theEnv,WPROMPT,GetCommandString(theEnv));
+      PrintString(theEnv,STDOUT,GetCommandString(theEnv));
      }
   }
    
@@ -359,5 +359,5 @@ void SaveBinaryFile(
    SetCommandString(theEnv,"(bsave \"");  
    AppendCommandString(theEnv,ofn.lpstrFile);
    AppendCommandString(theEnv,"\")\n");
-   EnvPrintRouter(theEnv,WPROMPT,GetCommandString(theEnv));
+   PrintString(theEnv,STDOUT,GetCommandString(theEnv));
   }

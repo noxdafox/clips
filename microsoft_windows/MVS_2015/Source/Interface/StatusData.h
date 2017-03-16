@@ -19,38 +19,24 @@
 /*                                                           */
 /*************************************************************/
 
-#ifndef _H_status
+#ifndef _H_statusData
 
-#define _H_status
+#define _H_statusData
 
-#ifdef LOCALE
-#undef LOCALE
-#endif
+#include "utility.h"
 
-#ifdef _STATUS_SOURCE_
-#define LOCALE
-#else
-#define LOCALE extern
-#endif
-
-   LOCALE  LRESULT CALLBACK              StatusWndProc(HWND,UINT,WPARAM,LPARAM);
-   LOCALE void                           UpdateStatus(void);
-   LOCALE BOOL                           status_InitInstance(HINSTANCE);
-   LOCALE BOOL                           factsWindow_New(HWND);
-   LOCALE BOOL                           agendaWindow_New(HWND);
-   LOCALE BOOL                           instancesWindow_New(HWND);
-   LOCALE BOOL                           globalsWindow_New(HWND);
-   LOCALE BOOL                           focusWindow_New(HWND);
-   LOCALE void                           TileStatusWindows(void);
-
-#ifndef _STATUS_SOURCE_
-   extern HWND                    FactsWindow;
-   extern HWND                    AgendaWindow;
-   extern HWND                    InstancesWindow;
-   extern HWND                    GlobalsWindow;
-   extern HWND                    FocusWindow;
-   extern ATOM                    StatusAtomClass;
-#endif
+struct statusWindowData
+  {
+   char *baseName;
+   int noLines;
+   int lastLine;
+   int lineSize;
+   void (*getPPForm)(void *,StringBuilder *);
+   void *(*getNextValue)(void *,void *);
+   bool (*getChanged)(Environment *);
+   void (*setChanged)(Environment *,bool);
+   int (*getCount)(void *);
+  };
 
 #endif
 

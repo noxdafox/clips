@@ -828,7 +828,7 @@ CLIPSLexeme *ImplodeMultifield(
   UDFValue *value)
   {
    size_t strsize = 0;
-   long i, j;
+   size_t i, j;
    const char *tmp_str;
    char *ret_str;
    CLIPSLexeme *rv;

@@ -994,7 +994,7 @@ void GrabProcWildargs(
   int theIndex)
   {
    int i,j;
-   long k; /* 6.04 Bug Fix */
+   size_t k; /* 6.04 Bug Fix */
    long size;
    UDFValue *val;
 

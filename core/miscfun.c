@@ -998,7 +998,7 @@ static void ExpandFuncMultifield(
   void *expmult)
   {
    Expression *newexp,*top,*bot;
-   long i; /* 6.04 Bug Fix */
+   size_t i; /* 6.04 Bug Fix */
 
    while (theExp != NULL)
      {
@@ -1217,7 +1217,7 @@ void FuncallFunction(
   UDFContext *context,
   UDFValue *returnValue)
   {
-   int j;
+   size_t j;
    UDFValue theArg;
    Expression theReference;
    const char *name;

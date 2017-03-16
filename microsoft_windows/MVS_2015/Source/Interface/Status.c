@@ -35,12 +35,14 @@
 /*------------------------+
 | CLIPS 6.0 Include Files |
 +------------------------*/
+
 #include "setup.h"
+#include "entities.h"
 #include "engine.h"
-#include "inscom.h"
-#include "globldef.h"
-#include "insfun.h"
 #include "factmngr.h"
+#include "globldef.h"
+#include "inscom.h"
+#include "insfun.h"
 
 /*------------------------+
 | Interface Include Files |
@@ -52,7 +54,8 @@
 #include "frame.h"
 #include "Initialization.h"
 #include "resource.h"
-#include "status.h"
+#include "Status.h"
+#include "StatusData.h"
 
 /***************************************/
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
@@ -69,7 +72,7 @@
    static BOOL                    status_OnContextMenu(HWND,HWND,int,int);
    static void                    RedrawScreen(HWND,HDC);
    static void                    UpdateWnd(HWND);
-   static void                    GetFocusPPForm(struct focus *,char *,size_t);
+   static void                    GetFocusPPForm(FocalModule *,StringBuilder *);
    static int                     CountInstances(void *);
    static int                     CountDefglobals(void *);
    static int                     CountFocus(void *);
@@ -79,7 +82,7 @@
    static void                    UpdateStatusContent(HWND);
    static void                    SaveStatusWindow(HWND);
    static HWND                    statusWindow_New(HWND,char *,int,int,int,int,
-                                                   void (*)(void *,char *,size_t),
+                                                   void (*)(void *,StringBuilder *),
                                                    void *(*)(void *,void *),
 												               bool (*)(Environment *),
                                                    void (*)(Environment *,bool),
@@ -172,8 +175,8 @@ BOOL factsWindow_New(
                                   wwidth,wheight,
                                   FactPPForm,
 								          GetNextFactInScope,
-								          EnvGetFactListChanged,
-                                  EnvSetFactListChanged,
+								          GetFactListChanged,
+                                  SetFactListChanged,
 								          CountFacts);
                                   
    if (FactsWindow == NULL)
@@ -201,9 +204,9 @@ BOOL agendaWindow_New(
       
    AgendaWindow = statusWindow_New(hwnd,"Agenda",xpos,ypos,wwidth,wheight,
                                    ActivationPPForm,
-								           EnvGetNextActivation,
-								           EnvGetAgendaChanged,
-                                   EnvSetAgendaChanged,
+								           GetNextActivation,
+								           GetAgendaChanged,
+                                   SetAgendaChanged,
 								           CountActivations);
                                   
    if (AgendaWindow == NULL)
@@ -232,8 +235,8 @@ BOOL instancesWindow_New(
    InstancesWindow = statusWindow_New(hwnd,"Instances",xpos,ypos,wwidth,wheight,
                                       InstancePPForm,
 									           GetNextInstanceInScope,
-									           EnvGetInstancesChanged,
-                                      EnvSetInstancesChanged,
+									           GetInstancesChanged,
+                                      SetInstancesChanged,
 									           CountInstances);
                                   
    if (InstancesWindow == NULL)
@@ -262,8 +265,8 @@ BOOL globalsWindow_New(
    GlobalsWindow = statusWindow_New(hwnd,"Globals",xpos,ypos,wwidth,wheight,
                                     DefglobalValueForm,
 									         GetNextDefglobalInScope,
-									         EnvGetGlobalsChanged,
-                                    EnvSetGlobalsChanged,
+									         GetGlobalsChanged,
+                                    SetGlobalsChanged,
 									         CountDefglobals);
                                   
    if (GlobalsWindow == NULL)
@@ -291,9 +294,9 @@ BOOL focusWindow_New(
 
    FocusWindow = statusWindow_New(hwnd,"Focus",xpos,ypos,wwidth,wheight,
                                   GetFocusPPForm,
-								          EnvGetNextFocus,
-								          EnvGetFocusChanged,
-                                  EnvSetFocusChanged,
+								          GetNextFocus,
+								          GetFocusChanged,
+                                  SetFocusChanged,
 								          CountFocus);
                                   
    if (FocusWindow == NULL)
@@ -379,7 +382,7 @@ static HWND statusWindow_New(
   int ypos,
   int width,
   int height,
-  void (*getPPForm)(void *,char *,size_t),
+  void (*getPPForm)(void *,StringBuilder *),
   void *(*getNextValue)(void *,void *),
   bool (*getChanged)(Environment *),
   void (*setChanged)(Environment *,bool),
@@ -722,7 +725,6 @@ static void RedrawScreen(
   HDC hDC)
   {  
    void *valuePtr;
-   char Buffer[300];
    RECT Rect;
    int count, pos, sbmax = 0;
    int bufsize;
@@ -760,6 +762,8 @@ static void RedrawScreen(
 
    if (valuePtr != NULL)
      {  
+      StringBuilder *sb;
+
       /*===============*/
       /* Clear window. */
       /*===============*/
@@ -774,23 +778,27 @@ static void RedrawScreen(
       /*=============================*/
       
       count = 0;
+      sb = CreateStringBuilder(GlobalEnv,299);
       do
         {  
          pos = GetScrollPos(hwnd,SB_HORZ);
-         (*theData->getPPForm)(valuePtr,Buffer,299);
-         bufsize = lstrlen (Buffer);
+         (*theData->getPPForm)(valuePtr,sb);
+         bufsize = sb->length;
          if (bufsize > sbmax) sbmax = bufsize;
          if (pos < bufsize)
            {  
-            char *buffer = Buffer + pos;
+            char *buffer = sb->contents + pos;
             DrawText(hDC,buffer,lstrlen(buffer),&Rect,DT_LEFT);
            }
          Rect.top = Rect.top + theData->lineSize;
          count++;
+         SBReset(sb);
         }
       while (((valuePtr= (*theData->getNextValue)(GlobalEnv,valuePtr)) != NULL) && 
              (count < theData->noLines));
         { SetScrollRange(hwnd,SB_HORZ,0,sbmax-1,TRUE); }
+
+      SBDispose(sb);
      }
    
    if (hfont != NULL)
@@ -802,13 +810,10 @@ static void RedrawScreen(
 /*   Names in printable form.        */
 /*************************************/
 static void GetFocusPPForm(
-  struct focus *theFocus,
-  char *buffer,
-  size_t bufferLength)
+  FocalModule *theFocus,
+  StringBuilder *sb)
   {  
-   Environment *theEnv = theFocus->theModule->header.env;
-
-   strncpy(buffer,DefmoduleName(theFocus->theModule),bufferLength);
+   SBAppend(sb,DefmoduleName(theFocus->theModule));
   }
 
 /*************************************/
@@ -821,7 +826,7 @@ static int CountFocus(
    int count = 0;
    void *Ptr = NULL;
   
-   while ((Ptr = EnvGetNextFocus(theEnv,Ptr)) != NULL)
+   while ((Ptr = GetNextFocus(theEnv,Ptr)) != NULL)
      { count++; }
    return count;
   }
@@ -883,7 +888,7 @@ static int CountActivations(
    int count = 0;
    void *Ptr = NULL;
 
-   while ((Ptr = EnvGetNextActivation(theEnv,Ptr)) != NULL)
+   while ((Ptr = GetNextActivation(theEnv,Ptr)) != NULL)
      { count++; }
 
    return count;
@@ -901,17 +906,17 @@ void UpdateStatus(void)
    if (lastModuleIndex != DefmoduleData(theEnv)->ModuleChangeIndex)
      {
 #if DEFRULE_CONSTRUCT
-      EnvSetFocusChanged(theEnv,TRUE);
-      EnvSetAgendaChanged(theEnv,TRUE);
+      SetFocusChanged(theEnv,TRUE);
+      SetAgendaChanged(theEnv,TRUE);
 #endif
 #if DEFTEMPLATE_CONSTRUCT
-      EnvSetFactListChanged(theEnv,TRUE);
+      SetFactListChanged(theEnv,TRUE);
 #endif
 #if OBJECT_SYSTEM
-      EnvSetInstancesChanged(theEnv,TRUE);
+      SetInstancesChanged(theEnv,TRUE);
 #endif
 #if DEFGLOBAL_CONSTRUCT
-      EnvSetGlobalsChanged(theEnv,TRUE);
+      SetGlobalsChanged(theEnv,TRUE);
 #endif
       lastModuleIndex = DefmoduleData(GlobalEnv)->ModuleChangeIndex;
      }
@@ -1005,7 +1010,7 @@ static void UpdateStatusWndTitle(
   {  
    Environment *theEnv = GlobalEnv;
    struct statusWindowData *theData;
-   struct defmodule *theModule = (struct defmodule *) EnvGetCurrentModule(theEnv);
+   Defmodule *theModule = GetCurrentModule(theEnv);
    char buffer[255];
        
    theData = (struct statusWindowData *) GetWindowLongPtr(hwnd,GWLP_USERDATA);
@@ -1033,6 +1038,7 @@ static void SaveStatusWindow(
    struct statusWindowData *theData;
    FILE *fp;
    void *valuePtr;
+   StringBuilder *sb;
    char buffer[300];
    
    theData = (struct statusWindowData *) GetWindowLongPtr(hwnd,GWLP_USERDATA);
@@ -1091,13 +1097,15 @@ static void SaveStatusWindow(
    if ((fp = fopen(ofn.lpstrFile,"w")) == NULL)
      { return; }
    
+   sb = CreateStringBuilder(GlobalEnv,299);
    for (valuePtr = (*theData->getNextValue)(GlobalEnv,NULL);
         (valuePtr != NULL);
         valuePtr = (*theData->getNextValue)(GlobalEnv,valuePtr))
      {  
-      (*theData->getPPForm)(valuePtr,buffer,299);
-      fprintf(fp,"%s\n",buffer);
+      (*theData->getPPForm)(valuePtr,sb);
+      fprintf(fp,"%s\n",sb->contents);
      }  
 
+   SBDispose(sb);
    fclose(fp);
   }

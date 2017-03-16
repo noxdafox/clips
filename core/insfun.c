@@ -614,7 +614,7 @@ bool DirectPutSlotValue(
   UDFValue *val,
   UDFValue *setVal)
   {
-   long i,j; /* 6.04 Bug Fix */
+   size_t i,j; /* 6.04 Bug Fix */
 #if DEFRULE_CONSTRUCT
    int sharedTraversalID;
    InstanceSlot *bsp,**spaddr;

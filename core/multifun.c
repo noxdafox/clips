@@ -679,7 +679,8 @@ void SubsetpFunction(
   UDFValue *returnValue)
   {
    UDFValue item1, item2, tmpItem;
-   long i,j,k;
+   size_t i;
+   long j,k;
 
    if (! UDFFirstArgument(context,MULTIFIELD_BIT,&item1))
      { return; }
@@ -1247,7 +1248,7 @@ bool ReplaceMultiValueField(
   UDFValue *field,
   const char *funcName)
   {
-   long i,j,k;
+   size_t i,j,k;
    CLIPSValue *deptr;
    CLIPSValue *septr;
    long srclen,dstlen;
@@ -1323,7 +1324,7 @@ bool InsertMultiValueField(
   UDFValue *field,
   const char *funcName)
   {
-   long i,j,k;
+   size_t i,j,k;
    CLIPSValue *deptr, *septr;
    long srclen,dstlen;
 
@@ -1450,7 +1451,7 @@ bool DeleteMultiValueField(
   long re,
   const char *funcName)
   {
-   long i,j;
+   size_t i,j;
    CLIPSValue *deptr, *septr;
    long srclen, dstlen;
 

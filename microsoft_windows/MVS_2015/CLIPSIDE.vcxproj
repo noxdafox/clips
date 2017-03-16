@@ -186,6 +186,7 @@
     <ClCompile Include="Source\CLIPS\watch.c" />
     <ClCompile Include="Source\Interface\Balance.c" />
     <ClCompile Include="Source\Interface\clipsdde.c" />
+    <ClCompile Include="Source\Interface\CLIPSGlue.c" />
     <ClCompile Include="Source\Interface\Dialog1.c" />
     <ClCompile Include="Source\Interface\Dialog2.c" />
     <ClCompile Include="Source\Interface\Display.c" />
@@ -381,6 +382,7 @@
     <ClInclude Include="Source\CLIPS\watch.h" />
     <ClInclude Include="Source\Interface\Balance.h" />
     <ClInclude Include="Source\Interface\clipsdde.h" />
+    <ClInclude Include="Source\Interface\CLIPSGlue.h" />
     <ClInclude Include="Source\Interface\Dialog1.h" />
     <ClInclude Include="Source\Interface\Dialog2.h" />
     <ClInclude Include="Source\Interface\Display.h" />
@@ -400,6 +402,7 @@
     <ClInclude Include="Source\Interface\Resource.h" />
     <ClInclude Include="Source\Interface\SearchDialog.h" />
     <ClInclude Include="Source\Interface\Status.h" />
+    <ClInclude Include="Source\Interface\StatusData.h" />
     <ClInclude Include="Source\Interface\StdSDK.h" />
     <ClInclude Include="Source\Interface\Text.h" />
   </ItemGroup>

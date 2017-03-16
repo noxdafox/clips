@@ -859,8 +859,8 @@ static void display_OnCommand(
 
         if (DoCommandCompletion(hwnd,buffer,1))
           {  
-			AppendCommandString(GlobalEnv, &(CompleteString[length]));
-			EnvPrintRouter(GlobalEnv, WPROMPT, (&(CompleteString[length])));
+           AppendCommandString(GlobalEnv, &(CompleteString[length]));
+		   PrintString(GlobalEnv, STDOUT, (&(CompleteString[length])));
           }
        break;
 	 } 
@@ -2073,7 +2073,7 @@ void GetUserCmd(
            else
              { AppendCommandString(GlobalEnv, "   "); }
           }
-        EnvPrintRouter (GlobalEnv,"stdout", "   " );
+        PrintString (GlobalEnv,STDOUT, "   " );
         break;
       
       /*=====================*/
@@ -2143,13 +2143,13 @@ static void HandleStandardCharacter(
       if (theCommand == NULL)
 		{ 
 		 SetCommandString(theEnv,text);
-		 EnvPrintRouter(theEnv,"stdout",text); 
+		 PrintString(theEnv,STDOUT,text); 
          FlashBalancedParenthesis(theEnv,theData,TRUE);
 		}
 	  else if (theData->caretOffset == 0)
        	{  
        	 AppendCommandString(theEnv,text); 
-       	 EnvPrintRouter(theEnv,"stdout",text);
+       	 PrintString(theEnv,STDOUT,text);
          FlashBalancedParenthesis(theEnv,theData,TRUE);
        	}
       else
@@ -2205,9 +2205,9 @@ static void HandleStandardCharacter(
          tempChars = theData->caretCharsBack;
          tempLines = theData->caretLinesBack;
          
-       	 EnvPrintRouter(theEnv,"stdout",preCommand);
-       	 EnvPrintRouter(theEnv,"stdout",text);
-       	 EnvPrintRouter(theEnv,"stdout",postCommand);
+       	 PrintString(theEnv,STDOUT,preCommand);
+       	 PrintString(theEnv,STDOUT,text);
+       	 PrintString(theEnv,STDOUT,postCommand);
          
          /*============================*/
          /* Restore the caret offsets. */
@@ -2233,7 +2233,7 @@ static void HandleStandardCharacter(
       return;
      }
           
-   EnvPrintRouter(theEnv,"stdout",text);
+   PrintString(theEnv,STDOUT,text);
   }
   
 /***************************************************/
@@ -2298,7 +2298,7 @@ static int QuickBackSpace(
 	 
    text[0] = (char) VK_BACK;
    text[1] = '\0';
-   EnvPrintRouter(GlobalEnv,"stdout",text);
+   PrintString(GlobalEnv,STDOUT,text);
    
    return rv;
   }
@@ -2398,8 +2398,8 @@ static void HandleBackSpace(
          /* Reprint the command with the character deleted. */
          /*=================================================*/
            
-       	 EnvPrintRouter(theEnv,"stdout",preCommand);
-       	 EnvPrintRouter(theEnv,"stdout",postCommand);
+       	 PrintString(theEnv,STDOUT,preCommand);
+       	 PrintString(theEnv,STDOUT,postCommand);
          
          /*============================*/
          /* Restore the caret offsets. */
@@ -2755,7 +2755,7 @@ static void SwitchCommand(
    /*======================*/
    
    SetCommandString(theEnv,newCommand->command);
-   EnvPrintRouter(theEnv,"stdout",newCommand->command);
+   PrintString(theEnv,STDOUT,newCommand->command);
    theData->currentCommand = newCommand;
    
    /*=============================*/
@@ -2832,7 +2832,7 @@ static void DisplayPaste(
    if (theData->caretOffset == 0)
      {  
       AppendCommandString(GlobalEnv,theString);
-      EnvPrintRouter(GlobalEnv,WPROMPT,theString);
+      PrintString(GlobalEnv,STDOUT,theString);
       return;
      }
 
@@ -2841,7 +2841,7 @@ static void DisplayPaste(
    if (theCommand == NULL)
      { 
       AppendCommandString(GlobalEnv,theString);
-      EnvPrintRouter(GlobalEnv,WPROMPT,theString);
+      PrintString(GlobalEnv,STDOUT,theString);
       return; 
 	 }
 
@@ -2896,9 +2896,9 @@ static void DisplayPaste(
    tempChars = theData->caretCharsBack;
    tempLines = theData->caretLinesBack;
          
-   EnvPrintRouter(GlobalEnv,"stdout",preCommand);
-   EnvPrintRouter(GlobalEnv,"stdout",theString);
-   EnvPrintRouter(GlobalEnv,"stdout",postCommand);
+   PrintString(GlobalEnv,STDOUT,preCommand);
+   PrintString(GlobalEnv,STDOUT,theString);
+   PrintString(GlobalEnv,STDOUT,postCommand);
          
    /*============================*/
    /* Restore the caret offsets. */
