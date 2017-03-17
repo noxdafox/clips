@@ -92,9 +92,11 @@ void AppendDribble(
   Environment *theEnv,
   const char *str)
   {
+   int i;
+
    if (! DribbleActive(theEnv)) return;
    
-   for (int i = 0 ; str[i] != EOS ; i++)
+   for (i = 0 ; str[i] != EOS ; i++)
      { PutcDribbleBuffer(theEnv,str[i]); }
   }
 
