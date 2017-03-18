@@ -32,6 +32,12 @@ namespace CLIPSIDE
                              "Clear", 
                              typeof(IDECommands)
                             );
+
+      public static readonly RoutedCommand SetDirectory = 
+         new RoutedUICommand("SetDirectory",
+                             "SetDirectory", 
+                             typeof(IDECommands)
+                            );
      }
 
   public partial class MainWindow : Window
@@ -50,9 +56,9 @@ namespace CLIPSIDE
          String currentDirectory = preferences.GetCurrentDirectory();
 
          if (Directory.Exists(currentDirectory))
-           { this.SetDirectory(currentDirectory); }
+           { this.SetCurrentDirectory(currentDirectory); }
          else
-           { this.SetDirectory(Directory.GetCurrentDirectory()); }
+           { this.SetCurrentDirectory(Directory.GetCurrentDirectory()); }
         }
         
       /**********/
@@ -132,7 +138,7 @@ namespace CLIPSIDE
          String fileName = Path.GetFileName(openFileDialog.FileName);
 
          preferences.SaveCurrentDirectory(dirPath);
-         this.SetDirectory(dirPath);
+         this.SetCurrentDirectory(dirPath);
            
          dialog.ReplaceCommand("(load \"" + fileName + "\")\n");
         }
@@ -170,15 +176,47 @@ namespace CLIPSIDE
          String fileName = Path.GetFileName(openFileDialog.FileName);
 
          preferences.SaveCurrentDirectory(dirPath);
-         this.SetDirectory(dirPath);
+         this.SetCurrentDirectory(dirPath);
            
          dialog.ReplaceCommand("(batch \"" + fileName + "\")\n");
         }
 
-      /****************/
-      /* SetDirectory */
-      /****************/  
-      public bool SetDirectory(
+      /***************************/
+      /* SetDirectory_CanExecute */
+      /***************************/
+      private void SetDirectory_CanExecute(
+        object sender, 
+        CanExecuteRoutedEventArgs e)
+        {
+         e.CanExecute = true;
+        }
+
+      /*************************/      
+      /* SetDirectory_Executed */
+      /*************************/      
+      private void SetDirectory_Executed(
+        object sender, 
+        ExecutedRoutedEventArgs e)
+        {
+         System.Windows.Forms.DialogResult result;
+         var selectFolderDialog = new System.Windows.Forms.FolderBrowserDialog();
+
+         String currentDirectory = preferences.GetCurrentDirectory();
+         if (Directory.Exists(currentDirectory))
+           { selectFolderDialog.SelectedPath = currentDirectory; } 
+
+         selectFolderDialog.Description = "Set Directory...";
+
+         if (selectFolderDialog.ShowDialog() != System.Windows.Forms.DialogResult.OK) return;
+
+         preferences.SaveCurrentDirectory(selectFolderDialog.SelectedPath);
+         this.SetCurrentDirectory(selectFolderDialog.SelectedPath);
+        }
+
+      /***********************/
+      /* SetCurrentDirectory */
+      /***********************/  
+      public bool SetCurrentDirectory(
         String newDirectory)
         {
          bool dirChanged = dialog.ChangeDirectory(newDirectory);

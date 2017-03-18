@@ -10,6 +10,7 @@
         <CommandBinding Command="local:IDECommands.Clear" CanExecute="Clear_CanExecute" Executed="Clear_Executed" />
         <CommandBinding Command="local:IDECommands.LoadConstructs" CanExecute="LoadConstructs_CanExecute" Executed="LoadConstructs_Executed" />
         <CommandBinding Command="local:IDECommands.LoadBatch" CanExecute="LoadBatch_CanExecute" Executed="LoadBatch_Executed" />
+        <CommandBinding Command="local:IDECommands.SetDirectory" CanExecute="SetDirectory_CanExecute" Executed="SetDirectory_Executed" />
     </Window.CommandBindings>    <Grid Margin="0,1,0,-1">
         <Grid HorizontalAlignment="Left" VerticalAlignment="Top"/>
         <local:CommandPromptTextBox x:Name="dialog" Margin="0" Grid.Row="1" AcceptsReturn="True" IsReadOnly="False" FontFamily="Consolas" FontSize="16" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" BorderThickness="0,1,0,0" Padding="3,0,0,5"/>
@@ -22,7 +23,7 @@
                     <MenuItem Header="Clear" Command="local:IDECommands.Clear"/>
                     <MenuItem Header="Load Constructs..." Command="local:IDECommands.LoadConstructs"/>
                     <MenuItem Header="Load Batch..."  Command="local:IDECommands.LoadBatch"/>
-                    <MenuItem Header="Set Directory..." />
+                    <MenuItem Header="Set Directory..." Command="local:IDECommands.SetDirectory"/>
                 </MenuItem>
             </Menu>
             <StackPanel>
