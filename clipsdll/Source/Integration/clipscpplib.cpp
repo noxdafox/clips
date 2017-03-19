@@ -256,6 +256,19 @@ void CLIPSCPPEnv::SetHaltExecution(
 #endif
 }
 
+/***************************/
+/* SetHaltCommandLoopBatch */
+/***************************/
+void CLIPSCPPEnv::SetHaltCommandLoopBatch(
+   bool value)
+{
+#ifndef CLIPS_DLL_WRAPPER
+    ::SetHaltCommandLoopBatch(theEnv,value);
+#else
+    __SetHaltCommandLoopBatch(theEnv,value);
+#endif
+}
+
 /**********************/
 /* GetEvaluationError */
 /**********************/

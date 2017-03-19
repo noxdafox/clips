@@ -40,6 +40,7 @@ class CLIPSCPPEnv
       void Clear();
       int GetHaltExecution();
       void SetHaltExecution(bool);
+      void SetHaltCommandLoopBatch(bool);
       int GetEvaluationError();
       void SetEvaluationError(bool);
       int GetHaltRules();

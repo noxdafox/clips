@@ -277,6 +277,13 @@ void __declspec(dllexport) __SetHaltExecution(
    SetHaltExecution(theEnv,value);
   }
 
+void __declspec(dllexport) __SetHaltCommandLoopBatch(
+  Environment *theEnv,
+  bool value)
+  {
+   SetHaltCommandLoopBatch(theEnv,value);
+  }
+
 bool __declspec(dllexport) __GetHaltRules(
   Environment *theEnv)
   {
