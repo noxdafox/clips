@@ -11,6 +11,12 @@ namespace CLIPSIDE
   {
    public static class IDECommands
      {
+      public static readonly RoutedCommand Clear = 
+         new RoutedUICommand("Clear",
+                             "Clear", 
+                             typeof(IDECommands)
+                            );
+
       public static readonly RoutedCommand LoadConstructs = 
          new RoutedUICommand("LoadConstructs",
                              "LoadConstructs", 
@@ -27,16 +33,42 @@ namespace CLIPSIDE
                                { new KeyGesture(Key.L,ModifierKeys.Control | ModifierKeys.Shift) }
                             );
 
-      public static readonly RoutedCommand Clear = 
-         new RoutedUICommand("Clear",
-                             "Clear", 
-                             typeof(IDECommands)
-                            );
-
       public static readonly RoutedCommand SetDirectory = 
          new RoutedUICommand("SetDirectory",
                              "SetDirectory", 
                              typeof(IDECommands)
+                            );
+
+      public static readonly RoutedCommand Reset = 
+         new RoutedUICommand("Reset",
+                             "Reset", 
+                             typeof(IDECommands),
+                             new InputGestureCollection()
+                               { new KeyGesture(Key.R,ModifierKeys.Control) }
+                            );
+
+      public static readonly RoutedCommand Run = 
+         new RoutedUICommand("Run",
+                             "Run", 
+                             typeof(IDECommands),
+                             new InputGestureCollection()
+                               { new KeyGesture(Key.R,ModifierKeys.Control | ModifierKeys.Shift) }
+                            );
+
+      public static readonly RoutedCommand HaltRules = 
+         new RoutedUICommand("HaltRules",
+                             "HaltRule", 
+                             typeof(IDECommands),
+                             new InputGestureCollection()
+                               { new KeyGesture(Key.H,ModifierKeys.Control) }
+                            );
+
+      public static readonly RoutedCommand HaltExecution = 
+         new RoutedUICommand("HaltExecution",
+                             "HaltExecution", 
+                             typeof(IDECommands),
+                             new InputGestureCollection()
+                               { new KeyGesture(Key.H,ModifierKeys.Control | ModifierKeys.Shift) }
                             );
      }
 
@@ -92,7 +124,10 @@ namespace CLIPSIDE
         object sender, 
         CanExecuteRoutedEventArgs e)
         {
-         e.CanExecute = true;
+         if (dialog.GetExecuting())
+           { e.CanExecute = false; }
+         else
+           { e.CanExecute = true; }
         }
 
       /******************/      
@@ -112,7 +147,10 @@ namespace CLIPSIDE
         object sender, 
         CanExecuteRoutedEventArgs e)
         {
-         e.CanExecute = true;
+         if (dialog.GetExecuting())
+           { e.CanExecute = false; }
+         else
+           { e.CanExecute = true; }
         }
 
       /***************************/      
@@ -150,7 +188,10 @@ namespace CLIPSIDE
         object sender, 
         CanExecuteRoutedEventArgs e)
         {
-         e.CanExecute = true;
+         if (dialog.GetExecuting())
+           { e.CanExecute = false; }
+         else
+           { e.CanExecute = true; }
         }
 
       /**********************/      
@@ -188,7 +229,10 @@ namespace CLIPSIDE
         object sender, 
         CanExecuteRoutedEventArgs e)
         {
-         e.CanExecute = true;
+         if (dialog.GetExecuting())
+           { e.CanExecute = false; }
+         else
+           { e.CanExecute = true; }
         }
 
       /*************************/      
@@ -198,7 +242,6 @@ namespace CLIPSIDE
         object sender, 
         ExecutedRoutedEventArgs e)
         {
-         System.Windows.Forms.DialogResult result;
          var selectFolderDialog = new System.Windows.Forms.FolderBrowserDialog();
 
          String currentDirectory = preferences.GetCurrentDirectory();
@@ -229,5 +272,97 @@ namespace CLIPSIDE
         
          return false;
         }     
+
+      /********************/
+      /* Reset_CanExecute */
+      /********************/
+      private void Reset_CanExecute(
+        object sender, 
+        CanExecuteRoutedEventArgs e)
+        {
+         if (dialog.GetExecuting())
+           { e.CanExecute = false; }
+         else
+           { e.CanExecute = true; }
+        }
+
+      /******************/      
+      /* Reset_Executed */
+      /******************/      
+      private void Reset_Executed(
+        object sender, 
+        ExecutedRoutedEventArgs e)
+        {
+         dialog.ReplaceCommand("(reset)\n");
+        }
+
+      /******************/
+      /* Run_CanExecute */
+      /******************/
+      private void Run_CanExecute(
+        object sender, 
+        CanExecuteRoutedEventArgs e)
+        {
+         if (dialog.GetExecuting())
+           { e.CanExecute = false; }
+         else
+           { e.CanExecute = true; }
+        }
+
+      /****************/      
+      /* Run_Executed */
+      /****************/      
+      private void Run_Executed(
+        object sender, 
+        ExecutedRoutedEventArgs e)
+        {
+         dialog.ReplaceCommand("(run)\n");
+        }
+
+      /************************/
+      /* HaltRules_CanExecute */
+      /************************/
+      private void HaltRules_CanExecute(
+        object sender, 
+        CanExecuteRoutedEventArgs e)
+        {
+         if (dialog.GetExecuting())
+           { e.CanExecute = true; }
+         else
+           { e.CanExecute = false; }
+        }
+
+      /**********************/      
+      /* HaltRules_Executed */
+      /**********************/      
+      private void HaltRules_Executed(
+        object sender, 
+        ExecutedRoutedEventArgs e)
+        {
+         dialog.HaltRules();
+        }
+
+      /****************************/
+      /* HaltExecution_CanExecute */
+      /****************************/
+      private void HaltExecution_CanExecute(
+        object sender, 
+        CanExecuteRoutedEventArgs e)
+        {
+         if (dialog.GetExecuting())
+           { e.CanExecute = true; }
+         else
+           { e.CanExecute = false; }
+        }
+
+      /**************************/      
+      /* HaltExecution_Executed */
+      /**************************/      
+      private void HaltExecution_Executed(
+        object sender, 
+        ExecutedRoutedEventArgs e)
+        {
+         dialog.HaltExecution();
+        }
      }
   }

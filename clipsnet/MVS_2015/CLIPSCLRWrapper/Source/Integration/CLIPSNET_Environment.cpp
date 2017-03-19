@@ -302,6 +302,13 @@ namespace CLIPSNET
    void Environment::SetHaltExecution(bool value)
      { m_Env->SetHaltExecution(value); }
 
+
+   /***************************/
+   /* SetHaltCommandLoopBatch */
+   /***************************/
+   void Environment::SetHaltCommandLoopBatch(bool value)
+     { m_Env->SetHaltCommandLoopBatch(value); }
+
    /**********************/
    /* GetEvaluationError */
    /**********************/

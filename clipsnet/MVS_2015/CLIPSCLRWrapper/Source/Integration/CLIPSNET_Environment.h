@@ -26,6 +26,7 @@ namespace CLIPSNET
         bool Build(String ^);
         bool GetHaltExecution();
         void SetHaltExecution(bool);
+        void SetHaltCommandLoopBatch(bool);
         bool GetHaltRules();
         void SetHaltRules(bool);
         bool GetEvaluationError();

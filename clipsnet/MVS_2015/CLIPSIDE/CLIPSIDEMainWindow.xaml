@@ -11,6 +11,10 @@
         <CommandBinding Command="local:IDECommands.LoadConstructs" CanExecute="LoadConstructs_CanExecute" Executed="LoadConstructs_Executed" />
         <CommandBinding Command="local:IDECommands.LoadBatch" CanExecute="LoadBatch_CanExecute" Executed="LoadBatch_Executed" />
         <CommandBinding Command="local:IDECommands.SetDirectory" CanExecute="SetDirectory_CanExecute" Executed="SetDirectory_Executed" />
+        <CommandBinding Command="local:IDECommands.Reset" CanExecute="Reset_CanExecute" Executed="Reset_Executed" />
+        <CommandBinding Command="local:IDECommands.Run" CanExecute="Run_CanExecute" Executed="Run_Executed" />
+        <CommandBinding Command="local:IDECommands.HaltRules" CanExecute="HaltRules_CanExecute" Executed="HaltRules_Executed" />
+        <CommandBinding Command="local:IDECommands.HaltExecution" CanExecute="HaltExecution_CanExecute" Executed="HaltExecution_Executed" />
     </Window.CommandBindings>    <Grid Margin="0,1,0,-1">
         <Grid HorizontalAlignment="Left" VerticalAlignment="Top"/>
         <local:CommandPromptTextBox x:Name="dialog" Margin="0" Grid.Row="1" AcceptsReturn="True" IsReadOnly="False" FontFamily="Consolas" FontSize="16" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" BorderThickness="0,1,0,0" Padding="3,0,0,5"/>
@@ -24,6 +28,11 @@
                     <MenuItem Header="Load Constructs..." Command="local:IDECommands.LoadConstructs"/>
                     <MenuItem Header="Load Batch..."  Command="local:IDECommands.LoadBatch"/>
                     <MenuItem Header="Set Directory..." Command="local:IDECommands.SetDirectory"/>
+                    <Separator/>
+                    <MenuItem Header="Reset" Command="local:IDECommands.Reset"/>
+                    <MenuItem Header="Run" Command="local:IDECommands.Run"/>
+                    <MenuItem Header="Halt Rules" Command="local:IDECommands.HaltRules"/>
+                    <MenuItem Header="Halt Execution" Command="local:IDECommands.HaltExecution"/>
                 </MenuItem>
             </Menu>
             <StackPanel>

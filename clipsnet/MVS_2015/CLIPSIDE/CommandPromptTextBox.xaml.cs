@@ -413,6 +413,24 @@ namespace CLIPSIDE
          isExecuting = value;
         }
  
+      /*************/
+      /* HaltRules */
+      /*************/
+      public void HaltRules() 
+        {
+         clips.SetHaltRules(true);
+        }
+
+ 
+      /*****************/
+      /* HaltExecution */
+      /*****************/
+      public void HaltExecution() 
+        {
+         clips.SetHaltCommandLoopBatch(true);
+         clips.SetHaltExecution(true);
+        }
+
       /********************/
       /* DoExecuteCommand */
       /********************/  
