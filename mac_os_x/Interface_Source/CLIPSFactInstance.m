@@ -21,7 +21,7 @@
   {
    if (self = [super init])
      {
-      int i;
+      size_t i;
       CLIPSValue slotNames;
       UDFValue slotValue;
       UDFValue defaultValue;
@@ -100,7 +100,7 @@
   {
    if (self = [super init])
      {
-      int i;
+      size_t i;
       CLIPSValue slotNames;
       UDFValue slotValue;
       UDFValue defaultValue;
@@ -144,7 +144,7 @@
          NSString *theSlotName = [NSString stringWithUTF8String: theCSlotName];
          
          DirectGetSlot(theInstance,theCSlotName,&result);
-         CLIPSToUDFValue(&result,&slotValue);
+         CLIPSToUDFValue(&result,&slotValue); // TBD Remove
          
          NSString *theSlotValue = [NSString stringWithUTF8String: DataObjectToString(theEnvironment,&slotValue)];
 

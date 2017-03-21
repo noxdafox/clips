@@ -154,9 +154,9 @@
 /**************************************************/
 /* splitView:constraintMinCoordinate:ofSubviewAt: */
 /**************************************************/
-- (float) splitView: (NSSplitView *) sender 
-          constrainMinCoordinate: (float) proposedMin 
-          ofSubviewAt: (int) offset
+- (CGFloat) splitView: (NSSplitView *) sender
+          constrainMinCoordinate: (CGFloat) proposedMin
+          ofSubviewAt: (NSInteger) offset
   {
    return 100.0;
   }
@@ -164,9 +164,9 @@
 /**************************************************/
 /* splitView:constraintMaxCoordinate:ofSubviewAt: */
 /**************************************************/
-- (float) splitView: (NSSplitView *) sender 
-          constrainMaxCoordinate: (float) proposedMax 
-          ofSubviewAt: (int) offset
+- (CGFloat) splitView: (NSSplitView *) sender
+          constrainMaxCoordinate: (CGFloat) proposedMax
+          ofSubviewAt: (NSInteger) offset
   {
    return [sender bounds].size.width - 200.0;
   }
@@ -264,7 +264,7 @@
 /************************************************/
 - (void) tableViewSelectionDidChange: (NSNotification *) aNotification
   {
-   int theRow;
+   NSInteger theRow;
    NSString *thePPForm = nil;
    AppController *theDelegate = [NSApp delegate];
    
@@ -282,7 +282,7 @@
       Fact *clipsFact;
       long long theFactIndex;
       NSArray *theArray = [factListController arrangedObjects];
-      CLIPSFactInstance *theFact = [theArray objectAtIndex: theRow];
+      CLIPSFactInstance *theFact = [theArray objectAtIndex: (NSUInteger) theRow];
       
       /*============================================================*/
       /* Use the fact index stored with the GUI fact object to find */

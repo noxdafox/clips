@@ -485,7 +485,7 @@ void DeallocateMarkedHandlers(
   Environment *theEnv,
   Defclass *cls)
   {
-   short count;
+   unsigned count;
    DefmessageHandler *hnd,*nhnd;
    unsigned *arr,*narr;
    long i,j;
@@ -523,7 +523,7 @@ void DeallocateMarkedHandlers(
      }
    else
      {
-      count = (short) (cls->handlerCount - count);
+      count = (cls->handlerCount - count);
       hnd = cls->handlers;
       arr = cls->handlerOrderMap;
       nhnd = (DefmessageHandler *) gm2(theEnv,(sizeof(DefmessageHandler) * count));

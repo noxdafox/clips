@@ -204,7 +204,7 @@
    /* CLIPS Glue Code */
    /*=================*/
    
-   SetEnvironmentContext(theEnvironment,(__bridge void *)(self));
+   SetEnvironmentContext(theEnvironment,(__bridge void *)(self)); // TBD Remove?
    
    AddRouter(theEnvironment,"CLIPSTerminalController",10,QueryInterfaceRouter,PrintInterfaceRouter,
              GetcInterfaceRouter,NULL,ExitInterfaceRouter,(__bridge void *)(self));
@@ -658,7 +658,7 @@
 /* loadConstructPanelDidEnd:returnCode:contextInfo: */
 /****************************************************/
 - (void) loadConstructPanelDidEnd: (NSOpenPanel *) sheet 
-         returnCode: (int) returnCode 
+         returnCode: (NSInteger) returnCode
   {
    if (returnCode != NSModalResponseOK) return;
 
@@ -753,7 +753,7 @@
 /* loadBatchPanelDidEnd:returnCode:contextInfo: */
 /************************************************/
 - (void) loadBatchPanelDidEnd: (NSOpenPanel *) sheet 
-         returnCode: (int) returnCode 
+         returnCode: (NSInteger) returnCode
   {
    if (returnCode != NSModalResponseOK) return;
 
@@ -834,7 +834,7 @@
 /* setDirectoryPanelDidEnd:returnCode:contextInfo: */
 /************************************************/
 - (void) setDirectoryPanelDidEnd: (NSOpenPanel *) sheet 
-         returnCode: (int) returnCode 
+         returnCode: (NSInteger) returnCode 
   {
    if (returnCode != NSModalResponseOK) return;
    
@@ -1046,9 +1046,9 @@
 /*********************/    
 - (void) dumpOutputBuffer
   {
-   unsigned int saveDumpPosition;
-   unsigned int currentPosition;
-   unsigned int difference;
+   NSUInteger saveDumpPosition;
+   NSUInteger currentPosition;
+   NSUInteger difference;
    /*
    int startLines = lineCount;
    */
@@ -1166,8 +1166,8 @@
 - (unsigned int) lineCountIncrease: (NSString *) theString
   {  
    NSRange theRange = { 0, 0 };
-   unsigned position = 0;
-   unsigned length = [theString length];
+   NSUInteger position = 0;
+   NSUInteger length = [theString length];
    unsigned lineIncrease = 0;
    unichar theChar;
    
@@ -1192,7 +1192,7 @@
 - (void) deleteExtraLines
   {  
    NSRange theRange = { 0, 0 };
-   unsigned position = 0;
+   NSUInteger position = 0;
    unsigned linesToDelete;
    
    /*==============================================*/

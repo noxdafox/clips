@@ -152,9 +152,9 @@
 /**************************************************/
 /* splitView:constraintMinCoordinate:ofSubviewAt: */
 /**************************************************/
-- (float) splitView: (NSSplitView *) sender 
-          constrainMinCoordinate: (float) proposedMin 
-          ofSubviewAt: (int) offset
+- (CGFloat) splitView: (NSSplitView *) sender
+          constrainMinCoordinate: (CGFloat) proposedMin
+          ofSubviewAt: (NSInteger) offset
   {
    return 100.0;
   }
@@ -162,9 +162,9 @@
 /**************************************************/
 /* splitView:constraintMaxCoordinate:ofSubviewAt: */
 /**************************************************/
-- (float) splitView: (NSSplitView *) sender 
-          constrainMaxCoordinate: (float) proposedMax 
-          ofSubviewAt: (int) offset
+- (CGFloat) splitView: (NSSplitView *) sender
+          constrainMaxCoordinate: (CGFloat) proposedMax
+          ofSubviewAt: (NSInteger) offset
   {
    return [sender bounds].size.width - 200.0;
   }
@@ -341,7 +341,7 @@
 /*******************************/
 - (void) updateAgendaInspectorText
   {
-   int theRow = [agendaList selectedRow];
+   NSInteger theRow = [agendaList selectedRow];
    AppController *theDelegate = [NSApp delegate];
 
    /*===============================================*/
@@ -360,7 +360,7 @@
      {   
       NSArray *theArray = [focusStackController valueForKeyPath: @"selection.agenda"];
          
-      struct activation *theActivation = (struct activation *) [[theArray objectAtIndex: theRow] activation];
+      Activation *theActivation = (Activation *) [[theArray objectAtIndex: (NSUInteger) theRow] activation];
          
       NSString *thePPForm = [NSString stringWithUTF8String: DefrulePPForm(theActivation->theRule)];
 

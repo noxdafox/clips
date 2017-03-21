@@ -644,7 +644,7 @@ void NthFunction(
      { return; }
 
    n = value1.integerValue->contents; /* 6.04 Bug Fix */
-   if ((n > value2.range) || (n < 1))
+   if ((n > ((long long) value2.range)) || (n < 1))
 	 {
       returnValue->lexemeValue = CreateSymbol(theEnv,"nil");
 	  return;
@@ -1251,12 +1251,13 @@ bool ReplaceMultiValueField(
    size_t i,j,k;
    CLIPSValue *deptr;
    CLIPSValue *septr;
-   long srclen,dstlen;
+   size_t srclen, dstlen;
+   size_t urb, ure;
 
    srclen = ((src != NULL) ? src->range : 0);
    if ((re < rb) ||
 	   (rb < 1) || (re < 1) ||
-	   (rb > srclen) || (re > srclen))
+	   (rb > (long) srclen) || (re > (long) srclen))
 	 {
 	  MVRangeError(theEnv,rb,re,srclen,funcName);
 	  return false;
@@ -1264,13 +1265,17 @@ bool ReplaceMultiValueField(
    rb = src->begin + rb - 1;
    re = src->begin + re - 1;
    if (field->header->type == MULTIFIELD_TYPE)
-	 dstlen = srclen + field->range - (re-rb+1);
+	 dstlen = (size_t) (srclen + field->range - (re-rb+1));
    else
-	 dstlen = srclen + 1 - (re-rb+1);
+	 dstlen = (size_t) (srclen + 1 - (re-rb+1));
    dst->begin = 0;
    dst->value = CreateMultifield(theEnv,dstlen);
    dst->range = dstlen;
-   for (i = 0 , j = src->begin ; j < rb ; i++ , j++)
+   
+   urb = (size_t) rb;
+   ure = (size_t) re;
+   
+   for (i = 0 , j = src->begin ; j < urb ; i++ , j++)
 	 {
 	  deptr = &dst->multifieldValue->contents[i];
 	  septr = &src->multifieldValue->contents[j];
@@ -1290,7 +1295,7 @@ bool ReplaceMultiValueField(
 		 deptr->value = septr->value;
 		}
 	 }
-   while (j < re)
+   while (j < ure)
 	 j++;
    for (j++ ; i < dstlen ; i++ , j++)
 	 {
@@ -1326,7 +1331,7 @@ bool InsertMultiValueField(
   {
    size_t i,j,k;
    CLIPSValue *deptr, *septr;
-   long srclen,dstlen;
+   long srclen, dstlen;
 
    srclen = (long) ((src != NULL) ? src->range : 0);
    if (theIndex < 1)
@@ -1357,7 +1362,7 @@ bool InsertMultiValueField(
    dst->value = CreateMultifield(theEnv,dstlen);
    dst->range = dstlen;
    theIndex--;
-   for (i = 0 , j = src->begin ; i < theIndex ; i++ , j++)
+   for (i = 0 , j = src->begin ; i < (size_t) theIndex ; i++ , j++)
      {
       deptr = &dst->multifieldValue->contents[i];
       septr = &src->multifieldValue->contents[j];
@@ -1454,6 +1459,7 @@ bool DeleteMultiValueField(
    size_t i,j;
    CLIPSValue *deptr, *septr;
    long srclen, dstlen;
+   size_t urb, ure;
 
    srclen = (long) ((src != NULL) ? src->range : 0);
    if ((re < rb) ||
@@ -1475,13 +1481,17 @@ bool DeleteMultiValueField(
    dstlen = srclen-(re-rb+1);
    dst->range = dstlen;
    dst->value = CreateMultifield(theEnv,dstlen);
-   for (i = 0 , j = src->begin ; j < rb ; i++ , j++)
+   
+   urb = (size_t) rb;
+   ure = (size_t) re;
+   
+   for (i = 0 , j = src->begin ; j < urb ; i++ , j++)
      {
       deptr = &dst->multifieldValue->contents[i];
       septr = &src->multifieldValue->contents[j];
       deptr->value = septr->value;
      }
-   while (j < re)
+   while (j < ure)
      j++;
    for (j++ ; i < (dst->begin + dst->range) ; j++ , i++)
      {

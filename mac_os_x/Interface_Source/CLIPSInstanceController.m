@@ -127,9 +127,9 @@
      }
   }
 
-/**************************************************/
+/***************************/
 /* observeValueForKeyPath: */
-/**************************************************/
+/***************************/
 - (void) observeValueForKeyPath: (NSString *) keyPath 
                        ofObject: (id) object 
                         change: (NSDictionary *) change 
@@ -155,9 +155,9 @@
 /**************************************************/
 /* splitView:constraintMinCoordinate:ofSubviewAt: */
 /**************************************************/
-- (float) splitView: (NSSplitView *) sender 
-          constrainMinCoordinate: (float) proposedMin 
-          ofSubviewAt: (int) offset
+- (CGFloat) splitView: (NSSplitView *) sender
+          constrainMinCoordinate: (CGFloat) proposedMin
+          ofSubviewAt: (NSInteger) offset
   {
    return 100.0;
   }
@@ -165,9 +165,9 @@
 /**************************************************/
 /* splitView:constraintMaxCoordinate:ofSubviewAt: */
 /**************************************************/
-- (float) splitView: (NSSplitView *) sender 
+- (CGFloat) splitView: (NSSplitView *) sender
           constrainMaxCoordinate: (float) proposedMax 
-          ofSubviewAt: (int) offset
+          ofSubviewAt: (NSInteger) offset
   {
    return [sender bounds].size.width - 200.0;
   }
@@ -265,7 +265,7 @@
 /****************************************************/
 - (void) tableViewSelectionDidChange: (NSNotification *) aNotification
   {
-   int theRow;
+   NSInteger theRow;
    NSString *thePPForm = nil;
    AppController *theDelegate = [NSApp delegate];
    
@@ -283,7 +283,7 @@
       Instance *clipsInstance = NULL;
       char *theInstanceName;
       NSArray *theArray = [instanceListController arrangedObjects];
-      CLIPSFactInstance *theInstance = [theArray objectAtIndex: theRow];
+      CLIPSFactInstance *theInstance = [theArray objectAtIndex: (NSUInteger) theRow];
       
       /*===============================================================*/
       /* Use the instance name stored with the GUI fact object to find */

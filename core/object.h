@@ -104,7 +104,7 @@ struct defclass
                  *instanceListBottom;
    DefmessageHandler *handlers;
    unsigned *handlerOrderMap;
-   short handlerCount;
+   unsigned handlerCount;
    Defclass *nxtHash;
    CLIPSBitMap *scopeMap;
    char traversalRecord[TRAVERSAL_BYTES];

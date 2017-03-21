@@ -694,7 +694,7 @@ bool MultifieldsEqual(
   {
    CLIPSValue *elem1;
    CLIPSValue *elem2;
-   long length, i = 0;
+   size_t length, i = 0;
 
    length = segment1->length;
    if (length != segment2->length)

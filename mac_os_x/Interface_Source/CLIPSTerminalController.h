@@ -39,7 +39,7 @@ struct priorCommand
    NSConditionLock *outputBufferLock;
    int bufferCount;
    unsigned lineCount;
-   unsigned lastDumpPosition;
+   NSUInteger lastDumpPosition;
    NSConditionLock *pauseLock;
    BOOL scrollToEnd;
    BOOL exit;
@@ -76,13 +76,13 @@ struct priorCommand
 - (void)               printC: (const char *) theString;
 
 - (void)               loadConstructPanelDidEnd: (NSOpenPanel *) sheet 
-                       returnCode: (int) returnCode;
+                       returnCode: (NSInteger) returnCode;
 
 - (void)               loadBatchPanelDidEnd: (NSOpenPanel *) sheet 
-                       returnCode: (int) returnCode;
+                       returnCode: (NSInteger) returnCode;
 
 - (void)               setDirectoryPanelDidEnd: (NSOpenPanel *) sheet 
-                       returnCode: (int) returnCode;
+                       returnCode: (NSInteger) returnCode;
 
 - (unsigned int)       lineCountIncrease: (NSString *) theString;
                        

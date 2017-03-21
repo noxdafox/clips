@@ -112,7 +112,7 @@ void MacPeriodicFunction(
   Environment *theEnv,
   void *context)
   {
-   CLIPSTerminalController *theController = (__bridge CLIPSTerminalController *) GetEnvironmentContext(theEnv);
+   CLIPSTerminalController *theController = (__bridge CLIPSTerminalController *) GetEnvironmentContext(theEnv); // TBD Remove?
    NSConditionLock *theAgendaLock, *theFactsLock;
    
    /* TBD See if there are other ways to check the locks */
