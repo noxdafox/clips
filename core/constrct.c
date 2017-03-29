@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/25/16             */
+   /*            CLIPS Version 6.40  03/29/17             */
    /*                                                     */
    /*                  CONSTRUCT MODULE                   */
    /*******************************************************/
@@ -51,6 +51,9 @@
 /*            Added code to keep track of pointers to        */
 /*            constructs that are contained externally to    */
 /*            to constructs, DanglingConstructs.             */
+/*                                                           */
+/*      6.31: Error flags reset before Clear processed when  */
+/*            called from embedded controller.               */
 /*                                                           */
 /*      6.40: Added Env prefix to GetHaltExecution and       */
 /*            SetHaltExecution functions.                    */
@@ -618,6 +621,17 @@ bool Clear(
   {
    struct voidCallFunctionItem *theFunction;
    GCBlock gcb;
+
+   /*=====================================*/
+   /* If embedded, clear the error flags. */
+   /*=====================================*/
+
+   if ((! CommandLineData(theEnv)->EvaluatingTopLevelCommand) &&
+       (EvaluationData(theEnv)->CurrentExpression == NULL))
+     {
+      SetEvaluationError(theEnv,false);
+      SetHaltExecution(theEnv,false);
+     }
 
    /*===================================*/
    /* Determine if a clear is possible. */
