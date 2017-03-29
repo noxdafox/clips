@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  01/25/15            */
+   /*             CLIPS Version 6.31  03/29/17            */
    /*                                                     */
    /*                  CONSTRUCT MODULE                   */
    /*******************************************************/
@@ -51,6 +51,9 @@
 /*            Added code to keep track of pointers to        */
 /*            constructs that are contained externally to    */
 /*            to constructs, DanglingConstructs.             */
+/*                                                           */
+/*      6.31: Error flags reset before Clear processed when  */
+/*            called from embedded controller.               */
 /*                                                           */
 /*************************************************************/
 
@@ -588,6 +591,18 @@ globle void EnvClear(
   void *theEnv)
   {
    struct callFunctionItem *theFunction;
+
+   /*==============================*/
+   /* Clear error flags if issued  */
+   /* from an embedded controller. */
+   /*==============================*/
+
+   if ((UtilityData(theEnv)->CurrentGarbageFrame->topLevel) && (! CommandLineData(theEnv)->EvaluatingTopLevelCommand) &&
+       (EvaluationData(theEnv)->CurrentExpression == NULL) && (UtilityData(theEnv)->GarbageCollectionLocks == 0))
+     {
+      SetEvaluationError(theEnv,FALSE);
+      SetHaltExecution(theEnv,FALSE);
+     }
    
    /*==========================================*/
    /* Activate the watch router which captures */
