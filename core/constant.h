@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  11/01/16             */
+   /*            CLIPS Version 6.40  03/29/17             */
    /*                                                     */
    /*                CONSTANTS HEADER FILE                */
    /*******************************************************/
@@ -96,7 +96,7 @@ typedef enum
 #endif
 
 #ifndef BANNER_STRING
-#define BANNER_STRING "         CLIPS (Cypher Alpha 03/01/17)\n"
+#define BANNER_STRING "         CLIPS (Cypher Alpha 03/29/17)\n"
 #endif
 
 /*************************/

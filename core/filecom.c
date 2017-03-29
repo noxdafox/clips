@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  08/25/16            */
+   /*             CLIPS Version 6.40  03/29/17            */
    /*                                                     */
    /*                 FILE COMMANDS MODULE                */
    /*******************************************************/
@@ -43,6 +43,9 @@
 /*                                                           */
 /*            Added STDOUT and STDIN logical name            */
 /*            definitions.                                   */
+/*                                                           */
+/*      6.31: Unprocessed batch files did not deallocate     */
+/*            all memory on exit.                            */
 /*                                                           */
 /*      6.40: Split inputSource to fileSource and            */
 /*            logicalSource.                                 */
@@ -145,6 +148,7 @@ static void DeallocateFileCommandData(
       else
         { rm(theEnv,(void *) theEntry->theString,strlen(theEntry->theString) + 1); }
 
+      DeleteString(theEnv,(char *) theEntry->fileName);
       DeleteString(theEnv,(char *) theEntry->logicalSource);
       rtn_struct(theEnv,batchEntry,theEntry);
 
