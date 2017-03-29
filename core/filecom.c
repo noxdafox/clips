@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  01/26/15            */
+   /*             CLIPS Version 6.31  03/29/17            */
    /*                                                     */
    /*                 FILE COMMANDS MODULE                */
    /*******************************************************/
@@ -43,6 +43,9 @@
 /*                                                           */
 /*            Added STDOUT and STDIN logical name            */
 /*            definitions.                                   */
+/*                                                           */
+/*      6.31: Unprocessed batch files did not deallocate     */
+/*            all memory on exit.                            */
 /*                                                           */
 /*************************************************************/
 
@@ -188,6 +191,8 @@ static void DeallocateFileCommandData(
         { GenClose(theEnv,(FILE *) FileCommandData(theEnv)->TopOfBatchList->inputSource); }
       else
         { rm(theEnv,(void *) theEntry->theString,strlen(theEntry->theString) + 1); }
+
+      DeleteString(theEnv,(char *) theEntry->fileName);
 
       rtn_struct(theEnv,batchEntry,theEntry);
          
