@@ -184,7 +184,7 @@ static bool CheckTypeConstraint(
 /********************************************************/
 bool CheckCardinalityConstraint(
   Environment *theEnv,
-  long number,
+  size_t number,
   CONSTRAINT_RECORD *constraints)
   {
    /*=========================================*/
@@ -203,7 +203,7 @@ bool CheckCardinalityConstraint(
      {
       if (constraints->minFields->value != SymbolData(theEnv)->NegativeInfinity)
         {
-         if (number < constraints->minFields->integerValue->contents)
+         if (number < (size_t) constraints->minFields->integerValue->contents)
            { return false; }
         }
      }
@@ -217,7 +217,7 @@ bool CheckCardinalityConstraint(
      {
       if (constraints->maxFields->value != SymbolData(theEnv)->PositiveInfinity)
         {
-         if (number > constraints->maxFields->integerValue->contents)
+         if (number > (size_t) constraints->maxFields->integerValue->contents)
            { return false; }
         }
      }
@@ -530,9 +530,9 @@ void ConstraintViolationErrorMessage(
   const char *theWhat,
   const char *thePlace,
   bool command,
-  int thePattern,
+  unsigned short thePattern,
   CLIPSLexeme *theSlot,
-  int theField,
+  unsigned short theField,
   int violationType,
   CONSTRAINT_RECORD *theConstraint,
   bool printPrelude)
@@ -647,22 +647,21 @@ static void PrintRange(
 /*   object structure and a constraint record, determines if */
 /*   the data object satisfies the constraint record.        */
 /*************************************************************/
-int ConstraintCheckDataObject(
+ConstraintViolationType ConstraintCheckDataObject(
   Environment *theEnv,
   UDFValue *theData,
   CONSTRAINT_RECORD *theConstraints)
   {
    size_t i; /* 6.04 Bug Fix */
-   int rv;
+   ConstraintViolationType rv;
    CLIPSValue *theMultifield;
 
-   if (theConstraints == NULL) return(NO_VIOLATION);
+   if (theConstraints == NULL) return NO_VIOLATION;
 
    if (theData->header->type == MULTIFIELD_TYPE)
      {
-      if (CheckCardinalityConstraint(theEnv,theData->range,
-                                     theConstraints) == false)
-        { return(CARDINALITY_VIOLATION); }
+      if (CheckCardinalityConstraint(theEnv,theData->range,theConstraints) == false)
+        { return CARDINALITY_VIOLATION; }
 
       theMultifield = theData->multifieldValue->contents;
       for (i = theData->begin; i < theData->begin + theData->range; i++)
@@ -670,60 +669,61 @@ int ConstraintCheckDataObject(
          if ((rv = ConstraintCheckValue(theEnv,theMultifield[i].header->type,
                                         theMultifield[i].value,
                                         theConstraints)) != NO_VIOLATION)
-           { return(rv); }
+           { return rv; }
         }
 
-      return(NO_VIOLATION);
+      return NO_VIOLATION;
      }
 
-   if (CheckCardinalityConstraint(theEnv,1L,theConstraints) == false)
-    { return(CARDINALITY_VIOLATION); }
+   if (CheckCardinalityConstraint(theEnv,1,theConstraints) == false)
+    { return CARDINALITY_VIOLATION; }
 
-   return(ConstraintCheckValue(theEnv,theData->header->type,theData->value,theConstraints));
+   return ConstraintCheckValue(theEnv,theData->header->type,theData->value,theConstraints);
   }
 
 /****************************************************************/
 /* ConstraintCheckValue: Given a value and a constraint record, */
 /*   determines if the value satisfies the constraint record.   */
 /****************************************************************/
-int ConstraintCheckValue(
+ConstraintViolationType ConstraintCheckValue(
   Environment *theEnv,
   int theType,
   void *theValue,
   CONSTRAINT_RECORD *theConstraints)
   {
    if (CheckTypeConstraint(theType,theConstraints) == false)
-     { return(TYPE_VIOLATION); }
+     { return TYPE_VIOLATION; }
 
    else if (CheckAllowedValuesConstraint(theType,theValue,theConstraints) == false)
-     { return(ALLOWED_VALUES_VIOLATION); }
+     { return ALLOWED_VALUES_VIOLATION; }
 
    else if (CheckAllowedClassesConstraint(theEnv,theType,theValue,theConstraints) == false)
-     { return(ALLOWED_CLASSES_VIOLATION); }
+     { return ALLOWED_CLASSES_VIOLATION; }
 
    else if (CheckRangeConstraint(theEnv,theType,theValue,theConstraints) == false)
-     { return(RANGE_VIOLATION); }
+     { return RANGE_VIOLATION; }
 
    else if (theType == FCALL)
      {
-      if (CheckFunctionReturnType((unsigned) UnknownFunctionType(theValue),theConstraints) == false)
-        { return(FUNCTION_RETURN_TYPE_VIOLATION); }
+      if (CheckFunctionReturnType(UnknownFunctionType(theValue),theConstraints) == false)
+        { return FUNCTION_RETURN_TYPE_VIOLATION; }
      }
 
-   return(NO_VIOLATION);
+   return NO_VIOLATION;
   }
 
 /********************************************************************/
 /* ConstraintCheckExpressionChain: Checks an expression and nextArg */
 /* links for constraint conflicts (argList is not followed).        */
 /********************************************************************/
-int ConstraintCheckExpressionChain(
+ConstraintViolationType ConstraintCheckExpressionChain(
   Environment *theEnv,
   struct expr *theExpression,
   CONSTRAINT_RECORD *theConstraints)
   {
    struct expr *theExp;
-   int min = 0, max = 0, vCode;
+   int min = 0, max = 0;
+   ConstraintViolationType vCode;
 
    /*===========================================================*/
    /* Determine the minimum and maximum number of value which   */
@@ -751,7 +751,7 @@ int ConstraintCheckExpressionChain(
 
    if (max == 0) max = min;
    if (CheckRangeAgainstCardinalityConstraint(theEnv,min,max,theConstraints) == false)
-     { return(CARDINALITY_VIOLATION); }
+     { return CARDINALITY_VIOLATION; }
 
    /*========================================*/
    /* Check for other constraint violations. */
@@ -761,10 +761,10 @@ int ConstraintCheckExpressionChain(
      {
       vCode = ConstraintCheckValue(theEnv,theExp->type,theExp->value,theConstraints);
       if (vCode != NO_VIOLATION)
-        return(vCode);
+        return vCode;
      }
 
-   return(NO_VIOLATION);
+   return NO_VIOLATION;
   }
 
 #if (! RUN_TIME) && (! BLOAD_ONLY)
@@ -774,12 +774,12 @@ int ConstraintCheckExpressionChain(
 /*   for constraint conflicts. Returns zero if     */
 /*   conflicts are found, otherwise non-zero.      */
 /***************************************************/
-int ConstraintCheckExpression(
+ConstraintViolationType ConstraintCheckExpression(
   Environment *theEnv,
   struct expr *theExpression,
   CONSTRAINT_RECORD *theConstraints)
   {
-   int rv = NO_VIOLATION;
+   ConstraintViolationType rv = NO_VIOLATION;
 
    if (theConstraints == NULL) return(rv);
 
@@ -788,13 +788,13 @@ int ConstraintCheckExpression(
       rv = ConstraintCheckValue(theEnv,theExpression->type,
                                 theExpression->value,
                                 theConstraints);
-      if (rv != NO_VIOLATION) return(rv);
+      if (rv != NO_VIOLATION) return rv;
       rv = ConstraintCheckExpression(theEnv,theExpression->argList,theConstraints);
-      if (rv != NO_VIOLATION) return(rv);
+      if (rv != NO_VIOLATION) return rv;
       theExpression = theExpression->nextArg;
      }
 
-   return(rv);
+   return rv;
   }
 
 #endif /* (! RUN_TIME) && (! BLOAD_ONLY) */

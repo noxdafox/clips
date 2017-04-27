@@ -118,7 +118,8 @@
    static long long               GetFactsArgument(UDFContext *);
 #endif
    static struct expr            *StandardLoadFact(Environment *,const char *,struct token *);
-   static Deftemplate           **GetSaveFactsDeftemplateNames(Environment *,struct expr *,int,int *,bool *);
+   static Deftemplate           **GetSaveFactsDeftemplateNames(Environment *,struct expr *,int,
+                                                               unsigned int *,bool *);
 
 /***************************************/
 /* FactCommandDefinitions: Initializes */
@@ -567,7 +568,7 @@ void Facts(
   long long max)
   {
    Fact *factPtr;
-   long count = 0;
+   unsigned long count = 0;
    Defmodule *oldModule;
    bool allModules = false;
 
@@ -740,7 +741,7 @@ void SaveFactsCommand(
   UDFValue *returnValue)
   {
    const char *fileName;
-   int numArgs;
+   unsigned int numArgs;
    SaveScope saveCode = LOCAL_SAVE;
    const char *argument;
    UDFValue theValue;
@@ -861,7 +862,7 @@ bool SaveFactsDriver(
    FILE *filePtr;
    Defmodule *theModule;
    Deftemplate **deftemplateArray;
-   int count, i;
+   unsigned int count, i;
    bool printFact, error;
 
    /*======================================================*/
@@ -984,7 +985,7 @@ bool SaveFactsDriver(
    /*==================================*/
 
    if (theList != NULL)
-     { rm(theEnv,deftemplateArray,(long) sizeof(Deftemplate *) * count); }
+     { rm(theEnv,deftemplateArray,sizeof(Deftemplate *) * count); }
 
    /*===================================*/
    /* Return true to indicate no errors */
@@ -1002,13 +1003,13 @@ static Deftemplate **GetSaveFactsDeftemplateNames(
   Environment *theEnv,
   struct expr *theList,
   int saveCode,
-  int *count,
+  unsigned int *count,
   bool *error)
   {
    struct expr *tempList;
    Deftemplate **deftemplateArray;
    UDFValue tempArg;
-   int i, tempCount;
+   unsigned int i, tempCount;
    Deftemplate *theDeftemplate = NULL;
 
    /*=============================*/
@@ -1042,7 +1043,7 @@ static Deftemplate **GetSaveFactsDeftemplateNames(
    /* Allocate the storage for the name list. */
    /*=========================================*/
 
-   deftemplateArray = (Deftemplate **) gm2(theEnv,(long) sizeof(Deftemplate *) * *count);
+   deftemplateArray = (Deftemplate **) gm2(theEnv,sizeof(Deftemplate *) * *count);
 
    /*=====================================*/
    /* Loop through each of the arguments. */
@@ -1061,7 +1062,7 @@ static Deftemplate **GetSaveFactsDeftemplateNames(
       if (EvaluationData(theEnv)->EvaluationError)
         {
          *error = true;
-         rm(theEnv,deftemplateArray,(long) sizeof(Deftemplate *) * *count);
+         rm(theEnv,deftemplateArray,sizeof(Deftemplate *) * *count);
          return NULL;
         }
 
@@ -1073,7 +1074,7 @@ static Deftemplate **GetSaveFactsDeftemplateNames(
         {
          *error = true;
          ExpectedTypeError1(theEnv,"save-facts",3+i,"symbol");
-         rm(theEnv,deftemplateArray,(long) sizeof(Deftemplate *) * *count);
+         rm(theEnv,deftemplateArray,sizeof(Deftemplate *) * *count);
          return NULL;
         }
 
@@ -1090,7 +1091,7 @@ static Deftemplate **GetSaveFactsDeftemplateNames(
            {
             *error = true;
             ExpectedTypeError1(theEnv,"save-facts",3+i,"local deftemplate name");
-            rm(theEnv,deftemplateArray,(long) sizeof(Deftemplate *) * *count);
+            rm(theEnv,deftemplateArray,sizeof(Deftemplate *) * *count);
             return NULL;
            }
         }
@@ -1104,7 +1105,7 @@ static Deftemplate **GetSaveFactsDeftemplateNames(
            {
             *error = true;
             ExpectedTypeError1(theEnv,"save-facts",3+i,"visible deftemplate name");
-            rm(theEnv,deftemplateArray,(long) sizeof(Deftemplate *) * *count);
+            rm(theEnv,deftemplateArray,sizeof(Deftemplate *) * *count);
             return NULL;
            }
         }
@@ -1183,7 +1184,7 @@ bool LoadFacts(
 bool LoadFactsFromString(
   Environment *theEnv,
   const char *theString,
-  long theMax)
+  size_t theMax)
   {
    const char *theStrRouter = "*** load-facts-from-string ***";
    struct token theToken;
@@ -1194,8 +1195,8 @@ bool LoadFactsFromString(
    /* Initialize string router */
    /*==========================*/
 
-   if ((theMax == -1) ? (!OpenStringSource(theEnv,theStrRouter,theString,0)) :
-                        (!OpenTextSource(theEnv,theStrRouter,theString,0,(size_t) theMax)))
+   if ((theMax == SIZE_MAX) ? (! OpenStringSource(theEnv,theStrRouter,theString,0)) :
+                              (! OpenTextSource(theEnv,theStrRouter,theString,0,theMax)))
      return false;
 
    /*=================*/

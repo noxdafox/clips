@@ -1572,9 +1572,7 @@
     textLength = [[textView string] length];
     NSUInteger inputEnd = textLength;
     NSUInteger inputStart = textLength - charOffset;
-    
-    //NSLog(@"inputStart = %d inputEnd = %d",(int) inputStart, (int) inputEnd);
-    
+        
     /*==================================*/
     /* Look for the original selection. */
     /*==================================*/

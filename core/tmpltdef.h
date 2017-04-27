@@ -116,7 +116,7 @@ struct templateSlot
 struct deftemplateData
   {
    Construct *DeftemplateConstruct;
-   int DeftemplateModuleIndex;
+   unsigned int DeftemplateModuleIndex;
    struct entityRecord DeftemplatePtrRecord;
 #if DEBUGGING_FUNCTIONS
    int DeletedTemplateDebugFlags;

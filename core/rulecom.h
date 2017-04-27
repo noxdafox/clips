@@ -72,7 +72,7 @@
 
 struct joinInformation
   {
-   int whichCE;
+   unsigned short whichCE;
    struct joinNode *theJoin;
    int patternBegin;
    int patternEnd;
@@ -98,12 +98,12 @@ typedef enum
    void                           MatchesCommand(Environment *,UDFContext *,UDFValue *);
    void                           JoinActivityCommand(Environment *,UDFContext *,UDFValue *);
    void                           TimetagFunction(Environment *,UDFContext *,UDFValue *);
-   long                           AlphaJoinCount(Environment *,Defrule *);
-   long                           BetaJoinCount(Environment *,Defrule *);
-   struct joinInformation        *CreateJoinArray(Environment *,long);
-   void                           FreeJoinArray(Environment *,struct joinInformation *,long);
-   void                           AlphaJoins(Environment *,Defrule *,long,struct joinInformation *);
-   void                           BetaJoins(Environment *,Defrule *,long,struct joinInformation *);
+   unsigned short                 AlphaJoinCount(Environment *,Defrule *);
+   unsigned short                 BetaJoinCount(Environment *,Defrule *);
+   struct joinInformation        *CreateJoinArray(Environment *,unsigned short);
+   void                           FreeJoinArray(Environment *,struct joinInformation *,unsigned short);
+   void                           AlphaJoins(Environment *,Defrule *,unsigned short,struct joinInformation *);
+   void                           BetaJoins(Environment *,Defrule *,unsigned short,struct joinInformation *);
    void                           JoinActivityResetCommand(Environment *,UDFContext *,UDFValue *);
    void                           GetFocusFunction(Environment *,UDFContext *,UDFValue *);
    Defmodule                     *GetFocus(Environment *);

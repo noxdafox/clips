@@ -66,13 +66,16 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static bool                    ConstructToCode(Environment *,const char *,const char *,char *,int,FILE *,int,int);
-   static void                    SlotToCode(Environment *,FILE *,struct templateSlot *,int,int,int);
-   static void                    DeftemplateModuleToCode(Environment *,FILE *,Defmodule *,int,int,int);
+   static bool                    ConstructToCode(Environment *,const char *,const char *,char *,
+                                                  unsigned int,FILE *,unsigned int,unsigned int);
+   static void                    SlotToCode(Environment *,FILE *,struct templateSlot *,
+                                             unsigned int,unsigned int,unsigned int);
+   static void                    DeftemplateModuleToCode(Environment *,FILE *,Defmodule *,unsigned int,
+                                                          unsigned int,unsigned int);
    static void                    DeftemplateToCode(Environment *,FILE *,Deftemplate *,
-                                                 int,int,int,int);
-   static void                    CloseDeftemplateFiles(Environment *,FILE *,FILE *,FILE *,int);
-   static void                    InitDeftemplateCode(Environment *,FILE *,int,int);
+                                                    unsigned int,unsigned int,unsigned int,unsigned int);
+   static void                    CloseDeftemplateFiles(Environment *,FILE *,FILE *,FILE *,unsigned int);
+   static void                    InitDeftemplateCode(Environment *,FILE *,unsigned int,unsigned int);
 
 /*********************************************************/
 /* DeftemplateCompilerSetup: Initializes the deftemplate */
@@ -81,7 +84,8 @@
 void DeftemplateCompilerSetup(
   Environment *theEnv)
   {
-   DeftemplateData(theEnv)->DeftemplateCodeItem = AddCodeGeneratorItem(theEnv,"deftemplate",0,NULL,InitDeftemplateCode,ConstructToCode,3);
+   DeftemplateData(theEnv)->DeftemplateCodeItem =
+      AddCodeGeneratorItem(theEnv,"deftemplate",0,NULL,InitDeftemplateCode,ConstructToCode,3);
   }
 
 /*************************************************************/
@@ -93,18 +97,18 @@ static bool ConstructToCode(
   const char *fileName,
   const char *pathName,
   char *fileNameBuffer,
-  int fileID,
+  unsigned int fileID,
   FILE *headerFP,
-  int imageID,
-  int maxIndices)
+  unsigned int imageID,
+  unsigned int maxIndices)
   {
-   int fileCount = 1;
+   unsigned int fileCount = 1;
    Defmodule *theModule;
    Deftemplate *theTemplate;
    struct templateSlot *slotPtr;
-   int slotCount = 0, slotArrayCount = 0, slotArrayVersion = 1;
-   int moduleCount = 0, moduleArrayCount = 0, moduleArrayVersion = 1;
-   int templateArrayCount = 0, templateArrayVersion = 1;
+   unsigned int slotCount = 0, slotArrayCount = 0, slotArrayVersion = 1;
+   unsigned int moduleCount = 0, moduleArrayCount = 0, moduleArrayVersion = 1;
+   unsigned int templateArrayCount = 0, templateArrayVersion = 1;
    FILE *slotFile = NULL, *moduleFile = NULL, *templateFile = NULL;
 
    /*==================================================*/
@@ -212,10 +216,10 @@ static void CloseDeftemplateFiles(
   FILE *moduleFile,
   FILE *templateFile,
   FILE *slotFile,
-  int maxIndices)
+  unsigned int maxIndices)
   {
-   int count = maxIndices;
-   int arrayVersion = 0;
+   unsigned int count = maxIndices;
+   unsigned int arrayVersion = 0;
 
    if (slotFile != NULL)
      {
@@ -244,9 +248,9 @@ static void DeftemplateModuleToCode(
   Environment *theEnv,
   FILE *theFile,
   Defmodule *theModule,
-  int imageID,
-  int maxIndices,
-  int moduleCount)
+  unsigned int imageID,
+  unsigned int maxIndices,
+  unsigned int moduleCount)
   {
 #if MAC_XCD
 #pragma unused(moduleCount)
@@ -268,10 +272,10 @@ static void DeftemplateToCode(
   Environment *theEnv,
   FILE *theFile,
   Deftemplate *theTemplate,
-  int imageID,
-  int maxIndices,
-  int moduleCount,
-  int slotCount)
+  unsigned int imageID,
+  unsigned int maxIndices,
+  unsigned int moduleCount,
+  unsigned int slotCount)
   {
    /*====================*/
    /* Deftemplate Header */
@@ -330,9 +334,9 @@ static void SlotToCode(
   Environment *theEnv,
   FILE *theFile,
   struct templateSlot *theSlot,
-  int imageID,
-  int maxIndices,
-  int slotCount)
+  unsigned int imageID,
+  unsigned int maxIndices,
+  unsigned int slotCount)
   {
    /*===========*/
    /* Slot Name */
@@ -390,11 +394,11 @@ static void SlotToCode(
 void DeftemplateCModuleReference(
   Environment *theEnv,
   FILE *theFile,
-  int count,
-  int imageID,
-  int maxIndices)
+  unsigned long count,
+  unsigned int imageID,
+  unsigned int maxIndices)
   {
-   fprintf(theFile,"MIHS &%s%d_%d[%d]",ModulePrefix(DeftemplateData(theEnv)->DeftemplateCodeItem),
+   fprintf(theFile,"MIHS &%s%u_%lu[%lu]",ModulePrefix(DeftemplateData(theEnv)->DeftemplateCodeItem),
                       imageID,
                       (count / maxIndices) + 1,
                       (count % maxIndices));
@@ -408,14 +412,14 @@ void DeftemplateCConstructReference(
   Environment *theEnv,
   FILE *theFile,
   Deftemplate *theDeftemplate,
-  int imageID,
-  int maxIndices)
+  unsigned int imageID,
+  unsigned int maxIndices)
   {
    if (theDeftemplate == NULL)
      { fprintf(theFile,"NULL"); }
    else
      {
-      fprintf(theFile,"&%s%d_%ld[%ld]",ConstructPrefix(DeftemplateData(theEnv)->DeftemplateCodeItem),
+      fprintf(theFile,"&%s%u_%lu[%lu]",ConstructPrefix(DeftemplateData(theEnv)->DeftemplateCodeItem),
                       imageID,
                       (theDeftemplate->header.bsaveID / maxIndices) + 1,
                       theDeftemplate->header.bsaveID % maxIndices);
@@ -430,8 +434,8 @@ void DeftemplateCConstructReference(
 static void InitDeftemplateCode(
   Environment *theEnv,
   FILE *initFP,
-  int imageID,
-  int maxIndices)
+  unsigned int imageID,
+  unsigned int maxIndices)
   {
 #if MAC_XCD
 #pragma unused(theEnv)

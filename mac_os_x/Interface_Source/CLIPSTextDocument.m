@@ -391,7 +391,7 @@
    PrintString(theEnvironment,STDOUT,"Loading Selection...\n");
    FlushCommandString(theEnvironment);
    
-   OpenTextSource(theEnvironment,"aecompiletext",theString,0,(unsigned) length); // TBD Make the name unique
+   OpenTextSource(theEnvironment,"aecompiletext",theString,0,length); // TBD Make the name unique
    SetPrintWhileLoading(theEnvironment,true);
    LoadConstructsFromLogicalName(theEnvironment,"aecompiletext");
    SetPrintWhileLoading(theEnvironment,false);
@@ -488,7 +488,7 @@
    PrintString(theEnvironment,STDOUT,"Loading Buffer...\n");
    FlushCommandString(theEnvironment);
    
-   OpenTextSource(theEnvironment,"aecompiletext",theString,0,(unsigned) length); // TBD Make the name unique
+   OpenTextSource(theEnvironment,"aecompiletext",theString,0,length); // TBD Make the name unique
    SetPrintWhileLoading(theEnvironment,true);
    LoadConstructsFromLogicalName(theEnvironment,"aecompiletext");
    SetPrintWhileLoading(theEnvironment,false);

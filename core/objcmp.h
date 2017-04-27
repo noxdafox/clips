@@ -64,8 +64,8 @@ struct objectCompilerData
 #define ObjectCompilerData(theEnv) ((struct objectCompilerData *) GetEnvironmentData(theEnv,OBJECT_COMPILER_DATA))
 
    void                    SetupObjectsCompiler(Environment *);
-   void                    PrintClassReference(Environment *,FILE *,Defclass *,int,int);
-   void                    DefclassCModuleReference(Environment *,FILE *,int,int,int);
+   void                    PrintClassReference(Environment *,FILE *,Defclass *,unsigned,unsigned);
+   void                    DefclassCModuleReference(Environment *,FILE *,unsigned long,unsigned int,unsigned int);
 
 #endif /* _H_objcmp */
 

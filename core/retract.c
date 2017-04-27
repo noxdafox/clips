@@ -569,7 +569,7 @@ void ReturnPartialMatch(
      {
       if (waste->binds[0].gm.theMatch->markers != NULL)
         { ReturnMarkers(theEnv,waste->binds[0].gm.theMatch->markers); }
-      rm(theEnv,waste->binds[0].gm.theMatch,(int) sizeof(struct alphaMatch));
+      rm(theEnv,waste->binds[0].gm.theMatch,sizeof(struct alphaMatch));
      }
 
    /*=================================================*/
@@ -584,7 +584,7 @@ void ReturnPartialMatch(
    /* Return the partial match to the pool of free memory. */
    /*======================================================*/
 
-   rtn_var_struct(theEnv,partialMatch,(int) sizeof(struct genericMatch *) *
+   rtn_var_struct(theEnv,partialMatch,sizeof(struct genericMatch *) *
                   (waste->bcount - 1),
                   waste);
   }
@@ -608,7 +608,7 @@ void DestroyPartialMatch(
      {
       if (waste->binds[0].gm.theMatch->markers != NULL)
         { ReturnMarkers(theEnv,waste->binds[0].gm.theMatch->markers); }
-      rm(theEnv,waste->binds[0].gm.theMatch,(int) sizeof(struct alphaMatch));
+      rm(theEnv,waste->binds[0].gm.theMatch,sizeof(struct alphaMatch));
      }
 
    /*=================================================*/
@@ -623,7 +623,7 @@ void DestroyPartialMatch(
    /* Return the partial match to the pool of free memory. */
    /*======================================================*/
 
-   rtn_var_struct(theEnv,partialMatch,(int) sizeof(struct genericMatch *) *
+   rtn_var_struct(theEnv,partialMatch,sizeof(struct genericMatch *) *
                   (waste->bcount - 1),
                   waste);
   }

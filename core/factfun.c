@@ -243,8 +243,6 @@ void FactSlotValue(
   const char *theSlotName,
   CLIPSValue *returnValue)
   {
-   short position;
-
    /*==================================================*/
    /* Make sure the slot exists (the symbol implied is */
    /* used for the implied slot of an ordered fact).   */
@@ -262,7 +260,7 @@ void FactSlotValue(
         }
      }
 
-   else if (FindSlot(theFact->whichDeftemplate,CreateSymbol(theEnv,theSlotName),&position) == NULL)
+   else if (FindSlot(theFact->whichDeftemplate,CreateSymbol(theEnv,theSlotName),NULL) == NULL)
      {
       SetEvaluationError(theEnv,true);
       InvalidDeftemplateSlotMessage(theEnv,theSlotName,
@@ -332,7 +330,7 @@ void FactSlotNames(
 
    if (theFact->whichDeftemplate->implied)
      {
-      theList = CreateMultifield(theEnv,(int) 1);
+      theList = CreateMultifield(theEnv,1);
       theList->contents[0].lexemeValue = CreateSymbol(theEnv,"implied");
       returnValue->value = theList;
       return;

@@ -139,21 +139,21 @@
    static void                    SaveDefgenerics(Environment *,Defmodule *,const char *,void *);
    static void                    SaveDefmethods(Environment *,Defmodule *,const char *,void *);
    static void                    SaveDefmethodsForDefgeneric(Environment *,ConstructHeader *,void *);
-   static void                    RemoveDefgenericMethod(Environment *,Defgeneric *,long);
+   static void                    RemoveDefgenericMethod(Environment *,Defgeneric *,unsigned short);
 
 #endif
 
 #if DEBUGGING_FUNCTIONS
-   static long                    ListMethodsForGeneric(Environment *,const char *,Defgeneric *);
+   static unsigned short          ListMethodsForGeneric(Environment *,const char *,Defgeneric *);
    static bool                    DefgenericWatchAccess(Environment *,int,bool,Expression *);
    static bool                    DefgenericWatchPrint(Environment *,const char *,int,Expression *);
    static bool                    DefmethodWatchAccess(Environment *,int,bool,Expression *);
    static bool                    DefmethodWatchPrint(Environment *,const char *,int,Expression *);
    static bool                    DefmethodWatchSupport(Environment *,const char *,const char *,bool,
-                                                        void (*)(Environment *,const char *,Defgeneric *,unsigned),
-                                                        void (*)(Defgeneric *,unsigned,bool),
+                                                        void (*)(Environment *,const char *,Defgeneric *,unsigned short),
+                                                        void (*)(Defgeneric *,unsigned short,bool),
                                                         Expression *);
-   static void                    PrintMethodWatchFlag(Environment *,const char *,Defgeneric *,unsigned);
+   static void                    PrintMethodWatchFlag(Environment *,const char *,Defgeneric *,unsigned short);
 #endif
 
 /* =========================================
@@ -472,11 +472,11 @@ Defgeneric *GetNextDefgeneric(
   NOTES        : If index == 0, the index of the first
                    method is returned
  ***********************************************************/
-unsigned GetNextDefmethod(
+unsigned short GetNextDefmethod(
   Defgeneric *theDefgeneric,
-  unsigned theIndex)
+  unsigned short theIndex)
   {
-   long mi;
+   unsigned short mi;
 
    if (theIndex == 0)
      {
@@ -543,14 +543,18 @@ bool DefgenericIsDeletable(
  ***************************************************/
 bool DefmethodIsDeletable(
   Defgeneric *theDefgeneric,
-  unsigned theIndex)
+  unsigned short theIndex)
   {
    Environment *theEnv = theDefgeneric->header.env;
+   unsigned short mi;
    
    if (! ConstructsDeletable(theEnv))
      { return false; }
 
-   if (theDefgeneric->methods[FindMethodByIndex(theDefgeneric,theIndex)].system)
+   mi = FindMethodByIndex(theDefgeneric,theIndex);
+   if (mi == METHOD_NOT_FOUND) return false;
+   
+   if (theDefgeneric->methods[mi].system)
      return false;
 
 #if (! BLOAD_ONLY) && (! RUN_TIME)
@@ -607,7 +611,7 @@ void UndefmethodCommand(
   {
    UDFValue theArg;
    Defgeneric *gfunc;
-   long mi;
+   unsigned short mi;
 
    if (! UDFFirstArgument(context,SYMBOL_BIT,&theArg)) return;
 
@@ -635,7 +639,7 @@ void UndefmethodCommand(
      }
    else if (CVIsType(&theArg,INTEGER_BIT))
      {
-      mi = (long) theArg.integerValue->contents;
+      mi = (unsigned short) theArg.integerValue->contents;
       if (mi == 0)
         {
          PrintErrorID(theEnv,"GENRCCOM",2,false);
@@ -717,7 +721,7 @@ bool Undefgeneric(
  **************************************************************/
 bool Undefmethod(
   Defgeneric *theDefgeneric,
-  unsigned mi,
+  unsigned short mi,
   Environment *allEnv)
   {
    Environment *theEnv;
@@ -737,7 +741,7 @@ bool Undefmethod(
      {
       PrintGenericName(theEnv,WERROR,theDefgeneric);
       PrintString(theEnv,WERROR," #");
-      PrintInteger(theEnv,WERROR,(long long) mi);
+      PrintUnsignedInteger(theEnv,WERROR,mi);
      }
    else
      PrintString(theEnv,WERROR,"*");
@@ -754,7 +758,7 @@ bool Undefmethod(
         {
          PrintString(theEnv,WERROR,DefgenericName(theDefgeneric));
          PrintString(theEnv,WERROR," #");
-         PrintInteger(theEnv,WERROR,(long long) mi);
+         PrintUnsignedInteger(theEnv,WERROR,mi);
         }
       else
         PrintString(theEnv,WERROR,"*");
@@ -792,8 +796,8 @@ bool Undefmethod(
      { RemoveAllExplicitMethods(theEnv,theDefgeneric); }
    else
      {
-      long nmi = CheckMethodExists(theEnv,"undefmethod",theDefgeneric,mi);
-      if (nmi == -1)
+      unsigned short nmi = CheckMethodExists(theEnv,"undefmethod",theDefgeneric,mi);
+      if (nmi == METHOD_NOT_FOUND)
         {
          GCBlockEnd(theEnv,&gcb);
          return false;
@@ -823,7 +827,7 @@ bool Undefmethod(
  *****************************************************/
 void DefmethodDescription(
   Defgeneric *theDefgeneric,
-  unsigned theIndex,
+  unsigned short theIndex,
   StringBuilder *theSB)
   {
    long mi;
@@ -833,7 +837,8 @@ void DefmethodDescription(
 
    OpenStringBuilderDestination(theEnv,"MethodDescription",theSB);
 
-   PrintMethod(theEnv,&theDefgeneric->methods[mi],theSB);
+   if (mi != METHOD_NOT_FOUND)
+     { PrintMethod(theEnv,&theDefgeneric->methods[mi],theSB); }
    
    CloseStringBuilderDestination(theEnv,"MethodDescription");
 
@@ -889,12 +894,16 @@ void DefgenericSetWatch(
  *********************************************************/
 bool DefmethodGetWatch(
   Defgeneric *theGeneric,
-  unsigned theIndex)
+  unsigned short theIndex)
   {
-   long mi;
+   unsigned short mi;
 
    mi = FindMethodByIndex(theGeneric,theIndex);
-   return theGeneric->methods[mi].trace;
+   
+   if (mi != METHOD_NOT_FOUND)
+     { return theGeneric->methods[mi].trace; }
+     
+   return false;
   }
 
 /*********************************************************
@@ -911,13 +920,15 @@ bool DefmethodGetWatch(
  *********************************************************/
 void DefmethodSetWatch(
   Defgeneric *theGeneric,
-  unsigned theIndex,
+  unsigned short theIndex,
   bool newState)
   {
-   long mi;
+   unsigned short mi;
 
    mi = FindMethodByIndex(theGeneric,theIndex);
-   theGeneric->methods[mi].trace = newState;
+   
+   if (mi != METHOD_NOT_FOUND)
+     { theGeneric->methods[mi].trace = newState; }
   }
 
 
@@ -955,7 +966,7 @@ void PPDefmethodCommand(
    UDFValue theArg;
    const char *gname;
    Defgeneric *gfunc;
-   int gi;
+   unsigned short gi;
 
    if (! UDFFirstArgument(context,SYMBOL_BIT,&theArg)) return;
    gname = theArg.lexemeValue->contents;
@@ -965,11 +976,11 @@ void PPDefmethodCommand(
    gfunc = CheckGenericExists(theEnv,"ppdefmethod",gname);
    if (gfunc == NULL)
      return;
-   gi = CheckMethodExists(theEnv,"ppdefmethod",gfunc,(long) theArg.integerValue->contents);
-   if (gi == -1)
+   gi = CheckMethodExists(theEnv,"ppdefmethod",gfunc,(unsigned short) theArg.integerValue->contents);
+   if (gi == METHOD_NOT_FOUND)
      return;
    if (gfunc->methods[gi].header.ppForm != NULL)
-     PrintInChunks(theEnv,STDOUT,gfunc->methods[gi].header.ppForm);
+     PrintString(theEnv,STDOUT,gfunc->methods[gi].header.ppForm);
   }
 
 /******************************************************
@@ -1012,12 +1023,16 @@ void ListDefmethodsCommand(
  ***************************************************************/
 const char *DefmethodPPForm(
   Defgeneric *theDefgeneric,
-  unsigned theIndex)
+  unsigned short theIndex)
   {
-   int mi;
+   unsigned short mi;
 
    mi = FindMethodByIndex(theDefgeneric,theIndex);
-   return theDefgeneric->methods[mi].header.ppForm;
+   
+   if (mi != METHOD_NOT_FOUND)
+     { return theDefgeneric->methods[mi].header.ppForm; }
+     
+   return "";
   }
 
 /***************************************************
@@ -1070,12 +1085,12 @@ void ListDefmethods(
   Defgeneric *theDefgeneric)
   {
    Defgeneric *gfunc;
-   long count;
+   unsigned long count;
    if (theDefgeneric != NULL)
      count = ListMethodsForGeneric(theEnv,logicalName,theDefgeneric);
    else
      {
-      count = 0L;
+      count = 0;
       for (gfunc = GetNextDefgeneric(theEnv,NULL) ;
            gfunc != NULL ;
            gfunc = GetNextDefgeneric(theEnv,gfunc))
@@ -1206,7 +1221,7 @@ void GetDefmethodList(
    for (svg = gfunc ;
         gfunc != NULL ;
         gfunc = GetNextDefgeneric(theEnv,gfunc))
-     count += (unsigned long) gfunc->mcnt;
+     count += gfunc->mcnt;
    count *= 2;
    theList = CreateMultifield(theEnv,count);
    returnValue->value = theList;
@@ -1240,6 +1255,7 @@ void GetMethodRestrictionsCommand(
    UDFValue theArg;
    Defgeneric *gfunc;
    CLIPSValue result;
+   unsigned short mi;
 
    if (! UDFFirstArgument(context,SYMBOL_BIT,&theArg))
      { return; }
@@ -1253,12 +1269,15 @@ void GetMethodRestrictionsCommand(
    if (! UDFNextArgument(context,INTEGER_BIT,&theArg))
      { return; }
 
-   if (CheckMethodExists(theEnv,"get-method-restrictions",gfunc,(long) theArg.integerValue->contents) == -1)
+   mi = (unsigned short) theArg.integerValue->contents;
+   
+   if (CheckMethodExists(theEnv,"get-method-restrictions",gfunc,mi) == METHOD_NOT_FOUND)
      {
       SetMultifieldErrorValue(theEnv,returnValue);
       return;
      }
-   GetMethodRestrictions(gfunc,(unsigned) theArg.integerValue->contents,&result);
+     
+   GetMethodRestrictions(gfunc,mi,&result);
    CLIPSToUDFValue(&result,returnValue);
   }
 
@@ -1300,13 +1319,13 @@ void GetMethodRestrictionsCommand(
  ***********************************************************************/
 void GetMethodRestrictions(
   Defgeneric *theDefgeneric,
-  unsigned mi,
+  unsigned short mi,
   CLIPSValue *returnValue)
   {
    short i,j;
    Defmethod *meth;
    RESTRICTION *rptr;
-   long count;
+   size_t count;
    int roffset,rstrctIndex;
    Multifield *theList;
    Environment *theEnv = theDefgeneric->header.env;
@@ -1318,8 +1337,14 @@ void GetMethodRestrictions(
    theList = CreateMultifield(theEnv,count);
 
    returnValue->value = theList;
-   theList->contents[0].integerValue = CreateInteger(theEnv,(long long) meth->minRestrictions);
-   theList->contents[1].integerValue = CreateInteger(theEnv,(long long) meth->maxRestrictions);
+   if (meth->minRestrictions == RESTRICTIONS_UNBOUNDED)
+     { theList->contents[0].integerValue = CreateInteger(theEnv,-1); }
+   else
+     { theList->contents[0].integerValue = CreateInteger(theEnv,(long long) meth->minRestrictions); }
+   if (meth->maxRestrictions == RESTRICTIONS_UNBOUNDED)
+     { theList->contents[1].integerValue = CreateInteger(theEnv,-1); }
+   else
+     { theList->contents[1].integerValue = CreateInteger(theEnv,(long long) meth->maxRestrictions); }
    theList->contents[2].integerValue = CreateInteger(theEnv,(long long) meth->restrictionCount);
    roffset = 3 + meth->restrictionCount;
    rstrctIndex = 3;
@@ -1517,7 +1542,7 @@ static void SaveDefmethodsForDefgeneric(
      {
       if (gfunc->methods[i].header.ppForm != NULL)
         {
-         PrintInChunks(theEnv,logName,gfunc->methods[i].header.ppForm);
+         PrintString(theEnv,logName,gfunc->methods[i].header.ppForm);
          PrintString(theEnv,logName,"\n");
         }
      }
@@ -1538,10 +1563,10 @@ static void SaveDefmethodsForDefgeneric(
 static void RemoveDefgenericMethod(
   Environment *theEnv,
   Defgeneric *gfunc,
-  long gi)
+  unsigned short gi)
   {
    Defmethod *narr;
-   long b,e;
+   unsigned short b,e;
 
    if (gfunc->methods[gi].system)
      {
@@ -1555,7 +1580,7 @@ static void RemoveDefgenericMethod(
    DeleteMethodInfo(theEnv,gfunc,&gfunc->methods[gi]);
    if (gfunc->mcnt == 1)
      {
-      rm(theEnv,gfunc->methods,(int) sizeof(Defmethod));
+      rm(theEnv,gfunc->methods,sizeof(Defmethod));
       gfunc->mcnt = 0;
       gfunc->methods = NULL;
      }
@@ -1565,7 +1590,7 @@ static void RemoveDefgenericMethod(
       narr = (Defmethod *) gm2(theEnv,(sizeof(Defmethod) * gfunc->mcnt));
       for (b = e = 0 ; b < gfunc->mcnt ; b++ , e++)
         {
-         if (((int) b) == gi)
+         if (b == gi)
            e++;
          GenCopyMemory(Defmethod,1,&narr[b],&gfunc->methods[e]);
         }
@@ -1588,12 +1613,12 @@ static void RemoveDefgenericMethod(
   SIDE EFFECTS : None
   NOTES        : None
  ******************************************************/
-static long ListMethodsForGeneric(
+static unsigned short ListMethodsForGeneric(
   Environment *theEnv,
   const char *logicalName,
   Defgeneric *gfunc)
   {
-   long gi;
+   unsigned short gi;
    StringBuilder *theSB;
    
    theSB = CreateStringBuilder(theEnv,256);
@@ -1609,7 +1634,7 @@ static long ListMethodsForGeneric(
      
    SBDispose(theSB);
    
-   return((long) gfunc->mcnt);
+   return gfunc->mcnt;
   }
 
 /******************************************************************
@@ -1742,13 +1767,13 @@ static bool DefmethodWatchSupport(
   const char *funcName,
   const char *logName,
   bool newState,
-  void (*printFunc)(Environment *,const char *,Defgeneric *,unsigned),
-  void (*traceFunc)(Defgeneric *,unsigned,bool),
+  void (*printFunc)(Environment *,const char *,Defgeneric *,unsigned short),
+  void (*traceFunc)(Defgeneric *,unsigned short,bool),
   Expression *argExprs)
   {
    Defgeneric *theGeneric;
-   unsigned theMethod = 0;
-   int argIndex = 2;
+   unsigned short theMethod = 0;
+   unsigned int argIndex = 2;
    UDFValue genericName, methodIndex;
    Defmodule *theModule;
 
@@ -1816,8 +1841,8 @@ static bool DefmethodWatchSupport(
            return false;
          if ((methodIndex.header->type != INTEGER_TYPE) ? false :
              ((methodIndex.integerValue->contents <= 0) ? false :
-              (FindMethodByIndex(theGeneric,theMethod) != -1)))
-           theMethod = (long) methodIndex.integerValue->contents;
+              (FindMethodByIndex(theGeneric,theMethod) != METHOD_NOT_FOUND)))
+           theMethod = (unsigned short) methodIndex.integerValue->contents;
          else
            {
             ExpectedTypeError1(theEnv,funcName,argIndex,"method index");
@@ -1863,7 +1888,7 @@ static void PrintMethodWatchFlag(
   Environment *theEnv,
   const char *logName,
   Defgeneric *theGeneric,
-  unsigned theMethod)
+  unsigned short theMethod)
   {
    StringBuilder *theSB = CreateStringBuilder(theEnv,60);
 

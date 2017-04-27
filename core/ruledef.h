@@ -88,7 +88,7 @@ struct defrule
   {
    ConstructHeader header;
    int salience;
-   int localVarCnt;
+   unsigned short localVarCnt;
    unsigned int complexity      : 11;
    unsigned int afterBreakpoint :  1;
    unsigned int watchActivation :  1;
@@ -126,8 +126,8 @@ struct defruleModule
 struct defruleData
   {
    Construct *DefruleConstruct;
-   int DefruleModuleIndex;
-   long long CurrentEntityTimeTag;
+   unsigned DefruleModuleIndex;
+   unsigned long long CurrentEntityTimeTag;
    struct alphaMemoryHash **AlphaMemoryTable;
    bool BetaMemoryResizingFlag;
    struct joinLink *RightPrimeJoins;

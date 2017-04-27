@@ -80,7 +80,7 @@ struct patternParser
   {
    const char *name;
    struct patternEntityRecord *entityType;
-   int positionInArray;
+   unsigned short positionInArray;
    bool (*recognizeFunction)(CLIPSLexeme *);
    struct lhsParseNode *(*parseFunction)(Environment *,const char *,struct token *);
    bool (*postAnalysisFunction)(Environment *,struct lhsParseNode *);
@@ -96,9 +96,9 @@ struct patternParser
    struct expr *(*genComparePNValuesFunction)(Environment *,struct lhsParseNode *,struct lhsParseNode *);
    void (*returnUserDataFunction)(Environment *,void *);
    void *(*copyUserDataFunction)(Environment *,void *);
-   void (*markIRPatternFunction)(Environment *,struct patternNodeHeader *,int);
+   void (*markIRPatternFunction)(Environment *,struct patternNodeHeader *,bool);
    void (*incrementalResetFunction)(Environment *);
-   void (*codeReferenceFunction)(Environment *,void *,FILE *,int,int);
+   void (*codeReferenceFunction)(Environment *,void *,FILE *,unsigned int,unsigned int);
    int priority;
    struct patternParser *next;
   };
@@ -118,7 +118,7 @@ struct patternData
   {
    struct patternParser *ListOfPatternParsers;
    struct patternParser *PatternParserArray[MAX_POSITIONS];
-   int NextPosition;
+   unsigned short NextPosition;
    struct reservedSymbol *ListOfReservedPatternSymbols;
    bool WithinNotCE;
    int GlobalSalience;
@@ -133,16 +133,17 @@ struct patternData
    void                           InitializePatterns(Environment *);
    bool                           AddPatternParser(Environment *,struct patternParser *);
    struct patternParser          *FindPatternParser(Environment *,const char *);
-   void                           DetachPattern(Environment *,int,struct patternNodeHeader *);
+   void                           DetachPattern(Environment *,unsigned short,struct patternNodeHeader *);
    void                           GetNextPatternEntity(Environment *,
                                                        struct patternParser **,
                                                        struct patternEntity **);
-   struct patternParser          *GetPatternParser(Environment *,int);
+   struct patternParser          *GetPatternParser(Environment *,unsigned short);
    struct lhsParseNode           *RestrictionParse(Environment *,const char *,struct token *,bool,
-                                                   CLIPSLexeme *,short,
-                                                   struct constraintRecord *,short);
+                                                   CLIPSLexeme *,unsigned short,
+                                                   struct constraintRecord *,unsigned short);
    bool                           PostPatternAnalysis(Environment *,struct lhsParseNode *);
-   void                           PatternNodeHeaderToCode(Environment *,FILE *,struct patternNodeHeader *,int,int);
+   void                           PatternNodeHeaderToCode(Environment *,FILE *,struct patternNodeHeader *,
+                                                          unsigned int,unsigned int);
    void                           AddReservedPatternSymbol(Environment *,const char *,const char *);
    bool                           ReservedPatternSymbol(Environment *,const char *,const char *);
    void                           ReservedPatternSymbolErrorMsg(Environment *,const char *,const char *);

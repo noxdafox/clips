@@ -175,8 +175,8 @@ struct memoryPtr
 
 struct memoryData
   {
-   long MemoryAmount;
-   long MemoryCalls;
+   long long MemoryAmount;
+   long long MemoryCalls;
    bool ConserveMemory;
    OutOfMemoryFunction *OutOfMemoryCallback;
    struct memoryPtr *TempMemoryPtr;
@@ -192,10 +192,10 @@ struct memoryData
    OutOfMemoryFunction           *SetOutOfMemoryFunction(Environment *,OutOfMemoryFunction *);
    void                           genfree(Environment *,void *,size_t);
    void                          *genrealloc(Environment *,void *,size_t,size_t);
-   long                           MemUsed(Environment *);
-   long                           MemRequests(Environment *);
-   long                           UpdateMemoryUsed(Environment *,long);
-   long                           UpdateMemoryRequests(Environment *,long);
+   long long                      MemUsed(Environment *);
+   long long                      MemRequests(Environment *);
+   long long                      UpdateMemoryUsed(Environment *,long long);
+   long long                      UpdateMemoryRequests(Environment *,long long);
    long                           ReleaseMem(Environment *,long);
    void                          *gm1(Environment *,size_t);
    void                          *gm2(Environment *,size_t);

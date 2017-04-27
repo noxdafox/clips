@@ -77,7 +77,7 @@ struct multifieldBuilder
    size_t bufferMaximum;
   };
 
-   Multifield                    *CreateUnmanagedMultifield(Environment *,long);
+   Multifield                    *CreateUnmanagedMultifield(Environment *,unsigned long);
    void                           ReturnMultifield(Environment *,Multifield *);
    void                           IncrementMultifieldReferenceCount(Environment *,Multifield *);
    void                           DecrementMultifieldReferenceCount(Environment *,Multifield *);
@@ -89,7 +89,7 @@ struct multifieldBuilder
    void                           FlushMultifields(Environment *);
    void                           DuplicateMultifield(Environment *,UDFValue *,UDFValue *);
    void                           PrintMultifield(Environment *,const char *,Multifield *);
-   void                           PrintMultifieldDriver(Environment *,const char *,Multifield *,long,long,bool);
+   void                           PrintMultifieldDriver(Environment *,const char *,Multifield *,size_t,size_t,bool);
    bool                           MultifieldDOsEqual(UDFValue *,UDFValue *);
    void                           StoreInMultifield(Environment *,UDFValue *,Expression *,bool);
    Multifield                    *CopyMultifield(Environment *,Multifield *);
@@ -99,7 +99,7 @@ struct multifieldBuilder
    Multifield                    *GetMultifieldList(Environment *);
    CLIPSLexeme                   *ImplodeMultifield(Environment *,UDFValue *);
    void                           EphemerateMultifield(Environment *,Multifield *);
-   Multifield                    *ArrayToMultifield(Environment *,CLIPSValue *,long size);
+   Multifield                    *ArrayToMultifield(Environment *,CLIPSValue *,unsigned long);
    void                           NormalizeMultifield(Environment *,UDFValue *);
    void                           CLIPSToUDFValue(CLIPSValue *,UDFValue *);
    MultifieldBuilder             *CreateMultifieldBuilder(Environment *,size_t);

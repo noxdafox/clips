@@ -464,11 +464,11 @@ bool DeleteRouter(
          if (lastPtr == NULL)
            {
             RouterData(theEnv)->ListOfRouters = currentPtr->next;
-            rm(theEnv,currentPtr,(int) sizeof(struct router));
+            rm(theEnv,currentPtr,sizeof(struct router));
             return true;
            }
          lastPtr->next = currentPtr->next;
-         rm(theEnv,currentPtr,(int) sizeof(struct router));
+         rm(theEnv,currentPtr,sizeof(struct router));
          return true;
         }
       lastPtr = currentPtr;

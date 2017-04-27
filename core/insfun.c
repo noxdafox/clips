@@ -214,7 +214,7 @@ void InitializeInstanceTable(
    int i;
 
    InstanceData(theEnv)->InstanceTable = (Instance **)
-                    gm2(theEnv,(int) (sizeof(Instance *) * INSTANCE_TABLE_HASH_SIZE));
+                    gm2(theEnv,sizeof(Instance *) * INSTANCE_TABLE_HASH_SIZE);
    for (i = 0 ; i < INSTANCE_TABLE_HASH_SIZE ; i++)
      InstanceData(theEnv)->InstanceTable[i] = NULL;
   }
@@ -285,7 +285,7 @@ unsigned HashInstance(
    unsigned long tally;
 
    tally = ((unsigned long) cname->bucket) * BIG_PRIME;
-   return((unsigned) (tally % INSTANCE_TABLE_HASH_SIZE));
+   return (unsigned) (tally % INSTANCE_TABLE_HASH_SIZE);
   }
 
 /***************************************************
@@ -355,7 +355,7 @@ void RemoveInstanceData(
             AddToMultifieldList(theEnv,sp->multifieldValue);
            }
          else
-           AtomDeinstall(theEnv,(int) sp->type,sp->value);
+           AtomDeinstall(theEnv,sp->type,sp->value);
          sp->value = NULL;
         }
      }
@@ -546,13 +546,15 @@ int FindInstanceTemplateSlot(
   Defclass *cls,
   CLIPSLexeme *sname)
   {
-   int sid;
+   unsigned short sid;
 
    sid = FindSlotNameID(theEnv,sname);
-   if (sid == -1)
+   if (sid == SLOT_NAME_NOT_FOUND)
      return -1;
-   if (sid > (int) cls->maxSlotNameID)
+     
+   if (sid > cls->maxSlotNameID)
      return -1;
+     
    return((int) cls->slotNameMap[sid] - 1);
   }
 
@@ -677,14 +679,14 @@ bool DirectPutSlotValue(
          if (sp->desc->multiple)
            IncrementMultifieldReferenceCount(theEnv,bsp->multifieldValue);
          else
-           AtomInstall(theEnv,(int) bsp->type,bsp->value);
+           AtomInstall(theEnv,bsp->type,bsp->value);
         }
      }
 
 #endif
    if (sp->desc->multiple == 0)
      {
-      AtomDeinstall(theEnv,(int) sp->type,sp->value);
+      AtomDeinstall(theEnv,sp->type,sp->value);
 
       /* ======================================
          Assumed that multfield already checked
@@ -700,7 +702,7 @@ bool DirectPutSlotValue(
          sp->type = val->header->type;
          sp->value = val->value;
         }
-      AtomInstall(theEnv,(int) sp->type,sp->value);
+      AtomInstall(theEnv,sp->type,sp->value);
       setVal->value = sp->value;
      }
    else
@@ -749,10 +751,10 @@ bool DirectPutSlotValue(
       PrintString(theEnv,STDOUT,ins->name->contents);
       PrintString(theEnv,STDOUT," <- ");
       if (sp->type != MULTIFIELD_TYPE)
-        PrintAtom(theEnv,STDOUT,(int) sp->type,sp->value);
+        PrintAtom(theEnv,STDOUT,sp->type,sp->value);
       else
         PrintMultifieldDriver(theEnv,STDOUT,sp->multifieldValue,0,
-                              (long) (sp->multifieldValue->length - 1),true);
+                              sp->multifieldValue->length,true);
       PrintString(theEnv,STDOUT,"\n");
      }
 #endif
@@ -814,7 +816,7 @@ bool ValidSlotValue(
   Instance *ins,
   const char *theCommand)
   {
-   int violationCode;
+   ConstraintViolationType violationCode;
 
    /* ===================================
       Special NoParamValue means to reset
@@ -969,7 +971,7 @@ void StaleInstanceAddress(
    if (whichArg > 0)
      {
       PrintString(theEnv,WERROR,", argument #");
-      PrintInteger(theEnv,WERROR,(long long) whichArg);
+      PrintInteger(theEnv,WERROR,whichArg);
      }
    PrintString(theEnv,WERROR,".\n");
   }
@@ -1182,7 +1184,7 @@ void DecrementObjectBasisCount(
               if (theInstance->basisSlots[i].desc->multiple)
                 DecrementMultifieldReferenceCount(theEnv,theInstance->basisSlots[i].multifieldValue);
               else
-                AtomDeinstall(theEnv,(int) theInstance->basisSlots[i].type,
+                AtomDeinstall(theEnv,theInstance->basisSlots[i].type,
                               theInstance->basisSlots[i].value);
              }
          rm(theEnv,theInstance->basisSlots,
@@ -1383,7 +1385,7 @@ static void NetworkModifyForSharedSlot(
   SlotDescriptor *sd)
   {
    Instance *ins;
-   long i;
+   unsigned long i;
 
    /* ================================================
       Make sure we haven't already examined this class

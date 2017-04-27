@@ -3,7 +3,7 @@
    /*                                                     */
    /*            CLIPS Version 6.40  10/18/16             */
    /*                                                     */
-   /*           INSTANCE MULTIFIELD_TYPE SLOT MODULE           */
+   /*           INSTANCE MULTIFIELD_TYPE SLOT MODULE      */
    /*******************************************************/
 
 /*************************************************************/
@@ -81,7 +81,7 @@
 
    static Instance               *CheckMultifieldSlotInstance(UDFContext *);
    static InstanceSlot           *CheckMultifieldSlotModify(Environment *,int,const char *,Instance *,
-                                                            Expression *,long *,long *,UDFValue *);
+                                                            Expression *,long long *,long long *,UDFValue *);
    static void                    AssignSlotToDataObject(UDFValue *,InstanceSlot *);
 
 /* =========================================
@@ -133,7 +133,9 @@ void MVSlotReplaceCommand(
    UDFValue newval,newseg,oldseg;
    Instance *ins;
    InstanceSlot *sp;
-   long rb,re;
+   long long start, end;
+   size_t rs, re, srcLen, dstLen;
+   size_t i, j, k;
    Expression arg;
 
    returnValue->lexemeValue = FalseSymbol(theEnv);
@@ -141,12 +143,82 @@ void MVSlotReplaceCommand(
    if (ins == NULL)
      return;
    sp = CheckMultifieldSlotModify(theEnv,REPLACE,"slot-replace$",ins,
-                            GetFirstArgument()->nextArg,&rb,&re,&newval);
+                            GetFirstArgument()->nextArg,&start,&end,&newval);
    if (sp == NULL)
      return;
    AssignSlotToDataObject(&oldseg,sp);
-   if (ReplaceMultiValueField(theEnv,&newseg,&oldseg,rb,re,&newval,"slot-replace$") == false)
-     return;
+   
+   /*===========================================*/
+   /* Verify the start and end index arguments. */
+   /*===========================================*/
+
+   if ((end < start) || (start < 1) || (end < 1) || // TBD Refactor
+       (((long long) ((size_t) start)) != start) ||
+       (((long long) ((size_t) end)) != end))
+     {
+      MVRangeError(theEnv,start,end,oldseg.range,"slot-replace$");
+      return;
+     }
+      
+   /*============================================*/
+   /* Convert the indices to unsigned zero-based */
+   /* values including the begin value.          */
+   /*============================================*/
+   
+   rs = (size_t) start;
+   re = (size_t) end;
+   srcLen = oldseg.range;
+   
+   if ((rs > srcLen) || (re > srcLen))
+     {
+      MVRangeError(theEnv,start,end,oldseg.range,"slot-replace$");
+      return;
+     }
+     
+   rs--;
+   re--;
+   rs += oldseg.begin;
+   re += oldseg.begin;
+
+   dstLen = srcLen - (re - rs + 1); // TBD Refactor
+   newseg.begin = 0;
+   newseg.range = dstLen;
+   newseg.multifieldValue = CreateMultifield(theEnv,dstLen);
+
+
+   /*===================================*/
+   /* Delete the members from the slot. */
+   /*===================================*/
+   
+   if (newval.header->type == MULTIFIELD_TYPE) // TBD Refactor
+     { dstLen = srcLen - (re - rs + 1) + newval.range; }
+   else
+     { dstLen = srcLen - (re - rs); }
+     
+   newseg.begin = 0;
+   newseg.range = dstLen;
+   newseg.multifieldValue = CreateMultifield(theEnv,dstLen);
+
+   for (i = oldseg.begin, j = 0; i < (oldseg.begin + oldseg.range); i++)
+     {
+      if (i == rs)
+        {
+         if (newval.header->type == MULTIFIELD_TYPE)
+           {
+            for (k = newval.begin; k < (newval.begin + newval.range); k++)
+              { newseg.multifieldValue->contents[j++].value = newval.multifieldValue->contents[k].value; }
+           }
+         else
+           { newseg.multifieldValue->contents[j++].value = newval.value; }
+           
+         continue;
+        }
+      else if ((i > rs) && (i <= re))
+        { continue; }
+      
+      newseg.multifieldValue->contents[j++].value = oldseg.multifieldValue->contents[i].value;
+     }
+     
    arg.type = MULTIFIELD_TYPE;
    arg.value = &newseg;
    arg.nextArg = NULL;
@@ -173,8 +245,9 @@ void MVSlotInsertCommand(
    UDFValue newval,newseg,oldseg;
    Instance *ins;
    InstanceSlot *sp;
-   long theIndex;
+   long long theIndex;
    Expression arg;
+   size_t uindex;
 
    returnValue->lexemeValue = FalseSymbol(theEnv);
    ins = CheckMultifieldSlotInstance(context);
@@ -184,9 +257,21 @@ void MVSlotInsertCommand(
                             GetFirstArgument()->nextArg,&theIndex,NULL,&newval);
    if (sp == NULL)
      return;
+     
    AssignSlotToDataObject(&oldseg,sp);
-   if (InsertMultiValueField(theEnv,&newseg,&oldseg,theIndex,&newval,"slot-insert$") == false)
+   
+   if ((((long long) ((size_t) theIndex)) != theIndex) ||
+       (theIndex < 1))
+ 	 {
+      MVRangeError(theEnv,theIndex,theIndex,oldseg.range,"slot-insert$");
+	  return;
+	 }
+
+   uindex = (size_t) theIndex;
+
+   if (InsertMultiValueField(theEnv,&newseg,&oldseg,uindex,&newval,"slot-insert$") == false)
      return;
+     
    arg.type = MULTIFIELD_TYPE;
    arg.value = &newseg;
    arg.nextArg = NULL;
@@ -214,20 +299,72 @@ void MVSlotDeleteCommand(
    UDFValue newseg,oldseg;
    Instance *ins;
    InstanceSlot *sp;
-   long rb,re;
+   long long start, end;
    Expression arg;
-
+   size_t rs, re, srcLen, dstLen, i, j;
+   
    returnValue->lexemeValue = FalseSymbol(theEnv);
    ins = CheckMultifieldSlotInstance(context);
    if (ins == NULL)
      return;
    sp = CheckMultifieldSlotModify(theEnv,DELETE_OP,"slot-delete$",ins,
-                            GetFirstArgument()->nextArg,&rb,&re,NULL);
+                            GetFirstArgument()->nextArg,&start,&end,NULL);
    if (sp == NULL)
      return;
    AssignSlotToDataObject(&oldseg,sp);
-   if (DeleteMultiValueField(theEnv,&newseg,&oldseg,rb,re,"slot-delete$") == false)
-     return;
+      
+   /*===========================================*/
+   /* Verify the start and end index arguments. */
+   /*===========================================*/
+
+   if ((end < start) || (start < 1) || (end < 1) || // TBD Refactor
+       (((long long) ((size_t) start)) != start) ||
+       (((long long) ((size_t) end)) != end))
+     {
+      MVRangeError(theEnv,start,end,oldseg.range,"slot-delete$");
+      SetEvaluationError(theEnv,true);
+      SetMultifieldErrorValue(theEnv,returnValue);
+      return;
+     }
+      
+   /*============================================*/
+   /* Convert the indices to unsigned zero-based */
+   /* values including the begin value.          */
+   /*============================================*/
+   
+   rs = (size_t) start;
+   re = (size_t) end;
+   srcLen = oldseg.range;
+   
+   if ((rs > srcLen) || (re > srcLen))
+     {
+      MVRangeError(theEnv,start,end,oldseg.range,"slot-delete$");
+      SetEvaluationError(theEnv,true);
+      SetMultifieldErrorValue(theEnv,returnValue);
+      return;
+     }
+     
+   rs--;
+   re--;
+   rs += oldseg.begin;
+   re += oldseg.begin;
+
+   /*===================================*/
+   /* Delete the members from the slot. */
+   /*===================================*/
+   
+   dstLen = srcLen - (re - rs + 1); // TBD Refactor
+   newseg.begin = 0;
+   newseg.range = dstLen;
+   newseg.multifieldValue = CreateMultifield(theEnv,dstLen);
+
+   for (i = oldseg.begin, j = 0; i < (oldseg.begin + oldseg.range); i++)
+     {
+      if ((i >= rs) && (i <= re)) continue;
+      
+      newseg.multifieldValue->contents[j++].value = oldseg.multifieldValue->contents[i].value;
+     }
+   
    arg.type = MULTIFIELD_TYPE;
    arg.value = &newseg;
    arg.nextArg = NULL;
@@ -251,8 +388,10 @@ void DirectMVReplaceCommand(
   {
    InstanceSlot *sp;
    Instance *ins;
-   long rb,re;
-   UDFValue newval,newseg,oldseg;
+   long long start, end;
+   size_t rs, re, srcLen, dstLen;
+   size_t i, j, k;
+   UDFValue newval, newseg, oldseg;
 
    if (CheckCurrentMessage(theEnv,"direct-slot-replace$",true) == false)
      {
@@ -262,7 +401,7 @@ void DirectMVReplaceCommand(
 
    ins = GetActiveInstance(theEnv);
    sp = CheckMultifieldSlotModify(theEnv,REPLACE,"direct-slot-replace$",ins,
-                            GetFirstArgument(),&rb,&re,&newval);
+                            GetFirstArgument(),&start,&end,&newval);
    if (sp == NULL)
      {
       returnValue->lexemeValue = FalseSymbol(theEnv);
@@ -270,10 +409,77 @@ void DirectMVReplaceCommand(
      }
 
    AssignSlotToDataObject(&oldseg,sp);
-   if (! ReplaceMultiValueField(theEnv,&newseg,&oldseg,rb,re,&newval,"direct-slot-replace$"))
+   
+   /*===========================================*/
+   /* Verify the start and end index arguments. */
+   /*===========================================*/
+
+   if ((end < start) || (start < 1) || (end < 1) || // TBD Refactor
+       (((long long) ((size_t) start)) != start) ||
+       (((long long) ((size_t) end)) != end))
      {
+      MVRangeError(theEnv,start,end,oldseg.range,"direct-slot-replace$");
       returnValue->lexemeValue = FalseSymbol(theEnv);
       return;
+     }
+     
+   /*============================================*/
+   /* Convert the indices to unsigned zero-based */
+   /* values including the begin value.          */
+   /*============================================*/
+   
+   rs = (size_t) start;
+   re = (size_t) end;
+   srcLen = oldseg.range;
+   
+   if ((rs > srcLen) || (re > srcLen))
+     {
+      MVRangeError(theEnv,start,end,oldseg.range,"direct-slot-replace$");
+      returnValue->lexemeValue = FalseSymbol(theEnv);
+      return;
+     }
+     
+   rs--;
+   re--;
+   rs += oldseg.begin;
+   re += oldseg.begin;
+
+   dstLen = srcLen - (re - rs + 1); // TBD Refactor
+   newseg.begin = 0;
+   newseg.range = dstLen;
+   newseg.multifieldValue = CreateMultifield(theEnv,dstLen);
+
+   /*===================================*/
+   /* Delete the members from the slot. */
+   /*===================================*/
+   
+   if (newval.header->type == MULTIFIELD_TYPE) // TBD Refactor
+     { dstLen = srcLen - (re - rs + 1) + newval.range; }
+   else
+     { dstLen = srcLen - (re - rs); }
+     
+   newseg.begin = 0;
+   newseg.range = dstLen;
+   newseg.multifieldValue = CreateMultifield(theEnv,dstLen);
+
+   for (i = oldseg.begin, j = 0; i < (oldseg.begin + oldseg.range); i++)
+     {
+      if (i == rs)
+        {
+         if (newval.header->type == MULTIFIELD_TYPE)
+           {
+            for (k = newval.begin; k < (newval.begin + newval.range); k++)
+              { newseg.multifieldValue->contents[j++].value = newval.multifieldValue->contents[k].value; }
+           }
+         else
+           { newseg.multifieldValue->contents[j++].value = newval.value; }
+           
+         continue;
+        }
+      else if ((i > rs) && (i <= re))
+        { continue; }
+      
+      newseg.multifieldValue->contents[j++].value = oldseg.multifieldValue->contents[i].value;
      }
 
    if (PutSlotValue(theEnv,ins,sp,&newseg,&newval,"function direct-slot-replace$"))
@@ -297,8 +503,9 @@ void DirectMVInsertCommand(
   {
    InstanceSlot *sp;
    Instance *ins;
-   long theIndex;
+   long long theIndex;
    UDFValue newval,newseg,oldseg;
+   size_t uindex;
 
    if (CheckCurrentMessage(theEnv,"direct-slot-insert$",true) == false)
      { 
@@ -316,7 +523,17 @@ void DirectMVInsertCommand(
      }
 
    AssignSlotToDataObject(&oldseg,sp);
-   if (! InsertMultiValueField(theEnv,&newseg,&oldseg,theIndex,&newval,"direct-slot-insert$"))
+   
+   if ((((long long) ((size_t) theIndex)) != theIndex) ||
+       (theIndex < 1))
+ 	 {
+      MVRangeError(theEnv,theIndex,theIndex,oldseg.range,"direct-slot-insert$");
+	  return;
+	 }
+
+   uindex = (size_t) theIndex;
+   
+   if (! InsertMultiValueField(theEnv,&newseg,&oldseg,uindex,&newval,"direct-slot-insert$"))
      {
       returnValue->lexemeValue = FalseSymbol(theEnv);
       return; 
@@ -344,8 +561,9 @@ void DirectMVDeleteCommand(
   {
    InstanceSlot *sp;
    Instance *ins;
-   long rb,re;
-   UDFValue newseg,oldseg;
+   size_t rs, re, dstLen, srcLen, i, j;
+   UDFValue newseg, oldseg;
+   long long start, end;
 
    if (CheckCurrentMessage(theEnv,"direct-slot-delete$",true) == false)
      {
@@ -355,7 +573,7 @@ void DirectMVDeleteCommand(
 
    ins = GetActiveInstance(theEnv);
    sp = CheckMultifieldSlotModify(theEnv,DELETE_OP,"direct-slot-delete$",ins,
-                                  GetFirstArgument(),&rb,&re,NULL);
+                                  GetFirstArgument(),&start,&end,NULL);
    if (sp == NULL)
      {
       returnValue->lexemeValue = FalseSymbol(theEnv);
@@ -363,12 +581,58 @@ void DirectMVDeleteCommand(
      }
 
    AssignSlotToDataObject(&oldseg,sp);
-   if (! DeleteMultiValueField(theEnv,&newseg,&oldseg,rb,re,"direct-slot-delete$"))
+   
+   /*===========================================*/
+   /* Verify the start and end index arguments. */
+   /*===========================================*/
+
+   if ((end < start) || (start < 1) || (end < 1) || // TBD Refactor
+       (((long long) ((size_t) start)) != start) ||
+       (((long long) ((size_t) end)) != end))
      {
+      MVRangeError(theEnv,start,end,oldseg.range,"direct-slot-delete$");
       returnValue->lexemeValue = FalseSymbol(theEnv);
       return;
      }
 
+   /*============================================*/
+   /* Convert the indices to unsigned zero-based */
+   /* values including the begin value.          */
+   /*============================================*/
+   
+   rs = (size_t) start;
+   re = (size_t) end;
+   srcLen = oldseg.range;
+   
+   if ((rs > srcLen) || (re > srcLen))
+     {
+      MVRangeError(theEnv,start,end,oldseg.range,"direct-slot-delete$");
+      SetEvaluationError(theEnv,true);
+      SetMultifieldErrorValue(theEnv,returnValue);
+      return;
+     }
+     
+   rs--;
+   re--;
+   rs += oldseg.begin;
+   re += oldseg.begin;
+
+   /*=================================================*/
+   /* Delete the section out of the multifield value. */
+   /*=================================================*/
+
+   dstLen = srcLen - (re - rs + 1); // TBD Refactor
+   newseg.begin = 0;
+   newseg.range = dstLen;
+   newseg.multifieldValue = CreateMultifield(theEnv,dstLen);
+
+   for (i = oldseg.begin, j = 0; i < (oldseg.begin + oldseg.range); i++)
+     {
+      if ((i >= rs) && (i <= re)) continue;
+      
+      newseg.multifieldValue->contents[j++].value = oldseg.multifieldValue->contents[i].value;
+     }
+ 
    if (PutSlotValue(theEnv,ins,sp,&newseg,&oldseg,"function direct-slot-delete$"))
      { returnValue->lexemeValue = TrueSymbol(theEnv); }
    else
@@ -453,13 +717,13 @@ static InstanceSlot *CheckMultifieldSlotModify(
   const char *func,
   Instance *ins,
   Expression *args,
-  long *rb,
-  long *re,
+  long long *rb,
+  long long *re,
   UDFValue *newval)
   {
    UDFValue temp;
    InstanceSlot *sp;
-   int start;
+   unsigned int start;
 
    start = (args == GetFirstArgument()) ? 1 : 2;
    EvaluationData(theEnv)->EvaluationError = false;
@@ -497,7 +761,7 @@ static InstanceSlot *CheckMultifieldSlotModify(
       return NULL;
      }
    args = args->nextArg->nextArg;
-   *rb = (long) temp.integerValue->contents;
+   *rb = temp.integerValue->contents;
    if ((code == REPLACE) || (code == DELETE_OP))
      {
       EvaluateExpression(theEnv,args,&temp);
@@ -507,7 +771,7 @@ static InstanceSlot *CheckMultifieldSlotModify(
          SetEvaluationError(theEnv,true);
          return NULL;
         }
-      *re = (long) temp.integerValue->contents;
+      *re = temp.integerValue->contents;
       args = args->nextArg;
      }
    if ((code == INSERT) || (code == REPLACE))

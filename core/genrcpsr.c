@@ -60,6 +60,7 @@
                EXTERNAL DEFINITIONS
    =========================================
    ***************************************** */
+
 #include "setup.h"
 
 #if DEFGENERIC_CONSTRUCT && (! BLOAD_ONLY) && (! RUN_TIME)
@@ -106,6 +107,8 @@
 
 #define CURR_ARG_VAR "current-argument"
 
+#define PARAMETER_ERROR USHRT_MAX
+
 /* =========================================
    *****************************************
       INTERNALLY VISIBLE FUNCTION HEADERS
@@ -113,13 +116,13 @@
    ***************************************** */
 
    static bool                    ValidGenericName(Environment *,const char *);
-   static CLIPSLexeme            *ParseMethodNameAndIndex(Environment *,const char *,unsigned *,struct token *);
+   static CLIPSLexeme            *ParseMethodNameAndIndex(Environment *,const char *,unsigned short *,struct token *);
 
 #if DEBUGGING_FUNCTIONS
    static void                    CreateDefaultGenericPPForm(Environment *,Defgeneric *);
 #endif
 
-   static int                     ParseMethodParameters(Environment *,const char *,Expression **,CLIPSLexeme **,struct token *);
+   static unsigned short          ParseMethodParameters(Environment *,const char *,Expression **,CLIPSLexeme **,struct token *);
    static RESTRICTION            *ParseRestriction(Environment *,const char *);
    static void                    ReplaceCurrentArgRefs(Environment *,Expression *);
    static bool                    DuplicateParameters(Environment *,Expression *,Expression **,CLIPSLexeme *);
@@ -127,7 +130,7 @@
    static Expression             *ValidType(Environment *,CLIPSLexeme *);
    static bool                    RedundantClasses(Environment *,void *,void *);
    static Defgeneric             *AddGeneric(Environment *,CLIPSLexeme *,bool *);
-   static Defmethod              *AddGenericMethod(Environment *,Defgeneric *,int,short);
+   static Defmethod              *AddGenericMethod(Environment *,Defgeneric *,int,unsigned short);
    static int                     RestrictionsCompare(Expression *,int,int,int,Defmethod *);
    static int                     TypeListCompare(RESTRICTION *,RESTRICTION *);
    static Defgeneric             *NewGeneric(Environment *,CLIPSLexeme *);
@@ -222,7 +225,10 @@ bool ParseDefmethod(
   const char *readSource)
   {
    CLIPSLexeme *gname;
-   int rcnt,mposn,mi, lvars;
+   unsigned short rcnt;
+   int mposn;
+   unsigned short mi;
+   unsigned short lvars;
    bool newMethod;
    bool mnew = false;
    bool error;
@@ -230,7 +236,7 @@ bool ParseDefmethod(
    CLIPSLexeme *wildcard;
    Defmethod *meth;
    Defgeneric *gfunc;
-   unsigned theIndex;
+   unsigned short theIndex;
    struct token genericInputToken;
 
    SetPPBufferStatus(theEnv,true);
@@ -267,7 +273,7 @@ bool ParseDefmethod(
    IncrementIndentDepth(theEnv,1);
    rcnt = ParseMethodParameters(theEnv,readSource,&params,&wildcard,&genericInputToken);
    DecrementIndentDepth(theEnv,1);
-   if (rcnt == -1)
+   if (rcnt == PARAMETER_ERROR)
      goto DefmethodParseError;
    PPCRAndIndent(theEnv);
    for (tmp = params ; tmp != NULL ; tmp = tmp->nextArg)
@@ -288,7 +294,7 @@ bool ParseDefmethod(
         {
          PrintErrorID(theEnv,"GENRCPSR",17,false);
          PrintString(theEnv,WERROR,"Cannot replace the implicit system method #");
-         PrintInteger(theEnv,WERROR,(long long) meth->index);
+         PrintUnsignedInteger(theEnv,WERROR,meth->index);
          PrintString(theEnv,WERROR,".\n");
          error = true;
         }
@@ -296,9 +302,9 @@ bool ParseDefmethod(
         {
          PrintErrorID(theEnv,"GENRCPSR",2,false);
          PrintString(theEnv,WERROR,"New method #");
-         PrintInteger(theEnv,WERROR,(long long) theIndex);
+         PrintUnsignedInteger(theEnv,WERROR,theIndex);
          PrintString(theEnv,WERROR," would be indistinguishable from method #");
-         PrintInteger(theEnv,WERROR,(long long) meth->index);
+         PrintUnsignedInteger(theEnv,WERROR,meth->index);
          PrintString(theEnv,WERROR,".\n");
          error = true;
         }
@@ -306,13 +312,13 @@ bool ParseDefmethod(
    else if (theIndex != 0)
      {
       mi = FindMethodByIndex(gfunc,theIndex);
-      if (mi == -1)
+      if (mi == METHOD_NOT_FOUND)
         mnew = true;
       else if (gfunc->methods[mi].system)
         {
          PrintErrorID(theEnv,"GENRCPSR",17,false);
          PrintString(theEnv,WERROR,"Cannot replace the implicit system method #");
-         PrintInteger(theEnv,WERROR,(long long) theIndex);
+         PrintUnsignedInteger(theEnv,WERROR,theIndex);
          PrintString(theEnv,WERROR,".\n");
          error = true;
         }
@@ -385,7 +391,7 @@ bool ParseDefmethod(
       if (mnew)
         {
          PrintString(theEnv,outRouter,"   Method #");
-         PrintInteger(theEnv,outRouter,(long long) meth->index);
+         PrintUnsignedInteger(theEnv,outRouter,meth->index);
          PrintString(theEnv,outRouter," defined.\n");
         }
       else
@@ -393,7 +399,7 @@ bool ParseDefmethod(
          outRouter = WWARNING;
          PrintWarningID(theEnv,"CSTRCPSR",1,true);
          PrintString(theEnv,outRouter,"Method #");
-         PrintInteger(theEnv,outRouter,(long long) meth->index);
+         PrintUnsignedInteger(theEnv,outRouter,meth->index);
          PrintString(theEnv,outRouter," redefined.\n");
         }
      }
@@ -442,24 +448,24 @@ Defmethod *AddMethod(
   Defgeneric *gfunc,
   Defmethod *meth,
   int mposn,
-  unsigned mi,
+  unsigned short mi,
   Expression *params,
-  int rcnt,
-  int lvars,
+  unsigned short rcnt,
+  unsigned short lvars,
   CLIPSLexeme *wildcard,
   Expression *actions,
   char *ppForm,
   bool copyRestricts)
   {
-   RESTRICTION *rptr,*rtmp;
+   RESTRICTION *rptr, *rtmp;
    int i,j;
-   int mai;
+   unsigned short mai;
 
    SaveBusyCount(gfunc);
    if (meth == NULL)
      {
-      mai = (mi != 0) ? FindMethodByIndex(gfunc,mi) : -1;
-      if (mai == -1)
+      mai = (mi != 0) ? FindMethodByIndex(gfunc,mi) : METHOD_NOT_FOUND;
+      if (mai == METHOD_NOT_FOUND)
         meth = AddGenericMethod(theEnv,gfunc,mposn,mi);
       else
         {
@@ -499,15 +505,19 @@ Defmethod *AddMethod(
       return(meth);
      }
 
-   meth->localVarCount = (short) lvars;
-   meth->restrictionCount = (short) rcnt;
+   meth->localVarCount = lvars;
+   meth->restrictionCount = rcnt;
+      
    if (wildcard != NULL)
      {
-      meth->minRestrictions = (short) (rcnt-1);
-      meth->maxRestrictions = -1;
+      if (rcnt == 0)
+        { meth->minRestrictions = RESTRICTIONS_UNBOUNDED; }
+      else
+        { meth->minRestrictions = rcnt - 1; }
+      meth->maxRestrictions = RESTRICTIONS_UNBOUNDED;
      }
    else
-     meth->minRestrictions = meth->maxRestrictions = (short) rcnt;
+     meth->minRestrictions = meth->maxRestrictions = rcnt;
    if (rcnt != 0)
      meth->restrictions = (RESTRICTION *)
                           gm2(theEnv,(sizeof(RESTRICTION) * rcnt));
@@ -817,7 +827,7 @@ static void CreateDefaultGenericPPForm(
 static CLIPSLexeme *ParseMethodNameAndIndex(
   Environment *theEnv,
   const char *readSource,
-  unsigned *theIndex,
+  unsigned short *theIndex,
   struct token *genericInputToken)
   {
    CLIPSLexeme *gname;
@@ -830,20 +840,20 @@ static CLIPSLexeme *ParseMethodNameAndIndex(
      return NULL;
    if (genericInputToken->tknType == INTEGER_TOKEN)
      {
-      int tmp;
+      unsigned short tmp;
 
       PPBackup(theEnv);
       PPBackup(theEnv);
       SavePPBuffer(theEnv," ");
       SavePPBuffer(theEnv,genericInputToken->printForm);
-      tmp = (int) genericInputToken->integerValue->contents;
+      tmp = (unsigned short) genericInputToken->integerValue->contents;
       if (tmp < 1)
         {
          PrintErrorID(theEnv,"GENRCPSR",6,false);
          PrintString(theEnv,WERROR,"Method index out of range.\n");
          return NULL;
         }
-      *theIndex = (unsigned) tmp;
+      *theIndex = tmp;
       PPCRAndIndent(theEnv);
       GetToken(theEnv,readSource,genericInputToken);
      }
@@ -875,7 +885,7 @@ static CLIPSLexeme *ParseMethodNameAndIndex(
   NOTES        : Any memory allocated is freed on errors
                  Assumes first opening parenthesis has been scanned
  ************************************************************************/
-static int ParseMethodParameters(
+static unsigned short ParseMethodParameters(
   Environment *theEnv,
   const char *readSource,
   Expression **params,
@@ -885,7 +895,7 @@ static int ParseMethodParameters(
    Expression *phead = NULL,*pprv;
    CLIPSLexeme *pname;
    RESTRICTION *rtmp;
-   int rcnt = 0;
+   unsigned short rcnt = 0;
 
    *wildcard = NULL;
    *params = NULL;
@@ -893,7 +903,7 @@ static int ParseMethodParameters(
      {
       PrintErrorID(theEnv,"GENRCPSR",7,false);
       PrintString(theEnv,WERROR,"Expected a '(' to begin method parameter restrictions.\n");
-      return(-1);
+      return PARAMETER_ERROR;
      }
    GetToken(theEnv,readSource,genericInputToken);
    while (genericInputToken->tknType != RIGHT_PARENTHESIS_TOKEN)
@@ -903,7 +913,7 @@ static int ParseMethodParameters(
          DeleteTempRestricts(theEnv,phead);
          PrintErrorID(theEnv,"PRCCODE",8,false);
          PrintString(theEnv,WERROR,"No parameters allowed after wildcard parameter.\n");
-         return(-1);
+         return PARAMETER_ERROR;
         }
       if ((genericInputToken->tknType == SF_VARIABLE_TOKEN) ||
           (genericInputToken->tknType == MF_VARIABLE_TOKEN))
@@ -912,7 +922,7 @@ static int ParseMethodParameters(
          if (DuplicateParameters(theEnv,phead,&pprv,pname))
            {
             DeleteTempRestricts(theEnv,phead);
-            return(-1);
+            return PARAMETER_ERROR;
            }
          if (genericInputToken->tknType == MF_VARIABLE_TOKEN)
            *wildcard = pname;
@@ -931,13 +941,13 @@ static int ParseMethodParameters(
             DeleteTempRestricts(theEnv,phead);
             PrintErrorID(theEnv,"GENRCPSR",8,false);
             PrintString(theEnv,WERROR,"Expected a variable for parameter specification.\n");
-            return(-1);
+            return PARAMETER_ERROR;
            }
          pname = genericInputToken->lexemeValue;
          if (DuplicateParameters(theEnv,phead,&pprv,pname))
            {
             DeleteTempRestricts(theEnv,phead);
-            return(-1);
+            return PARAMETER_ERROR;
            }
          if (genericInputToken->tknType == MF_VARIABLE_TOKEN)
            *wildcard = pname;
@@ -946,7 +956,7 @@ static int ParseMethodParameters(
          if (rtmp == NULL)
            {
             DeleteTempRestricts(theEnv,phead);
-            return(-1);
+            return PARAMETER_ERROR;
            }
          phead = AddParameter(theEnv,phead,pprv,pname,rtmp);
          rcnt++;
@@ -956,7 +966,7 @@ static int ParseMethodParameters(
          DeleteTempRestricts(theEnv,phead);
          PrintErrorID(theEnv,"GENRCPSR",9,false);
          PrintString(theEnv,WERROR,"Expected a variable or '(' for parameter specification.\n");
-         return(-1);
+         return PARAMETER_ERROR;
         }
       PPCRAndIndent(theEnv);
       GetToken(theEnv,readSource,genericInputToken);
@@ -1240,35 +1250,35 @@ static Expression *ValidType(
      }
 #else
    if (strcmp(tname->contents,INTEGER_TYPE_NAME) == 0)
-     return(GenConstant(theEnv,INTEGER_TYPE,CreateInteger(theEnv,(long long) INTEGER_TYPE)));
+     return(GenConstant(theEnv,INTEGER_TYPE,CreateInteger(theEnv,INTEGER_TYPE)));
    if (strcmp(tname->contents,FLOAT_TYPE_NAME) == 0)
-     return(GenConstant(theEnv,INTEGER_TYPE,CreateInteger(theEnv,(long long) FLOAT_TYPE)));
+     return(GenConstant(theEnv,INTEGER_TYPE,CreateInteger(theEnv,FLOAT_TYPE)));
    if (strcmp(tname->contents,SYMBOL_TYPE_NAME) == 0)
-     return(GenConstant(theEnv,INTEGER_TYPE,CreateInteger(theEnv,(long long) SYMBOL_TYPE)));
+     return(GenConstant(theEnv,INTEGER_TYPE,CreateInteger(theEnv,SYMBOL_TYPE)));
    if (strcmp(tname->contents,STRING_TYPE_NAME) == 0)
-     return(GenConstant(theEnv,INTEGER_TYPE,CreateInteger(theEnv,(long long) STRING_TYPE)));
+     return(GenConstant(theEnv,INTEGER_TYPE,CreateInteger(theEnv,STRING_TYPE)));
    if (strcmp(tname->contents,MULTIFIELD_TYPE_NAME) == 0)
-     return(GenConstant(theEnv,INTEGER_TYPE,CreateInteger(theEnv,(long long) MULTIFIELD_TYPE)));
+     return(GenConstant(theEnv,INTEGER_TYPE,CreateInteger(theEnv,MULTIFIELD_TYPE)));
    if (strcmp(tname->contents,EXTERNAL_ADDRESS_TYPE_NAME) == 0)
-     return(GenConstant(theEnv,INTEGER_TYPE,CreateInteger(theEnv,(long long) EXTERNAL_ADDRESS_TYPE)));
+     return(GenConstant(theEnv,INTEGER_TYPE,CreateInteger(theEnv,EXTERNAL_ADDRESS_TYPE)));
    if (strcmp(tname->contents,FACT_ADDRESS_TYPE_NAME) == 0)
-     return(GenConstant(theEnv,INTEGER_TYPE,CreateInteger(theEnv,(long long) FACT_ADDRESS_TYPE)));
+     return(GenConstant(theEnv,INTEGER_TYPE,CreateInteger(theEnv,FACT_ADDRESS_TYPE)));
    if (strcmp(tname->contents,NUMBER_TYPE_NAME) == 0)
-     return(GenConstant(theEnv,INTEGER_TYPE,CreateInteger(theEnv,(long long) NUMBER_TYPE_CODE)));
+     return(GenConstant(theEnv,INTEGER_TYPE,CreateInteger(theEnv,NUMBER_TYPE_CODE)));
    if (strcmp(tname->contents,LEXEME_TYPE_NAME) == 0)
-     return(GenConstant(theEnv,INTEGER_TYPE,CreateInteger(theEnv,(long long) LEXEME_TYPE_CODE)));
+     return(GenConstant(theEnv,INTEGER_TYPE,CreateInteger(theEnv,LEXEME_TYPE_CODE)));
    if (strcmp(tname->contents,ADDRESS_TYPE_NAME) == 0)
-     return(GenConstant(theEnv,INTEGER_TYPE,CreateInteger(theEnv,(long long) ADDRESS_TYPE_CODE)));
+     return(GenConstant(theEnv,INTEGER_TYPE,CreateInteger(theEnv,ADDRESS_TYPE_CODE)));
    if (strcmp(tname->contents,PRIMITIVE_TYPE_NAME) == 0)
-     return(GenConstant(theEnv,INTEGER_TYPE,CreateInteger(theEnv,(long long) PRIMITIVE_TYPE_CODE)));
+     return(GenConstant(theEnv,INTEGER_TYPE,CreateInteger(theEnv,PRIMITIVE_TYPE_CODE)));
    if (strcmp(tname->contents,OBJECT_TYPE_NAME) == 0)
-     return(GenConstant(theEnv,INTEGER_TYPE,CreateInteger(theEnv,(long long) OBJECT_TYPE_CODE)));
+     return(GenConstant(theEnv,INTEGER_TYPE,CreateInteger(theEnv,OBJECT_TYPE_CODE)));
    if (strcmp(tname->contents,INSTANCE_TYPE_NAME) == 0)
-     return(GenConstant(theEnv,INTEGER_TYPE,CreateInteger(theEnv,(long long) INSTANCE_TYPE_CODE)));
+     return(GenConstant(theEnv,INTEGER_TYPE,CreateInteger(theEnv,INSTANCE_TYPE_CODE)));
    if (strcmp(tname->contents,INSTANCE_NAME_TYPE_NAME) == 0)
-     return(GenConstant(theEnv,INTEGER_TYPE,CreateInteger(theEnv,(long long) INSTANCE_NAME_TYPE)));
+     return(GenConstant(theEnv,INTEGER_TYPE,CreateInteger(theEnv,INSTANCE_NAME_TYPE)));
    if (strcmp(tname->contents,INSTANCE_ADDRESS_TYPE_NAME) == 0)
-     return(GenConstant(theEnv,INTEGER_TYPE,CreateInteger(theEnv,(long long) INSTANCE_ADDRESS_TYPE)));
+     return(GenConstant(theEnv,INTEGER_TYPE,CreateInteger(theEnv,INSTANCE_ADDRESS_TYPE)));
 
    PrintErrorID(theEnv,"GENRCPSR",14,false);
    PrintString(theEnv,WERROR,"Unknown type in method.\n");
@@ -1377,7 +1387,7 @@ static Defmethod *AddGenericMethod(
   Environment *theEnv,
   Defgeneric *gfunc,
   int mposn,
-  short mi)
+  unsigned short mi)
   {
    Defmethod *narr;
    long b, e;
@@ -1395,7 +1405,7 @@ static Defmethod *AddGenericMethod(
      {
       narr[mposn].index = mi;
       if (mi >= gfunc->new_index)
-        gfunc->new_index = (short) (mi+1);
+        gfunc->new_index = mi + 1;
      }
    narr[mposn].busy = 0;
 #if DEBUGGING_FUNCTIONS
@@ -1461,11 +1471,11 @@ static int RestrictionsCompare(
          a regular parameter, regardless of the class restriction list
          ============================================================= */
       if ((i == rcnt-1) && (max == -1) &&
-          (meth->maxRestrictions != -1))
-        return(LOWER_PRECEDENCE);
+          (meth->maxRestrictions != RESTRICTIONS_UNBOUNDED))
+        return LOWER_PRECEDENCE;
       if ((i == meth->restrictionCount-1) && (max != -1) &&
-          (meth->maxRestrictions == -1))
-        return(HIGHER_PRECEDENCE);
+          (meth->maxRestrictions == RESTRICTIONS_UNBOUNDED))
+        return HIGHER_PRECEDENCE;
 
       /* =============================================================
          The parameter with the most specific type list has precedence
@@ -1474,15 +1484,15 @@ static int RestrictionsCompare(
       r2 = &meth->restrictions[i];
       rtn = TypeListCompare(r1,r2);
       if (rtn != IDENTICAL)
-        return(rtn);
+        return rtn;
 
       /* =====================================================
          The parameter with a query restriction has precedence
          ===================================================== */
       if ((r1->query == NULL) && (r2->query != NULL))
-        return(LOWER_PRECEDENCE);
+        return LOWER_PRECEDENCE;
       if ((r1->query != NULL) && (r2->query == NULL))
-        return(HIGHER_PRECEDENCE);
+        return HIGHER_PRECEDENCE;
 
       /* ==========================================================
          Remember if the method restrictions differ at all - query
@@ -1510,9 +1520,9 @@ static int RestrictionsCompare(
       then one without a wildcard has precedence
       ============================================= */
    if (min > meth->minRestrictions)
-     return(HIGHER_PRECEDENCE);
+     return HIGHER_PRECEDENCE;
    if (meth->minRestrictions < min)
-     return(LOWER_PRECEDENCE);
+     return LOWER_PRECEDENCE;
    return((max == - 1) ? LOWER_PRECEDENCE : HIGHER_PRECEDENCE);
   }
 

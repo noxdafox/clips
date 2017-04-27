@@ -197,7 +197,7 @@ char *CopyPPBuffer(
 
    if (theBuffer == NULL) return NULL;
 
-   length = (1 + strlen(theBuffer)) * (int) sizeof (char);
+   length = (1 + strlen(theBuffer)) * sizeof(char);
    newString = (char *) gm2(theEnv,length);
 
    genstrcpy(newString,theBuffer);

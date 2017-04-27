@@ -406,7 +406,7 @@ void PrintCLIPSValue(
 
       case MULTIFIELD_TYPE:
         PrintMultifieldDriver(theEnv,fileid,argPtr->multifieldValue,
-                              0,argPtr->multifieldValue->length - 1,true);
+                              0,argPtr->multifieldValue->length,true);
         break;
 
       default:
@@ -446,7 +446,7 @@ void PrintUDFValue(
 
       case MULTIFIELD_TYPE:
         PrintMultifieldDriver(theEnv,fileid,argPtr->multifieldValue,
-                              argPtr->begin,(argPtr->begin + argPtr->range) - 1,true);
+                              argPtr->begin,argPtr->range,true);
         break;
 
       default:
@@ -618,7 +618,7 @@ void DecrementReferenceCount(
 /*****************************************/
 void AtomInstall(
   Environment *theEnv,
-  int type,
+  unsigned short type,
   void *vPtr)
   {
    switch (type)
@@ -668,7 +668,7 @@ void AtomInstall(
 /*******************************************/
 void AtomDeinstall(
   Environment *theEnv,
-  int type,
+  unsigned short type,
   void *vPtr)
   {
    switch (type)
@@ -787,7 +787,7 @@ struct expr *ConvertValueToExpression(
 unsigned long GetAtomicHashValue(
   unsigned short type,
   void *value,
-  int position)
+  unsigned short position)
   {
    unsigned long tvalue;
    union
@@ -812,7 +812,7 @@ unsigned long GetAtomicHashValue(
       case EXTERNAL_ADDRESS_TYPE:
          fis.liv = 0;
          fis.vv = ((CLIPSExternalAddress *) value)->contents;
-         tvalue = (unsigned long) fis.liv;
+         tvalue = fis.liv;
          break;
 
       case FACT_ADDRESS_TYPE:
@@ -821,7 +821,7 @@ unsigned long GetAtomicHashValue(
 #endif
          fis.liv = 0;
          fis.vv = value;
-         tvalue = (unsigned long) fis.liv;
+         tvalue = fis.liv;
          break;
 
       case STRING_TYPE:
@@ -836,9 +836,9 @@ unsigned long GetAtomicHashValue(
         tvalue = type;
      }
 
-   if (position < 0) return(tvalue);
+   if (position < 0) return tvalue;
 
-   return((unsigned long) (tvalue * (((unsigned long) position) + 29)));
+   return tvalue * (position + 29);
   }
 
 /***********************************************************/
@@ -1049,7 +1049,7 @@ static void NewCAddress(
   UDFContext *context,
   UDFValue *rv)
   {
-   int numberOfArguments;
+   unsigned int numberOfArguments;
    Environment *theEnv = context->environment;
 
    numberOfArguments = UDFArgumentCount(context);

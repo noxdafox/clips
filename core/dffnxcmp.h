@@ -44,8 +44,8 @@
 #include "dffnxfun.h"
 
    void                           SetupDeffunctionCompiler(Environment *);
-   void                           PrintDeffunctionReference(Environment *,FILE *,Deffunction *,int,int);
-   void                           DeffunctionCModuleReference(Environment *,FILE *,int,int,int);
+   void                           PrintDeffunctionReference(Environment *,FILE *,Deffunction *,unsigned,unsigned);
+   void                           DeffunctionCModuleReference(Environment *,FILE *,unsigned long,unsigned int,unsigned int);
 
 #endif /* DEFFUNCTION_CONSTRUCT && CONSTRUCT_COMPILER && (! RUN_TIME) */
 

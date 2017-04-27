@@ -54,7 +54,7 @@
 #define LinkPrefix() ArbitraryPrefix(DefruleData(theEnv)->DefruleCodeItem,3)
 
    void                     DefruleCompilerSetup(Environment *);
-   void                     DefruleCModuleReference(Environment *,FILE *,int,int,int);
+   void                     DefruleCModuleReference(Environment *,FILE *,unsigned long,unsigned int,unsigned int);
 
 #endif /* _H_rulecmp */
 

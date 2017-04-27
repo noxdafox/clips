@@ -51,11 +51,12 @@
 /***************************************/
 
    static void                    ReadyDefinstancesForCode(Environment *);
-   static bool                    DefinstancesToCode(Environment *,const char *,const char *,char *,int,FILE *,int,int);
-   static void                    CloseDefinstancesFiles(Environment *,FILE *,FILE *,int);
-   static void                    DefinstancesModuleToCode(Environment *,FILE *,Defmodule *,int,int);
-   static void                    SingleDefinstancesToCode(Environment*,FILE *,Definstances *,int,int,int);
-   static void                    InitDefinstancesCode(Environment *,FILE *,int,int);
+   static bool                    DefinstancesToCode(Environment *,const char *,const char *,char *,unsigned int,
+                                                     FILE *,unsigned int,unsigned int);
+   static void                    CloseDefinstancesFiles(Environment *,FILE *,FILE *,unsigned int);
+   static void                    DefinstancesModuleToCode(Environment *,FILE *,Defmodule *,unsigned int,unsigned int);
+   static void                    SingleDefinstancesToCode(Environment*,FILE *,Definstances *,unsigned int,unsigned int,unsigned int);
+   static void                    InitDefinstancesCode(Environment *,FILE *,unsigned int,unsigned int);
 
 /* =========================================
    *****************************************
@@ -96,11 +97,11 @@ void SetupDefinstancesCompiler(
 void DefinstancesCModuleReference(
   Environment *theEnv,
   FILE *theFile,
-  int count,
-  int imageID,
-  int maxIndices)
+  unsigned long count,
+  unsigned int imageID,
+  unsigned int maxIndices)
   {
-   fprintf(theFile,"MIHS &%s%d_%d[%d]",
+   fprintf(theFile,"MIHS &%s%u_%lu[%lu]",
                       ModulePrefix(DefinstancesData(theEnv)->DefinstancesCodeItem),
                       imageID,
                       (count / maxIndices) + 1,
@@ -135,8 +136,8 @@ static void ReadyDefinstancesForCode(
 static void InitDefinstancesCode(
   Environment *theEnv,
   FILE *initFP,
-  int imageID,
-  int maxIndices)
+  unsigned int imageID,
+  unsigned int maxIndices)
   {
 #if MAC_XCD
 #pragma unused(maxIndices)
@@ -166,16 +167,16 @@ static bool DefinstancesToCode(
   const char *fileName,
   const char *pathName,
   char *fileNameBuffer,
-  int fileID,
+  unsigned int fileID,
   FILE *headerFP,
-  int imageID,
-  int maxIndices)
+  unsigned int imageID,
+  unsigned int maxIndices)
   {
-   int fileCount = 1;
+   unsigned int fileCount = 1;
    Defmodule *theModule;
    Definstances *theDefinstances;
-   int moduleCount = 0, moduleArrayCount = 0, moduleArrayVersion = 1;
-   int definstancesArrayCount = 0, definstancesArrayVersion = 1;
+   unsigned int moduleCount = 0, moduleArrayCount = 0, moduleArrayVersion = 1;
+   unsigned int definstancesArrayCount = 0, definstancesArrayVersion = 1;
    FILE *moduleFile = NULL, *definstancesFile = NULL;
 
    /* ================================================
@@ -257,10 +258,10 @@ static void CloseDefinstancesFiles(
   Environment *theEnv,
   FILE *moduleFile,
   FILE *definstancesFile,
-  int maxIndices)
+  unsigned int maxIndices)
   {
-   int count = maxIndices;
-   int arrayVersion = 0;
+   unsigned int count = maxIndices;
+   unsigned int arrayVersion = 0;
 
    if (definstancesFile != NULL)
      {
@@ -293,8 +294,8 @@ static void DefinstancesModuleToCode(
   Environment *theEnv,
   FILE *theFile,
   Defmodule *theModule,
-  int imageID,
-  int maxIndices)
+  unsigned int imageID,
+  unsigned int maxIndices)
   {
    fprintf(theFile,"{");
    ConstructModuleToCode(theEnv,theFile,theModule,imageID,maxIndices,
@@ -320,9 +321,9 @@ static void SingleDefinstancesToCode(
   Environment *theEnv,
   FILE *theFile,
   Definstances *theDefinstances,
-  int imageID,
-  int maxIndices,
-  int moduleCount)
+  unsigned int imageID,
+  unsigned int maxIndices,
+  unsigned int moduleCount)
   {
    /* ===================
       Definstances Header

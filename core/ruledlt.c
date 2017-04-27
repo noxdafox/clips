@@ -297,7 +297,7 @@ static void DetachJoins(
   {
    struct joinNode *prevJoin, *rightJoin;
    struct joinLink *lastLink, *theLink;
-   int lastMark;
+   unsigned lastMark;
 
    /*===========================*/
    /* Begin removing the joins. */
@@ -588,7 +588,7 @@ static void RemoveIntranetworkLink(
    /*===================================================*/
 
    if (patternPtr->entryJoin == NULL)
-     { DetachPattern(theEnv,(int) join->rhsType,patternPtr); }
+     { DetachPattern(theEnv,join->rhsType,patternPtr); }
   }
 
 #endif /* (! RUN_TIME) && (! BLOAD_ONLY) */

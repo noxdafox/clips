@@ -44,8 +44,8 @@ struct factPatternNode;
 struct factPatternNode
   {
    struct patternNodeHeader header;
-   long bsaveID;
-   unsigned short whichField;
+   unsigned long bsaveID;
+   unsigned short whichField; // TBD seems to be 1 based rather than 0 based
    unsigned short whichSlot;
    unsigned short leaveFields;
    struct expr *networkTest;

@@ -79,16 +79,16 @@ typedef void ConstructActionFunction(Environment *,ConstructHeader *,void *);
    struct defmoduleItemHeader    *GetConstructModuleItem(ConstructHeader *);
    const char                    *GetConstructPPForm(ConstructHeader *);
    void                           PPConstructCommand(UDFContext *,const char *,Construct *);
-   ConstructHeader               *GetNextConstructItem(Environment *,ConstructHeader *,int);
-   struct defmoduleItemHeader    *GetConstructModuleItemByIndex(Environment *,Defmodule *,int);
+   ConstructHeader               *GetNextConstructItem(Environment *,ConstructHeader *,unsigned);
+   struct defmoduleItemHeader    *GetConstructModuleItemByIndex(Environment *,Defmodule *,unsigned);
    void                           FreeConstructHeaderModule(Environment *,struct defmoduleItemHeader *,
                                                                    Construct *);
-   long                           DoForAllConstructs(Environment *,
+   void                           DoForAllConstructs(Environment *,
                                                      ConstructActionFunction *,
-                                                     int,bool,void *);
+                                                     unsigned,bool,void *);
    void                           DoForAllConstructsInModule(Environment *,Defmodule *,
                                                              ConstructActionFunction *,
-                                                             int,int,void *);
+                                                             unsigned,bool,void *);
    void                           InitializeConstructHeader(Environment *,const char *,ConstructType,
                                                             ConstructHeader *,CLIPSLexeme *);
    void                           SetConstructPPForm(Environment *,ConstructHeader *,const char *);

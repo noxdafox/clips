@@ -193,7 +193,7 @@ ConstructHeader *FindNamedConstructInModuleOrImports(
   Construct *constructClass)
   {
    ConstructHeader *theConstruct;
-   int count;
+   unsigned int count;
 
    /*================================================*/
    /* First look in the current or specified module. */
@@ -431,13 +431,11 @@ bool PPConstruct(
    if ((*constructClass->getPPFormFunction)(constructPtr) == NULL)
      { return true; }
 
-   /*============================================*/
-   /* Print the pretty print string in smaller   */
-   /* chunks. (VMS had a bug that didn't allow   */
-   /* printing a string greater than 512 bytes.) */
-   /*============================================*/
+   /*================================*/
+   /* Print the pretty print string. */
+   /*================================*/
 
-   PrintInChunks(theEnv,logicalName,(*constructClass->getPPFormFunction)(constructPtr));
+   PrintString(theEnv,logicalName,(*constructClass->getPPFormFunction)(constructPtr));
 
    /*=======================================*/
    /* Return true to indicate the construct */
@@ -499,7 +497,7 @@ Defmodule *GetConstructModule(
   Construct *constructClass)
   {
    ConstructHeader *constructPtr;
-   int count;
+   unsigned int count;
    unsigned position;
    CLIPSLexeme *theName;
 
@@ -709,7 +707,7 @@ void SaveConstruct(
       ppform = (*constructClass->getPPFormFunction)(theConstruct);
       if (ppform != NULL)
         {
-         PrintInChunks(theEnv,logicalName,ppform);
+         PrintString(theEnv,logicalName,ppform);
          PrintString(theEnv,logicalName,"\n");
         }
       }
@@ -756,7 +754,7 @@ void GetConstructListFunction(
   {
    Defmodule *theModule;
    UDFValue result;
-   int numArgs;
+   unsigned int numArgs;
    Environment *theEnv = context->environment;
 
    /*====================================*/
@@ -994,7 +992,7 @@ void ListConstructCommand(
   {
    Defmodule *theModule;
    UDFValue result;
-   int numArgs;
+   unsigned int numArgs;
    Environment *theEnv = context->environment;
 
    /*====================================*/
@@ -1058,7 +1056,7 @@ void ListConstruct(
   {
    ConstructHeader *constructPtr;
    CLIPSLexeme *constructName;
-   long count = 0;
+   unsigned long count = 0;
    bool allModules = false;
 
    /*==========================*/
@@ -1140,7 +1138,7 @@ void ListConstruct(
    /*=================================================*/
 
    PrintTally(theEnv,STDOUT,count,constructClass->constructName,
-                             constructClass->pluralName);
+              constructClass->pluralName);
 
    RestoreCurrentModule(theEnv);
   }
@@ -1181,7 +1179,7 @@ const char *GetConstructPPForm(
 ConstructHeader *GetNextConstructItem(
   Environment *theEnv,
   ConstructHeader *theConstruct,
-  int moduleIndex)
+  unsigned moduleIndex)
   {
    struct defmoduleItemHeader *theModuleItem;
 
@@ -1207,7 +1205,7 @@ ConstructHeader *GetNextConstructItem(
 struct defmoduleItemHeader *GetConstructModuleItemByIndex(
   Environment *theEnv,
   Defmodule *theModule,
-  int moduleIndex)
+  unsigned moduleIndex)
   {
    if (theModule != NULL)
      {
@@ -1245,10 +1243,10 @@ void FreeConstructHeaderModule(
 /* DoForAllConstructs: Executes an action for */
 /*   all constructs of a specified type.      */
 /**********************************************/
-long DoForAllConstructs(
+void DoForAllConstructs(
   Environment *theEnv,
   void (*actionFunction)(Environment *,ConstructHeader *,void *),
-  int moduleItemIndex,
+  unsigned moduleItemIndex,
   bool interruptable,
   void *userBuffer)
   {
@@ -1298,7 +1296,7 @@ long DoForAllConstructs(
             if (GetHaltExecution(theEnv) == true)
               {
                RestoreCurrentModule(theEnv);
-               return(-1L);
+               return;
               }
            }
 
@@ -1322,12 +1320,6 @@ long DoForAllConstructs(
    /*=============================*/
 
    RestoreCurrentModule(theEnv);
-
-   /*=========================================*/
-   /* Return the number of modules traversed. */
-   /*=========================================*/
-
-   return(moduleCount);
   }
 
 /******************************************************/
@@ -1338,8 +1330,8 @@ void DoForAllConstructsInModule(
   Environment *theEnv,
   Defmodule *theModule,
   ConstructActionFunction *actionFunction,
-  int moduleItemIndex,
-  int interruptable,
+  unsigned moduleItemIndex,
+  bool interruptable,
   void *userBuffer)
   {
    ConstructHeader *theConstruct;
@@ -1486,7 +1478,7 @@ static bool ConstructWatchSupport(
    Defmodule *theModule;
    ConstructHeader *theConstruct;
    UDFValue constructName;
-   int argIndex = 2;
+   unsigned int argIndex = 2;
 
    /*========================================*/
    /* If no constructs are specified, then   */
@@ -1651,7 +1643,7 @@ ConstructHeader *LookupConstruct(
   {
    ConstructHeader *theConstruct;
    const char *constructType;
-   int moduleCount;
+   unsigned int moduleCount;
 
    /*============================================*/
    /* Look for the specified construct in the    */

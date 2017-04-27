@@ -62,8 +62,8 @@
    bool                           FactPNConstant1(Environment *,void *,UDFValue *);
    bool                           FactPNConstant2(Environment *,void *,UDFValue *);
    bool                           FactStoreMultifield(Environment *,void *,UDFValue *);
-   unsigned short                 AdjustFieldPosition(Environment *,struct multifieldMarker *,
-                                                      unsigned short,unsigned short,int *);
+   size_t                         AdjustFieldPosition(Environment *,struct multifieldMarker *,
+                                                      unsigned short,unsigned short,size_t *);
 
 #endif
 

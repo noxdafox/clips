@@ -77,12 +77,12 @@ struct bloadData
 
 #define BloadData(theEnv) ((struct bloadData *) GetEnvironmentData(theEnv,BLOAD_DATA))
 
-#define FunctionPointer(i) ((((i) == -1L) ? NULL : BloadData(theEnv)->FunctionArray[i]))
+#define FunctionPointer(i) ((((i) == ULONG_MAX) ? NULL : BloadData(theEnv)->FunctionArray[i]))
 
    void                    InitializeBloadData(Environment *);
    void                    BloadCommand(Environment *,UDFContext *,UDFValue *);
    bool                    Bload(Environment *,const char *);
-   void                    BloadandRefresh(Environment *,long,size_t,void (*)(Environment *,void *,long));
+   void                    BloadandRefresh(Environment *,unsigned long,size_t,void (*)(Environment *,void *,unsigned long));
    bool                    Bloaded(Environment *);
    void                    AddBeforeBloadFunction(Environment *,const char *,VoidCallFunction *,int,void *);
    void                    AddAfterBloadFunction(Environment *,const char *,VoidCallFunction *,int,void *);

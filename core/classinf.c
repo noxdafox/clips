@@ -443,8 +443,8 @@ void ClassSlots(
   CLIPSValue *returnValue,
   bool inhp)
   {
-   long size;
-   long i;
+   size_t size;
+   unsigned i;
    Environment *theEnv = theDefclass->header.env;
 
    size = inhp ? theDefclass->instanceSlotCount : theDefclass->slotCount;
@@ -493,7 +493,7 @@ void GetDefmessageHandlerList(
   {
    Defclass *cls,*svcls,*svnxt,*supcls;
    long j;
-   int classi, classiLimit;
+   unsigned long classi, classiLimit;
    unsigned long i, sublen, len;
 
    if (theDefclass == NULL)
@@ -570,7 +570,7 @@ void ClassSuperclasses(
   {
    PACKED_CLASS_LINKS *plinks;
    unsigned offset;
-   long i,j;
+   unsigned long i, j;
    Environment *theEnv = theDefclass->header.env;
    
    if (inhp)
@@ -589,7 +589,7 @@ void ClassSuperclasses(
    if (returnValue->multifieldValue->length == 0)
      { return; }
 
-   for (i = offset , j = 0 ; i < plinks->classCount ; i++ , j++)
+   for (i = offset, j = 0 ; i < plinks->classCount; i++, j++)
      {
       returnValue->multifieldValue->contents[j].value = GetDefclassNamePointer(plinks->classArray[i]);
      }
@@ -612,7 +612,7 @@ void ClassSubclasses(
   CLIPSValue *returnValue,
   bool inhp)
   {
-   int i; // Bug fix 2014-07-18: Previously unsigned and SetpDOEnd decremented to -1.
+   unsigned i;
    int id;
    Environment *theEnv = theDefclass->header.env;
 
@@ -653,7 +653,7 @@ void ClassSubclassAddresses(
   UDFValue *returnValue,
   bool inhp)
   {
-   int i; // Bug fix 2014-07-18: Previously unsigned and SetpDOEnd decremented to -1.
+   unsigned i;
    int id;
 
    if ((id = GetTraversalID(theEnv)) == -1)
@@ -792,7 +792,7 @@ bool SlotSources(
   CLIPSValue *returnValue)
   {
    unsigned i;
-   int classi;
+   unsigned classi;
    SlotDescriptor *sp, *csp;
    CLASS_LINK *ctop,*ctmp;
    Defclass *cls;
@@ -956,7 +956,7 @@ bool SlotAllowedValues(
       return true;
      }
 
-   returnValue->value = CreateMultifield(theEnv,(unsigned long) ExpressionSize(sp->constraint->restrictionList));
+   returnValue->value = CreateMultifield(theEnv,ExpressionSize(sp->constraint->restrictionList));
    i = 0;
    theExp = sp->constraint->restrictionList;
    while (theExp != NULL)
@@ -994,7 +994,7 @@ bool SlotAllowedClasses(
       returnValue->value = FalseSymbol(theEnv);
       return true;
      }
-   returnValue->value = CreateMultifield(theEnv,(unsigned long) ExpressionSize(sp->constraint->classList));
+   returnValue->value = CreateMultifield(theEnv,ExpressionSize(sp->constraint->classList));
    i = 0;
    theExp = sp->constraint->classList;
    while (theExp != NULL)
@@ -1134,7 +1134,7 @@ static unsigned CountSubclasses(
   bool inhp,
   int tvid)
   {
-   long i,cnt;
+   unsigned i, cnt;
    Defclass *subcls;
 
    for (cnt = 0 , i = 0 ; i < cls->directSubclasses.classCount ; i++)
@@ -1148,7 +1148,7 @@ static unsigned CountSubclasses(
            cnt += CountSubclasses(subcls,inhp,tvid);
         }
      }
-   return(cnt);
+   return cnt;
   }
 
 /*********************************************************************
@@ -1172,7 +1172,7 @@ static unsigned StoreSubclasses(
   int tvid,
   bool storeName)
   {
-   long i,classi;
+   unsigned i, classi;
    Defclass *subcls;
 
    for (i = si , classi = 0 ; classi < cls->directSubclasses.classCount ; classi++)
@@ -1194,7 +1194,7 @@ static unsigned StoreSubclasses(
            i += StoreSubclasses(mfval,i,subcls,inhp,tvid,storeName);
         }
      }
-   return(i - si);
+   return i - si;
   }
 
 /*********************************************************
@@ -1227,6 +1227,7 @@ static SlotDescriptor *SlotInfoSlot(
       SetMultifieldErrorValue(theEnv,returnValue);
       return NULL;
      }
+     
    i = FindInstanceTemplateSlot(theEnv,cls,ssym);
    if (i == -1)
      {
@@ -1235,8 +1236,10 @@ static SlotDescriptor *SlotInfoSlot(
       SetMultifieldErrorValue(theEnv,returnValue);
       return NULL;
      }
+     
    returnValue->begin = 0;
-   return(cls->instanceTemplate[i]);
+   
+   return cls->instanceTemplate[i];
   }
 
 #endif

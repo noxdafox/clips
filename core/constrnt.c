@@ -96,7 +96,7 @@ void InitializeConstraints(
 #if (! RUN_TIME) && (! BLOAD_ONLY)
 
     ConstraintData(theEnv)->ConstraintHashtable = (struct constraintRecord **)
-                          gm2(theEnv,(int) sizeof (struct constraintRecord *) *
+                          gm2(theEnv,sizeof (struct constraintRecord *) *
                                     SIZE_CONSTRAINT_HASH);
 
     if (ConstraintData(theEnv)->ConstraintHashtable == NULL) ExitRouter(theEnv,EXIT_FAILURE);
@@ -133,7 +133,7 @@ static void DeallocateConstraintData(
      }
 
    rm(theEnv,ConstraintData(theEnv)->ConstraintHashtable,
-      (int) sizeof (struct constraintRecord *) * SIZE_CONSTRAINT_HASH);
+      sizeof(struct constraintRecord *) * SIZE_CONSTRAINT_HASH);
 #else
 #if MAC_XCD
 #pragma unused(theEnv)
@@ -160,7 +160,7 @@ static void ReturnConstraintRecord(
   {
    if (constraints == NULL) return;
 
-   if (constraints->bucket < 0)
+   if (! constraints->installed)
      {
       ReturnExpression(theEnv,constraints->classList);
       ReturnExpression(theEnv,constraints->restrictionList);
@@ -184,7 +184,7 @@ static void DeinstallConstraintRecord(
   Environment *theEnv,
   CONSTRAINT_RECORD *constraints)
   {
-   if (constraints->bucket >= 0)
+   if (constraints->installed)
      {
       RemoveHashedExpression(theEnv,constraints->classList);
       RemoveHashedExpression(theEnv,constraints->restrictionList);
@@ -225,7 +225,7 @@ void RemoveConstraint(
    /* the hash table.                        */
    /*========================================*/
 
-   if (theConstraint->bucket < 0)
+   if (! theConstraint->installed)
      {
       ReturnConstraintRecord(theEnv,theConstraint);
       return;
@@ -270,12 +270,12 @@ void RemoveConstraint(
 unsigned long HashConstraint(
   struct constraintRecord *theConstraint)
   {
-   int i = 0;
+   unsigned short i = 0;
    unsigned long count = 0;
    unsigned long hashValue;
    struct expr *tmpPtr;
 
-   count += (unsigned long)
+   count +=
       (theConstraint->anyAllowed * 17) +
       (theConstraint->symbolsAllowed * 5) +
       (theConstraint->stringsAllowed * 23) +
@@ -284,7 +284,7 @@ unsigned long HashConstraint(
       (theConstraint->instanceNamesAllowed * 31) +
       (theConstraint->instanceAddressesAllowed * 17);
 
-   count += (unsigned long)
+   count +=
       (theConstraint->externalAddressesAllowed * 29) +
       (theConstraint->voidAllowed * 29) +
       (theConstraint->multifieldsAllowed * 29) +
@@ -292,7 +292,7 @@ unsigned long HashConstraint(
       (theConstraint->anyRestriction * 59) +
       (theConstraint->symbolRestriction * 61);
 
-   count += (unsigned long)
+   count +=
       (theConstraint->stringRestriction * 3) +
       (theConstraint->floatRestriction * 37) +
       (theConstraint->integerRestriction * 9) +
@@ -320,9 +320,9 @@ unsigned long HashConstraint(
    if (theConstraint->multifield != NULL)
      { count += HashConstraint(theConstraint->multifield); }
 
-   hashValue = (unsigned long) (count % SIZE_CONSTRAINT_HASH);
+   hashValue = count % SIZE_CONSTRAINT_HASH;
 
-   return(hashValue);
+   return hashValue;
   }
 
 /**********************************************/
@@ -443,16 +443,17 @@ struct constraintRecord *AddConstraint(
         {
          tmpPtr->count++;
          ReturnConstraintRecord(theEnv,theConstraint);
-         return(tmpPtr);
+         return tmpPtr;
         }
      }
 
    InstallConstraintRecord(theEnv,theConstraint);
    theConstraint->count = 1;
-   theConstraint->bucket = hashValue;
+   theConstraint->bucket = (unsigned int) hashValue;
+   theConstraint->installed = true;
    theConstraint->next = ConstraintData(theEnv)->ConstraintHashtable[hashValue];
    ConstraintData(theEnv)->ConstraintHashtable[hashValue] = theConstraint;
-   return(theConstraint);
+   return theConstraint;
   }
 
 /*************************************************/

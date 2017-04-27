@@ -55,20 +55,20 @@ struct bsaveDefrule
   {
    struct bsaveConstructHeader header;
    int salience;
-   int localVarCnt;
+   unsigned short localVarCnt;
    unsigned int complexity      : 12;
    unsigned int autoFocus       :  1;
-   long dynamicSalience;
-   long actions;
-   long logicalJoin;
-   long lastJoin;
-   long disjunct;
+   unsigned long dynamicSalience;
+   unsigned long actions;
+   unsigned long logicalJoin;
+   unsigned long lastJoin;
+   unsigned long disjunct;
   };
 
 struct bsavePatternNodeHeader
   {
-   long entryJoin;
-   long rightHash;
+   unsigned long entryJoin;
+   unsigned long rightHash;
    unsigned int singlefieldNode : 1;
    unsigned int multifieldNode : 1;
    unsigned int stopNode : 1;
@@ -88,8 +88,8 @@ struct bsaveDefruleModule
 struct bsaveJoinLink
   {
    char enterDirection;
-   long join;
-   long next;
+   unsigned long join;
+   unsigned long next;
   };
 
 struct bsaveJoinNode
@@ -101,27 +101,27 @@ struct bsaveJoinNode
    unsigned int patternIsExists : 1;
    unsigned int rhsType : 3;
    unsigned int depth : 7;
-   long networkTest;
-   long secondaryNetworkTest;
-   long leftHash;
-   long rightHash;
-   long rightSideEntryStructure;
-   long nextLinks;
-   long lastLevel;
-   long rightMatchNode;
-   long ruleToActivate;
+   unsigned long networkTest;
+   unsigned long secondaryNetworkTest;
+   unsigned long leftHash;
+   unsigned long rightHash;
+   unsigned long rightSideEntryStructure;
+   unsigned long nextLinks;
+   unsigned long lastLevel;
+   unsigned long rightMatchNode;
+   unsigned long ruleToActivate;
   };
 
 #define RULEBIN_DATA 20
 
 struct defruleBinaryData
   {
-   long NumberOfDefruleModules;
-   long NumberOfDefrules;
-   long NumberOfJoins;
-   long NumberOfLinks;
-   long RightPrimeIndex;
-   long LeftPrimeIndex;
+   unsigned long NumberOfDefruleModules;
+   unsigned long NumberOfDefrules;
+   unsigned long NumberOfJoins;
+   unsigned long NumberOfLinks;
+   unsigned long RightPrimeIndex;
+   unsigned long LeftPrimeIndex;
    struct defruleModule *ModuleArray;
    Defrule *DefruleArray;
    struct joinNode *JoinArray;
@@ -130,18 +130,18 @@ struct defruleBinaryData
 
 #define DefruleBinaryData(theEnv) ((struct defruleBinaryData *) GetEnvironmentData(theEnv,RULEBIN_DATA))
 
-#define BloadDefrulePointer(x,i) ((Defrule *) ((i == -1L) ? NULL : &x[i]))
-#define BsaveJoinIndex(joinPtr) ((joinPtr == NULL) ? -1L :  ((struct joinNode *) joinPtr)->bsaveID)
-#define BloadJoinPointer(i) ((struct joinNode *) ((i == -1L) ? NULL : &DefruleBinaryData(theEnv)->JoinArray[i]))
-#define BsaveJoinLinkIndex(linkPtr) ((linkPtr == NULL) ? -1L :  ((struct joinLink *) linkPtr)->bsaveID)
-#define BloadJoinLinkPointer(i) ((struct joinLink *) ((i == -1L) ? NULL : &DefruleBinaryData(theEnv)->LinkArray[i]))
+#define BloadDefrulePointer(x,i) ((Defrule *) ((i == ULONG_MAX) ? NULL : &x[i]))
+#define BsaveJoinIndex(joinPtr) ((joinPtr == NULL) ? ULONG_MAX :  ((struct joinNode *) joinPtr)->bsaveID)
+#define BloadJoinPointer(i) ((struct joinNode *) ((i == ULONG_MAX) ? NULL : &DefruleBinaryData(theEnv)->JoinArray[i]))
+#define BsaveJoinLinkIndex(linkPtr) ((linkPtr == NULL) ? ULONG_MAX :  ((struct joinLink *) linkPtr)->bsaveID)
+#define BloadJoinLinkPointer(i) ((struct joinLink *) ((i == ULONG_MAX) ? NULL : &DefruleBinaryData(theEnv)->LinkArray[i]))
 
    void                           DefruleBinarySetup(Environment *);
    void                           UpdatePatternNodeHeader(Environment *,struct patternNodeHeader *,
                                                                  struct bsavePatternNodeHeader *);
    void                           AssignBsavePatternHeaderValues(Environment *,struct bsavePatternNodeHeader *,
                                                                         struct patternNodeHeader *);
-   void                          *BloadDefruleModuleReference(Environment *,int);
+   void                          *BloadDefruleModuleReference(Environment *,unsigned long);
 
 #endif /* (! RUN_TIME) */
 

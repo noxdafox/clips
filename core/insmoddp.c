@@ -86,8 +86,8 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static UDFValue               *EvaluateSlotOverrides(Environment *,Expression *,int *,bool *);
-   static void                    DeleteSlotOverrideEvaluations(Environment *,UDFValue *,int);
+   static UDFValue               *EvaluateSlotOverrides(Environment *,Expression *,unsigned short *,bool *);
+   static void                    DeleteSlotOverrideEvaluations(Environment *,UDFValue *,unsigned short);
    static void                    ModifyMsgHandlerSupport(Environment *,UDFValue *,bool);
    static void                    DuplicateMsgHandlerSupport(Environment *,UDFValue *,bool);
 
@@ -173,7 +173,7 @@ void ModifyInstance(
    Expression theExp;
    UDFValue *overrides;
    bool oldOMDMV;
-   int overrideCount;
+   unsigned short overrideCount;
    bool error;
 
    /* ===========================================
@@ -243,7 +243,7 @@ void MsgModifyInstance(
    Expression theExp;
    UDFValue *overrides;
    bool oldOMDMV;
-   int overrideCount;
+   unsigned short overrideCount;
    bool error;
 
    /* ===========================================
@@ -313,7 +313,7 @@ void DuplicateInstance(
    Expression theExp[2];
    UDFValue *overrides;
    bool oldOMDMV;
-   int overrideCount;
+   unsigned short overrideCount;
    bool error;
 
    /* ===========================================
@@ -393,7 +393,7 @@ void MsgDuplicateInstance(
    Expression theExp[2];
    UDFValue *overrides;
    bool oldOMDMV;
-   int overrideCount;
+   unsigned short overrideCount;
    bool error;
 
    /* ===========================================
@@ -669,11 +669,11 @@ void MsgModifyMsgHandler(
 static UDFValue *EvaluateSlotOverrides(
   Environment *theEnv,
   Expression *ovExprs,
-  int *ovCnt,
+  unsigned short *ovCnt,
   bool *error)
   {
    UDFValue *ovs;
-   int ovi;
+   unsigned ovi;
    void *slotName;
 
    *error = false;
@@ -743,7 +743,7 @@ EvaluateOverridesError:
 static void DeleteSlotOverrideEvaluations(
   Environment *theEnv,
   UDFValue *ovEvals,
-  int ovCnt)
+  unsigned short ovCnt)
   {
    if (ovEvals != NULL)
      rm(theEnv,ovEvals,(sizeof(UDFValue) * ovCnt));

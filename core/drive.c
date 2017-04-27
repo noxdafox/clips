@@ -857,13 +857,13 @@ unsigned long BetaMemoryHashValue(
 #endif
             fis.liv = 0;
             fis.vv = theResult.value;
-            hashValue += (unsigned long) (fis.liv * multiplier);
+            hashValue += fis.liv * multiplier;
             break;
 
           case EXTERNAL_ADDRESS_TYPE:
             fis.liv = 0;
             fis.vv = theResult.externalAddressValue->contents;
-            hashValue += (unsigned long) (fis.liv * multiplier);
+            hashValue += fis.liv * multiplier;
             break;
         }
 

@@ -86,7 +86,7 @@
 /******************************************/
 void SetNumberOfDefmodules(
   Environment *theEnv,
-  long value)
+  unsigned short value)
   {
    DefmoduleData(theEnv)->NumberOfDefmodules = value;
   }
@@ -137,7 +137,7 @@ bool ParseDefmodule(
    CLIPSLexeme *defmoduleName;
    Defmodule *newDefmodule;
    struct token inputToken;
-   int i;
+   unsigned int i;
    struct moduleItem *theItem;
    struct portItem *portSpecs, *nextSpec;
    struct defmoduleItemHeader *theHeader;
@@ -500,7 +500,7 @@ static bool ParseImportSpec(
    Defmodule *theModule;
    struct portItem *thePort, *oldImportSpec;
    bool found;
-   int count;
+   unsigned int count;
 
    /*===========================*/
    /* Look for the module name. */
@@ -953,7 +953,7 @@ static bool FindMultiImportConflict(
   Defmodule *theModule)
   {
    Defmodule *testModule;
-   int count;
+   unsigned int count;
    struct portConstructItem *thePCItem;
    Construct *theConstruct;
    ConstructHeader *theCItem;
@@ -1081,7 +1081,7 @@ bool FindImportExportConflict(
   {
    Defmodule *theModule;
    struct moduleItem *theModuleItem;
-   int count;
+   unsigned int count;
 
    /*===========================================================*/
    /* If the construct type can't be imported or exported, then */

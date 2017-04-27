@@ -186,7 +186,7 @@ static void DeallocateConstructCompilerData(
   Environment *theEnv)
   {
    struct CodeGeneratorItem *tmpPtr, *nextPtr;
-   int i;
+   unsigned int i;
 
    tmpPtr = ConstructCompilerData(theEnv)->ListOfCodeGeneratorItems;
    while (tmpPtr != NULL)
@@ -218,7 +218,7 @@ void ConstructsToCCommand(
    const char *pathName;
    UDFValue theArg;
    long long id, max;
-   int nameLength, pathLength;
+   size_t nameLength, pathLength;
 #if WIN_MVC
    int i;
 #endif
@@ -231,7 +231,7 @@ void ConstructsToCCommand(
      { return; }
 
    fileName = theArg.lexemeValue->contents;
-   nameLength = (int) strlen(fileName);
+   nameLength = strlen(fileName);
 
    /*================================*/
    /* File names for the VAX and IBM */
@@ -293,7 +293,7 @@ void ConstructsToCCommand(
         { return; }
 
       pathName = theArg.lexemeValue->contents;
-      pathLength = (int) strlen(pathName);
+      pathLength = strlen(pathName);
      }
    else
      {
@@ -346,7 +346,7 @@ static bool ConstructsToC(
   long long theImageID,
   long long max)
   {
-   int fileVersion;
+   unsigned fileVersion;
    struct CodeGeneratorItem *cgPtr;
 
    /*===============================================*/
@@ -355,7 +355,7 @@ static bool ConstructsToC(
    /* in each file.                                 */
    /*===============================================*/
 
-   ConstructCompilerData(theEnv)->MaxIndices = (int) max; /* TBD */
+   ConstructCompilerData(theEnv)->MaxIndices = (unsigned) max; /* TBD */
 
    /*=====================================================*/
    /* Open a header file for dumping general information. */
@@ -396,7 +396,7 @@ static bool ConstructsToC(
    ConstructCompilerData(theEnv)->FilePrefix = fileName;
    ConstructCompilerData(theEnv)->PathName = pathName;
    ConstructCompilerData(theEnv)->FileNameBuffer = fileNameBuffer;
-   ConstructCompilerData(theEnv)->ImageID = (int) theImageID; /* TBD */
+   ConstructCompilerData(theEnv)->ImageID = (unsigned) theImageID; /* TBD */
    ConstructCompilerData(theEnv)->ExpressionFP = NULL;
    ConstructCompilerData(theEnv)->ExpressionVersion = 1;
    ConstructCompilerData(theEnv)->ExpressionHeader = true;
@@ -563,9 +563,9 @@ static bool FunctionsToCode(
   const char *pathName,
   char *fileNameBuffer)
   {
-   short i = 0;
+   unsigned short i = 0;
    FILE *fp;
-   int version = 1;
+   unsigned version = 1;
    bool newHeader = true;
    struct functionDefinition *fctnPtr;
 
@@ -653,7 +653,7 @@ void PrintFunctionReference(
   {
    if (funcPtr == NULL) fprintf(fp,"NULL");
    else
-      fprintf(fp,"&P%d_%d[%d]",ConstructCompilerData(theEnv)->ImageID,
+      fprintf(fp,"&P%d_%lu[%lu]",ConstructCompilerData(theEnv)->ImageID,
                                   (funcPtr->bsaveIndex / ConstructCompilerData(theEnv)->MaxIndices) + 1,
                                    funcPtr->bsaveIndex % ConstructCompilerData(theEnv)->MaxIndices);
   }
@@ -756,7 +756,6 @@ static bool WriteInitializationFunction(
    return true;
   }
 
-
 /**************************************************/
 /* NewCFile: Opens a new file for writing C code. */
 /**************************************************/
@@ -765,8 +764,8 @@ FILE *NewCFile(
   const char *fileName,
   const char *pathName,
   char *fileNameBuffer,
-  int id,
-  int version,
+  unsigned id,
+  unsigned version,
   bool reopenOldFile)
   {
    FILE *newFP;
@@ -826,10 +825,10 @@ void PrintHashedExpressionReference(
   Environment *theEnv,
   FILE *theFile,
   struct expr *theExpression,
-  int imageID,
-  int maxIndices)
+  unsigned imageID,
+  unsigned maxIndices)
   {
-   long theIDValue;
+   unsigned long theIDValue;
 
    if (theExpression == NULL)
      { fprintf(theFile,"NULL"); }
@@ -979,7 +978,9 @@ static void DumpExpression(
 
          case DEFCLASS_PTR:
 #if OBJECT_SYSTEM
-           PrintClassReference(theEnv,ConstructCompilerData(theEnv)->ExpressionFP,(Defclass *) exprPtr->value,ConstructCompilerData(theEnv)->ImageID,ConstructCompilerData(theEnv)->MaxIndices);
+           PrintClassReference(theEnv,ConstructCompilerData(theEnv)->ExpressionFP,
+                               (Defclass *) exprPtr->value,ConstructCompilerData(theEnv)->ImageID,
+                               ConstructCompilerData(theEnv)->MaxIndices);
 #else
            fprintf(ConstructCompilerData(theEnv)->ExpressionFP,"NULL");
 #endif
@@ -1083,12 +1084,13 @@ struct CodeGeneratorItem *AddCodeGeneratorItem(
   const char *name,
   int priority,
   void (*beforeFunction)(Environment *),
-  void (*initFunction)(Environment *,FILE *,int,int),
-  bool (*generateFunction)(Environment *,const char *,const char *,char *,int,FILE *,int,int),
-  int arrayCount)
+  void (*initFunction)(Environment *,FILE *,unsigned,unsigned),
+  bool (*generateFunction)(Environment *,const char *,const char *,char *,
+                           unsigned int,FILE *,unsigned int,unsigned int),
+  unsigned arrayCount)
   {
    struct CodeGeneratorItem *newPtr, *currentPtr, *lastPtr = NULL;
-   int i;
+   unsigned int i;
    char theBuffer[3];
 
    /*======================================*/
@@ -1185,9 +1187,9 @@ struct CodeGeneratorItem *AddCodeGeneratorItem(
 FILE *CloseFileIfNeeded(
   Environment *theEnv,
   FILE *theFile,
-  int *theCount,
-  int *arrayVersion,
-  int maxIndices,
+  unsigned int *theCount,
+  unsigned int *arrayVersion,
+  unsigned int maxIndices,
   bool *canBeReopened,
   struct CodeGeneratorFile *codeFile)
   {
@@ -1210,7 +1212,7 @@ FILE *CloseFileIfNeeded(
          return NULL;
         }
 
-      return(theFile);
+      return theFile;
      }
 
    /*===========================================*/
@@ -1238,7 +1240,9 @@ FILE *CloseFileIfNeeded(
       if (codeFile->filePrefix == NULL)
         { return NULL; }
 
-      theFile = NewCFile(theEnv,codeFile->filePrefix,codeFile->pathName,codeFile->fileNameBuffer,codeFile->id,codeFile->version,true);
+      theFile = NewCFile(theEnv,codeFile->filePrefix,codeFile->pathName,
+                         codeFile->fileNameBuffer,
+                         codeFile->id,codeFile->version,true);
       if (theFile == NULL)
         {
          SystemError(theEnv,"CONSCOMP",4);
@@ -1283,10 +1287,10 @@ FILE *OpenFileIfNeeded(
   const char *fileName,
   const char *pathName,
   char *fileNameBuffer,
-  int fileID,
-  int imageID,
-  int *fileCount,
-  int arrayVersion,
+  unsigned fileID,
+  unsigned int imageID,
+  unsigned *fileCount,
+  unsigned int arrayVersion,
   FILE *headerFP,
   const char *structureName,
   char *structPrefix,
@@ -1295,7 +1299,7 @@ FILE *OpenFileIfNeeded(
   {
    char arrayName[80];
    const char *newName;
-   int newID, newVersion;
+   unsigned int newID, newVersion;
 
    /*===========================================*/
    /* If a file is being reopened, use the same */
@@ -1381,7 +1385,7 @@ FILE *OpenFileIfNeeded(
 /*************************************************/
 void MarkConstructBsaveIDs(
   Environment *theEnv,
-  int constructModuleIndex)
+  unsigned int constructModuleIndex)
   {
    long theCount = 0;
 
@@ -1398,7 +1402,7 @@ static void MarkConstruct(
   ConstructHeader *theConstruct,
   void *vTheBuffer)
   {
-   long *count = (long *) vTheBuffer;
+   unsigned long *count = (unsigned long *) vTheBuffer;
 #if MAC_XCD
 #pragma unused(theEnv)
 #endif
@@ -1414,9 +1418,9 @@ void ConstructHeaderToCode(
   Environment *theEnv,
   FILE *theFile,
   ConstructHeader *theConstruct,
-  int imageID,
-  int maxIndices,
-  int moduleCount,
+  unsigned int imageID,
+  unsigned int maxIndices,
+  unsigned int moduleCount,
   const char *constructModulePrefix,
   const char *constructPrefix)
   {
@@ -1516,9 +1520,9 @@ void ConstructModuleToCode(
   Environment *theEnv,
   FILE *theFile,
   Defmodule *theModule,
-  int imageID,
-  int maxIndices,
-  int constructIndex,
+  unsigned int imageID,
+  unsigned int maxIndices,
+  unsigned int constructIndex,
   const char *constructPrefix)
   {
    struct defmoduleItemHeader *theModuleItem;
@@ -1544,8 +1548,8 @@ void ConstructModuleToCode(
    else fprintf(theFile,"CHS &%s%d_%ld[%ld],",
                         constructPrefix,
                         imageID,
-                        (long) (theModuleItem->firstItem->bsaveID / maxIndices) + 1,
-                        (long) theModuleItem->firstItem->bsaveID % maxIndices);
+                        (theModuleItem->firstItem->bsaveID / maxIndices) + 1,
+                        theModuleItem->firstItem->bsaveID % maxIndices);
 
    /*============================*/
    /* Last Construct Module Item */
@@ -1555,8 +1559,8 @@ void ConstructModuleToCode(
    else fprintf(theFile,"CHS &%s%d_%ld[%ld]",
                         constructPrefix,
                         imageID,
-                        (long) (theModuleItem->lastItem->bsaveID / maxIndices) + 1,
-                        (long) theModuleItem->lastItem->bsaveID % maxIndices);
+                        (theModuleItem->lastItem->bsaveID / maxIndices) + 1,
+                        theModuleItem->lastItem->bsaveID % maxIndices);
 
    fprintf(theFile,"}");
   }

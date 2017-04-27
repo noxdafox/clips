@@ -313,7 +313,7 @@ static Activation *PlaceBreadthActivation(
    /* Return the insertion point in the agenda. */
    /*===========================================*/
 
-   return(lastAct);
+   return lastAct;
   }
 
 /*******************************************************************/
@@ -357,7 +357,7 @@ static Activation *PlaceLEXActivation(
         {
          theGroup->last = newActivation;
 
-         return(actPtr);
+         return actPtr;
         }
      }
 
@@ -414,7 +414,7 @@ static Activation *PlaceLEXActivation(
    /* Return the insertion point in the agenda. */
    /*===========================================*/
 
-   return(lastAct);
+   return lastAct;
   }
 
 /*******************************************************************/
@@ -432,7 +432,7 @@ static Activation *PlaceMEAActivation(
    unsigned long long timetag;
    Activation *lastAct, *actPtr;
    int flag;
-   long long cWhoset = 0, oWhoset = 0;
+   unsigned long long cWhoset = 0, oWhoset = 0;
    bool cSet, oSet;
 
    /*============================================*/
@@ -487,7 +487,7 @@ static Activation *PlaceMEAActivation(
         {
          theGroup->last = newActivation;
 
-         return(actPtr);
+         return actPtr;
         }
      }
 
@@ -502,8 +502,8 @@ static Activation *PlaceMEAActivation(
    actPtr = theGroup->first;
    while (actPtr != NULL)
      {
-      cWhoset = -1;
-      oWhoset = -1;
+      cWhoset = 0;
+      oWhoset = 0;
       if (GetMatchingItem(newActivation,0) != NULL)
         { cWhoset = GetMatchingItem(newActivation,0)->timeTag; }
 
@@ -563,7 +563,7 @@ static Activation *PlaceMEAActivation(
    /* Return the insertion point in the agenda. */
    /*===========================================*/
 
-   return(lastAct);
+   return lastAct;
   }
 
 /*********************************************************************/
@@ -577,7 +577,7 @@ static Activation *PlaceComplexityActivation(
   Activation *newActivation,
   struct salienceGroup *theGroup)
   {
-   int complexity;
+   unsigned int complexity;
    unsigned long long timetag;
    Activation *lastAct, *actPtr;
 
@@ -603,7 +603,7 @@ static Activation *PlaceComplexityActivation(
    actPtr = theGroup->first;
    while (actPtr != NULL)
      {
-      if (complexity < (int) actPtr->theRule->complexity)
+      if (complexity < actPtr->theRule->complexity)
         {
          lastAct = actPtr;
          if (actPtr == theGroup->last)
@@ -611,7 +611,7 @@ static Activation *PlaceComplexityActivation(
          else
            { actPtr = actPtr->next; }
         }
-      else if (complexity > (int) actPtr->theRule->complexity)
+      else if (complexity > actPtr->theRule->complexity)
         { break; }
       else if (timetag > actPtr->timetag)
         {
@@ -640,7 +640,7 @@ static Activation *PlaceComplexityActivation(
    /* Return the insertion point in the agenda. */
    /*===========================================*/
 
-   return(lastAct);
+   return lastAct;
   }
 
 /*********************************************************************/
@@ -654,7 +654,7 @@ static Activation *PlaceSimplicityActivation(
   Activation *newActivation,
   struct salienceGroup *theGroup)
   {
-   int complexity;
+   unsigned int complexity;
    unsigned long long timetag;
    Activation *lastAct, *actPtr;
 
@@ -680,7 +680,7 @@ static Activation *PlaceSimplicityActivation(
    actPtr = theGroup->first;
    while (actPtr != NULL)
      {
-      if (complexity > (int) actPtr->theRule->complexity)
+      if (complexity > actPtr->theRule->complexity)
         {
          lastAct = actPtr;
          if (actPtr == theGroup->last)
@@ -688,7 +688,7 @@ static Activation *PlaceSimplicityActivation(
          else
            { actPtr = actPtr->next; }
         }
-      else if (complexity < (int) actPtr->theRule->complexity)
+      else if (complexity < actPtr->theRule->complexity)
         { break; }
       else if (timetag > actPtr->timetag)
         {
@@ -808,7 +808,7 @@ static unsigned long long *SortPartialMatch(
    unsigned long long *nbinds;
    unsigned long long temp;
    bool flag;
-   unsigned j, k;
+   unsigned short j, k;
 
    /*====================================================*/
    /* Copy the array. Use 0 to represent the timetags of */
@@ -818,7 +818,7 @@ static unsigned long long *SortPartialMatch(
 
    nbinds = (unsigned long long *) get_mem(theEnv,sizeof(long long) * binds->bcount);
 
-   for (j = 0; j < (unsigned) binds->bcount; j++)
+   for (j = 0; j < binds->bcount; j++)
      {
       if ((binds->binds[j].gm.theMatch != NULL) &&
           (binds->binds[j].gm.theMatch->matchingItem != NULL))
@@ -852,7 +852,7 @@ static unsigned long long *SortPartialMatch(
    /* Return the array. */
    /*===================*/
 
-   return(nbinds);
+   return nbinds;
   }
 
 /**************************************************************************/
@@ -866,7 +866,7 @@ static int ComparePartialMatches(
   Activation *actPtr,
   Activation *newActivation)
   {
-   int cCount, oCount, mCount, i;
+   unsigned cCount, oCount, mCount, i;
    unsigned long long *basis1, *basis2;
 
    /*=================================================*/

@@ -66,9 +66,9 @@
 #endif
    static void                    BloadStorage(Environment *);
    static void                    BloadBinaryItem(Environment *);
-   static void                    UpdateDeftemplateModule(Environment *,void *,long);
-   static void                    UpdateDeftemplate(Environment *,void *,long);
-   static void                    UpdateDeftemplateSlot(Environment *,void *,long);
+   static void                    UpdateDeftemplateModule(Environment *,void *,unsigned long);
+   static void                    UpdateDeftemplate(Environment *,void *,unsigned long);
+   static void                    UpdateDeftemplateSlot(Environment *,void *,unsigned long);
    static void                    ClearBload(Environment *);
    static void                    DeallocateDeftemplateBloadData(Environment *);
 
@@ -288,7 +288,8 @@ static void BsaveBinaryItem(
 
          if (theDeftemplate->slotList != NULL)
            { tempDeftemplate.slotList = DeftemplateBinaryData(theEnv)->NumberOfTemplateSlots; }
-         else tempDeftemplate.slotList = -1L;
+         else
+           { tempDeftemplate.slotList = ULONG_MAX; }
 
          GenWrite(&tempDeftemplate,sizeof(struct bsaveDeftemplate),fp);
 
@@ -324,7 +325,7 @@ static void BsaveBinaryItem(
             tempTemplateSlot.facetList = HashedExpressionIndex(theEnv,theSlot->facetList);
 
             if (theSlot->next != NULL) tempTemplateSlot.next = 0L;
-            else tempTemplateSlot.next = -1L;
+            else tempTemplateSlot.next = ULONG_MAX;
 
             GenWrite(&tempTemplateSlot,sizeof(struct bsaveTemplateSlot),fp);
            }
@@ -460,13 +461,13 @@ static void BloadBinaryItem(
 static void UpdateDeftemplateModule(
   Environment *theEnv,
   void *buf,
-  long obji)
+  unsigned long obji)
   {
    struct bsaveDeftemplateModule *bdmPtr;
 
    bdmPtr = (struct bsaveDeftemplateModule *) buf;
    UpdateDefmoduleItemHeader(theEnv,&bdmPtr->header,&DeftemplateBinaryData(theEnv)->ModuleArray[obji].header,
-                             (int) sizeof(Deftemplate),
+                             sizeof(Deftemplate),
                              (void *) DeftemplateBinaryData(theEnv)->DeftemplateArray);
   }
 
@@ -477,7 +478,7 @@ static void UpdateDeftemplateModule(
 static void UpdateDeftemplate(
   Environment *theEnv,
   void *buf,
-  long obji)
+  unsigned long obji)
   {
    Deftemplate *theDeftemplate;
    struct bsaveDeftemplate *bdtPtr;
@@ -486,15 +487,15 @@ static void UpdateDeftemplate(
    theDeftemplate = &DeftemplateBinaryData(theEnv)->DeftemplateArray[obji];
 
    UpdateConstructHeader(theEnv,&bdtPtr->header,&theDeftemplate->header,DEFTEMPLATE,
-                         (int) sizeof(struct deftemplateModule),DeftemplateBinaryData(theEnv)->ModuleArray,
-                         (int) sizeof(Deftemplate),DeftemplateBinaryData(theEnv)->DeftemplateArray);
+                         sizeof(struct deftemplateModule),DeftemplateBinaryData(theEnv)->ModuleArray,
+                         sizeof(Deftemplate),DeftemplateBinaryData(theEnv)->DeftemplateArray);
 
-   if (bdtPtr->slotList != -1L)
+   if (bdtPtr->slotList != ULONG_MAX)
      { theDeftemplate->slotList = (struct templateSlot *) &DeftemplateBinaryData(theEnv)->SlotArray[bdtPtr->slotList]; }
    else
      { theDeftemplate->slotList = NULL; }
 
-   if (bdtPtr->patternNetwork != -1L)
+   if (bdtPtr->patternNetwork != ULONG_MAX)
      { theDeftemplate->patternNetwork = (struct factPatternNode *) BloadFactPatternPointer(bdtPtr->patternNetwork); }
    else
      { theDeftemplate->patternNetwork = NULL; }
@@ -504,7 +505,7 @@ static void UpdateDeftemplate(
    theDeftemplate->watch = FactData(theEnv)->WatchFacts;
 #endif
    theDeftemplate->inScope = false;
-   theDeftemplate->numberOfSlots = (unsigned short) bdtPtr->numberOfSlots;
+   theDeftemplate->numberOfSlots = bdtPtr->numberOfSlots;
    theDeftemplate->factList = NULL;
    theDeftemplate->lastFact = NULL;
   }
@@ -516,7 +517,7 @@ static void UpdateDeftemplate(
 static void UpdateDeftemplateSlot(
   Environment *theEnv,
   void *buf,
-  long obji)
+  unsigned long obji)
   {
    struct templateSlot *theSlot;
    struct bsaveTemplateSlot *btsPtr;
@@ -535,7 +536,7 @@ static void UpdateDeftemplateSlot(
    theSlot->defaultPresent = btsPtr->defaultPresent;
    theSlot->defaultDynamic = btsPtr->defaultDynamic;
 
-   if (btsPtr->next != -1L)
+   if (btsPtr->next != ULONG_MAX)
      { theSlot->next = (struct templateSlot *) &DeftemplateBinaryData(theEnv)->SlotArray[obji + 1]; }
    else
      { theSlot->next = NULL; }
@@ -549,7 +550,7 @@ static void ClearBload(
   Environment *theEnv)
   {
    size_t space;
-   int i;
+   unsigned long i;
 
    /*=============================================*/
    /* Decrement in use counters for atomic values */
@@ -598,7 +599,7 @@ static void ClearBload(
 /************************************************************/
 void *BloadDeftemplateModuleReference(
   Environment *theEnv,
-  int theIndex)
+  unsigned long theIndex)
   {
    return ((void *) &DeftemplateBinaryData(theEnv)->ModuleArray[theIndex]);
   }

@@ -130,7 +130,8 @@ bool ParseDefmessageHandler(
    Defclass *cls;
    CLIPSLexeme *cname, *mname, *wildcard;
    unsigned mtype = MPRIMARY;
-   int min,max,lvars;
+   unsigned short min, max;
+   unsigned short lvars;
    bool error;
    Expression *hndParams,*actions;
    DefmessageHandler *hnd;
@@ -289,14 +290,14 @@ bool ParseDefmessageHandler(
      }
    else
      {
-      hnd = InsertHandlerHeader(theEnv,cls,mname,(int) mtype);
+      hnd = InsertHandlerHeader(theEnv,cls,mname,mtype);
       IncrementLexemeCount(hnd->header.name);
      }
    ReturnExpression(theEnv,hndParams);
 
-   hnd->minParams = (short) min;
-   hnd->maxParams = (short) max;
-   hnd->localVarCount = (short) lvars;
+   hnd->minParams = min;
+   hnd->maxParams = max;
+   hnd->localVarCount = lvars;
    hnd->actions = actions;
    ExpressionInstall(theEnv,hnd->actions);
 #if DEBUGGING_FUNCTIONS
@@ -607,7 +608,7 @@ static SlotDescriptor *CheckSlotReference(
   {
    int slotIndex;
    SlotDescriptor *sd;
-   int vCode;
+   ConstraintViolationType vCode;
 
    if (theType != SYMBOL_TYPE)
      {
@@ -685,11 +686,11 @@ static void GenHandlerSlotReference(
    HANDLER_SLOT_REFERENCE handlerReference;
 
    ClearBitString(&handlerReference,sizeof(HANDLER_SLOT_REFERENCE));
-   handlerReference.classID = (unsigned short) sd->cls->id;
-   handlerReference.slotID = (unsigned) sd->slotName->id;
+   handlerReference.classID = sd->cls->id;
+   handlerReference.slotID = sd->slotName->id;
    theExp->type = theType;
    theExp->value =  AddBitMap(theEnv,&handlerReference,
-                           (int) sizeof(HANDLER_SLOT_REFERENCE));
+                              sizeof(HANDLER_SLOT_REFERENCE));
   }
 
 #endif

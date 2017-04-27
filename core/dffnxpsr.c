@@ -98,7 +98,7 @@
 /***************************************/
 
    static bool                    ValidDeffunctionName(Environment *,const char *);
-   static Deffunction            *AddDeffunction(Environment *,CLIPSLexeme *,Expression *,int,int,int,bool);
+   static Deffunction            *AddDeffunction(Environment *,CLIPSLexeme *,Expression *,unsigned short,unsigned short,unsigned short,bool);
 
 /***************************************************************************
   NAME         : ParseDeffunction
@@ -119,10 +119,11 @@ bool ParseDeffunction(
    Expression *actions;
    Expression *parameterList;
    CLIPSLexeme *wildcard;
-   int min,max,lvars;
+   unsigned short min, max;
+   unsigned short lvars;
    bool deffunctionError = false;
    bool overwrite = false;
-   short owMin = 0, owMax = 0;
+   unsigned short owMin = 0, owMax = 0;
    Deffunction *dptr;
    struct token inputToken;
    
@@ -176,8 +177,8 @@ bool ParseDeffunction(
       else
         {
          overwrite = true;
-         owMin = (short) dptr->minNumberOfParameters;
-         owMax = (short) dptr->maxNumberOfParameters;
+         owMin = dptr->minNumberOfParameters;
+         owMax = dptr->maxNumberOfParameters;
          dptr->minNumberOfParameters = min;
          dptr->maxNumberOfParameters = max;
         }
@@ -415,9 +416,9 @@ static Deffunction *AddDeffunction(
   Environment *theEnv,
   CLIPSLexeme *name,
   Expression *actions,
-  int min,
-  int max,
-  int lvars,
+  unsigned short min,
+  unsigned short max,
+  unsigned short lvars,
   bool headerp)
   {
    Deffunction *dfuncPtr;
@@ -504,7 +505,7 @@ static Deffunction *AddDeffunction(
      { SetDeffunctionPPForm(theEnv,dfuncPtr,CopyPPBuffer(theEnv)); }
 #endif
 
-   return(dfuncPtr);
+   return dfuncPtr;
   }
 
 #endif /* DEFFUNCTION_CONSTRUCT && (! BLOAD_ONLY) && (! RUN_TIME) */

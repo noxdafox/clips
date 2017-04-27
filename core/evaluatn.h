@@ -73,6 +73,8 @@
 #include "constant.h"
 #include "entities.h"
 
+#define PARAMETERS_UNBOUNDED USHRT_MAX
+
 #define C_POINTER_EXTERNAL_ADDRESS 0
 
 struct externalAddressType
@@ -134,14 +136,14 @@ struct evaluationData
    void                           IncrementUDFValueReferenceCount(Environment *,UDFValue *);
    void                           DecrementUDFValueReferenceCount(Environment *,UDFValue *);
    void                           CopyDataObject(Environment *,UDFValue *,UDFValue *,int);
-   void                           AtomInstall(Environment *,int,void *);
-   void                           AtomDeinstall(Environment *,int,void *);
+   void                           AtomInstall(Environment *,unsigned short,void *);
+   void                           AtomDeinstall(Environment *,unsigned short,void *);
    void                           IncrementReferenceCount(Environment *,TypeHeader *);
    void                           DecrementReferenceCount(Environment *,TypeHeader *);
    void                           IncrementCLIPSValueReferenceCount(Environment *,CLIPSValue *);
    void                           DecrementCLIPSValueReferenceCount(Environment *,CLIPSValue *);
    struct expr                   *ConvertValueToExpression(Environment *,UDFValue *);
-   unsigned long                  GetAtomicHashValue(unsigned short,void *,int);
+   unsigned long                  GetAtomicHashValue(unsigned short,void *,unsigned short);
    void                           InstallPrimitive(Environment *,struct entityRecord *,int);
    int                            InstallExternalAddressType(Environment *,struct externalAddressType *);
    void                           TransferDataObjectValues(UDFValue *,UDFValue *);

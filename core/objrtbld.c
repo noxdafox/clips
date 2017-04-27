@@ -148,8 +148,8 @@
    static struct lhsParseNode    *ParseClassRestriction(Environment *,const char *,struct token *);
    static struct lhsParseNode    *ParseNameRestriction(Environment *,const char *,struct token *);
    static struct lhsParseNode    *ParseSlotRestriction(Environment *,const char *,struct token *,CONSTRAINT_RECORD *,bool);
-   static CLASS_BITMAP           *NewClassBitMap(Environment *,int,int);
-   static void                    InitializeClassBitMap(Environment *,CLASS_BITMAP *,int);
+   static CLASS_BITMAP           *NewClassBitMap(Environment *,unsigned short,bool);
+   static void                    InitializeClassBitMap(Environment *,CLASS_BITMAP *,bool);
    static void                    DeleteIntermediateClassBitMap(Environment *,CLASS_BITMAP *);
    static void                   *CopyClassBitMap(Environment *,void *);
    static void                    DeleteClassBitMap(Environment *,void *);
@@ -166,7 +166,7 @@
                                               struct lhsParseNode **,struct lhsParseNode **);
    static CLIPSBitMap            *FormSlotBitMap(Environment *,struct lhsParseNode *);
    static struct lhsParseNode    *RemoveSlotExistenceTests(Environment *,struct lhsParseNode *,CLIPSBitMap **);
-   static void                    MarkObjectPtnIncrementalReset(Environment *,struct patternNodeHeader *,int);
+   static void                    MarkObjectPtnIncrementalReset(Environment *,struct patternNodeHeader *,bool);
    static void                    ObjectIncrementalReset(Environment *);
 
 #endif
@@ -328,7 +328,7 @@ static struct lhsParseNode *ObjectLHSParse(
       existing classes - and set all bits, since the initial
       set of applicable classes is everything.
       ======================================================== */
-   clsset = NewClassBitMap(theEnv,((int) DefclassData(theEnv)->MaxClassID) - 1,1);
+   clsset = NewClassBitMap(theEnv,DefclassData(theEnv)->MaxClassID - 1,true);
    if (EmptyClassBitMap(clsset))
      {
       PrintErrorID(theEnv,"OBJRTBLD",1,false);
@@ -336,7 +336,7 @@ static struct lhsParseNode *ObjectLHSParse(
       DeleteIntermediateClassBitMap(theEnv,clsset);
       return NULL;
      }
-   tmpset = NewClassBitMap(theEnv,((int) DefclassData(theEnv)->MaxClassID) - 1,1);
+   tmpset = NewClassBitMap(theEnv,DefclassData(theEnv)->MaxClassID - 1,true);
 
    IncrementIndentDepth(theEnv,7);
 
@@ -368,7 +368,7 @@ static struct lhsParseNode *ObjectLHSParse(
          tmpNode = ParseClassRestriction(theEnv,readSource,&theToken);
          if (tmpNode == NULL)
            goto ObjectLHSParseERROR;
-         InitializeClassBitMap(theEnv,tmpset,0);
+         InitializeClassBitMap(theEnv,tmpset,false);
          if (ProcessClassRestriction(theEnv,tmpset,&tmpNode->bottom,true) == false)
            {
             ReturnLHSParseNodes(theEnv,tmpNode);
@@ -381,21 +381,21 @@ static struct lhsParseNode *ObjectLHSParse(
          tmpNode = ParseNameRestriction(theEnv,readSource,&theToken);
          if (tmpNode == NULL)
            goto ObjectLHSParseERROR;
-         InitializeClassBitMap(theEnv,tmpset,1);
+         InitializeClassBitMap(theEnv,tmpset,true);
         }
       else
         {
          slotConstraints = ProcessSlotRestriction(theEnv,clsset,theToken.lexemeValue,&multip);
          if (slotConstraints != NULL)
            {
-            InitializeClassBitMap(theEnv,tmpset,1);
+            InitializeClassBitMap(theEnv,tmpset,true);
             tmpNode = ParseSlotRestriction(theEnv,readSource,&theToken,slotConstraints,multip);
             if (tmpNode == NULL)
               goto ObjectLHSParseERROR;
            }
          else
            {
-            InitializeClassBitMap(theEnv,tmpset,0);
+            InitializeClassBitMap(theEnv,tmpset,false);
             tmpNode = GetLHSParseNode(theEnv);
             tmpNode->slot = theToken.lexemeValue;
            }
@@ -511,7 +511,7 @@ static bool ReorderAndAnalyzeObjectPattern(
       Allocate a temporary set for marking classes
       ============================================ */
    clsset = (CLASS_BITMAP *) ((CLIPSBitMap *) bitmap_node->userData)->contents;
-   tmpset = NewClassBitMap(theEnv,(int) clsset->maxid,0);
+   tmpset = NewClassBitMap(theEnv,clsset->maxid,false);
 
    /* ==========================================================
       Check the allowed-values for the constraint on the is-a
@@ -531,7 +531,7 @@ static bool ReorderAndAnalyzeObjectPattern(
          cls = LookupDefclassInScope(theEnv,rexp->lexemeValue->contents);
          if (cls != NULL)
            {
-            if ((cls->id <= (unsigned) clsset->maxid) ? TestBitMap(clsset->map,cls->id) : false)
+            if ((cls->id <= clsset->maxid) ? TestBitMap(clsset->map,cls->id) : false)
               SetBitMap(tmpset->map,cls->id);
            }
          rexp = rexp->nextArg;
@@ -623,7 +623,7 @@ static bool ReorderAndAnalyzeObjectPattern(
          PrintErrorID(theEnv,"OBJRTBLD",3,true);
          DeleteIntermediateClassBitMap(theEnv,tmpset);
          PrintString(theEnv,WERROR,"No objects of existing classes can satisfy pattern #");
-         PrintInteger(theEnv,WERROR,(long long) topNode->pattern);
+         PrintInteger(theEnv,WERROR,topNode->pattern);
          PrintString(theEnv,WERROR,".\n");
          return true;
         }
@@ -832,8 +832,8 @@ static OBJECT_PATTERN_NODE *FindObjectPatternNode(
       if (((thePattern->pnType == MF_WILDCARD_NODE) || (thePattern->pnType == MF_VARIABLE_NODE)) ?
           listOfNodes->multifieldNode : (listOfNodes->multifieldNode == 0))
         {
-         if ((thePattern->slotNumber == (int) listOfNodes->slotNameID) &&
-             (thePattern->index == (int) listOfNodes->whichField) &&
+         if ((thePattern->slotNumber == listOfNodes->slotNameID) &&
+             (thePattern->index == listOfNodes->whichField) &&
              (thePattern->singleFieldsAfter == listOfNodes->leaveFields) &&
              (endSlot == listOfNodes->endSlot) &&
              IdenticalExpression(listOfNodes->networkTest,compareTest))
@@ -846,8 +846,8 @@ static OBJECT_PATTERN_NODE *FindObjectPatternNode(
       /*===============================================*/
 
       if ((*nodeSlotGroup == NULL) &&
-          (thePattern->index == (int) listOfNodes->whichField) &&
-          (thePattern->slotNumber == (int) listOfNodes->slotNameID))
+          (thePattern->index == listOfNodes->whichField) &&
+          (thePattern->slotNumber == listOfNodes->slotNameID))
         *nodeSlotGroup = listOfNodes;
       listOfNodes = listOfNodes->rightNode;
      }
@@ -919,7 +919,7 @@ static OBJECT_PATTERN_NODE *CreateNewObjectPatternNode(
    /* Install the slot name for the new node. */
    /*=========================================*/
 
-   newNode->slotNameID = (unsigned) thePattern->slotNumber;
+   newNode->slotNameID = thePattern->slotNumber;
    if ((thePattern->pnType == MF_WILDCARD_NODE) || (thePattern->pnType == MF_VARIABLE_NODE))
      newNode->multifieldNode = true;
    newNode->endSlot = endSlot;
@@ -1494,21 +1494,19 @@ static struct lhsParseNode *ParseSlotRestriction(
  ********************************************************/
 static CLASS_BITMAP *NewClassBitMap(
   Environment *theEnv,
-  int maxid,
-  int set)
+  unsigned short maxid,
+  bool set)
   {
    CLASS_BITMAP *bmp;
-   unsigned size;
+   size_t size;
 
-   if (maxid == -1)
-     maxid = 0;
-   size = sizeof(CLASS_BITMAP) +
-          (sizeof(char) * (maxid / BITS_PER_BYTE));
+   size = sizeof(CLASS_BITMAP) + (sizeof(char) * (maxid / BITS_PER_BYTE));
    bmp = (CLASS_BITMAP *) gm2(theEnv,size);
    ClearBitString(bmp,size);
    bmp->maxid = (unsigned short) maxid;
    InitializeClassBitMap(theEnv,bmp,set);
-   return(bmp);
+   
+   return bmp;
   }
 
 /***********************************************************
@@ -1524,9 +1522,9 @@ static CLASS_BITMAP *NewClassBitMap(
 static void InitializeClassBitMap(
   Environment *theEnv,
   CLASS_BITMAP *bmp,
-  int set)
+  bool set)
   {
-   int i, bytes;
+   unsigned short i, bytes;
    Defclass *cls;
    Defmodule *currentModule;
 
@@ -1536,10 +1534,11 @@ static void InitializeClassBitMap(
       bmp->map[bytes - 1] = (char) 0;
       bytes--;
      }
+     
    if (set)
      {
       currentModule = GetCurrentModule(theEnv);
-      for (i = 0 ; i <= (int) bmp->maxid ; i++)
+      for (i = 0 ; i <= bmp->maxid ; i++)
         {
          cls = DefclassData(theEnv)->ClassIDMap[i];
          if ((cls != NULL) ? DefclassInScope(theEnv,cls,currentModule) : false)
@@ -1685,11 +1684,11 @@ static bool IdenticalClassBitMap(
   CLASS_BITMAP *cs1,
   CLASS_BITMAP *cs2)
   {
-   int i;
+   unsigned short i;
 
    if (cs1->maxid != cs2->maxid)
      return false;
-   for (i = 0 ; i < (int) (cs1->maxid / BITS_PER_BYTE + 1) ; i++)
+   for (i = 0 ; i < (cs1->maxid / BITS_PER_BYTE + 1) ; i++)
      if (cs1->map[i] != cs2->map[i])
        return false;
    return true;
@@ -1722,7 +1721,7 @@ static bool ProcessClassRestriction(
    if (*classRestrictions == NULL)
      {
       if (recursiveCall)
-        InitializeClassBitMap(theEnv,clsset,1);
+        InitializeClassBitMap(theEnv,clsset,true);
       return true;
      }
 
@@ -1732,8 +1731,8 @@ static bool ProcessClassRestriction(
       restriction is comprised entirely of symbols,
       it can be removed
       =============================================== */
-   tmpset1 = NewClassBitMap(theEnv,((int) DefclassData(theEnv)->MaxClassID) - 1,1);
-   tmpset2 = NewClassBitMap(theEnv,((int) DefclassData(theEnv)->MaxClassID) - 1,0);
+   tmpset1 = NewClassBitMap(theEnv,DefclassData(theEnv)->MaxClassID - 1,1);
+   tmpset2 = NewClassBitMap(theEnv,DefclassData(theEnv)->MaxClassID - 1,0);
    for  (chk = *classRestrictions ; chk != NULL ; chk = chk->right)
      {
       if (chk->pnType == SYMBOL_NODE)
@@ -1749,12 +1748,12 @@ static bool ProcessClassRestriction(
            }
          if (chk->negated)
            {
-            InitializeClassBitMap(theEnv,tmpset2,1);
+            InitializeClassBitMap(theEnv,tmpset2,true);
             MarkBitMapSubclasses(tmpset2->map,(Defclass *) chk->value,0);
            }
          else
            {
-            InitializeClassBitMap(theEnv,tmpset2,0);
+            InitializeClassBitMap(theEnv,tmpset2,false);
             MarkBitMapSubclasses(tmpset2->map,(Defclass *) chk->value,1);
            }
          IntersectClassBitMaps(tmpset1,tmpset2);
@@ -1912,7 +1911,7 @@ static CLASS_BITMAP *PackClassBitMap(
        break;
    if (newmaxid != oldset->maxid)
      {
-      newset = NewClassBitMap(theEnv,(int) newmaxid,0);
+      newset = NewClassBitMap(theEnv,newmaxid,0);
       GenCopyMemory(char,newmaxid / BITS_PER_BYTE + 1,newset->map,oldset->map);
       DeleteIntermediateClassBitMap(theEnv,oldset);
      }
@@ -2010,45 +2009,56 @@ static CLIPSBitMap *FormSlotBitMap(
   struct lhsParseNode *thePattern)
   {
    struct lhsParseNode *node;
-   int maxSlotID = -1;
+   unsigned short maxSlotID = USHRT_MAX;
    unsigned size;
    SLOT_BITMAP *bmp;
    CLIPSBitMap *hshBmp;
 
-   /* =======================================
-      Find the largest slot id in the pattern
-      ======================================= */
+   /*==========================================*/
+   /* Find the largest slot id in the pattern. */
+   /*==========================================*/
+   
    for (node = thePattern ; node != NULL ; node = node->right)
-     if (node->slotNumber > maxSlotID)
-       maxSlotID = node->slotNumber;
+     {
+      if (((node->slotNumber > maxSlotID) ||
+           (maxSlotID == USHRT_MAX)) &&
+          (node->slotNumber != UNSPECIFIED_SLOT))
+        { maxSlotID = node->slotNumber; }
+     }
+      
+   /*==================================================*/
+   /* If the pattern contains no slot tests or only    */
+   /* tests on the class or name (which do not change) */
+   /* do not store a slot bitmap.                      */
+   /*==================================================*/
+   
+   if ((maxSlotID == ISA_ID) ||
+       (maxSlotID == NAME_ID) ||
+       (maxSlotID == USHRT_MAX))
+     { return NULL; }
 
-   /* ===================================================
-      If the pattern contains no slot tests or only tests
-      on the class or name (which do not change) do not
-      store a slot bitmap
-      =================================================== */
-   if ((maxSlotID == ISA_ID) || (maxSlotID == NAME_ID))
-     return NULL;
-
-   /* ===================================
-      Initialize the bitmap to all zeroes
-      =================================== */
-   size = (sizeof(SLOT_BITMAP) +
-                (sizeof(char) * (maxSlotID / BITS_PER_BYTE)));
+   /*======================================*/
+   /* Initialize the bitmap to all zeroes. */
+   /*======================================*/
+   
+   size = (sizeof(SLOT_BITMAP) + (sizeof(char) * (maxSlotID / BITS_PER_BYTE)));
    bmp = (SLOT_BITMAP *) gm2(theEnv,size);
    ClearBitString(bmp,size);
    bmp->maxid = (unsigned short) maxSlotID;
 
-   /* ============================================
-      Add (retrieve) a bitmap to (from) the bitmap
-      hash table which has a corresponding bit set
-      for the id of every slot used in the pattern
-      ============================================ */
+   /*===============================================*/
+   /* Add (retrieve) a bitmap to (from) the bitmap  */
+   /* hash table which has a corresponding bit set  */
+   /* for the id of every slot used in the pattern. */
+   /*===============================================*/
+      
    for (node = thePattern ; node != NULL ; node = node->right)
-     SetBitMap(bmp->map,node->slotNumber);
+     { SetBitMap(bmp->map,node->slotNumber); }
+     
    hshBmp = (CLIPSBitMap *) AddBitMap(theEnv,bmp,SlotBitMapSize(bmp));
    rm(theEnv,bmp,size);
-   return(hshBmp);
+   
+   return hshBmp;
   }
 
 /****************************************************
@@ -2279,7 +2289,7 @@ static Expression *ObjectMatchDelayParse(
 static void MarkObjectPtnIncrementalReset(
   Environment *theEnv,
   struct patternNodeHeader *thePattern,
-  int value)
+  bool value)
   {
 #if MAC_XCD
 #pragma unused(theEnv)

@@ -149,7 +149,7 @@ void OpenErrorMessage(
 /************************************************************/
 Defmodule *GetModuleName(
   UDFContext *context,
-  int whichArgument,
+  unsigned int whichArgument,
   bool *error)
   {
    UDFValue returnValue;
@@ -226,7 +226,7 @@ void ExpectedCountError(
   Environment *theEnv,
   const char *functionName,
   int countRelation,
-  int expectedNumber)
+  unsigned int expectedNumber)
   {
    PrintErrorID(theEnv,"ARGACCES",4,false);
    PrintString(theEnv,WERROR,"Function ");
@@ -241,7 +241,7 @@ void ExpectedCountError(
    else
      { PrintString(theEnv,WERROR," generated an illegal argument check for "); }
 
-   PrintInteger(theEnv,WERROR,expectedNumber);
+   PrintUnsignedInteger(theEnv,WERROR,expectedNumber);
    PrintString(theEnv,WERROR," argument(s)\n");
   }
 
@@ -264,7 +264,7 @@ bool CheckFunctionArgCount(
   struct functionDefinition *func,
   int argumentCount)
   {
-   int minArguments, maxArguments;
+   unsigned short minArguments, maxArguments;
    const char *functionName;
 
    functionName = func->callFunctionName->contents;
@@ -346,7 +346,7 @@ bool CheckFunctionArgCount(
 void ExpectedTypeError0(
   Environment *theEnv,
   const char *functionName,
-  int whichArg)
+  unsigned int whichArg)
   {
    PrintErrorID(theEnv,"ARGACCES",5,false);
    PrintString(theEnv,WERROR,"Function ");
@@ -364,7 +364,7 @@ void ExpectedTypeError0(
 void ExpectedTypeError1(
   Environment *theEnv,
   const char *functionName,
-  int whichArg,
+  unsigned int whichArg,
   const char *expectedType)
   {
    ExpectedTypeError0(theEnv,functionName,whichArg);
@@ -381,7 +381,7 @@ void ExpectedTypeError1(
 void ExpectedTypeError2(
   Environment *theEnv,
   const char *functionName,
-  int whichArg)
+  unsigned int whichArg)
   {
    unsigned theRestriction;
    struct functionDefinition *theFunction;
@@ -401,7 +401,7 @@ void ExpectedTypeError2(
 /***************************************************/
 void *GetFactOrInstanceArgument(
   UDFContext *context,
-  int thePosition,
+  unsigned int thePosition,
   UDFValue *item)
   {
    Environment *theEnv = context->environment;

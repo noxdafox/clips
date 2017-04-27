@@ -124,14 +124,15 @@ void SortFunction(
   UDFContext *context,
   UDFValue *returnValue)
   {
-   long argumentCount, i, k = 0;
+   unsigned argumentCount, i;
+   unsigned long k = 0;
    size_t j;
    UDFValue *theArguments, *theArguments2;
    UDFValue theArg;
    Multifield *theMultifield, *tempMultifield;
    const char *functionName;
    struct expr *functionReference;
-   int argumentSize = 0;
+   unsigned int argumentSize = 0;
    struct functionDefinition *fptr;
 #if DEFFUNCTION_CONSTRUCT
    Deffunction *dptr;
@@ -267,7 +268,7 @@ void SortFunction(
    for (i = 0; i < argumentSize; i++)
      { IncrementUDFValueReferenceCount(theEnv,&theArguments2[i]); }
 
-   MergeSort(theEnv,(unsigned long) argumentSize,theArguments2,DefaultCompareSwapFunction);
+   MergeSort(theEnv,argumentSize,theArguments2,DefaultCompareSwapFunction);
 
    for (i = 0; i < argumentSize; i++)
      { DecrementUDFValueReferenceCount(theEnv,&theArguments2[i]); }
@@ -276,7 +277,7 @@ void SortFunction(
    functionReference->nextArg = NULL;
    ReturnExpression(theEnv,functionReference);
 
-   theMultifield = CreateMultifield(theEnv,(unsigned long) argumentSize);
+   theMultifield = CreateMultifield(theEnv,argumentSize);
 
    for (i = 0; i < argumentSize; i++)
      {
@@ -289,7 +290,6 @@ void SortFunction(
    returnValue->range = argumentSize;
    returnValue->value = theMultifield;
   }
-
 
 /*******************************************/
 /* MergeSort: Sorts a list of fields       */

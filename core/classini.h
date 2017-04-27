@@ -60,7 +60,7 @@
    void                           SetupObjectSystem(Environment *);
 
 #if RUN_TIME
-   void                           ObjectsRunTimeInitialize(Environment *,Defclass *[],SLOT_NAME *[],Defclass *[],unsigned);
+   void                           ObjectsRunTimeInitialize(Environment *,Defclass *[],SLOT_NAME *[],Defclass *[],unsigned short);
 #else
    void                           CreateSystemClasses(Environment *,void *);
 #endif /* RUN_TIME */

@@ -112,14 +112,14 @@ struct alphaMatch
 /******************************************************/
 struct multifieldMarker
   {
-   int whichField;
+   unsigned short whichField;
    union
      {
       void *whichSlot;
-      short int whichSlotNumber;
+      unsigned short whichSlotNumber;
      } where;
-    long startPosition;
-    long endPosition;
+    unsigned long startPosition;
+    size_t range;
     MultifieldMarker *next;
    };
 

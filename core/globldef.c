@@ -570,7 +570,7 @@ static bool EntityGetDefglobalValue(
   UDFValue *vPtr)
   {
    Defglobal *theGlobal;
-   int count;
+   unsigned int count;
 
    /*===========================================*/
    /* Search for the specified defglobal in the */
@@ -706,7 +706,7 @@ void UpdateDefglobalScope(
   Environment *theEnv)
   {
    Defglobal *theDefglobal;
-   int moduleCount;
+   unsigned int moduleCount;
    Defmodule *theModule;
    struct defmoduleItemHeader *theItem;
 

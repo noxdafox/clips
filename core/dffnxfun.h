@@ -89,9 +89,9 @@ struct deffunction
    unsigned executing;
    bool trace;
    Expression *code;
-   int minNumberOfParameters;
-   int maxNumberOfParameters;
-   int numberOfLocalVars;
+   unsigned short minNumberOfParameters;
+   unsigned short maxNumberOfParameters;
+   unsigned short numberOfLocalVars;
   };
 
 #define DEFFUNCTION_DATA 23
@@ -99,7 +99,7 @@ struct deffunction
 struct deffunctionData
   {
    Construct *DeffunctionConstruct;
-   int DeffunctionModuleIndex;
+   unsigned DeffunctionModuleIndex;
    EntityRecord DeffunctionEntityRecord;
 #if DEBUGGING_FUNCTIONS
    bool WatchDeffunctions;

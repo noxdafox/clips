@@ -76,6 +76,9 @@ typedef struct defgeneric Defgeneric;
 #include "moduldef.h"
 #include "symbol.h"
 
+#define METHOD_NOT_FOUND USHRT_MAX
+#define RESTRICTIONS_UNBOUNDED USHRT_MAX
+
 struct defgenericModule
   {
    struct defmoduleItemHeader header;
@@ -85,18 +88,18 @@ struct restriction
   {
    void **types;
    Expression *query;
-   short tcnt;
+   unsigned short tcnt;
   };
 
 struct defmethod
   {
    ConstructHeader header;
-   unsigned index;
+   unsigned short index;
    unsigned busy;
-   short restrictionCount;
-   short minRestrictions;
-   short maxRestrictions;
-   short localVarCount;
+   unsigned short restrictionCount;
+   unsigned short minRestrictions;
+   unsigned short maxRestrictions;
+   unsigned short localVarCount;
    unsigned system : 1;
    unsigned trace : 1;
    RESTRICTION *restrictions;
@@ -106,11 +109,11 @@ struct defmethod
 struct defgeneric
   {
    ConstructHeader header;
-   unsigned busy;
+   unsigned busy; // TBD bool?
    bool trace;
    Defmethod *methods;
-   short mcnt;
-   short new_index;
+   unsigned short mcnt;
+   unsigned short new_index;
   };
 
 #define DEFGENERIC_DATA 27
@@ -118,7 +121,7 @@ struct defgeneric
 struct defgenericData
   {
    Construct *DefgenericConstruct;
-   int DefgenericModuleIndex;
+   unsigned int DefgenericModuleIndex;
    EntityRecord GenericEntityRecord;
 #if DEBUGGING_FUNCTIONS
    bool WatchGenerics;
@@ -162,7 +165,7 @@ struct defgenericData
    bool                           SubsumeType(int,int);
 #endif
 
-   long                           FindMethodByIndex(Defgeneric *,unsigned);
+   unsigned short                 FindMethodByIndex(Defgeneric *,unsigned short);
 #if DEBUGGING_FUNCTIONS || PROFILING_FUNCTIONS
    void                           PrintMethod(Environment *,Defmethod *,StringBuilder *);
 #endif
@@ -170,7 +173,7 @@ struct defgenericData
    void                           PreviewGeneric(Environment *,UDFContext *,UDFValue *);
 #endif
    Defgeneric                    *CheckGenericExists(Environment *,const char *,const char *);
-   long                           CheckMethodExists(Environment *,const char *,Defgeneric *,unsigned);
+   unsigned short                 CheckMethodExists(Environment *,const char *,Defgeneric *,unsigned short);
 
 #if ! OBJECT_SYSTEM
    const char                    *TypeName(Environment *,int);

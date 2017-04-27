@@ -113,8 +113,8 @@
 /***************************************/
 
 #if DEBUGGING_FUNCTIONS
-   static long                    ListInstancesInModule(Environment *,int,const char *,const char *,bool,bool);
-   static long                    TabulateInstances(Environment *,int,const char *,Defclass *,bool,bool);
+   static unsigned long           ListInstancesInModule(Environment *,int,const char *,const char *,bool,bool);
+   static unsigned long           TabulateInstances(Environment *,int,const char *,Defclass *,bool,bool);
 #endif
 
    static void                    PrintInstance(Environment *,const char *,Instance *,const char *);
@@ -248,7 +248,7 @@ static void DeallocateInstanceData(
    /*=================================*/
 
    rm(theEnv,InstanceData(theEnv)->InstanceTable,
-      (int) (sizeof(Instance *) * INSTANCE_TABLE_HASH_SIZE));
+      (sizeof(Instance *) * INSTANCE_TABLE_HASH_SIZE));
 
    /*=======================*/
    /* Return all instances. */
@@ -574,7 +574,7 @@ void Instances(
   bool inheritFlag)
   {
    int id;
-   long count = 0L;
+   unsigned long count = 0L;
 
    /*==============================================*/
    /* Grab a traversal id to avoid printing out    */
@@ -1170,7 +1170,7 @@ void UnmakeInstanceCommand(
   {
    UDFValue theArg;
    Instance *ins;
-   int argNumber = 1;
+   unsigned int argNumber = 1;
    bool rtn = true;
 
    while (UDFHasNextArgument(context))
@@ -1517,7 +1517,7 @@ void InstanceExistPCommand(
   NOTES        : Assumes defclass scope flags
                  are up to date
  ***************************************************/
-static long ListInstancesInModule(
+static unsigned long ListInstancesInModule(
   Environment *theEnv,
   int id,
   const char *logicalName,
@@ -1527,7 +1527,7 @@ static long ListInstancesInModule(
   {
    Defclass *theDefclass;
    Instance *theInstance;
-   long count = 0L;
+   unsigned long count = 0L;
 
    /* ===================================
       For the specified module, print out
@@ -1603,7 +1603,7 @@ static long ListInstancesInModule(
   SIDE EFFECTS : None
   NOTES        : None
  ******************************************************/
-static long TabulateInstances(
+static unsigned long TabulateInstances(
   Environment *theEnv,
   int id,
   const char *logicalName,
@@ -1612,32 +1612,35 @@ static long TabulateInstances(
   bool allModulesFlag)
   {
    Instance *ins;
-   long i;
-   long count = 0;
+   unsigned long i;
+   unsigned long count = 0;
 
    if (TestTraversalID(cls->traversalRecord,id))
-     return(0L);
+     return 0L;
+     
    SetTraversalID(cls->traversalRecord,id);
    for (ins = cls->instanceList ; ins != NULL ; ins = ins->nxtClass)
      {
       if (EvaluationData(theEnv)->HaltExecution)
-        return(count);
+        return count;
       if (allModulesFlag)
         PrintString(theEnv,logicalName,"   ");
       PrintInstanceNameAndClass(theEnv,logicalName,ins,true);
       count++;
      }
+     
    if (inheritFlag)
      {
       for (i = 0 ; i < cls->directSubclasses.classCount ; i++)
         {
          if (EvaluationData(theEnv)->HaltExecution)
-           return(count);
+           return count;
          count += TabulateInstances(theEnv,id,logicalName,
                      cls->directSubclasses.classArray[i],inheritFlag,allModulesFlag);
         }
      }
-   return(count);
+    
+   return count;
   }
 
 #endif
@@ -1672,13 +1675,13 @@ static void PrintInstance(
       if (sp->type != MULTIFIELD_TYPE)
         {
          PrintString(theEnv,logicalName," ");
-         PrintAtom(theEnv,logicalName,(int) sp->type,sp->value);
+         PrintAtom(theEnv,logicalName,sp->type,sp->value);
         }
       else if (sp->multifieldValue->length != 0)
         {
          PrintString(theEnv,logicalName," ");
          PrintMultifieldDriver(theEnv,logicalName,sp->multifieldValue,0,
-                               sp->multifieldValue->length - 1,false);
+                               sp->multifieldValue->length,false);
         }
       PrintString(theEnv,logicalName,")");
      }

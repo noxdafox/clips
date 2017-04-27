@@ -132,7 +132,7 @@ void *genalloc(
         }
      }
 
-   MemoryData(theEnv)->MemoryAmount += (long) size;
+   MemoryData(theEnv)->MemoryAmount += size;
    MemoryData(theEnv)->MemoryCalls++;
 
    return memPtr;
@@ -181,7 +181,7 @@ void genfree(
   {
    free(waste);
 
-   MemoryData(theEnv)->MemoryAmount -= (long) size;
+   MemoryData(theEnv)->MemoryAmount -= size;
    MemoryData(theEnv)->MemoryCalls--;
   }
 
@@ -217,7 +217,7 @@ void *genrealloc(
 /* MemUsed: C access routine */
 /*   for the mem-used command.  */
 /********************************/
-long MemUsed(
+long long MemUsed(
   Environment *theEnv)
   {
    return MemoryData(theEnv)->MemoryAmount;
@@ -227,7 +227,7 @@ long MemUsed(
 /* MemRequests: C access routine   */
 /*   for the mem-requests command. */
 /***********************************/
-long MemRequests(
+long long MemRequests(
   Environment *theEnv)
   {
    return MemoryData(theEnv)->MemoryCalls;
@@ -237,9 +237,9 @@ long MemRequests(
 /* UpdateMemoryUsed: Allows the amount */
 /*   of memory used to be updated.     */
 /***************************************/
-long UpdateMemoryUsed(
+long long UpdateMemoryUsed(
   Environment *theEnv,
-  long value)
+  long long value)
   {
    MemoryData(theEnv)->MemoryAmount += value;
    return MemoryData(theEnv)->MemoryAmount;
@@ -249,12 +249,12 @@ long UpdateMemoryUsed(
 /* UpdateMemoryRequests: Allows the number */
 /*   of memory requests to be updated.     */
 /*******************************************/
-long UpdateMemoryRequests(
+long long UpdateMemoryRequests(
   Environment *theEnv,
-  long value)
+  long long value)
   {
    MemoryData(theEnv)->MemoryCalls += value;
-   return(MemoryData(theEnv)->MemoryCalls);
+   return MemoryData(theEnv)->MemoryCalls;
   }
 
 /**********************************/
@@ -266,18 +266,18 @@ long ReleaseMem(
   long maximum)
   {
    struct memoryPtr *tmpPtr, *memPtr;
-   int i;
+   unsigned int i;
    long returns = 0;
    long amount = 0;
 
-   for (i = (MEM_TABLE_SIZE - 1) ; i >= (int) sizeof(char *) ; i--)
+   for (i = (MEM_TABLE_SIZE - 1) ; i >= sizeof(char *) ; i--)
      {
       YieldTime(theEnv);
       memPtr = MemoryData(theEnv)->MemoryTable[i];
       while (memPtr != NULL)
         {
          tmpPtr = memPtr->next;
-         genfree(theEnv,memPtr,(unsigned) i);
+         genfree(theEnv,memPtr,i);
          memPtr = tmpPtr;
          amount += i;
          returns++;
@@ -303,10 +303,10 @@ void *gm1(
    char *tmpPtr;
    size_t i;
 
-   if ((size < (long) sizeof(char *)) ||
+   if ((size < sizeof(char *)) ||
        (size >= MEM_TABLE_SIZE))
      {
-      tmpPtr = (char *) genalloc(theEnv,(unsigned) size);
+      tmpPtr = (char *) genalloc(theEnv,size);
       for (i = 0 ; i < size ; i++)
         { tmpPtr[i] = '\0'; }
       return((void *) tmpPtr);
@@ -315,7 +315,7 @@ void *gm1(
    memPtr = (struct memoryPtr *) MemoryData(theEnv)->MemoryTable[size];
    if (memPtr == NULL)
      {
-      tmpPtr = (char *) genalloc(theEnv,(unsigned) size);
+      tmpPtr = (char *) genalloc(theEnv,size);
       for (i = 0 ; i < size ; i++)
         { tmpPtr[i] = '\0'; }
       return((void *) tmpPtr);

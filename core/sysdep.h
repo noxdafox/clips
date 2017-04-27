@@ -116,7 +116,7 @@
    int                         GenClose(Environment *,FILE *);
    void                        genexit(Environment *,int);
    int                         genrand(void);
-   void                        genseed(int);
+   void                        genseed(unsigned int);
    bool                        genremove(const char *);
    bool                        genrename(const char *,const char *);
    char                       *gengetcwd(char *,int);

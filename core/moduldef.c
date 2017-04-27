@@ -112,7 +112,7 @@ static void DeallocateDefmoduleData(
    struct portConstructItem *tmpPCPtr, *nextPCPtr;
 #endif
 #if (BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE) && (! RUN_TIME)
-   int i;
+   unsigned int i;
    size_t space;
 #endif
 
@@ -205,13 +205,13 @@ void InitializeDefmodules(
 /* RegisterModuleItem: Called to register a construct */
 /*   which can be placed within a module.             */
 /******************************************************/
-int RegisterModuleItem(
+unsigned RegisterModuleItem(
   Environment *theEnv,
   const char *theItem,
   AllocateModuleFunction *allocateFunction,
   FreeModuleFunction *freeFunction,
-  void *(*bloadModuleReference)(Environment *,int),
-  void  (*constructsToCModuleReference)(Environment *,FILE *,int,int,int),
+  void *(*bloadModuleReference)(Environment *,unsigned long),
+  void  (*constructsToCModuleReference)(Environment *,FILE *,unsigned long,unsigned int,unsigned int),
   FindConstructFunction *findFunction)
   {
    struct moduleItem *newModuleItem;
@@ -237,7 +237,7 @@ int RegisterModuleItem(
       DefmoduleData(theEnv)->LastModuleItem = newModuleItem;
      }
 
-   return(newModuleItem->moduleIndex);
+   return newModuleItem->moduleIndex;
   }
 
 /***********************************************************/
@@ -252,10 +252,10 @@ struct moduleItem *GetListOfModuleItems(
 /***************************************************************/
 /* GetNumberOfModuleItems: Returns the number of module items. */
 /***************************************************************/
-int GetNumberOfModuleItems(
+unsigned GetNumberOfModuleItems(
   Environment *theEnv)
   {
-   return (DefmoduleData(theEnv)->NumberOfModuleItems);
+   return DefmoduleData(theEnv)->NumberOfModuleItems;
   }
 
 /********************************************************/
@@ -376,7 +376,7 @@ void RestoreCurrentModule(
 void *GetModuleItem(
   Environment *theEnv,
   Defmodule *theModule,
-  int moduleItemIndex)
+  unsigned moduleItemIndex)
   {
    if (theModule == NULL)
      {
@@ -398,7 +398,7 @@ void *GetModuleItem(
 void SetModuleItem(
   Environment *theEnv,
   Defmodule *theModule,
-  int moduleItemIndex,
+  unsigned moduleItemIndex,
   void *newValue)
   {
    if (theModule == NULL)
@@ -420,7 +420,7 @@ void CreateMainModule(
   {
    Defmodule *newDefmodule;
    struct moduleItem *theItem;
-   int i;
+   unsigned int i;
    struct defmoduleItemHeader *theHeader;
 
    /*=======================================*/
@@ -475,7 +475,7 @@ void CreateMainModule(
    /*=======================================*/
 
 #if (! BLOAD_ONLY) && (! RUN_TIME) && DEFMODULE_CONSTRUCT
-   SetNumberOfDefmodules(theEnv,1L);
+   SetNumberOfDefmodules(theEnv,1);
 #endif
 
    DefmoduleData(theEnv)->LastDefmodule = newDefmodule;
@@ -572,7 +572,7 @@ static void ReturnDefmodule(
   Defmodule *theDefmodule,
   bool environmentClear)
   {
-   int i;
+   unsigned int i;
    struct moduleItem *theItem;
    struct portItem *theSpec, *nextSpec;
 
@@ -656,7 +656,7 @@ static void ReturnDefmodule(
    if (theDefmodule->header.ppForm != NULL)
      {
       rm(theEnv,(void *) theDefmodule->header.ppForm,
-         (int) sizeof(char) * (strlen(theDefmodule->header.ppForm) + 1));
+         sizeof(char) * (strlen(theDefmodule->header.ppForm) + 1));
      }
 
    /*=======================*/
@@ -805,13 +805,13 @@ void IllegalModuleSpecifierMessage(
 /* GetNumberOfDefmodules: Returns the number */
 /*   of defmodules currently defined.        */
 /*********************************************/
-long GetNumberOfDefmodules(
+unsigned short GetNumberOfDefmodules(
   Environment *theEnv)
   {
 #if DEFMODULE_CONSTRUCT && (! RUN_TIME) && (! BLOAD_ONLY)
-   return(DefmoduleData(theEnv)->NumberOfDefmodules);
+   return DefmoduleData(theEnv)->NumberOfDefmodules;
 #else
-   return 1L;
+   return 1;
 #endif
   }
 

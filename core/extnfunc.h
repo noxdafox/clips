@@ -75,12 +75,12 @@ struct functionDefinition
    void (*functionPointer)(Environment *,UDFContext *,UDFValue *);
    struct expr *(*parser)(Environment *,struct expr *,const char *);
    CLIPSLexeme *restrictions;
-   int minArgs;
-   int maxArgs;
+   unsigned short minArgs;
+   unsigned short maxArgs;
    bool overloadable;
    bool sequenceuseok;
    bool neededFunction;
-   short int bsaveIndex;
+   unsigned long bsaveIndex;
    struct functionDefinition *next;
    struct userData *usrData;
    void *context;
@@ -116,7 +116,7 @@ struct FunctionHash
 
    void                           InitializeExternalFunctionData(Environment *);
    bool                           AddUDF(Environment *,const char *,const char *,
-                                         int,int,const char *,
+                                         unsigned short,unsigned short,const char *,
                                          UserDefinedFunction *,
                                          const char *,void *);
    bool                           AddFunctionParser(Environment *,const char *,
@@ -126,12 +126,12 @@ struct FunctionHash
    struct functionDefinition     *GetFunctionList(Environment *);
    void                           InstallFunctionList(Environment *,struct functionDefinition *);
    struct functionDefinition     *FindFunction(Environment *,const char *);
-   unsigned                       GetNthRestriction(Environment *,struct functionDefinition *,int);
+   unsigned                       GetNthRestriction(Environment *,struct functionDefinition *,unsigned int);
    bool                           RemoveUDF(Environment *,const char *);
    int                            GetMinimumArgs(struct functionDefinition *);
    int                            GetMaximumArgs(struct functionDefinition *);
-   int                            UDFArgumentCount(UDFContext *);
-   bool                           UDFNthArgument(UDFContext *,int,unsigned,UDFValue *);
+   unsigned int                   UDFArgumentCount(UDFContext *);
+   bool                           UDFNthArgument(UDFContext *,unsigned int,unsigned,UDFValue *);
    void                           UDFInvalidArgumentMessage(UDFContext *,const char *);
    const char                    *UDFContextFunctionName(UDFContext *);
    void                           PrintTypesString(Environment *,const char *,unsigned,bool);

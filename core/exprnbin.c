@@ -75,7 +75,7 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static void                        UpdateExpression(Environment *,void *,long);
+   static void                        UpdateExpression(Environment *,void *,unsigned long);
 
 /***********************************************************/
 /* AllocateExpressions: Determines the amount of space     */
@@ -107,7 +107,7 @@ void RefreshExpressions(
    if (ExpressionData(theEnv)->ExpressionArray == NULL) return;
 
    BloadandRefresh(theEnv,ExpressionData(theEnv)->NumberOfExpressions,
-                   (unsigned) sizeof(BSAVE_EXPRESSION),UpdateExpression);
+                   sizeof(BSAVE_EXPRESSION),UpdateExpression);
   }
 
 /*********************************************************
@@ -124,10 +124,10 @@ void RefreshExpressions(
 static void UpdateExpression(
   Environment *theEnv,
   void *buf,
-  long obji)
+  unsigned long obji)
   {
    BSAVE_EXPRESSION *bexp;
-   long theIndex;
+   unsigned long theIndex;
 
    bexp = (BSAVE_EXPRESSION *) buf;
    ExpressionData(theEnv)->ExpressionArray[obji].type = bexp->type;
@@ -231,14 +231,14 @@ static void UpdateExpression(
         break;
      }
 
-   theIndex = (long) bexp->nextArg;
-   if (theIndex == -1L)
+   theIndex = bexp->nextArg;
+   if (theIndex == ULONG_MAX)
      { ExpressionData(theEnv)->ExpressionArray[obji].nextArg = NULL; }
    else
      { ExpressionData(theEnv)->ExpressionArray[obji].nextArg = (struct expr *) &ExpressionData(theEnv)->ExpressionArray[theIndex]; }
 
-   theIndex = (long) bexp->argList;
-   if (theIndex == -1L)
+   theIndex = bexp->argList;
+   if (theIndex == ULONG_MAX)
      { ExpressionData(theEnv)->ExpressionArray[obji].argList = NULL; }
    else
      { ExpressionData(theEnv)->ExpressionArray[obji].argList = (struct expr *) &ExpressionData(theEnv)->ExpressionArray[theIndex]; }
@@ -258,7 +258,7 @@ void ClearBloadedExpressions(
    /* Update the busy counts of atomic data values. */
    /*===============================================*/
 
-   for (i = 0; i < (unsigned long) ExpressionData(theEnv)->NumberOfExpressions; i++)
+   for (i = 0; i < ExpressionData(theEnv)->NumberOfExpressions; i++)
      {
       switch (ExpressionData(theEnv)->ExpressionArray[i].type)
         {
@@ -385,7 +385,7 @@ void BsaveExpression(
   FILE *fp)
   {
    BSAVE_EXPRESSION newTest;
-   long newIndex;
+   unsigned long newIndex;
 
    while (testPtr != NULL)
      {
@@ -402,7 +402,7 @@ void BsaveExpression(
       /*=======================================*/
 
       if (testPtr->argList == NULL)
-        { newTest.argList = -1L; }
+        { newTest.argList = ULONG_MAX; }
       else
         { newTest.argList = ExpressionData(theEnv)->ExpressionCount; }
 
@@ -411,7 +411,7 @@ void BsaveExpression(
       /*========================================*/
 
       if (testPtr->nextArg == NULL)
-        { newTest.nextArg = -1L; }
+        { newTest.nextArg = ULONG_MAX; }
       else
         {
          newIndex = ExpressionData(theEnv)->ExpressionCount + ExpressionSize(testPtr->argList);
@@ -425,15 +425,15 @@ void BsaveExpression(
       switch(testPtr->type)
         {
          case FLOAT_TYPE:
-           newTest.value = (long) testPtr->floatValue->bucket;
+           newTest.value = testPtr->floatValue->bucket;
            break;
 
          case INTEGER_TYPE:
-           newTest.value = (long) testPtr->integerValue->bucket;
+           newTest.value = testPtr->integerValue->bucket;
            break;
 
          case FCALL:
-           newTest.value = (long) testPtr->functionValue->bsaveIndex;
+           newTest.value = testPtr->functionValue->bsaveIndex;
            break;
 
          case GCALL:
@@ -442,7 +442,7 @@ void BsaveExpression(
              newTest.value = testPtr->constructValue->bsaveID;
            else
 #endif
-             newTest.value = -1L;
+             newTest.value = ULONG_MAX;
            break;
 
          case PCALL:
@@ -451,7 +451,7 @@ void BsaveExpression(
              newTest.value = testPtr->constructValue->bsaveID;
            else
 #endif
-             newTest.value = -1L;
+             newTest.value = ULONG_MAX;
            break;
 
          case DEFTEMPLATE_PTR:
@@ -460,7 +460,7 @@ void BsaveExpression(
              newTest.value = testPtr->constructValue->bsaveID;
            else
 #endif
-             newTest.value = -1L;
+             newTest.value = ULONG_MAX;
            break;
 
          case DEFCLASS_PTR:
@@ -469,7 +469,7 @@ void BsaveExpression(
              newTest.value = testPtr->constructValue->bsaveID;
            else
 #endif
-             newTest.value = -1L;
+             newTest.value = ULONG_MAX;
            break;
 
          case DEFGLOBAL_PTR:
@@ -478,7 +478,7 @@ void BsaveExpression(
              newTest.value = testPtr->constructValue->bsaveID;
            else
 #endif
-             newTest.value = -1L;
+             newTest.value = ULONG_MAX;
            break;
 
 #if OBJECT_SYSTEM
@@ -487,13 +487,13 @@ void BsaveExpression(
          case SYMBOL_TYPE:
          case GBL_VARIABLE:
          case STRING_TYPE:
-           newTest.value = (long) testPtr->lexemeValue->bucket;
+           newTest.value = testPtr->lexemeValue->bucket;
            break;
 
          case FACT_ADDRESS_TYPE:
          case INSTANCE_ADDRESS_TYPE:
          case EXTERNAL_ADDRESS_TYPE:
-           newTest.value = -1L;
+           newTest.value = ULONG_MAX;
            break;
 
          case VOID_TYPE:
@@ -502,7 +502,7 @@ void BsaveExpression(
          default:
            if (EvaluationData(theEnv)->PrimitivesArray[testPtr->type] == NULL) break;
            if (EvaluationData(theEnv)->PrimitivesArray[testPtr->type]->bitMap)
-             { newTest.value = (long) ((CLIPSBitMap *) testPtr->value)->bucket; }
+             { newTest.value = ((CLIPSBitMap *) testPtr->value)->bucket; }
            break;
         }
 
@@ -510,7 +510,7 @@ void BsaveExpression(
      /* Write out the expression. */
      /*===========================*/
 
-     GenWrite(&newTest,(unsigned long) sizeof(BSAVE_EXPRESSION),fp);
+     GenWrite(&newTest,sizeof(BSAVE_EXPRESSION),fp);
 
      /*==========================*/
      /* Write out argument list. */

@@ -73,12 +73,12 @@ struct bsaveConstraintRecord
    unsigned int instanceNameRestriction : 1;
    unsigned int multifieldsAllowed : 1;
    unsigned int singlefieldsAllowed : 1;
-   long classList;
-   long restrictionList;
-   long minValue;
-   long maxValue;
-   long minFields;
-   long maxFields;
+   unsigned long classList;
+   unsigned long restrictionList;
+   unsigned long minValue;
+   unsigned long maxValue;
+   unsigned long minFields;
+   unsigned long maxFields;
   };
 
 typedef struct bsaveConstraintRecord BSAVE_CONSTRAINT_RECORD;
@@ -90,7 +90,7 @@ typedef struct bsaveConstraintRecord BSAVE_CONSTRAINT_RECORD;
 #if BLOAD_AND_BSAVE
    static void                    CopyToBsaveConstraintRecord(Environment *,CONSTRAINT_RECORD *,BSAVE_CONSTRAINT_RECORD *);
 #endif
-   static void                    CopyFromBsaveConstraintRecord(Environment *,void *,long);
+   static void                    CopyFromBsaveConstraintRecord(Environment *,void *,unsigned long);
 
 #if BLOAD_AND_BSAVE
 
@@ -222,7 +222,7 @@ void ReadNeededConstraints(
 static void CopyFromBsaveConstraintRecord(
   Environment *theEnv,
   void *buf,
-  long theIndex)
+  unsigned long theIndex)
   {
    BSAVE_CONSTRAINT_RECORD *bsaveConstraints;
    CONSTRAINT_RECORD *constraints;

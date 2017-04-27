@@ -61,6 +61,8 @@
 
 #include "evaluatn.h"
 
+#define VALUE_NOT_FOUND SIZE_MAX
+
    void                    MultifieldFunctionDefinitions(Environment *);
 #if MULTIFIELD_FUNCTIONS
    void                    DeleteFunction(Environment *,UDFContext *,UDFValue *);
@@ -80,18 +82,15 @@
    void                    ForeachFunction(Environment *,UDFContext *,UDFValue *);
    void                    GetMvPrognField(Environment *,UDFContext *,UDFValue *);
    void                    GetMvPrognIndex(Environment *,UDFContext *,UDFValue *);
-   bool                    FindDOsInSegment(UDFValue *,int,UDFValue *,
-                                            long *,long *,long *,int);
+   bool                    FindDOsInSegment(UDFValue *,unsigned int,UDFValue *,
+                                            size_t *,size_t *,size_t *,unsigned int);
 #endif
-   bool                    ReplaceMultiValueField(Environment *,UDFValue *,
-                                                  UDFValue *,
-                                                  long,long,
-                                                  UDFValue *,const char *);
-   bool                    InsertMultiValueField(Environment *,UDFValue *,
-                                                 UDFValue *,
-                                                 long,UDFValue *,const char *);
-   bool                    DeleteMultiValueField(Environment *,UDFValue *,UDFValue *,
-                                                 long,long,const char *);
+   bool                    ReplaceMultiValueFieldSizet(Environment *,UDFValue *,UDFValue *,
+                                                  size_t,size_t,UDFValue *,const char *);
+   bool                    InsertMultiValueField(Environment *,UDFValue *,UDFValue *,
+                                                 size_t,UDFValue *,const char *);
+   void                    MVRangeError(Environment *,long long,long long,size_t,const char *);
+   size_t                  FindValueInMultifield(UDFValue *,UDFValue *);
 
 #endif /* _H_multifun */
 

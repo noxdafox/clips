@@ -102,10 +102,12 @@
 #if DEBUGGING_FUNCTIONS
    static Defclass               *CheckClass(Environment *,const char *,const char *);
    static const char             *GetClassNameArgument(UDFContext *);
-   static void                    PrintClassBrowse(Environment *,const char *,Defclass *,long);
+   static void                    PrintClassBrowse(Environment *,const char *,Defclass *,unsigned long);
    static void                    DisplaySeparator(Environment *,const char *,char *,int,int);
-   static void                    DisplaySlotBasicInfo(Environment *,const char *,const char *,const char *,char *,Defclass *);
-   static bool                    PrintSlotSources(Environment *,const char *,CLIPSLexeme *,PACKED_CLASS_LINKS *,long,bool);
+   static void                    DisplaySlotBasicInfo(Environment *,const char *,const char *,const char *,
+                                                       char *,Defclass *);
+   static bool                    PrintSlotSources(Environment *,const char *,CLIPSLexeme *,PACKED_CLASS_LINKS *,
+                                                   unsigned long,bool);
    static void                    DisplaySlotConstraintInfo(Environment *,const char *,const char *,char *,unsigned,Defclass *);
    static const char             *ConstraintCode(CONSTRAINT_RECORD *,unsigned,unsigned);
 #endif
@@ -222,7 +224,7 @@ void DescribeClass(
         slotNamePrintFormat[12],
         overrideMessagePrintFormat[12];
    bool messageBanner;
-   long i;
+   unsigned long i;
    size_t slotNameLength, maxSlotNameLength;
    size_t overrideMessageLength, maxOverrideMessageLength;
    Environment *theEnv = theDefclass->header.env;
@@ -268,6 +270,7 @@ void DescribeClass(
         maxSlotNameLength = 16;
       if (maxOverrideMessageLength > 12)
         maxOverrideMessageLength = 12;
+/*        
 #if WIN_MVC
       gensprintf(slotNamePrintFormat,"%%-%Id.%Ids : ",maxSlotNameLength,maxSlotNameLength);
       gensprintf(overrideMessagePrintFormat,"%%-%Id.%Ids ",maxOverrideMessageLength,
@@ -277,11 +280,13 @@ void DescribeClass(
       gensprintf(overrideMessagePrintFormat,"%%-%ld.%lds ",(long) maxOverrideMessageLength,
                                             (long) maxOverrideMessageLength);
 #else
+*/
       gensprintf(slotNamePrintFormat,"%%-%zd.%zds : ",maxSlotNameLength,maxSlotNameLength);
       gensprintf(overrideMessagePrintFormat,"%%-%zd.%zds ",maxOverrideMessageLength,
                                               maxOverrideMessageLength);
+/*
 #endif
-
+*/
       DisplaySlotBasicInfo(theEnv,logicalName,slotNamePrintFormat,overrideMessagePrintFormat,buf,theDefclass);
       PrintString(theEnv,logicalName,"\nConstraint information for slots:\n\n");
       DisplaySlotConstraintInfo(theEnv,logicalName,slotNamePrintFormat,buf,82,theDefclass);
@@ -802,7 +807,7 @@ void SlotDefaultValueCommand(
      }
 
    if (sd->dynamicDefault)
-     EvaluateAndStoreInDataObject(theEnv,(int) sd->multiple,
+     EvaluateAndStoreInDataObject(theEnv,sd->multiple,
                                   (Expression *) sd->defaultValue,
                                   returnValue,true);
    else
@@ -844,7 +849,7 @@ bool SlotDefaultValue(
 
    if (sd->dynamicDefault)
      {
-      rv = EvaluateAndStoreInDataObject(theEnv,(int) sd->multiple,
+      rv = EvaluateAndStoreInDataObject(theEnv,sd->multiple,
                                          (Expression *) sd->defaultValue,
                                          &result,true);
       NormalizeMultifield(theEnv,&result);
@@ -1012,15 +1017,15 @@ static SlotDescriptor *LookupSlot(
 
    slotSymbol = FindSymbolHN(theEnv,slotName,SYMBOL_BIT);
    if (slotSymbol == NULL)
-     return NULL;
+     { return NULL; }
 
    slotIndex = FindInstanceTemplateSlot(theEnv,theDefclass,slotSymbol);
    if (slotIndex == -1)
-     return NULL;
+     { return NULL; }
 
    sd = theDefclass->instanceTemplate[slotIndex];
    if ((sd->cls != theDefclass) && (inheritFlag == false))
-     return NULL;
+     { return NULL; }
 
    return sd;
   }
@@ -1085,9 +1090,9 @@ static void PrintClassBrowse(
   Environment *theEnv,
   const char *logicalName,
   Defclass *cls,
-  long depth)
+  unsigned long depth)
   {
-   long i;
+   unsigned long i;
 
    for (i = 0 ; i < depth ; i++)
      PrintString(theEnv,logicalName,"  ");
@@ -1240,7 +1245,7 @@ static bool PrintSlotSources(
   const char *logicalName,
   CLIPSLexeme *sname,
   PACKED_CLASS_LINKS *sprec,
-  long theIndex,
+  unsigned long theIndex,
   bool inhp)
   {
    SlotDescriptor *csp;
@@ -1308,20 +1313,15 @@ static void DisplaySlotConstraintInfo(
       gensprintf(buf,slotNamePrintFormat,cls->instanceTemplate[i]->slotName->name->contents);
       if (cr != NULL)
         {
-         genstrcat(buf,ConstraintCode(cr,(unsigned) cr->symbolsAllowed,
-                                      (unsigned) cr->symbolRestriction));
-         genstrcat(buf,ConstraintCode(cr,(unsigned) cr->stringsAllowed,
-                                      (unsigned) cr->stringRestriction));
-         genstrcat(buf,ConstraintCode(cr,(unsigned) cr->instanceNamesAllowed,
-                                      (unsigned) (cr->instanceNameRestriction || cr->classRestriction)));
-         genstrcat(buf,ConstraintCode(cr,(unsigned) cr->instanceAddressesAllowed,
-                                      (unsigned) cr->classRestriction));
-         genstrcat(buf,ConstraintCode(cr,(unsigned) cr->externalAddressesAllowed,0));
-         genstrcat(buf,ConstraintCode(cr,(unsigned) cr->factAddressesAllowed,0));
-         genstrcat(buf,ConstraintCode(cr,(unsigned) cr->integersAllowed,
-                                      (unsigned) cr->integerRestriction));
-         genstrcat(buf,ConstraintCode(cr,(unsigned) cr->floatsAllowed,
-                                      (unsigned) cr->floatRestriction));
+         genstrcat(buf,ConstraintCode(cr,cr->symbolsAllowed,cr->symbolRestriction));
+         genstrcat(buf,ConstraintCode(cr,cr->stringsAllowed,cr->stringRestriction));
+         genstrcat(buf,ConstraintCode(cr,cr->instanceNamesAllowed,
+                                      (cr->instanceNameRestriction || cr->classRestriction)));
+         genstrcat(buf,ConstraintCode(cr,cr->instanceAddressesAllowed,cr->classRestriction));
+         genstrcat(buf,ConstraintCode(cr,cr->externalAddressesAllowed,0));
+         genstrcat(buf,ConstraintCode(cr,cr->factAddressesAllowed,0));
+         genstrcat(buf,ConstraintCode(cr,cr->integersAllowed,cr->integerRestriction));
+         genstrcat(buf,ConstraintCode(cr,cr->floatsAllowed,cr->floatRestriction));
          OpenStringDestination(theEnv,strdest,buf + strlen(buf),(maxlen - strlen(buf) - 1));
          if (cr->integersAllowed || cr->floatsAllowed || cr->anyAllowed)
            {

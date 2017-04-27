@@ -198,7 +198,7 @@ void ExitCommand(
   UDFContext *context,
   UDFValue *returnValue)
   {
-   int argCnt;
+   unsigned int argCnt;
    int status;
    UDFValue theArg;
 
@@ -349,7 +349,7 @@ void RandomFunction(
   UDFContext *context,
   UDFValue *returnValue)
   {
-   int argCount;
+   unsigned int argCount;
    long long rv;
    UDFValue theArg;
    long long begin, end;
@@ -419,7 +419,7 @@ void SeedFunction(
    /* Seed the random number generator with the provided integer. */
    /*=============================================================*/
 
-   genseed((int) theValue.integerValue->contents);
+   genseed((unsigned int) theValue.integerValue->contents);
   }
 
 /********************************************/
@@ -447,7 +447,7 @@ void LengthFunction(
 
    if (CVIsType(&theArg,LEXEME_BITS))
      {
-      returnValue->integerValue = CreateInteger(theEnv,strlen(theArg.lexemeValue->contents));
+      returnValue->integerValue = CreateInteger(theEnv,(long long) strlen(theArg.lexemeValue->contents));
       return;
      }
 
@@ -458,7 +458,7 @@ void LengthFunction(
 
    else if (CVIsType(&theArg,MULTIFIELD_BIT))
      {
-      returnValue->value = CreateInteger(theEnv,theArg.range);
+      returnValue->value = CreateInteger(theEnv,(long long) theArg.range);
       return;
      }
   }
@@ -1223,7 +1223,7 @@ void FuncallFunction(
    const char *name;
    Multifield *theMultifield;
    struct expr *lastAdd = NULL, *nextAdd, *multiAdd;
-   struct functionDefinition *theFunction;
+   struct functionDefinition *theFunction = NULL;
 
    /*==================================*/
    /* Set up the default return value. */

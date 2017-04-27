@@ -42,15 +42,15 @@
 struct factBinaryData
   {
    struct factPatternNode *FactPatternArray;
-   long NumberOfPatterns;
+   unsigned long NumberOfPatterns;
   };
 
 #define FactBinaryData(theEnv) ((struct factBinaryData *) GetEnvironmentData(theEnv,FACTBIN_DATA))
 
    void                           FactBinarySetup(Environment *);
 
-#define BsaveFactPatternIndex(patPtr) ((patPtr == NULL) ? -1L : ((struct factPatternNode *) patPtr)->bsaveID)
-#define BloadFactPatternPointer(i) ((struct factPatternNode *) ((i == -1L) ? NULL : &FactBinaryData(theEnv)->FactPatternArray[i]))
+#define BsaveFactPatternIndex(patPtr) ((patPtr == NULL) ? ULONG_MAX : ((struct factPatternNode *) patPtr)->bsaveID)
+#define BloadFactPatternPointer(i) ((struct factPatternNode *) ((i == ULONG_MAX) ? NULL : &FactBinaryData(theEnv)->FactPatternArray[i]))
 
 #endif
 

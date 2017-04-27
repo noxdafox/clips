@@ -138,7 +138,7 @@ static void SaveDefmodules(
    ppform = DefmodulePPForm(theModule);
    if (ppform != NULL)
      {
-      PrintInChunks(theEnv,logicalName,ppform);
+      PrintString(theEnv,logicalName,ppform);
       PrintString(theEnv,logicalName,"\n");
      }
   }
@@ -245,7 +245,7 @@ bool PPDefmodule(
      }
 
    if (DefmodulePPForm(defmodulePtr) == NULL) return true;
-   PrintInChunks(theEnv,logicalName,DefmodulePPForm(defmodulePtr));
+   PrintString(theEnv,logicalName,DefmodulePPForm(defmodulePtr));
 
    return true;
   }
@@ -271,7 +271,7 @@ void ListDefmodules(
   const char *logicalName)
   {
    Defmodule *theModule;
-   int count = 0;
+   unsigned int count = 0;
 
    for (theModule = GetNextDefmodule(theEnv,NULL);
         theModule != NULL;

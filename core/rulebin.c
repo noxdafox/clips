@@ -80,10 +80,10 @@
 #endif
    static void                    BloadStorage(Environment *);
    static void                    BloadBinaryItem(Environment *);
-   static void                    UpdateDefruleModule(Environment *,void *,long);
-   static void                    UpdateDefrule(Environment *,void *,long);
-   static void                    UpdateJoin(Environment *,void *,long);
-   static void                    UpdateLink(Environment *,void *,long);
+   static void                    UpdateDefruleModule(Environment *,void *,unsigned long);
+   static void                    UpdateDefrule(Environment *,void *,unsigned long);
+   static void                    UpdateJoin(Environment *,void *,unsigned long);
+   static void                    UpdateLink(Environment *,void *,unsigned long);
    static void                    ClearBload(Environment *);
    static void                    DeallocateDefruleBloadData(Environment *);
 
@@ -118,7 +118,7 @@ static void DeallocateDefruleBloadData(
   {
 #if (BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE) && (! RUN_TIME)
    size_t space;
-   long i;
+   unsigned long i;
    struct defruleModule *theModuleItem;
    struct activation *theActivation, *tmpActivation;
    struct salienceGroup *theGroup, *tmpGroup;
@@ -337,7 +337,7 @@ static void BsaveStorage(
   FILE *fp)
   {
    size_t space;
-   long value;
+   unsigned long value;
 
    space = sizeof(long) * 5;
    GenWrite(&space,sizeof(size_t),fp);
@@ -347,18 +347,18 @@ static void BsaveStorage(
    GenWrite(&DefruleBinaryData(theEnv)->NumberOfLinks,sizeof(long),fp);
 
    if (DefruleData(theEnv)->RightPrimeJoins == NULL)
-     { value = -1; }
+     { value = ULONG_MAX; }
    else
      { value = DefruleData(theEnv)->RightPrimeJoins->bsaveID; }
 
-   GenWrite(&value,sizeof(long),fp);
+   GenWrite(&value,sizeof(unsigned long),fp);
 
    if (DefruleData(theEnv)->LeftPrimeJoins == NULL)
-     { value = -1; }
+     { value = ULONG_MAX; }
    else
      { value = DefruleData(theEnv)->LeftPrimeJoins->bsaveID; }
 
-   GenWrite(&value,sizeof(long),fp);
+   GenWrite(&value,sizeof(unsigned long),fp);
   }
 
 /*******************************************/
@@ -457,7 +457,7 @@ static void BsaveDisjuncts(
   {
    Defrule *theDisjunct;
    struct bsaveDefrule tempDefrule;
-   long disjunctExpressionCount = 0L;
+   unsigned long disjunctExpressionCount = 0;
    bool first;
 
    /*=========================================*/
@@ -497,7 +497,7 @@ static void BsaveDisjuncts(
            { tempDefrule.dynamicSalience = disjunctExpressionCount; }
         }
       else
-        { tempDefrule.dynamicSalience = -1L; }
+        { tempDefrule.dynamicSalience = ULONG_MAX; }
 
       /*==============================================*/
       /* Set the index to the disjunct's RHS actions. */
@@ -509,7 +509,7 @@ static void BsaveDisjuncts(
          ExpressionData(theEnv)->ExpressionCount += ExpressionSize(theDisjunct->actions);
         }
       else
-        { tempDefrule.actions = -1L; }
+        { tempDefrule.actions = ULONG_MAX; }
 
       /*=================================*/
       /* Set the index to the disjunct's */
@@ -526,7 +526,7 @@ static void BsaveDisjuncts(
       if (theDisjunct->disjunct != NULL)
         { tempDefrule.disjunct = DefruleBinaryData(theEnv)->NumberOfDefrules; }
       else
-        { tempDefrule.disjunct = -1L; }
+        { tempDefrule.disjunct = ULONG_MAX; }
 
       /*=================================*/
       /* Write the disjunct to the file. */
@@ -620,9 +620,9 @@ static void BsaveJoin(
    tempJoin.patternIsExists = joinPtr->patternIsExists;
 
    if (joinPtr->joinFromTheRight)
-     { tempJoin.rightSideEntryStructure =  BsaveJoinIndex(joinPtr->rightSideEntryStructure); }
+     { tempJoin.rightSideEntryStructure = BsaveJoinIndex(joinPtr->rightSideEntryStructure); }
    else
-     { tempJoin.rightSideEntryStructure =  -1L; }
+     { tempJoin.rightSideEntryStructure = ULONG_MAX; }
 
    tempJoin.lastLevel =  BsaveJoinIndex(joinPtr->lastLevel);
    tempJoin.nextLinks =  BsaveJoinLinkIndex(joinPtr->nextLinks);
@@ -638,9 +638,9 @@ static void BsaveJoin(
          GetDisjunctIndex(joinPtr->ruleToActivate);
      }
    else
-     { tempJoin.ruleToActivate = -1L; }
+     { tempJoin.ruleToActivate = ULONG_MAX; }
 
-   GenWrite(&tempJoin,(unsigned long) sizeof(struct bsaveJoinNode),fp);
+   GenWrite(&tempJoin,sizeof(struct bsaveJoinNode),fp);
   }
 
 /********************************************/
@@ -742,7 +742,7 @@ static void BsaveLink(
    tempLink.join =  BsaveJoinIndex(linkPtr->join);
    tempLink.next =  BsaveJoinLinkIndex(linkPtr->next);
 
-   GenWrite(&tempLink,(unsigned long) sizeof(struct bsaveJoinLink),fp);
+   GenWrite(&tempLink,sizeof(struct bsaveJoinLink),fp);
   }
 
 /***********************************************************/
@@ -895,13 +895,13 @@ static void BloadBinaryItem(
 static void UpdateDefruleModule(
   Environment *theEnv,
   void *buf,
-  long obji)
+  unsigned long obji)
   {
    struct bsaveDefruleModule *bdmPtr;
 
    bdmPtr = (struct bsaveDefruleModule *) buf;
    UpdateDefmoduleItemHeader(theEnv,&bdmPtr->header,&DefruleBinaryData(theEnv)->ModuleArray[obji].header,
-                             (int) sizeof(Defrule),
+                             sizeof(Defrule),
                              (void *) DefruleBinaryData(theEnv)->DefruleArray);
    DefruleBinaryData(theEnv)->ModuleArray[obji].agenda = NULL;
    DefruleBinaryData(theEnv)->ModuleArray[obji].groupings = NULL;
@@ -915,14 +915,14 @@ static void UpdateDefruleModule(
 static void UpdateDefrule(
   Environment *theEnv,
   void *buf,
-  long obji)
+  unsigned long obji)
   {
    struct bsaveDefrule *br;
 
    br = (struct bsaveDefrule *) buf;
    UpdateConstructHeader(theEnv,&br->header,&DefruleBinaryData(theEnv)->DefruleArray[obji].header,DEFRULE,
-                         (int) sizeof(struct defruleModule),(void *) DefruleBinaryData(theEnv)->ModuleArray,
-                         (int) sizeof(Defrule),(void *) DefruleBinaryData(theEnv)->DefruleArray);
+                         sizeof(struct defruleModule),(void *) DefruleBinaryData(theEnv)->ModuleArray,
+                         sizeof(Defrule),(void *) DefruleBinaryData(theEnv)->DefruleArray);
 
    DefruleBinaryData(theEnv)->DefruleArray[obji].dynamicSalience = ExpressionPointer(br->dynamicSalience);
 
@@ -949,7 +949,7 @@ static void UpdateDefrule(
 static void UpdateJoin(
   Environment *theEnv,
   void *buf,
-  long obji)
+  unsigned long obji)
   {
    struct bsaveJoinNode *bj;
 
@@ -991,7 +991,7 @@ static void UpdateJoin(
 static void UpdateLink(
   Environment *theEnv,
   void *buf,
-  long obji)
+  unsigned long obji)
   {
    struct bsaveJoinLink *bj;
 
@@ -1042,7 +1042,7 @@ static void ClearBload(
   Environment *theEnv)
   {
    size_t space;
-   long i;
+   unsigned long i;
    struct patternParser *theParser = NULL;
    struct patternEntity *theEntity = NULL;
    Defmodule *theModule;
@@ -1126,7 +1126,7 @@ static void ClearBload(
 /*******************************************************/
 void *BloadDefruleModuleReference(
   Environment *theEnv,
-  int theIndex)
+  unsigned long theIndex)
   {
    return ((void *) &DefruleBinaryData(theEnv)->ModuleArray[theIndex]);
   }

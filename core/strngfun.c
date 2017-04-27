@@ -171,7 +171,9 @@ static void StrOrSymCatFunction(
   unsigned short returnType)
   {
    UDFValue theArg;
-   int numArgs, i, total, j;
+   unsigned int numArgs;
+   unsigned int i;
+   unsigned int total, j;
    char *theString;
    CLIPSLexeme **arrayOfStrings;
    CLIPSLexeme *hashPtr;
@@ -186,7 +188,7 @@ static void StrOrSymCatFunction(
    numArgs = UDFArgumentCount(context);
    if (numArgs == 0) return;
 
-   arrayOfStrings = (CLIPSLexeme **) gm1(theEnv,(int) sizeof(CLIPSLexeme *) * numArgs);
+   arrayOfStrings = (CLIPSLexeme **) gm1(theEnv,sizeof(CLIPSLexeme *) * numArgs);
    for (i = 0; i < numArgs; i++)
      { arrayOfStrings[i] = NULL; }
 
@@ -247,7 +249,7 @@ static void StrOrSymCatFunction(
          return;
         }
 
-      total += (int) strlen(arrayOfStrings[i - 1]->contents);
+      total += strlen(arrayOfStrings[i - 1]->contents);
      }
 
    /*=========================================================*/
@@ -262,7 +264,7 @@ static void StrOrSymCatFunction(
    for (i = 0 ; i < numArgs ; i++)
      {
       gensprintf(&theString[j],"%s",arrayOfStrings[i]->contents);
-      j += (int) strlen(arrayOfStrings[i]->contents);
+      j += strlen(arrayOfStrings[i]->contents);
      }
 
    /*=========================================*/
@@ -307,7 +309,7 @@ void StrLengthFunction(
    /* Return the length of the string or symbol. */
    /*============================================*/
 
-   returnValue->integerValue = CreateInteger(theEnv,UTF8Length(theArg.lexemeValue->contents));
+   returnValue->integerValue = CreateInteger(theEnv,(long long) UTF8Length(theArg.lexemeValue->contents));
   }
 
 /****************************************/
@@ -544,7 +546,7 @@ void SubStringFunction(
       start = UTF8Offset(tempString,start);
       end = UTF8Offset(tempString,end + 1) - 1;
 
-      returnString = (char *) gm2(theEnv,(unsigned) (end - start + 2));  /* (end - start) inclusive + EOS */
+      returnString = (char *) gm2(theEnv,(end - start + 2));  /* (end - start) inclusive + EOS */
       for(j=0, i=start;i <= end; i++, j++)
         { *(returnString+j) = *(tempString+i); }
       *(returnString+j) = '\0';
@@ -555,7 +557,7 @@ void SubStringFunction(
    /*========================*/
 
    returnValue->lexemeValue = CreateString(theEnv,returnString);
-   rm(theEnv,returnString,(unsigned) (end - start + 2));
+   rm(theEnv,returnString,(end - start + 2));
   }
 
 /******************************************/
@@ -996,7 +998,7 @@ bool Build(
    if (errorFlag == 1)
      {
       PrintString(theEnv,WERROR,"\nERROR:\n");
-      PrintInChunks(theEnv,WERROR,GetPPBuffer(theEnv));
+      PrintString(theEnv,WERROR,GetPPBuffer(theEnv));
       PrintString(theEnv,WERROR,"\n");
      }
 

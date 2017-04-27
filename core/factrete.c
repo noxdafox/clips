@@ -68,12 +68,13 @@ bool FactPNGetVar1(
   void *theValue,
   UDFValue *returnValue)
   {
+   size_t adjustedField;
    unsigned short theField, theSlot;
    Fact *factPtr;
    CLIPSValue *fieldPtr;
    struct multifieldMarker *marks;
    Multifield *segmentPtr;
-   int extent;
+   size_t extent;
    struct factGetVarPN1Call *hack;
 
    /*==========================================*/
@@ -136,18 +137,18 @@ bool FactPNGetVar1(
    /* the range of fields for the variable being retrieved.    */
    /*==========================================================*/
 
-   extent = -1;
-   theField = AdjustFieldPosition(theEnv,marks,theField,theSlot,&extent);
+   extent = SIZE_MAX;
+   adjustedField = AdjustFieldPosition(theEnv,marks,theField,theSlot,&extent);
 
    /*=============================================================*/
    /* If a range of values are being retrieved (i.e. a multifield */
    /* variable), then return the values as a multifield.          */
    /*=============================================================*/
 
-   if (extent != -1)
+   if (extent != SIZE_MAX)
      {
       returnValue->value = fieldPtr->value;
-      returnValue->begin = theField;
+      returnValue->begin = adjustedField;
       returnValue->range = extent;
       return true;
      }
@@ -158,7 +159,7 @@ bool FactPNGetVar1(
    /*========================================================*/
 
    segmentPtr = fieldPtr->multifieldValue;
-   fieldPtr = &segmentPtr->contents[theField];
+   fieldPtr = &segmentPtr->contents[adjustedField];
 
    returnValue->value = fieldPtr->value;
 
@@ -243,7 +244,7 @@ bool FactPNGetVar3(
    if (hack->fromBeginning && hack->fromEnd)
      {
       returnValue->value = segmentPtr;
-      returnValue->begin = (long) hack->beginOffset;
+      returnValue->begin = hack->beginOffset;
       returnValue->range = segmentPtr->length - (hack->endOffset + hack->beginOffset);
       return true;
      }
@@ -386,12 +387,13 @@ bool FactJNGetVar1(
   void *theValue,
   UDFValue *returnValue)
   {
+   size_t adjustedField;
    unsigned short theField, theSlot;
    Fact *factPtr;
    CLIPSValue *fieldPtr;
    struct multifieldMarker *marks;
    Multifield *segmentPtr;
-   int extent;
+   size_t extent;
    struct factGetVarJN1Call *hack;
    Multifield *theSlots = NULL;
 
@@ -420,7 +422,7 @@ bool FactJNGetVar1(
       factPtr = (Fact *) get_nth_pm_match(EngineData(theEnv)->GlobalLHSBinds,hack->whichPattern)->matchingItem;
       marks = get_nth_pm_match(EngineData(theEnv)->GlobalLHSBinds,hack->whichPattern)->markers;
      }
-   else if ((((unsigned short) (EngineData(theEnv)->GlobalJoin->depth - 1))) == hack->whichPattern)
+   else if ((EngineData(theEnv)->GlobalJoin->depth - 1) == hack->whichPattern)
      {
       factPtr = (Fact *) get_nth_pm_match(EngineData(theEnv)->GlobalRHSBinds,0)->matchingItem;
       marks = get_nth_pm_match(EngineData(theEnv)->GlobalRHSBinds,0)->markers;
@@ -490,18 +492,18 @@ bool FactJNGetVar1(
    /* the range of fields for the variable being retrieved.    */
    /*==========================================================*/
 
-   extent = -1;
-   theField = AdjustFieldPosition(theEnv,marks,theField,theSlot,&extent);
+   extent = SIZE_MAX;
+   adjustedField = AdjustFieldPosition(theEnv,marks,theField,theSlot,&extent);
 
    /*=============================================================*/
    /* If a range of values are being retrieved (i.e. a multifield */
    /* variable), then return the values as a multifield.          */
    /*=============================================================*/
 
-   if (extent != -1)
+   if (extent != SIZE_MAX)
      {
       returnValue->value = fieldPtr->value;
-      returnValue->begin = theField;
+      returnValue->begin = adjustedField;
       returnValue->range = extent;
       return true;
      }
@@ -512,7 +514,7 @@ bool FactJNGetVar1(
    /*========================================================*/
 
    segmentPtr = theSlots->contents[theSlot].multifieldValue;
-   fieldPtr = &segmentPtr->contents[theField];
+   fieldPtr = &segmentPtr->contents[adjustedField];
 
    returnValue->value = fieldPtr->value;
 
@@ -549,7 +551,7 @@ bool FactJNGetVar2(
      { factPtr = (Fact *) get_nth_pm_match(EngineData(theEnv)->GlobalRHSBinds,hack->whichPattern)->matchingItem; }
    else if (EngineData(theEnv)->GlobalRHSBinds == NULL)
      { factPtr = (Fact *) get_nth_pm_match(EngineData(theEnv)->GlobalLHSBinds,hack->whichPattern)->matchingItem; }
-   else if (((unsigned short) (EngineData(theEnv)->GlobalJoin->depth - 1)) == hack->whichPattern)
+   else if ((EngineData(theEnv)->GlobalJoin->depth - 1) == hack->whichPattern)
 	 { factPtr = (Fact *) get_nth_pm_match(EngineData(theEnv)->GlobalRHSBinds,0)->matchingItem; }
    else
      { factPtr = (Fact *) get_nth_pm_match(EngineData(theEnv)->GlobalLHSBinds,hack->whichPattern)->matchingItem; }
@@ -600,7 +602,7 @@ bool FactJNGetVar3(
      { factPtr = (Fact *) get_nth_pm_match(EngineData(theEnv)->GlobalRHSBinds,hack->whichPattern)->matchingItem; }
    else if (EngineData(theEnv)->GlobalRHSBinds == NULL)
      { factPtr = (Fact *) get_nth_pm_match(EngineData(theEnv)->GlobalLHSBinds,hack->whichPattern)->matchingItem; }
-   else if (((unsigned short) (EngineData(theEnv)->GlobalJoin->depth - 1)) == hack->whichPattern)
+   else if ((EngineData(theEnv)->GlobalJoin->depth - 1) == hack->whichPattern)
      { factPtr = (Fact *) get_nth_pm_match(EngineData(theEnv)->GlobalRHSBinds,0)->matchingItem; }
    else
      { factPtr = (Fact *) get_nth_pm_match(EngineData(theEnv)->GlobalLHSBinds,hack->whichPattern)->matchingItem; }
@@ -665,7 +667,7 @@ bool FactSlotLength(
         tempMark = tempMark->next)
      {
       if (tempMark->where.whichSlotNumber != hack->whichSlot) continue;
-      extraOffset += ((tempMark->endPosition - tempMark->startPosition) + 1);
+      extraOffset += tempMark->range;
      }
 
    segmentPtr = FactData(theEnv)->CurrentPatternFact->theProposition.contents[hack->whichSlot].multifieldValue;
@@ -692,7 +694,7 @@ bool FactJNCompVars1(
 #if MAC_XCD
 #pragma unused(theResult)
 #endif
-   int p1, e1, p2, e2;
+   unsigned short p1, e1, p2, e2;
    Fact *fact1, *fact2;
    struct factCompVarsJN1Call *hack;
 
@@ -706,8 +708,8 @@ bool FactJNCompVars1(
    /* Extract the fact pointers for the two patterns. */
    /*=================================================*/
 
-   p1 = (int) hack->pattern1;
-   p2 = (int) hack->pattern2;
+   p1 = hack->pattern1;
+   p2 = hack->pattern2;
 
    fact1 = (Fact *) EngineData(theEnv)->GlobalRHSBinds->binds[p1].gm.theMatch->matchingItem;
 
@@ -720,14 +722,14 @@ bool FactJNCompVars1(
    /* Compare the values. */
    /*=====================*/
 
-   e1 = (int) hack->slot1;
-   e2 = (int) hack->slot2;
+   e1 = hack->slot1;
+   e2 = hack->slot2;
 
    if (fact1->theProposition.contents[e1].value !=
        fact2->theProposition.contents[e2].value)
-     { return((bool) hack->fail); }
+     { return hack->fail; }
 
-   return((bool) hack->pass);
+   return hack->pass;
   }
 
 /*****************************************************************/
@@ -745,7 +747,7 @@ bool FactJNCompVars2(
 #if MAC_XCD
 #pragma unused(theResult)
 #endif
-   int p1, s1, p2, s2;
+   unsigned short p1, s1, p2, s2;
    Fact *fact1, *fact2;
    struct factCompVarsJN2Call *hack;
    Multifield *segment;
@@ -761,10 +763,10 @@ bool FactJNCompVars2(
    /* Extract the fact pointers for the two patterns. */
    /*=================================================*/
 
-   p1 = (int) hack->pattern1;
-   p2 = (int) hack->pattern2;
-   s1 = (int) hack->slot1;
-   s2 = (int) hack->slot2;
+   p1 = hack->pattern1;
+   p2 = hack->pattern2;
+   s1 = hack->slot1;
+   s2 = hack->slot2;
 
    fact1 = (Fact *) EngineData(theEnv)->GlobalRHSBinds->binds[p1].gm.theMatch->matchingItem;
 
@@ -806,9 +808,9 @@ bool FactJNCompVars2(
    /*=====================*/
 
    if (fieldPtr1->value != fieldPtr2->value)
-     { return((bool) hack->fail); }
+     { return hack->fail; }
 
-   return((bool) hack->pass);
+   return hack->pass;
   }
 
 /*****************************************************/
@@ -861,14 +863,14 @@ bool FactPNCompVars1(
 /*   variable ?z) would be 8 since $?x binds to 2 fields and $?y binds   */
 /*   to 3 fields.                                                        */
 /*************************************************************************/
-unsigned short AdjustFieldPosition(
+size_t AdjustFieldPosition(
   Environment *theEnv,
   struct multifieldMarker *markList,
   unsigned short whichField,
   unsigned short whichSlot,
-  int *extent)
+  size_t *extent)
   {
-   unsigned short actualIndex;
+   size_t actualIndex;
 #if MAC_XCD
 #pragma unused(theEnv)
 #endif
@@ -893,8 +895,8 @@ unsigned short AdjustFieldPosition(
 
       if (markList->whichField == whichField)
         {
-         *extent = (markList->endPosition - markList->startPosition) + 1;
-         return(actualIndex);
+         *extent = markList->range;
+         return actualIndex;
         }
 
       /*=====================================================*/
@@ -904,21 +906,21 @@ unsigned short AdjustFieldPosition(
       /*=====================================================*/
 
       else if (markList->whichField > whichField)
-        { return(actualIndex); }
+        { return actualIndex; }
 
       /*==========================================================*/
       /* Adjust the actual index to the field based on the number */
       /* of fields taken up by the preceding multifield variable. */
       /*==========================================================*/
 
-      actualIndex += (unsigned short) (markList->endPosition - markList->startPosition);
+      actualIndex = actualIndex + markList->range - 1;
      }
 
    /*=======================================*/
    /* Return the actual index to the field. */
    /*=======================================*/
 
-   return(actualIndex);
+   return actualIndex;
   }
 
 /*****************************************************/

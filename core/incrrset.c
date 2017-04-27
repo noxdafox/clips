@@ -84,7 +84,8 @@
    static void                    CheckForPrimableJoins(Environment *,Defrule *,struct joinNode *);
    static void                    PrimeJoinFromLeftMemory(Environment *,struct joinNode *);
    static void                    PrimeJoinFromRightMemory(Environment *,struct joinNode *);
-   static void                    MarkPatternForIncrementalReset(Environment *,int,struct patternNodeHeader *,int);
+   static void                    MarkPatternForIncrementalReset(Environment *,unsigned short,
+                                                                 struct patternNodeHeader *,bool);
 #endif
 
 /**************************************************************/
@@ -210,7 +211,7 @@ static void MarkJoinsForIncrementalReset(
            {
             patternPtr = (struct patternNodeHeader *) GetPatternForJoin(joinPtr);
             if (patternPtr != NULL)
-              { MarkPatternForIncrementalReset(theEnv,(int) joinPtr->rhsType,patternPtr,value); }
+              { MarkPatternForIncrementalReset(theEnv,joinPtr->rhsType,patternPtr,value); }
            }
         }
      }
@@ -509,9 +510,9 @@ static void PrimeJoinFromRightMemory(
 /*********************************************************************/
 static void MarkPatternForIncrementalReset(
   Environment *theEnv,
-  int rhsType,
+  unsigned short rhsType,
   struct patternNodeHeader *theHeader,
-  int value)
+  bool value)
   {
    struct patternParser *tempParser;
 

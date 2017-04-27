@@ -776,7 +776,7 @@ static void AgendaClearFunction(
   Environment *theEnv,
   void *context)
   {
-   AgendaData(theEnv)->CurrentTimetag = 0;
+   AgendaData(theEnv)->CurrentTimetag = 1;
   }
 
 /*************************************************/
@@ -996,7 +996,7 @@ void RefreshAgendaCommand(
   UDFContext *context,
   UDFValue *returnValue)
   {
-   int numArgs;
+   unsigned int numArgs;
    bool error;
    Defmodule *theModule;
 
@@ -1244,7 +1244,7 @@ static int EvaluateSalience(
   Defrule *theDefrule)
   {
    UDFValue salienceValue;
-   int salience;
+   long long salience;
 
   /*==================================================*/
   /* If saliences are only being evaluated when rules */
@@ -1293,7 +1293,7 @@ static int EvaluateSalience(
   /* minimum and maximum allowed values.      */
   /*==========================================*/
 
-  salience = (int) salienceValue.integerValue->contents;
+  salience = salienceValue.integerValue->contents;
 
   if ((salience > MAX_DEFRULE_SALIENCE) || (salience < MIN_DEFRULE_SALIENCE))
     {
@@ -1308,7 +1308,7 @@ static int EvaluateSalience(
   /* the rule and return this value.   */
   /*===================================*/
 
-  theDefrule->salience = salience;
+  theDefrule->salience = (int) salience;
   return theDefrule->salience;
  }
 
@@ -1324,7 +1324,7 @@ void AgendaCommand(
   UDFContext *context,
   UDFValue *returnValue)
   {
-   int numArgs;
+   unsigned int numArgs;
    bool error;
    Defmodule *theModule;
 

@@ -99,10 +99,10 @@
 
 typedef struct
   {
-   long classCount;
+   unsigned long classCount;
    unsigned short currentPartition;
    unsigned short slotCount;
-   int maxIndices;
+   unsigned int maxIndices;
   } MARK_INFO;
 
 typedef union
@@ -112,7 +112,7 @@ typedef union
       unsigned thePartition : 16;
       unsigned theOffset    : 16;
      } theLocation;
-   long theLong;
+   unsigned long theLong;
   } PACKED_LOCATION_INFO;
 
 /***************************************/
@@ -121,37 +121,47 @@ typedef union
 
    static void                    ReadyObjectsForCode(Environment *);
    static void                    MarkDefclassAndSlots(Environment *,ConstructHeader *,void *);
-   static void                    PrintSlotNameReference(Environment *,FILE *,SLOT_NAME *,int,int);
-   static void                    InitObjectsCode(Environment *,FILE *,int,int);
-   static bool                    ObjectsToCode(Environment *,const char *,const char *,char *,int,FILE *,int,int);
-   static bool                    ClassIDMapToCode(Environment *,const char *,const char *,char *,int,FILE *,int,int,int *);
-   static bool                    ClassHashTableToCode(Environment *,const char *,const char *,char *,int,FILE *,int,int,int *);
-   static bool                    SlotNameHashTableToCode(Environment *,const char *,const char *,char *,int,FILE *,int,int,int *);
-   static bool                    SlotNameEntriesToCode(Environment *,const char *,const char *,char *,int,FILE *,int,int,int *);
+   static void                    PrintSlotNameReference(Environment *,FILE *,SLOT_NAME *,unsigned int,unsigned int);
+   static void                    InitObjectsCode(Environment *,FILE *,unsigned int,unsigned int);
+   static bool                    ObjectsToCode(Environment *,const char *,const char *,char *,unsigned int,
+                                                FILE *,unsigned int,unsigned int);
+   static bool                    ClassIDMapToCode(Environment *,const char *,const char *,char *,unsigned int,
+                                                   FILE *,unsigned int,unsigned int,unsigned int *);
+   static bool                    ClassHashTableToCode(Environment *,const char *,const char *,char *,unsigned int,
+                                                       FILE *,unsigned int,unsigned int,unsigned int *);
+   static bool                    SlotNameHashTableToCode(Environment *,const char *,const char *,char *,unsigned int,
+                                                          FILE *,unsigned int,unsigned int,unsigned int *);
+   static bool                    SlotNameEntriesToCode(Environment *,const char *,const char *,char *,unsigned int,
+                                                        FILE *,unsigned int,unsigned int,unsigned int *);
    static void                    CloseObjectFiles(Environment *,FILE *[SAVE_ITEMS],bool [SAVE_ITEMS],
-                                                   struct CodeGeneratorFile [SAVE_ITEMS],int);
-   static void                    DefclassModuleToCode(Environment *,FILE *,Defmodule *,int,int);
-   static void                    SingleDefclassToCode(Environment *,FILE *,int,int,Defclass *,int,
-                                                      int,int,int,int,int,int,
-                                                      int,int,int,int,int,int);
-   static bool                    InheritanceLinksToCode(Environment *,FILE **,const char *,const char *,char *,int,int,FILE *,
-                                                         int *,int,Defclass *,int *,
-                                                         int *,bool *,struct CodeGeneratorFile *);
-   static bool                    SlotsToCode(Environment *,FILE **,const char *,const char *,char *,int,int,FILE *,
-                                              int *,int,Defclass *,int *,
-                                              int *,bool *,struct CodeGeneratorFile *);
-   static bool                    TemplateSlotsToCode(Environment *,FILE **,const char *,const char *,char *,int,int,FILE *,
-                                                      int *,int,Defclass *,int *,
-                                                      int *,bool *,struct CodeGeneratorFile *);
-   static bool                    OrderedSlotsToCode(Environment *,FILE **,const char *,const char *,char *,int,int,FILE *,
-                                                     int *,int,Defclass *,int *,
-                                                     int *,bool *,struct CodeGeneratorFile *);
-   static bool                    HandlersToCode(Environment *,FILE **,const char *,const char *,char *,int,int,FILE *,
-                                                 int *,int,Defclass *,int,int *,
-                                                 int *,bool *,struct CodeGeneratorFile *);
-   static bool                    OrderedHandlersToCode(Environment *,FILE **,const char *,const char *,char *,int,int,FILE *,
-                                                        int *,int,Defclass *,int *,
-                                                        int *,bool *,struct CodeGeneratorFile *);
+                                                   struct CodeGeneratorFile [SAVE_ITEMS],unsigned int);
+   static void                    DefclassModuleToCode(Environment *,FILE *,Defmodule *,unsigned int,unsigned int);
+   static void                    SingleDefclassToCode(Environment *,FILE *,unsigned int,unsigned int,Defclass *,unsigned int,
+                                                      unsigned int,unsigned int,unsigned int,unsigned int,unsigned int,unsigned int,
+                                                      unsigned int,unsigned int,unsigned int,unsigned int,unsigned int,unsigned int);
+   static bool                    InheritanceLinksToCode(Environment *,FILE **,const char *,const char *,char *,
+                                                         unsigned int,unsigned int,FILE *,
+                                                         unsigned int *,unsigned int,Defclass *,unsigned int *,
+                                                         unsigned int *,bool *,struct CodeGeneratorFile *);
+   static bool                    SlotsToCode(Environment *,FILE **,const char *,const char *,char *,unsigned int,unsigned int,FILE *,
+                                              unsigned int *,unsigned int,Defclass *,unsigned int *,
+                                              unsigned int *,bool *,struct CodeGeneratorFile *);
+   static bool                    TemplateSlotsToCode(Environment *,FILE **,const char *,const char *,char *,
+                                                      unsigned int,unsigned int,FILE *,
+                                                      unsigned int *,unsigned int,Defclass *,unsigned int *,
+                                                      unsigned int *,bool *,struct CodeGeneratorFile *);
+   static bool                    OrderedSlotsToCode(Environment *,FILE **,const char *,const char *,char *,
+                                                     unsigned int,unsigned int,FILE *,
+                                                     unsigned int *,unsigned int,Defclass *,unsigned int *,
+                                                     unsigned int *,bool *,struct CodeGeneratorFile *);
+   static bool                    HandlersToCode(Environment *,FILE **,const char *,const char *,char *,
+                                                 unsigned int,unsigned int,FILE *,
+                                                 unsigned int *,unsigned int,Defclass *,unsigned int,unsigned int *,
+                                                 unsigned int *,bool *,struct CodeGeneratorFile *);
+   static bool                    OrderedHandlersToCode(Environment *,FILE **,const char *,const char *,char *,
+                                                        unsigned int,unsigned int,FILE *,
+                                                        unsigned int *,unsigned int,Defclass *,unsigned int *,
+                                                        unsigned int *,bool *,struct CodeGeneratorFile *);
 
 /* =========================================
    *****************************************
@@ -194,17 +204,17 @@ void PrintClassReference(
   Environment *theEnv,
   FILE *fp,
   Defclass *cls,
-  int imageID,
-  int maxIndices)
+  unsigned int imageID,
+  unsigned int maxIndices)
   {
    if (cls == NULL)
      fprintf(fp,"NULL");
    else
-     fprintf(fp,"&%s%d_%d[%d]",
+     fprintf(fp,"&%s%u_%lu[%lu]",
                  ClassPrefix(),
                  imageID,
-                 (int) ((cls->header.bsaveID / maxIndices) + 1),
-                 (int) (cls->header.bsaveID % maxIndices));
+                 ((cls->header.bsaveID / maxIndices) + 1),
+                 (cls->header.bsaveID % maxIndices));
   }
 
 /****************************************************
@@ -223,11 +233,11 @@ void PrintClassReference(
 void DefclassCModuleReference(
   Environment *theEnv,
   FILE *theFile,
-  int count,
-  int imageID,
-  int maxIndices)
+  unsigned long count,
+  unsigned int imageID,
+  unsigned int maxIndices)
   {
-   fprintf(theFile,"MIHS &%s%d_%d[%d]",
+   fprintf(theFile,"MIHS &%s%u_%lu[%lu]",
                    ModulePrefix(ObjectCompilerData(theEnv)->ObjectCodeItem),
                    imageID,
                    (count / maxIndices) + 1,
@@ -254,7 +264,7 @@ static void ReadyObjectsForCode(
   Environment *theEnv)
   {
    MARK_INFO markInfo;
-   long i;
+   unsigned long i;
    int j;
    SLOT_NAME *snp;
 
@@ -342,17 +352,17 @@ static void PrintSlotNameReference(
   Environment *theEnv,
   FILE *fp,
   SLOT_NAME *snp,
-  int imageID,
-  int maxIndices)
+  unsigned int imageID,
+  unsigned int maxIndices)
   {
    if (snp == NULL)
      fprintf(fp,"NULL");
    else
-     fprintf(fp,"&%s%d_%d[%d]",
+     fprintf(fp,"&%s%u_%lu[%lu]",
                  SlotNamePrefix(),
                  imageID,
-                 (int) ((snp->bsaveIndex / maxIndices) + 1),
-                 (int) (snp->bsaveIndex % maxIndices));
+                 ((snp->bsaveIndex / maxIndices) + 1),
+                 (snp->bsaveIndex % maxIndices));
   }
 
 /*******************************************************
@@ -370,14 +380,14 @@ static void PrintSlotNameReference(
 static void InitObjectsCode(
   Environment *theEnv,
   FILE *initFP,
-  int imageID,
-  int maxIndices)
+  unsigned int imageID,
+  unsigned int maxIndices)
   {
 #if MAC_XCD
 #pragma unused(maxIndices)
 #endif
 
-   fprintf(initFP,"   ObjectsRunTimeInitialize(theEnv,%s%d_1,%s%d_1,%s%d_1,%s%d);\n",
+   fprintf(initFP,"   ObjectsRunTimeInitialize(theEnv,%s%u_1,%s%u_1,%s%u_1,%s%u);\n",
                       ClassHashPrefix(),imageID,SlotNameHashPrefix(),imageID,
                       ClassIDPrefix(),imageID,MaxClassIDPrefix(),imageID);
   }
@@ -403,18 +413,18 @@ static bool ObjectsToCode(
   const char *fileName,
   const char *pathName,
   char *fileNameBuffer,
-  int fileID,
+  unsigned int fileID,
   FILE *headerFP,
-  int imageID,
-  int maxIndices)
+  unsigned int imageID,
+  unsigned int maxIndices)
   {
-   int fileCount = 1;
+   unsigned int fileCount = 1;
    Defmodule *theModule;
    Defclass *theDefclass;
    int i;
-   int moduleCount = 0;
-   int itemArrayCounts[SAVE_ITEMS];
-   int itemArrayVersions[SAVE_ITEMS];
+   unsigned int moduleCount = 0;
+   unsigned int itemArrayCounts[SAVE_ITEMS];
+   unsigned int itemArrayVersions[SAVE_ITEMS];
    FILE *itemFiles[SAVE_ITEMS];
    bool itemReopenFlags[SAVE_ITEMS];
    struct CodeGeneratorFile itemCodeFiles[SAVE_ITEMS];
@@ -566,15 +576,15 @@ static bool ClassIDMapToCode(
   const char *fileName,
   const char *pathName,
   char *fileNameBuffer,
-  int fileID,
+  unsigned int fileID,
   FILE *headerFP,
-  int imageID,
-  int maxIndices,
-  int *fileCount)
+  unsigned int imageID,
+  unsigned int maxIndices,
+  unsigned int *fileCount)
   {
    FILE *classIDMapFile = NULL;
-   int classIDMapArrayCount,
-       classIDMapArrayVersion = 1;
+   unsigned int classIDMapArrayCount;
+   unsigned int classIDMapArrayVersion = 1;
 
    classIDMapFile = OpenFileIfNeeded(theEnv,classIDMapFile,fileName,pathName,fileNameBuffer,fileID,imageID,fileCount,
                                      classIDMapArrayVersion,headerFP,
@@ -615,14 +625,14 @@ static bool ClassHashTableToCode(
   const char *fileName,
   const char *pathName,
   char *fileNameBuffer,
-  int fileID,
+  unsigned int fileID,
   FILE *headerFP,
-  int imageID,
-  int maxIndices,
-  int *fileCount)
+  unsigned int imageID,
+  unsigned int maxIndices,
+  unsigned int *fileCount)
   {
    FILE *classHashFile = NULL;
-   int classHashArrayCount,
+   unsigned int classHashArrayCount,
        classHashArrayVersion = 1;
 
    classHashFile = OpenFileIfNeeded(theEnv,classHashFile,fileName,pathName,fileNameBuffer,fileID,imageID,fileCount,
@@ -662,14 +672,14 @@ static bool SlotNameHashTableToCode(
   const char *fileName,
   const char *pathName,
   char *fileNameBuffer,
-  int fileID,
+  unsigned int fileID,
   FILE *headerFP,
-  int imageID,
-  int maxIndices,
-  int *fileCount)
+  unsigned int imageID,
+  unsigned int maxIndices,
+  unsigned int *fileCount)
   {
    FILE *slotNameHashFile = NULL;
-   int slotNameHashArrayCount,
+   unsigned int slotNameHashArrayCount,
        slotNameHashArrayVersion = 1;
 
    slotNameHashFile = OpenFileIfNeeded(theEnv,slotNameHashFile,fileName,pathName,fileNameBuffer,fileID,
@@ -710,14 +720,14 @@ static bool SlotNameEntriesToCode(
   const char *fileName,
   const char *pathName,
   char *fileNameBuffer,
-  int fileID,
+  unsigned int fileID,
   FILE *headerFP,
-  int imageID,
-  int maxIndices,
-  int *fileCount)
+  unsigned int imageID,
+  unsigned int maxIndices,
+  unsigned int *fileCount)
   {
    FILE *slotNameFile = NULL;
-   int slotNameArrayCount = 0,
+   unsigned int slotNameArrayCount = 0,
        slotNameArrayVersion = 1;
    SLOT_NAME *snp;
    unsigned i;
@@ -771,10 +781,10 @@ static void CloseObjectFiles(
   FILE *itemFiles[SAVE_ITEMS],
   bool itemReopenFlags[SAVE_ITEMS],
   struct CodeGeneratorFile itemCodeFiles[SAVE_ITEMS],
-  int maxIndices)
+  unsigned int maxIndices)
   {
-   int count = maxIndices;
-   int arrayVersion = 0;
+   unsigned int count = maxIndices;
+   unsigned int arrayVersion = 0;
    int i;
 
    for (i = 0 ; i < SAVE_ITEMS ; i++)
@@ -803,8 +813,8 @@ static void DefclassModuleToCode(
   Environment *theEnv,
   FILE *theFile,
   Defmodule *theModule,
-  int imageID,
-  int maxIndices)
+  unsigned int imageID,
+  unsigned int maxIndices)
   {
    fprintf(theFile,"{");
    ConstructModuleToCode(theEnv,theFile,theModule,imageID,maxIndices,
@@ -853,22 +863,22 @@ static void DefclassModuleToCode(
 static void SingleDefclassToCode(
   Environment *theEnv,
   FILE *theFile,
-  int imageID,
-  int maxIndices,
+  unsigned int imageID,
+  unsigned int maxIndices,
   Defclass *theDefclass,
-  int moduleCount,
-  int classLinkArrayVersion,
-  int classLinkArrayCount,
-  int slotArrayVersion,
-  int slotArrayCount,
-  int templateSlotArrayVersion,
-  int templateSlotArrayCount,
-  int orderedSlotArrayVersion,
-  int orderedSlotArrayCount,
-  int handlerArrayVersion,
-  int handlerArrayCount,
-  int orderedHandlerArrayVersion,
-  int orderedHandlerArrayCount)
+  unsigned int moduleCount,
+  unsigned int classLinkArrayVersion,
+  unsigned int classLinkArrayCount,
+  unsigned int slotArrayVersion,
+  unsigned int slotArrayCount,
+  unsigned int templateSlotArrayVersion,
+  unsigned int templateSlotArrayCount,
+  unsigned int orderedSlotArrayVersion,
+  unsigned int orderedSlotArrayCount,
+  unsigned int handlerArrayVersion,
+  unsigned int handlerArrayCount,
+  unsigned int orderedHandlerArrayVersion,
+  unsigned int orderedHandlerArrayCount)
   {
    /* ==================
       Defclass Header
@@ -886,8 +896,8 @@ static void SingleDefclassToCode(
                    theDefclass->hashTableIndex);
 
    if (theDefclass->directSuperclasses.classCount > 0)
-     fprintf(theFile,"{ %u,&%s%d_%d[%d] },",
-                     (unsigned) theDefclass->directSuperclasses.classCount,
+     fprintf(theFile,"{ %lu,&%s%d_%d[%d] },",
+                     theDefclass->directSuperclasses.classCount,
                      ClassLinkPrefix(),
                      imageID,classLinkArrayVersion,classLinkArrayCount);
    else
@@ -895,8 +905,8 @@ static void SingleDefclassToCode(
    classLinkArrayCount += theDefclass->directSuperclasses.classCount;
 
    if (theDefclass->directSubclasses.classCount > 0)
-     fprintf(theFile,"{ %u,&%s%d_%d[%d] },",
-                     (unsigned) theDefclass->directSubclasses.classCount,
+     fprintf(theFile,"{ %lu,&%s%d_%d[%d] },",
+                     theDefclass->directSubclasses.classCount,
                      ClassLinkPrefix(),
                      imageID,classLinkArrayVersion,classLinkArrayCount);
    else
@@ -904,8 +914,8 @@ static void SingleDefclassToCode(
    classLinkArrayCount += theDefclass->directSubclasses.classCount;
 
    if (theDefclass->allSuperclasses.classCount > 0)
-     fprintf(theFile,"{ %u,&%s%d_%d[%d] },",
-                     (unsigned) theDefclass->allSuperclasses.classCount,
+     fprintf(theFile,"{ %lu,&%s%d_%d[%d] },",
+                     theDefclass->allSuperclasses.classCount,
                      ClassLinkPrefix(),
                      imageID,classLinkArrayVersion,classLinkArrayCount);
    else
@@ -932,7 +942,7 @@ static void SingleDefclassToCode(
    else
      fprintf(theFile,"NULL,");
 
-   fprintf(theFile,"%hd,%hd,%hd,%hd,NULL,NULL,\n   ",
+   fprintf(theFile,"%u,%u,%u,%u,NULL,NULL,\n   ",
                    theDefclass->slotCount,theDefclass->localInstanceSlotCount,
                    theDefclass->instanceSlotCount,theDefclass->maxSlotNameID);
 
@@ -991,19 +1001,19 @@ static bool InheritanceLinksToCode(
   const char *fileName,
   const char *pathName,
   char *fileNameBuffer,
-  int fileID,
-  int imageID,
+  unsigned int fileID,
+  unsigned int imageID,
   FILE *headerFP,
-  int *fileCount,
-  int maxIndices,
+  unsigned int *fileCount,
+  unsigned int maxIndices,
   Defclass *theDefclass,
-  int *classLinkArrayVersion,
-  int *classLinkArrayCount,
+  unsigned int *classLinkArrayVersion,
+  unsigned int *classLinkArrayCount,
   bool *reopenClassLinkFile,
   struct CodeGeneratorFile *classLinkCodeFile)
   {
-   long i;
-   int inheritanceLinkCount;
+   unsigned long i;
+   unsigned long inheritanceLinkCount;
    bool linkPrinted = false;
 
    inheritanceLinkCount = theDefclass->directSuperclasses.classCount +
@@ -1089,14 +1099,14 @@ static bool SlotsToCode(
   const char *fileName,
   const char *pathName,
   char *fileNameBuffer,
-  int fileID,
-  int imageID,
+  unsigned int fileID,
+  unsigned int imageID,
   FILE *headerFP,
-  int *fileCount,
-  int maxIndices,
+  unsigned int *fileCount,
+  unsigned int maxIndices,
   Defclass *theDefclass,
-  int *slotArrayVersion,
-  int *slotArrayCount,
+  unsigned int *slotArrayVersion,
+  unsigned int *slotArrayCount,
   bool *reopenSlotFile,
   struct CodeGeneratorFile *slotCodeFile)
   {
@@ -1162,7 +1172,7 @@ static bool SlotsToCode(
       else
         fprintf(*slotFile,"{ NULL,0,0,0, { NULL } } }");
      }
-   *slotArrayCount += (int) theDefclass->slotCount;
+   *slotArrayCount += theDefclass->slotCount;
    *slotFile = CloseFileIfNeeded(theEnv,*slotFile,slotArrayCount,
                                  slotArrayVersion,maxIndices,
                                  reopenSlotFile,slotCodeFile);
@@ -1204,18 +1214,18 @@ static bool TemplateSlotsToCode(
   const char *fileName,
   const char *pathName,
   char *fileNameBuffer,
-  int fileID,
-  int imageID,
+  unsigned int fileID,
+  unsigned int imageID,
   FILE *headerFP,
-  int *fileCount,
-  int maxIndices,
+  unsigned int *fileCount,
+  unsigned int maxIndices,
   Defclass *theDefclass,
-  int *templateSlotArrayVersion,
-  int *templateSlotArrayCount,
+  unsigned int *templateSlotArrayVersion,
+  unsigned int *templateSlotArrayCount,
   bool *reopenTemplateSlotFile,
   struct CodeGeneratorFile *templateSlotCodeFile)
   {
-   long i;
+   unsigned long i;
    SlotDescriptor *sd;
    PACKED_LOCATION_INFO theLocationInfo;
 
@@ -1241,7 +1251,7 @@ static bool TemplateSlotsToCode(
                                 theLocationInfo.theLocation.thePartition,
                                 theLocationInfo.theLocation.theOffset);
      }
-   *templateSlotArrayCount += (int) theDefclass->instanceSlotCount;
+   *templateSlotArrayCount += theDefclass->instanceSlotCount;
    *templateSlotFile = CloseFileIfNeeded(theEnv,*templateSlotFile,templateSlotArrayCount,
                                          templateSlotArrayVersion,maxIndices,
                                          reopenTemplateSlotFile,templateSlotCodeFile);
@@ -1283,14 +1293,14 @@ static bool OrderedSlotsToCode(
   const char *fileName,
   const char *pathName,
   char *fileNameBuffer,
-  int fileID,
-  int imageID,
+  unsigned int fileID,
+  unsigned int imageID,
   FILE *headerFP,
-  int *fileCount,
-  int maxIndices,
+  unsigned int *fileCount,
+  unsigned int maxIndices,
   Defclass *theDefclass,
-  int *orderedSlotArrayVersion,
-  int *orderedSlotArrayCount,
+  unsigned int *orderedSlotArrayVersion,
+  unsigned int *orderedSlotArrayCount,
   bool *reopenOrderedSlotFile,
   struct CodeGeneratorFile *orderedSlotCodeFile)
   {
@@ -1313,7 +1323,7 @@ static bool OrderedSlotsToCode(
         fprintf(*orderedSlotFile,",");
       fprintf(*orderedSlotFile,"%u",theDefclass->slotNameMap[i]);
      }
-   *orderedSlotArrayCount += (int) theDefclass->maxSlotNameID + 1;
+   *orderedSlotArrayCount += theDefclass->maxSlotNameID + 1;
    *orderedSlotFile = CloseFileIfNeeded(theEnv,*orderedSlotFile,orderedSlotArrayCount,
                                         orderedSlotArrayVersion,maxIndices,
                                         reopenOrderedSlotFile,orderedSlotCodeFile);
@@ -1354,19 +1364,19 @@ static bool HandlersToCode(
   const char *fileName,
   const char *pathName,
   char *fileNameBuffer,
-  int fileID,
-  int imageID,
+  unsigned int fileID,
+  unsigned int imageID,
   FILE *headerFP,
-  int *fileCount,
-  int maxIndices,
+  unsigned int *fileCount,
+  unsigned int maxIndices,
   Defclass *theDefclass,
-  int moduleCount,
-  int *handlerArrayVersion,
-  int *handlerArrayCount,
+  unsigned int moduleCount,
+  unsigned int *handlerArrayVersion,
+  unsigned int *handlerArrayCount,
   bool *reopenHandlerFile,
   struct CodeGeneratorFile *handlerCodeFile)
   {
-   long i;
+   unsigned int i;
    DefmessageHandler *hnd;
 
    if (theDefclass->handlerCount == 0)
@@ -1390,15 +1400,13 @@ static bool HandlersToCode(
       ConstructHeaderToCode(theEnv,*handlerFile,&hnd->header,imageID,maxIndices,moduleCount,
                             ModulePrefix(ObjectCompilerData(theEnv)->ObjectCodeItem),HandlerPrefix());
 
-
       fprintf(*handlerFile,",%u,%u,0,0,0,",hnd->system,hnd->type);
       PrintClassReference(theEnv,*handlerFile,hnd->cls,imageID,maxIndices);
-      fprintf(*handlerFile,",%hd,%hd,%hd,",hnd->minParams,hnd->maxParams,
-                                        hnd->localVarCount);
+      fprintf(*handlerFile,",%hu,%hu,%hu,",hnd->minParams,hnd->maxParams,hnd->localVarCount);
       ExpressionToCode(theEnv,*handlerFile,hnd->actions);
       fprintf(*handlerFile,"}");
      }
-   *handlerArrayCount += (int) theDefclass->handlerCount;
+   *handlerArrayCount += theDefclass->handlerCount;
    *handlerFile = CloseFileIfNeeded(theEnv,*handlerFile,handlerArrayCount,
                                     handlerArrayVersion,maxIndices,
                                     reopenHandlerFile,handlerCodeFile);
@@ -1440,14 +1448,14 @@ static bool OrderedHandlersToCode(
   const char *fileName,
   const char *pathName,
   char *fileNameBuffer,
-  int fileID,
-  int imageID,
+  unsigned int fileID,
+  unsigned int imageID,
   FILE *headerFP,
-  int *fileCount,
-  int maxIndices,
+  unsigned int *fileCount,
+  unsigned int maxIndices,
   Defclass *theDefclass,
-  int *orderedHandlerArrayVersion,
-  int *orderedHandlerArrayCount,
+  unsigned int *orderedHandlerArrayVersion,
+  unsigned int *orderedHandlerArrayCount,
   bool *reopenOrderedHandlerFile,
   struct CodeGeneratorFile *orderedHandlerCodeFile)
   {
@@ -1471,7 +1479,7 @@ static bool OrderedHandlersToCode(
         fprintf(*orderedHandlerFile,",");
       fprintf(*orderedHandlerFile,"%u",theDefclass->handlerOrderMap[i]);
      }
-   *orderedHandlerArrayCount += (int) theDefclass->handlerCount;
+   *orderedHandlerArrayCount += theDefclass->handlerCount;
    *orderedHandlerFile = CloseFileIfNeeded(theEnv,*orderedHandlerFile,orderedHandlerArrayCount,
                                            orderedHandlerArrayVersion,maxIndices,
                                            reopenOrderedHandlerFile,

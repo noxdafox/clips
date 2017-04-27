@@ -325,7 +325,7 @@ unsigned GetNextDefmessageHandler(
  *****************************************************/
 DefmessageHandler *GetDefmessageHandlerPointer(
   Defclass *theDefclass,
-  int theIndex)
+  unsigned int theIndex)
   {
    return &theDefclass->handlers[theIndex-1];
   }
@@ -403,7 +403,7 @@ unsigned FindDefmessageHandler(
    if (hsym == NULL)
      { return 0; }
 
-   theIndex = FindHandlerByIndex(theDefclass,hsym,(unsigned) htype);
+   theIndex = FindHandlerByIndex(theDefclass,hsym,htype);
    return (unsigned) (theIndex+1);
   }
 
@@ -615,7 +615,7 @@ void PPDefmessageHandlerCommand(
    if (csym != NULL)
      cls = LookupDefclassByMdlOrScope(theEnv,csym->contents);
    if (((cls == NULL) || (msym == NULL)) ? true :
-       ((hnd = FindHandlerByAddress(cls,msym,(unsigned) mtype)) == NULL))
+       ((hnd = FindHandlerByAddress(cls,msym,mtype)) == NULL))
      {
       PrintErrorID(theEnv,"MSGCOM",2,false);
       PrintString(theEnv,WERROR,"Unable to find message-handler ");
@@ -629,7 +629,7 @@ void PPDefmessageHandlerCommand(
       return;
      }
    if (hnd->header.ppForm != NULL)
-     PrintInChunks(theEnv,STDOUT,hnd->header.ppForm);
+     PrintString(theEnv,STDOUT,hnd->header.ppForm);
   }
 
 /*****************************************************************************
@@ -731,7 +731,7 @@ void ListDefmessageHandlers(
   const char *logName,
   bool inhp)
   {
-   long cnt;
+   unsigned long cnt;
    PACKED_CLASS_LINKS plinks;
 
    if (theDefclass != NULL)
@@ -803,21 +803,21 @@ void PreviewSend(
   SIDE EFFECTS : None
   NOTES        : Used by DescribeClass()
  ****************************************************/
-long DisplayHandlersInLinks(
+unsigned long DisplayHandlersInLinks(
   Environment *theEnv,
   const char *logName,
   PACKED_CLASS_LINKS *plinks,
-  int theIndex)
+  unsigned int theIndex)
   {
-   long i;
-   long cnt;
+   unsigned long i;
+   unsigned long cnt;
 
-   cnt = (long) plinks->classArray[theIndex]->handlerCount;
-   if (((int) theIndex) < (plinks->classCount - 1))
+   cnt = plinks->classArray[theIndex]->handlerCount;
+   if ((theIndex + 1) < plinks->classCount)
      cnt += DisplayHandlersInLinks(theEnv,logName,plinks,theIndex + 1);
    for (i = 0 ; i < plinks->classArray[theIndex]->handlerCount ; i++)
      PrintHandler(theEnv,logName,&plinks->classArray[theIndex]->handlers[i],true);
-   return(cnt);
+   return cnt;
   }
 
 #endif
@@ -993,7 +993,7 @@ static bool DefmessageHandlerWatchSupport(
    Defclass *theClass;
    const char *theHandlerStr;
    int theType;
-   int argIndex = 2;
+   unsigned int argIndex = 2;
    UDFValue tmpData;
 
    /* ===============================

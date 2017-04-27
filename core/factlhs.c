@@ -85,7 +85,7 @@ struct lhsParseNode *SequenceRestrictionParse(
    topNode->pnType = SF_WILDCARD_NODE;
    topNode->negated = false;
    topNode->exists = false;
-   topNode->index = -1;
+   topNode->index = NO_INDEX;
    topNode->slotNumber = 1;
    topNode->bottom = GetLHSParseNode(theEnv);
    topNode->bottom->pnType = SYMBOL_NODE;
@@ -181,7 +181,7 @@ struct lhsParseNode *FactPatternParse(
   struct token *theToken)
   {
    Deftemplate *theDeftemplate;
-   int count;
+   unsigned int count;
 
    /*=========================================*/
    /* A module separator can not be included  */

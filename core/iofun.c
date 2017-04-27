@@ -143,9 +143,9 @@ struct IOFunctionData
 
 #if IO_FUNCTIONS
    static void             ReadTokenFromStdin(Environment *,struct token *);
-   static const char      *ControlStringCheck(UDFContext *,int);
+   static const char      *ControlStringCheck(UDFContext *,unsigned int);
    static char             FindFormatFlag(const char *,size_t *,char *,size_t);
-   static const char      *PrintFormatFlag(UDFContext *,const char *,int,int);
+   static const char      *PrintFormatFlag(UDFContext *,const char *,unsigned int,int);
    static char            *FillBuffer(Environment *,const char *,size_t *,size_t *);
    static void             ReadNumber(Environment *,const char *,struct token *,bool);
    static void             PrintDriver(UDFContext *,const char *,bool);
@@ -690,7 +690,7 @@ void PutCharFunction(
   UDFContext *context,
   UDFValue *returnValue)
   {
-   int numberOfArguments;
+   unsigned int numberOfArguments;
    const char *logicalName;
    UDFValue theArg;
    long long theChar;
@@ -818,12 +818,12 @@ void FormatFunction(
   UDFContext *context,
   UDFValue *returnValue)
   {
-   int argCount;
+   unsigned int argCount;
    size_t start_pos;
    const char *formatString;
    const char *logicalName;
    char formatFlagType;
-   int  f_cur_arg = 3;
+   unsigned int f_cur_arg = 3;
    size_t form_pos = 0;
    char percentBuffer[FLAG_MAX];
    char *fstr = NULL;
@@ -944,13 +944,13 @@ void FormatFunction(
 /*********************************************************************/
 static const char *ControlStringCheck(
   UDFContext *context,
-  int argCount)
+  unsigned int argCount)
   {
    UDFValue t_ptr;
    const char *str_array;
    char print_buff[FLAG_MAX];
    size_t i;
-   int per_count;
+   unsigned int per_count;
    char formatFlag;
    Environment *theEnv = context->environment;
 
@@ -959,7 +959,7 @@ static const char *ControlStringCheck(
 
    per_count = 0;
    str_array = t_ptr.lexemeValue->contents;
-   for (i= 0 ; str_array[i] != '\0' ; )
+   for (i = 0; str_array[i] != '\0' ; )
      {
       if (str_array[i] == '%')
         {
@@ -981,7 +981,7 @@ static const char *ControlStringCheck(
         { i++; }
      }
 
-   if (per_count != (argCount - 2))
+   if ((per_count + 2) != argCount)
      {
       ExpectedCountError(theEnv,"format",EXACTLY,per_count+2);
       SetEvaluationError(theEnv,true);
@@ -1115,7 +1115,7 @@ static char FindFormatFlag(
 static const char *PrintFormatFlag(
   UDFContext *context,
   const char *formatString,
-  int whichArg,
+  unsigned int whichArg,
   int formatType)
   {
    UDFValue theResult;
@@ -1176,7 +1176,7 @@ static const char *PrintFormatFlag(
         if (theResult.header->type == FLOAT_TYPE)
           { gensprintf(printBuffer,formatString,(long long) theResult.floatValue->contents); }
         else
-          { gensprintf(printBuffer,formatString,(long long) theResult.integerValue->contents); }
+          { gensprintf(printBuffer,formatString,theResult.integerValue->contents); }
 
         setlocale(LC_NUMERIC,oldLocale->contents);
         break;
@@ -1259,7 +1259,7 @@ void ReadlineFunction(
    if (GetHaltExecution(theEnv))
      {
       returnValue->lexemeValue = CreateString(theEnv,"*** READ ERROR ***");
-      if (buffer != NULL) rm(theEnv,buffer,(int) sizeof (char) * line_max);
+      if (buffer != NULL) rm(theEnv,buffer,sizeof (char) * line_max);
       return;
      }
 
@@ -1270,7 +1270,7 @@ void ReadlineFunction(
      }
 
    returnValue->lexemeValue = CreateString(theEnv,buffer);
-   rm(theEnv,buffer,(int) sizeof (char) * line_max);
+   rm(theEnv,buffer,sizeof (char) * line_max);
    return;
   }
 

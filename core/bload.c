@@ -72,7 +72,7 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static struct functionDefinition **ReadNeededFunctions(Environment *,long *,bool *);
+   static struct functionDefinition **ReadNeededFunctions(Environment *,unsigned long *,bool *);
    static struct functionDefinition  *FastFindFunction(Environment *,const char *,struct functionDefinition *);
    static bool                        ClearBload(Environment *);
    static void                        ClearBloadCallback(Environment *,void *);
@@ -88,8 +88,8 @@ void InitializeBloadData(
   Environment *theEnv)
   {
    char sizeBuffer[20];
-   sprintf(sizeBuffer,"%2d%2d%2d%2d%2d",(int) sizeof(void *),(int) sizeof(double),
-                                        (int) sizeof(int),(int) sizeof(long),(int) sizeof(long long));
+   sprintf(sizeBuffer,"%2zu%2zu%2zu%2zu%2zu",sizeof(void *),sizeof(double),
+                                             sizeof(int),sizeof(long),sizeof(long long));
 
    AllocateEnvironmentData(theEnv,BLOAD_DATA,sizeof(struct bloadData),NULL);
    AddEnvironmentCleanupFunction(theEnv,"bload",DeallocateBloadData,-1500);
@@ -123,7 +123,7 @@ bool Bload(
   Environment *theEnv,
   const char *fileName)
   {
-   long numberOfFunctions;
+   unsigned long numberOfFunctions;
    unsigned long space;
    bool error;
    char IDbuffer[20];
@@ -146,7 +146,7 @@ bool Bload(
    /* Determine if this is a binary file. */
    /*=====================================*/
 
-   GenReadBinary(theEnv,IDbuffer,(unsigned long) strlen(BloadData(theEnv)->BinaryPrefixID) + 1);
+   GenReadBinary(theEnv,IDbuffer,strlen(BloadData(theEnv)->BinaryPrefixID) + 1);
    if (strcmp(IDbuffer,BloadData(theEnv)->BinaryPrefixID) != 0)
      {
       PrintErrorID(theEnv,"BLOAD",2,false);
@@ -162,7 +162,7 @@ bool Bload(
    /* a format from a different version.    */
    /*=======================================*/
 
-   GenReadBinary(theEnv,IDbuffer,(unsigned long) strlen(BloadData(theEnv)->BinaryVersionID) + 1);
+   GenReadBinary(theEnv,IDbuffer,strlen(BloadData(theEnv)->BinaryVersionID) + 1);
    if (strcmp(IDbuffer,BloadData(theEnv)->BinaryVersionID) != 0)
      {
       PrintErrorID(theEnv,"BLOAD",3,false);
@@ -178,7 +178,7 @@ bool Bload(
    /* correct size for pointers and numbers.    */
    /*===========================================*/
 
-   GenReadBinary(theEnv,sizesBuffer,(unsigned long) strlen(BloadData(theEnv)->BinarySizes) + 1);
+   GenReadBinary(theEnv,sizesBuffer,strlen(BloadData(theEnv)->BinarySizes) + 1);
    if (strcmp(sizesBuffer,BloadData(theEnv)->BinarySizes) != 0)
      {
       PrintErrorID(theEnv,"BLOAD",3,false);
@@ -260,9 +260,9 @@ bool Bload(
    /* in this binary image and allocate the necessary space    */
    /*==========================================================*/
 
-   for (GenReadBinary(theEnv,constructBuffer,(unsigned long) CONSTRUCT_HEADER_SIZE);
+   for (GenReadBinary(theEnv,constructBuffer,CONSTRUCT_HEADER_SIZE);
         strncmp(constructBuffer,BloadData(theEnv)->BinaryPrefixID,CONSTRUCT_HEADER_SIZE) != 0;
-        GenReadBinary(theEnv,constructBuffer,(unsigned long) CONSTRUCT_HEADER_SIZE))
+        GenReadBinary(theEnv,constructBuffer,CONSTRUCT_HEADER_SIZE))
      {
       bool found;
 
@@ -296,7 +296,7 @@ bool Bload(
 
       if (! found)
         {
-         GenReadBinary(theEnv,&space,(unsigned long) sizeof(unsigned long));
+         GenReadBinary(theEnv,&space,sizeof(unsigned long));
          GetSeekCurBinary(theEnv,(long) space);
          if (space != 0)
            {
@@ -323,9 +323,9 @@ bool Bload(
    /* Read in the constructs stored in this binary image.  */
    /*======================================================*/
 
-   for (GenReadBinary(theEnv,constructBuffer,(unsigned long) CONSTRUCT_HEADER_SIZE);
+   for (GenReadBinary(theEnv,constructBuffer,CONSTRUCT_HEADER_SIZE);
         strncmp(constructBuffer,BloadData(theEnv)->BinaryPrefixID,CONSTRUCT_HEADER_SIZE) != 0;
-        GenReadBinary(theEnv,constructBuffer,(unsigned long) CONSTRUCT_HEADER_SIZE))
+        GenReadBinary(theEnv,constructBuffer,CONSTRUCT_HEADER_SIZE))
      {
       bool found;
 
@@ -358,7 +358,7 @@ bool Bload(
 
       if (! found)
         {
-         GenReadBinary(theEnv,&space,(unsigned long) sizeof(unsigned long));
+         GenReadBinary(theEnv,&space,sizeof(unsigned long));
          GetSeekCurBinary(theEnv,(long) space);
         }
      }
@@ -424,13 +424,13 @@ bool Bload(
  ************************************************************/
 void BloadandRefresh(
   Environment *theEnv,
-  long objcnt,
+  unsigned long objcnt,
   size_t objsz,
-  void (*objupdate)(Environment *,void *,long))
+  void (*objupdate)(Environment *,void *,unsigned long))
   {
-   long i,bi;
+   unsigned long i, bi;
    char *buf;
-   long objsmaxread,objsread;
+   unsigned long objsmaxread, objsread;
    size_t space;
    OutOfMemoryFunction *oldOutOfMemoryFunction;
 
@@ -478,13 +478,13 @@ void BloadandRefresh(
 /**********************************************/
 static struct functionDefinition **ReadNeededFunctions(
   Environment *theEnv,
-  long *numberOfFunctions,
+  unsigned long *numberOfFunctions,
   bool *error)
   {
    char *functionNames, *namePtr;
    unsigned long space;
    size_t temp;
-   long i;
+   unsigned long i;
    struct functionDefinition **newFunctionArray, *functionPtr;
    bool functionsNotFound = false;
 
@@ -493,8 +493,8 @@ static struct functionDefinition **ReadNeededFunctions(
    /* and the space required for them.                  */
    /*===================================================*/
 
-   GenReadBinary(theEnv,numberOfFunctions,(unsigned long) sizeof(long));
-   GenReadBinary(theEnv,&space,(unsigned long) sizeof(unsigned long));
+   GenReadBinary(theEnv,numberOfFunctions,sizeof(long));
+   GenReadBinary(theEnv,&space,sizeof(unsigned long));
    if (*numberOfFunctions == 0)
      {
       *error = false;
@@ -512,7 +512,7 @@ static struct functionDefinition **ReadNeededFunctions(
    /* Store the function pointers in the function array. */
    /*====================================================*/
 
-   temp = (unsigned long) sizeof(struct functionDefinition *) * *numberOfFunctions;
+   temp = sizeof(struct functionDefinition *) * *numberOfFunctions;
    newFunctionArray = (struct functionDefinition **) genalloc(theEnv,temp);
    namePtr = functionNames;
    functionPtr = NULL;

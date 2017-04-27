@@ -48,10 +48,10 @@ struct bsaveTemplateSlot
    unsigned int noDefault : 1;
    unsigned int defaultPresent : 1;
    unsigned int defaultDynamic : 1;
-   long constraints;
-   long defaultList;
-   long facetList;
-   long next;
+   unsigned long constraints;
+   unsigned long defaultList;
+   unsigned long facetList;
+   unsigned long next;
   };
 
 struct bsaveDeftemplate;
@@ -62,10 +62,10 @@ struct bsaveDeftemplateModule;
 struct bsaveDeftemplate
   {
    struct bsaveConstructHeader header;
-   long slotList;
+   unsigned long slotList;
    unsigned int implied : 1;
    unsigned int numberOfSlots : 15;
-   long patternNetwork;
+   unsigned long patternNetwork;
   };
 
 #include "modulbin.h"
@@ -82,9 +82,9 @@ struct bsaveDeftemplateModule
 struct deftemplateBinaryData
   {
    Deftemplate *DeftemplateArray;
-   long NumberOfDeftemplates;
-   long NumberOfTemplateSlots;
-   long NumberOfTemplateModules;
+   unsigned long NumberOfDeftemplates;
+   unsigned long NumberOfTemplateSlots;
+   unsigned long NumberOfTemplateModules;
    struct templateSlot *SlotArray;
    struct deftemplateModule *ModuleArray;
   };
@@ -98,7 +98,7 @@ struct deftemplateBinaryData
 #endif
 
    void                           DeftemplateBinarySetup(Environment *);
-   void                          *BloadDeftemplateModuleReference(Environment *,int);
+   void                          *BloadDeftemplateModuleReference(Environment *,unsigned long);
 
 #endif /* (! RUN_TIME) */
 

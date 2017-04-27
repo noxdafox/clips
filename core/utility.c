@@ -558,7 +558,7 @@ char *AppendToString(
    /*===============================================*/
 
    genstrcpy(&oldStr[*oldPos],appendStr);
-   *oldPos += (int) length;
+   *oldPos += length;
 
    /*============================================================*/
    /* Return the expanded string containing the appended string. */
@@ -606,7 +606,7 @@ char *InsertInString(
    /*===============================================*/
 
    genstrncpy(&oldStr[*oldPos],insertStr,length);
-   *oldPos += (int) length;
+   *oldPos += length;
 
    /*============================================================*/
    /* Return the expanded string containing the appended string. */

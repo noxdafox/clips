@@ -102,7 +102,7 @@ struct joinLink
    char enterDirection;
    struct joinNode *join;
    struct joinLink *next;
-   long bsaveID;
+   unsigned long bsaveID;
   };
 
 struct joinNode
@@ -116,7 +116,7 @@ struct joinNode
    unsigned int marked : 1;
    unsigned int rhsType : 3;
    unsigned int depth : 16;
-   long bsaveID;
+   unsigned long bsaveID;
    long long memoryLeftAdds;
    long long memoryRightAdds;
    long long memoryLeftDeletes;

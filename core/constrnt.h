@@ -84,6 +84,7 @@ struct constraintRecord
    unsigned int instanceNameRestriction : 1;
    unsigned int multifieldsAllowed : 1;
    unsigned int singlefieldsAllowed : 1;
+   unsigned int installed : 1;
    unsigned short bsaveIndex;
    struct expr *classList;
    struct expr *restrictionList;
@@ -93,8 +94,8 @@ struct constraintRecord
    struct expr *maxFields;
    struct constraintRecord *multifield;
    struct constraintRecord *next;
-   int bucket;
-   int count;
+   unsigned int bucket;
+   unsigned int count;
   };
 
 #define SIZE_CONSTRAINT_HASH  167
@@ -107,7 +108,7 @@ struct constraintData
    bool DynamicConstraintChecking;
 #if (BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE) && (! RUN_TIME)
    struct constraintRecord *ConstraintArray;
-   long NumberOfConstraints;
+   unsigned long NumberOfConstraints;
 #endif
   };
 

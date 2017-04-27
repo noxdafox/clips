@@ -50,7 +50,8 @@
 #include <stdio.h>
 
    void                    ObjectPatternsCompilerSetup(Environment *);
-   void                    ObjectPatternNodeReference(Environment *,void *,FILE *,int,int);
+   void                    ObjectPatternNodeReference(Environment *,void *,FILE *,
+                                                      unsigned int,unsigned int);
 
 #endif /* DEFRULE_CONSTRUCT && OBJECT_SYSTEM && (! RUN_TIME) && CONSTRUCT_COMPILER */
 

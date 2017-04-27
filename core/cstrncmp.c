@@ -57,20 +57,20 @@
 /*   record code for a run-time module created */
 /*   using the constructs-to-c function.       */
 /***********************************************/
-int ConstraintsToCode(
+void ConstraintsToCode(
   Environment *theEnv,
   const char *fileName,
   const char *pathName,
   char *fileNameBuffer,
-  int fileID,
+  unsigned fileID,
   FILE *headerFP,
-  int imageID,
-  int maxIndices)
+  unsigned imageID,
+  unsigned maxIndices)
   {
-   int i, j, count;
+   unsigned int i, j, count;
    bool newHeader = true;
    FILE *fp;
-   int version = 1;
+   unsigned int version = 1;
    int arrayVersion = 1;
    unsigned short numberOfConstraints = 0;
    CONSTRAINT_RECORD *tmpPtr;
@@ -102,7 +102,7 @@ int ConstraintsToCode(
      }
 
    if (numberOfConstraints == 0)
-     { return -1; }
+     { return; }
 
    /*=================================================*/
    /* Print the extern definition in the header file. */
@@ -115,7 +115,7 @@ int ConstraintsToCode(
    /* Create the file. */
    /*==================*/
 
-   if ((fp = NewCFile(theEnv,fileName,pathName,fileNameBuffer,fileID,version,false)) == NULL) return(-1);
+   if ((fp = NewCFile(theEnv,fileName,pathName,fileNameBuffer,fileID,version,false)) == NULL) return;
 
    /*===================*/
    /* List the entries. */
@@ -136,7 +136,7 @@ int ConstraintsToCode(
             newHeader = false;
            }
 
-         fprintf(fp,"{%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d",
+         fprintf(fp,"{%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d",
                  tmpPtr->anyAllowed,
                  tmpPtr->symbolsAllowed,
                  tmpPtr->stringsAllowed,
@@ -155,7 +155,8 @@ int ConstraintsToCode(
                  tmpPtr->classRestriction,
                  tmpPtr->instanceNameRestriction,
                  tmpPtr->multifieldsAllowed,
-                 tmpPtr->singlefieldsAllowed);
+                 tmpPtr->singlefieldsAllowed,
+                 tmpPtr->installed);
 
          fprintf(fp,",0,"); /* bsaveIndex */
 
@@ -187,7 +188,7 @@ int ConstraintsToCode(
               { fprintf(fp,",&C%d_%d[%d],",imageID,arrayVersion,j + 1); }
            }
 
-         fprintf(fp,"%d,%d",tmpPtr->bucket,tmpPtr->count + 1);
+         fprintf(fp,"%u,%u",tmpPtr->bucket,tmpPtr->count + 1);
 
          count++;
          j++;
@@ -202,7 +203,7 @@ int ConstraintsToCode(
             if (count < numberOfConstraints)
               {
                if ((fp = NewCFile(theEnv,fileName,pathName,fileNameBuffer,1,version,false)) == NULL)
-                 { return 0; }
+                 { return; }
                newHeader = true;
               }
            }
@@ -210,8 +211,6 @@ int ConstraintsToCode(
            { fprintf(fp,"},\n"); }
         }
      }
-
-   return version;
   }
 
 /**********************************************************/
@@ -222,14 +221,14 @@ void PrintConstraintReference(
   Environment *theEnv,
   FILE *fp,
   CONSTRAINT_RECORD *cPtr,
-  int imageID,
-  int maxIndices)
+  unsigned int imageID,
+  unsigned int maxIndices)
   {
    if ((cPtr == NULL) || (! GetDynamicConstraintChecking(theEnv)))
      { fprintf(fp,"NULL"); }
-   else fprintf(fp,"&C%d_%d[%d]",imageID,
-                                 (int) (cPtr->bsaveIndex / maxIndices) + 1,
-                                 (int) cPtr->bsaveIndex % maxIndices);
+   else fprintf(fp,"&C%u_%u[%u]",imageID,
+                                 (cPtr->bsaveIndex / maxIndices) + 1,
+                                 cPtr->bsaveIndex % maxIndices);
   }
 
 #endif /* CONSTRUCT_COMPILER && (! RUN_TIME) */

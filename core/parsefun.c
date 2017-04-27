@@ -219,7 +219,7 @@ bool CheckSyntax(
       if (rv)
         {
          PrintString(theEnv,WERROR,"\nERROR:\n");
-         PrintInChunks(theEnv,WERROR,GetPPBuffer(theEnv));
+         PrintString(theEnv,WERROR,GetPPBuffer(theEnv));
          PrintString(theEnv,WERROR,"\n");
         }
 

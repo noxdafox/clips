@@ -69,7 +69,7 @@ typedef struct instanceModifier InstanceModifier;
 
 struct packedClassLinks
   {
-   long classCount;
+   unsigned long classCount;
    Defclass **classArray;
   };
 
@@ -87,24 +87,24 @@ struct defclass
    unsigned reactive       : 1;
    unsigned traceInstances : 1;
    unsigned traceSlots     : 1;
-   unsigned id;
-   unsigned busy,
-            hashTableIndex;
-   PACKED_CLASS_LINKS directSuperclasses,
-                      directSubclasses,
-                      allSuperclasses;
-   SlotDescriptor *slots,
-             **instanceTemplate;
+   unsigned short id;
+   unsigned busy;
+   unsigned hashTableIndex;
+   PACKED_CLASS_LINKS directSuperclasses;
+   PACKED_CLASS_LINKS directSubclasses;
+   PACKED_CLASS_LINKS allSuperclasses;
+   SlotDescriptor *slots;
+   SlotDescriptor **instanceTemplate;
    unsigned *slotNameMap;
-   short slotCount;
-   short localInstanceSlotCount;
-   short instanceSlotCount;
-   short maxSlotNameID;
-   Instance *instanceList,
-                 *instanceListBottom;
+   unsigned short slotCount;
+   unsigned short localInstanceSlotCount;
+   unsigned short instanceSlotCount;
+   unsigned short maxSlotNameID;
+   Instance *instanceList;
+   Instance *instanceListBottom;
    DefmessageHandler *handlers;
    unsigned *handlerOrderMap;
-   unsigned handlerCount;
+   unsigned short handlerCount;
    Defclass *nxtHash;
    CLIPSBitMap *scopeMap;
    char traversalRecord[TRAVERSAL_BYTES];
@@ -118,13 +118,13 @@ struct classLink
 
 struct slotName
   {
-   unsigned hashTableIndex,
-            use;
-   short id;
-   CLIPSLexeme *name,
-             *putHandlerName;
+   unsigned hashTableIndex;
+   unsigned use;
+   unsigned short id;
+   CLIPSLexeme *name;
+   CLIPSLexeme *putHandlerName;
    struct slotName *nxt;
-   long bsaveIndex;
+   unsigned long bsaveIndex;
   };
 
 struct instanceSlot
@@ -170,7 +170,7 @@ struct slotDescriptor
    void *defaultValue;
    CONSTRAINT_RECORD *constraint;
    unsigned sharedCount;
-   long bsaveIndex;
+   unsigned long bsaveIndex;
    InstanceSlot sharedValue;
   };
 
@@ -208,9 +208,9 @@ struct defmessageHandler
    unsigned trace          : 1;
    unsigned busy;
    Defclass *cls;
-   short minParams;
-   short maxParams;
-   short localVarCount;
+   unsigned short minParams;
+   unsigned short maxParams;
+   unsigned short localVarCount;
    Expression *actions;
   };
 

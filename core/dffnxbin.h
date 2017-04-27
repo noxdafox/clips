@@ -42,21 +42,21 @@
 #include "dffnxfun.h"
 
    void                           SetupDeffunctionsBload(Environment *);
-   void                          *BloadDeffunctionModuleReference(Environment *,int);
+   void                          *BloadDeffunctionModuleReference(Environment *,unsigned long);
 
 #define DFFNXBIN_DATA 24
 
 struct deffunctionBinaryData
   {
    Deffunction *DeffunctionArray;
-   long DeffunctionCount;
-   long ModuleCount;
+   unsigned long DeffunctionCount;
+   unsigned long ModuleCount;
    DeffunctionModuleData *ModuleArray;
   };
 
 #define DeffunctionBinaryData(theEnv) ((struct deffunctionBinaryData *) GetEnvironmentData(theEnv,DFFNXBIN_DATA))
 
-#define DeffunctionPointer(i) (((i) == -1L) ? NULL : &DeffunctionBinaryData(theEnv)->DeffunctionArray[i])
+#define DeffunctionPointer(i) (((i) == ULONG_MAX) ? NULL : &DeffunctionBinaryData(theEnv)->DeffunctionArray[i])
 
 #endif /* DEFFUNCTION_CONSTRUCT && (BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE) */
 

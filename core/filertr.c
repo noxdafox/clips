@@ -316,7 +316,7 @@ bool CloseFile(
            { FileRouterData(theEnv)->ListOfFileRouters = fptr->next; }
          else
            { prev->next = fptr->next; }
-         rm(theEnv,fptr,(int) sizeof(struct fileRouter));
+         rm(theEnv,fptr,sizeof(struct fileRouter));
 
          return true;
         }
@@ -347,7 +347,7 @@ bool CloseAllFiles(
       prev = fptr;
       rm(theEnv,(void *) fptr->logicalName,strlen(fptr->logicalName) + 1);
       fptr = fptr->next;
-      rm(theEnv,prev,(int) sizeof(struct fileRouter));
+      rm(theEnv,prev,sizeof(struct fileRouter));
      }
 
    FileRouterData(theEnv)->ListOfFileRouters = NULL;

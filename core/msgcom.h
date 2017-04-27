@@ -98,7 +98,7 @@ struct messageHandlerData
    const char      *DefmessageHandlerType(Defclass *,unsigned);
    unsigned         GetNextDefmessageHandler(Defclass *,unsigned);
    DefmessageHandler
-                   *GetDefmessageHandlerPointer(Defclass *,int);
+                   *GetDefmessageHandlerPointer(Defclass *,unsigned int);
 #if DEBUGGING_FUNCTIONS
    bool             DefmessageHandlerGetWatch(Defclass *,unsigned);
    void             DefmessageHandlerSetWatch(Defclass *,unsigned,bool);
@@ -114,7 +114,7 @@ struct messageHandlerData
    const char      *DefmessageHandlerPPForm(Defclass *,unsigned);
    void             ListDefmessageHandlers(Environment *,Defclass *,const char *,bool);
    void             PreviewSend(Defclass *,const char *,const char *);
-   long             DisplayHandlersInLinks(Environment *,const char *,PACKED_CLASS_LINKS *,int);
+   unsigned long    DisplayHandlersInLinks(Environment *,const char *,PACKED_CLASS_LINKS *,unsigned int);
 #endif
 
 #endif /* _H_msgcom */

@@ -185,7 +185,7 @@ struct factsData
    bool                           Retract(Fact *);
    bool                           RetractDriver(Environment *,Fact *,bool,char *);
    bool                           RetractAllFacts(Environment *);
-   Fact                          *CreateFactBySize(Environment *,unsigned);
+   Fact                          *CreateFactBySize(Environment *,size_t);
    void                           FactInstall(Environment *,Fact *);
    void                           FactDeinstall(Environment *,Fact *);
    Fact                          *GetNextFact(Environment *,Fact *);

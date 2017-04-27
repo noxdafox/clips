@@ -158,7 +158,7 @@ static struct patternNodeHeader *PlaceFactPattern(
    struct factPatternNode *currentLevel, *lastLevel;
    struct factPatternNode *nodeBeforeMatch, *newNode = NULL;
    bool endSlot;
-   int count;
+   unsigned int count;
    const char *deftemplateName;
 
    /*======================================================================*/
@@ -615,11 +615,11 @@ static struct factPatternNode *CreateNewPatternNode(
    InitializePatternHeader(theEnv,(struct patternNodeHeader *) &newNode->header);
 
    if (thePattern->index > 0)
-     { newNode->whichField = (unsigned short) thePattern->index; }
+     { newNode->whichField = thePattern->index; }
    else newNode->whichField = 0;
 
-   if (thePattern->slotNumber >= 0)
-     { newNode->whichSlot = (unsigned short) (thePattern->slotNumber - 1); }
+   if ((thePattern->slotNumber >= 0) && (thePattern->slotNumber != UNSPECIFIED_SLOT))
+     { newNode->whichSlot = thePattern->slotNumber - 1; }
    else
      { newNode->whichSlot = newNode->whichField; }
 

@@ -827,7 +827,7 @@ bool HandlerSlotPutFunction(
       ====================================== */
    if (GetFirstArgument())
      {
-      if (EvaluateAndStoreInDataObject(theEnv,(int) sp->desc->multiple,
+      if (EvaluateAndStoreInDataObject(theEnv,sp->desc->multiple,
                                        GetFirstArgument(),&theSetVal,true) == false)
          goto HandlerPutError2;
      }
@@ -954,7 +954,7 @@ void DynamicHandlerPutSlot(
      }
    if (GetFirstArgument()->nextArg)
      {
-      if (EvaluateAndStoreInDataObject(theEnv,(int) sp->desc->multiple,
+      if (EvaluateAndStoreInDataObject(theEnv,sp->desc->multiple,
                         GetFirstArgument()->nextArg,&temp,true) == false)
         return;
      }
@@ -1214,7 +1214,7 @@ static HANDLER_LINK *FindApplicableHandlers(
   Defclass *cls,
   CLIPSLexeme *mname)
   {
-   int i;
+   unsigned int i;
    HANDLER_LINK *tops[4],*bots[4];
 
    for (i = MAROUND ; i <= MAFTER ; i++)

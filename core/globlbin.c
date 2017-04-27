@@ -57,8 +57,8 @@
 #endif
    static void                    BloadStorageDefglobals(Environment *);
    static void                    BloadBinaryItem(Environment *);
-   static void                    UpdateDefglobalModule(Environment *,void *,long);
-   static void                    UpdateDefglobal(Environment *,void *,long);
+   static void                    UpdateDefglobalModule(Environment *,void *,unsigned long);
+   static void                    UpdateDefglobal(Environment *,void *,unsigned long);
    static void                    ClearBload(Environment *);
    static void                    DeallocateDefglobalBloadData(Environment *);
 
@@ -97,7 +97,7 @@ static void DeallocateDefglobalBloadData(
   {
 #if (BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE) && (! RUN_TIME)
    size_t space;
-   long i;
+   unsigned long i;
 
    for (i = 0; i < DefglobalBinaryData(theEnv)->NumberOfDefglobals; i++)
      {
@@ -365,14 +365,14 @@ static void BloadBinaryItem(
 static void UpdateDefglobalModule(
   Environment *theEnv,
   void *buf,
-  long obji)
+  unsigned long obji)
   {
    struct bsaveDefglobalModule *bdmPtr;
 
    bdmPtr = (struct bsaveDefglobalModule *) buf;
 
    UpdateDefmoduleItemHeader(theEnv,&bdmPtr->header,&DefglobalBinaryData(theEnv)->ModuleArray[obji].header,
-                             (int) sizeof(Defglobal),
+                             sizeof(Defglobal),
                              DefglobalBinaryData(theEnv)->DefglobalArray);
   }
 
@@ -383,14 +383,14 @@ static void UpdateDefglobalModule(
 static void UpdateDefglobal(
   Environment *theEnv,
   void *buf,
-  long obji)
+  unsigned long obji)
   {
    struct bsaveDefglobal *bdp;
 
    bdp = (struct bsaveDefglobal *) buf;
    UpdateConstructHeader(theEnv,&bdp->header,&DefglobalBinaryData(theEnv)->DefglobalArray[obji].header,DEFGLOBAL,
-                         (int) sizeof(struct defglobalModule),DefglobalBinaryData(theEnv)->ModuleArray,
-                         (int) sizeof(Defglobal),DefglobalBinaryData(theEnv)->DefglobalArray);
+                         sizeof(struct defglobalModule),DefglobalBinaryData(theEnv)->ModuleArray,
+                         sizeof(Defglobal),DefglobalBinaryData(theEnv)->DefglobalArray);
 
 #if DEBUGGING_FUNCTIONS
    DefglobalBinaryData(theEnv)->DefglobalArray[obji].watch = DefglobalData(theEnv)->WatchGlobals;
@@ -406,7 +406,7 @@ static void UpdateDefglobal(
 static void ClearBload(
   Environment *theEnv)
   {
-   long i;
+   unsigned long i;
    size_t space;
 
    /*=======================================================*/
@@ -447,7 +447,7 @@ static void ClearBload(
 /********************************************************/
 void *BloadDefglobalModuleReference(
   Environment *theEnv,
-  int theIndex)
+  unsigned long theIndex)
   {
    return (void *) &DefglobalBinaryData(theEnv)->ModuleArray[theIndex];
   }

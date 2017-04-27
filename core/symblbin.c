@@ -195,8 +195,8 @@ void WriteNeededSymbols(
    /* Write out the symbols and the string sizes. */
    /*=============================================*/
 
-   GenWrite(&numberOfUsedSymbols,(unsigned long) sizeof(unsigned long),fp);
-   GenWrite(&size,(unsigned long) sizeof(unsigned long),fp);
+   GenWrite(&numberOfUsedSymbols,sizeof(unsigned long),fp);
+   GenWrite(&size,sizeof(unsigned long),fp);
 
    /*=============================*/
    /* Write out the symbol types. */
@@ -226,7 +226,7 @@ void WriteNeededSymbols(
          if (symbolPtr->neededSymbol)
            {
             length = strlen(symbolPtr->contents) + 1;
-            GenWrite((void *) symbolPtr->contents,(unsigned long) length,fp);
+            GenWrite((void *) symbolPtr->contents,length,fp);
            }
         }
      }
@@ -267,7 +267,7 @@ void WriteNeededFloats(
    /* Write out the number of floats and the float values. */
    /*======================================================*/
 
-   GenWrite(&numberOfUsedFloats,(unsigned long) sizeof(unsigned long),fp);
+   GenWrite(&numberOfUsedFloats,sizeof(unsigned long),fp);
 
    for (i = 0 ; i < FLOAT_HASH_SIZE; i++)
      {
@@ -277,7 +277,7 @@ void WriteNeededFloats(
         {
          if (floatPtr->neededFloat)
            { GenWrite(&floatPtr->contents,
-                      (unsigned long) sizeof(floatPtr->contents),fp); }
+                      sizeof(floatPtr->contents),fp); }
         }
      }
   }
@@ -319,7 +319,7 @@ void WriteNeededIntegers(
    /* Write out the number of integers and the integer values. */
    /*==========================================================*/
 
-   GenWrite(&numberOfUsedIntegers,(unsigned long) sizeof(unsigned long),fp);
+   GenWrite(&numberOfUsedIntegers,sizeof(unsigned long),fp);
 
    for (i = 0 ; i < INTEGER_HASH_SIZE; i++)
      {
@@ -330,7 +330,7 @@ void WriteNeededIntegers(
          if (integerPtr->neededInteger)
            {
             GenWrite(&integerPtr->contents,
-                     (unsigned long) sizeof(integerPtr->contents),fp);
+                     sizeof(integerPtr->contents),fp);
            }
         }
      }
@@ -378,8 +378,8 @@ static void WriteNeededBitMaps(
    /* Write out the bitmaps and their sizes. */
    /*========================================*/
 
-   GenWrite(&numberOfUsedBitMaps,(unsigned long) sizeof(unsigned long),fp);
-   GenWrite(&size,(unsigned long) sizeof(unsigned long),fp);
+   GenWrite(&numberOfUsedBitMaps,sizeof(unsigned long),fp);
+   GenWrite(&size,sizeof(unsigned long),fp);
 
    for (i = 0; i < BITMAP_HASH_SIZE; i++)
      {
@@ -389,9 +389,9 @@ static void WriteNeededBitMaps(
         {
          if (bitMapPtr->neededBitMap)
            {
-            tempSize = (unsigned short) bitMapPtr->size;
-            GenWrite(&tempSize,(unsigned long) sizeof(unsigned short),fp);
-            GenWrite((void *) bitMapPtr->contents,(unsigned long) bitMapPtr->size,fp);
+            tempSize = bitMapPtr->size;
+            GenWrite(&tempSize,sizeof(unsigned short),fp);
+            GenWrite((void *) bitMapPtr->contents,bitMapPtr->size,fp);
            }
         }
      }
@@ -423,15 +423,15 @@ void ReadNeededSymbols(
    char *symbolNames, *namePtr;
    unsigned long space;
    unsigned short *types;
-   long i;
+   unsigned long i;
 
    /*=================================================*/
    /* Determine the number of symbol names to be read */
    /* and space required for them.                    */
    /*=================================================*/
 
-   GenReadBinary(theEnv,&SymbolData(theEnv)->NumberOfSymbols,(unsigned long) sizeof(long));
-   GenReadBinary(theEnv,&space,(unsigned long) sizeof(unsigned long));
+   GenReadBinary(theEnv,&SymbolData(theEnv)->NumberOfSymbols,sizeof(long));
+   GenReadBinary(theEnv,&space,sizeof(unsigned long));
    if (SymbolData(theEnv)->NumberOfSymbols == 0)
      {
       SymbolData(theEnv)->SymbolArray = NULL;
@@ -445,7 +445,7 @@ void ReadNeededSymbols(
    types = (unsigned short *) gm2(theEnv,sizeof(unsigned short) * SymbolData(theEnv)->NumberOfSymbols);
    GenReadBinary(theEnv,types,sizeof(unsigned short) * SymbolData(theEnv)->NumberOfSymbols);
 
-   symbolNames = (char *) gm2(theEnv,(long) space);
+   symbolNames = (char *) gm2(theEnv,space);
    GenReadBinary(theEnv,symbolNames,space);
 
    /*================================================*/
@@ -453,7 +453,7 @@ void ReadNeededSymbols(
    /*================================================*/
 
    SymbolData(theEnv)->SymbolArray = (CLIPSLexeme **)
-                 gm2(theEnv,(long) sizeof(CLIPSLexeme *) * SymbolData(theEnv)->NumberOfSymbols);
+                 gm2(theEnv,sizeof(CLIPSLexeme *) * SymbolData(theEnv)->NumberOfSymbols);
    namePtr = symbolNames;
    for (i = 0; i < SymbolData(theEnv)->NumberOfSymbols; i++)
      {
@@ -472,7 +472,7 @@ void ReadNeededSymbols(
    /*=======================*/
 
    rm(theEnv,types,sizeof(unsigned short) * SymbolData(theEnv)->NumberOfSymbols);
-   rm(theEnv,symbolNames,(long) space);
+   rm(theEnv,symbolNames,space);
   }
 
 /*****************************************/
@@ -483,13 +483,13 @@ void ReadNeededFloats(
   Environment *theEnv)
   {
    double *floatValues;
-   long i;
+   unsigned long i;
 
    /*============================================*/
    /* Determine the number of floats to be read. */
    /*============================================*/
 
-   GenReadBinary(theEnv,&SymbolData(theEnv)->NumberOfFloats,(unsigned long) sizeof(long));
+   GenReadBinary(theEnv,&SymbolData(theEnv)->NumberOfFloats,sizeof(long));
    if (SymbolData(theEnv)->NumberOfFloats == 0)
      {
       SymbolData(theEnv)->FloatArray = NULL;
@@ -500,15 +500,15 @@ void ReadNeededFloats(
    /* Allocate area for the floats. */
    /*===============================*/
 
-   floatValues = (double *) gm2(theEnv,(long) sizeof(double) * SymbolData(theEnv)->NumberOfFloats);
-   GenReadBinary(theEnv,floatValues,(unsigned long) (sizeof(double) * SymbolData(theEnv)->NumberOfFloats));
+   floatValues = (double *) gm2(theEnv,sizeof(double) * SymbolData(theEnv)->NumberOfFloats);
+   GenReadBinary(theEnv,floatValues,(sizeof(double) * SymbolData(theEnv)->NumberOfFloats));
 
    /*======================================*/
    /* Store the floats in the float array. */
    /*======================================*/
 
    SymbolData(theEnv)->FloatArray = (CLIPSFloat **)
-               gm2(theEnv,(long) sizeof(CLIPSFloat *) * SymbolData(theEnv)->NumberOfFloats);
+               gm2(theEnv,sizeof(CLIPSFloat *) * SymbolData(theEnv)->NumberOfFloats);
    for (i = 0; i < SymbolData(theEnv)->NumberOfFloats; i++)
      { SymbolData(theEnv)->FloatArray[i] = CreateFloat(theEnv,floatValues[i]); }
 
@@ -516,7 +516,7 @@ void ReadNeededFloats(
    /* Free the float buffer. */
    /*========================*/
 
-   rm(theEnv,floatValues,(long) (sizeof(double) * SymbolData(theEnv)->NumberOfFloats));
+   rm(theEnv,floatValues,(sizeof(double) * SymbolData(theEnv)->NumberOfFloats));
   }
 
 /*********************************************/
@@ -527,13 +527,13 @@ void ReadNeededIntegers(
   Environment *theEnv)
   {
    long long *integerValues;
-   long i;
+   unsigned long i;
 
    /*==============================================*/
    /* Determine the number of integers to be read. */
    /*==============================================*/
 
-   GenReadBinary(theEnv,&SymbolData(theEnv)->NumberOfIntegers,(unsigned long) sizeof(unsigned long));
+   GenReadBinary(theEnv,&SymbolData(theEnv)->NumberOfIntegers,sizeof(unsigned long));
    if (SymbolData(theEnv)->NumberOfIntegers == 0)
      {
       SymbolData(theEnv)->IntegerArray = NULL;
@@ -544,15 +544,15 @@ void ReadNeededIntegers(
    /* Allocate area for the integers. */
    /*=================================*/
 
-   integerValues = (long long *) gm2(theEnv,(long) (sizeof(long long) * SymbolData(theEnv)->NumberOfIntegers));
-   GenReadBinary(theEnv,integerValues,(unsigned long) (sizeof(long long) * SymbolData(theEnv)->NumberOfIntegers));
+   integerValues = (long long *) gm2(theEnv,(sizeof(long long) * SymbolData(theEnv)->NumberOfIntegers));
+   GenReadBinary(theEnv,integerValues,(sizeof(long long) * SymbolData(theEnv)->NumberOfIntegers));
 
    /*==========================================*/
    /* Store the integers in the integer array. */
    /*==========================================*/
 
    SymbolData(theEnv)->IntegerArray = (CLIPSInteger **)
-           gm2(theEnv,(long) (sizeof(CLIPSInteger *) * SymbolData(theEnv)->NumberOfIntegers));
+           gm2(theEnv,(sizeof(CLIPSInteger *) * SymbolData(theEnv)->NumberOfIntegers));
    for (i = 0; i < SymbolData(theEnv)->NumberOfIntegers; i++)
      { SymbolData(theEnv)->IntegerArray[i] = CreateInteger(theEnv,integerValues[i]); }
 
@@ -560,7 +560,7 @@ void ReadNeededIntegers(
    /* Free the integer buffer. */
    /*==========================*/
 
-   rm(theEnv,integerValues,(long) (sizeof(long long) * SymbolData(theEnv)->NumberOfIntegers));
+   rm(theEnv,integerValues,(sizeof(long long) * SymbolData(theEnv)->NumberOfIntegers));
   }
 
 /*******************************************/
@@ -572,7 +572,7 @@ static void ReadNeededBitMaps(
   {
    char *bitMapStorage, *bitMapPtr;
    unsigned long space;
-   long i;
+   unsigned long i;
    unsigned short *tempSize;
 
    /*=======================================*/
@@ -580,8 +580,8 @@ static void ReadNeededBitMaps(
    /* read and space required for them.     */
    /*=======================================*/
 
-   GenReadBinary(theEnv,&SymbolData(theEnv)->NumberOfBitMaps,(unsigned long) sizeof(long));
-   GenReadBinary(theEnv,&space,(unsigned long) sizeof(unsigned long));
+   GenReadBinary(theEnv,&SymbolData(theEnv)->NumberOfBitMaps,sizeof(long));
+   GenReadBinary(theEnv,&space,sizeof(unsigned long));
    if (SymbolData(theEnv)->NumberOfBitMaps == 0)
      {
       SymbolData(theEnv)->BitMapArray = NULL;
@@ -592,7 +592,7 @@ static void ReadNeededBitMaps(
    /* Allocate area for bitmaps to be read. */
    /*=======================================*/
 
-   bitMapStorage = (char *) gm2(theEnv,(long) space);
+   bitMapStorage = (char *) gm2(theEnv,space);
    GenReadBinary(theEnv,bitMapStorage,space);
 
    /*================================================*/
@@ -600,7 +600,7 @@ static void ReadNeededBitMaps(
    /*================================================*/
 
    SymbolData(theEnv)->BitMapArray = (CLIPSBitMap **)
-                 gm2(theEnv,(long) sizeof(CLIPSBitMap *) * SymbolData(theEnv)->NumberOfBitMaps);
+                 gm2(theEnv,sizeof(CLIPSBitMap *) * SymbolData(theEnv)->NumberOfBitMaps);
    bitMapPtr = bitMapStorage;
    for (i = 0; i < SymbolData(theEnv)->NumberOfBitMaps; i++)
      {
@@ -613,7 +613,7 @@ static void ReadNeededBitMaps(
    /* Free the bitmap buffer. */
    /*=========================*/
 
-   rm(theEnv,bitMapStorage,(long) space);
+   rm(theEnv,bitMapStorage,space);
   }
 
 /**********************************************************/
@@ -625,13 +625,13 @@ void FreeAtomicValueStorage(
   Environment *theEnv)
   {
    if (SymbolData(theEnv)->SymbolArray != NULL)
-     rm(theEnv,SymbolData(theEnv)->SymbolArray,(long) sizeof(CLIPSLexeme *) * SymbolData(theEnv)->NumberOfSymbols);
+     rm(theEnv,SymbolData(theEnv)->SymbolArray,sizeof(CLIPSLexeme *) * SymbolData(theEnv)->NumberOfSymbols);
    if (SymbolData(theEnv)->FloatArray != NULL)
-     rm(theEnv,SymbolData(theEnv)->FloatArray,(long) sizeof(CLIPSFloat *) * SymbolData(theEnv)->NumberOfFloats);
+     rm(theEnv,SymbolData(theEnv)->FloatArray,sizeof(CLIPSFloat *) * SymbolData(theEnv)->NumberOfFloats);
    if (SymbolData(theEnv)->IntegerArray != NULL)
-     rm(theEnv,SymbolData(theEnv)->IntegerArray,(long) sizeof(CLIPSInteger *) * SymbolData(theEnv)->NumberOfIntegers);
+     rm(theEnv,SymbolData(theEnv)->IntegerArray,sizeof(CLIPSInteger *) * SymbolData(theEnv)->NumberOfIntegers);
    if (SymbolData(theEnv)->BitMapArray != NULL)
-     rm(theEnv,SymbolData(theEnv)->BitMapArray,(long) sizeof(CLIPSBitMap *) * SymbolData(theEnv)->NumberOfBitMaps);
+     rm(theEnv,SymbolData(theEnv)->BitMapArray,sizeof(CLIPSBitMap *) * SymbolData(theEnv)->NumberOfBitMaps);
 
    SymbolData(theEnv)->SymbolArray = NULL;
    SymbolData(theEnv)->FloatArray = NULL;

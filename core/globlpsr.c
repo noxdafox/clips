@@ -460,7 +460,7 @@ bool ReplaceGlobalVariable(
   struct expr *ePtr)
   {
    Defglobal *theGlobal;
-   int count;
+   unsigned int count;
 
    /*=================================*/
    /* Search for the global variable. */

@@ -890,7 +890,7 @@ static void BuildDefaultSlots(
               {
                adst[i]->type = SYMBOL_TYPE;
                adst[i]->value = CreateSymbol(theEnv,"nil");
-               AtomInstall(theEnv,(int) adst[i]->type,adst[i]->value);
+               AtomInstall(theEnv,adst[i]->type,adst[i]->value);
               }
            }
          else
@@ -1093,7 +1093,7 @@ static bool InsertSlotOverrides(
                        ins,NULL,slot_exp->nextArg->argList); }
       else if (slot_exp->nextArg->argList)
         {
-         if (EvaluateAndStoreInDataObject(theEnv,(int) slot->desc->multiple,
+         if (EvaluateAndStoreInDataObject(theEnv,slot->desc->multiple,
                                slot_exp->nextArg->argList,&temp,true))
              PutSlotValue(theEnv,ins,slot,&temp,&junk,"function make-instance");
         }
@@ -1130,7 +1130,7 @@ static bool InsertSlotOverridesCV(
   Instance *ins,
   CLIPSValue *overrides)
   {
-   int i;
+   unsigned int i;
    InstanceSlot *slot;
    UDFValue temp, junk;
 
@@ -1171,7 +1171,7 @@ static void EvaluateClassDefaults(
   {
    InstanceSlot *slot;
    UDFValue temp,junk;
-   long i;
+   unsigned long i;
 
    if (ins->initializeInProgress == 0)
      {
@@ -1193,7 +1193,7 @@ static void EvaluateClassDefaults(
         {
          if (slot->desc->dynamicDefault)
            {
-            if (EvaluateAndStoreInDataObject(theEnv,(int) slot->desc->multiple,
+            if (EvaluateAndStoreInDataObject(theEnv,slot->desc->multiple,
                                              (Expression *) slot->desc->defaultValue,
                                              &temp,true))
               PutSlotValue(theEnv,ins,slot,&temp,&junk,"function init-slots");
@@ -1264,7 +1264,7 @@ InstanceBuilder *CreateInstanceBuilder(
   {
    InstanceBuilder *theIB;
    Defclass *theDefclass;
-   int i;
+   unsigned int i;
    
    theDefclass = FindDefclass(theEnv,defclassName);
    if (theDefclass == NULL) return NULL;
@@ -1510,9 +1510,9 @@ bool IBPutSlot(
   CLIPSValue *slotValue)
   {
    Environment *theEnv = theIB->ibEnv;
-   short whichSlot;
+   int whichSlot;
    CLIPSValue oldValue;
-   int i;
+   unsigned int i;
       
    /*===================================*/
    /* Make sure the slot name requested */
@@ -1577,7 +1577,7 @@ Instance *IBMake(
    Instance *theInstance;
    CLIPSLexeme *instanceLexeme;
    UDFValue rv;
-   int i;
+   unsigned int i;
 
    if (instanceName == NULL)
      {
@@ -1635,7 +1635,7 @@ void IBAbort(
   InstanceBuilder *theIB)
   {
    Environment *theEnv = theIB->ibEnv;
-   int i;
+   unsigned int i;
    
    for (i = 0; i < theIB->ibDefclass->slotCount; i++)
      {
@@ -1657,7 +1657,7 @@ bool IBSetDefclass(
   {
    Defclass *theDefclass;
    Environment *theEnv = theIB->ibEnv;
-   int i;
+   unsigned int i;
    
    IBAbort(theIB);
    
@@ -1686,7 +1686,7 @@ InstanceModifier *CreateInstanceModifier(
   Instance *oldInstance)
   {
    InstanceModifier *theIM;
-   int i;
+   unsigned int i;
 
    if (oldInstance->garbage) return NULL;
    if (oldInstance->cls->slotCount == 0) return NULL;
@@ -1937,10 +1937,10 @@ bool IMPutSlot(
   CLIPSValue *slotValue)
   {
    Environment *theEnv = theIM->imEnv;
-   short whichSlot;
+   int whichSlot;
    CLIPSValue oldValue;
    CLIPSValue oldInstanceValue;
-   int i;
+   unsigned int i;
 
    /*===================================*/
    /* Make sure the slot name requested */
@@ -2063,7 +2063,7 @@ static bool IMModifySlots(
   {
    UDFValue temp, junk;
    InstanceSlot *insSlot;
-   int i;
+   unsigned int i;
 
    for (i = 0; i < theInstance->cls->slotCount; i++)
      {
@@ -2096,7 +2096,7 @@ void IMDispose(
   InstanceModifier *theIM)
   {
    Environment *theEnv = theIM->imEnv;
-   int i;
+   unsigned int i;
 
    /*========================*/
    /* Clear the value array. */
@@ -2136,7 +2136,7 @@ void IMAbort(
   InstanceModifier *theIM)
   {
    Environment *theEnv = theIM->imEnv;
-   int i;
+   unsigned int i;
    
    for (i = 0; i < theIM->imOldInstance->cls->slotCount; i++)
      {
@@ -2159,8 +2159,8 @@ bool IMSetInstance(
   Instance *oldInstance)
   {
    Environment *theEnv = theIM->imEnv;
-   unsigned short currentSlotCount = theIM->imOldInstance->cls->slotCount;
-   int i;
+   unsigned int currentSlotCount = theIM->imOldInstance->cls->slotCount;
+   unsigned int i;
    
    /*=================================================*/
    /* Modifiers can only be created for non-retracted */

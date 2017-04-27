@@ -84,12 +84,13 @@ struct constraintRecord *GetConstraintRecord(
    constraints->maxValue = GenConstant(theEnv,SYMBOL_TYPE,SymbolData(theEnv)->PositiveInfinity);
    constraints->minFields = GenConstant(theEnv,INTEGER_TYPE,SymbolData(theEnv)->Zero);
    constraints->maxFields = GenConstant(theEnv,SYMBOL_TYPE,SymbolData(theEnv)->PositiveInfinity);
-   constraints->bucket = -1;
+   constraints->installed = false;
+   constraints->bucket = 0;
    constraints->count = 0;
    constraints->multifield = NULL;
    constraints->next = NULL;
 
-   return(constraints);
+   return constraints;
   }
 
 /********************************************************/
@@ -166,7 +167,8 @@ struct constraintRecord *CopyConstraintRecord(
    theConstraint->maxValue = CopyExpression(theEnv,sourceConstraint->maxValue);
    theConstraint->minFields = CopyExpression(theEnv,sourceConstraint->minFields);
    theConstraint->maxFields = CopyExpression(theEnv,sourceConstraint->maxFields);
-   theConstraint->bucket = -1;
+   theConstraint->bucket = 0;
+   theConstraint->installed = false;
    theConstraint->count = 0;
    theConstraint->multifield = CopyConstraintRecord(theEnv,sourceConstraint->multifield);
    theConstraint->next = NULL;
@@ -186,7 +188,7 @@ void SetAnyRestrictionFlags(
   CONSTRAINT_RECORD *theConstraint,
   bool justOne)
   {
-   int flag1, flag2;
+   bool flag1, flag2;
 
    if (justOne)
      {

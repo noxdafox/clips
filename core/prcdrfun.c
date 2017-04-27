@@ -310,7 +310,7 @@ void IfFunction(
   UDFContext *context,
   UDFValue *returnValue)
   {
-   int numArgs;
+   unsigned int numArgs;
 
    /*=========================*/
    /* Evaluate the condition. */

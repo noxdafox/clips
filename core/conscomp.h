@@ -84,28 +84,29 @@ struct CodeGeneratorItem
   {
    const char *name;
    void (*beforeFunction)(Environment *);
-   void (*initFunction)(Environment *,FILE *,int,int);
-   bool (*generateFunction)(Environment *,const char *,const char *,char *,int,FILE *,int,int);
+   void (*initFunction)(Environment *,FILE *,unsigned,unsigned);
+   bool (*generateFunction)(Environment *,const char *,const char *,char *,
+                            unsigned int,FILE *,unsigned int,unsigned int);
    int priority;
    char **arrayNames;
-   int arrayCount;
+   unsigned int arrayCount;
    struct CodeGeneratorItem *next;
   };
 
 struct constructCompilerData
   {
-   int ImageID;
+   unsigned ImageID;
    FILE *HeaderFP;
-   int MaxIndices;
+   unsigned MaxIndices;
    FILE *ExpressionFP;
    FILE *FixupFP;
    const char *FilePrefix;
    const char *PathName;
    char *FileNameBuffer;
    bool ExpressionHeader;
-   long ExpressionCount;
-   int ExpressionVersion;
-   int CodeGeneratorCount;
+   unsigned long ExpressionCount;
+   unsigned ExpressionVersion;
+   unsigned CodeGeneratorCount;
    struct CodeGeneratorItem *ListOfCodeGeneratorItems;
   };
 
@@ -116,27 +117,31 @@ struct CodeGeneratorFile
   const char *filePrefix;
   const char *pathName;
   char *fileNameBuffer;
-  int id,version;
+  unsigned int id;
+  unsigned int version;
  };
 
    void                      InitializeConstructCompilerData(Environment *);
    void                      ConstructsToCCommandDefinition(Environment *);
-   FILE                     *NewCFile(Environment *,const char *,const char *,char *,int,int,bool);
+   FILE                     *NewCFile(Environment *,const char *,const char *,char *,unsigned,unsigned,bool);
    int                       ExpressionToCode(Environment *,FILE *,struct expr *);
    void                      PrintFunctionReference(Environment *,FILE *,struct functionDefinition *);
    struct CodeGeneratorItem *AddCodeGeneratorItem(Environment *,const char *,int,
                                                   void (*)(Environment *),
-                                                  void (*)(Environment *,FILE *,int,int),
-                                                  bool (*)(Environment *,const char *,const char *,char *,int,FILE *,int,int),int);
-   FILE                     *CloseFileIfNeeded(Environment *,FILE *,int *,int *,int,bool *,struct CodeGeneratorFile *);
-   FILE                     *OpenFileIfNeeded(Environment *,FILE *,const char *,const char *,char *,int,int,int *,
-                                              int,FILE *,const char *,char *,bool,struct CodeGeneratorFile *);
-   void                      MarkConstructBsaveIDs(Environment *,int);
-   void                      ConstructHeaderToCode(Environment *,FILE *,ConstructHeader *,int,int,
-                                                   int,const char *,const char *);
-   void                      ConstructModuleToCode(Environment *,FILE *,Defmodule *,int,int,
-                                                   int,const char *);
-   void                      PrintHashedExpressionReference(Environment *,FILE *,struct expr *,int,int);
+                                                  void (*)(Environment *,FILE *,unsigned,unsigned),
+                                                  bool (*)(Environment *,const char *,const char *,char *,
+                                                           unsigned int,FILE *,unsigned int,unsigned int),
+                                                  unsigned);
+   FILE                     *CloseFileIfNeeded(Environment *,FILE *,unsigned int *,unsigned int *,unsigned int,
+                                               bool *,struct CodeGeneratorFile *);
+   FILE                     *OpenFileIfNeeded(Environment *,FILE *,const char *,const char *,char *,unsigned int,
+                                              unsigned int,unsigned int *,unsigned int,FILE *,const char *,char *,bool,struct CodeGeneratorFile *);
+   void                      MarkConstructBsaveIDs(Environment *,unsigned int);
+   void                      ConstructHeaderToCode(Environment *,FILE *,ConstructHeader *,unsigned int,
+                                                   unsigned int,unsigned int,const char *,const char *);
+   void                      ConstructModuleToCode(Environment *,FILE *,Defmodule *,unsigned int,
+                                                   unsigned int,unsigned int,const char *);
+   void                      PrintHashedExpressionReference(Environment *,FILE *,struct expr *,unsigned,unsigned);
 
 #endif
 

@@ -94,7 +94,7 @@
    static void                        ResizeBetaMemory(Environment *,struct betaMemory *);
    static void                        ResetBetaMemory(Environment *,struct betaMemory *);
 #if (CONSTRUCT_COMPILER || BLOAD_AND_BSAVE) && (! RUN_TIME)
-   static void                        TagNetworkTraverseJoins(Environment *,long *,long *,struct joinNode *);
+   static void                        TagNetworkTraverseJoins(Environment *,unsigned long *,unsigned long *,struct joinNode *);
 #endif
 
 /***********************************************************/
@@ -601,7 +601,7 @@ struct partialMatch *MergePartialMatches(
 
    memcpy(linker,&mergeTemplate,sizeof(struct partialMatch) - sizeof(struct genericMatch));
 
-   linker->bcount = (unsigned short) (lhsBind->bcount + 1);
+   linker->bcount = lhsBind->bcount + 1;
 
    /*========================================================*/
    /* Copy the bindings of the partial match being extended. */
@@ -618,7 +618,7 @@ struct partialMatch *MergePartialMatches(
    else
      { linker->binds[lhsBind->bcount].gm.theValue = rhsBind->binds[0].gm.theValue; }
 
-   return(linker);
+   return linker;
   }
 
 /*******************************************************************/
@@ -775,7 +775,7 @@ struct multifieldMarker *CopyMultifieldMarkers(
       newMark->whichField = theMarkers->whichField;
       newMark->where = theMarkers->where;
       newMark->startPosition = theMarkers->startPosition;
-      newMark->endPosition = theMarkers->endPosition;
+      newMark->range = theMarkers->range;
 
       if (lastMark == NULL)
         { head = newMark; }
@@ -972,7 +972,7 @@ static int CountPriorPatterns(
 /********************************************************/
 void MarkRuleNetwork(
   Environment *theEnv,
-  int value)
+  bool value)
   {
    Defrule *rulePtr, *disjunctPtr;
    struct joinNode *joinPtr;
@@ -1024,7 +1024,7 @@ void MarkRuleNetwork(
 /******************/
 void MarkRuleJoins(
   struct joinNode *joinPtr,
-  int value)
+  bool value)
   {
    while (joinPtr != NULL)
      {
@@ -1438,13 +1438,13 @@ unsigned long ComputeRightHashValue(
 #endif
             fis.liv = 0;
             fis.vv = theResult.value;
-            hashValue += (unsigned long) (fis.liv * multiplier);
+            hashValue += fis.liv * multiplier;
             break;
 
           case EXTERNAL_ADDRESS_TYPE:
             fis.liv = 0;
             fis.vv = theResult.externalAddressValue->contents;
-            hashValue += (unsigned long) (fis.liv * multiplier);
+            hashValue += fis.liv * multiplier;
             break;
           }
        }
@@ -1615,10 +1615,10 @@ unsigned long PrintBetaMemory(
 /*************************************************************/
 void TagRuleNetwork(
   Environment *theEnv,
-  long *moduleCount,
-  long *ruleCount,
-  long *joinCount,
-  long *linkCount)
+  unsigned long *moduleCount,
+  unsigned long *ruleCount,
+  unsigned long *joinCount,
+  unsigned long *linkCount)
   {
    Defmodule *modulePtr;
    Defrule *rulePtr, *disjunctPtr;
@@ -1687,8 +1687,8 @@ void TagRuleNetwork(
 /*******************************************************************/
 static void TagNetworkTraverseJoins(
   Environment *theEnv,
-  long *joinCount,
-  long *linkCount,
+  unsigned long *joinCount,
+  unsigned long *linkCount,
   struct joinNode *joinPtr)
   {
    struct joinLink *theLink;

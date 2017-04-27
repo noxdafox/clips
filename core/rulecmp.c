@@ -63,19 +63,22 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static bool                    ConstructToCode(Environment *,const char *,const char *,char *,int,FILE *,int,int);
-   static void                    JoinToCode(Environment *,FILE *,struct joinNode *,int,int);
-   static void                    LinkToCode(Environment *,FILE *,struct joinLink *,int,int);
-   static void                    DefruleModuleToCode(Environment *,FILE *,Defmodule *,int,int,int);
-   static void                    DefruleToCode(Environment *,FILE *,Defrule *,int,int,int);
-   static void                    CloseDefruleFiles(Environment *,FILE *,FILE *,FILE *,FILE*,int);
+   static bool                    ConstructToCode(Environment *,const char *,const char *,char *,
+                                                  unsigned int,FILE *,unsigned int,unsigned int);
+   static void                    JoinToCode(Environment *,FILE *,struct joinNode *,unsigned int,unsigned int);
+   static void                    LinkToCode(Environment *,FILE *,struct joinLink *,unsigned int,unsigned int);
+   static void                    DefruleModuleToCode(Environment *,FILE *,Defmodule *,unsigned int,unsigned int,unsigned int);
+   static void                    DefruleToCode(Environment *,FILE *,Defrule *,unsigned int,unsigned int,unsigned int);
+   static void                    CloseDefruleFiles(Environment *,FILE *,FILE *,FILE *,FILE*,unsigned int);
    static void                    BeforeDefrulesCode(Environment *);
-   static void                    InitDefruleCode(Environment *,FILE *,int,int);
-   static bool                    RuleCompilerTraverseJoins(Environment *,struct joinNode *,const char *,const char *,char *,int,
-                                                            FILE *,int,int,FILE **,FILE **,
-                                                            int *,int *,int *,int *,int *);
-   static bool                    TraverseJoinLinks(Environment *,struct joinLink *,const char *,const char *,char *,int,FILE *,
-                                                    int,int,FILE **,int *,int *, int *);
+   static void                    InitDefruleCode(Environment *,FILE *,unsigned int,unsigned int);
+   static bool                    RuleCompilerTraverseJoins(Environment *,struct joinNode *,const char *,
+                                                            const char *,char *,unsigned int,FILE *,
+                                                            unsigned int,unsigned int,FILE **,FILE **,
+                                                            unsigned int *,unsigned int *,unsigned int *,unsigned int *,unsigned int *);
+   static bool                    TraverseJoinLinks(Environment *,struct joinLink *,const char *,const char *,
+                                                    char *,unsigned int,FILE *,unsigned int,unsigned int,
+                                                    FILE **,unsigned int *,unsigned int *,unsigned int *);
 
 /***********************************************************/
 /* DefruleCompilerSetup: Initializes the defrule construct */
@@ -96,7 +99,7 @@ void DefruleCompilerSetup(
 static void BeforeDefrulesCode(
   Environment *theEnv)
   {
-   long moduleCount, ruleCount, joinCount, linkCount;
+   unsigned long moduleCount, ruleCount, joinCount, linkCount;
 
    TagRuleNetwork(theEnv,&moduleCount,&ruleCount,&joinCount,&linkCount);
   }
@@ -110,18 +113,18 @@ static bool ConstructToCode(
   const char *fileName,
   const char *pathName,
   char *fileNameBuffer,
-  int fileID,
+  unsigned int fileID,
   FILE *headerFP,
-  int imageID,
-  int maxIndices)
+  unsigned int imageID,
+  unsigned int maxIndices)
   {
-   int fileCount = 1;
+   unsigned int fileCount = 1;
    Defmodule *theModule;
    Defrule *theDefrule, *theDisjunct;
-   int joinArrayCount = 0, joinArrayVersion = 1;
-   int linkArrayCount = 0, linkArrayVersion = 1;
-   int moduleCount = 0, moduleArrayCount = 0, moduleArrayVersion = 1;
-   int defruleArrayCount = 0, defruleArrayVersion = 1;
+   unsigned int joinArrayCount = 0, joinArrayVersion = 1;
+   unsigned int linkArrayCount = 0, linkArrayVersion = 1;
+   unsigned int moduleCount = 0, moduleArrayCount = 0, moduleArrayVersion = 1;
+   unsigned int defruleArrayCount = 0, defruleArrayVersion = 1;
    FILE *joinFile = NULL, *moduleFile = NULL, *defruleFile = NULL, *linkFile = NULL;
 
    /*==============================================*/
@@ -248,17 +251,17 @@ static bool RuleCompilerTraverseJoins(
   const char *fileName,
   const char *pathName,
   char *fileNameBuffer,
-  int fileID,
+  unsigned int fileID,
   FILE *headerFP,
-  int imageID,
-  int maxIndices,
+  unsigned int imageID,
+  unsigned int maxIndices,
   FILE **joinFile,
   FILE **linkFile,
-  int *fileCount,
-  int *joinArrayVersion,
-  int *joinArrayCount,
-  int *linkArrayVersion,
-  int *linkArrayCount)
+  unsigned int *fileCount,
+  unsigned int *joinArrayVersion,
+  unsigned int *joinArrayCount,
+  unsigned int *linkArrayVersion,
+  unsigned int *linkArrayCount)
   {
    for (;
         joinPtr != NULL;
@@ -305,14 +308,14 @@ static bool TraverseJoinLinks(
   const char *fileName,
   const char *pathName,
   char *fileNameBuffer,
-  int fileID,
+  unsigned int fileID,
   FILE *headerFP,
-  int imageID,
-  int maxIndices,
+  unsigned int imageID,
+  unsigned int maxIndices,
   FILE **linkFile,
-  int *fileCount,
-  int *linkArrayVersion,
-  int *linkArrayCount)
+  unsigned int *fileCount,
+  unsigned int *linkArrayVersion,
+  unsigned int *linkArrayCount)
   {
    for (;
         linkPtr != NULL;
@@ -345,10 +348,10 @@ static void CloseDefruleFiles(
   FILE *defruleFile,
   FILE *joinFile,
   FILE *linkFile,
-  int maxIndices)
+  unsigned int maxIndices)
   {
-   int count = maxIndices;
-   int arrayVersion = 0;
+   unsigned int count = maxIndices;
+   unsigned int arrayVersion = 0;
 
    if (linkFile != NULL)
      {
@@ -383,9 +386,9 @@ static void DefruleModuleToCode(
   Environment *theEnv,
   FILE *theFile,
   Defmodule *theModule,
-  int imageID,
-  int maxIndices,
-  int moduleCount)
+  unsigned int imageID,
+  unsigned int maxIndices,
+  unsigned int moduleCount)
   {
 #if MAC_XCD
 #pragma unused(moduleCount)
@@ -394,7 +397,8 @@ static void DefruleModuleToCode(
    fprintf(theFile,"{");
 
    ConstructModuleToCode(theEnv,theFile,theModule,imageID,maxIndices,
-                                  DefruleData(theEnv)->DefruleModuleIndex,ConstructPrefix(DefruleData(theEnv)->DefruleCodeItem));
+                         DefruleData(theEnv)->DefruleModuleIndex,
+                         ConstructPrefix(DefruleData(theEnv)->DefruleCodeItem));
 
    fprintf(theFile,",NULL}");
   }
@@ -407,9 +411,9 @@ static void DefruleToCode(
   Environment *theEnv,
   FILE *theFile,
   Defrule *theDefrule,
-  int imageID,
-  int maxIndices,
-  int moduleCount)
+  unsigned int imageID,
+  unsigned int maxIndices,
+  unsigned int moduleCount)
   {
    /*==================*/
    /* Construct Header */
@@ -493,8 +497,8 @@ static void JoinToCode(
   Environment *theEnv,
   FILE *joinFile,
   struct joinNode *theJoin,
-  int imageID,
-  int maxIndices)
+  unsigned int imageID,
+  unsigned int maxIndices)
   {
    struct patternParser *theParser;
 
@@ -552,7 +556,7 @@ static void JoinToCode(
      { fprintf(joinFile,"NULL,"); }
    else if (theJoin->joinFromTheRight == false)
      {
-      theParser = GetPatternParser(theEnv,(int) theJoin->rhsType);
+      theParser = GetPatternParser(theEnv,theJoin->rhsType);
       if (theParser->codeReferenceFunction == NULL) fprintf(joinFile,"NULL,");
       else
         {
@@ -564,7 +568,7 @@ static void JoinToCode(
      }
    else
      {
-      fprintf(joinFile,"&%s%d_%ld[%ld],",JoinPrefix(),
+      fprintf(joinFile,"&%s%u_%lu[%lu],",JoinPrefix(),
               imageID,(((struct joinNode *) theJoin->rightSideEntryStructure)->bsaveID / maxIndices) + 1,
                       ((struct joinNode *) theJoin->rightSideEntryStructure)->bsaveID % maxIndices);
      }
@@ -630,8 +634,8 @@ static void LinkToCode(
   Environment *theEnv,
   FILE *theFile,
   struct joinLink *theLink,
-  int imageID,
-  int maxIndices)
+  unsigned int imageID,
+  unsigned int maxIndices)
   {
    /*==================*/
    /* Enter Direction. */
@@ -679,11 +683,11 @@ static void LinkToCode(
 void DefruleCModuleReference(
   Environment *theEnv,
   FILE *theFile,
-  int count,
-  int imageID,
-  int maxIndices)
+  unsigned long count,
+  unsigned int imageID,
+  unsigned int maxIndices)
   {
-   fprintf(theFile,"MIHS &%s%d_%d[%d]",ModulePrefix(DefruleData(theEnv)->DefruleCodeItem),
+   fprintf(theFile,"MIHS &%s%u_%lu[%lu]",ModulePrefix(DefruleData(theEnv)->DefruleCodeItem),
                       imageID,
                       (count / maxIndices) + 1,
                       (count % maxIndices));
@@ -696,8 +700,8 @@ void DefruleCModuleReference(
 static void InitDefruleCode(
   Environment *theEnv,
   FILE *initFP,
-  int imageID,
-  int maxIndices)
+  unsigned int imageID,
+  unsigned int maxIndices)
   {
 #if MAC_XCD
 #pragma unused(maxIndices)
@@ -711,7 +715,7 @@ static void InitDefruleCode(
      { fprintf(initFP,"NULL,"); }
    else
      {
-      fprintf(initFP,"&%s%d_%ld[%ld],",LinkPrefix(),
+      fprintf(initFP,"&%s%u_%lu[%lu],",LinkPrefix(),
                     imageID,(DefruleData(theEnv)->RightPrimeJoins->bsaveID / maxIndices) + 1,
                              DefruleData(theEnv)->RightPrimeJoins->bsaveID % maxIndices);
      }
@@ -720,12 +724,10 @@ static void InitDefruleCode(
      { fprintf(initFP,"NULL);\n"); }
    else
      {
-      fprintf(initFP,"&%s%d_%ld[%ld]);\n",LinkPrefix(),
+      fprintf(initFP,"&%s%u_%lu[%lu]);\n",LinkPrefix(),
                     imageID,(DefruleData(theEnv)->LeftPrimeJoins->bsaveID / maxIndices) + 1,
                              DefruleData(theEnv)->LeftPrimeJoins->bsaveID % maxIndices);
      }
   }
 
 #endif /* DEFRULE_CONSTRUCT && (! RUN_TIME) && CONSTRUCT_COMPILER */
-
-

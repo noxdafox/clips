@@ -73,7 +73,7 @@
    struct expr                   *GroupActions(Environment *,const char *,struct token *,
                                                       bool,const char *,bool);
    struct expr                   *RemoveUnneededProgn(Environment *,struct expr *);
-   void                           PopulateRestriction(Environment *,unsigned *,unsigned,const char *,int);
+   void                           PopulateRestriction(Environment *,unsigned *,unsigned,const char *,unsigned int);
 
 
    bool                           CheckExpressionAgainstRestrictions(Environment *,struct expr *,

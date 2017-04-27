@@ -60,11 +60,13 @@
 #define SetTraversalID(traversalRecord,id) SetBitMap(traversalRecord,id)
 #define ClearTraversalID(traversalRecord,id) ClearBitMap(traversalRecord,id)
 
-#define CLASS_TABLE_HASH_SIZE     167
-#define SLOT_NAME_TABLE_HASH_SIZE 167
+#define CLASS_TABLE_HASH_SIZE     167 // TBD Larger?
+#define SLOT_NAME_TABLE_HASH_SIZE 167 // TBD Larger?
 
 #define ISA_ID  0
 #define NAME_ID 1
+
+#define SLOT_NAME_NOT_FOUND USHRT_MAX
 
    void                           IncrementDefclassBusyCount(Environment *,Defclass *);
    void                           DecrementDefclassBusyCount(Environment *,Defclass *);
@@ -85,13 +87,13 @@
 #if ! RUN_TIME
    void                           PutClassInTable(Environment *,Defclass *);
    void                           RemoveClassFromTable(Environment *,Defclass *);
-   void                           AddClassLink(Environment *,PACKED_CLASS_LINKS *,Defclass *,int);
+   void                           AddClassLink(Environment *,PACKED_CLASS_LINKS *,Defclass *,bool,unsigned int);
    void                           DeleteSubclassLink(Environment *,Defclass *,Defclass *);
    void                           DeleteSuperclassLink(Environment *,Defclass *,Defclass *);
    Defclass                      *NewClass(Environment *,CLIPSLexeme *);
    void                           DeletePackedClassLinks(Environment *,PACKED_CLASS_LINKS *,bool);
    void                           AssignClassID(Environment *,Defclass *);
-   SLOT_NAME                     *AddSlotName(Environment *,CLIPSLexeme *,int,bool);
+   SLOT_NAME                     *AddSlotName(Environment *,CLIPSLexeme *,unsigned short,bool);
    void                           DeleteSlotName(Environment *,SLOT_NAME *);
    void                           RemoveDefclass(Environment *,Defclass *);
    void                           InstallClass(Environment *,Defclass *,bool);
@@ -105,12 +107,12 @@
    void                           MarkBitMapSubclasses(char *,Defclass *,int);
 #endif
 
-   short                          FindSlotNameID(Environment *,CLIPSLexeme *);
-   CLIPSLexeme                   *FindIDSlotName(Environment *,int);
-   SLOT_NAME                     *FindIDSlotNameHash(Environment *,int);
+   unsigned short                 FindSlotNameID(Environment *,CLIPSLexeme *);
+   CLIPSLexeme                   *FindIDSlotName(Environment *,unsigned short);
+   SLOT_NAME                     *FindIDSlotNameHash(Environment *,unsigned short); 
    int                            GetTraversalID(Environment *);
    void                           ReleaseTraversalID(Environment *);
-   unsigned                       HashClass(CLIPSLexeme *);
+   unsigned int                   HashClass(CLIPSLexeme *);
 
 #define DEFCLASS_DATA 21
 
@@ -121,7 +123,7 @@
 struct defclassData
   {
    Construct *DefclassConstruct;
-   int DefclassModuleIndex;
+   unsigned DefclassModuleIndex;
    EntityRecord DefclassEntityRecord;
    Defclass *PrimitiveClassMap[PRIMITIVE_CLASSES];
    Defclass **ClassIDMap;

@@ -51,7 +51,7 @@
       
       DecrementBitMapReferenceCount(theEnvironment,theScopeMap);
 
-      tempArray = [NSMutableArray arrayWithCapacity: (unsigned) slotNames.multifieldValue->length];
+      tempArray = [NSMutableArray arrayWithCapacity: slotNames.multifieldValue->length];
 
       for (i = 0; i < slotNames.multifieldValue->length; i++)
         {
@@ -136,7 +136,7 @@
       
       DecrementBitMapReferenceCount(theEnvironment,theScopeMap);
 
-      tempArray = [NSMutableArray arrayWithCapacity: (unsigned) slotNames.multifieldValue->length];
+      tempArray = [NSMutableArray arrayWithCapacity: slotNames.multifieldValue->length];
 
       for (i = 0; i < slotNames.multifieldValue->length; i++)
         {

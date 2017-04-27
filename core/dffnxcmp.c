@@ -50,11 +50,13 @@
 /***************************************/
 
    static void                    ReadyDeffunctionsForCode(Environment *);
-   static bool                    DeffunctionsToCode(Environment *,const char *,const char *,char *,int,FILE *,int,int);
-   static void                    CloseDeffunctionFiles(Environment *,FILE *,FILE *,int);
-   static void                    DeffunctionModuleToCode(Environment *,FILE *,Defmodule *,int,int);
-   static void                    SingleDeffunctionToCode(Environment *,FILE *,Deffunction *,int,int,int);
-   static void                    InitDeffunctionCode(Environment *,FILE *,int,int);
+   static bool                    DeffunctionsToCode(Environment *,const char *,const char *,char *,
+                                                     unsigned int,FILE *,unsigned int,unsigned int);
+   static void                    CloseDeffunctionFiles(Environment *,FILE *,FILE *,unsigned int);
+   static void                    DeffunctionModuleToCode(Environment *,FILE *,Defmodule *,unsigned int,unsigned int);
+   static void                    SingleDeffunctionToCode(Environment *,FILE *,Deffunction *,
+                                                          unsigned int,unsigned int,unsigned int);
+   static void                    InitDeffunctionCode(Environment *,FILE *,unsigned int,unsigned int);
 
 /* =========================================
    *****************************************
@@ -97,15 +99,15 @@ void PrintDeffunctionReference(
   Environment *theEnv,
   FILE *fp,
   Deffunction *dfPtr,
-  int imageID,
-  int maxIndices)
+  unsigned imageID,
+  unsigned maxIndices)
   {
    if (dfPtr == NULL)
      fprintf(fp,"NULL");
    else
-     fprintf(fp,"&%s%d_%d[%d]",ConstructPrefix(DeffunctionData(theEnv)->DeffunctionCodeItem),imageID,
-                               (int) ((dfPtr->header.bsaveID / maxIndices) + 1),
-                               (int) (dfPtr->header.bsaveID % maxIndices));
+     fprintf(fp,"&%s%d_%lu[%lu]",ConstructPrefix(DeffunctionData(theEnv)->DeffunctionCodeItem),imageID,
+                                ((dfPtr->header.bsaveID / maxIndices) + 1),
+                                (dfPtr->header.bsaveID % maxIndices));
   }
 
 /****************************************************
@@ -124,11 +126,11 @@ void PrintDeffunctionReference(
 void DeffunctionCModuleReference(
   Environment *theEnv,
   FILE *theFile,
-  int count,
-  int imageID,
-  int maxIndices)
+  unsigned long count,
+  unsigned int imageID,
+  unsigned int maxIndices)
   {
-   fprintf(theFile,"MIHS &%s%d_%d[%d]",
+   fprintf(theFile,"MIHS &%s%u_%lu[%lu]",
                       ModulePrefix(DeffunctionData(theEnv)->DeffunctionCodeItem),
                       imageID,
                       (count / maxIndices) + 1,
@@ -163,8 +165,8 @@ static void ReadyDeffunctionsForCode(
 static void InitDeffunctionCode(
   Environment *theEnv,
   FILE *initFP,
-  int imageID,
-  int maxIndices)
+  unsigned int imageID,
+  unsigned int maxIndices)
   {
 #if MAC_XCD
 #pragma unused(maxIndices)
@@ -194,16 +196,16 @@ static bool DeffunctionsToCode(
   const char *fileName,
   const char *pathName,
   char *fileNameBuffer,
-  int fileID,
+  unsigned int fileID,
   FILE *headerFP,
-  int imageID,
-  int maxIndices)
+  unsigned int imageID,
+  unsigned int maxIndices)
   {
-   int fileCount = 1;
+   unsigned int fileCount = 1;
    Defmodule *theModule;
    Deffunction *theDeffunction;
-   int moduleCount = 0, moduleArrayCount = 0, moduleArrayVersion = 1;
-   int deffunctionArrayCount = 0, deffunctionArrayVersion = 1;
+   unsigned int moduleCount = 0, moduleArrayCount = 0, moduleArrayVersion = 1;
+   unsigned int deffunctionArrayCount = 0, deffunctionArrayVersion = 1;
    FILE *moduleFile = NULL, *deffunctionFile = NULL;
 
    /* ===============================================
@@ -285,10 +287,10 @@ static void CloseDeffunctionFiles(
   Environment *theEnv,
   FILE *moduleFile,
   FILE *deffunctionFile,
-  int maxIndices)
+  unsigned int maxIndices)
   {
-   int count = maxIndices;
-   int arrayVersion = 0;
+   unsigned int count = maxIndices;
+   unsigned int arrayVersion = 0;
 
    if (deffunctionFile != NULL)
      {
@@ -320,8 +322,8 @@ static void DeffunctionModuleToCode(
   Environment *theEnv,
   FILE *theFile,
   Defmodule *theModule,
-  int imageID,
-  int maxIndices)
+  unsigned int imageID,
+  unsigned int maxIndices)
   {
    fprintf(theFile,"{");
    ConstructModuleToCode(theEnv,theFile,theModule,imageID,maxIndices,
@@ -347,9 +349,9 @@ static void SingleDeffunctionToCode(
   Environment *theEnv,
   FILE *theFile,
   Deffunction *theDeffunction,
-  int imageID,
-  int maxIndices,
-  int moduleCount)
+  unsigned int imageID,
+  unsigned int maxIndices,
+  unsigned int moduleCount)
   {
    /* ==================
       Deffunction Header

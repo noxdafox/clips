@@ -35,21 +35,21 @@
 
 struct bsaveConstructHeader
   {
-   long name;
-   long whichModule;
-   long next;
+   unsigned long name;
+   unsigned long whichModule;
+   unsigned long next;
   };
 
 #include "constrct.h"
 
 #if BLOAD_AND_BSAVE
-void MarkConstructHeaderNeededItems(ConstructHeader *,long);
+void MarkConstructHeaderNeededItems(ConstructHeader *,unsigned long);
 void AssignBsaveConstructHeaderVals(struct bsaveConstructHeader *,
                                     ConstructHeader *);
 #endif
 
 void UpdateConstructHeader(Environment *,struct bsaveConstructHeader *,
-                           ConstructHeader *,ConstructType,int,void *,int,void *);
+                           ConstructHeader *,ConstructType,size_t,void *,size_t,void *);
 void UnmarkConstructHeader(Environment *,ConstructHeader *);
 
 #endif

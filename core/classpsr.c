@@ -109,7 +109,7 @@
    static void                    BuildSubclassLinks(Environment *,Defclass *);
    static void                    FormInstanceTemplate(Environment *,Defclass *);
    static void                    FormSlotNameMap(Environment *,Defclass *);
-   static TEMP_SLOT_LINK         *MergeSlots(Environment *,TEMP_SLOT_LINK *,Defclass *,short *,int);
+   static TEMP_SLOT_LINK         *MergeSlots(Environment *,TEMP_SLOT_LINK *,Defclass *,unsigned short *,unsigned short);
    static void                    PackSlots(Environment *,Defclass *,TEMP_SLOT_LINK *);
    static void                    CreatePublicSlotMessageHandlers(Environment *,Defclass *);
 
@@ -659,10 +659,10 @@ static void BuildSubclassLinks(
   Environment *theEnv,
   Defclass *cls)
   {
-   long i;
+   unsigned long i;
 
    for (i = 0 ; i < cls->directSuperclasses.classCount ; i++)
-     AddClassLink(theEnv,&cls->directSuperclasses.classArray[i]->directSubclasses,cls,-1);
+     AddClassLink(theEnv,&cls->directSuperclasses.classArray[i]->directSubclasses,cls,true,0);
   }
 
 /**********************************************************
@@ -681,8 +681,8 @@ static void FormInstanceTemplate(
   Defclass *cls)
   {
    TEMP_SLOT_LINK *islots = NULL,*stmp;
-   short scnt = 0;
-   long i;
+   unsigned short scnt = 0;
+   unsigned long i;
 
    /* ========================
       Get direct class's slots
@@ -741,7 +741,7 @@ static void FormSlotNameMap(
   Environment *theEnv,
   Defclass *cls)
   {
-   long i;
+   unsigned i;
 
    cls->maxSlotNameID = 0;
    cls->slotNameMap = NULL;
@@ -776,25 +776,27 @@ static TEMP_SLOT_LINK *MergeSlots(
   Environment *theEnv,
   TEMP_SLOT_LINK *old,
   Defclass *cls,
-  short *scnt,
-  int src)
+  unsigned short *scnt,
+  unsigned short src)
   {
    TEMP_SLOT_LINK *cur,*tmp;
-   int i;
+   unsigned int i;
    SlotDescriptor *newSlot;
-
-   /* ======================================
-      Process the slots in reverse order
-      since we are pushing them onto a stack
-      ====================================== */
-   for (i = (int) (cls->slotCount - 1) ; i >= 0 ; i--)
+   
+   /*=========================================*/
+   /* Process the slots in reverse order      */
+   /* since we are pushing them onto a stack. */
+   /*=========================================*/
+      
+   for (i = cls->slotCount; i > 0 ; i--)
      {
-      newSlot = &cls->slots[i];
+      newSlot = &cls->slots[i-1];
 
-      /* ==========================================
-         A class can prevent it slots from being
-         propagated to all but its direct instances
-         ========================================== */
+      /*=============================================*/
+      /* A class can prevent it slots from being     */
+      /* propagated to all but its direct instances. */
+      /*=============================================*/
+      
       if ((newSlot->noInherit == 0) ? true : (src == DIRECT))
         {
          cur = old;
@@ -810,7 +812,8 @@ static TEMP_SLOT_LINK *MergeSlots(
            }
         }
      }
-   return(old);
+     
+   return old;
   }
 
 /***********************************************************************
@@ -916,11 +919,12 @@ void *CreateClassScopeMap(
   Environment *theEnv,
   Defclass *theDefclass)
   {
-   unsigned scopeMapSize;
+   unsigned short scopeMapSize;
    char *scopeMap;
    const char *className;
    Defmodule *matchModule, *theModule;
-   int moduleID,count;
+   unsigned long moduleID;
+   unsigned int count;
    void *theBitMap;
 
    className = theDefclass->header.name->contents;
@@ -936,7 +940,7 @@ void *CreateClassScopeMap(
         theModule = GetNextDefmodule(theEnv,theModule))
      {
       SetCurrentModule(theEnv,theModule);
-      moduleID = (int) theModule->header.bsaveID;
+      moduleID = theModule->header.bsaveID;
       if (FindImportedConstruct(theEnv,"defclass",matchModule,
                                 className,&count,true,NULL) != NULL)
         SetBitMap(scopeMap,moduleID);

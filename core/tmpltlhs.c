@@ -65,7 +65,7 @@
 
    static struct lhsParseNode    *GetLHSSlots(Environment *,const char *,struct token *,Deftemplate *,bool *);
    static struct lhsParseNode    *GetSingleLHSSlot(Environment *,const char *,struct token *,
-                                                   struct templateSlot *,bool *,short);
+                                                   struct templateSlot *,bool *,unsigned short);
    static bool                    MultiplyDefinedLHSSlots(Environment *,struct lhsParseNode *,CLIPSLexeme *);
 
 /*********************************************/
@@ -143,7 +143,7 @@ static struct lhsParseNode *GetLHSSlots(
   {
    struct lhsParseNode *firstSlot = NULL, *nextSlot, *lastSlot = NULL;
    struct templateSlot *slotPtr;
-   short position;
+   unsigned short position;
 
    /*=======================================================*/
    /* Continue parsing slot definitions until the pattern's */
@@ -209,7 +209,7 @@ static struct lhsParseNode *GetLHSSlots(
       /* Get the pattern matching values used in the slot definition. */
       /*==============================================================*/
 
-      nextSlot = GetSingleLHSSlot(theEnv,readSource,tempToken,slotPtr,error,(short) (position+1));
+      nextSlot = GetSingleLHSSlot(theEnv,readSource,tempToken,slotPtr,error,position+1);
       if (*error)
         {
          ReturnLHSParseNodes(theEnv,firstSlot);
@@ -254,7 +254,7 @@ static struct lhsParseNode *GetSingleLHSSlot(
   struct token *tempToken,
   struct templateSlot *slotPtr,
   bool *error,
-  short position)
+  unsigned short position)
   {
    struct lhsParseNode *nextSlot;
    CLIPSLexeme *slotName;
@@ -278,7 +278,7 @@ static struct lhsParseNode *GetSingleLHSSlot(
       /*=======================*/
 
       nextSlot = RestrictionParse(theEnv,readSource,tempToken,false,
-                                  slotPtr->slotName,(short) (position - 1),
+                                  slotPtr->slotName,position,
                                   slotPtr->constraints,0);
       if (nextSlot == NULL)
         {
@@ -307,7 +307,7 @@ static struct lhsParseNode *GetSingleLHSSlot(
 
    else
      {
-      nextSlot = RestrictionParse(theEnv,readSource,tempToken,true,slotName,(short) (position - 1),
+      nextSlot = RestrictionParse(theEnv,readSource,tempToken,true,slotName,position,
                                   slotPtr->constraints,1);
       if (nextSlot == NULL)
         {

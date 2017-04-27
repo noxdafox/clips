@@ -60,11 +60,11 @@ struct bsaveFactPatternNode
    unsigned short whichSlot;
    unsigned short whichField;
    unsigned short leaveFields;
-   long networkTest;
-   long nextLevel;
-   long lastLevel;
-   long leftNode;
-   long rightNode;
+   unsigned long networkTest;
+   unsigned long nextLevel;
+   unsigned long lastLevel;
+   unsigned long leftNode;
+   unsigned long rightNode;
   };
 
 #define BSAVE_FIND         0
@@ -83,7 +83,7 @@ struct bsaveFactPatternNode
 #endif
    static void                    BloadStorage(Environment *);
    static void                    BloadBinaryItem(Environment *);
-   static void                    UpdateFactPatterns(Environment *,void *,long);
+   static void                    UpdateFactPatterns(Environment *,void *,unsigned long);
    static void                    ClearBload(Environment *);
    static void                    DeallocateFactBloadData(Environment *);
 
@@ -117,7 +117,7 @@ static void DeallocateFactBloadData(
   Environment *theEnv)
   {
    size_t space;
-   int i;
+   unsigned long i;
 
    for (i = 0; i < FactBinaryData(theEnv)->NumberOfPatterns; i++)
      { DestroyAlphaMemory(theEnv,&FactBinaryData(theEnv)->FactPatternArray[i].header,false); }
@@ -311,7 +311,7 @@ static void BsavePatternNode(
    tempNode.leftNode =  BsaveFactPatternIndex(thePattern->leftNode);
    tempNode.rightNode =  BsaveFactPatternIndex(thePattern->rightNode);
 
-   GenWrite(&tempNode,(unsigned long) sizeof(struct bsaveFactPatternNode),fp);
+   GenWrite(&tempNode,sizeof(struct bsaveFactPatternNode),fp);
   }
 
 #endif /* BLOAD_AND_BSAVE */
@@ -356,7 +356,7 @@ static void BloadBinaryItem(
   Environment *theEnv)
   {
    size_t space;
-   long i;
+   unsigned long i;
 
    /*======================================================*/
    /* Read in the amount of space used by the binary image */
@@ -371,7 +371,7 @@ static void BloadBinaryItem(
    /* and refresh the pointers.                   */
    /*=============================================*/
 
-   BloadandRefresh(theEnv,FactBinaryData(theEnv)->NumberOfPatterns,(unsigned) sizeof(struct bsaveFactPatternNode),
+   BloadandRefresh(theEnv,FactBinaryData(theEnv)->NumberOfPatterns,sizeof(struct bsaveFactPatternNode),
                    UpdateFactPatterns);
 
    for (i = 0; i < FactBinaryData(theEnv)->NumberOfPatterns; i++)
@@ -394,7 +394,7 @@ static void BloadBinaryItem(
 static void UpdateFactPatterns(
   Environment *theEnv,
   void *buf,
-  long obji)
+  unsigned long obji)
   {
    struct bsaveFactPatternNode *bp;
 
@@ -422,7 +422,7 @@ static void ClearBload(
   Environment *theEnv)
   {
    size_t space;
-   long i;
+   unsigned long i;
 
    for (i = 0; i < FactBinaryData(theEnv)->NumberOfPatterns; i++)
      {

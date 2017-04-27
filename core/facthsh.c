@@ -91,7 +91,7 @@ unsigned long HashFact(
    /* Get a hash value for the deftemplate name. */
    /*============================================*/
 
-   count += (unsigned long) theFact->whichDeftemplate->header.name->bucket * 73981;
+   count += theFact->whichDeftemplate->header.name->bucket * 73981;
 
    /*=================================================*/
    /* Add in the hash value for the rest of the fact. */

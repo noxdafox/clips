@@ -333,7 +333,7 @@ int LoadConstructsFromLogicalName(
       if (constructFlag == 1)
         {
          PrintString(theEnv,WERROR,"\nERROR:\n");
-         PrintInChunks(theEnv,WERROR,GetPPBuffer(theEnv));
+         PrintString(theEnv,WERROR,GetPPBuffer(theEnv));
          PrintString(theEnv,WERROR,"\n");
 
          FlushParsingMessages(theEnv);

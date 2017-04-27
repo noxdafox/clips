@@ -78,7 +78,8 @@ struct successor
 /***************************************/
 
    static PARTIAL_ORDER          *InitializePartialOrderTable(Environment *,PARTIAL_ORDER *,PACKED_CLASS_LINKS *);
-   static void                    RecordPartialOrders(Environment *,PARTIAL_ORDER *,Defclass *,PACKED_CLASS_LINKS *,long);
+   static void                    RecordPartialOrders(Environment *,PARTIAL_ORDER *,Defclass *,
+                                                      PACKED_CLASS_LINKS *,unsigned long);
    static PARTIAL_ORDER          *FindPartialOrder(PARTIAL_ORDER *,Defclass *);
    static void                    PrintPartialOrderLoop(Environment *,PARTIAL_ORDER *);
    static void                    PrintClassLinks(Environment *,const char *,const char *,CLASS_LINK *);
@@ -325,7 +326,7 @@ PACKED_CLASS_LINKS *FindPrecedenceList(
    SUCCESSOR *stmp;
    CLASS_LINK *ptop,*pbot,*ptmp;
    PACKED_CLASS_LINKS *plinks;
-   long i;
+   unsigned long i;
 
    /* =====================================================================
       Recursively add all superclasses in a pre-order depth-first traversal
@@ -527,7 +528,7 @@ void PackClassLinks(
    for (count = 0 , lp = lptop ; lp != NULL ; lp = lp->nxt , count++)
      plinks->classArray[count] = lp->cls;
    DeleteClassLinks(theEnv,lptop);
-   plinks->classCount = (unsigned short) count;
+   plinks->classCount = count;
   }
 
 /* =========================================
@@ -558,7 +559,7 @@ static PARTIAL_ORDER *InitializePartialOrderTable(
   PACKED_CLASS_LINKS *supers)
   {
    PARTIAL_ORDER *pop,*poprv;
-   long i;
+   unsigned long i;
 
    for (i = 0 ; i < supers->classCount ; i++)
      {
@@ -637,7 +638,7 @@ static void RecordPartialOrders(
   PARTIAL_ORDER *po_table,
   Defclass *cls,
   PACKED_CLASS_LINKS *successors,
-  long starti)
+  unsigned long starti)
   {
    PARTIAL_ORDER *clspo;
    SUCCESSOR *stmp;

@@ -171,7 +171,7 @@ void ShowDefglobalsCommand(
   UDFValue *returnValue)
   {
    Defmodule *theModule;
-   int numArgs;
+   unsigned int numArgs;
    bool error;
 
    numArgs = UDFArgumentCount(context);

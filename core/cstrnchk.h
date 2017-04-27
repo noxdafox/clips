@@ -58,27 +58,29 @@
 #include "constrnt.h"
 #include "evaluatn.h"
 
-#define NO_VIOLATION                    0
-#define TYPE_VIOLATION                  1
-#define RANGE_VIOLATION                 2
-#define ALLOWED_VALUES_VIOLATION        3
-#define FUNCTION_RETURN_TYPE_VIOLATION  4
-#define CARDINALITY_VIOLATION           5
-#define ALLOWED_CLASSES_VIOLATION       6
+typedef enum
+  {
+   NO_VIOLATION,
+   TYPE_VIOLATION,
+   RANGE_VIOLATION,
+   ALLOWED_VALUES_VIOLATION,
+   FUNCTION_RETURN_TYPE_VIOLATION,
+   CARDINALITY_VIOLATION,
+   ALLOWED_CLASSES_VIOLATION
+  } ConstraintViolationType;
 
-   bool                           CheckCardinalityConstraint(Environment *,long,CONSTRAINT_RECORD *);
+   bool                           CheckCardinalityConstraint(Environment *,size_t,CONSTRAINT_RECORD *);
    bool                           CheckAllowedValuesConstraint(int,void *,CONSTRAINT_RECORD *);
    bool                           CheckAllowedClassesConstraint(Environment *,int,void *,CONSTRAINT_RECORD *);
-   int                            ConstraintCheckExpressionChain(Environment *,struct expr *,
+   ConstraintViolationType        ConstraintCheckExpressionChain(Environment *,struct expr *,
                                                                      CONSTRAINT_RECORD *);
-   void                           ConstraintViolationErrorMessage(Environment *,const char *,const char *,bool,int,
-                                                                      CLIPSLexeme *,
-                                                                      int,int,CONSTRAINT_RECORD *,
-                                                                      bool);
-   int                            ConstraintCheckValue(Environment *,int,void *,CONSTRAINT_RECORD *);
-   int                            ConstraintCheckDataObject(Environment *,UDFValue *,CONSTRAINT_RECORD *);
+   void                           ConstraintViolationErrorMessage(Environment *,const char *,const char *,bool,
+                                                                  unsigned short,CLIPSLexeme *,unsigned short,
+                                                                  int,CONSTRAINT_RECORD *,bool);
+   ConstraintViolationType        ConstraintCheckValue(Environment *,int,void *,CONSTRAINT_RECORD *);
+   ConstraintViolationType        ConstraintCheckDataObject(Environment *,UDFValue *,CONSTRAINT_RECORD *);
 #if (! BLOAD_ONLY) && (! RUN_TIME)
-   int                            ConstraintCheckExpression(Environment *,struct expr *,
+   ConstraintViolationType        ConstraintCheckExpression(Environment *,struct expr *,
                                                             CONSTRAINT_RECORD *);
 #endif
    bool                           UnmatchableConstraint(struct constraintRecord *);

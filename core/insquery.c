@@ -81,7 +81,7 @@
 
    static void                    PushQueryCore(Environment *);
    static void                    PopQueryCore(Environment *);
-   static QUERY_CORE             *FindQueryCore(Environment *,int);
+   static QUERY_CORE             *FindQueryCore(Environment *,long long);
    static QUERY_CLASS            *DetermineQueryClasses(Environment *,Expression *,const char *,unsigned *);
    static QUERY_CLASS            *FormChain(Environment *,const char *,Defclass *,UDFValue *);
    static void                    DeleteQueryClasses(Environment *,QUERY_CLASS *);
@@ -151,8 +151,8 @@ void GetQueryInstance(
   {
    QUERY_CORE *core;
 
-   core = FindQueryCore(theEnv,(int) GetFirstArgument()->integerValue->contents);
-   returnValue->value = GetFullInstanceName(theEnv,core->solns[(int) GetFirstArgument()->nextArg->integerValue->contents]);
+   core = FindQueryCore(theEnv,GetFirstArgument()->integerValue->contents);
+   returnValue->value = GetFullInstanceName(theEnv,core->solns[GetFirstArgument()->nextArg->integerValue->contents]);
   }
 
 /***************************************************************************
@@ -176,8 +176,8 @@ void GetQueryInstanceSlot(
 
    returnValue->lexemeValue = FalseSymbol(theEnv);
 
-   core = FindQueryCore(theEnv,(int) GetFirstArgument()->integerValue->contents);
-   ins = core->solns[(int) GetFirstArgument()->nextArg->integerValue->contents];
+   core = FindQueryCore(theEnv,GetFirstArgument()->integerValue->contents);
+   ins = core->solns[GetFirstArgument()->nextArg->integerValue->contents];
    EvaluateExpression(theEnv,GetFirstArgument()->nextArg->nextArg,&temp);
    if (temp.header->type != SYMBOL_TYPE)
      {
@@ -372,7 +372,7 @@ void QueryFindAllInstances(
   {
    QUERY_CLASS *qclasses;
    unsigned rcnt;
-   unsigned i,j;
+   size_t i, j;
 
    returnValue->begin = 0;
    returnValue->range = 0;
@@ -396,12 +396,12 @@ void QueryFindAllInstances(
    returnValue->value = CreateMultifield(theEnv,InstanceQueryData(theEnv)->QueryCore->soln_cnt * rcnt);
    while (InstanceQueryData(theEnv)->QueryCore->soln_set != NULL)
      {
-      for (i = 0 , j = (unsigned) returnValue->range ; i < rcnt ; i++ , j++)
+      for (i = 0 , j = returnValue->range ; i < rcnt ; i++ , j++)
         {
          returnValue->multifieldValue->contents[j].lexemeValue =
             GetFullInstanceName(theEnv,InstanceQueryData(theEnv)->QueryCore->soln_set->soln[i]);
         }
-      returnValue->range = (long) j;
+      returnValue->range = j;
       PopQuerySoln(theEnv);
      }
    rm(theEnv,InstanceQueryData(theEnv)->QueryCore->solns,(sizeof(Instance *) * rcnt));
@@ -631,19 +631,19 @@ static void PopQueryCore(
  ***************************************************/
 static QUERY_CORE *FindQueryCore(
   Environment *theEnv,
-  int depth)
+  long long depth)
   {
    QUERY_STACK *qptr;
 
    if (depth == 0)
-     return(InstanceQueryData(theEnv)->QueryCore);
+     return InstanceQueryData(theEnv)->QueryCore;
    qptr = InstanceQueryData(theEnv)->QueryCoreStack;
    while (depth > 1)
      {
       qptr = qptr->nxt;
       depth--;
      }
-   return(qptr->core);
+   return qptr->core;
   }
 
 /**********************************************************
@@ -746,7 +746,7 @@ static QUERY_CLASS *FormChain(
   {
    Defclass *cls;
    QUERY_CLASS *head,*bot,*tmp;
-   long i,end; /* 6.04 Bug Fix */
+   size_t i;
    const char *className;
    Defmodule *currentModule;
 
@@ -794,8 +794,7 @@ static QUERY_CLASS *FormChain(
    if (val->header->type == MULTIFIELD_TYPE)
      {
       head = bot = NULL;
-      end = (val->begin + val->range) - 1;
-      for (i = val->begin ; i <= end ; i++)
+      for (i = val->begin ; i < (val->begin + val->range) ; i++)
         {
          if (val->multifieldValue->contents[i].header->type == SYMBOL_TYPE)
            {
@@ -924,7 +923,7 @@ static bool TestForFirstInstanceInClass(
   QUERY_CLASS *qchain,
   int indx)
   {
-   long i;
+   unsigned long i;
    Instance *ins;
    UDFValue temp;
    GCBlock gcb;
@@ -1046,7 +1045,7 @@ static void TestEntireClass(
   QUERY_CLASS *qchain,
   int indx)
   {
-   long i;
+   unsigned long i;
    Instance *ins;
    UDFValue temp;
    GCBlock gcb;
@@ -1140,7 +1139,7 @@ static void AddSolution(
    QUERY_SOLN *new_soln;
    unsigned i;
 
-   new_soln = (QUERY_SOLN *) gm2(theEnv,(int) sizeof(QUERY_SOLN));
+   new_soln = (QUERY_SOLN *) gm2(theEnv,sizeof(QUERY_SOLN));
    new_soln->soln = (Instance **)
                     gm2(theEnv,(sizeof(Instance *) * (InstanceQueryData(theEnv)->QueryCore->soln_size)));
    for (i = 0 ; i < InstanceQueryData(theEnv)->QueryCore->soln_size ; i++)

@@ -68,7 +68,7 @@ void PrintFactJNCompVars1(
    else PrintString(theEnv,logicalName,"<> ");
 
    PrintString(theEnv,logicalName,"p");
-   PrintInteger(theEnv,logicalName,(long long) hack->pattern1 + 1);
+   PrintUnsignedInteger(theEnv,logicalName,hack->pattern1 + 1);
 
    if (hack->p1lhs)
      { PrintString(theEnv,logicalName," L"); }
@@ -76,10 +76,10 @@ void PrintFactJNCompVars1(
      { PrintString(theEnv,logicalName," R"); }
 
    PrintString(theEnv,logicalName," s");
-   PrintInteger(theEnv,logicalName,(long long) hack->slot1);
+   PrintUnsignedInteger(theEnv,logicalName,hack->slot1);
 
    PrintString(theEnv,logicalName," p");
-   PrintInteger(theEnv,logicalName,(long long) hack->pattern2 + 1);
+   PrintUnsignedInteger(theEnv,logicalName,hack->pattern2 + 1);
 
    if (hack->p2lhs)
      { PrintString(theEnv,logicalName," L"); }
@@ -87,7 +87,7 @@ void PrintFactJNCompVars1(
      { PrintString(theEnv,logicalName," R"); }
 
    PrintString(theEnv,logicalName," s");
-   PrintInteger(theEnv,logicalName,(long long) hack->slot2);
+   PrintUnsignedInteger(theEnv,logicalName,hack->slot2);
    PrintString(theEnv,logicalName,")");
 #else
 #if MAC_XCD
@@ -116,7 +116,7 @@ void PrintFactJNCompVars2(
    else PrintString(theEnv,logicalName,"<> ");
 
    PrintString(theEnv,logicalName,"p");
-   PrintInteger(theEnv,logicalName,(long long) hack->pattern1 + 1);
+   PrintUnsignedInteger(theEnv,logicalName,hack->pattern1 + 1);
 
    if (hack->p1lhs)
      { PrintString(theEnv,logicalName," L"); }
@@ -124,16 +124,16 @@ void PrintFactJNCompVars2(
      { PrintString(theEnv,logicalName," R"); }
 
    PrintString(theEnv,logicalName," s");
-   PrintInteger(theEnv,logicalName,(long long) hack->slot1);
+   PrintUnsignedInteger(theEnv,logicalName,hack->slot1);
 
    if (hack->fromBeginning1) PrintString(theEnv,logicalName, " b");
    else PrintString(theEnv,logicalName," e");
 
    PrintString(theEnv,logicalName," f");
-   PrintInteger(theEnv,logicalName,(long long) hack->offset1);
+   PrintUnsignedInteger(theEnv,logicalName,hack->offset1);
 
    PrintString(theEnv,logicalName," p");
-   PrintInteger(theEnv,logicalName,(long long) hack->pattern2 + 1);
+   PrintUnsignedInteger(theEnv,logicalName,hack->pattern2 + 1);
 
    if (hack->p2lhs)
      { PrintString(theEnv,logicalName," L"); }
@@ -141,13 +141,13 @@ void PrintFactJNCompVars2(
      { PrintString(theEnv,logicalName," R"); }
 
    PrintString(theEnv,logicalName," s");
-   PrintInteger(theEnv,logicalName,(long long) hack->slot2);
+   PrintUnsignedInteger(theEnv,logicalName,hack->slot2);
 
    if (hack->fromBeginning2) PrintString(theEnv,logicalName," b");
    else PrintString(theEnv,logicalName," e");
 
    PrintString(theEnv,logicalName," f");
-   PrintInteger(theEnv,logicalName,(long long) hack->offset2);
+   PrintUnsignedInteger(theEnv,logicalName,hack->offset2);
    PrintString(theEnv,logicalName,")");
 #else
 #if MAC_XCD
@@ -174,9 +174,9 @@ void PrintFactPNCompVars1(
    PrintString(theEnv,logicalName,"(fact-pn-cmp-vars ");
    if (hack->pass) PrintString(theEnv,logicalName,"p ");
    else PrintString(theEnv,logicalName,"n ");
-   PrintInteger(theEnv,logicalName,(long long) hack->field1);
+   PrintUnsignedInteger(theEnv,logicalName,hack->field1);
    PrintString(theEnv,logicalName," ");
-   PrintInteger(theEnv,logicalName,(long long) hack->field2);
+   PrintUnsignedInteger(theEnv,logicalName,hack->field2);
    PrintString(theEnv,logicalName,")");
 #else
 #if MAC_XCD
@@ -202,11 +202,11 @@ void PrintFactSlotLength(
    hack = (struct factCheckLengthPNCall *) ((CLIPSBitMap *) theValue)->contents;
 
    PrintString(theEnv,logicalName,"(slot-length ");
-   PrintInteger(theEnv,logicalName,(long long) hack->whichSlot);
+   PrintUnsignedInteger(theEnv,logicalName,hack->whichSlot);
    PrintString(theEnv,logicalName," ");
    if (hack->exactly) PrintString(theEnv,logicalName,"= ");
    else PrintString(theEnv,logicalName,">= ");
-   PrintInteger(theEnv,logicalName,(long long) hack->minLength);
+   PrintUnsignedInteger(theEnv,logicalName,hack->minLength);
    PrintString(theEnv,logicalName,")");
 #else
 #if MAC_XCD
@@ -237,11 +237,11 @@ void PrintFactJNGetVar1(
    else PrintString(theEnv,logicalName,"f ");
 
    PrintString(theEnv,logicalName,"p");
-   PrintInteger(theEnv,logicalName,(long long) hack->whichPattern + 1);
+   PrintUnsignedInteger(theEnv,logicalName,hack->whichPattern + 1);
    PrintString(theEnv,logicalName," ");
-   PrintInteger(theEnv,logicalName,(long long) hack->whichField);
+   PrintUnsignedInteger(theEnv,logicalName,hack->whichField);
    PrintString(theEnv,logicalName," s");
-   PrintInteger(theEnv,logicalName,(long long) hack->whichSlot);
+   PrintUnsignedInteger(theEnv,logicalName,hack->whichSlot);
 
    if (hack->lhs)
      { PrintString(theEnv,logicalName," L"); }
@@ -273,9 +273,9 @@ void PrintFactJNGetVar2(
    PrintString(theEnv,logicalName,"(fact-jn-getvar-2");
 
    PrintString(theEnv,logicalName," p");
-   PrintInteger(theEnv,logicalName,(long long) hack->whichPattern + 1);
+   PrintUnsignedInteger(theEnv,logicalName,hack->whichPattern + 1);
    PrintString(theEnv,logicalName," s");
-   PrintInteger(theEnv,logicalName,(long long) hack->whichSlot);
+   PrintUnsignedInteger(theEnv,logicalName,hack->whichSlot);
    if (hack->lhs)
      { PrintString(theEnv,logicalName," L"); }
    else if (hack->rhs)
@@ -309,14 +309,14 @@ void PrintFactJNGetVar3(
    if (hack->fromEnd) PrintString(theEnv,logicalName,"t ");
    else PrintString(theEnv,logicalName,"f ");
 
-   PrintInteger(theEnv,logicalName,(long long) hack->beginOffset);
+   PrintUnsignedInteger(theEnv,logicalName,hack->beginOffset);
    PrintString(theEnv,logicalName," ");
-   PrintInteger(theEnv,logicalName,(long long) hack->endOffset);
+   PrintUnsignedInteger(theEnv,logicalName,hack->endOffset);
    PrintString(theEnv,logicalName," ");
-   PrintInteger(theEnv,logicalName,(long long) hack->whichSlot);
+   PrintUnsignedInteger(theEnv,logicalName,hack->whichSlot);
 
    PrintString(theEnv,logicalName," p");
-   PrintInteger(theEnv,logicalName,(long long) hack->whichPattern + 1);
+   PrintUnsignedInteger(theEnv,logicalName,hack->whichPattern + 1);
 
    if (hack->lhs)
      { PrintString(theEnv,logicalName," L"); }
@@ -352,9 +352,9 @@ void PrintFactPNGetVar1(
    if (hack->allFields) PrintString(theEnv,logicalName,"t F");
    else PrintString(theEnv,logicalName,"f F");
 
-   PrintInteger(theEnv,logicalName,(long long) hack->whichField);
+   PrintUnsignedInteger(theEnv,logicalName,hack->whichField);
    PrintString(theEnv,logicalName," S");
-   PrintInteger(theEnv,logicalName,(long long) hack->whichSlot);
+   PrintUnsignedInteger(theEnv,logicalName,hack->whichSlot);
    PrintString(theEnv,logicalName,")");
 #else
 #if MAC_XCD
@@ -379,7 +379,7 @@ void PrintFactPNGetVar2(
 
    hack = (struct factGetVarPN2Call *) ((CLIPSBitMap *) theValue)->contents;
    PrintString(theEnv,logicalName,"(fact-pn-getvar-2 S");
-   PrintInteger(theEnv,logicalName,(long long) hack->whichSlot);
+   PrintUnsignedInteger(theEnv,logicalName,hack->whichSlot);
    PrintString(theEnv,logicalName,")");
 #else
 #if MAC_XCD
@@ -410,11 +410,11 @@ void PrintFactPNGetVar3(
    if (hack->fromEnd) PrintString(theEnv,logicalName,"t B");
    else PrintString(theEnv,logicalName,"f B");
 
-   PrintInteger(theEnv,logicalName,(long long) hack->beginOffset);
+   PrintUnsignedInteger(theEnv,logicalName,hack->beginOffset);
    PrintString(theEnv,logicalName," E");
-   PrintInteger(theEnv,logicalName,(long long) hack->endOffset);
+   PrintUnsignedInteger(theEnv,logicalName,hack->endOffset);
    PrintString(theEnv,logicalName," S");
-   PrintInteger(theEnv,logicalName,(long long) hack->whichSlot);
+   PrintUnsignedInteger(theEnv,logicalName,hack->whichSlot);
    PrintString(theEnv,logicalName,")");
 #else
 #if MAC_XCD
@@ -441,7 +441,7 @@ void PrintFactPNConstant1(
 
    PrintString(theEnv,logicalName,"(fact-pn-constant1 ");
 
-   PrintInteger(theEnv,logicalName,(long long) hack->whichSlot);
+   PrintUnsignedInteger(theEnv,logicalName,hack->whichSlot);
 
    if (hack->testForEquality) PrintString(theEnv,logicalName," = ");
    else PrintString(theEnv,logicalName," != ");
@@ -473,11 +473,11 @@ void PrintFactPNConstant2(
 
    PrintString(theEnv,logicalName,"(fact-pn-constant2 ");
 
-   PrintInteger(theEnv,logicalName,(long long) hack->whichSlot);
+   PrintUnsignedInteger(theEnv,logicalName,hack->whichSlot);
 
    PrintString(theEnv,logicalName," ");
 
-   PrintInteger(theEnv,logicalName,(long long) hack->offset);
+   PrintUnsignedInteger(theEnv,logicalName,hack->offset);
 
    if (hack->testForEquality) PrintString(theEnv,logicalName," = ");
    else PrintString(theEnv,logicalName," != ");

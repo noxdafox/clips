@@ -44,13 +44,15 @@
 #define _H_constant
 
 #include <stdbool.h>
+#include <stdint.h>
+#include <limits.h>
 
 #define EXACTLY       0
 #define AT_LEAST      1
 #define NO_MORE_THAN  2
 #define RANGE         3
 
-#define UNBOUNDED    -1
+#define UNBOUNDED    USHRT_MAX
 
 #define LHS           0
 #define RHS           1
@@ -92,11 +94,11 @@ typedef enum
 #endif
 
 #ifndef CREATION_DATE_STRING
-#define CREATION_DATE_STRING "03/01/17"
+#define CREATION_DATE_STRING "04/25/17"
 #endif
 
 #ifndef BANNER_STRING
-#define BANNER_STRING "         CLIPS (Cypher Alpha 03/29/17)\n"
+#define BANNER_STRING "         CLIPS (Cypher Alpha 04/25/17)\n"
 #endif
 
 /*************************/

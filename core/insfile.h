@@ -64,7 +64,7 @@ struct instanceFileData
   {
    const char *InstanceBinaryPrefixID;
    const char *InstanceBinaryVersionID;
-   unsigned long BinaryInstanceFileSize;
+   size_t BinaryInstanceFileSize;
 
 #if BLOAD_INSTANCES
    unsigned long BinaryInstanceFileOffset;
@@ -94,9 +94,9 @@ struct instanceFileData
    long                           BinaryLoadInstances(Environment *,const char *);
 #endif
    long                           LoadInstances(Environment *,const char *);
-   long                           LoadInstancesFromString(Environment *,const char *,long);
+   long                           LoadInstancesFromString(Environment *,const char *,size_t);
    long                           RestoreInstances(Environment *,const char *);
-   long                           RestoreInstancesFromString(Environment *,const char *,long);
+   long                           RestoreInstancesFromString(Environment *,const char *,size_t);
 
 #endif /* _H_insfile */
 
