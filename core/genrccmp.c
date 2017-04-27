@@ -88,15 +88,19 @@
 /***************************************/
 
    static void                    ReadyDefgenericsForCode(Environment *);
-   static bool                    DefgenericsToCode(Environment *,const char *,const char *,char *,int,FILE *,int,int);
+   static bool                    DefgenericsToCode(Environment *,const char *,const char *,char *,
+                                                    unsigned int,FILE *,unsigned int,unsigned int);
    static void                    CloseDefgenericFiles(Environment *,FILE *[SAVE_ITEMS],bool [SAVE_ITEMS],
-                                                       struct CodeGeneratorFile [SAVE_ITEMS],int);
-   static void                    DefgenericModuleToCode(Environment *,FILE *,Defmodule *,int,int);
-   static void                    SingleDefgenericToCode(Environment *,FILE *,int,int,Defgeneric *,int,int,int);
-   static void                    MethodToCode(Environment *,FILE *,int,int,Defmethod *,int,int,int);
-   static void                    RestrictionToCode(Environment *,FILE *,int,RESTRICTION *,int,int);
-   static void                    TypeToCode(Environment *,FILE *,int,void *,int);
-   static void                    InitDefgenericsCode(Environment *,FILE *,int,int);
+                                                       struct CodeGeneratorFile [SAVE_ITEMS],unsigned int);
+   static void                    DefgenericModuleToCode(Environment *,FILE *,Defmodule *,unsigned int,unsigned int);
+   static void                    SingleDefgenericToCode(Environment *,FILE *,unsigned int,unsigned int,
+                                                         Defgeneric *,unsigned int,unsigned int,unsigned int);
+   static void                    MethodToCode(Environment *,FILE *,unsigned int,unsigned int,Defmethod *,
+                                               unsigned int,unsigned int,unsigned int);
+   static void                    RestrictionToCode(Environment *,FILE *,unsigned int,RESTRICTION *,
+                                                    unsigned int,unsigned int);
+   static void                    TypeToCode(Environment *,FILE *,unsigned int,void *,unsigned int);
+   static void                    InitDefgenericsCode(Environment *,FILE *,unsigned int,unsigned int);
 
 /* =========================================
    *****************************************
@@ -138,15 +142,15 @@ void PrintGenericFunctionReference(
   Environment *theEnv,
   FILE *fp,
   Defgeneric *gfunc,
-  int imageID,
-  int maxIndices)
+  unsigned imageID,
+  unsigned maxIndices)
   {
    if (gfunc == NULL)
      fprintf(fp,"NULL");
    else
-     fprintf(fp,"&%s%d_%d[%d]",ConstructPrefix(DefgenericData(theEnv)->DefgenericCodeItem),imageID,
-                                (int) ((gfunc->header.bsaveID / maxIndices) + 1),
-                                (int) (gfunc->header.bsaveID % maxIndices));
+     fprintf(fp,"&%s%d_%lu[%lul]",ConstructPrefix(DefgenericData(theEnv)->DefgenericCodeItem),imageID,
+                                (gfunc->header.bsaveID / maxIndices) + 1,
+                                (gfunc->header.bsaveID % maxIndices));
   }
 
 /****************************************************
@@ -165,11 +169,11 @@ void PrintGenericFunctionReference(
 void DefgenericCModuleReference(
   Environment *theEnv,
   FILE *theFile,
-  int count,
-  int imageID,
-  int maxIndices)
+  unsigned long count,
+  unsigned int imageID,
+  unsigned int maxIndices)
   {
-   fprintf(theFile,"MIHS &%s%d_%d[%d]",
+   fprintf(theFile,"MIHS &%s%u_%lu[%lu]",
                       ModulePrefix(DefgenericData(theEnv)->DefgenericCodeItem),
                       imageID,
                       (count / maxIndices) + 1,
@@ -204,8 +208,8 @@ static void ReadyDefgenericsForCode(
 static void InitDefgenericsCode(
   Environment *theEnv,
   FILE *initFP,
-  int imageID,
-  int maxIndices)
+  unsigned int imageID,
+  unsigned int maxIndices)
   {
 #if MAC_XCD
 #pragma unused(maxIndices)
@@ -235,20 +239,20 @@ static bool DefgenericsToCode(
   const char *fileName,
   const char *pathName,
   char *fileNameBuffer,
-  int fileID,
+  unsigned int fileID,
   FILE *headerFP,
-  int imageID,
-  int maxIndices)
+  unsigned int imageID,
+  unsigned int maxIndices)
   {
-   int fileCount = 1;
+   unsigned int fileCount = 1;
    Defmodule *theModule;
    Defgeneric *theDefgeneric;
    Defmethod *theMethod;
    RESTRICTION *theRestriction;
    short i,j,k;
-   int moduleCount = 0;
-   int itemArrayCounts[SAVE_ITEMS];
-   int itemArrayVersions[SAVE_ITEMS];
+   unsigned int moduleCount = 0;
+   unsigned int itemArrayCounts[SAVE_ITEMS];
+   unsigned int itemArrayVersions[SAVE_ITEMS];
    FILE *itemFiles[SAVE_ITEMS];
    bool itemReopenFlags[SAVE_ITEMS];
    struct CodeGeneratorFile itemCodeFiles[SAVE_ITEMS];
@@ -378,7 +382,7 @@ static bool DefgenericsToCode(
                            TypeToCode(theEnv,itemFiles[TYPEI],imageID,
                                       theRestriction->types[k],maxIndices);
                           }
-                        itemArrayCounts[TYPEI] += (int) theRestriction->tcnt;
+                        itemArrayCounts[TYPEI] += theRestriction->tcnt;
                         itemFiles[TYPEI] =
                            CloseFileIfNeeded(theEnv,itemFiles[TYPEI],&itemArrayCounts[TYPEI],
                                              &itemArrayVersions[TYPEI],maxIndices,
@@ -392,7 +396,7 @@ static bool DefgenericsToCode(
                                        &itemReopenFlags[RESTRICTIONI],&itemCodeFiles[RESTRICTIONI]);
                  }
               }
-            itemArrayCounts[METHODI] += (int) theDefgeneric->mcnt;
+            itemArrayCounts[METHODI] += theDefgeneric->mcnt;
             itemFiles[METHODI] =
                CloseFileIfNeeded(theEnv,itemFiles[METHODI],&itemArrayCounts[METHODI],
                                  &itemArrayVersions[METHODI],maxIndices,
@@ -434,11 +438,11 @@ static void CloseDefgenericFiles(
   FILE *itemFiles[SAVE_ITEMS],
   bool itemReopenFlags[SAVE_ITEMS],
   struct CodeGeneratorFile itemCodeFiles[SAVE_ITEMS],
-  int maxIndices)
+  unsigned int maxIndices)
   {
-   int count = maxIndices;
-   int arrayVersion = 0;
-   int i;
+   unsigned int count = maxIndices;
+   unsigned int arrayVersion = 0;
+   unsigned int i;
 
    for (i = 0 ; i < SAVE_ITEMS ; i++)
      {
@@ -466,8 +470,8 @@ static void DefgenericModuleToCode(
   Environment *theEnv,
   FILE *theFile,
   Defmodule *theModule,
-  int imageID,
-  int maxIndices)
+  unsigned int imageID,
+  unsigned int maxIndices)
   {
    fprintf(theFile,"{");
    ConstructModuleToCode(theEnv,theFile,theModule,imageID,maxIndices,
@@ -496,12 +500,12 @@ static void DefgenericModuleToCode(
 static void SingleDefgenericToCode(
   Environment *theEnv,
   FILE *theFile,
-  int imageID,
-  int maxIndices,
+  unsigned int imageID,
+  unsigned int maxIndices,
   Defgeneric *theDefgeneric,
-  int moduleCount,
-  int methodArrayVersion,
-  int methodArrayCount)
+  unsigned int moduleCount,
+  unsigned int methodArrayVersion,
+  unsigned int methodArrayCount)
   {
    /* ==================
       Defgeneric Header
@@ -543,19 +547,19 @@ static void SingleDefgenericToCode(
 static void MethodToCode(
   Environment *theEnv,
   FILE *theFile,
-  int imageID,
-  int maxIndices,
+  unsigned int imageID,
+  unsigned int maxIndices,
   Defmethod *theMethod,
-  int moduleCount,
-  int restrictionArrayVersion,
-  int restrictionArrayCount)
+  unsigned int moduleCount,
+  unsigned int restrictionArrayVersion,
+  unsigned int restrictionArrayCount)
   {
    fprintf(theFile,"{");
    ConstructHeaderToCode(theEnv,theFile,&theMethod->header,imageID,maxIndices,moduleCount,
                          ModulePrefix(DefgenericData(theEnv)->DefgenericCodeItem),
                          "");
 
-   fprintf(theFile,",%u,0,%hd,%hd,%hd,%hd,%u,0,",
+   fprintf(theFile,",%u,0,%hd,%hu,%hu,%hd,%u,0,",
                    theMethod->index,theMethod->restrictionCount,
                    theMethod->minRestrictions,theMethod->maxRestrictions,
                    theMethod->localVarCount,theMethod->system);
@@ -586,10 +590,10 @@ static void MethodToCode(
 static void RestrictionToCode(
   Environment *theEnv,
   FILE *theFile,
-  int imageID,
+  unsigned int imageID,
   RESTRICTION *theRestriction,
-  int typeArrayVersion,
-  int typeArrayCount)
+  unsigned int typeArrayVersion,
+  unsigned int typeArrayCount)
   {
    fprintf(theFile,"{");
    if (theRestriction->types == NULL)
@@ -615,9 +619,9 @@ static void RestrictionToCode(
 static void TypeToCode(
   Environment *theEnv,
   FILE *theFile,
-  int imageID,
+  unsigned int imageID,
   void *theType,
-  int maxIndices)
+  unsigned int maxIndices)
   {
 #if OBJECT_SYSTEM
    fprintf(theFile,"VS ");
@@ -632,6 +636,5 @@ static void TypeToCode(
    PrintIntegerReference(theEnv,theFile,(CLIPSInteger *) theType);
 #endif
   }
-
 
 #endif

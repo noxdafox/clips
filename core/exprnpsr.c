@@ -475,7 +475,7 @@ bool RestrictionExists(
        i++;
       }
 
-    if (position == currentPosition) true;
+    if (position == currentPosition) return true;
 
     return false;
    }
@@ -494,9 +494,9 @@ bool CheckExpressionAgainstRestrictions(
   struct functionDefinition *theFunction,
   const char *functionName)
   {
-   int j = 1;
-   int number1, number2;
-   int argCount;
+   unsigned int j = 1;
+   unsigned short number1, number2;
+   unsigned short argCount;
    struct expr *argPtr;
    const char *restrictions;
    unsigned defaultRestriction2, argRestriction2;
@@ -870,9 +870,9 @@ void PopulateRestriction(
    unsigned *restriction,
    unsigned defaultRestriction,
    const char *restrictionString,
-   int position)
+   unsigned int position)
    {
-    int i = 0, currentPosition = 0, valuesRead = 0;
+    unsigned int i = 0, currentPosition = 0, valuesRead = 0;
     char buffer[2];
 
     *restriction = 0;

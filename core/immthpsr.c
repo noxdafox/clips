@@ -143,9 +143,10 @@ static void FormMethodsFromRestrictions(
    Expression *plist,*tmp,*bot,*svBot;
    RESTRICTION *rptr;
    unsigned defaultc2, argRestriction2;
-   int min,max,mposn;
+   int mposn;
+   unsigned short min, max;
    bool needMinimumMethod;
-   int i;
+   unsigned short i;
    const char *rstring;
 
    if (sysfunc->restrictions == NULL)
@@ -249,7 +250,7 @@ static void FormMethodsFromRestrictions(
 
       rptr = ParseRestrictionType(theEnv,defaultc2);
 
-      if (max != -1)
+      if (max != UNBOUNDED)
         {
          rptr->query = GenConstant(theEnv,FCALL,FindFunction(theEnv,"<="));
          rptr->query->argList = GenConstant(theEnv,FCALL,FindFunction(theEnv,"length$"));
@@ -420,7 +421,7 @@ static Expression *GenTypeExpression(
    else
      tmp = GenConstant(theEnv,0,LookupDefclassByMdlOrScope(theEnv,COOLName));
 #else
-   tmp = GenConstant(theEnv,0,CreateInteger(theEnv,(long long) nonCOOLCode));
+   tmp = GenConstant(theEnv,0,CreateInteger(theEnv,nonCOOLCode));
 #endif
    tmp->nextArg = top;
    return(tmp);

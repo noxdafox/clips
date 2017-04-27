@@ -69,11 +69,11 @@ typedef struct bsaveDeffunctionModule
 typedef struct bsaveDeffunctionStruct
   {
    struct bsaveConstructHeader header;
-   int minNumberOfParameters,
-       maxNumberOfParameters,
-       numberOfLocalVars;
-   long name,
-        code;
+   unsigned short minNumberOfParameters;
+   unsigned short maxNumberOfParameters;
+   unsigned short numberOfLocalVars;
+   unsigned long name;
+   unsigned long code;
   } BSAVE_DEFFUNCTION;
 
 /****************************************/
@@ -92,8 +92,8 @@ typedef struct bsaveDeffunctionStruct
 
    static void                    BloadStorageDeffunctions(Environment *);
    static void                    BloadDeffunctions(Environment *);
-   static void                    UpdateDeffunctionModule(Environment *,void *,long);
-   static void                    UpdateDeffunction(Environment *,void *,long);
+   static void                    UpdateDeffunctionModule(Environment *,void *,unsigned long);
+   static void                    UpdateDeffunction(Environment *,void *,unsigned long);
    static void                    ClearDeffunctionBload(Environment *);
    static void                    DeallocateDeffunctionBloadData(Environment *);
 
@@ -157,7 +157,7 @@ static void DeallocateDeffunctionBloadData(
  ***************************************************/
 void *BloadDeffunctionModuleReference(
   Environment *theEnv,
-  int theIndex)
+  unsigned long theIndex)
   {
    return (void *) &DeffunctionBinaryData(theEnv)->ModuleArray[theIndex];
   }
@@ -192,9 +192,11 @@ static void BsaveDeffunctionFind(
    SaveBloadCount(theEnv,DeffunctionBinaryData(theEnv)->DeffunctionCount);
    DeffunctionBinaryData(theEnv)->DeffunctionCount = 0L;
 
-   DeffunctionBinaryData(theEnv)->ModuleCount =
-      DoForAllConstructs(theEnv,MarkDeffunctionItems,DeffunctionData(theEnv)->DeffunctionModuleIndex,
-                         false,NULL);
+   DeffunctionBinaryData(theEnv)->ModuleCount = GetNumberOfDefmodules(theEnv);
+   
+   DoForAllConstructs(theEnv,MarkDeffunctionItems,
+                      DeffunctionData(theEnv)->DeffunctionModuleIndex,
+                      false,NULL);
   }
 
 /***************************************************
@@ -352,7 +354,7 @@ static void BsaveDeffunction(
       ExpressionData(theEnv)->ExpressionCount += ExpressionSize(dptr->code);
      }
    else
-     dummy_df.code = -1L;
+     dummy_df.code = ULONG_MAX;
    GenWrite(&dummy_df,sizeof(BSAVE_DEFFUNCTION),(FILE *) userBuffer);
   }
 
@@ -434,13 +436,13 @@ static void BloadDeffunctions(
 static void UpdateDeffunctionModule(
   Environment *theEnv,
   void *buf,
-  long obji)
+  unsigned long obji)
   {
    BSAVE_DEFFUNCTION_MODULE *bdptr;
 
    bdptr = (BSAVE_DEFFUNCTION_MODULE *) buf;
    UpdateDefmoduleItemHeader(theEnv,&bdptr->header,&DeffunctionBinaryData(theEnv)->ModuleArray[obji].header,
-                             (int) sizeof(Deffunction),DeffunctionBinaryData(theEnv)->DeffunctionArray);
+                             sizeof(Deffunction),DeffunctionBinaryData(theEnv)->DeffunctionArray);
   }
 
 /***************************************************
@@ -458,7 +460,7 @@ static void UpdateDeffunctionModule(
 static void UpdateDeffunction(
   Environment *theEnv,
   void *buf,
-  long obji)
+  unsigned long obji)
   {
    BSAVE_DEFFUNCTION *bdptr;
    Deffunction *dptr;
@@ -467,14 +469,14 @@ static void UpdateDeffunction(
    dptr = &DeffunctionBinaryData(theEnv)->DeffunctionArray[obji];
 
    UpdateConstructHeader(theEnv,&bdptr->header,&dptr->header,DEFFUNCTION,
-                         (int) sizeof(DeffunctionModuleData),DeffunctionBinaryData(theEnv)->ModuleArray,
-                         (int) sizeof(Deffunction),DeffunctionBinaryData(theEnv)->DeffunctionArray);
+                         sizeof(DeffunctionModuleData),DeffunctionBinaryData(theEnv)->ModuleArray,
+                         sizeof(Deffunction),DeffunctionBinaryData(theEnv)->DeffunctionArray);
 
    dptr->code = ExpressionPointer(bdptr->code);
    dptr->busy = 0;
    dptr->executing = 0;
 #if DEBUGGING_FUNCTIONS
-   dptr->trace = (unsigned short) DeffunctionData(theEnv)->WatchDeffunctions;
+   dptr->trace = DeffunctionData(theEnv)->WatchDeffunctions;
 #endif
    dptr->minNumberOfParameters = bdptr->minNumberOfParameters;
    dptr->maxNumberOfParameters = bdptr->maxNumberOfParameters;
@@ -494,7 +496,7 @@ static void UpdateDeffunction(
 static void ClearDeffunctionBload(
   Environment *theEnv)
   {
-   long i;
+   unsigned long i;
    size_t space;
 
    space = (sizeof(DeffunctionModuleData) * DeffunctionBinaryData(theEnv)->ModuleCount);
@@ -504,10 +506,10 @@ static void ClearDeffunctionBload(
    DeffunctionBinaryData(theEnv)->ModuleArray = NULL;
    DeffunctionBinaryData(theEnv)->ModuleCount = 0L;
 
-   for (i = 0L ; i < DeffunctionBinaryData(theEnv)->DeffunctionCount ; i++)
+   for (i = 0 ; i < DeffunctionBinaryData(theEnv)->DeffunctionCount ; i++)
      UnmarkConstructHeader(theEnv,&DeffunctionBinaryData(theEnv)->DeffunctionArray[i].header);
    space = (sizeof(Deffunction) * DeffunctionBinaryData(theEnv)->DeffunctionCount);
-   if (space == 0L)
+   if (space == 0)
      return;
    genfree(theEnv,DeffunctionBinaryData(theEnv)->DeffunctionArray,space);
    DeffunctionBinaryData(theEnv)->DeffunctionArray = NULL;

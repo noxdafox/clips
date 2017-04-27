@@ -181,7 +181,7 @@ struct objectReteData
   {
    Instance *CurrentPatternObject;
    InstanceSlot *CurrentPatternObjectSlot;
-   unsigned CurrentObjectSlotLength;
+   size_t CurrentObjectSlotLength;
    struct multifieldMarker *CurrentPatternObjectMarks;
    struct entityRecord ObjectGVInfo1;
    struct entityRecord ObjectGVInfo2;
@@ -200,7 +200,7 @@ struct objectReteData
    OBJECT_ALPHA_NODE *ObjectPatternNetworkTerminalPointer;
    bool DelayObjectPatternMatching;
    unsigned long long CurrentObjectMatchTimeTag;
-   long long UseEntityTimeTag;
+   unsigned long long UseEntityTimeTag;
 #if DEFRULE_CONSTRUCT && OBJECT_SYSTEM && CONSTRUCT_COMPILER && (! RUN_TIME)
    struct CodeGeneratorItem *ObjectPatternCodeItem;
 #endif

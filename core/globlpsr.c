@@ -380,7 +380,7 @@ static void AddDefglobal(
 
    if (newGlobal == false)
      {
-      DecrementUDFValueReferenceCount(theEnv,&defglobalPtr->current);
+      DecrementReferenceCount(theEnv,defglobalPtr->current.header);
       if (defglobalPtr->current.header->type == MULTIFIELD_TYPE)
         { ReturnMultifield(theEnv,defglobalPtr->current.multifieldValue); }
 
@@ -391,9 +391,11 @@ static void AddDefglobal(
    /* Copy the new values to the defglobal. */
    /*=======================================*/
 
-   if (vPtr->header->type != MULTIFIELD_TYPE) defglobalPtr->current.value = vPtr->value;
-   else DuplicateMultifield(theEnv,&defglobalPtr->current,vPtr);
-   IncrementUDFValueReferenceCount(theEnv,&defglobalPtr->current);
+   if (vPtr->header->type != MULTIFIELD_TYPE)
+     { defglobalPtr->current.value = vPtr->value; }
+   else
+     { defglobalPtr->current.value = CopyMultifield(theEnv,vPtr->multifieldValue); }
+   IncrementReferenceCount(theEnv,defglobalPtr->current.header);
 
    defglobalPtr->initial = AddHashedExpression(theEnv,ePtr);
    ReturnExpression(theEnv,ePtr);
@@ -458,7 +460,7 @@ bool ReplaceGlobalVariable(
   struct expr *ePtr)
   {
    Defglobal *theGlobal;
-   int count;
+   unsigned int count;
 
    /*=================================*/
    /* Search for the global variable. */

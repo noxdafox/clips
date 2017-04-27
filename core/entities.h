@@ -213,7 +213,7 @@ struct udfContext
    Environment *environment;
    void *context;
    FunctionDefinition *theFunction;
-   int lastPosition;
+   unsigned int lastPosition;
    Expression *lastArg;
    UDFValue *returnValue;
   };

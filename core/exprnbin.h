@@ -39,7 +39,7 @@
 
 #include "expressn.h"
 
-#define ExpressionPointer(i) ((struct expr *) (((i) == -1L) ? NULL : &ExpressionData(theEnv)->ExpressionArray[i]))
+#define ExpressionPointer(i) ((struct expr *) (((i) == ULONG_MAX) ? NULL : &ExpressionData(theEnv)->ExpressionArray[i]))
 #define HashedExpressionPointer(i) ExpressionPointer(i)
 
    void                        AllocateExpressions(Environment *);

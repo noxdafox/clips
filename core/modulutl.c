@@ -54,10 +54,9 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static ConstructHeader    *SearchImportedConstructModules(Environment *,CLIPSLexeme *,
-                                              Defmodule *,
-                                              struct moduleItem *,CLIPSLexeme *,
-                                              int *,int,Defmodule *);
+   static ConstructHeader    *SearchImportedConstructModules(Environment *,CLIPSLexeme *,Defmodule *,
+                                                             struct moduleItem *,CLIPSLexeme *,
+                                                             unsigned int *,bool,Defmodule *);
 
 /********************************************************************/
 /* FindModuleSeparator: Finds the :: separator which delineates the */
@@ -279,7 +278,7 @@ ConstructHeader *FindImportedConstruct(
   const char *constructName,
   Defmodule *matchModule,
   const char *findName,
-  int *count,
+  unsigned int *count,
   bool searchCurrent,
   Defmodule *notYetDefinedInModule)
   {
@@ -403,8 +402,8 @@ static ConstructHeader *SearchImportedConstructModules(
   Defmodule *matchModule,
   struct moduleItem *theModuleItem,
   CLIPSLexeme *findName,
-  int *count,
-  int searchCurrent,
+  unsigned int *count,
+  bool searchCurrent,
   Defmodule *notYetDefinedInModule)
   {
    Defmodule *theModule;
@@ -641,7 +640,7 @@ void ListItemsDriver(
   {
    void *constructPtr;
    const char *constructName;
-   long count = 0;
+   unsigned long count = 0;
    bool allModules = false;
    bool doIt;
 
@@ -938,6 +937,7 @@ CLIPSLexeme *GetConstructNameAndComment(
          redefining = true;
          if (deleteFunction != NULL)
            {
+            IncrementLexemeReferenceCount(theEnv,name);
             if ((*deleteFunction)(theConstruct,theEnv) == false)
               {
                PrintErrorID(theEnv,"CSTRCPSR",4,true);
@@ -946,8 +946,10 @@ CLIPSLexeme *GetConstructNameAndComment(
                PrintString(theEnv,WERROR," ");
                PrintString(theEnv,WERROR,name->contents);
                PrintString(theEnv,WERROR," while it is in use.\n");
+               DecrementLexemeReferenceCount(theEnv,name);
                return NULL;
               }
+            DecrementLexemeReferenceCount(theEnv,name);
            }
         }
      }

@@ -137,8 +137,8 @@ void DeftemplateFunctions(
   Environment *theEnv)
   {
 #if ! RUN_TIME
-   AddUDF(theEnv,"modify","bf",0,UNBOUNDED,NULL,ModifyCommand,"ModifyCommand",NULL);
-   AddUDF(theEnv,"duplicate","bf",0,UNBOUNDED,NULL,DuplicateCommand,"DuplicateCommand",NULL);
+   AddUDF(theEnv,"modify","bf",0,UNBOUNDED,"*;lf",ModifyCommand,"ModifyCommand",NULL);
+   AddUDF(theEnv,"duplicate","bf",0,UNBOUNDED,"*;lf",DuplicateCommand,"DuplicateCommand",NULL);
 
    AddUDF(theEnv,"deftemplate-slot-names","bm",1,1,"y",DeftemplateSlotNamesFunction,"DeftemplateSlotNamesFunction",NULL);
    AddUDF(theEnv,"deftemplate-slot-default-value","*",2,2,"y",DeftemplateSlotDefaultValueFunction,"DeftemplateSlotDefaultValueFunction",NULL);
@@ -176,11 +176,11 @@ static void FreeTemplateValueArray(
   CLIPSValue *theValueArray,
   Deftemplate *templatePtr)
   {
-   int i;
+   unsigned short i;
 
    if (theValueArray == NULL) return;
 
-   for (i = 0; i < (int) templatePtr->numberOfSlots; i++)
+   for (i = 0; i < templatePtr->numberOfSlots; i++)
      {
       if (theValueArray[i].header->type == MULTIFIELD_TYPE)
         { ReturnMultifield(theEnv,theValueArray[i].multifieldValue); }
@@ -203,7 +203,9 @@ void ModifyCommand(
    UDFValue computeResult;
    Deftemplate *templatePtr;
    struct templateSlot *slotPtr;
-   int i, position, replacementCount = 0;
+   size_t i;
+   long long position;
+   int replacementCount = 0;
    bool found;
    CLIPSValue *theValueArray;
    char *changeMap;
@@ -304,7 +306,7 @@ void ModifyCommand(
    /* Duplicate the values from the old fact (skipping multifields). */
    /*================================================================*/
 
-   for (i = 0; i < (int) oldFact->theProposition.length; i++)
+   for (i = 0; i < oldFact->theProposition.length; i++)
      { theValueArray[i].voidValue = VoidConstant(theEnv); }
 
    /*========================*/
@@ -323,7 +325,7 @@ void ModifyCommand(
       /*============================================================*/
 
       if (testPtr->type == INTEGER_TYPE)
-        { position = (int) testPtr->integerValue->contents; }
+        { position = testPtr->integerValue->contents; }
       else
         {
          found = false;
@@ -493,7 +495,7 @@ Fact *ReplaceFact(
   CLIPSValue *theValueArray,
   char *changeMap)
   {
-   int i;
+   size_t i;
    Fact *theFact;
    Fact *factListPosition, *templatePosition;
    
@@ -534,7 +536,7 @@ Fact *ReplaceFact(
    /* Copy the new values to the old fact. */
    /*======================================*/
 
-   for (i = 0; i < (int) oldFact->theProposition.length; i++)
+   for (i = 0; i < oldFact->theProposition.length; i++)
      {
       if (theValueArray[i].voidValue != VoidConstant(theEnv))
         {
@@ -595,7 +597,8 @@ void DuplicateCommand(
    UDFValue computeResult;
    Deftemplate *templatePtr;
    struct templateSlot *slotPtr;
-   int i, position;
+   size_t i;
+   long long position;
    bool found;
 
    /*===================================================*/
@@ -680,7 +683,7 @@ void DuplicateCommand(
 
    newFact = CreateFactBySize(theEnv,oldFact->theProposition.length);
    newFact->whichDeftemplate = templatePtr;
-   for (i = 0; i < (int) oldFact->theProposition.length; i++)
+   for (i = 0; i < oldFact->theProposition.length; i++)
      {
       if (oldFact->theProposition.contents[i].header->type != MULTIFIELD_TYPE)
         { newFact->theProposition.contents[i].value = oldFact->theProposition.contents[i].value; }
@@ -704,7 +707,7 @@ void DuplicateCommand(
       /*============================================================*/
 
       if (testPtr->type == INTEGER_TYPE)
-        { position = (int) testPtr->integerValue->contents; }
+        { position = testPtr->integerValue->contents; }
       else
         {
          found = false;
@@ -813,7 +816,7 @@ void DuplicateCommand(
    /* old fact that were not replaced.    */
    /*=====================================*/
 
-   for (i = 0; i < (int) oldFact->theProposition.length; i++)
+   for (i = 0; i < oldFact->theProposition.length; i++)
      {
       if ((oldFact->theProposition.contents[i].header->type == MULTIFIELD_TYPE) &&
           (newFact->theProposition.contents[i].value == NULL))
@@ -905,7 +908,7 @@ void DeftemplateSlotNames(
 
    if (theDeftemplate->implied)
      {
-      theList = CreateMultifield(theEnv,(int) 1);
+      theList = CreateMultifield(theEnv,1);
       theList->contents[0].lexemeValue = CreateSymbol(theEnv,"implied");
       returnValue->value = theList;
       return;
@@ -985,7 +988,6 @@ DefaultType DeftemplateSlotDefaultP(
   Deftemplate *theDeftemplate,
   const char *slotName)
   {
-   short position;
    struct templateSlot *theSlot;
    Environment *theEnv = theDeftemplate->header.env;
 
@@ -1014,7 +1016,7 @@ DefaultType DeftemplateSlotDefaultP(
    /* list of slots defined for the deftemplate. */
    /*============================================*/
 
-   else if ((theSlot = FindSlot(theDeftemplate,CreateSymbol(theEnv,slotName),&position)) == NULL)
+   else if ((theSlot = FindSlot(theDeftemplate,CreateSymbol(theEnv,slotName),NULL)) == NULL)
      {
       SetEvaluationError(theEnv,true);
       InvalidDeftemplateSlotMessage(theEnv,slotName,
@@ -1075,7 +1077,6 @@ bool DeftemplateSlotDefaultValue(
   const char *slotName,
   CLIPSValue *theValue)
   {
-   short position;
    struct templateSlot *theSlot;
    UDFValue tempDO;
    Environment *theEnv = theDeftemplate->header.env;
@@ -1112,7 +1113,7 @@ bool DeftemplateSlotDefaultValue(
    /* list of slots defined for the deftemplate. */
    /*============================================*/
 
-   else if ((theSlot = FindSlot(theDeftemplate,CreateSymbol(theEnv,slotName),&position)) == NULL)
+   else if ((theSlot = FindSlot(theDeftemplate,CreateSymbol(theEnv,slotName),NULL)) == NULL)
      {
       SetEvaluationError(theEnv,true);
       InvalidDeftemplateSlotMessage(theEnv,slotName,
@@ -1178,7 +1179,6 @@ bool DeftemplateSlotCardinality(
   const char *slotName,
   CLIPSValue *returnValue)
   {
-   short position;
    struct templateSlot *theSlot;
    Environment *theEnv = theDeftemplate->header.env;
 
@@ -1211,7 +1211,7 @@ bool DeftemplateSlotCardinality(
    /* list of slots defined for the deftemplate. */
    /*============================================*/
 
-   else if ((theSlot = FindSlot(theDeftemplate,CreateSymbol(theEnv,slotName),&position)) == NULL)
+   else if ((theSlot = FindSlot(theDeftemplate,CreateSymbol(theEnv,slotName),NULL)) == NULL)
      {
       returnValue->multifieldValue = CreateMultifield(theEnv,0L);
       SetEvaluationError(theEnv,true);
@@ -1287,7 +1287,6 @@ bool DeftemplateSlotAllowedValues(
   const char *slotName,
   CLIPSValue *returnValue)
   {
-   short position;
    struct templateSlot *theSlot;
    int i;
    Expression *theExp;
@@ -1320,7 +1319,7 @@ bool DeftemplateSlotAllowedValues(
    /* list of slots defined for the deftemplate. */
    /*============================================*/
 
-   else if ((theSlot = FindSlot(theDeftemplate,CreateSymbol(theEnv,slotName),&position)) == NULL)
+   else if ((theSlot = FindSlot(theDeftemplate,CreateSymbol(theEnv,slotName),NULL)) == NULL)
      {
       returnValue->multifieldValue = CreateMultifield(theEnv,0L);
       SetEvaluationError(theEnv,true);
@@ -1394,7 +1393,6 @@ bool DeftemplateSlotRange(
   const char *slotName,
   CLIPSValue *returnValue)
   {
-   short position;
    struct templateSlot *theSlot;
    Environment *theEnv = theDeftemplate->header.env;
 
@@ -1429,7 +1427,7 @@ bool DeftemplateSlotRange(
    /* list of slots defined for the deftemplate. */
    /*============================================*/
 
-   else if ((theSlot = FindSlot(theDeftemplate,CreateSymbol(theEnv,slotName),&position)) == NULL)
+   else if ((theSlot = FindSlot(theDeftemplate,CreateSymbol(theEnv,slotName),NULL)) == NULL)
      {
       returnValue->multifieldValue = CreateMultifield(theEnv,0L);
       SetEvaluationError(theEnv,true);
@@ -1497,9 +1495,8 @@ bool DeftemplateSlotTypes(
   const char *slotName,
   CLIPSValue *returnValue)
   {
-   short position;
    struct templateSlot *theSlot = NULL;
-   int numTypes, i;
+   unsigned int numTypes, i;
    bool allTypes = false;
    Environment *theEnv = theDeftemplate->header.env;
 
@@ -1525,7 +1522,7 @@ bool DeftemplateSlotTypes(
    /* list of slots defined for the deftemplate. */
    /*============================================*/
 
-   else if ((theSlot = FindSlot(theDeftemplate,CreateSymbol(theEnv,slotName),&position)) == NULL)
+   else if ((theSlot = FindSlot(theDeftemplate,CreateSymbol(theEnv,slotName),NULL)) == NULL)
      {
       returnValue->multifieldValue = CreateMultifield(theEnv,0L);
       SetEvaluationError(theEnv,true);
@@ -1658,7 +1655,6 @@ bool DeftemplateSlotMultiP(
   Deftemplate *theDeftemplate,
   const char *slotName)
   {
-   short position;
    struct templateSlot *theSlot;
    Environment *theEnv = theDeftemplate->header.env;
 
@@ -1685,7 +1681,7 @@ bool DeftemplateSlotMultiP(
    /* list of slots defined for the deftemplate. */
    /*============================================*/
 
-   else if ((theSlot = FindSlot(theDeftemplate,CreateSymbol(theEnv,slotName),&position)) == NULL)
+   else if ((theSlot = FindSlot(theDeftemplate,CreateSymbol(theEnv,slotName),NULL)) == NULL)
      {
       SetEvaluationError(theEnv,true);
       InvalidDeftemplateSlotMessage(theEnv,slotName,
@@ -1738,7 +1734,6 @@ bool DeftemplateSlotSingleP(
   Deftemplate *theDeftemplate,
   const char *slotName)
   {
-   short position;
    struct templateSlot *theSlot;
    Environment *theEnv = theDeftemplate->header.env;
 
@@ -1765,7 +1760,7 @@ bool DeftemplateSlotSingleP(
    /* list of slots defined for the deftemplate. */
    /*============================================*/
 
-   else if ((theSlot = FindSlot(theDeftemplate,CreateSymbol(theEnv,slotName),&position)) == NULL)
+   else if ((theSlot = FindSlot(theDeftemplate,CreateSymbol(theEnv,slotName),NULL)) == NULL)
      {
       SetEvaluationError(theEnv,true);
       InvalidDeftemplateSlotMessage(theEnv,slotName,
@@ -1818,7 +1813,6 @@ bool DeftemplateSlotExistP(
   Deftemplate *theDeftemplate,
   const char *slotName)
   {
-   short position;
    Environment *theEnv = theDeftemplate->header.env;
 
    /*===============================================*/
@@ -1839,7 +1833,7 @@ bool DeftemplateSlotExistP(
    /* list of slots defined for the deftemplate. */
    /*============================================*/
 
-   else if (FindSlot(theDeftemplate,CreateSymbol(theEnv,slotName),&position) == NULL)
+   else if (FindSlot(theDeftemplate,CreateSymbol(theEnv,slotName),NULL) == NULL)
      { return false; }
 
    /*==================*/
@@ -1900,7 +1894,6 @@ bool DeftemplateSlotFacetExistP(
   const char *slotName,
   const char *facetName)
   {
-   short position;
    struct templateSlot *theSlot;
    CLIPSLexeme *facetHN;
    struct expr *tempFacet;
@@ -1917,7 +1910,7 @@ bool DeftemplateSlotFacetExistP(
    /* list of slots defined for the deftemplate. */
    /*============================================*/
 
-   else if ((theSlot = FindSlot(theDeftemplate,CreateSymbol(theEnv,slotName),&position)) == NULL)
+   else if ((theSlot = FindSlot(theDeftemplate,CreateSymbol(theEnv,slotName),NULL)) == NULL)
      { return false; }
 
    /*=======================*/
@@ -1992,7 +1985,6 @@ bool DeftemplateSlotFacetValue(
   const char *facetName,
   UDFValue *rv)
   {
-   short position;
    struct templateSlot *theSlot;
    CLIPSLexeme *facetHN;
    struct expr *tempFacet;
@@ -2009,7 +2001,7 @@ bool DeftemplateSlotFacetValue(
    /* list of slots defined for the deftemplate. */
    /*============================================*/
 
-   else if ((theSlot = FindSlot(theDeftemplate,CreateSymbol(theEnv,slotName),&position)) == NULL)
+   else if ((theSlot = FindSlot(theDeftemplate,CreateSymbol(theEnv,slotName),NULL)) == NULL)
      { return false; }
 
    /*=======================*/
@@ -2095,7 +2087,6 @@ bool UpdateModifyDuplicate(
    CLIPSLexeme *templateName;
    Deftemplate *theDeftemplate;
    struct templateSlot *slotPtr;
-   short position;
 
    /*========================================*/
    /* Determine the fact-address or index to */
@@ -2139,7 +2130,7 @@ bool UpdateModifyDuplicate(
       /* Does the slot exist? */
       /*======================*/
 
-      if ((slotPtr = FindSlot(theDeftemplate,tempArg->lexemeValue,&position)) == NULL)
+      if ((slotPtr = FindSlot(theDeftemplate,tempArg->lexemeValue,NULL)) == NULL)
         {
          InvalidDeftemplateSlotMessage(theEnv,tempArg->lexemeValue->contents,
                                        theDeftemplate->header.name->contents,true);
@@ -2258,7 +2249,7 @@ struct expr *ModifyParse(
   struct expr *top,
   const char *logicalName)
   {
-   return(ModAndDupParse(theEnv,top,logicalName,"modify"));
+   return ModAndDupParse(theEnv,top,logicalName,"modify");
   }
 
 /*************************************************/
@@ -2269,7 +2260,7 @@ struct expr *DuplicateParse(
   struct expr *top,
   const char *logicalName)
   {
-   return(ModAndDupParse(theEnv,top,logicalName,"duplicate"));
+   return ModAndDupParse(theEnv,top,logicalName,"duplicate");
   }
 
 /*************************************************************/
@@ -2298,20 +2289,15 @@ static struct expr *ModAndDupParse(
    if ((theToken.tknType == SF_VARIABLE_TOKEN) || (theToken.tknType == GBL_VARIABLE_TOKEN))
      { nextOne = GenConstant(theEnv,TokenTypeToType(theToken.tknType),theToken.value); }
    else if (theToken.tknType == INTEGER_TOKEN)
+     { nextOne = GenConstant(theEnv,INTEGER_TYPE,theToken.value); }
+   else if (theToken.tknType == LEFT_PARENTHESIS_TOKEN)
      {
-#if (! RUN_TIME)
-      if (! TopLevelCommand(theEnv))
+      nextOne = Function1Parse(theEnv,logicalName);
+      if (nextOne == NULL)
         {
-         PrintErrorID(theEnv,"TMPLTFUN",1,true);
-         PrintString(theEnv,WERROR,"Fact-indexes can only be used by ");
-         PrintString(theEnv,WERROR,name);
-         PrintString(theEnv,WERROR," as a top level command.\n");
          ReturnExpression(theEnv,top);
          return NULL;
         }
-#endif
-
-      nextOne = GenConstant(theEnv,INTEGER_TYPE,theToken.value);
      }
    else
      {
@@ -2320,8 +2306,6 @@ static struct expr *ModAndDupParse(
       return NULL;
      }
 
-   nextOne->nextArg = NULL;
-   nextOne->argList = NULL;
    top->argList = nextOne;
    nextOne = top->argList;
 
@@ -2439,7 +2423,7 @@ static struct expr *ModAndDupParse(
    /* Return the parsed modify/duplicate expression. */
    /*================================================*/
 
-   return(top);
+   return top;
   }
 
 #endif /* DEFTEMPLATE_CONSTRUCT */

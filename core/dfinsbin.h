@@ -48,15 +48,15 @@
 struct definstancesBinaryData
   {
    Definstances *DefinstancesArray;
-   long DefinstancesCount;
-   long ModuleCount;
+   unsigned long DefinstancesCount;
+   unsigned long ModuleCount;
    DEFINSTANCES_MODULE *ModuleArray;
   };
 
 #define DefinstancesBinaryData(theEnv) ((struct definstancesBinaryData *) GetEnvironmentData(theEnv,DFINSBIN_DATA))
 
    void                           SetupDefinstancesBload(Environment *);
-   void                          *BloadDefinstancesModuleRef(Environment *,int);
+   void                          *BloadDefinstancesModuleRef(Environment *,unsigned long);
 
 #endif /* DEFINSTANCES_CONSTRUCT && (BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE) */
 

@@ -58,16 +58,16 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static bool                    CheckForUnmatchableConstraints(Environment *,struct lhsParseNode *,int);
+   static bool                    CheckForUnmatchableConstraints(Environment *,struct lhsParseNode *,unsigned short);
    static bool                    MultifieldCardinalityViolation(Environment *,struct lhsParseNode *);
    static struct lhsParseNode    *UnionVariableConstraints(Environment *,struct lhsParseNode *,
                                                            struct lhsParseNode *);
    static struct lhsParseNode    *AddToVariableConstraints(Environment *,struct lhsParseNode *,
                                                            struct lhsParseNode *);
    static void                    ConstraintConflictMessage(Environment *,CLIPSLexeme *,
-                                                            int,int,CLIPSLexeme *);
+                                                            unsigned short,unsigned short,CLIPSLexeme *);
    static bool                    CheckArgumentForConstraintError(Environment *,struct expr *,struct expr*,
-                                                                  int,struct functionDefinition *,
+                                                                  unsigned int,struct functionDefinition *,
                                                                   struct lhsParseNode *);
 
 /***********************************************************/
@@ -78,7 +78,7 @@
 static bool CheckForUnmatchableConstraints(
   Environment *theEnv,
   struct lhsParseNode *theNode,
-  int whichCE)
+  unsigned short whichCE)
   {
    if (UnmatchableConstraint(theNode->constraints))
      {
@@ -98,8 +98,8 @@ static bool CheckForUnmatchableConstraints(
 static void ConstraintConflictMessage(
   Environment *theEnv,
   CLIPSLexeme *variableName,
-  int thePattern,
-  int theField,
+  unsigned short thePattern,
+  unsigned short theField,
   CLIPSLexeme *theSlot)
   {
    /*=========================*/
@@ -159,8 +159,8 @@ static bool MultifieldCardinalityViolation(
   {
    struct lhsParseNode *tmpNode;
    struct expr *tmpMax;
-   long minFields = 0;
-   long maxFields = 0;
+   long long minFields = 0;
+   long long maxFields = 0;
    bool posInfinity = false;
    CONSTRAINT_RECORD *newConstraint, *tempConstraint;
 
@@ -208,7 +208,7 @@ static bool MultifieldCardinalityViolation(
          /*=======================================*/
 
          if (tmpNode->constraints->minFields->value != SymbolData(theEnv)->NegativeInfinity)
-           { minFields += (long) tmpNode->constraints->minFields->integerValue->contents; }
+           { minFields += tmpNode->constraints->minFields->integerValue->contents; }
 
          /*=========================================*/
          /* The greatest maximum of all the min/max */
@@ -220,7 +220,7 @@ static bool MultifieldCardinalityViolation(
          if (tmpMax->value == SymbolData(theEnv)->PositiveInfinity)
            { posInfinity = true; }
          else
-           { maxFields += (long) tmpMax->integerValue->contents; }
+           { maxFields += tmpMax->integerValue->contents; }
         }
 
       /*================================================*/
@@ -242,9 +242,9 @@ static bool MultifieldCardinalityViolation(
    else tempConstraint = CopyConstraintRecord(theEnv,theNode->constraints);
    ReturnExpression(theEnv,tempConstraint->minFields);
    ReturnExpression(theEnv,tempConstraint->maxFields);
-   tempConstraint->minFields = GenConstant(theEnv,INTEGER_TYPE,CreateInteger(theEnv,(long long) minFields));
+   tempConstraint->minFields = GenConstant(theEnv,INTEGER_TYPE,CreateInteger(theEnv,minFields));
    if (posInfinity) tempConstraint->maxFields = GenConstant(theEnv,SYMBOL_TYPE,SymbolData(theEnv)->PositiveInfinity);
-   else tempConstraint->maxFields = GenConstant(theEnv,INTEGER_TYPE,CreateInteger(theEnv,(long long) maxFields));
+   else tempConstraint->maxFields = GenConstant(theEnv,INTEGER_TYPE,CreateInteger(theEnv,maxFields));
 
    /*================================================================*/
    /* Determine the final cardinality for the multifield slot by     */
@@ -374,7 +374,7 @@ bool ProcessConnectedConstraints(
    /* Check for constraint violations. */
    /*==================================*/
 
-   if (CheckForUnmatchableConstraints(theEnv,theNode,(int) patternHead->whichCE))
+   if (CheckForUnmatchableConstraints(theEnv,theNode,patternHead->whichCE))
      { return true; }
 
    /*=========================================*/
@@ -388,7 +388,7 @@ bool ProcessConnectedConstraints(
         {
          ConstraintViolationErrorMessage(theEnv,"The group of restrictions",
                                                   NULL,false,
-                                                  (int) patternHead->whichCE,
+                                                  patternHead->whichCE,
                                                   multifieldHeader->slot,
                                                   multifieldHeader->index,
                                                   CARDINALITY_VIOLATION,
@@ -713,7 +713,7 @@ bool CheckRHSForConstraintErrors(
   struct lhsParseNode *theLHS)
   {
    struct functionDefinition *theFunction;
-   int i;
+   unsigned int i;
    struct expr *lastOne = NULL, *checkList, *tmpPtr;
 
    if (expressionList == NULL) return false;
@@ -763,7 +763,7 @@ static bool CheckArgumentForConstraintError(
   Environment *theEnv,
   struct expr *expressionList,
   struct expr *lastOne,
-  int i,
+  unsigned int i,
   struct functionDefinition *theFunction,
   struct lhsParseNode *theLHS)
   {
@@ -787,7 +787,7 @@ static bool CheckArgumentForConstraintError(
    /* convert them to a constraint record.      */
    /*===========================================*/
 
-   theRestriction2 = GetNthRestriction2(theEnv,theFunction,i);
+   theRestriction2 = GetNthRestriction(theEnv,theFunction,i);
    constraint1 = ArgumentTypeToConstraintRecord(theEnv,theRestriction2);
 
    /*================================================*/

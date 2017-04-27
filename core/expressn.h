@@ -84,7 +84,7 @@ typedef struct exprHashNode
    unsigned count;
    Expression *exp;
    struct exprHashNode *next;
-   long bsaveID;
+   unsigned long bsaveID;
   } EXPRESSION_HN;
 
 struct savedContexts
@@ -111,9 +111,9 @@ struct expressionData
    FunctionDefinition *PTR_NOT;
    EXPRESSION_HN **ExpressionHashTable;
 #if (BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE)
-   long NumberOfExpressions;
+   unsigned long NumberOfExpressions;
    Expression *ExpressionArray;
-   long ExpressionCount;
+   unsigned long ExpressionCount;
 #endif
    SavedContexts *svContexts;
    bool ReturnContext;
@@ -141,7 +141,7 @@ struct expressionData
 #endif
    void                           RemoveHashedExpression(Environment *,Expression *);
 #if BLOAD_AND_BSAVE || BLOAD_ONLY || BLOAD || CONSTRUCT_COMPILER
-   long                           HashedExpressionIndex(Environment *,Expression *);
+   unsigned long                  HashedExpressionIndex(Environment *,Expression *);
 #endif
 
 #endif

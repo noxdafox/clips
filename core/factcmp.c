@@ -52,11 +52,12 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static bool                    PatternNetworkToCode(Environment *,const char *,const char *,char *,int,FILE *,int,int);
+   static bool                    PatternNetworkToCode(Environment *,const char *,const char *,char *,
+                                                       unsigned int,FILE *,unsigned int,unsigned int);
    static void                    BeforePatternNetworkToCode(Environment *);
    static struct factPatternNode *GetNextPatternNode(struct factPatternNode *);
-   static void                    CloseNetworkFiles(Environment *,FILE *,int);
-   static void                    PatternNodeToCode(Environment *,FILE *,struct factPatternNode *,int,int);
+   static void                    CloseNetworkFiles(Environment *,FILE *,unsigned int);
+   static void                    PatternNodeToCode(Environment *,FILE *,struct factPatternNode *,unsigned int,unsigned int);
 
 /**************************************************************/
 /* FactPatternsCompilerSetup: Initializes the constructs-to-c */
@@ -77,8 +78,8 @@ void FactPatternsCompilerSetup(
 static void BeforePatternNetworkToCode(
   Environment *theEnv)
   {
-   int whichPattern = 0;
-   int whichDeftemplate = 0;
+   unsigned int whichPattern = 0;
+   unsigned int whichDeftemplate = 0;
    Defmodule *theModule;
    Deftemplate *theDeftemplate;
    struct factPatternNode *thePattern;
@@ -170,16 +171,16 @@ static bool PatternNetworkToCode(
   const char *fileName,
   const char *pathName,
   char *fileNameBuffer,
-  int fileID,
+  unsigned int fileID,
   FILE *headerFP,
-  int imageID,
-  int maxIndices)
+  unsigned int imageID,
+  unsigned int maxIndices)
   {
-   int fileCount = 1;
+   unsigned int fileCount = 1;
    Defmodule *theModule;
    Deftemplate *theTemplate;
    struct factPatternNode *thePatternNode;
-   int networkArrayCount = 0, networkArrayVersion = 1;
+   unsigned int networkArrayCount = 0, networkArrayVersion = 1;
    FILE *networkFile = NULL;
 
    /*===========================================================*/
@@ -261,10 +262,10 @@ static bool PatternNetworkToCode(
 static void CloseNetworkFiles(
   Environment *theEnv,
   FILE *networkFile,
-  int maxIndices)
+  unsigned int maxIndices)
   {
-   int count = maxIndices;
-   int arrayVersion = 0;
+   unsigned int count = maxIndices;
+   unsigned int arrayVersion = 0;
 
    if (networkFile != NULL)
      {
@@ -280,8 +281,8 @@ static void PatternNodeToCode(
   Environment *theEnv,
   FILE *theFile,
   struct factPatternNode *thePatternNode,
-  int imageID,
-  int maxIndices)
+  unsigned int imageID,
+  unsigned int maxIndices)
   {
    fprintf(theFile,"{");
 
@@ -366,15 +367,15 @@ void FactPatternNodeReference(
   Environment *theEnv,
   void *theVPattern,
   FILE *theFile,
-  int imageID,
-  int maxIndices)
+  unsigned int imageID,
+  unsigned int maxIndices)
   {
    struct factPatternNode *thePattern = (struct factPatternNode *) theVPattern;
 
    if (thePattern == NULL) fprintf(theFile,"NULL");
    else
      {
-      fprintf(theFile,"&%s%d_%ld[%ld]",FactPrefix(),
+      fprintf(theFile,"&%s%u_%lu[%lu]",FactPrefix(),
                     imageID,(thePattern->bsaveID / maxIndices) + 1,
                             thePattern->bsaveID % maxIndices);
      }

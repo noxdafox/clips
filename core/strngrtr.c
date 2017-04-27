@@ -347,7 +347,7 @@ bool OpenStringDestination(
    if (FindStringRouter(theEnv,name) != NULL) return false;
 
    newStringRouter = get_struct(theEnv,stringRouter);
-   theName = (char *) gm1(theEnv,(int) strlen(name) + 1);
+   theName = (char *) gm1(theEnv,strlen(name) + 1);
    genstrcpy(theName,name);
    newStringRouter->name = theName;
    newStringRouter->readString = NULL;
@@ -406,7 +406,7 @@ bool OpenStringBuilderDestination(
    if (FindStringBuilderRouter(theEnv,name) != NULL) return false;
 
    newStringRouter = get_struct(theEnv,stringBuilderRouter);
-   theName = (char *) gm1(theEnv,(int) strlen(name) + 1);
+   theName = (char *) gm1(theEnv,strlen(name) + 1);
    genstrcpy(theName,name);
    newStringRouter->name = theName;
    newStringRouter->SBR = theSB;

@@ -186,7 +186,6 @@ static struct templateSlot *ParseSlotLabel(
   TokenType endType)
   {
    struct templateSlot *slotPtr;
-   short position;
 
    /*========================*/
    /* Initialize error flag. */
@@ -239,7 +238,7 @@ static struct templateSlot *ParseSlotLabel(
    /* Check that the slot name is valid for this template. */
    /*======================================================*/
 
-   if ((slotPtr = FindSlot(theDeftemplate,tempToken->lexemeValue,&position)) == NULL)
+   if ((slotPtr = FindSlot(theDeftemplate,tempToken->lexemeValue,NULL)) == NULL)
      {
       InvalidDeftemplateSlotMessage(theEnv,tempToken->lexemeValue->contents,
                                     theDeftemplate->header.name->contents,true);
@@ -251,7 +250,7 @@ static struct templateSlot *ParseSlotLabel(
    /* Return a pointer to the slot name. */
    /*====================================*/
 
-   return(slotPtr);
+   return slotPtr;
   }
 
 /**************************************************************************/

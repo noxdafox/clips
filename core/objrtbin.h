@@ -50,8 +50,8 @@
 
 struct objectReteBinaryData
   {
-   long AlphaNodeCount;
-   long PatternNodeCount;
+   unsigned long AlphaNodeCount;
+   unsigned long PatternNodeCount;
    OBJECT_ALPHA_NODE *AlphaArray;
    OBJECT_PATTERN_NODE *PatternArray;
   };

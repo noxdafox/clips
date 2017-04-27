@@ -79,7 +79,7 @@
 
    static void                    PushQueryCore(Environment *);
    static void                    PopQueryCore(Environment *);
-   static QUERY_CORE             *FindQueryCore(Environment *,int);
+   static QUERY_CORE             *FindQueryCore(Environment *,long long);
    static QUERY_TEMPLATE         *DetermineQueryTemplates(Environment *,Expression *,const char *,unsigned *);
    static QUERY_TEMPLATE         *FormChain(Environment *,const char *,Deftemplate *,UDFValue *);
    static void                    DeleteQueryTemplates(Environment *,QUERY_TEMPLATE *);
@@ -153,9 +153,9 @@ void GetQueryFact(
   {
    QUERY_CORE *core;
 
-   core = FindQueryCore(theEnv,(int) GetFirstArgument()->integerValue->contents);
+   core = FindQueryCore(theEnv,GetFirstArgument()->integerValue->contents);
 
-   returnValue->factValue = core->solns[(int) GetFirstArgument()->nextArg->integerValue->contents];
+   returnValue->factValue = core->solns[GetFirstArgument()->nextArg->integerValue->contents];
   }
 
 /***************************************************************************
@@ -175,12 +175,12 @@ void GetQueryFactSlot(
    Fact *theFact;
    UDFValue temp;
    QUERY_CORE *core;
-   short position;
+   unsigned short position;
 
    returnValue->lexemeValue = FalseSymbol(theEnv);
 
-   core = FindQueryCore(theEnv,(int) GetFirstArgument()->integerValue->contents);
-   theFact = core->solns[(int) GetFirstArgument()->nextArg->integerValue->contents];
+   core = FindQueryCore(theEnv,GetFirstArgument()->integerValue->contents);
+   theFact = core->solns[GetFirstArgument()->nextArg->integerValue->contents];
    EvaluateExpression(theEnv,GetFirstArgument()->nextArg->nextArg,&temp);
    if (temp.header->type != SYMBOL_TYPE)
      {
@@ -201,7 +201,7 @@ void GetQueryFactSlot(
          SlotExistError(theEnv,temp.lexemeValue->contents,"fact-set query");
          return;
         }
-      position = 1;
+      position = 0;
      }
 
    else if (FindSlot(theFact->whichDeftemplate,
@@ -211,7 +211,7 @@ void GetQueryFactSlot(
       return;
      }
 
-   returnValue->value = theFact->theProposition.contents[position-1].value;
+   returnValue->value = theFact->theProposition.contents[position].value;
    if (returnValue->header->type == MULTIFIELD_TYPE)
      {
       returnValue->begin = 0;
@@ -385,7 +385,7 @@ void QueryFindAllFacts(
   {
    QUERY_TEMPLATE *qtemplates;
    unsigned rcnt;
-   unsigned i, j;
+   size_t i, j;
 
    returnValue->begin = 0;
    returnValue->range = 0;
@@ -409,11 +409,11 @@ void QueryFindAllFacts(
    returnValue->value = CreateMultifield(theEnv,FactQueryData(theEnv)->QueryCore->soln_cnt * rcnt);
    while (FactQueryData(theEnv)->QueryCore->soln_set != NULL)
      {
-      for (i = 0 , j = (unsigned) returnValue->range ; i < rcnt ; i++ , j++)
+      for (i = 0 , j = returnValue->range ; i < rcnt ; i++ , j++)
         {
          returnValue->multifieldValue->contents[j].value = FactQueryData(theEnv)->QueryCore->soln_set->soln[i];
         }
-      returnValue->range = (long) j;
+      returnValue->range = j;
       PopQuerySoln(theEnv);
      }
    rm(theEnv,FactQueryData(theEnv)->QueryCore->solns,(sizeof(Fact *) * rcnt));
@@ -645,19 +645,21 @@ static void PopQueryCore(
  ***************************************************/
 static QUERY_CORE *FindQueryCore(
   Environment *theEnv,
-  int depth)
+  long long depth)
   {
    QUERY_STACK *qptr;
 
    if (depth == 0)
-     return(FactQueryData(theEnv)->QueryCore);
+     return FactQueryData(theEnv)->QueryCore;
+     
    qptr = FactQueryData(theEnv)->QueryCoreStack;
    while (depth > 1)
      {
       qptr = qptr->nxt;
       depth--;
      }
-   return(qptr->core);
+     
+   return qptr->core;
   }
 
 /**********************************************************
@@ -758,9 +760,9 @@ static QUERY_TEMPLATE *FormChain(
   {
    Deftemplate *templatePtr;
    QUERY_TEMPLATE *head,*bot,*tmp;
-   long i; /* 6.04 Bug Fix */
+   size_t i; /* 6.04 Bug Fix */
    const char *templateName;
-   int count;
+   unsigned int count;
 
    if (theDeftemplate != NULL)
      {
@@ -1101,7 +1103,7 @@ static void AddSolution(
    QUERY_SOLN *new_soln;
    unsigned i;
 
-   new_soln = (QUERY_SOLN *) gm2(theEnv,(int) sizeof(QUERY_SOLN));
+   new_soln = (QUERY_SOLN *) gm2(theEnv,sizeof(QUERY_SOLN));
    new_soln->soln = (Fact **)
                     gm2(theEnv,(sizeof(Fact *) * (FactQueryData(theEnv)->QueryCore->soln_size)));
    for (i = 0 ; i < FactQueryData(theEnv)->QueryCore->soln_size ; i++)

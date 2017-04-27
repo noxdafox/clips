@@ -82,14 +82,14 @@
 /******************************/
 Multifield *CreateUnmanagedMultifield(
   Environment *theEnv,
-  long size)
+  size_t size)
   {
    Multifield *theSegment;
-   long newSize = size;
+   size_t newSize = size;
 
    if (size <= 0) newSize = 1;
 
-   theSegment = get_var_struct(theEnv,multifield,(long) sizeof(struct clipsValue) * (newSize - 1L));
+   theSegment = get_var_struct(theEnv,multifield,sizeof(struct clipsValue) * (newSize - 1));
 
    theSegment->header.type = MULTIFIELD_TYPE;
    theSegment->length = size;
@@ -278,10 +278,10 @@ Multifield *StringToMultifield(
 Multifield *ArrayToMultifield(
   Environment *theEnv,
   CLIPSValue *theArray,
-  long size)
+  unsigned long size) // TBD size_t
   {
    Multifield *rv;
-   int i;
+   unsigned int i;
    
    rv = CreateMultifield(theEnv,size);
    
@@ -310,12 +310,12 @@ Multifield *CreateMultifield(
   size_t size)
   {
    Multifield *theSegment;
-   long newSize;
+   unsigned long newSize;
 
    if (size == 0) newSize = 1;
    else newSize = size;
 
-   theSegment = get_var_struct(theEnv,multifield,(long) sizeof(struct clipsValue) * (newSize - 1L));
+   theSegment = get_var_struct(theEnv,multifield,sizeof(struct clipsValue) * (newSize - 1));
 
    theSegment->header.type = MULTIFIELD_TYPE;
    theSegment->length = size;
@@ -342,7 +342,7 @@ Multifield *DOToMultifield(
 
    if (theValue->header->type != MULTIFIELD_TYPE) return NULL;
 
-   dst = CreateUnmanagedMultifield(theEnv,(unsigned long) theValue->range);
+   dst = CreateUnmanagedMultifield(theEnv,theValue->range);
 
    src = theValue->multifieldValue;
    GenCopyMemory(struct clipsValue,dst->length,
@@ -451,7 +451,7 @@ void DuplicateMultifield(
   {
    dst->begin = 0;
    dst->range = src->range;
-   dst->value = CreateUnmanagedMultifield(theEnv,(unsigned long) dst->range);
+   dst->value = CreateUnmanagedMultifield(theEnv,dst->range);
    GenCopyMemory(struct clipsValue,dst->range,&dst->multifieldValue->contents[0],
                                          &src->multifieldValue->contents[src->begin]);
   }
@@ -499,9 +499,7 @@ void PrintMultifield(
   const char *fileid,
   Multifield *segment)
   {
-   PrintMultifieldDriver(theEnv,fileid,segment,0,
-                         (long) (segment->length - 1),
-                         true);
+   PrintMultifieldDriver(theEnv,fileid,segment,0,segment->length,true);
   }
   
 /***************************************************/
@@ -511,25 +509,28 @@ void PrintMultifieldDriver(
   Environment *theEnv,
   const char *fileid,
   Multifield *segment,
-  long begin,
-  long end, // TBD Range
+  size_t begin,
+  size_t range,
   bool printParens)
   {
    CLIPSValue *theMultifield;
-   int i;
+   size_t i;
 
    theMultifield = segment->contents;
+   
    if (printParens)
-     PrintString(theEnv,fileid,"(");
-   i = begin;
-   while (i <= end)
+     { PrintString(theEnv,fileid,"("); }
+
+   for (i = 0; i < range; i++)
      {
-      PrintAtom(theEnv,fileid,theMultifield[i].header->type,theMultifield[i].value);
-      i++;
-      if (i <= end) PrintString(theEnv,fileid," ");
+      PrintAtom(theEnv,fileid,theMultifield[begin+i].header->type,theMultifield[begin+i].value);
+     
+      if ((i + 1) < range)
+        { PrintString(theEnv,fileid," "); }
      }
+
    if (printParens)
-     PrintString(theEnv,fileid,")");
+     { PrintString(theEnv,fileid,")"); }
   }
 
 /****************************************************/
@@ -545,8 +546,10 @@ void StoreInMultifield(
    UDFValue *val_arr;
    Multifield *theMultifield;
    Multifield *orig_ptr;
-   long start, range, i,j, k, argCount;
-   unsigned long seg_size;
+   size_t start, range;
+   unsigned long i, j, k;
+   unsigned int argCount;
+   size_t seg_size;
 
    argCount = CountArguments(expptr);
 
@@ -571,7 +574,7 @@ void StoreInMultifield(
       /* the total length of all the arguments. */
       /*========================================*/
 
-      val_arr = (UDFValue *) gm2(theEnv,(long) sizeof(UDFValue) * argCount);
+      val_arr = (UDFValue *) gm2(theEnv,sizeof(UDFValue) * argCount);
       seg_size = 0;
 
       for (i = 1; i <= argCount; i++, expptr = expptr->nextArg)
@@ -585,7 +588,7 @@ void StoreInMultifield(
               { theMultifield = CreateMultifield(theEnv,0L); }
             else theMultifield = CreateUnmanagedMultifield(theEnv,0L);
             returnValue->value = theMultifield;
-            rm(theEnv,val_arr,(long) sizeof(UDFValue) * argCount);
+            rm(theEnv,val_arr,sizeof(UDFValue) * argCount);
             return;
            }
          if (val_ptr.header->type == MULTIFIELD_TYPE)
@@ -607,7 +610,7 @@ void StoreInMultifield(
             range = 1;
            }
 
-         seg_size += (unsigned long) range;
+         seg_size += range;
          (val_arr+i-1)->begin = start;
          (val_arr+i-1)->range = range;
         }
@@ -644,32 +647,33 @@ void StoreInMultifield(
       /*=========================*/
 
       returnValue->begin = 0;
-      returnValue->range = (long) seg_size;
+      returnValue->range = seg_size;
       returnValue->value = theMultifield;
-      rm(theEnv,val_arr,(long) sizeof(UDFValue) * argCount);
+      rm(theEnv,val_arr,sizeof(UDFValue) * argCount);
       return;
      }
   }
 
 /*************************************************************/
-/* MultifieldDOsEqual: determines if two segments are equal. */
+/* MultifieldDOsEqual: Determines if two segments are equal. */
 /*************************************************************/
 bool MultifieldDOsEqual(
   UDFValue *dobj1,
   UDFValue *dobj2)
   {
-   long extent1,extent2; /* 6.04 Bug Fix */
+   size_t extent1, extent2;
    CLIPSValue *e1, *e2;
 
    extent1 = dobj1->range;
    extent2 = dobj2->range;
+   
    if (extent1 != extent2)
      { return false; }
 
    e1 = &dobj1->multifieldValue->contents[dobj1->begin];
    e2 = &dobj2->multifieldValue->contents[dobj2->begin];
 
-   while (extent1 != 0)
+   while (extent1 > 0)
      {
       if (e1->value != e2->value)
         { return false; }
@@ -682,6 +686,7 @@ bool MultifieldDOsEqual(
          e2++;
         }
      }
+     
    return true;
   }
 
@@ -694,7 +699,7 @@ bool MultifieldsEqual(
   {
    CLIPSValue *elem1;
    CLIPSValue *elem2;
-   long length, i = 0;
+   size_t length, i = 0;
 
    length = segment1->length;
    if (length != segment2->length)
@@ -783,13 +788,13 @@ unsigned long HashMultifield(
 #endif
             fis.liv = 0;
             fis.vv = fieldPtr[i].value;
-            count += (unsigned long) (fis.liv * (i + 29));
+            count += fis.liv * (i + 29);
             break;
 
           case EXTERNAL_ADDRESS_TYPE:
             fis.liv = 0;
             fis.vv = fieldPtr[i].externalAddressValue->contents;
-            count += (unsigned long) (fis.liv * (i + 29));
+            count += fis.liv * (i + 29);
             break;
 
           case SYMBOL_TYPE:
@@ -798,7 +803,7 @@ unsigned long HashMultifield(
           case INSTANCE_NAME_TYPE:
 #endif
             tvalue = (unsigned long) HashSymbol(fieldPtr[i].lexemeValue->contents,theRange);
-            count += (unsigned long) (tvalue * (i + 29));
+            count += tvalue * (i + 29);
             break;
          }
      }
@@ -828,7 +833,7 @@ CLIPSLexeme *ImplodeMultifield(
   UDFValue *value)
   {
    size_t strsize = 0;
-   long i, j;
+   size_t i, j;
    const char *tmp_str;
    char *ret_str;
    CLIPSLexeme *rv;

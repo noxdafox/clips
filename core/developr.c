@@ -127,8 +127,8 @@ void PrimitiveTablesInfoCommand(
    CLIPSFloat **floatArray, *floatPtr;
    CLIPSInteger **integerArray, *integerPtr;
    CLIPSBitMap **bitMapArray, *bitMapPtr;
-   unsigned long symbolCount = 0, integerCount = 0;
-   unsigned long floatCount = 0, bitMapCount = 0;
+   unsigned long long symbolCount = 0, integerCount = 0;
+   unsigned long long floatCount = 0, bitMapCount = 0;
 
    /*====================================*/
    /* Count entries in the symbol table. */
@@ -179,22 +179,17 @@ void PrimitiveTablesInfoCommand(
    /*========================*/
 
    PrintString(theEnv,STDOUT,"Symbols: ");
-   PrintInteger(theEnv,STDOUT,(long long) symbolCount);
+   PrintUnsignedInteger(theEnv,STDOUT,symbolCount);
    PrintString(theEnv,STDOUT,"\n");
    PrintString(theEnv,STDOUT,"Integers: ");
-   PrintInteger(theEnv,STDOUT,(long long) integerCount);
+   PrintUnsignedInteger(theEnv,STDOUT,integerCount);
    PrintString(theEnv,STDOUT,"\n");
    PrintString(theEnv,STDOUT,"Floats: ");
-   PrintInteger(theEnv,STDOUT,(long long) floatCount);
+   PrintUnsignedInteger(theEnv,STDOUT,floatCount);
    PrintString(theEnv,STDOUT,"\n");
    PrintString(theEnv,STDOUT,"BitMaps: ");
-   PrintInteger(theEnv,STDOUT,(long long) bitMapCount);
+   PrintUnsignedInteger(theEnv,STDOUT,bitMapCount);
    PrintString(theEnv,STDOUT,"\n");
-   /*
-   PrintString(theEnv,STDOUT,"Ephemerals: ");
-   PrintInteger(theEnv,STDOUT,(long long) EphemeralSymbolCount());
-   PrintString(theEnv,STDOUT,"\n");
-   */
   }
 
 #define COUNT_SIZE 21
@@ -209,11 +204,11 @@ void PrimitiveTablesUsageCommand(
   UDFValue *returnValue)
   {
    unsigned long i;
-   int symbolCounts[COUNT_SIZE], floatCounts[COUNT_SIZE];
+   unsigned long long symbolCounts[COUNT_SIZE], floatCounts[COUNT_SIZE];
    CLIPSLexeme **symbolArray, *symbolPtr;
    CLIPSFloat **floatArray, *floatPtr;
-   unsigned long symbolCount, totalSymbolCount = 0;
-   unsigned long floatCount, totalFloatCount = 0;
+   unsigned long long symbolCount, totalSymbolCount = 0;
+   unsigned long long floatCount, totalFloatCount = 0;
 
    for (i = 0; i < 21; i++)
      {
@@ -261,30 +256,29 @@ void PrimitiveTablesUsageCommand(
         { floatCounts[COUNT_SIZE - 1]++; }
      }
 
-
    /*========================*/
    /* Print the information. */
    /*========================*/
 
    PrintString(theEnv,STDOUT,"Total Symbols: ");
-   PrintInteger(theEnv,STDOUT,(long long) totalSymbolCount);
+   PrintUnsignedInteger(theEnv,STDOUT,totalSymbolCount);
    PrintString(theEnv,STDOUT,"\n");
    for (i = 0; i < COUNT_SIZE; i++)
      {
-      PrintInteger(theEnv,STDOUT,(long long) i);
+      PrintUnsignedInteger(theEnv,STDOUT,i);
       PrintString(theEnv,STDOUT," ");
-      PrintInteger(theEnv,STDOUT,(long long) symbolCounts[i]);
+      PrintUnsignedInteger(theEnv,STDOUT,symbolCounts[i]);
       PrintString(theEnv,STDOUT,"\n");
      }
 
    PrintString(theEnv,STDOUT,"\nTotal Floats: ");
-   PrintInteger(theEnv,STDOUT,(long long) totalFloatCount);
+   PrintUnsignedInteger(theEnv,STDOUT,totalFloatCount);
    PrintString(theEnv,STDOUT,"\n");
    for (i = 0; i < COUNT_SIZE; i++)
      {
-      PrintInteger(theEnv,STDOUT,(long long) i);
+      PrintUnsignedInteger(theEnv,STDOUT,i);
       PrintString(theEnv,STDOUT," ");
-      PrintInteger(theEnv,STDOUT,(long long) floatCounts[i]);
+      PrintUnsignedInteger(theEnv,STDOUT,floatCounts[i]);
       PrintString(theEnv,STDOUT,"\n");
      }
 
@@ -303,7 +297,7 @@ void ValidateFactIntegrityCommand(
   {
    Fact *theFact;
    Multifield *theSegment;
-   int i;
+   size_t i;
    CLIPSLexeme *theSymbol;
    CLIPSFloat *theFloat;
    CLIPSInteger *theInteger;
@@ -326,7 +320,7 @@ void ValidateFactIntegrityCommand(
 
       theSegment = &theFact->theProposition;
 
-      for (i = 0 ; i < (int) theSegment->length ; i++)
+      for (i = 0 ; i < theSegment->length ; i++)
         {
          if ((theSegment->contents[i].header->type == SYMBOL_TYPE) ||
              (theSegment->contents[i].header->type == STRING_TYPE) ||
@@ -395,15 +389,15 @@ void ShowFactPatternNetworkCommand(
          PrintString(theEnv,STDOUT,"MF");
          if (patternPtr->header.endSlot) PrintString(theEnv,STDOUT,")");
          else PrintString(theEnv,STDOUT,"*");
-         PrintInteger(theEnv,STDOUT,(long long) patternPtr->leaveFields);
+         PrintUnsignedInteger(theEnv,STDOUT,patternPtr->leaveFields);
          PrintString(theEnv,STDOUT," ");
         }
 
       PrintString(theEnv,STDOUT,"Slot: ");
 
-      PrintInteger(theEnv,STDOUT,(long long) patternPtr->whichSlot);
+      PrintUnsignedInteger(theEnv,STDOUT,patternPtr->whichSlot);
       PrintString(theEnv,STDOUT," Field: ");
-      PrintInteger(theEnv,STDOUT,(long long) patternPtr->whichField);
+      PrintUnsignedInteger(theEnv,STDOUT,patternPtr->whichField);
       PrintString(theEnv,STDOUT," Expression: ");
       if (patternPtr->networkTest == NULL) PrintString(theEnv,STDOUT,"None");
       else PrintExpression(theEnv,STDOUT,patternPtr->networkTest);
@@ -484,10 +478,10 @@ static void PrintOPNLevel(
         PrintString(theEnv,STDOUT,"+");
       PrintString(theEnv,STDOUT,FindIDSlotName(theEnv,pptr->slotNameID)->contents);
       PrintString(theEnv,STDOUT," (");
-      PrintInteger(theEnv,STDOUT,(long long) pptr->slotNameID);
+      PrintUnsignedInteger(theEnv,STDOUT,pptr->slotNameID);
       PrintString(theEnv,STDOUT,") ");
       PrintString(theEnv,STDOUT,pptr->endSlot ? "EPF#" : "PF#");
-      PrintInteger(theEnv,STDOUT,(long long) pptr->whichField);
+      PrintUnsignedInteger(theEnv,STDOUT,pptr->whichField);
       PrintString(theEnv,STDOUT," ");
       PrintString(theEnv,STDOUT,pptr->multifieldNode ? "$? " : "? ");
       if (pptr->networkTest != NULL)
@@ -587,13 +581,13 @@ void InstanceTableUsageCommand(
    /*========================*/
 
    PrintString(theEnv,STDOUT,"Total Instances: ");
-   PrintInteger(theEnv,STDOUT,(long long) totalInstanceCount);
+   PrintUnsignedInteger(theEnv,STDOUT,totalInstanceCount);
    PrintString(theEnv,STDOUT,"\n");
    for (i = 0; i < COUNT_SIZE; i++)
      {
-      PrintInteger(theEnv,STDOUT,(long long) i);
+      PrintUnsignedInteger(theEnv,STDOUT,i);
       PrintString(theEnv,STDOUT," ");
-      PrintInteger(theEnv,STDOUT,(long long) instanceCounts[i]);
+      PrintUnsignedInteger(theEnv,STDOUT,instanceCounts[i]);
       PrintString(theEnv,STDOUT,"\n");
      }
   }

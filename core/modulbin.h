@@ -43,24 +43,24 @@
 struct bsaveDefmodule
   {
    struct bsaveConstructHeader header;
-   long importList;
-   long exportList;
-   long bsaveID;
+   unsigned long importList;
+   unsigned long exportList;
+   unsigned long bsaveID;
   };
 
 struct bsaveDefmoduleItemHeader
   {
-   long theModule;
-   long firstItem;
-   long lastItem;
+   unsigned long theModule;
+   unsigned long firstItem;
+   unsigned long lastItem;
   };
 
 struct bsavePortItem
   {
-   long moduleName;
-   long constructType;
-   long constructName;
-   long next;
+   unsigned long moduleName;
+   unsigned long constructType;
+   unsigned long constructName;
+   unsigned long next;
   };
 
 #define ModulePointer(i) ((Defmodule *) (&DefmoduleData(theEnv)->DefmoduleArray[i]))
@@ -68,7 +68,7 @@ struct bsavePortItem
    void                           DefmoduleBinarySetup(Environment *);
    void                           UpdateDefmoduleItemHeader
                                                  (Environment *,struct bsaveDefmoduleItemHeader *,
-                                                  struct defmoduleItemHeader *,int,void *);
+                                                  struct defmoduleItemHeader *,size_t,void *);
 
 #if BLOAD_AND_BSAVE
    void                           AssignBsaveDefmdlItemHdrVals

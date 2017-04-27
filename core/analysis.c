@@ -65,16 +65,12 @@
 /***************************************/
 
    static bool                    GetVariables(Environment *,struct lhsParseNode *,ParseNodeType,struct nandFrame *);
-   static bool                    UnboundVariablesInPattern(Environment *,struct lhsParseNode *,int);
+   static bool                    UnboundVariablesInPattern(Environment *,struct lhsParseNode *,unsigned short);
    static bool                    PropagateVariableToNodes(Environment *,struct lhsParseNode *,ParseNodeType,
                                                            CLIPSLexeme *,struct lhsParseNode *,
                                                            int,bool,bool);
-   static struct lhsParseNode    *CheckExpression(Environment *,
-                                                  struct lhsParseNode *,
-                                                  struct lhsParseNode *,
-                                                  int,
-                                                  CLIPSLexeme *,
-                                                  int);
+   static struct lhsParseNode    *CheckExpression(Environment *,struct lhsParseNode *,struct lhsParseNode *,
+                                                  unsigned short,CLIPSLexeme *,unsigned short);
    static void                    VariableReferenceErrorMessage(Environment *,
                                                                 CLIPSLexeme *,
                                                                 struct lhsParseNode *,
@@ -162,7 +158,7 @@ bool VariableAnalysis(
              (patternPtr->referringNode != NULL))
            {
             errorFlag = true;
-            if (patternPtr->referringNode->index == -1)
+            if (patternPtr->referringNode->index == NO_INDEX)
               {
                PrintErrorID(theEnv,"ANALYSIS",1,true);
                PrintString(theEnv,WERROR,"Duplicate pattern-address ?");
@@ -293,7 +289,7 @@ static bool TestCEAnalysis(
    /* Verify that all variables were referenced properly. */
    /*=====================================================*/
 
-   rv = CheckExpression(theEnv,theExpression,NULL,(int) patternPtr->whichCE,NULL,0);
+   rv = CheckExpression(theEnv,theExpression,NULL,patternPtr->whichCE,NULL,0);
 
    /*====================================================================*/
    /* Temporarily disconnect the right nodes. If this is a pattern node  */
@@ -644,7 +640,7 @@ static bool ProcessField(
    /* errors. Return true if this type of error is detected.    */
    /*===========================================================*/
 
-   if (UnboundVariablesInPattern(theEnv,thePattern,(int) patternHead->whichCE))
+   if (UnboundVariablesInPattern(theEnv,thePattern,patternHead->whichCE))
      { return true; }
 
    /*==================================================*/
@@ -826,15 +822,15 @@ static bool PropagateVariableToNodes(
 static bool UnboundVariablesInPattern(
   Environment *theEnv,
   struct lhsParseNode *theSlot,
-  int pattern)
+  unsigned short pattern)
   {
    struct lhsParseNode *andField;
    struct lhsParseNode *rv;
-   int result;
+   ConstraintViolationType result;
    struct lhsParseNode *orField;
    CLIPSLexeme *slotName;
    CONSTRAINT_RECORD *theConstraints;
-   int theField;
+   unsigned short theField;
 
    /*===================================================*/
    /* If a multifield slot is being checked, then check */
@@ -948,13 +944,13 @@ static struct lhsParseNode *CheckExpression(
   Environment *theEnv,
   struct lhsParseNode *exprPtr,
   struct lhsParseNode *lastOne,
-  int whichCE,
+  unsigned short whichCE,
   CLIPSLexeme *slotName,
-  int theField)
+  unsigned short theField)
   {
    struct lhsParseNode *rv;
-   int i = 1;
-
+   unsigned short i = 1;
+     
    while (exprPtr != NULL)
      {
       /*===============================================================*/
@@ -969,13 +965,13 @@ static struct lhsParseNode *CheckExpression(
            {
             VariableReferenceErrorMessage(theEnv,exprPtr->lexemeValue,lastOne,
                                           whichCE,slotName,theField);
-            return(exprPtr);
+            return exprPtr;
            }
          else if (UnmatchableConstraint(exprPtr->constraints))
            {
             ConstraintReferenceErrorMessage(theEnv,exprPtr->lexemeValue,lastOne,i,
                                             whichCE,slotName,theField);
-            return(exprPtr);
+            return exprPtr;
            }
         }
 
@@ -988,7 +984,7 @@ static struct lhsParseNode *CheckExpression(
         {
          VariableReferenceErrorMessage(theEnv,exprPtr->lexemeValue,lastOne,
                                        whichCE,slotName,theField);
-         return(exprPtr);
+         return exprPtr;
         }
 
       /*=====================================================*/
@@ -1000,14 +996,14 @@ static struct lhsParseNode *CheckExpression(
 #if DEFGLOBAL_CONSTRUCT
       else if (exprPtr->pnType == GBL_VARIABLE_NODE)
         {
-         int count;
+         unsigned int count;
 
          if (FindImportedConstruct(theEnv,"defglobal",NULL,exprPtr->lexemeValue->contents,
                                    &count,true,NULL) == NULL)
            {
             VariableReferenceErrorMessage(theEnv,exprPtr->lexemeValue,lastOne,
                                           whichCE,slotName,theField);
-            return(exprPtr);
+            return exprPtr;
            }
         }
 #endif
@@ -1027,7 +1023,7 @@ static struct lhsParseNode *CheckExpression(
          ) && (exprPtr->bottom != NULL))
         {
          if ((rv = CheckExpression(theEnv,exprPtr->bottom,exprPtr,whichCE,slotName,theField)) != NULL)
-           { return(rv); }
+           { return rv; }
         }
 
       /*=============================================*/

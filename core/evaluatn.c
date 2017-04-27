@@ -66,6 +66,7 @@
 /*************************************************************/
 
 #include <stdio.h>
+#include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
@@ -405,7 +406,7 @@ void PrintCLIPSValue(
 
       case MULTIFIELD_TYPE:
         PrintMultifieldDriver(theEnv,fileid,argPtr->multifieldValue,
-                              0,argPtr->multifieldValue->length - 1,true);
+                              0,argPtr->multifieldValue->length,true);
         break;
 
       default:
@@ -445,7 +446,7 @@ void PrintUDFValue(
 
       case MULTIFIELD_TYPE:
         PrintMultifieldDriver(theEnv,fileid,argPtr->multifieldValue,
-                              argPtr->begin,(argPtr->begin + argPtr->range) - 1,true);
+                              argPtr->begin,argPtr->range,true);
         break;
 
       default:
@@ -617,7 +618,7 @@ void DecrementReferenceCount(
 /*****************************************/
 void AtomInstall(
   Environment *theEnv,
-  int type,
+  unsigned short type,
   void *vPtr)
   {
    switch (type)
@@ -667,7 +668,7 @@ void AtomInstall(
 /*******************************************/
 void AtomDeinstall(
   Environment *theEnv,
-  int type,
+  unsigned short type,
   void *vPtr)
   {
    switch (type)
@@ -709,117 +710,6 @@ void AtomDeinstall(
           { (*EvaluationData(theEnv)->PrimitivesArray[type]->decrementBusyCount)(theEnv,vPtr); }
      }
   }
-
-#if DEFFUNCTION_CONSTRUCT || DEFGENERIC_CONSTRUCT
-
-/********************************************/
-/* FunctionCall: Allows Deffunctions and    */
-/*   Generic Functions to be called from C. */
-/*   Allows only constants as arguments.    */
-/********************************************/
-bool FunctionCall(
-  Environment *theEnv,
-  const char *name,
-  const char *args,
-  CLIPSValue *returnValue)
-  {
-   Expression theReference;
-   UDFValue evalResult;
-   bool rv;
-
-   /*=======================================*/
-   /* Call the function if it can be found. */
-   /*=======================================*/
-
-   if (GetFunctionReference(theEnv,name,&theReference))
-     {
-      rv = FunctionCall2(theEnv,&theReference,args,&evalResult);
-      NormalizeMultifield(theEnv,&evalResult);
-      returnValue->value = evalResult.value;
-      return rv;
-     }
-
-   /*=========================================================*/
-   /* Otherwise signal an error if a deffunction, defgeneric, */
-   /* or user defined function doesn't exist that matches     */
-   /* the specified function name.                            */
-   /*=========================================================*/
-
-   PrintErrorID(theEnv,"EVALUATN",2,false);
-   PrintString(theEnv,WERROR,"No function, generic function or deffunction of name ");
-   PrintString(theEnv,WERROR,name);
-   PrintString(theEnv,WERROR," exists for external call.\n");
-   return true;
-  }
-
-/********************************************/
-/* FunctionCall2: Allows Deffunctions and   */
-/*   Generic Functions to be called from C. */
-/*   Allows only constants as arguments.    */
-/********************************************/
-bool FunctionCall2(
-  Environment *theEnv,
-  Expression *theReference,
-  const char *args,
-  UDFValue *returnValue)
-  {
-   Expression *argexps;
-   bool error = false;
-
-   /*=============================================*/
-   /* Force periodic cleanup if the function call */
-   /* was executed from an embedded application.  */
-   /*=============================================*/
-
-   if ((UtilityData(theEnv)->CurrentGarbageFrame->topLevel) && (! CommandLineData(theEnv)->EvaluatingTopLevelCommand) &&
-       (EvaluationData(theEnv)->CurrentExpression == NULL) && (UtilityData(theEnv)->GarbageCollectionLocks == 0))
-     {
-      CleanCurrentGarbageFrame(theEnv,NULL);
-      CallPeriodicTasks(theEnv);
-     }
-
-   /*========================*/
-   /* Reset the error state. */
-   /*========================*/
-
-   if (UtilityData(theEnv)->CurrentGarbageFrame->topLevel) SetHaltExecution(theEnv,false);
-   EvaluationData(theEnv)->EvaluationError = false;
-
-   /*======================================*/
-   /* Initialize the default return value. */
-   /*======================================*/
-
-   returnValue->value = FalseSymbol(theEnv);
-
-   /*============================*/
-   /* Parse the argument string. */
-   /*============================*/
-
-   argexps = ParseConstantArguments(theEnv,args,&error);
-   if (error == true) return true;
-
-   /*====================*/
-   /* Call the function. */
-   /*====================*/
-
-   theReference->argList = argexps;
-   error = EvaluateExpression(theEnv,theReference,returnValue);
-
-   /*========================*/
-   /* Return the expression. */
-   /*========================*/
-
-   ReturnExpression(theEnv,argexps);
-   theReference->argList = NULL;
-
-   /*==========================*/
-   /* Return the error status. */
-   /*==========================*/
-
-   return(error);
-  }
-
-#endif
 
 /***************************************************/
 /* CopyDataObject: Copies the values from a source */
@@ -869,7 +759,7 @@ struct expr *ConvertValueToExpression(
   Environment *theEnv,
   UDFValue *theValue)
   {
-   long i;
+   size_t i;
    struct expr *head = NULL, *last = NULL, *newItem;
 
    if (theValue->header->type != MULTIFIELD_TYPE)
@@ -897,7 +787,7 @@ struct expr *ConvertValueToExpression(
 unsigned long GetAtomicHashValue(
   unsigned short type,
   void *value,
-  int position)
+  unsigned short position)
   {
    unsigned long tvalue;
    union
@@ -922,7 +812,7 @@ unsigned long GetAtomicHashValue(
       case EXTERNAL_ADDRESS_TYPE:
          fis.liv = 0;
          fis.vv = ((CLIPSExternalAddress *) value)->contents;
-         tvalue = (unsigned long) fis.liv;
+         tvalue = fis.liv;
          break;
 
       case FACT_ADDRESS_TYPE:
@@ -931,7 +821,7 @@ unsigned long GetAtomicHashValue(
 #endif
          fis.liv = 0;
          fis.vv = value;
-         tvalue = (unsigned long) fis.liv;
+         tvalue = fis.liv;
          break;
 
       case STRING_TYPE:
@@ -946,9 +836,9 @@ unsigned long GetAtomicHashValue(
         tvalue = type;
      }
 
-   if (position < 0) return(tvalue);
+   if (position < 0) return tvalue;
 
-   return((unsigned long) (tvalue * (((unsigned long) position) + 29)));
+   return tvalue * (position + 29);
   }
 
 /***********************************************************/
@@ -1159,7 +1049,7 @@ static void NewCAddress(
   UDFContext *context,
   UDFValue *rv)
   {
-   int numberOfArguments;
+   unsigned int numberOfArguments;
    Environment *theEnv = context->environment;
 
    numberOfArguments = UDFArgumentCount(context);

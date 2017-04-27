@@ -410,7 +410,9 @@ bool Undeffunction(
    return false;
 #else
    Environment *theEnv;
-   
+   bool success;
+   GCBlock gcb;
+  
    if (theDeffunction == NULL)
      { theEnv = allEnv; }
    else
@@ -420,12 +422,25 @@ bool Undeffunction(
    if (Bloaded(theEnv) == true)
      return false;
 #endif
+
+   GCBlockStart(theEnv,&gcb);
    if (theDeffunction == NULL)
-      return(RemoveAllDeffunctions(theEnv));
+     {
+      success = RemoveAllDeffunctions(theEnv);
+      GCBlockEnd(theEnv,&gcb);
+      return success;
+     }
+      
    if (DeffunctionIsDeletable(theDeffunction) == false)
-     return false;
+     {
+      GCBlockEnd(theEnv,&gcb);
+      return false;
+     }
+     
    RemoveConstructFromModule(theEnv,&theDeffunction->header);
    RemoveDeffunction(theEnv,theDeffunction);
+   GCBlockEnd(theEnv,&gcb);
+
    return true;
 #endif
   }
@@ -644,7 +659,7 @@ bool CheckDeffunctionCall(
 
    if (args < theDeffunction->minNumberOfParameters)
      {
-      if (theDeffunction->maxNumberOfParameters == -1)
+      if (theDeffunction->maxNumberOfParameters == PARAMETERS_UNBOUNDED)
         ExpectedCountError(theEnv,DeffunctionName(theDeffunction),
                            AT_LEAST,theDeffunction->minNumberOfParameters);
       else
@@ -653,7 +668,7 @@ bool CheckDeffunctionCall(
       return false;
      }
    else if ((args > theDeffunction->minNumberOfParameters) &&
-            (theDeffunction->maxNumberOfParameters != -1))
+            (theDeffunction->maxNumberOfParameters != PARAMETERS_UNBOUNDED))
      {
       ExpectedCountError(theEnv,DeffunctionName(theDeffunction),
                          EXACTLY,theDeffunction->minNumberOfParameters);
@@ -991,7 +1006,7 @@ static void SaveDeffunctionHeader(
   {
    Deffunction *dfnxPtr = (Deffunction *) theDeffunction;
    const char *logicalName = (const char *) userBuffer;
-   int i;
+   unsigned short i;
 
    if (DeffunctionPPForm(dfnxPtr) != NULL)
      {
@@ -1003,11 +1018,11 @@ static void SaveDeffunctionHeader(
       for (i = 0 ; i < dfnxPtr->minNumberOfParameters ; i++)
         {
          PrintString(theEnv,logicalName,"?p");
-         PrintInteger(theEnv,logicalName,(long long) i);
-         if (i != dfnxPtr->minNumberOfParameters-1)
+         PrintUnsignedInteger(theEnv,logicalName,i);
+         if ((i + 1) != dfnxPtr->minNumberOfParameters)
            PrintString(theEnv,logicalName," ");
         }
-      if (dfnxPtr->maxNumberOfParameters == -1)
+      if (dfnxPtr->maxNumberOfParameters == PARAMETERS_UNBOUNDED)
         {
          if (dfnxPtr->minNumberOfParameters != 0)
            PrintString(theEnv,logicalName," ");

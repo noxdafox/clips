@@ -158,7 +158,7 @@ void MiscFunctionDefinitions(
    AddUDF(theEnv,"setgen","l",1,1,"l",SetgenFunction,"SetgenFunction",NULL);
 
    AddUDF(theEnv,"system","v",1,UNBOUNDED,"sy",SystemCommand,"SystemCommand",NULL);
-   AddUDF(theEnv,"length$","l",1,1,"sym",LengthFunction,"LengthFunction",NULL);
+   AddUDF(theEnv,"length$","l",1,1,"m",LengthFunction,"LengthFunction",NULL);
    AddUDF(theEnv,"time","d",0,0,NULL,TimeFunction,"TimeFunction",NULL);
    AddUDF(theEnv,"local-time","m",0,0,NULL,LocalTimeFunction,"LocalTimeFunction",NULL);
    AddUDF(theEnv,"gm-time","m",0,0,NULL,GMTimeFunction,"GMTimeFunction",NULL);
@@ -203,7 +203,7 @@ void ExitCommand(
   UDFContext *context,
   UDFValue *returnValue)
   {
-   int argCnt;
+   unsigned int argCnt;
    int status;
    UDFValue theArg;
 
@@ -354,7 +354,7 @@ void RandomFunction(
   UDFContext *context,
   UDFValue *returnValue)
   {
-   int argCount;
+   unsigned int argCount;
    long long rv;
    UDFValue theArg;
    long long begin, end;
@@ -424,7 +424,7 @@ void SeedFunction(
    /* Seed the random number generator with the provided integer. */
    /*=============================================================*/
 
-   genseed((int) theValue.integerValue->contents);
+   genseed((unsigned int) theValue.integerValue->contents);
   }
 
 /********************************************/
@@ -452,7 +452,7 @@ void LengthFunction(
 
    if (CVIsType(&theArg,LEXEME_BITS))
      {
-      returnValue->integerValue = CreateInteger(theEnv,strlen(theArg.lexemeValue->contents));
+      returnValue->integerValue = CreateInteger(theEnv,(long long) strlen(theArg.lexemeValue->contents));
       return;
      }
 
@@ -463,7 +463,7 @@ void LengthFunction(
 
    else if (CVIsType(&theArg,MULTIFIELD_BIT))
      {
-      returnValue->value = CreateInteger(theEnv,theArg.range);
+      returnValue->value = CreateInteger(theEnv,(long long) theArg.range);
       return;
      }
   }
@@ -1003,7 +1003,7 @@ static void ExpandFuncMultifield(
   void *expmult)
   {
    Expression *newexp,*top,*bot;
-   long i; /* 6.04 Bug Fix */
+   size_t i; /* 6.04 Bug Fix */
 
    while (theExp != NULL)
      {
@@ -1222,13 +1222,13 @@ void FuncallFunction(
   UDFContext *context,
   UDFValue *returnValue)
   {
-   int j;
+   size_t j;
    UDFValue theArg;
    Expression theReference;
    const char *name;
    Multifield *theMultifield;
    struct expr *lastAdd = NULL, *nextAdd, *multiAdd;
-   struct functionDefinition *theFunction;
+   struct functionDefinition *theFunction = NULL;
 
    /*==================================*/
    /* Set up the default return value. */
@@ -1346,7 +1346,8 @@ void FuncallFunction(
    /* Verify the correct number of arguments. */
    /*=========================================*/
 
-#if ! RUN_TIME // TBD Allow runtime check
+// TBD Support run time check of arguments
+#if ! RUN_TIME
    if (theReference.type == FCALL)
      {
       if (CheckExpressionAgainstRestrictions(theEnv,&theReference,theFunction,name))
@@ -1716,7 +1717,7 @@ void SlotValueFunction(
    struct fact *theFact;
 #endif
    UDFValue slotNameReference, factReference, variableSlotReference;
-   short position;
+   unsigned short position;
 
    /*=============================================*/
    /* Set up the default return value for errors. */
@@ -1789,7 +1790,7 @@ void SlotValueFunction(
    else if (FindSlot(theFact->whichDeftemplate,
                      slotNameReference.lexemeValue,&position) != NULL)
      {
-      returnValue->value = theFact->theProposition.contents[position-1].value;
+      returnValue->value = theFact->theProposition.contents[position].value;
       if (returnValue->header->type == MULTIFIELD_TYPE)
         {
          returnValue->begin = 0;

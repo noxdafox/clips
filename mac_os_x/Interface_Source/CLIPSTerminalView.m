@@ -204,7 +204,7 @@
 /**********/    
 /* print: */
 /**********/    
-- (unsigned int) print: (NSString *) theString
+- (NSUInteger) print: (NSString *) theString
   {
    NSRange theRange = { [[super string] length], 0 };
 
@@ -263,8 +263,8 @@
 - (void) balanceParentheses
   {
    NSRange selectionRange;
-   unsigned int cursorLocation;
-   int commandLength;
+   NSUInteger cursorLocation;
+   size_t commandLength;
    unichar characterToCheck;
    unsigned short nestingDepth;
    NSString *theText = [super string];

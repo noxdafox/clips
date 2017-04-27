@@ -257,7 +257,7 @@ TEMP_SLOT_LINK *ParseSlot(
                                     SLOT_LOCAL_RLN,SLOT_SHARE_RLN,NULL,NULL,NULL);
          if (rtnCode == -1)
            goto ParseSlotError;
-         slot->shared = rtnCode;
+         slot->shared = (rtnCode == 0) ? false : true;
         }
       else if (strcmp(DefclassData(theEnv)->ObjectParseToken.lexemeValue->contents,PROPAGATION_FACET) == 0)
         {
@@ -265,7 +265,7 @@ TEMP_SLOT_LINK *ParseSlot(
                                     SLOT_INH_RLN,SLOT_NO_INH_RLN,NULL,NULL,NULL);
          if (rtnCode == -1)
            goto ParseSlotError;
-         slot->noInherit = rtnCode;
+         slot->noInherit = (rtnCode == 0) ? false : true;
         }
       else if (strcmp(DefclassData(theEnv)->ObjectParseToken.lexemeValue->contents,SOURCE_FACET) == 0)
         {
@@ -273,7 +273,7 @@ TEMP_SLOT_LINK *ParseSlot(
                                     SLOT_EXCLUSIVE_RLN,SLOT_COMPOSITE_RLN,NULL,NULL,NULL);
          if (rtnCode == -1)
            goto ParseSlotError;
-         slot->composite = rtnCode;
+         slot->composite = (rtnCode == 0) ? false : true;
         }
 #if DEFRULE_CONSTRUCT
       else if (strcmp(DefclassData(theEnv)->ObjectParseToken.lexemeValue->contents,MATCH_FACET) == 0)
@@ -282,7 +282,7 @@ TEMP_SLOT_LINK *ParseSlot(
                                     SLOT_NONREACTIVE_RLN,SLOT_REACTIVE_RLN,NULL,NULL,NULL);
          if (rtnCode == -1)
            goto ParseSlotError;
-         slot->reactive = rtnCode;
+         slot->reactive = (rtnCode == 0) ? false : true;
         }
 #endif
       else if (strcmp(DefclassData(theEnv)->ObjectParseToken.lexemeValue->contents,VISIBILITY_FACET) == 0)
@@ -291,7 +291,7 @@ TEMP_SLOT_LINK *ParseSlot(
                                     SLOT_PRIVATE_RLN,SLOT_PUBLIC_RLN,NULL,NULL,NULL);
          if (rtnCode == -1)
            goto ParseSlotError;
-         slot->publicVisibility = rtnCode;
+         slot->publicVisibility = (rtnCode == 0) ? false : true;
         }
       else if (strcmp(DefclassData(theEnv)->ObjectParseToken.lexemeValue->contents,CREATE_ACCESSOR_FACET) == 0)
         {
@@ -694,7 +694,7 @@ static void BuildCompositeFacets(
   CONSTRAINT_PARSE_RECORD *parsedConstraint)
   {
    SlotDescriptor *compslot = NULL;
-   long i;
+   unsigned long i;
 
    for (i = 1 ; i < preclist->classCount ; i++)
      {
@@ -832,7 +832,7 @@ static bool EvaluateSlotDefaultValue(
   {
    UDFValue temp;
    bool oldce,olddcc, vPass;
-   int vCode;
+   ConstraintViolationType vCode;
 
    /* ===================================================================
       Slot default value expression is marked as dynamic until now so
@@ -877,7 +877,7 @@ static bool EvaluateSlotDefaultValue(
         {
          sd->defaultValue = get_struct(theEnv,udfValue);
          DeriveDefaultFromConstraints(theEnv,sd->constraint,
-                                      (UDFValue *) sd->defaultValue,(int) sd->multiple,true);
+                                      (UDFValue *) sd->defaultValue,sd->multiple,true);
          IncrementUDFValueReferenceCount(theEnv,(UDFValue *) sd->defaultValue);
         }
      }

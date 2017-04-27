@@ -76,7 +76,7 @@
    bool                           SaveFacts(Environment *,const char *,SaveScope);
    bool                           SaveFactsDriver(Environment *,const char *,SaveScope,struct expr *);
    bool                           LoadFacts(Environment *,const char *);
-   bool                           LoadFactsFromString(Environment *,const char *,long);
+   bool                           LoadFactsFromString(Environment *,const char *,size_t);
    void                           FactIndexFunction(Environment *,UDFContext *,UDFValue *);
 
 #endif /* _H_factcom */

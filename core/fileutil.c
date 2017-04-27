@@ -92,9 +92,11 @@ void AppendDribble(
   Environment *theEnv,
   const char *str)
   {
+   int i;
+
    if (! DribbleActive(theEnv)) return;
    
-   for (int i = 0 ; str[i] != EOS ; i++)
+   for (i = 0 ; str[i] != EOS ; i++)
      { PutcDribbleBuffer(theEnv,str[i]); }
   }
 
@@ -925,7 +927,7 @@ bool BatchStar(
          SetHaltExecution(theEnv,false);
          SetEvaluationError(theEnv,false);
          FlushBindList(theEnv,NULL);
-         genfree(theEnv,theString,(unsigned) maxChars);
+         genfree(theEnv,theString,maxChars);
          theString = NULL;
          maxChars = 0;
          position = 0;
@@ -939,7 +941,7 @@ bool BatchStar(
      }
 
    if (theString != NULL)
-     { genfree(theEnv,theString,(unsigned) maxChars); }
+     { genfree(theEnv,theString,maxChars); }
 
    /*=======================*/
    /* Close the batch file. */

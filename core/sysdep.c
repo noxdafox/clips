@@ -59,7 +59,7 @@
 /*            Changed the EX_MATH compilation flag to        */
 /*            EXTENDED_MATH_FUNCTIONS.                       */
 /*                                                           */
-/*            Support for typed EXTERNAL_ADDRESS_TYPE.            */
+/*            Support for typed EXTERNAL_ADDRESS_TYPE.       */
 /*                                                           */
 /*            GenOpen function checks for UTF-8 Byte Order   */
 /*            Marker.                                        */
@@ -269,7 +269,18 @@ void gensystem(
   const char *commandBuffer)
   {
    if (SystemDependentData(theEnv)->PauseEnvFunction != NULL) (*SystemDependentData(theEnv)->PauseEnvFunction)(theEnv);
+
+#if (! WIN_MVC)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-result" 
+#endif
+
    system(commandBuffer);
+
+#if (! WIN_MVC)
+#pragma GCC diagnostic pop 
+#endif
+
    if (SystemDependentData(theEnv)->ContinueEnvFunction != NULL) (*SystemDependentData(theEnv)->ContinueEnvFunction)(theEnv,1);
    if (SystemDependentData(theEnv)->RedrawScreenFunction != NULL) (*SystemDependentData(theEnv)->RedrawScreenFunction)(theEnv);
   }
@@ -485,9 +496,9 @@ int genrand()
 /* genseed: Generic function for seeding the random number generator. */
 /**********************************************************************/
 void genseed(
-  int seed)
+  unsigned int seed)
   {
-   srand((unsigned) seed);
+   srand(seed);
   }
 
 /*********************************************/
@@ -730,7 +741,13 @@ void GenReadBinary(
 #endif
 
 #if (! WIN_MVC)
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-result" 
+
    fread(dataPtr,size,1,SystemDependentData(theEnv)->BinaryFP);
+
+#pragma GCC diagnostic pop 
 #endif
   }
 

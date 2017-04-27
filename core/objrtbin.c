@@ -74,8 +74,8 @@ typedef struct bsaveObjectPatternNode
    unsigned selector       : 1;
    unsigned whichField     : 8;
    unsigned short leaveFields;
-   unsigned slotNameID;
-   long networkTest,
+   unsigned short slotNameID;
+   unsigned long networkTest,
         nextLevel,
         lastLevel,
         leftNode,
@@ -86,18 +86,18 @@ typedef struct bsaveObjectPatternNode
 typedef struct bsaveObjectAlphaNode
   {
    struct bsavePatternNodeHeader header;
-   long classbmp,
+   unsigned long classbmp,
         slotbmp,
         patternNode,
         nxtInGroup,
         nxtTerminal;
   } BSAVE_OBJECT_ALPHA_NODE;
 
-#define BsaveObjectPatternIndex(op) ((op != NULL) ? op->bsaveID : -1L)
-#define BsaveObjectAlphaIndex(ap)   ((ap != NULL) ? ap->bsaveID : -1L)
+#define BsaveObjectPatternIndex(op) ((op != NULL) ? op->bsaveID : ULONG_MAX)
+#define BsaveObjectAlphaIndex(ap)   ((ap != NULL) ? ap->bsaveID : ULONG_MAX)
 
-#define ObjectPatternPointer(i) ((i == -1L) ? NULL : (OBJECT_PATTERN_NODE *) &ObjectReteBinaryData(theEnv)->PatternArray[i])
-#define ObjectAlphaPointer(i)   ((i == -1L) ? NULL : (OBJECT_ALPHA_NODE *) &ObjectReteBinaryData(theEnv)->AlphaArray[i])
+#define ObjectPatternPointer(i) ((i == ULONG_MAX) ? NULL : (OBJECT_PATTERN_NODE *) &ObjectReteBinaryData(theEnv)->PatternArray[i])
+#define ObjectAlphaPointer(i)   ((i == ULONG_MAX) ? NULL : (OBJECT_ALPHA_NODE *) &ObjectReteBinaryData(theEnv)->AlphaArray[i])
 
 /***************************************/
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
@@ -110,8 +110,8 @@ typedef struct bsaveObjectAlphaNode
 #endif
    static void                    BloadStorageObjectPatterns(Environment *);
    static void                    BloadObjectPatterns(Environment *);
-   static void                    UpdateAlpha(Environment *,void *,long);
-   static void                    UpdatePattern(Environment *,void *,long);
+   static void                    UpdateAlpha(Environment *,void *,unsigned long);
+   static void                    UpdatePattern(Environment *,void *,unsigned long);
    static void                    ClearBloadObjectPatterns(Environment *);
    static void                    DeallocateObjectReteBinaryData(Environment *);
 
@@ -158,7 +158,7 @@ static void DeallocateObjectReteBinaryData(
   {
 #if (BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE) && (! RUN_TIME)
    size_t space;
-   long i;
+   unsigned long i;
 
    for (i = 0; i < ObjectReteBinaryData(theEnv)->AlphaNodeCount; i++)
      { DestroyAlphaMemory(theEnv,&ObjectReteBinaryData(theEnv)->AlphaArray[i].header,false); }
@@ -287,11 +287,11 @@ static void BsaveObjectPatterns(
    while (alphaPtr != NULL)
      {
       AssignBsavePatternHeaderValues(theEnv,&dummyAlpha.header,&alphaPtr->header);
-      dummyAlpha.classbmp = (long) alphaPtr->classbmp->bucket;
+      dummyAlpha.classbmp = alphaPtr->classbmp->bucket;
       if (alphaPtr->slotbmp != NULL)
-        dummyAlpha.slotbmp = (long) alphaPtr->slotbmp->bucket;
+        dummyAlpha.slotbmp = alphaPtr->slotbmp->bucket;
       else
-        dummyAlpha.slotbmp = -1L;
+        dummyAlpha.slotbmp = ULONG_MAX;
       dummyAlpha.patternNode = BsaveObjectPatternIndex(alphaPtr->patternNode);
       dummyAlpha.nxtInGroup = BsaveObjectAlphaIndex(alphaPtr->nxtInGroup);
       dummyAlpha.nxtTerminal = BsaveObjectAlphaIndex(alphaPtr->nxtTerminal);
@@ -357,7 +357,7 @@ static void BloadStorageObjectPatterns(
   Environment *theEnv)
   {
    size_t space;
-   long counts[2];
+   unsigned long counts[2];
 
    GenReadBinary(theEnv,&space,sizeof(size_t));
    GenReadBinary(theEnv,counts,space);
@@ -394,7 +394,7 @@ static void BloadObjectPatterns(
   Environment *theEnv)
   {
    size_t space;
-   long i;
+   unsigned long i;
 
    GenReadBinary(theEnv,&space,sizeof(size_t));
    if (space == 0L)
@@ -441,7 +441,7 @@ static void BloadObjectPatterns(
 static void UpdateAlpha(
   Environment *theEnv,
   void *buf,
-  long obji)
+  unsigned long obji)
   {
    BSAVE_OBJECT_ALPHA_NODE *bap;
    OBJECT_ALPHA_NODE *ap;
@@ -452,7 +452,7 @@ static void UpdateAlpha(
    UpdatePatternNodeHeader(theEnv,&ap->header,&bap->header);
    ap->matchTimeTag = 0L;
    ap->classbmp = BitMapPointer(bap->classbmp);
-   if (bap->slotbmp != -1L)
+   if (bap->slotbmp != ULONG_MAX)
      {
       ap->slotbmp = BitMapPointer(bap->slotbmp);
       IncrementBitMapCount(ap->slotbmp);
@@ -482,7 +482,7 @@ static void UpdateAlpha(
 static void UpdatePattern(
   Environment *theEnv,
   void *buf,
-  long obji)
+  unsigned long obji)
   {
    BSAVE_OBJECT_PATTERN_NODE *bop;
    OBJECT_PATTERN_NODE *op;
@@ -521,7 +521,7 @@ static void ClearBloadObjectPatterns(
   Environment *theEnv)
   {
    size_t space;
-   long i;
+   unsigned long i;
 
    for (i = 0; i < ObjectReteBinaryData(theEnv)->PatternNodeCount; i++)
      {

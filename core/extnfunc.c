@@ -81,9 +81,8 @@
    static void                    DeallocateExternalFunctionData(Environment *);
 #if (! RUN_TIME)
    static bool                    RemoveHashFunction(Environment *,struct functionDefinition *);
-   static bool                    DefineFunction(Environment *,const char *,unsigned,
-                                                 void (*)(Environment *,UDFContext *,UDFValue *),
-                                                 const char *,int,int,const char *,void *);
+   static bool                    DefineFunction(Environment *,const char *,unsigned,void (*)(Environment *,UDFContext *,UDFValue *),
+                                                 const char *,unsigned short,unsigned short,const char *,void *);
 #endif
    static void                    PrintType(Environment *,const char *,int,int *,const char *);
    static void                    AssignErrorValue(UDFContext *);
@@ -135,7 +134,7 @@ static void DeallocateExternalFunctionData(
      }
 
    genfree(theEnv,ExternalFunctionData(theEnv)->FunctionHashtable,
-           (int) sizeof (struct FunctionHash *) * SIZE_FUNCTION_HASH);
+           sizeof (struct FunctionHash *) * SIZE_FUNCTION_HASH);
   }
 
 #if (! RUN_TIME)
@@ -148,8 +147,8 @@ bool AddUDF(
   Environment *theEnv,
   const char *clipsFunctionName,
   const char *returnTypes,
-  int minArgs,
-  int maxArgs,
+  unsigned short minArgs,
+  unsigned short maxArgs,
   const char *argumentTypes,
   UserDefinedFunction *cFunctionPointer,
   const char *cFunctionName,
@@ -177,8 +176,8 @@ static bool DefineFunction(
   unsigned returnTypeBits,
   void (*pointer)(Environment *,UDFContext *,UDFValue *),
   const char *actualName,
-  int minArgs,
-  int maxArgs,
+  unsigned short minArgs,
+  unsigned short maxArgs,
   const char *restrictions,
   void *context)
   {
@@ -267,7 +266,7 @@ static bool RemoveHashFunction(
   struct functionDefinition *fdPtr)
   {
    struct FunctionHash *fhPtr, *lastPtr = NULL;
-   unsigned hashValue;
+   unsigned long hashValue;
 
    hashValue = HashSymbol(fdPtr->callFunctionName->contents,SIZE_FUNCTION_HASH);
 
@@ -316,7 +315,7 @@ bool AddFunctionParser(
       PrintString(theEnv,WERROR,"Function parsers can only be added for existing functions.\n");
       return false;
      }
-   fdPtr->restrictions = NULL;
+
    fdPtr->parser = fpPtr;
    fdPtr->overloadable = false;
 
@@ -365,147 +364,23 @@ bool FuncSeqOvlFlags(
       PrintString(theEnv,WERROR,"Only existing functions can be marked as using sequence expansion arguments/overloadable or not.\n");
       return false;
      }
-   fdPtr->sequenceuseok = (short) (seqp ? true : false);
-   fdPtr->overloadable = (short) (ovlp ? true : false);
+     
+   fdPtr->sequenceuseok = (seqp ? true : false);
+   fdPtr->overloadable = (ovlp ? true : false);
+   
    return true;
   }
 
 #endif
 
-/*********************************************************/
-/* GetArgumentTypeName: Returns a descriptive string for */
-/*   a function argument type (used by DefineFunction2). */
-/*********************************************************/
-const char *GetArgumentTypeName(
-  int theRestriction)
-  {
-   switch ((char) theRestriction)
-     {
-      case 'a':
-        return("external address");
-
-      case 'e':
-        return("instance address, instance name, or symbol");
-
-      case 'd':
-      case 'f':
-        return("float");
-
-      case 'g':
-        return("integer, float, or symbol");
-
-      case 'h':
-        return("instance address, instance name, fact address, integer, or symbol");
-
-      case 'j':
-        return("symbol, string, or instance name");
-
-      case 'k':
-        return("symbol or string");
-
-      case 'i':
-      case 'l':
-        return("integer");
-
-      case 'm':
-        return("multifield");
-
-      case 'n':
-        return("integer or float");
-
-      case 'o':
-        return("instance name");
-
-      case 'p':
-        return("instance name or symbol");
-
-      case 'q':
-        return("multifield, symbol, or string");
-
-      case 's':
-        return("string");
-
-      case 'w':
-        return("symbol");
-
-      case 'x':
-        return("instance address");
-
-      case 'y':
-        return("fact-address");
-
-      case 'z':
-        return("fact-address, integer, or symbol");
-
-      case 'u':
-        return("non-void return value");
-     }
-
-   return("unknown argument type");
-  }
-
-/***************************************************/
-/* GetNthRestriction: Returns the restriction type */
-/*   for the nth parameter of a function.          */
-/***************************************************/
-int GetNthRestriction(
-  struct functionDefinition *theFunction,
-  int position)
-  {
-   int defaultRestriction = (int) 'u';
-   size_t theLength;
-   int i = 2;
-
-   /*===========================================================*/
-   /* If no restrictions at all are specified for the function, */
-   /* then return 'u' to indicate that any value is suitable as */
-   /* an argument to the function.                              */
-   /*===========================================================*/
-
-   if (theFunction == NULL) return(defaultRestriction);
-
-   if (theFunction->restrictions == NULL) return(defaultRestriction);
-
-   /*===========================================================*/
-   /* If no type restrictions are specified for the function,   */
-   /* then return 'u' to indicate that any value is suitable as */
-   /* an argument to the function.                              */
-   /*===========================================================*/
-
-   theLength = strlen(theFunction->restrictions->contents);
-
-   if (theLength < 3) return(defaultRestriction);
-
-   /*==============================================*/
-   /* Determine the functions default restriction. */
-   /*==============================================*/
-
-   defaultRestriction = (int) theFunction->restrictions->contents[i];
-
-   if (defaultRestriction == '*') defaultRestriction = (int) 'u';
-
-   /*=======================================================*/
-   /* If the requested position does not have a restriction */
-   /* specified, then return the default restriction.       */
-   /*=======================================================*/
-
-   if (theLength < (size_t) (position + 3)) return(defaultRestriction);
-
-   /*=========================================================*/
-   /* Return the restriction specified for the nth parameter. */
-   /*=========================================================*/
-
-   return((int) theFunction->restrictions->contents[position + 2]);
-  }
-
-/***************************************************/
-/* GetNthRestriction2: Returns the restriction type */
-/*   for the nth parameter of a function.          */
-/***************************************************/
-unsigned GetNthRestriction2(
+/***********************************************/
+/* GetNthRestriction: Returns the restriction  */
+/*   type for the nth parameter of a function. */
+/***********************************************/
+unsigned GetNthRestriction(
   Environment *theEnv,
   struct functionDefinition *theFunction,
-  int position)
+  unsigned int position)
   {
    unsigned rv, df;
    const char *restrictions;
@@ -575,7 +450,7 @@ struct functionDefinition *FindFunction(
   const char *functionName)
   {
    struct FunctionHash *fhPtr;
-   unsigned hashValue;
+   unsigned long hashValue;
    CLIPSLexeme *findValue;
 
    if (ExternalFunctionData(theEnv)->FunctionHashtable == NULL) return NULL;
@@ -603,7 +478,7 @@ void *GetUDFContext(
   const char *functionName)
   {
    struct FunctionHash *fhPtr;
-   unsigned hashValue;
+   unsigned long hashValue;
    CLIPSLexeme *findValue;
 
    if (ExternalFunctionData(theEnv)->FunctionHashtable == NULL) return NULL;
@@ -633,7 +508,7 @@ static void InitializeFunctionHashTable(
    int i;
 
    ExternalFunctionData(theEnv)->FunctionHashtable = (struct FunctionHash **)
-                       gm2(theEnv,(int) sizeof (struct FunctionHash *) *
+                       gm2(theEnv,sizeof (struct FunctionHash *) *
                            SIZE_FUNCTION_HASH);
 
    for (i = 0; i < SIZE_FUNCTION_HASH; i++) ExternalFunctionData(theEnv)->FunctionHashtable[i] = NULL;
@@ -647,7 +522,7 @@ static void AddHashFunction(
   struct functionDefinition *fdPtr)
   {
    struct FunctionHash *newhash, *temp;
-   unsigned hashValue;
+   unsigned long hashValue;
 
    if (ExternalFunctionData(theEnv)->FunctionHashtable == NULL) InitializeFunctionHashTable(theEnv);
 
@@ -716,10 +591,10 @@ void AssignErrorValue(
 /*********************/
 /* UDFArgumentCount: */
 /*********************/
-int UDFArgumentCount(
+unsigned int UDFArgumentCount(
   UDFContext *context)
   {
-   int count = 0;
+   unsigned int count = 0;
    struct expr *argPtr;
 
    for (argPtr = EvaluationData(context->environment)->CurrentExpression->argList;
@@ -752,7 +627,7 @@ bool UDFNextArgument(
   UDFValue *returnValue)
   {
    struct expr *argPtr = context->lastArg;
-   int argumentPosition = context->lastPosition;
+   unsigned int argumentPosition = context->lastPosition;
    Environment *theEnv = context->environment;
 
    if (argPtr == NULL)
@@ -963,7 +838,7 @@ bool UDFNextArgument(
 /*******************/
 bool UDFNthArgument(
   UDFContext *context,
-  int argumentPosition,
+  unsigned int argumentPosition,
   unsigned expectedType,
   UDFValue *returnValue)
   {

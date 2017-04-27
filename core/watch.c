@@ -631,7 +631,7 @@ int GetNthWatchValue(
         wPtr = wPtr->next, i++)
      { if (i == whichItem) return((int) *(wPtr->flag)); }
 
-   return(-1);
+   return -1;
   }
 
 /**************************************/

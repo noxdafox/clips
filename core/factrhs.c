@@ -224,7 +224,7 @@ struct expr *GetRHSPattern(
    struct expr *lastOne = NULL;
    struct expr *nextOne, *firstOne, *argHead = NULL;
    bool printError;
-   int count;
+   unsigned int count;
    Deftemplate *theDeftemplate;
    CLIPSLexeme *templateName;
    const char *nullBitMap = "\0";

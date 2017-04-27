@@ -299,12 +299,13 @@ void SetCommandString(
    FlushCommandString(theEnv);
    length = strlen(str);
    CommandLineData(theEnv)->CommandString = (char *)
-                   genrealloc(theEnv,CommandLineData(theEnv)->CommandString,(unsigned) CommandLineData(theEnv)->MaximumCharacters,
-                              (unsigned) CommandLineData(theEnv)->MaximumCharacters + length + 1);
+                   genrealloc(theEnv,CommandLineData(theEnv)->CommandString,
+                              CommandLineData(theEnv)->MaximumCharacters,
+                              CommandLineData(theEnv)->MaximumCharacters + length + 1);
 
    genstrcpy(CommandLineData(theEnv)->CommandString,str);
    CommandLineData(theEnv)->MaximumCharacters += (length + 1);
-   RouterData(theEnv)->CommandBufferInputCount += (int) length;
+   RouterData(theEnv)->CommandBufferInputCount += length;
   }
 
 /*************************************************************/
@@ -318,13 +319,14 @@ void SetNCommandString(
   {
    FlushCommandString(theEnv);
    CommandLineData(theEnv)->CommandString = (char *)
-                   genrealloc(theEnv,CommandLineData(theEnv)->CommandString,(unsigned) CommandLineData(theEnv)->MaximumCharacters,
-                              (unsigned) CommandLineData(theEnv)->MaximumCharacters + length + 1);
+                   genrealloc(theEnv,CommandLineData(theEnv)->CommandString,
+                              CommandLineData(theEnv)->MaximumCharacters,
+                              CommandLineData(theEnv)->MaximumCharacters + length + 1);
 
    genstrncpy(CommandLineData(theEnv)->CommandString,str,length);
    CommandLineData(theEnv)->CommandString[CommandLineData(theEnv)->MaximumCharacters + length] = 0;
    CommandLineData(theEnv)->MaximumCharacters += (length + 1);
-   RouterData(theEnv)->CommandBufferInputCount += (int) length;
+   RouterData(theEnv)->CommandBufferInputCount += length;
   }
 
 /******************************************************************************/
@@ -989,7 +991,7 @@ bool RouteCommand(
        if (errorFlag == 1)
          {
           PrintString(theEnv,WERROR,"\nERROR:\n");
-          PrintInChunks(theEnv,WERROR,GetPPBuffer(theEnv));
+          PrintString(theEnv,WERROR,GetPPBuffer(theEnv));
           PrintString(theEnv,WERROR,"\n");
          }
        DestroyPPBuffer(theEnv);

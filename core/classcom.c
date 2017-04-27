@@ -319,13 +319,13 @@ bool DefclassInScope(
   Defmodule *theModule)
   {
 #if DEFMODULE_CONSTRUCT
-   int moduleID;
+   unsigned long moduleID;
    char *scopeMap;
 
    scopeMap = (char *) theDefclass->scopeMap->contents;
    if (theModule == NULL)
      { theModule = GetCurrentModule(theEnv); }
-   moduleID = (int) theModule->header.bsaveID;
+   moduleID = theModule->header.bsaveID;
 
    return TestBitMap(scopeMap,moduleID);
 #else
@@ -415,6 +415,8 @@ bool Undefclass(
    return false;
 #else
    Environment *theEnv;
+   bool success;
+   GCBlock gcb;
    
    if (theDefclass == NULL)
      { theEnv = allEnv; }
@@ -425,10 +427,18 @@ bool Undefclass(
    if (Bloaded(theEnv))
      return false;
 #endif
-   if (theDefclass == NULL)
-     { return RemoveAllUserClasses(theEnv); }
 
-   return DeleteClassUAG(theEnv,theDefclass);
+   GCBlockStart(theEnv,&gcb);
+   if (theDefclass == NULL)
+     {
+      success = RemoveAllUserClasses(theEnv);
+      GCBlockEnd(theEnv,&gcb);
+      return success;
+     }
+
+   success = DeleteClassUAG(theEnv,theDefclass);
+   GCBlockEnd(theEnv,&gcb);
+   return success;
 #endif
   }
 
@@ -676,7 +686,7 @@ bool HasSuperclass(
   Defclass *c1,
   Defclass *c2)
   {
-   long i;
+   unsigned long i;
 
    for (i = 1 ; i < c1->allSuperclasses.classCount ; i++)
      if (c1->allSuperclasses.classArray[i] == c2)
@@ -778,7 +788,7 @@ static void SaveDefclass(
    ppForm = DefclassPPForm(theDefclass);
    if (ppForm != NULL)
      {
-      PrintInChunks(theEnv,logName,ppForm);
+      PrintString(theEnv,logName,ppForm);
       PrintString(theEnv,logName,"\n");
       hnd = GetNextDefmessageHandler(theDefclass,0);
       while (hnd != 0)
@@ -786,7 +796,7 @@ static void SaveDefclass(
          ppForm = DefmessageHandlerPPForm(theDefclass,hnd);
          if (ppForm != NULL)
            {
-            PrintInChunks(theEnv,logName,ppForm);
+            PrintString(theEnv,logName,ppForm);
             PrintString(theEnv,logName,"\n");
            }
          hnd = GetNextDefmessageHandler(theDefclass,hnd);

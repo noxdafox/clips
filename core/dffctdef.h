@@ -66,7 +66,7 @@ typedef struct deffacts Deffacts;
 struct deffactsData
   {
    Construct *DeffactsConstruct;
-   int DeffactsModuleIndex;
+   unsigned DeffactsModuleIndex;
 #if CONSTRUCT_COMPILER && (! RUN_TIME)
    struct CodeGeneratorItem *DeffactsCodeItem;
 #endif

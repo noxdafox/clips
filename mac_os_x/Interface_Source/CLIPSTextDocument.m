@@ -116,7 +116,7 @@
 - (void) textViewDidChangeSelection: (NSNotification *) aNotification
   {
    NSRange selectionRange;
-   unsigned int cursorLocation;
+   NSUInteger cursorLocation;
    unichar characterToCheck;
    unsigned short nestingDepth;
    NSString *theText = [textView string];
@@ -391,7 +391,7 @@
    PrintString(theEnvironment,STDOUT,"Loading Selection...\n");
    FlushCommandString(theEnvironment);
    
-   OpenTextSource(theEnvironment,"aecompiletext",theString,0,(unsigned) length); // TBD Make the name unique
+   OpenTextSource(theEnvironment,"aecompiletext",theString,0,length); // TBD Make the name unique
    SetPrintWhileLoading(theEnvironment,true);
    LoadConstructsFromLogicalName(theEnvironment,"aecompiletext");
    SetPrintWhileLoading(theEnvironment,false);
@@ -488,7 +488,7 @@
    PrintString(theEnvironment,STDOUT,"Loading Buffer...\n");
    FlushCommandString(theEnvironment);
    
-   OpenTextSource(theEnvironment,"aecompiletext",theString,0,(unsigned) length); // TBD Make the name unique
+   OpenTextSource(theEnvironment,"aecompiletext",theString,0,length); // TBD Make the name unique
    SetPrintWhileLoading(theEnvironment,true);
    LoadConstructsFromLogicalName(theEnvironment,"aecompiletext");
    SetPrintWhileLoading(theEnvironment,false);
@@ -505,10 +505,10 @@
 - (IBAction) balance: (id) sender
   {
    NSRange selectionRange;
-   unsigned int leftMiddle, rightMiddle, textLength;
+   NSUInteger leftMiddle, rightMiddle, textLength;
    unichar characterToCheck;
    int count, leftCount, rightCount;
-   unsigned int i;
+   NSUInteger i;
    BOOL endReached;
    NSString *theText = [textView string];
    
@@ -655,11 +655,11 @@
 /* and right parentheses is balanced.                   */
 /********************************************************/
 - (void) balanceIt: (NSString *) theText
-         leftMiddle: (unsigned int) leftMiddle
-         rightMiddle: (unsigned int) rightMiddle
+         leftMiddle: (NSUInteger) leftMiddle
+         rightMiddle: (NSUInteger) rightMiddle
          leftCount: (int) leftCount
          rightCount: (int) rightCount
-         textLength: (unsigned int) textLength
+         textLength: (NSUInteger) textLength
   {
    unichar characterToCheck;
    BOOL beginningReached = NO;
@@ -730,8 +730,8 @@
   {
    NSRange selectionRange, rangeOfLine, tempRange;
    unsigned int numberOfLines = 0, i;
-   unsigned int tempLocation, maxSelectedRange;
-   unsigned locationOfFirstLine, locationOfLastLine;
+   NSUInteger tempLocation, maxSelectedRange;
+   NSUInteger locationOfFirstLine, locationOfLastLine;
    NSString *theText = [textView string];
       
    /*==============================================*/
@@ -837,8 +837,8 @@
    NSRange selectionRange, rangeOfLine, tempRange;
    unsigned int numberOfLines = 0, i;
    unsigned int numberOfCharactersDeleted = 0;
-   unsigned int tempLocation, maxSelectedRange;
-   unsigned locationOfFirstLine, locationOfLastLine;
+   NSUInteger tempLocation, maxSelectedRange;
+   NSUInteger locationOfFirstLine, locationOfLastLine;
    NSString *theText = [textView string];
       
    /*==============================================*/

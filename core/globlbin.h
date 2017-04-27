@@ -40,7 +40,7 @@
 struct bsaveDefglobal
   {
    struct bsaveConstructHeader header;
-   long initial;
+   unsigned long initial;
   };
 
 struct bsaveDefglobalModule
@@ -53,9 +53,9 @@ struct bsaveDefglobalModule
 struct defglobalBinaryData
   {
    Defglobal *DefglobalArray;
-   long NumberOfDefglobals;
+   unsigned long NumberOfDefglobals;
    struct defglobalModule *ModuleArray;
-   long NumberOfDefglobalModules;
+   unsigned long NumberOfDefglobalModules;
   };
 
 #define DefglobalBinaryData(theEnv) ((struct defglobalBinaryData *) GetEnvironmentData(theEnv,GLOBLBIN_DATA))
@@ -63,7 +63,7 @@ struct defglobalBinaryData
 #define DefglobalPointer(i) (&DefglobalBinaryData(theEnv)->DefglobalArray[i])
 
    void                           DefglobalBinarySetup(Environment *);
-   void                          *BloadDefglobalModuleReference(Environment *,int);
+   void                          *BloadDefglobalModuleReference(Environment *,unsigned long);
 
 #endif /* _H_globlbin */
 

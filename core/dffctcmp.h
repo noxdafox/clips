@@ -39,6 +39,6 @@
 #define _H_dffctcmp
 
    void                           DeffactsCompilerSetup(Environment *);
-   void                           DeffactsCModuleReference(Environment *,FILE *,int,int,int);
+   void                           DeffactsCModuleReference(Environment *,FILE *,unsigned long,unsigned int,unsigned int);
 
 #endif /* _H_dffctcmp */

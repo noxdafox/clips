@@ -41,6 +41,6 @@
 #include "pattern.h"
 
    void                           FactPatternsCompilerSetup(Environment *);
-   void                           FactPatternNodeReference(Environment *,void *,FILE *,int,int);
+   void                           FactPatternNodeReference(Environment *,void *,FILE *,unsigned int,unsigned int);
 
 #endif /* _H_factcmp */

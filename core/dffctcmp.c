@@ -53,13 +53,15 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static bool                    ConstructToCode(Environment *,const char *,const char *,char *,int,FILE *,int,int);
+   static bool                    ConstructToCode(Environment *,const char *,const char *,char *,
+                                                  unsigned int,FILE *,unsigned int,unsigned int);
    static void                    DeffactsToCode(Environment *,FILE *,Deffacts *,
-                                                 int,int,int);
-   static void                    DeffactsModuleToCode(Environment *,FILE *,Defmodule *,int,int,int);
-   static void                    CloseDeffactsFiles(Environment *,FILE *,FILE *,int);
+                                                 unsigned int,unsigned int,unsigned int);
+   static void                    DeffactsModuleToCode(Environment *,FILE *,Defmodule *,
+                                                       unsigned int,unsigned int,unsigned int);
+   static void                    CloseDeffactsFiles(Environment *,FILE *,FILE *,unsigned int);
    static void                    BeforeDeffactsToCode(Environment *);
-   static void                    InitDeffactsCode(Environment *,FILE *,int,int);
+   static void                    InitDeffactsCode(Environment *,FILE *,unsigned,unsigned int);
 
 /*************************************************************/
 /* DeffactsCompilerSetup: Initializes the deffacts construct */
@@ -91,8 +93,8 @@ static void BeforeDeffactsToCode(
 static void InitDeffactsCode(
   Environment *theEnv,
   FILE *initFP,
-  int imageID,
-  int maxIndices)
+  unsigned imageID,
+  unsigned maxIndices)
   {
 #if MAC_XCD
 #pragma unused(maxIndices)
@@ -111,16 +113,16 @@ static bool ConstructToCode(
   const char *fileName,
   const char *pathName,
   char *fileNameBuffer,
-  int fileID,
+  unsigned int fileID,
   FILE *headerFP,
-  int imageID,
-  int maxIndices)
+  unsigned int imageID,
+  unsigned int maxIndices)
   {
-   int fileCount = 1;
+   unsigned int fileCount = 1;
    Defmodule *theModule;
    Deffacts *theDeffacts;
-   int moduleCount = 0, moduleArrayCount = 0, moduleArrayVersion = 1;
-   int deffactsArrayCount = 0, deffactsArrayVersion = 1;
+   unsigned int moduleCount = 0, moduleArrayCount = 0, moduleArrayVersion = 1;
+   unsigned int deffactsArrayCount = 0, deffactsArrayVersion = 1;
    FILE *moduleFile = NULL, *deffactsFile = NULL;
 
    /*===============================================*/
@@ -197,10 +199,10 @@ static void CloseDeffactsFiles(
   Environment *theEnv,
   FILE *moduleFile,
   FILE *deffactsFile,
-  int maxIndices)
+  unsigned maxIndices)
   {
-   int count = maxIndices;
-   int arrayVersion = 0;
+   unsigned int count = maxIndices;
+   unsigned int arrayVersion = 0;
 
    if (deffactsFile != NULL)
      {
@@ -223,9 +225,9 @@ static void DeffactsModuleToCode(
   Environment *theEnv,
   FILE *theFile,
   Defmodule *theModule,
-  int imageID,
-  int maxIndices,
-  int moduleCount)
+  unsigned int imageID,
+  unsigned int maxIndices,
+  unsigned int moduleCount)
   {
 #if MAC_XCD
 #pragma unused(moduleCount)
@@ -248,9 +250,9 @@ static void DeffactsToCode(
   Environment *theEnv,
   FILE *theFile,
   Deffacts *theDeffacts,
-  int imageID,
-  int maxIndices,
-  int moduleCount)
+  unsigned int imageID,
+  unsigned int maxIndices,
+  unsigned int moduleCount)
   {
    /*=================*/
    /* Deffacts Header */
@@ -279,11 +281,11 @@ static void DeffactsToCode(
 void DeffactsCModuleReference(
   Environment *theEnv,
   FILE *theFile,
-  int count,
-  int imageID,
-  int maxIndices)
+  unsigned long count,
+  unsigned int imageID,
+  unsigned int maxIndices)
   {
-   fprintf(theFile,"MIHS &%s%d_%d[%d]",
+   fprintf(theFile,"MIHS &%s%u_%lu[%lu]",
                       ModulePrefix(DeffactsData(theEnv)->DeffactsCodeItem),
                       imageID,
                       (count / maxIndices) + 1,

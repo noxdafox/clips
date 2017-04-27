@@ -51,8 +51,9 @@
 #include "genrcfun.h"
 
    void                           SetupGenericsCompiler(Environment *);
-   void                           PrintGenericFunctionReference(Environment *,FILE *,Defgeneric *,int,int);
-   void                           DefgenericCModuleReference(Environment *,FILE *,int,int,int);
+   void                           PrintGenericFunctionReference(Environment *,FILE *,Defgeneric *,
+                                                                unsigned int,unsigned int);
+   void                           DefgenericCModuleReference(Environment *,FILE *,unsigned long,unsigned int,unsigned int);
 
 #endif /* _H_genrccmp */
 

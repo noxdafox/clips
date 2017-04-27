@@ -21,7 +21,7 @@
   {
    if (self = [super init])
      {
-      int i;
+      size_t i;
       CLIPSValue slotNames;
       UDFValue slotValue;
       UDFValue defaultValue;
@@ -51,7 +51,7 @@
       
       DecrementBitMapReferenceCount(theEnvironment,theScopeMap);
 
-      tempArray = [NSMutableArray arrayWithCapacity: (unsigned) slotNames.multifieldValue->length];
+      tempArray = [NSMutableArray arrayWithCapacity: slotNames.multifieldValue->length];
 
       for (i = 0; i < slotNames.multifieldValue->length; i++)
         {
@@ -100,7 +100,7 @@
   {
    if (self = [super init])
      {
-      int i;
+      size_t i;
       CLIPSValue slotNames;
       UDFValue slotValue;
       UDFValue defaultValue;
@@ -136,7 +136,7 @@
       
       DecrementBitMapReferenceCount(theEnvironment,theScopeMap);
 
-      tempArray = [NSMutableArray arrayWithCapacity: (unsigned) slotNames.multifieldValue->length];
+      tempArray = [NSMutableArray arrayWithCapacity: slotNames.multifieldValue->length];
 
       for (i = 0; i < slotNames.multifieldValue->length; i++)
         {
@@ -144,7 +144,7 @@
          NSString *theSlotName = [NSString stringWithUTF8String: theCSlotName];
          
          DirectGetSlot(theInstance,theCSlotName,&result);
-         CLIPSToUDFValue(&result,&slotValue);
+         CLIPSToUDFValue(&result,&slotValue); // TBD Remove
          
          NSString *theSlotValue = [NSString stringWithUTF8String: DataObjectToString(theEnvironment,&slotValue)];
 

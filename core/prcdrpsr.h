@@ -67,8 +67,8 @@ struct BindInfo
    void                           SetParsedBindNames(Environment *,struct BindInfo *);
    void                           ClearParsedBindNames(Environment *);
    bool                           ParsedBindNamesEmpty(Environment *);
-   int                            SearchParsedBindNames(Environment *,CLIPSLexeme *);
-   int                            CountParsedBindNames(Environment *);
+   unsigned short                 SearchParsedBindNames(Environment *,CLIPSLexeme *);
+   unsigned short                 CountParsedBindNames(Environment *);
    void                           RemoveParsedBindName(Environment *,CLIPSLexeme *);
    struct constraintRecord       *FindBindConstraints(Environment *,CLIPSLexeme *);
 

@@ -107,11 +107,11 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static unsigned                HashSlotName(CLIPSLexeme *);
+   static unsigned int            HashSlotName(CLIPSLexeme *);
 
 #if (! RUN_TIME)
-   static int                     NewSlotNameID(Environment *);
-   static void                    DeassignClassID(Environment *,unsigned);
+   static unsigned short          NewSlotNameID(Environment *);
+   static void                    DeassignClassID(Environment *,unsigned short);
 #endif
 
 /* =========================================
@@ -195,11 +195,11 @@ void InitializeClasses(
    int i;
 
    DefclassData(theEnv)->ClassTable =
-      (Defclass **) gm2(theEnv,(int) (sizeof(Defclass *) * CLASS_TABLE_HASH_SIZE));
+      (Defclass **) gm2(theEnv,(sizeof(Defclass *) * CLASS_TABLE_HASH_SIZE));
    for (i = 0 ; i < CLASS_TABLE_HASH_SIZE ; i++)
      DefclassData(theEnv)->ClassTable[i] = NULL;
    DefclassData(theEnv)->SlotNameTable =
-      (SLOT_NAME **) gm2(theEnv,(int) (sizeof(SLOT_NAME *) * SLOT_NAME_TABLE_HASH_SIZE));
+      (SLOT_NAME **) gm2(theEnv,(sizeof(SLOT_NAME *) * SLOT_NAME_TABLE_HASH_SIZE));
    for (i = 0 ; i < SLOT_NAME_TABLE_HASH_SIZE ; i++)
      DefclassData(theEnv)->SlotNameTable[i] = NULL;
   }
@@ -323,7 +323,7 @@ void PrintPackedClassLinks(
   const char *title,
   PACKED_CLASS_LINKS *plinks)
   {
-   long i;
+   unsigned long i;
 
    PrintString(theEnv,logicalName,title);
    for (i = 0 ; i < plinks->classCount ; i++)
@@ -389,8 +389,10 @@ void RemoveClassFromTable(
   INPUTS       : 1) The packed links in which to
                     insert the new class
                  2) The subclass pointer
-                 3) Index of where to place the
-                    class (-1 to append)
+                 3) A flag indicating if the link
+                    should be appended.
+                 4) Index of where to place the
+                    class if not appended
   RETURNS      : Nothing useful
   SIDE EFFECTS : Link created and attached
   NOTES        : Assumes the pack structure belongs
@@ -401,13 +403,14 @@ void AddClassLink(
   Environment *theEnv,
   PACKED_CLASS_LINKS *src,
   Defclass *cls,
-  int posn)
+  bool append,
+  unsigned int posn)
   {
    PACKED_CLASS_LINKS dst;
 
    dst.classArray = (Defclass **) gm2(theEnv,(sizeof(Defclass *) * (src->classCount + 1)));
 
-   if (posn == -1)
+   if (append)
      {
       GenCopyMemory(Defclass *,src->classCount,dst.classArray,src->classArray);
       dst.classArray[src->classCount] = cls;
@@ -420,7 +423,7 @@ void AddClassLink(
                  dst.classArray + posn + 1,src->classArray + posn);
       dst.classArray[posn] = cls;
      }
-   dst.classCount = (unsigned short) (src->classCount + 1);
+   dst.classCount = src->classCount + 1;
    DeletePackedClassLinks(theEnv,src,false);
    src->classCount = dst.classCount;
    src->classArray = dst.classArray;
@@ -442,7 +445,7 @@ void DeleteSubclassLink(
   Defclass *sclass,
   Defclass *cls)
   {
-   long deletedIndex;
+   unsigned long deletedIndex;
    PACKED_CLASS_LINKS *src,dst;
 
    src = &sclass->directSubclasses;
@@ -462,7 +465,8 @@ void DeleteSubclassLink(
      }
    else
      dst.classArray = NULL;
-   dst.classCount = (unsigned short) (src->classCount - 1);
+     
+   dst.classCount = src->classCount - 1;
    DeletePackedClassLinks(theEnv,src,false);
    src->classCount = dst.classCount;
    src->classArray = dst.classArray;
@@ -485,7 +489,7 @@ void DeleteSuperclassLink(
   Defclass *sclass,
   Defclass *cls)
   {
-   long deletedIndex;
+   unsigned long deletedIndex;
    PACKED_CLASS_LINKS *src,dst;
 
    src = &sclass->directSuperclasses;
@@ -505,7 +509,8 @@ void DeleteSuperclassLink(
      }
    else
      dst.classArray = NULL;
-   dst.classCount = (unsigned short) (src->classCount - 1);
+     
+   dst.classCount = src->classCount - 1;
    DeletePackedClassLinks(theEnv,src,false);
    src->classCount = dst.classCount;
    src->classArray = dst.classArray;
@@ -603,16 +608,17 @@ void AssignClassID(
   Environment *theEnv,
   Defclass *cls)
   {
-   unsigned i;
+   unsigned short i;
 
    if ((DefclassData(theEnv)->MaxClassID % CLASS_ID_MAP_CHUNK) == 0)
      {
-      DefclassData(theEnv)->ClassIDMap = (Defclass **) genrealloc(theEnv,DefclassData(theEnv)->ClassIDMap,
-                       (unsigned) (DefclassData(theEnv)->MaxClassID * sizeof(Defclass *)),
-                       (unsigned) ((DefclassData(theEnv)->MaxClassID + CLASS_ID_MAP_CHUNK) * sizeof(Defclass *)));
-      DefclassData(theEnv)->AvailClassID += (unsigned short) CLASS_ID_MAP_CHUNK;
+      DefclassData(theEnv)->ClassIDMap =
+         (Defclass **) genrealloc(theEnv,DefclassData(theEnv)->ClassIDMap,
+                                  (DefclassData(theEnv)->MaxClassID * sizeof(Defclass *)),
+                                  ((DefclassData(theEnv)->MaxClassID + CLASS_ID_MAP_CHUNK) * sizeof(Defclass *)));
+      DefclassData(theEnv)->AvailClassID += CLASS_ID_MAP_CHUNK;
 
-      for (i = DefclassData(theEnv)->MaxClassID ; i < (unsigned) (DefclassData(theEnv)->MaxClassID + CLASS_ID_MAP_CHUNK) ; i++)
+      for (i = DefclassData(theEnv)->MaxClassID ; i < (DefclassData(theEnv)->MaxClassID + CLASS_ID_MAP_CHUNK) ; i++)
         DefclassData(theEnv)->ClassIDMap[i] = NULL;
      }
    DefclassData(theEnv)->ClassIDMap[DefclassData(theEnv)->MaxClassID] = cls;
@@ -635,7 +641,7 @@ void AssignClassID(
 SLOT_NAME *AddSlotName(
   Environment *theEnv,
   CLIPSLexeme *slotName,
-  int newid,
+  unsigned short newid,
   bool usenewid)
   {
    SLOT_NAME *snp;
@@ -662,7 +668,7 @@ SLOT_NAME *AddSlotName(
       snp->name = slotName;
       snp->hashTableIndex = hashTableIndex;
       snp->use = 1;
-      snp->id = (short) (usenewid ? newid : NewSlotNameID(theEnv));
+      snp->id = (usenewid ? newid : NewSlotNameID(theEnv));
       snp->nxt = DefclassData(theEnv)->SlotNameTable[hashTableIndex];
       DefclassData(theEnv)->SlotNameTable[hashTableIndex] = snp;
       IncrementLexemeCount(slotName);
@@ -736,7 +742,7 @@ void RemoveDefclass(
   Defclass *cls)
   {
    DefmessageHandler *hnd;
-   long i;
+   unsigned long i;
 
    /* ====================================================
       Remove all of this class's superclasses' links to it
@@ -798,7 +804,7 @@ void RemoveDefclass(
      }
 
    SetDefclassPPForm(theEnv,cls,NULL);
-   DeassignClassID(theEnv,(unsigned) cls->id);
+   DeassignClassID(theEnv,cls->id);
    rtn_struct(theEnv,defclass,cls);
   }
 
@@ -971,7 +977,7 @@ void InstallClass(
 bool IsClassBeingUsed(
   Defclass *cls)
   {
-   long i;
+   unsigned long i;
 
    if (cls->busy > 0)
      return true;
@@ -1041,7 +1047,7 @@ bool DeleteClassUAG(
   Environment *theEnv,
   Defclass *cls)
   {
-   long subCount;
+   unsigned long subCount;
 
    while (cls->directSubclasses.classCount != 0)
      {
@@ -1078,7 +1084,7 @@ void MarkBitMapSubclasses(
   Defclass *cls,
   int set)
   {
-   long i;
+   unsigned long i;
 
    if (set)
      SetBitMap(map,cls->id);
@@ -1107,16 +1113,18 @@ void MarkBitMapSubclasses(
                  given the index (object pattern
                  matching uses this).
  ***************************************************/
-short FindSlotNameID(
+unsigned short FindSlotNameID(
   Environment *theEnv,
   CLIPSLexeme *slotName)
   {
    SLOT_NAME *snp;
 
    snp = DefclassData(theEnv)->SlotNameTable[HashSlotName(slotName)];
+   
    while ((snp != NULL) ? (snp->name != slotName) : false)
-     snp = snp->nxt;
-   return((snp != NULL) ? (short) snp->id : (short) -1);
+     { snp = snp->nxt; }
+     
+   return (snp != NULL) ? snp->id : SLOT_NAME_NOT_FOUND;
   }
 
 /***************************************************
@@ -1129,11 +1137,12 @@ short FindSlotNameID(
  ***************************************************/
 CLIPSLexeme *FindIDSlotName(
   Environment *theEnv,
-  int id)
+  unsigned short id)
   {
    SLOT_NAME *snp;
 
    snp = FindIDSlotNameHash(theEnv,id);
+   
    return((snp != NULL) ? snp->name : NULL);
   }
 
@@ -1147,9 +1156,9 @@ CLIPSLexeme *FindIDSlotName(
  ***************************************************/
 SLOT_NAME *FindIDSlotNameHash(
   Environment *theEnv,
-  int id)
+  unsigned short id)
   {
-   int i;
+   unsigned short i;
    SLOT_NAME *snp;
 
    for (i = 0 ; i < SLOT_NAME_TABLE_HASH_SIZE ; i++)
@@ -1158,7 +1167,7 @@ SLOT_NAME *FindIDSlotNameHash(
       while (snp != NULL)
         {
          if (snp->id == id)
-           return(snp);
+           return snp;
          snp = snp->nxt;
         }
      }
@@ -1227,13 +1236,14 @@ void ReleaseTraversalID(
                  symbol table - uses that hash value
                  multiplied by a prime for a new hash
  *******************************************************/
-unsigned HashClass(
+unsigned int HashClass(
   CLIPSLexeme *cname)
   {
-   unsigned long tally;
+   unsigned int tally;
 
-   tally = ((unsigned long) cname->bucket) * BIG_PRIME;
-   return((unsigned) (tally % CLASS_TABLE_HASH_SIZE));
+   tally = cname->bucket * BIG_PRIME;
+   
+   return tally % CLASS_TABLE_HASH_SIZE;
   }
 
 /* =========================================
@@ -1254,13 +1264,14 @@ unsigned HashClass(
                  symbol table - uses that hash value
                  multiplied by a prime for a new hash
  *******************************************************/
-static unsigned HashSlotName(
+static unsigned int HashSlotName(
   CLIPSLexeme *sname)
   {
-   unsigned long tally;
+   unsigned int tally;
 
-   tally = ((unsigned long) sname->bucket) * BIG_PRIME;
-   return((unsigned) (tally % SLOT_NAME_TABLE_HASH_SIZE));
+   tally = sname->bucket * BIG_PRIME;
+   
+   return tally % SLOT_NAME_TABLE_HASH_SIZE;
   }
 
 #if (! RUN_TIME)
@@ -1274,10 +1285,10 @@ static unsigned HashSlotName(
   SIDE EFFECTS : None
   NOTES        : None
  ***********************************************/
-static int NewSlotNameID(
+static unsigned short NewSlotNameID(
   Environment *theEnv)
   {
-   int newid = 0;
+   unsigned short newid = 0;
    unsigned i;
    SLOT_NAME *snp;
 
@@ -1296,7 +1307,7 @@ static int NewSlotNameID(
       else
         break;
      }
-   return(newid);
+   return newid;
   }
 
 /***************************************************
@@ -1312,26 +1323,27 @@ static int NewSlotNameID(
  ***************************************************/
 static void DeassignClassID(
   Environment *theEnv,
-  unsigned id)
+  unsigned short id)
   {
-   int i;
+   unsigned short i;
    bool reallocReqd;
-   unsigned short oldChunk = 0,newChunk = 0;
+   unsigned short oldChunk = 0, newChunk = 0;
 
    DefclassData(theEnv)->ClassIDMap[id] = NULL;
    for (i = id + 1 ; i < DefclassData(theEnv)->MaxClassID ; i++)
      if (DefclassData(theEnv)->ClassIDMap[i] != NULL)
        return;
+      
    reallocReqd = false;
    while (DefclassData(theEnv)->ClassIDMap[id] == NULL)
      {
-      DefclassData(theEnv)->MaxClassID = (unsigned short) id;
+      DefclassData(theEnv)->MaxClassID = id;
       if ((DefclassData(theEnv)->MaxClassID % CLASS_ID_MAP_CHUNK) == 0)
         {
          newChunk = DefclassData(theEnv)->MaxClassID;
          if (reallocReqd == false)
            {
-            oldChunk = (unsigned short) (DefclassData(theEnv)->MaxClassID + CLASS_ID_MAP_CHUNK);
+            oldChunk = (DefclassData(theEnv)->MaxClassID + CLASS_ID_MAP_CHUNK);
             reallocReqd = true;
            }
         }
@@ -1342,8 +1354,8 @@ static void DeassignClassID(
    if (reallocReqd)
      {
       DefclassData(theEnv)->ClassIDMap = (Defclass **) genrealloc(theEnv,DefclassData(theEnv)->ClassIDMap,
-                       (unsigned) (oldChunk * sizeof(Defclass *)),
-                       (unsigned) (newChunk * sizeof(Defclass *)));
+                       (oldChunk * sizeof(Defclass *)),
+                       (newChunk * sizeof(Defclass *)));
 
       DefclassData(theEnv)->AvailClassID = newChunk;
      }

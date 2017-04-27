@@ -53,10 +53,10 @@
 #include "factmngr.h"
 
    void                           FactPatternMatch(Environment *,Fact *,
-                                                   struct factPatternNode *,int,
+                                                   struct factPatternNode *,size_t,size_t,
                                                    struct multifieldMarker *,
                                                    struct multifieldMarker *);
-   void                           MarkFactPatternForIncrementalReset(Environment *,struct patternNodeHeader *,int);
+   void                           MarkFactPatternForIncrementalReset(Environment *,struct patternNodeHeader *,bool);
    void                           FactsIncrementalReset(Environment *);
 
 #endif /* _H_factmch */

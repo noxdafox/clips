@@ -84,7 +84,7 @@ typedef struct definstances
 struct definstancesData
   {
    Construct *DefinstancesConstruct;
-   int DefinstancesModuleIndex;
+   unsigned DefinstancesModuleIndex;
 #if CONSTRUCT_COMPILER && (! RUN_TIME)
    struct CodeGeneratorItem *DefinstancesCodeItem;
 #endif

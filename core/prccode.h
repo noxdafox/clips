@@ -73,7 +73,7 @@ typedef struct ProcParamStack
    Expression *ParamExpressions;
 #endif
 
-   int ParamArraySize;
+   unsigned int ParamArraySize;
    UDFValue *WildcardValue;
    void (*UnboundErrFunc)(Environment *);
    struct ProcParamStack *nxt;
@@ -85,7 +85,7 @@ struct proceduralPrimitiveData
   {
    Multifield *NoParamValue;
    UDFValue *ProcParamArray;
-   int ProcParamArraySize;
+   unsigned int ProcParamArraySize;
    Expression *CurrentProcActions;
 #if DEFGENERIC_CONSTRUCT
    Expression *ProcParamExpressions;
@@ -104,7 +104,7 @@ struct proceduralPrimitiveData
 #if ! DEFGENERIC_CONSTRUCT
    EntityRecord GenericEntityRecord;
 #endif
-   int Oldindex;
+   unsigned int Oldindex;
   };
 
 #define ProceduralPrimitiveData(theEnv) ((struct proceduralPrimitiveData *) GetEnvironmentData(theEnv,PROCEDURAL_PRIMITIVE_DATA))
@@ -115,13 +115,13 @@ struct proceduralPrimitiveData
 
 #if DEFFUNCTION_CONSTRUCT || OBJECT_SYSTEM
    Expression                    *ParseProcParameters(Environment *,const char *,struct token *,Expression *,
-                                                             CLIPSLexeme **,int *,int *,bool *,
+                                                             CLIPSLexeme **,unsigned short *,unsigned short *,bool *,
                                                              bool (*)(Environment *,const char *));
 #endif
    Expression                    *ParseProcActions(Environment *,const char *,const char *,struct token *,Expression *,CLIPSLexeme *,
                                                           int (*)(Environment *,Expression *,void *),
                                                           int (*)(Environment *,Expression *,void *),
-                                                          int *,void *);
+                                                          unsigned short *,void *);
    int                            ReplaceProcVars(Environment *,const char *,Expression *,Expression *,CLIPSLexeme *,
                                                          int (*)(Environment *,Expression *,void *),void *);
 #if DEFGENERIC_CONSTRUCT
@@ -129,17 +129,17 @@ struct proceduralPrimitiveData
 #endif
 #endif
 
-   void                           PushProcParameters(Environment *,Expression *,int,const char *,const char *,void (*)(Environment *));
+   void                           PushProcParameters(Environment *,Expression *,unsigned int,const char *,const char *,void (*)(Environment *));
    void                           PopProcParameters(Environment *);
 
 #if DEFGENERIC_CONSTRUCT
    Expression                    *GetProcParamExpressions(Environment *);
 #endif
 
-   void                           EvaluateProcActions(Environment *,Defmodule *,Expression *,int,
+   void                           EvaluateProcActions(Environment *,Defmodule *,Expression *,unsigned short,
                                                       UDFValue *,void (*)(Environment *));
    void                           PrintProcParamArray(Environment *,const char *);
-   void                           GrabProcWildargs(Environment *,UDFValue *,int);
+   void                           GrabProcWildargs(Environment *,UDFValue *,unsigned int);
 
 #endif /* _H_prccode */
 

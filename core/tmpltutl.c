@@ -160,7 +160,7 @@ void CheckTemplateFact(
    struct templateSlot *slotPtr;
    UDFValue theData;
    char thePlace[20];
-   int rv;
+   ConstraintViolationType rv;
 
    if (! GetDynamicConstraintChecking(theEnv)) return;
 
@@ -238,7 +238,7 @@ bool CheckRHSSlotTypes(
   struct templateSlot *slotPtr,
   const char *thePlace)
   {
-   int rv;
+   ConstraintViolationType rv;
    const char *theName;
 
    rv = ConstraintCheckExpressionChain(theEnv,rhsSlots,slotPtr->constraints);
@@ -260,15 +260,15 @@ bool CheckRHSSlotTypes(
 /*********************************************************/
 struct templateSlot *GetNthSlot(
   Deftemplate *theDeftemplate,
-  int position)
+  long long position)
   {
    struct templateSlot *slotPtr;
-   int i = 0;
+   long long i = 0;
 
    slotPtr = theDeftemplate->slotList;
    while (slotPtr != NULL)
      {
-      if (i == position) return(slotPtr);
+      if (i == position) return slotPtr;
       slotPtr = slotPtr->next;
       i++;
      }
@@ -332,8 +332,7 @@ static void PrintTemplateSlot(
       if (theSegment->length > 0)
         {
          PrintString(theEnv,logicalName," ");
-         PrintMultifieldDriver(theEnv,logicalName,theSegment,
-                         0,(long) theSegment->length-1,false);
+         PrintMultifieldDriver(theEnv,logicalName,theSegment,0,theSegment->length,false);
         }
      }
 
@@ -495,7 +494,7 @@ void UpdateDeftemplateScope(
   Environment *theEnv)
   {
    Deftemplate *theDeftemplate;
-   int moduleCount;
+   unsigned int moduleCount;
    Defmodule *theModule;
    struct defmoduleItemHeader *theItem;
 
@@ -539,21 +538,20 @@ void UpdateDeftemplateScope(
 struct templateSlot *FindSlot(
   Deftemplate *theDeftemplate,
   CLIPSLexeme *name,
-  short *whichOne)
+  unsigned short *whichOne)
   {
    struct templateSlot *slotPtr;
 
-   *whichOne = 1;
+   if (whichOne != NULL) *whichOne = 0;
    slotPtr = theDeftemplate->slotList;
    while (slotPtr != NULL)
      {
       if (slotPtr->slotName == name)
         { return(slotPtr); }
-      (*whichOne)++;
+      if (whichOne != NULL) (*whichOne)++;
       slotPtr = slotPtr->next;
      }
 
-   *whichOne = -1;
    return NULL;
   }
 

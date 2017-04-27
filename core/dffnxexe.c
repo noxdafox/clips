@@ -232,7 +232,7 @@ static void WatchDeffunction(
      }
    PrintString(theEnv,STDOUT,DeffunctionData(theEnv)->ExecutingDeffunction->header.name->contents);
    PrintString(theEnv,STDOUT," ED:");
-   PrintInteger(theEnv,STDOUT,(long long) EvaluationData(theEnv)->CurrentEvaluationDepth);
+   PrintInteger(theEnv,STDOUT,EvaluationData(theEnv)->CurrentEvaluationDepth);
    PrintProcParamArray(theEnv,STDOUT);
   }
 

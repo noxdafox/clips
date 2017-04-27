@@ -98,7 +98,7 @@ struct joinNode *ConstructJoins(
    bool isLogical, isExists;
    struct joinNode *lastRightJoin;
    bool lastIteration = false;
-   int rhsType;
+   unsigned short rhsType;
    struct expr *leftHash, *rightHash;
    void *rhsStruct;
    struct lhsParseNode *nextLHS;

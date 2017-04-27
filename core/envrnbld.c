@@ -188,6 +188,8 @@ Environment *CreateEnvironmentDriver(
 
    InitializeEnvironment(theEnvironment,symbolTable,floatTable,integerTable,
                          bitmapTable,externalAddressTable,functions);
+      
+   CleanCurrentGarbageFrame(theEnvironment,NULL);
 
    return theEnvironment;
   }
@@ -236,8 +238,8 @@ bool DestroyEnvironment(
    if ((theMemData->MemoryAmount != 0) || (theMemData->MemoryCalls != 0))
      {
       printf("\n[ENVRNMNT8] Environment data not fully deallocated.\n");
-      printf("\n[ENVRNMNT8] MemoryAmount = %ld.\n",(long) theMemData->MemoryAmount);
-      printf("\n[ENVRNMNT8] MemoryCalls = %ld.\n",(long) theMemData->MemoryCalls);
+      printf("\n[ENVRNMNT8] MemoryAmount = %lld.\n",theMemData->MemoryAmount);
+      printf("\n[ENVRNMNT8] MemoryCalls = %lld.\n",theMemData->MemoryCalls);
       rv = false;
      }
 

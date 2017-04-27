@@ -54,8 +54,8 @@
 #endif
    static void                    BloadStorage(Environment *);
    static void                    BloadBinaryItem(Environment *);
-   static void                    UpdateDeffactsModule(Environment *,void *,long);
-   static void                    UpdateDeffacts(Environment *,void *,long);
+   static void                    UpdateDeffactsModule(Environment *,void *,unsigned long);
+   static void                    UpdateDeffacts(Environment *,void *,unsigned long);
    static void                    ClearBload(Environment *);
    static void                    DeallocateDeffactsBloadData(Environment *);
 
@@ -267,7 +267,7 @@ static void BsaveBinaryItem(
 
       theModuleItem = (struct deffactsModule *) GetModuleItem(theEnv,NULL,DeffactsData(theEnv)->DeffactsModuleIndex);
       AssignBsaveDefmdlItemHdrVals(&tempDeffactsModule.header,&theModuleItem->header);
-      GenWrite(&tempDeffactsModule,(unsigned long) sizeof(struct bsaveDeffactsModule),fp);
+      GenWrite(&tempDeffactsModule,sizeof(struct bsaveDeffactsModule),fp);
      }
 
    /*==========================*/
@@ -291,9 +291,9 @@ static void BsaveBinaryItem(
             ExpressionData(theEnv)->ExpressionCount += ExpressionSize(theDeffacts->assertList);
            }
          else
-           { newDeffacts.assertList = -1L; }
+           { newDeffacts.assertList = ULONG_MAX; }
 
-         GenWrite(&newDeffacts,(unsigned long) sizeof(struct bsaveDeffacts),fp);
+         GenWrite(&newDeffacts,sizeof(struct bsaveDeffacts),fp);
         }
      }
 
@@ -399,13 +399,13 @@ static void BloadBinaryItem(
 static void UpdateDeffactsModule(
   Environment *theEnv,
   void *buf,
-  long obji)
+  unsigned long obji)
   {
    struct bsaveDeffactsModule *bdmPtr;
 
    bdmPtr = (struct bsaveDeffactsModule *) buf;
    UpdateDefmoduleItemHeader(theEnv,&bdmPtr->header,&DeffactsBinaryData(theEnv)->ModuleArray[obji].header,
-                             (int) sizeof(Deffacts),DeffactsBinaryData(theEnv)->DeffactsArray);
+                             sizeof(Deffacts),DeffactsBinaryData(theEnv)->DeffactsArray);
   }
 
 /*********************************************/
@@ -415,14 +415,14 @@ static void UpdateDeffactsModule(
 static void UpdateDeffacts(
   Environment *theEnv,
   void *buf,
-  long obji)
+  unsigned long obji)
   {
    struct bsaveDeffacts *bdp;
 
    bdp = (struct bsaveDeffacts *) buf;
    UpdateConstructHeader(theEnv,&bdp->header,&DeffactsBinaryData(theEnv)->DeffactsArray[obji].header,
-                         DEFFACTS,(int) sizeof(struct deffactsModule),DeffactsBinaryData(theEnv)->ModuleArray,
-                         (int) sizeof(Deffacts),DeffactsBinaryData(theEnv)->DeffactsArray);
+                         DEFFACTS,sizeof(struct deffactsModule),DeffactsBinaryData(theEnv)->ModuleArray,
+                         sizeof(Deffacts),DeffactsBinaryData(theEnv)->DeffactsArray);
    DeffactsBinaryData(theEnv)->DeffactsArray[obji].assertList = ExpressionPointer(bdp->assertList);
   }
 
@@ -433,7 +433,7 @@ static void UpdateDeffacts(
 static void ClearBload(
   Environment *theEnv)
   {
-   long i;
+   unsigned long i;
    size_t space;
 
    /*=============================================*/
@@ -467,7 +467,7 @@ static void ClearBload(
 /******************************************************/
 void *BloadDeffactsModuleReference(
   Environment *theEnv,
-  int theIndex)
+  unsigned long theIndex)
   {
    return (void *) &DeffactsBinaryData(theEnv)->ModuleArray[theIndex];
   }

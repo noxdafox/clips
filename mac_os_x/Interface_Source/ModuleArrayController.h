@@ -9,12 +9,12 @@
 
 @interface ModuleArrayController : NSArrayController 
   {
-   int moduleIndex;
+   NSInteger moduleIndex;
    NSString *searchString;
   }
 
-- (void)                         setModuleIndex: (int) theModule;
-- (int)                          moduleIndex;
+- (void)                         setModuleIndex: (NSInteger) theModule;
+- (NSInteger)                    moduleIndex;
 - (IBAction)                     search: (id) sender;
 - (void)                         setSearchString: (NSString *) string;
 @end

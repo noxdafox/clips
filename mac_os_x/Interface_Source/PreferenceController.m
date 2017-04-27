@@ -93,12 +93,12 @@
       if ([[[tabView selectedTabViewItem] identifier] isEqualToString: @"dialog"])
         {
          [theValues setValue: [panelFont fontName] forKey: @"dialogTextFontName"];
-         [theValues setValue: [NSNumber numberWithFloat: [panelFont pointSize]] forKey: @"dialogTextFontSize"];
+         [theValues setValue: [NSNumber numberWithDouble: [panelFont pointSize]] forKey: @"dialogTextFontSize"];
         }
       else
         {
          [theValues setValue: [panelFont fontName] forKey: @"editorTextFontName"];
-         [theValues setValue: [NSNumber numberWithFloat: [panelFont pointSize]] forKey: @"editorTextFontSize"];
+         [theValues setValue: [NSNumber numberWithDouble: [panelFont pointSize]] forKey: @"editorTextFontSize"];
         }
 
      }
@@ -198,9 +198,7 @@
    [alert beginSheetModalForWindow: [self window]
                  completionHandler: ^(NSInteger returnCode)
                  {
-                  NSUserDefaultsController *theDefaultsController;
                   NSWindow *panel = [self window];
-                  theDefaultsController = [NSUserDefaultsController sharedUserDefaultsController];
                   if (returnCode == NSAlertFirstButtonReturn) // Save
                     {
                      [theDefaultsController save: self];
@@ -267,9 +265,8 @@
    [alert beginSheetModalForWindow: [self window]
                  completionHandler: ^(NSInteger returnCode)
                  {
-                  NSUserDefaultsController *theDefaultsController;
                   NSWindow *panel = [self window];
-                  theDefaultsController = [NSUserDefaultsController sharedUserDefaultsController];
+
                   if (returnCode == NSAlertFirstButtonReturn) // Save
                     {
                      [panel close];

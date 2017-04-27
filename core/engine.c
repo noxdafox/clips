@@ -177,7 +177,9 @@ long long Run(
 #if OBJECT_SYSTEM
    unsigned long maxInstances = 0, sumInstances = 0;
 #endif
+#if (! GENERIC)
    double endTime, startTime = 0.0;
+#endif
    unsigned long tempValue;
 #endif
    unsigned short i;
@@ -223,7 +225,9 @@ long long Run(
 #endif
       maxActivations = GetNumberOfActivations(theEnv);
       sumActivations = maxActivations;
+#if (! GENERIC)
       startTime = gentime();
+#endif
      }
 #endif
 
@@ -555,9 +559,12 @@ long long Run(
 #if DEBUGGING_FUNCTIONS
    if (EngineData(theEnv)->WatchStatistics)
      {
+#if DEFTEMPLATE_CONSTRUCT || OBJECT_SYSTEM || DEVELOPER
       char printSpace[60];
-
+#endif
+#if (! GENERIC)
       endTime = gentime();
+#endif
 
       PrintInteger(theEnv,STDOUT,rulesFired);
       PrintString(theEnv,STDOUT," rules fired");
@@ -1122,7 +1129,7 @@ void RunCommand(
   UDFContext *context,
   UDFValue *returnValue)
   {
-   int numArgs;
+   unsigned int numArgs;
    long long runLimit = -1LL;
    UDFValue theArg;
 
@@ -1316,7 +1323,7 @@ void ShowBreaksCommand(
   UDFContext *context,
   UDFValue *returnValue)
   {
-   int numArgs;
+   unsigned int numArgs;
    bool error;
    Defmodule *theModule;
 
@@ -1464,7 +1471,7 @@ void FocusCommand(
    UDFValue theArg;
    const char *argument;
    Defmodule *theModule;
-   int argCount, i;
+   unsigned int argCount, i;
 
    /*===========================================*/
    /* Focus on the specified defrule module(s). */

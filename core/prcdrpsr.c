@@ -475,7 +475,7 @@ static void ReplaceLoopCountVars(
         {
          theExp->type = FCALL;
          theExp->value = FindFunction(theEnv,"(get-loop-count)");
-         theExp->argList = GenConstant(theEnv,INTEGER_TYPE,CreateInteger(theEnv,(long long) depth));
+         theExp->argList = GenConstant(theEnv,INTEGER_TYPE,CreateInteger(theEnv,depth));
         }
       else if (theExp->argList != NULL)
         {
@@ -653,7 +653,7 @@ static struct expr *BindParse(
    CONSTRAINT_RECORD *theConstraint = NULL;
 #if DEFGLOBAL_CONSTRUCT
    Defglobal *theGlobal;
-   int count;
+   unsigned int count;
 #endif
 
    SavePPBuffer(theEnv," ");
@@ -910,18 +910,18 @@ SwitchParseError:
 /**************************/
 /* SearchParsedBindNames: */
 /**************************/
-int SearchParsedBindNames(
+unsigned short SearchParsedBindNames(
   Environment *theEnv,
   CLIPSLexeme *name_sought)
   {
    struct BindInfo *var_ptr;
-   int theIndex = 1;
+   unsigned short theIndex = 1;
 
    var_ptr = ProcedureParserData(theEnv)->ListOfParsedBindNames;
    while (var_ptr != NULL)
      {
       if (var_ptr->name == name_sought)
-        { return(theIndex); }
+        { return theIndex; }
       var_ptr = var_ptr->next;
       theIndex++;
      }
@@ -954,11 +954,11 @@ struct constraintRecord *FindBindConstraints(
 /*   names that have been bound using the bind function */
 /*   in the current context (e.g. the RHS of a rule).   */
 /********************************************************/
-int CountParsedBindNames(
+unsigned short CountParsedBindNames(
   Environment *theEnv)
   {
    struct BindInfo *theVariable;
-   int theIndex = 0;
+   unsigned short theIndex = 0;
 
    theVariable = ProcedureParserData(theEnv)->ListOfParsedBindNames;
    while (theVariable != NULL)
@@ -967,7 +967,7 @@ int CountParsedBindNames(
       theIndex++;
      }
 
-   return(theIndex);
+   return theIndex;
   }
 
 /****************************************************************/

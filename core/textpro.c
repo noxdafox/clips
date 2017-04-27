@@ -375,7 +375,7 @@ static bool TextLookupToss(
      TextProcessingData(theEnv)->headings = clptr->next;
    else
      plptr->next = clptr->next;
-   rm(theEnv,clptr,(int) sizeof(struct lists));
+   rm(theEnv,clptr,sizeof(struct lists));
    return true;
   }
 
@@ -591,7 +591,7 @@ static struct lists *NewFetchFile(
       if (strcmp(lptr->file,file) == 0)
         return NULL;
      }
-   lnode = (struct lists *) gm2(theEnv,(int) sizeof(struct lists));
+   lnode = (struct lists *) gm2(theEnv,sizeof(struct lists));
    genstrcpy(lnode->file,file);
    lnode->topics = NULL;
    lnode->curr_menu = NULL;
@@ -636,11 +636,11 @@ static struct entries *AllocateEntryNode(
    /*Allocate a new node and scan the delimeter string for tree info */
    /*================================================================*/
 
-   enode = (struct entries *) gm2(theEnv,(int) sizeof(struct entries));
+   enode = (struct entries *) gm2(theEnv,sizeof(struct entries));
    if (sscanf(str,BFORMAT,
               &enode->level,t_code,bmarker,enode->name) != 4)
      {
-      rm(theEnv,enode,(int) sizeof(struct entries));
+      rm(theEnv,enode,sizeof(struct entries));
       GenClose(theEnv,fp);
       TextLookupToss(theEnv,file);
 
@@ -657,7 +657,7 @@ static struct entries *AllocateEntryNode(
      enode->type = INFO;
    else
      {
-      rm(theEnv,enode,(int) sizeof(struct entries));
+      rm(theEnv,enode,sizeof(struct entries));
       GenClose(theEnv,fp);
       TextLookupToss(theEnv,file);
 
@@ -670,7 +670,7 @@ static struct entries *AllocateEntryNode(
      }
    if (strcmp(bmarker,BDELIM) != 0)
      {
-      rm(theEnv,enode,(int) sizeof(struct entries));
+      rm(theEnv,enode,sizeof(struct entries));
       GenClose(theEnv,fp);
       TextLookupToss(theEnv,file);
 
@@ -743,7 +743,7 @@ static bool AttachLeaf(
        }
      else
        {
-        rm(theEnv,enode,(int) sizeof(struct entries));
+        rm(theEnv,enode,sizeof(struct entries));
         GenClose(theEnv,fp);
         TextLookupToss(theEnv,file);
 
@@ -979,7 +979,7 @@ static void TossFunction(
         TossFunction(theEnv,eptr->child);
       prev = eptr;
       eptr = eptr->next;
-      rm(theEnv,prev,(int) sizeof(struct entries));
+      rm(theEnv,prev,sizeof(struct entries));
      }
   }
 
@@ -1127,7 +1127,7 @@ void PrintRegionCommand(
      {
       tptr = params;
       params = params->next;
-      rm(theEnv,tptr,(int) sizeof(struct topics));
+      rm(theEnv,tptr,sizeof(struct topics));
      }
 
    returnValue->lexemeValue = CreateBoolean(theEnv,com_code);
@@ -1178,7 +1178,7 @@ void GetRegionCommand(
      {
       tptr = params;
       params = params->next;
-      rm(theEnv,tptr,(int) sizeof(struct topics));
+      rm(theEnv,tptr,sizeof(struct topics));
      }
 
    if (theString == NULL)
@@ -1250,7 +1250,7 @@ static struct topics *GetCommandLineTopics(
 
    while (UDFHasNextArgument(context))
      {
-      tnode = (struct topics *) gm2(theEnv,(int) sizeof(struct topics));
+      tnode = (struct topics *) gm2(theEnv,sizeof(struct topics));
 
       UDFNextArgument(context,ANY_TYPE_BITS,&val);
 
@@ -1377,7 +1377,7 @@ static void DeallocateTextProcessingData(
       nextptr = clptr->next;
 
       TossFunction(theEnv,clptr->topics);
-      rm(theEnv,clptr,(int) sizeof(struct lists));
+      rm(theEnv,clptr,sizeof(struct lists));
 
       clptr = nextptr;
      }

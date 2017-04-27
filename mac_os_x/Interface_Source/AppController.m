@@ -30,13 +30,13 @@
    appDefaults = 
       [NSDictionary dictionaryWithObjectsAndKeys:
 
-         [theFont fontName],                             @"editorTextFontName",
-         [NSNumber numberWithFloat:[theFont pointSize]], @"editorTextFontSize", 
-         [NSNumber numberWithBool:YES],                  @"editorBalanceParens",
+         [theFont fontName],                              @"editorTextFontName",
+         [NSNumber numberWithDouble:[theFont pointSize]], @"editorTextFontSize",
+         [NSNumber numberWithBool:YES],                   @"editorBalanceParens",
 
-         [theFont fontName],                             @"dialogTextFontName",
-         [NSNumber numberWithFloat:[theFont pointSize]], @"dialogTextFontSize",
-         [NSNumber numberWithBool:YES],                  @"dialogBalanceParens",
+         [theFont fontName],                              @"dialogTextFontName",
+         [NSNumber numberWithDouble:[theFont pointSize]], @"dialogTextFontSize",
+         [NSNumber numberWithBool:YES],                   @"dialogBalanceParens",
        
          nil]; 
  
@@ -553,7 +553,7 @@
 - (IBAction) showCLIPSExamples: (id) sender
   {
    [[NSWorkspace sharedWorkspace] 
-       openURL: [NSURL URLWithString: @"https://sourceforge.net/p/clipsrules/code/HEAD/tree/examples/"]];
+       openURL: [NSURL URLWithString: @"https://sourceforge.net/p/clipsrules/code/HEAD/tree/branches/65x/examples/"]];
   }
 
 /*****************************************/

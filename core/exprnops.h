@@ -50,8 +50,8 @@
 
    bool                           ConstantExpression(struct expr *);
    void                           PrintExpression(Environment *,const char *,struct expr *);
-   long                           ExpressionSize(struct expr *);
-   int                            CountArguments(struct expr *);
+   unsigned long                  ExpressionSize(struct expr *);
+   unsigned short                 CountArguments(struct expr *);
    struct expr                   *CopyExpression(Environment *,struct expr *);
    bool                           ExpressionContainsVariables(struct expr *,bool);
    bool                           IdenticalExpression(struct expr *,struct expr *);

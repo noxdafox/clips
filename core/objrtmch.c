@@ -97,10 +97,10 @@
    static void                    ProcessObjectMatchQueue(Environment *);
    static void                    MarkObjectPatternNetwork(Environment *,SLOT_BITMAP *);
    static bool                    CompareSlotBitMaps(SLOT_BITMAP *,SLOT_BITMAP *);
-   static void                    ObjectPatternMatch(Environment *,int,OBJECT_PATTERN_NODE *,struct multifieldMarker *);
-   static void                    ProcessPatternNode(Environment *,int,OBJECT_PATTERN_NODE *,struct multifieldMarker *);
+   static void                    ObjectPatternMatch(Environment *,size_t,size_t,OBJECT_PATTERN_NODE *,struct multifieldMarker *);
+   static void                    ProcessPatternNode(Environment *,size_t,size_t,OBJECT_PATTERN_NODE *,struct multifieldMarker *);
    static void                    CreateObjectAlphaMatch(Environment *,OBJECT_ALPHA_NODE *);
-   static bool                    EvaluateObjectPatternTest(Environment *,int,struct multifieldMarker *,
+   static bool                    EvaluateObjectPatternTest(Environment *,size_t,struct multifieldMarker *,
                                                             Expression *,OBJECT_PATTERN_NODE *);
    static void                    ObjectAssertAction(Environment *,Instance *);
    static void                    ObjectModifyAction(Environment *,Instance *,SLOT_BITMAP *);
@@ -689,7 +689,7 @@ static void MarkObjectPatternNetwork(
          ============================================ */
       clsset = (CLASS_BITMAP *) alphaPtr->classbmp->contents;
 
-      if ((id > (unsigned) clsset->maxid) ? false : TestBitMap(clsset->map,id))
+      if ((id > clsset->maxid) ? false : TestBitMap(clsset->map,id))
         {
          /* ===================================================
             If we are doing an assert, then we need to
@@ -750,7 +750,7 @@ static bool CompareSlotBitMaps(
   SLOT_BITMAP *smap1,
   SLOT_BITMAP *smap2)
   {
-   unsigned short i,maxByte;
+   unsigned short i, maxByte;
 
    maxByte = (unsigned short)
              (((smap1->maxid < smap2->maxid) ?
@@ -793,14 +793,15 @@ static bool CompareSlotBitMaps(
  **********************************************************************************/
 static void ObjectPatternMatch(
   Environment *theEnv,
-  int offset,
+  size_t offset,
+  size_t multifieldsProcessed,
   OBJECT_PATTERN_NODE *patternTop,
   struct multifieldMarker *endMark)
   {
-   unsigned saveSlotLength;
+   size_t saveSlotLength;
    InstanceSlot *saveSlot;
    OBJECT_PATTERN_NODE *blockedNode;
-
+      
    while (patternTop != NULL)
      {
       /*=============================================================*/
@@ -850,7 +851,7 @@ static void ObjectPatternMatch(
 
          saveSlotLength = ObjectReteData(theEnv)->CurrentObjectSlotLength;
          saveSlot = ObjectReteData(theEnv)->CurrentPatternObjectSlot;
-         ProcessPatternNode(theEnv,offset,patternTop,endMark);
+         ProcessPatternNode(theEnv,offset,multifieldsProcessed,patternTop,endMark);
          ObjectReteData(theEnv)->CurrentObjectSlotLength = saveSlotLength;
          ObjectReteData(theEnv)->CurrentPatternObjectSlot = saveSlot;
         }
@@ -908,20 +909,23 @@ static void ObjectPatternMatch(
  **********************************************************************************/
 static void ProcessPatternNode(
   Environment *theEnv,
-  int offset,
+  size_t offset,
+  size_t multifieldsProcessed,
   OBJECT_PATTERN_NODE *patternNode,
   struct multifieldMarker *endMark)
   {
-   int patternSlotField,objectSlotField;
-   unsigned objectSlotLength;
-   int repeatCount;
+   unsigned short patternSlotField;
+   size_t objectSlotField;
+   size_t objectSlotLength;
+   unsigned long repeatCount;
    InstanceSlot *objectSlot;
    struct multifieldMarker *newMark;
    UDFValue theResult;
    OBJECT_PATTERN_NODE *tempPtr;
 
    patternSlotField = patternNode->whichField;
-   objectSlotField = patternSlotField + offset;
+   
+   objectSlotField = patternSlotField + offset - multifieldsProcessed;
 
    /*============================================*/
    /* If this is a test on the class or the name */
@@ -942,7 +946,7 @@ static void ProcessPatternNode(
               {
                if (tempPtr->alphaNode != NULL)
                  { CreateObjectAlphaMatch(theEnv,tempPtr->alphaNode); }
-               ObjectPatternMatch(theEnv,offset,tempPtr->nextLevel,endMark);
+               ObjectPatternMatch(theEnv,offset,multifieldsProcessed,tempPtr->nextLevel,endMark);
               }
            }
         }
@@ -952,7 +956,7 @@ static void ProcessPatternNode(
         {
          if (patternNode->alphaNode != NULL)
            CreateObjectAlphaMatch(theEnv,patternNode->alphaNode);
-         ObjectPatternMatch(theEnv,offset,patternNode->nextLevel,endMark);
+         ObjectPatternMatch(theEnv,offset,multifieldsProcessed,patternNode->nextLevel,endMark);
         }
       return;
      }
@@ -975,7 +979,7 @@ static void ProcessPatternNode(
               {
                if (tempPtr->alphaNode != NULL)
                  { CreateObjectAlphaMatch(theEnv,tempPtr->alphaNode); }
-               ObjectPatternMatch(theEnv,offset,tempPtr->nextLevel,endMark);
+               ObjectPatternMatch(theEnv,offset,multifieldsProcessed,tempPtr->nextLevel,endMark);
               }
            }
         }
@@ -985,7 +989,7 @@ static void ProcessPatternNode(
         {
          if (patternNode->alphaNode != NULL)
            CreateObjectAlphaMatch(theEnv,patternNode->alphaNode);
-         ObjectPatternMatch(theEnv,offset,patternNode->nextLevel,endMark);
+         ObjectPatternMatch(theEnv,offset,multifieldsProcessed,patternNode->nextLevel,endMark);
         }
       return;
      }
@@ -1000,6 +1004,7 @@ static void ProcessPatternNode(
    newMark->whichField = patternSlotField;
    newMark->where.whichSlot = (void *) ObjectReteData(theEnv)->CurrentPatternObjectSlot->desc->slotName->name;
    newMark->startPosition = objectSlotField;
+
    newMark->next = NULL;
    if (ObjectReteData(theEnv)->CurrentPatternObjectMarks == NULL)
      ObjectReteData(theEnv)->CurrentPatternObjectMarks = newMark;
@@ -1020,9 +1025,8 @@ static void ProcessPatternNode(
      {
       objectSlotLength = ObjectReteData(theEnv)->CurrentObjectSlotLength;
       objectSlot = ObjectReteData(theEnv)->CurrentPatternObjectSlot;
-      newMark->endPosition = newMark->startPosition - 1;
-      repeatCount = (int) (objectSlotLength - newMark->startPosition
-                    - patternNode->leaveFields + 2);
+      newMark->range = 0;
+      repeatCount = objectSlotLength + 2 - newMark->startPosition - patternNode->leaveFields;
       while (repeatCount > 0)
         {
          if (patternNode->selector)
@@ -1037,8 +1041,8 @@ static void ProcessPatternNode(
                  {
                   if (tempPtr->alphaNode != NULL)
                     { CreateObjectAlphaMatch(theEnv,tempPtr->alphaNode); }
-                  ObjectPatternMatch(theEnv,(int) (offset + (newMark->endPosition - objectSlotField)),
-                                     tempPtr->nextLevel,newMark);
+                  ObjectPatternMatch(theEnv,offset + newMark->startPosition + newMark->range - objectSlotField,
+                                     multifieldsProcessed+1,tempPtr->nextLevel,newMark);
                   ObjectReteData(theEnv)->CurrentObjectSlotLength = objectSlotLength;
                   ObjectReteData(theEnv)->CurrentPatternObjectSlot = objectSlot;
                  }
@@ -1050,19 +1054,18 @@ static void ProcessPatternNode(
            {
             if (patternNode->alphaNode != NULL)
               CreateObjectAlphaMatch(theEnv,patternNode->alphaNode);
-            ObjectPatternMatch(theEnv,(int) (offset + (newMark->endPosition - objectSlotField)),
-                               patternNode->nextLevel,newMark);
+            ObjectPatternMatch(theEnv,offset + newMark->startPosition + newMark->range - objectSlotField,
+                               multifieldsProcessed+1,patternNode->nextLevel,newMark);
             ObjectReteData(theEnv)->CurrentObjectSlotLength = objectSlotLength;
             ObjectReteData(theEnv)->CurrentPatternObjectSlot = objectSlot;
            }
-         newMark->endPosition++;
+         newMark->range++;
          repeatCount--;
         }
      }
    else
      {
-      newMark->endPosition = (long) ObjectReteData(theEnv)->CurrentObjectSlotLength - patternNode->leaveFields; // Bug fix: added leaveFields
-
+      newMark->range = ObjectReteData(theEnv)->CurrentObjectSlotLength + 1 - newMark->startPosition - patternNode->leaveFields;
       if (patternNode->selector)
         {
          if (EvaluateObjectPatternTest(theEnv,objectSlotField,newMark,patternNode->networkTest->nextArg,patternNode))
@@ -1075,7 +1078,7 @@ static void ProcessPatternNode(
               {
                if (tempPtr->alphaNode != NULL)
                  CreateObjectAlphaMatch(theEnv,tempPtr->alphaNode);
-               ObjectPatternMatch(theEnv,0,tempPtr->nextLevel,newMark);
+               ObjectPatternMatch(theEnv,0,0,tempPtr->nextLevel,newMark);
               }
            }
         }
@@ -1085,7 +1088,7 @@ static void ProcessPatternNode(
         {
          if (patternNode->alphaNode != NULL)
            CreateObjectAlphaMatch(theEnv,patternNode->alphaNode);
-         ObjectPatternMatch(theEnv,0,patternNode->nextLevel,newMark);
+         ObjectPatternMatch(theEnv,0,0,patternNode->nextLevel,newMark);
         }
      }
 
@@ -1184,7 +1187,7 @@ static void CreateObjectAlphaMatch(
  ******************************************************/
 static bool EvaluateObjectPatternTest(
   Environment *theEnv,
-  int objectSlotField,
+  size_t objectSlotField,
   struct multifieldMarker *selfSlotMarker,
   Expression *networkTest,
   OBJECT_PATTERN_NODE *patternNode)
@@ -1297,7 +1300,7 @@ static void ObjectAssertAction(
    ObjectReteData(theEnv)->CurrentPatternObject = ins;
    ObjectReteData(theEnv)->CurrentPatternObjectSlot = NULL;
    MarkObjectPatternNetwork(theEnv,NULL);
-   ObjectPatternMatch(theEnv,0,ObjectNetworkPointer(theEnv),NULL);
+   ObjectPatternMatch(theEnv,0,0,ObjectNetworkPointer(theEnv),NULL);
    ins->reteSynchronized = true;
   }
 
@@ -1324,7 +1327,7 @@ static void ObjectModifyAction(
    ObjectReteData(theEnv)->CurrentPatternObject = ins;
    ObjectReteData(theEnv)->CurrentPatternObjectSlot = NULL;
    MarkObjectPatternNetwork(theEnv,slotNameIDs);
-   ObjectPatternMatch(theEnv,0,ObjectNetworkPointer(theEnv),NULL);
+   ObjectPatternMatch(theEnv,0,0,ObjectNetworkPointer(theEnv),NULL);
    ins->reteSynchronized = true;
   }
 
@@ -1449,7 +1452,7 @@ static void ObjectPatternNetErrorMessage(
    PrintString(theEnv,WERROR,"   Problem resides in slot ");
    PrintString(theEnv,WERROR,FindIDSlotName(theEnv,patternPtr->slotNameID)->contents);
    PrintString(theEnv,WERROR," field #");
-   PrintInteger(theEnv,WERROR,(long long) patternPtr->whichField);
+   PrintUnsignedInteger(theEnv,WERROR,patternPtr->whichField);
    PrintString(theEnv,WERROR,"\n");
    TraceErrorToObjectPattern(theEnv,true,patternPtr);
    PrintString(theEnv,WERROR,"\n");

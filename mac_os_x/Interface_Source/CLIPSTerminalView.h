@@ -23,7 +23,7 @@
   }
   
 - (void) resetBackgroundColour: (id) sender;
-- (unsigned int) print: (NSString *) theString;
+- (NSUInteger) print: (NSString *) theString;
 - (void) clearTerminal;
 - (void) balanceParentheses;
 - (int) waitForChar;

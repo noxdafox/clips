@@ -148,16 +148,16 @@ void InitializeAtomTables(
                   gm2(theEnv,sizeof (CLIPSLexeme *) * SYMBOL_HASH_SIZE);
 
    SymbolData(theEnv)->FloatTable = (CLIPSFloat **)
-                  gm2(theEnv,(int) sizeof (CLIPSFloat *) * FLOAT_HASH_SIZE);
+                  gm2(theEnv,sizeof (CLIPSFloat *) * FLOAT_HASH_SIZE);
 
    SymbolData(theEnv)->IntegerTable = (CLIPSInteger **)
-                   gm2(theEnv,(int) sizeof (CLIPSInteger *) * INTEGER_HASH_SIZE);
+                   gm2(theEnv,sizeof (CLIPSInteger *) * INTEGER_HASH_SIZE);
 
    SymbolData(theEnv)->BitMapTable = (CLIPSBitMap **)
-                   gm2(theEnv,(int) sizeof (CLIPSBitMap *) * BITMAP_HASH_SIZE);
+                   gm2(theEnv,sizeof (CLIPSBitMap *) * BITMAP_HASH_SIZE);
 
    SymbolData(theEnv)->ExternalAddressTable = (CLIPSExternalAddress **)
-                   gm2(theEnv,(int) sizeof (CLIPSExternalAddress *) * EXTERNAL_ADDRESS_HASH_SIZE);
+                   gm2(theEnv,sizeof (CLIPSExternalAddress *) * EXTERNAL_ADDRESS_HASH_SIZE);
 
    /*===================================================*/
    /* Initialize all of the hash table entries to NULL. */
@@ -190,7 +190,7 @@ void InitializeAtomTables(
    SetBitMapTable(theEnv,bitmapTable);
 
    SymbolData(theEnv)->ExternalAddressTable = (CLIPSExternalAddress **)
-                gm2(theEnv,(int) sizeof (CLIPSExternalAddress *) * EXTERNAL_ADDRESS_HASH_SIZE);
+                gm2(theEnv,sizeof (CLIPSExternalAddress *) * EXTERNAL_ADDRESS_HASH_SIZE);
 
    for (i = 0; i < EXTERNAL_ADDRESS_HASH_SIZE; i++) SymbolData(theEnv)->ExternalAddressTable[i] = NULL;
 #endif
@@ -302,14 +302,14 @@ static void DeallocateSymbolData(
  #if ! RUN_TIME
    rm(theEnv,SymbolData(theEnv)->SymbolTable,sizeof (CLIPSLexeme *) * SYMBOL_HASH_SIZE);
 
-   genfree(theEnv,SymbolData(theEnv)->FloatTable,(int) sizeof (CLIPSFloat *) * FLOAT_HASH_SIZE);
+   genfree(theEnv,SymbolData(theEnv)->FloatTable,sizeof (CLIPSFloat *) * FLOAT_HASH_SIZE);
 
-   genfree(theEnv,SymbolData(theEnv)->IntegerTable,(int) sizeof (CLIPSInteger *) * INTEGER_HASH_SIZE);
+   genfree(theEnv,SymbolData(theEnv)->IntegerTable,sizeof (CLIPSInteger *) * INTEGER_HASH_SIZE);
 
-   genfree(theEnv,SymbolData(theEnv)->BitMapTable,(int) sizeof (CLIPSBitMap *) * BITMAP_HASH_SIZE);
+   genfree(theEnv,SymbolData(theEnv)->BitMapTable,sizeof (CLIPSBitMap *) * BITMAP_HASH_SIZE);
 #endif
 
-   genfree(theEnv,SymbolData(theEnv)->ExternalAddressTable,(int) sizeof (CLIPSExternalAddress *) * EXTERNAL_ADDRESS_HASH_SIZE);
+   genfree(theEnv,SymbolData(theEnv)->ExternalAddressTable,sizeof (CLIPSExternalAddress *) * EXTERNAL_ADDRESS_HASH_SIZE);
 
    /*==============================*/
    /* Remove binary symbol tables. */
@@ -317,13 +317,13 @@ static void DeallocateSymbolData(
 
 #if BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE || BLOAD_INSTANCES || BSAVE_INSTANCES
    if (SymbolData(theEnv)->SymbolArray != NULL)
-     rm(theEnv,SymbolData(theEnv)->SymbolArray,(long) sizeof(CLIPSLexeme *) * SymbolData(theEnv)->NumberOfSymbols);
+     rm(theEnv,SymbolData(theEnv)->SymbolArray,sizeof(CLIPSLexeme *) * SymbolData(theEnv)->NumberOfSymbols);
    if (SymbolData(theEnv)->FloatArray != NULL)
-     rm(theEnv,SymbolData(theEnv)->FloatArray,(long) sizeof(CLIPSFloat *) * SymbolData(theEnv)->NumberOfFloats);
+     rm(theEnv,SymbolData(theEnv)->FloatArray,sizeof(CLIPSFloat *) * SymbolData(theEnv)->NumberOfFloats);
    if (SymbolData(theEnv)->IntegerArray != NULL)
-     rm(theEnv,SymbolData(theEnv)->IntegerArray,(long) sizeof(CLIPSInteger *) * SymbolData(theEnv)->NumberOfIntegers);
+     rm(theEnv,SymbolData(theEnv)->IntegerArray,sizeof(CLIPSInteger *) * SymbolData(theEnv)->NumberOfIntegers);
    if (SymbolData(theEnv)->BitMapArray != NULL)
-     rm(theEnv,SymbolData(theEnv)->BitMapArray,(long) sizeof(CLIPSBitMap *) * SymbolData(theEnv)->NumberOfBitMaps);
+     rm(theEnv,SymbolData(theEnv)->BitMapArray,sizeof(CLIPSBitMap *) * SymbolData(theEnv)->NumberOfBitMaps);
 #endif
   }
 
@@ -430,7 +430,7 @@ CLIPSLexeme *AddSymbol(
     genstrcpy(buffer,str);
     peek->contents = buffer;
     peek->next = NULL;
-    peek->bucket = tally;
+    peek->bucket = (unsigned int) tally;
     peek->count = 0;
     peek->permanent = false;
     peek->header.type = theType;
@@ -470,7 +470,7 @@ CLIPSLexeme *FindSymbolHN(
       {
        if (((1 << peek->header.type) & expectedType) &&
            (strcmp(str,peek->contents) == 0))
-         { return(peek); }
+         { return peek; }
       }
 
     return NULL;
@@ -522,7 +522,7 @@ CLIPSFloat *CreateFloat(
 
     peek->contents = number;
     peek->next = NULL;
-    peek->bucket = tally;
+    peek->bucket = (unsigned int) tally;
     peek->count = 0;
     peek->permanent = false;
     peek->header.type = FLOAT_TYPE;
@@ -587,7 +587,7 @@ CLIPSInteger *CreateInteger(
 
     peek->contents = number;
     peek->next = NULL;
-    peek->bucket = tally;
+    peek->bucket = (unsigned int) tally;
     peek->count = 0;
     peek->permanent = false;
     peek->header.type = INTEGER_TYPE;
@@ -637,11 +637,11 @@ CLIPSInteger *FindLongHN(
 void *AddBitMap(
   Environment *theEnv,
   void *vTheBitMap,
-  unsigned size)
+  unsigned short size)
   {
    char *theBitMap = (char *) vTheBitMap;
    unsigned long tally;
-   unsigned i;
+   unsigned short i;
    CLIPSBitMap *past = NULL, *peek;
    char *buffer;
 
@@ -666,7 +666,7 @@ void *AddBitMap(
 
     while (peek != NULL)
       {
-	   if (peek->size == (unsigned short) size)
+	   if (peek->size == size)
          {
           for (i = 0; i < size ; i++)
             { if (peek->contents[i] != theBitMap[i]) break; }
@@ -691,10 +691,10 @@ void *AddBitMap(
     for (i = 0; i < size ; i++) buffer[i] = theBitMap[i];
     peek->contents = buffer;
     peek->next = NULL;
-    peek->bucket = tally;
+    peek->bucket = (unsigned int) tally;
     peek->count = 0;
     peek->permanent = false;
-    peek->size = (unsigned short) size;
+    peek->size = size;
     peek->header.type = BITMAP;
 
     /*================================================*/
@@ -733,7 +733,7 @@ CLIPSExternalAddress *CreateCExternalAddress(
 CLIPSExternalAddress *CreateExternalAddress(
   Environment *theEnv,
   void *theExternalAddress,
-  unsigned theType)
+  unsigned short theType)
   {
    unsigned long tally;
    CLIPSExternalAddress *past = NULL, *peek;
@@ -754,7 +754,7 @@ CLIPSExternalAddress *CreateExternalAddress(
 
     while (peek != NULL)
       {
-       if ((peek->type == (unsigned short) theType) &&
+       if ((peek->type == theType) &&
            (peek->contents == theExternalAddress))
          { return peek; }
 
@@ -772,9 +772,9 @@ CLIPSExternalAddress *CreateExternalAddress(
     else past->next = peek;
 
     peek->contents = theExternalAddress;
-    peek->type = (unsigned short) theType;
+    peek->type = theType;
     peek->next = NULL;
-    peek->bucket = tally;
+    peek->bucket = (unsigned int) tally;
     peek->count = 0;
     peek->permanent = false;
     peek->header.type = EXTERNAL_ADDRESS_TYPE;
@@ -801,16 +801,16 @@ unsigned long HashSymbol(
   const char *word,
   unsigned long range)
   {
-   int i;
+   size_t i;
    unsigned long tally = 0;
 
    for (i = 0; word[i]; i++)
-     { tally = tally * 127 + word[i]; }
+     { tally = tally * 127 + (unsigned long) word[i]; }
 
    if (range == 0)
      { return tally; }
 
-   return(tally % range);
+   return tally % range;
   }
 
 /*************************************************/
@@ -822,17 +822,17 @@ unsigned long HashFloat(
   {
    unsigned long tally = 0;
    char *word;
-   unsigned i;
+   size_t i;
 
    word = (char *) &number;
 
    for (i = 0; i < sizeof(double); i++)
-     { tally = tally * 127 + word[i]; }
+     { tally = tally * 127 + (unsigned long) word[i]; }
 
    if (range == 0)
      { return tally; }
 
-   return(tally % range);
+   return tally % range;
   }
 
 /******************************************************/
@@ -1597,10 +1597,10 @@ void ReturnSymbolMatches(
 /***************************************************************/
 void ClearBitString(
   void *vTheBitMap,
-  unsigned length)
+  size_t length)
   {
    char *theBitMap = (char *) vTheBitMap;
-   unsigned i;
+   size_t i;
 
    for (i = 0; i < length; i++) theBitMap[i] = '\0';
   }
@@ -1806,8 +1806,8 @@ void SetAtomicValueIndices(
   Environment *theEnv,
   bool setAll)
   {
-   unsigned long count;
-   unsigned long i;
+   unsigned int count;
+   unsigned int i;
    CLIPSLexeme *symbolPtr, **symbolArray;
    CLIPSFloat *floatPtr, **floatArray;
    CLIPSInteger *integerPtr, **integerArray;
@@ -1827,11 +1827,7 @@ void SetAtomicValueIndices(
            symbolPtr = symbolPtr->next)
         {
          if ((symbolPtr->neededSymbol == true) || setAll)
-           {
-            symbolPtr->bucket = count++;
-            if (symbolPtr->bucket != (count - 1))
-              { SystemError(theEnv,"SYMBOL",13); }
-           }
+           { symbolPtr->bucket = count++; }
         }
      }
 
@@ -1849,11 +1845,7 @@ void SetAtomicValueIndices(
            floatPtr = floatPtr->next)
         {
          if ((floatPtr->neededFloat == true) || setAll)
-           {
-            floatPtr->bucket = count++;
-            if (floatPtr->bucket != (count - 1))
-              { SystemError(theEnv,"SYMBOL",14); }
-           }
+           { floatPtr->bucket = count++; }
         }
      }
 
@@ -1871,11 +1863,7 @@ void SetAtomicValueIndices(
            integerPtr = integerPtr->next)
         {
          if ((integerPtr->neededInteger == true) || setAll)
-           {
-            integerPtr->bucket = count++;
-            if (integerPtr->bucket != (count - 1))
-              { SystemError(theEnv,"SYMBOL",15); }
-           }
+           { integerPtr->bucket = count++; }
         }
      }
 
@@ -1893,11 +1881,7 @@ void SetAtomicValueIndices(
            bitMapPtr = bitMapPtr->next)
         {
          if ((bitMapPtr->neededBitMap == true) || setAll)
-           {
-            bitMapPtr->bucket = count++;
-            if (bitMapPtr->bucket != (count - 1))
-              { SystemError(theEnv,"SYMBOL",16); }
-           }
+           { bitMapPtr->bucket = count++; }
         }
      }
   }
@@ -1910,7 +1894,7 @@ void SetAtomicValueIndices(
 void RestoreAtomicValueBuckets(
   Environment *theEnv)
   {
-   unsigned long i;
+   unsigned int i;
    CLIPSLexeme *symbolPtr, **symbolArray;
    CLIPSFloat *floatPtr, **floatArray;
    CLIPSInteger *integerPtr, **integerArray;

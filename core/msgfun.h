@@ -51,8 +51,8 @@
 
 typedef struct handlerSlotReference
   {
-   long classID;
-   long slotID;
+   unsigned classID;
+   unsigned short slotID;
   } HANDLER_SLOT_REFERENCE;
 
 #include "msgpass.h"
@@ -69,6 +69,7 @@ typedef struct handlerSlotReference
 #define MPRIMARY       2
 #define MAFTER         3
 #define MERROR         4
+#define MALL_TYPES     5
 
 #define LOOKUP_HANDLER_INDEX   0
 #define LOOKUP_HANDLER_ADDRESS 1
@@ -80,23 +81,23 @@ typedef struct handlerSlotReference
    void             SlotVisibilityViolationError(Environment *,SlotDescriptor *,Defclass *,bool);
 
 #if ! RUN_TIME
-   void             NewSystemHandler(Environment *,const char *,const char *,const char *,int);
+   void             NewSystemHandler(Environment *,const char *,const char *,const char *,unsigned short);
    DefmessageHandler
-                   *InsertHandlerHeader(Environment *,Defclass *,CLIPSLexeme *,int);
+                   *InsertHandlerHeader(Environment *,Defclass *,CLIPSLexeme *,unsigned);
 #endif
 
 #if (! BLOAD_ONLY) && (! RUN_TIME)
    DefmessageHandler
                    *NewHandler(void);
    bool             HandlersExecuting(Defclass *);
-   bool             DeleteHandler(Environment *,Defclass *,CLIPSLexeme *,int,bool);
+   bool             DeleteHandler(Environment *,Defclass *,CLIPSLexeme *,unsigned short,bool);
    void             DeallocateMarkedHandlers(Environment *,Defclass *);
 #endif
-   unsigned         HandlerType(Environment *,const char *,const char *);
+   unsigned short   HandlerType(Environment *,const char *,const char *);
    bool             CheckCurrentMessage(Environment *,const char *,bool);
    void             PrintHandler(Environment *,const char *,DefmessageHandler *,bool);
    DefmessageHandler
-                   *FindHandlerByAddress(Defclass *,CLIPSLexeme *,unsigned);
+                   *FindHandlerByAddress(Defclass *,CLIPSLexeme *,unsigned short);
    int              FindHandlerByIndex(Defclass *,CLIPSLexeme *,unsigned);
    int              FindHandlerNameGroup(Defclass *,CLIPSLexeme *);
    void             HandlerDeleteError(Environment *,const char *);

@@ -19,11 +19,11 @@
   }
 
 - (void) balanceIt: (NSString *) theText
-         leftMiddle: (unsigned int) leftMiddle
-         rightMiddle: (unsigned int) rightMiddle
+         leftMiddle: (NSUInteger) leftMiddle
+         rightMiddle: (NSUInteger) rightMiddle
          leftCount: (int) leftCount
          rightCount: (int) rightCount
-         textLength: (unsigned int) textLength;
+         textLength: (NSUInteger) textLength;
 
 /*%%%%%%%%%%%%%%%%*/
 /* Action Methods */

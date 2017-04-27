@@ -358,7 +358,7 @@ static struct templateSlot *ParseSlot(
    bool parsingMultislot;
    CLIPSLexeme *slotName;
    struct templateSlot *newSlot;
-   int rv;
+   ConstraintViolationType rv;
 
    /*=====================================================*/
    /* Slots must  begin with keyword field or multifield. */

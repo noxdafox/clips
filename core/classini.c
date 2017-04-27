@@ -350,7 +350,7 @@ void ObjectsRunTimeInitialize(
   Defclass *ctable[],
   SLOT_NAME *sntable[],
   Defclass **cidmap,
-  unsigned mid)
+  unsigned short mid)
   {
    Defclass *cls;
    void *tmpexp;
@@ -389,7 +389,7 @@ void ObjectsRunTimeInitialize(
    DefclassData(theEnv)->ClassTable = (Defclass **) ctable;
    DefclassData(theEnv)->SlotNameTable = (SLOT_NAME **) sntable;
    DefclassData(theEnv)->ClassIDMap = (Defclass **) cidmap;
-   DefclassData(theEnv)->MaxClassID = (unsigned short) mid;
+   DefclassData(theEnv)->MaxClassID = mid;
    DefclassData(theEnv)->PrimitiveClassMap[FLOAT_TYPE] =
      LookupDefclassByMdlOrScope(theEnv,FLOAT_TYPE_NAME);
    DefclassData(theEnv)->PrimitiveClassMap[INTEGER_TYPE] =
@@ -423,7 +423,7 @@ void ObjectsRunTimeInitialize(
            {
             tmpexp = cls->slots[i].defaultValue;
             cls->slots[i].defaultValue = get_struct(theEnv,udfValue);
-            EvaluateAndStoreInDataObject(theEnv,(int) cls->slots[i].multiple,(Expression *) tmpexp,
+            EvaluateAndStoreInDataObject(theEnv,cls->slots[i].multiple,(Expression *) tmpexp,
                                          (UDFValue *) cls->slots[i].defaultValue,true);
             IncrementUDFValueReferenceCount(theEnv,(UDFValue *) cls->slots[i].defaultValue);
             ((UDFValue *) cls->slots[i].defaultValue)->supplementalInfo = tmpexp;
@@ -516,9 +516,9 @@ void CreateSystemClasses(
        INSTANCE-ADDRESS is-a INSTANCE and ADDRESS.  The links between INSTANCE-ADDRESS
        and ADDRESS still need to be made.
        =============================================================================== */
-   AddClassLink(theEnv,&DefclassData(theEnv)->PrimitiveClassMap[INSTANCE_ADDRESS_TYPE]->directSuperclasses,address,-1);
-   AddClassLink(theEnv,&DefclassData(theEnv)->PrimitiveClassMap[INSTANCE_ADDRESS_TYPE]->allSuperclasses,address,2);
-   AddClassLink(theEnv,&address->directSubclasses,DefclassData(theEnv)->PrimitiveClassMap[INSTANCE_ADDRESS_TYPE],-1);
+   AddClassLink(theEnv,&DefclassData(theEnv)->PrimitiveClassMap[INSTANCE_ADDRESS_TYPE]->directSuperclasses,address,true,0);
+   AddClassLink(theEnv,&DefclassData(theEnv)->PrimitiveClassMap[INSTANCE_ADDRESS_TYPE]->allSuperclasses,address,false,2);
+   AddClassLink(theEnv,&address->directSubclasses,DefclassData(theEnv)->PrimitiveClassMap[INSTANCE_ADDRESS_TYPE],true,0);
 
    /* =======================================================================
       The order of the class in the list MUST correspond to their type codes!
@@ -694,7 +694,7 @@ static Defclass *AddSystemClass(
   Defclass *parent)
   {
    Defclass *sys;
-   long i;
+   unsigned long i;
    char defaultScopeMap[1];
 
    sys = NewClass(theEnv,CreateSymbol(theEnv,name));
@@ -707,14 +707,14 @@ static Defclass *AddSystemClass(
    sys->system = 1;
    sys->hashTableIndex = HashClass(sys->header.name);
 
-   AddClassLink(theEnv,&sys->allSuperclasses,sys,-1);
+   AddClassLink(theEnv,&sys->allSuperclasses,sys,true,0);
    if (parent != NULL)
      {
-      AddClassLink(theEnv,&sys->directSuperclasses,parent,-1);
-      AddClassLink(theEnv,&parent->directSubclasses,sys,-1);
-      AddClassLink(theEnv,&sys->allSuperclasses,parent,-1);
+      AddClassLink(theEnv,&sys->directSuperclasses,parent,true,0);
+      AddClassLink(theEnv,&parent->directSubclasses,sys,true,0);
+      AddClassLink(theEnv,&sys->allSuperclasses,parent,true,0);
       for (i = 1 ; i < parent->allSuperclasses.classCount ; i++)
-        AddClassLink(theEnv,&sys->allSuperclasses,parent->allSuperclasses.classArray[i],-1);
+        AddClassLink(theEnv,&sys->allSuperclasses,parent->allSuperclasses.classArray[i],true,0);
      }
    sys->nxtHash = DefclassData(theEnv)->ClassTable[sys->hashTableIndex];
    DefclassData(theEnv)->ClassTable[sys->hashTableIndex] = sys;
@@ -724,10 +724,10 @@ static Defclass *AddSystemClass(
       There is only one module (MAIN) so far -
       which has an id of 0
       ========================================= */
-   ClearBitString(defaultScopeMap,(int) sizeof(char));
+   ClearBitString(defaultScopeMap,sizeof(char));
    SetBitMap(defaultScopeMap,0);
 #if DEFMODULE_CONSTRUCT
-   sys->scopeMap = (CLIPSBitMap *) AddBitMap(theEnv,defaultScopeMap,(int) sizeof(char));
+   sys->scopeMap = (CLIPSBitMap *) AddBitMap(theEnv,defaultScopeMap,sizeof(char));
    IncrementBitMapCount(sys->scopeMap);
 #endif
    return(sys);
@@ -787,13 +787,14 @@ static void UpdateDefclassesScope(
   {
    unsigned i;
    Defclass *theDefclass;
-   int newModuleID,count;
+   unsigned long newModuleID;
+   unsigned int count;
    char *newScopeMap;
-   unsigned newScopeMapSize;
+   unsigned short newScopeMapSize;
    const char *className;
    Defmodule *matchModule;
 
-   newModuleID = (int) GetCurrentModule(theEnv)->header.bsaveID;
+   newModuleID = GetCurrentModule(theEnv)->header.bsaveID;
    newScopeMapSize = (sizeof(char) * ((GetNumberOfDefmodules(theEnv) / BITS_PER_BYTE) + 1));
    newScopeMap = (char *) gm2(theEnv,newScopeMapSize);
    for (i = 0 ; i < CLASS_TABLE_HASH_SIZE ; i++)

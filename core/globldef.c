@@ -124,7 +124,7 @@ void InitializeDefglobals(
 
    struct entityRecord defglobalPtrRecord = { "DEFGLOBAL_PTR", DEFGLOBAL_PTR,0,0,0,
                                                        NULL,NULL,NULL,
-                                                       (EntityEvaluationFunction *) QGetDefglobalValue,
+                                                       (EntityEvaluationFunction *) QGetDefglobalUDFValue,
                                                        NULL,
                                                        (EntityBusyCountFunction *) DecrementDefglobalBusyCount,
                                                        (EntityBusyCountFunction *) IncrementDefglobalBusyCount,
@@ -341,9 +341,14 @@ static void ReturnDefglobal(
    /* Return the global's current value. */
    /*====================================*/
 
-   DecrementUDFValueReferenceCount(theEnv,&theDefglobal->current);
+   DecrementReferenceCount(theEnv,theDefglobal->current.header);
    if (theDefglobal->current.header->type == MULTIFIELD_TYPE)
-     { ReturnMultifield(theEnv,theDefglobal->current.multifieldValue); }
+     {
+      if (theDefglobal->current.multifieldValue->busyCount == 0)
+        { ReturnMultifield(theEnv,theDefglobal->current.multifieldValue); }
+      else
+        { AddToMultifieldList(theEnv,theDefglobal->current.multifieldValue); }
+     }
 
    /*================================================*/
    /* Return the expression representing the initial */
@@ -390,7 +395,12 @@ static void DestroyDefglobal(
    /*====================================*/
 
    if (theDefglobal->current.header->type == MULTIFIELD_TYPE)
-     { ReturnMultifield(theEnv,theDefglobal->current.multifieldValue); }
+     {
+      if (theDefglobal->current.multifieldValue->busyCount == 0)
+        { ReturnMultifield(theEnv,theDefglobal->current.multifieldValue); }
+      else
+        { AddToMultifieldList(theEnv,theDefglobal->current.multifieldValue); }
+     }
 
 #if (! RUN_TIME)
 
@@ -430,9 +440,7 @@ void QSetDefglobalValue(
      {
       EvaluateExpression(theEnv,theGlobal->initial,vPtr);
       if (EvaluationData(theEnv)->EvaluationError)
-        {
-         vPtr->value = FalseSymbol(theEnv);
-        }
+        { vPtr->value = FalseSymbol(theEnv); }
      }
 
    /*==========================================*/
@@ -450,7 +458,7 @@ void QSetDefglobalValue(
       PrintString(theEnv,STDOUT,"* ==> ");
       PrintUDFValue(theEnv,STDOUT,vPtr);
       PrintString(theEnv,STDOUT," <== ");
-      PrintUDFValue(theEnv,STDOUT,&theGlobal->current);
+      PrintCLIPSValue(theEnv,STDOUT,&theGlobal->current);
       PrintString(theEnv,STDOUT,"\n");
      }
 #endif
@@ -459,17 +467,24 @@ void QSetDefglobalValue(
    /* Remove the old value of the global variable. */
    /*==============================================*/
 
-   DecrementUDFValueReferenceCount(theEnv,&theGlobal->current);
+   DecrementReferenceCount(theEnv,theGlobal->current.header);
    if (theGlobal->current.header->type == MULTIFIELD_TYPE)
-     { ReturnMultifield(theEnv,theGlobal->current.multifieldValue); }
+     {
+      if (theGlobal->current.multifieldValue->busyCount == 0)
+        { ReturnMultifield(theEnv,theGlobal->current.multifieldValue); }
+      else
+        { AddToMultifieldList(theEnv,theGlobal->current.multifieldValue); }
+     }
 
    /*===========================================*/
    /* Set the new value of the global variable. */
    /*===========================================*/
 
-   if (vPtr->header->type != MULTIFIELD_TYPE) theGlobal->current.value = vPtr->value;
-   else DuplicateMultifield(theEnv,&theGlobal->current,vPtr);
-   IncrementUDFValueReferenceCount(theEnv,&theGlobal->current);
+   if (vPtr->header->type != MULTIFIELD_TYPE)
+     { theGlobal->current.value = vPtr->value; }
+   else
+     { theGlobal->current.value = CopyMultifield(theEnv,vPtr->multifieldValue); }
+   IncrementReferenceCount(theEnv,theGlobal->current.header);
 
    /*===========================================*/
    /* Set the variable indicating that a change */
@@ -478,8 +493,9 @@ void QSetDefglobalValue(
 
    DefglobalData(theEnv)->ChangeToGlobals = true;
 
-   if ((UtilityData(theEnv)->CurrentGarbageFrame->topLevel) && (! CommandLineData(theEnv)->EvaluatingTopLevelCommand) &&
-       (EvaluationData(theEnv)->CurrentExpression == NULL) && (UtilityData(theEnv)->GarbageCollectionLocks == 0))
+   if ((UtilityData(theEnv)->CurrentGarbageFrame->topLevel) &&
+       (! CommandLineData(theEnv)->EvaluatingTopLevelCommand) &&
+       (EvaluationData(theEnv)->CurrentExpression == NULL))
      {
       CleanCurrentGarbageFrame(theEnv,NULL);
       CallPeriodicTasks(theEnv);
@@ -500,7 +516,7 @@ Defglobal *QFindDefglobal(
    for (theDefglobal = GetNextDefglobal(theEnv,NULL);
         theDefglobal != NULL;
         theDefglobal = GetNextDefglobal(theEnv,theDefglobal))
-     { if (defglobalName == theDefglobal->header.name) return (theDefglobal); }
+     { if (defglobalName == theDefglobal->header.name) return theDefglobal; }
 
    return NULL;
   }
@@ -521,7 +537,7 @@ void DefglobalValueForm(
    PrintString(theEnv,"GlobalValueForm","?*");
    PrintString(theEnv,"GlobalValueForm",theGlobal->header.name->contents);
    PrintString(theEnv,"GlobalValueForm","* = ");
-   PrintUDFValue(theEnv,"GlobalValueForm",&theGlobal->current);
+   PrintCLIPSValue(theEnv,"GlobalValueForm",&theGlobal->current);
    CloseStringBuilderDestination(theEnv,"GlobalValueForm");
   }
 
@@ -531,7 +547,7 @@ void DefglobalValueForm(
 bool GetGlobalsChanged(
   Environment *theEnv)
   {
-   return(DefglobalData(theEnv)->ChangeToGlobals);
+   return DefglobalData(theEnv)->ChangeToGlobals;
   }
 
 /******************************************************/
@@ -554,7 +570,7 @@ static bool EntityGetDefglobalValue(
   UDFValue *vPtr)
   {
    Defglobal *theGlobal;
-   int count;
+   unsigned int count;
 
    /*===========================================*/
    /* Search for the specified defglobal in the */
@@ -598,41 +614,33 @@ static bool EntityGetDefglobalValue(
    /* Get the value of the defglobal. */
    /*=================================*/
 
-   QGetDefglobalValue(theEnv,theGlobal,vPtr);
-
+   CLIPSToUDFValue(&theGlobal->current,vPtr);
+     
    return true;
   }
 
-/***************************************************************/
-/* QGetDefglobalValue: Returns the value of a global variable. */
-/***************************************************************/
-bool QGetDefglobalValue(
+/******************************************************************/
+/* QGetDefglobalUDFValue: Returns the value of a global variable. */
+/******************************************************************/
+bool QGetDefglobalUDFValue(
   Environment *theEnv,
   Defglobal *theGlobal,
   UDFValue *vPtr)
   {
-   /*===============================================*/
-   /* Transfer values which can be copied directly. */
-   /*===============================================*/
-
    vPtr->value = theGlobal->current.value;
-   vPtr->begin = theGlobal->current.begin;
-   vPtr->range = theGlobal->current.range;
-
+   
    /*===========================================================*/
    /* If the global contains a multifield value, return a copy  */
    /* of the value so that routines which use this value are    */
    /* not affected if the value of the global is later changed. */
    /*===========================================================*/
 
-   if (vPtr->header->type == MULTIFIELD_TYPE)
+   if (theGlobal->current.header->type == MULTIFIELD_TYPE)
      {
-      vPtr->value = CreateMultifield(theEnv,(unsigned long) vPtr->range);
-      GenCopyMemory(struct clipsValue,vPtr->range,
-                                &vPtr->multifieldValue->contents[0],
-                                &theGlobal->current.multifieldValue->contents[theGlobal->current.begin]);
+      vPtr->begin = 0;
+      vPtr->range = theGlobal->current.multifieldValue->length;
      }
-
+     
    return true;
   }
 
@@ -644,12 +652,7 @@ void DefglobalGetValue(
   Defglobal *theDefglobal,
   CLIPSValue *vPtr)
   {
-   UDFValue temp;
-   Environment *theEnv = theDefglobal->header.env;
-      
-   QGetDefglobalValue(theEnv,theDefglobal,&temp);
-   NormalizeMultifield(theEnv,&temp);
-   vPtr->value = temp.value;
+   vPtr->value = theDefglobal->current.value;
   }
 
 /*************************************************************/
@@ -661,10 +664,13 @@ void DefglobalSetValue(
   CLIPSValue *vPtr)
   {
    UDFValue temp;
+   GCBlock gcb;
    Environment *theEnv = theDefglobal->header.env;
   
+   GCBlockStart(theEnv,&gcb);
    CLIPSToUDFValue(vPtr,&temp);
    QSetDefglobalValue(theEnv,theDefglobal,&temp,false);
+   GCBlockEnd(theEnv,&gcb);
   }
 
 /**********************************************************/
@@ -700,7 +706,7 @@ void UpdateDefglobalScope(
   Environment *theEnv)
   {
    Defglobal *theDefglobal;
-   int moduleCount;
+   unsigned int moduleCount;
    Defmodule *theModule;
    struct defmoduleItemHeader *theItem;
 

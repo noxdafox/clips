@@ -63,11 +63,13 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static bool                    ConstructToCode(Environment *,const char *,const char *,char *,int,FILE *,int,int);
-   static void                    InitDefmoduleCode(Environment *,FILE *,int,int);
+   static bool                    ConstructToCode(Environment *,const char *,const char *,char *,unsigned int,
+                                                  FILE *,unsigned int,unsigned int);
+   static void                    InitDefmoduleCode(Environment *,FILE *,unsigned int,unsigned int);
    static struct portItem        *GetNextPortItem(Environment *,Defmodule **,struct portItem **,
                                                   bool *,bool *);
-   static bool                    PortItemsToCode(Environment *,const char *,const char *,char *,int,FILE *,int,int,int *);
+   static bool                    PortItemsToCode(Environment *,const char *,const char *,char *,unsigned int,
+                                                  FILE *,unsigned int,unsigned int,unsigned int *);
    static void                    BeforeDefmodulesToCode(Environment *);
 
 /***************************************************************/
@@ -90,7 +92,7 @@ void DefmoduleCompilerSetup(
 static void BeforeDefmodulesToCode(
   Environment *theEnv)
   {
-   int value = 0;
+   unsigned int value = 0;
    Defmodule *theModule;
 
    for (theModule = GetNextDefmodule(theEnv,NULL);
@@ -109,9 +111,9 @@ void PrintDefmoduleReference(
   Defmodule *theModule)
   {
    if (theModule == NULL) fprintf(theFile,"NULL");
-   else fprintf(theFile,"&%s%d_%ld[%ld]",DefmodulePrefix(),ConstructCompilerData(theEnv)->ImageID,
-                                    (long) ((theModule->header.bsaveID / ConstructCompilerData(theEnv)->MaxIndices) + 1),
-                                    (long) (theModule->header.bsaveID % ConstructCompilerData(theEnv)->MaxIndices));
+   else fprintf(theFile,"&%s%u_%lu[%lu]",DefmodulePrefix(),ConstructCompilerData(theEnv)->ImageID,
+                                    ((theModule->header.bsaveID / ConstructCompilerData(theEnv)->MaxIndices) + 1),
+                                    (theModule->header.bsaveID % ConstructCompilerData(theEnv)->MaxIndices));
   }
 
 /************************************************/
@@ -121,8 +123,8 @@ void PrintDefmoduleReference(
 static void InitDefmoduleCode(
   Environment *theEnv,
   FILE *initFP,
-  int imageID,
-  int maxIndices)
+  unsigned int imageID,
+  unsigned int maxIndices)
   {
 #if MAC_XCD
 #pragma unused(maxIndices)
@@ -144,20 +146,20 @@ static bool ConstructToCode(
   const char *fileName,
   const char *pathName,
   char *fileNameBuffer,
-  int fileID,
+  unsigned int fileID,
   FILE *headerFP,
-  int imageID,
-  int maxIndices)
+  unsigned int imageID,
+  unsigned int maxIndices)
   {
    Defmodule *theConstruct;
    FILE *moduleFile = NULL, *itemsFile;
-   int portItemCount = 0;
+   unsigned int portItemCount = 0;
    struct portItem *portItemPtr;
-   int mihCount = 0, moduleCount = 0;
-   int j;
+   unsigned int mihCount = 0, moduleCount = 0;
+   unsigned int j;
    struct moduleItem *theItem;
-   int moduleArrayVersion = 1;
-   int fileCount = 2;
+   unsigned int moduleArrayVersion = 1;
+   unsigned int fileCount = 2;
 
    /*================================================*/
    /* Include the appropriate defmodule header file. */
@@ -229,7 +231,7 @@ static bool ConstructToCode(
          if (theItem->constructsToCModuleReference == NULL)
            { fprintf(itemsFile,"NULL"); }
          else
-           { (*theItem->constructsToCModuleReference)(theEnv,itemsFile,(int) theConstruct->header.bsaveID,imageID,maxIndices); }
+           { (*theItem->constructsToCModuleReference)(theEnv,itemsFile,theConstruct->header.bsaveID,imageID,maxIndices); }
 
          if ((j + 1) < GetNumberOfModuleItems(theEnv)) fprintf(itemsFile,",");
          else if (theConstruct->header.next != NULL) fprintf(itemsFile,",\n");
@@ -301,7 +303,7 @@ static bool ConstructToCode(
    /*=========================================*/
 
    if (portItemCount == 0) return true;
-   return(PortItemsToCode(theEnv,fileName,pathName,fileNameBuffer,fileID,headerFP,imageID,maxIndices,&fileCount));
+   return PortItemsToCode(theEnv,fileName,pathName,fileNameBuffer,fileID,headerFP,imageID,maxIndices,&fileCount);
   }
 
 /************************************************************/
@@ -313,19 +315,19 @@ static bool PortItemsToCode(
   const char *fileName,
   const char *pathName,
   char *fileNameBuffer,
-  int fileID,
+  unsigned int fileID,
   FILE *headerFP,
-  int imageID,
-  int maxIndices,
-  int *fileCount)
+  unsigned int imageID,
+  unsigned int maxIndices,
+  unsigned int *fileCount)
   {
    Defmodule *theDefmodule = NULL;
    struct portItem *thePortItem = NULL;
-   int portItemCount = 0;
+   unsigned int portItemCount = 0;
    bool importChecked = false;
    bool exportChecked = false;
    FILE *portItemsFile = NULL;
-   int portItemArrayVersion = 1;
+   unsigned int portItemArrayVersion = 1;
 
    /*=================================================================*/
    /* Loop through each of the portItem data structures writing their */

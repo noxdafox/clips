@@ -56,8 +56,8 @@
 #endif
    static void                    BloadStorage(Environment *);
    static void                    BloadBinaryItem(Environment *);
-   static void                    UpdateDefmodule(Environment *,void *,long);
-   static void                    UpdatePortItem(Environment *,void *,long);
+   static void                    UpdateDefmodule(Environment *,void *,unsigned long);
+   static void                    UpdatePortItem(Environment *,void *,unsigned long);
    static void                    ClearBload(Environment *);
 
 /*********************************************/
@@ -93,13 +93,13 @@ void UpdateDefmoduleItemHeader(
   Environment *theEnv,
   struct bsaveDefmoduleItemHeader *theBsaveHeader,
   struct defmoduleItemHeader *theHeader,
-  int itemSize,
+  size_t itemSize,
   void *itemArray)
   {
-   long firstOffset,lastOffset;
+   unsigned long firstOffset, lastOffset;
 
    theHeader->theModule = ModulePointer(theBsaveHeader->theModule);
-   if (theBsaveHeader->firstItem == -1L)
+   if (theBsaveHeader->firstItem == ULONG_MAX)
      {
       theHeader->firstItem = NULL;
       theHeader->lastItem = NULL;
@@ -128,8 +128,8 @@ void AssignBsaveDefmdlItemHdrVals(
    theBsaveHeader->theModule = theHeader->theModule->header.bsaveID;
    if (theHeader->firstItem == NULL)
      {
-      theBsaveHeader->firstItem = -1L;
-      theBsaveHeader->lastItem = -1L;
+      theBsaveHeader->firstItem = ULONG_MAX;
+      theBsaveHeader->lastItem = ULONG_MAX;
      }
    else
      {
@@ -283,7 +283,7 @@ static void BsaveBinaryItem(
       DefmoduleData(theEnv)->BNumberOfDefmodules++;
       
       if (defmodulePtr->importList == NULL)
-        { newDefmodule.importList = -1L; }
+        { newDefmodule.importList = ULONG_MAX; }
       else
         {
          newDefmodule.importList = DefmoduleData(theEnv)->NumberOfPortItems;
@@ -294,7 +294,7 @@ static void BsaveBinaryItem(
         }
 
       if (defmodulePtr->exportList == NULL)
-        { newDefmodule.exportList = -1L; }
+        { newDefmodule.exportList = ULONG_MAX; }
       else
         {
          newDefmodule.exportList = DefmoduleData(theEnv)->NumberOfPortItems;
@@ -321,16 +321,16 @@ static void BsaveBinaryItem(
            theList = theList->next)
         {
          DefmoduleData(theEnv)->NumberOfPortItems++;
-         if (theList->moduleName == NULL) newPortItem.moduleName = -1L;
-         else newPortItem.moduleName = (long) theList->moduleName->bucket;
+         if (theList->moduleName == NULL) newPortItem.moduleName = ULONG_MAX;
+         else newPortItem.moduleName = theList->moduleName->bucket;
 
-         if (theList->constructType == NULL) newPortItem.constructType = -1L;
-         else newPortItem.constructType = (long) theList->constructType->bucket;
+         if (theList->constructType == NULL) newPortItem.constructType = ULONG_MAX;
+         else newPortItem.constructType = theList->constructType->bucket;
 
-         if (theList->constructName == NULL) newPortItem.constructName = -1L;
-         else newPortItem.constructName = (long) theList->constructName->bucket;
+         if (theList->constructName == NULL) newPortItem.constructName = ULONG_MAX;
+         else newPortItem.constructName = theList->constructName->bucket;
 
-         if (theList->next == NULL) newPortItem.next = -1L;
+         if (theList->next == NULL) newPortItem.next = ULONG_MAX;
          else newPortItem.next = DefmoduleData(theEnv)->NumberOfPortItems;
 
          GenWrite(&newPortItem,sizeof(struct bsavePortItem),fp);
@@ -341,16 +341,16 @@ static void BsaveBinaryItem(
            theList = theList->next)
         {
          DefmoduleData(theEnv)->NumberOfPortItems++;
-         if (theList->moduleName == NULL) newPortItem.moduleName = -1L;
-         else newPortItem.moduleName = (long) theList->moduleName->bucket;
+         if (theList->moduleName == NULL) newPortItem.moduleName = ULONG_MAX;
+         else newPortItem.moduleName = theList->moduleName->bucket;
 
-         if (theList->constructType == NULL) newPortItem.constructType = -1L;
-         else newPortItem.constructType = (long) theList->constructType->bucket;
+         if (theList->constructType == NULL) newPortItem.constructType = ULONG_MAX;
+         else newPortItem.constructType = theList->constructType->bucket;
 
-         if (theList->constructName == NULL) newPortItem.constructName = -1L;
-         else newPortItem.constructName = (long) theList->constructName->bucket;
+         if (theList->constructName == NULL) newPortItem.constructName = ULONG_MAX;
+         else newPortItem.constructName = theList->constructName->bucket;
 
-         if (theList->next == NULL) newPortItem.next = -1L;
+         if (theList->next == NULL) newPortItem.next = ULONG_MAX;
          else newPortItem.next = DefmoduleData(theEnv)->NumberOfPortItems;
 
          GenWrite(&newPortItem,sizeof(struct bsavePortItem),fp);
@@ -387,8 +387,8 @@ static void BloadStorage(
    /*=======================================*/
 
    GenReadBinary(theEnv,&space,sizeof(size_t));
-   GenReadBinary(theEnv,&DefmoduleData(theEnv)->BNumberOfDefmodules,sizeof(long));
-   GenReadBinary(theEnv,&DefmoduleData(theEnv)->NumberOfPortItems,sizeof(long));
+   GenReadBinary(theEnv,&DefmoduleData(theEnv)->BNumberOfDefmodules,sizeof(unsigned long));
+   GenReadBinary(theEnv,&DefmoduleData(theEnv)->NumberOfPortItems,sizeof(unsigned long));
 
    /*================================*/
    /* Allocate the space needed for  */
@@ -445,16 +445,16 @@ static void BloadBinaryItem(
 static void UpdateDefmodule(
   Environment *theEnv,
   void *buf,
-  long obji)
+  unsigned long obji)
   {
    struct bsaveDefmodule *bdp;
    struct moduleItem *theItem;
-   int i;
+   unsigned int i;
 
    bdp = (struct bsaveDefmodule *) buf;
    
    UpdateConstructHeader(theEnv,&bdp->header,&DefmoduleData(theEnv)->DefmoduleArray[obji].header,DEFMODULE,
-                         0,NULL,(int) sizeof(Defmodule),DefmoduleData(theEnv)->DefmoduleArray);
+                         0,NULL,sizeof(Defmodule),DefmoduleData(theEnv)->DefmoduleArray);
 
    if (GetNumberOfModuleItems(theEnv) == 0)
      { DefmoduleData(theEnv)->DefmoduleArray[obji].itemsArray = NULL; }
@@ -480,12 +480,12 @@ static void UpdateDefmodule(
 
    DefmoduleData(theEnv)->DefmoduleArray[obji].header.ppForm = NULL;
 
-   if (bdp->importList != -1L)
+   if (bdp->importList != ULONG_MAX)
      { DefmoduleData(theEnv)->DefmoduleArray[obji].importList = (struct portItem *) &DefmoduleData(theEnv)->PortItemArray[bdp->importList]; }
    else
      { DefmoduleData(theEnv)->DefmoduleArray[obji].importList = NULL; }
 
-   if (bdp->exportList != -1L)
+   if (bdp->exportList != ULONG_MAX)
      { DefmoduleData(theEnv)->DefmoduleArray[obji].exportList = (struct portItem *) &DefmoduleData(theEnv)->PortItemArray[bdp->exportList]; }
    else
      { DefmoduleData(theEnv)->DefmoduleArray[obji].exportList = NULL; }
@@ -499,13 +499,13 @@ static void UpdateDefmodule(
 static void UpdatePortItem(
   Environment *theEnv,
   void *buf,
-  long obji)
+  unsigned long obji)
   {
    struct bsavePortItem *bdp;
 
    bdp = (struct bsavePortItem *) buf;
 
-   if (bdp->moduleName != -1L)
+   if (bdp->moduleName != ULONG_MAX)
      {
       DefmoduleData(theEnv)->PortItemArray[obji].moduleName = SymbolPointer(bdp->moduleName);
       IncrementLexemeCount(DefmoduleData(theEnv)->PortItemArray[obji].moduleName);
@@ -513,7 +513,7 @@ static void UpdatePortItem(
    else
      { DefmoduleData(theEnv)->PortItemArray[obji].moduleName = NULL; }
 
-   if (bdp->constructType != -1L)
+   if (bdp->constructType != ULONG_MAX)
      {
       DefmoduleData(theEnv)->PortItemArray[obji].constructType = SymbolPointer(bdp->constructType);
       IncrementLexemeCount(DefmoduleData(theEnv)->PortItemArray[obji].constructType);
@@ -521,7 +521,7 @@ static void UpdatePortItem(
    else
      { DefmoduleData(theEnv)->PortItemArray[obji].constructType = NULL; }
 
-   if (bdp->constructName != -1L)
+   if (bdp->constructName != ULONG_MAX)
      {
       DefmoduleData(theEnv)->PortItemArray[obji].constructName = SymbolPointer(bdp->constructName);
       IncrementLexemeCount(DefmoduleData(theEnv)->PortItemArray[obji].constructName);
@@ -529,7 +529,7 @@ static void UpdatePortItem(
    else
      { DefmoduleData(theEnv)->PortItemArray[obji].constructName = NULL; }
 
-   if (bdp->next != -1L)
+   if (bdp->next != ULONG_MAX)
      { DefmoduleData(theEnv)->PortItemArray[obji].next = (struct portItem *) &DefmoduleData(theEnv)->PortItemArray[bdp->next]; }
    else
      { DefmoduleData(theEnv)->PortItemArray[obji].next = NULL; }
@@ -542,7 +542,7 @@ static void UpdatePortItem(
 static void ClearBload(
   Environment *theEnv)
   {
-   long i;
+   unsigned long i;
    size_t space;
    struct portItem *theList;
 

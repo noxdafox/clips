@@ -197,7 +197,7 @@ void GenericDispatch(
          PrintString(theEnv,WERROR,"Generic function ");
          PrintString(theEnv,WERROR,DefgenericName(gfunc));
          PrintString(theEnv,WERROR," method #");
-         PrintInteger(theEnv,WERROR,(long long) meth->index);
+         PrintUnsignedInteger(theEnv,WERROR,meth->index);
          PrintString(theEnv,WERROR," is not applicable to the given arguments.\n");
         }
      }
@@ -282,7 +282,7 @@ void UnboundMethodErr(
    PrintString(theEnv,WERROR,"generic function ");
    PrintString(theEnv,WERROR,DefgenericName(DefgenericData(theEnv)->CurrentGeneric));
    PrintString(theEnv,WERROR," method #");
-   PrintInteger(theEnv,WERROR,(long long) DefgenericData(theEnv)->CurrentMethod->index);
+   PrintUnsignedInteger(theEnv,WERROR,DefgenericData(theEnv)->CurrentMethod->index);
    PrintString(theEnv,WERROR,".\n");
   }
 
@@ -302,7 +302,7 @@ bool IsMethodApplicable(
   Defmethod *meth)
   {
    UDFValue temp;
-   short i,j,k;
+   unsigned int i,j,k;
    RESTRICTION *rp;
 #if OBJECT_SYSTEM
    Defclass *type;
@@ -310,8 +310,8 @@ bool IsMethodApplicable(
    int type;
 #endif
 
-   if ((ProceduralPrimitiveData(theEnv)->ProcParamArraySize < meth->minRestrictions) ||
-       ((ProceduralPrimitiveData(theEnv)->ProcParamArraySize > meth->minRestrictions) && (meth->maxRestrictions != -1)))
+   if (((ProceduralPrimitiveData(theEnv)->ProcParamArraySize < meth->minRestrictions) && (meth->minRestrictions != RESTRICTIONS_UNBOUNDED)) ||
+       ((ProceduralPrimitiveData(theEnv)->ProcParamArraySize > meth->minRestrictions) && (meth->maxRestrictions != RESTRICTIONS_UNBOUNDED))) // TBD minRestrictions || maxRestrictions
      return false;
    for (i = 0 , k = 0 ; i < ProceduralPrimitiveData(theEnv)->ProcParamArraySize ; i++)
      {
@@ -366,7 +366,7 @@ bool IsMethodApplicable(
          if (temp.value == FalseSymbol(theEnv))
            return false;
         }
-      if (((int) k) != meth->restrictionCount-1)
+      if ((k + 1) != meth->restrictionCount)
         k++;
      }
    return true;
@@ -516,8 +516,8 @@ void CallSpecificMethod(
 
    if (! UDFNextArgument(context,INTEGER_BIT,&theArg)) return;
 
-   mi = CheckMethodExists(theEnv,"call-specific-method",gfunc,(long) theArg.integerValue->contents);
-   if (mi == -1)
+   mi = CheckMethodExists(theEnv,"call-specific-method",gfunc,(unsigned short) theArg.integerValue->contents);
+   if (mi == METHOD_NOT_FOUND)
      return;
    gfunc->methods[mi].busy++;
    GenericDispatch(theEnv,gfunc,NULL,&gfunc->methods[mi],
@@ -642,7 +642,7 @@ static void WatchGeneric(
    PrintString(theEnv,STDOUT,DefgenericData(theEnv)->CurrentGeneric->header.name->contents);
    PrintString(theEnv,STDOUT," ");
    PrintString(theEnv,STDOUT," ED:");
-   PrintInteger(theEnv,STDOUT,(long long) EvaluationData(theEnv)->CurrentEvaluationDepth);
+   PrintInteger(theEnv,STDOUT,EvaluationData(theEnv)->CurrentEvaluationDepth);
    PrintProcParamArray(theEnv,STDOUT);
   }
 
@@ -678,10 +678,10 @@ static void WatchMethod(
    PrintString(theEnv,STDOUT,":#");
    if (DefgenericData(theEnv)->CurrentMethod->system)
      PrintString(theEnv,STDOUT,"SYS");
-   PrintInteger(theEnv,STDOUT,(long long) DefgenericData(theEnv)->CurrentMethod->index);
+   PrintUnsignedInteger(theEnv,STDOUT,DefgenericData(theEnv)->CurrentMethod->index);
    PrintString(theEnv,STDOUT," ");
    PrintString(theEnv,STDOUT," ED:");
-   PrintInteger(theEnv,STDOUT,(long long) EvaluationData(theEnv)->CurrentEvaluationDepth);
+   PrintInteger(theEnv,STDOUT,EvaluationData(theEnv)->CurrentEvaluationDepth);
    PrintProcParamArray(theEnv,STDOUT);
   }
 

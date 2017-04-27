@@ -150,7 +150,7 @@ bool Bsave(
    FILE *fp;
    struct BinaryItem *biPtr;
    char constructBuffer[CONSTRUCT_HEADER_SIZE];
-   long saveExpressionCount;
+   unsigned long saveExpressionCount;
 
    /*===================================*/
    /* A bsave can't occur when a binary */
@@ -226,7 +226,7 @@ bool Bsave(
       if (biPtr->bsaveStorageFunction != NULL)
         {
          genstrncpy(constructBuffer,biPtr->name,CONSTRUCT_HEADER_SIZE);
-         GenWrite(constructBuffer,(unsigned long) CONSTRUCT_HEADER_SIZE,fp);
+         GenWrite(constructBuffer,CONSTRUCT_HEADER_SIZE,fp);
          (*biPtr->bsaveStorageFunction)(theEnv,fp);
         }
      }
@@ -264,7 +264,7 @@ bool Bsave(
       if (biPtr->bsaveFunction != NULL)
         {
          genstrncpy(constructBuffer,biPtr->name,CONSTRUCT_HEADER_SIZE);
-         GenWrite(constructBuffer,(unsigned long) CONSTRUCT_HEADER_SIZE,fp);
+         GenWrite(constructBuffer,CONSTRUCT_HEADER_SIZE,fp);
          (*biPtr->bsaveFunction)(theEnv,fp);
         }
      }
@@ -354,19 +354,19 @@ static void WriteNeededFunctions(
         functionList = functionList->next)
      {
       if (functionList->neededFunction)
-        { functionList->bsaveIndex = (short int) count++; }
+        { functionList->bsaveIndex = count++; }
       else
-        { functionList->bsaveIndex = -1; }
+        { functionList->bsaveIndex = ULONG_MAX; }
      }
 
    /*===================================================*/
    /* Write the number of function names to be written. */
    /*===================================================*/
 
-   GenWrite(&count,(unsigned long) sizeof(unsigned long),fp);
+   GenWrite(&count,sizeof(unsigned long),fp);
    if (count == 0)
      {
-      GenWrite(&count,(unsigned long) sizeof(unsigned long),fp);
+      GenWrite(&count,sizeof(unsigned long),fp);
       return;
      }
 
@@ -376,7 +376,7 @@ static void WriteNeededFunctions(
    /*================================*/
 
    space = FunctionBinarySize(theEnv);
-   GenWrite(&space,(unsigned long) sizeof(unsigned long),fp);
+   GenWrite(&space,sizeof(unsigned long),fp);
 
    /*===============================*/
    /* Write out the function names. */
@@ -389,7 +389,7 @@ static void WriteNeededFunctions(
       if (functionList->neededFunction)
         {
          length = strlen(functionList->callFunctionName->contents) + 1;
-         GenWrite((void *) functionList->callFunctionName->contents,(unsigned long) length,fp);
+         GenWrite((void *) functionList->callFunctionName->contents,length,fp);
         }
      }
   }
@@ -423,7 +423,7 @@ static size_t FunctionBinarySize(
 /***************************************************/
 void SaveBloadCount(
   Environment *theEnv,
-  long cnt)
+  unsigned long cnt)
   {
    BLOADCNTSV *tmp, *prv;
 
@@ -449,7 +449,7 @@ void SaveBloadCount(
 /**************************************************/
 void RestoreBloadCount(
   Environment *theEnv,
-  long *cnt)
+  unsigned long *cnt)
   {
    BLOADCNTSV *tmp;
 
@@ -517,9 +517,9 @@ static void WriteBinaryHeader(
   Environment *theEnv,
   FILE *fp)
   {
-   GenWrite((void *) BloadData(theEnv)->BinaryPrefixID,(unsigned long) strlen(BloadData(theEnv)->BinaryPrefixID) + 1,fp);
-   GenWrite((void *) BloadData(theEnv)->BinaryVersionID,(unsigned long) strlen(BloadData(theEnv)->BinaryVersionID) + 1,fp);
-   GenWrite((void *) BloadData(theEnv)->BinarySizes,(unsigned long) strlen(BloadData(theEnv)->BinarySizes) + 1,fp);
+   GenWrite((void *) BloadData(theEnv)->BinaryPrefixID,strlen(BloadData(theEnv)->BinaryPrefixID) + 1,fp);
+   GenWrite((void *) BloadData(theEnv)->BinaryVersionID,strlen(BloadData(theEnv)->BinaryVersionID) + 1,fp);
+   GenWrite((void *) BloadData(theEnv)->BinarySizes,strlen(BloadData(theEnv)->BinarySizes) + 1,fp);
   }
 
 /******************************************************/
@@ -533,7 +533,7 @@ static void WriteBinaryFooter(
    char footerBuffer[CONSTRUCT_HEADER_SIZE];
 
    genstrncpy(footerBuffer,BloadData(theEnv)->BinaryPrefixID,CONSTRUCT_HEADER_SIZE);
-   GenWrite(footerBuffer,(unsigned long) CONSTRUCT_HEADER_SIZE,fp);
+   GenWrite(footerBuffer,CONSTRUCT_HEADER_SIZE,fp);
   }
 
 #endif /* BLOAD_AND_BSAVE */

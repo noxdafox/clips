@@ -90,8 +90,8 @@
                                                           struct patternNodeHeader *,unsigned long);
    void                           TraceErrorToRule(Environment *,struct joinNode *,const char *);
    void                           InitializePatternHeader(Environment *,struct patternNodeHeader *);
-   void                           MarkRuleNetwork(Environment *,int);
-   void                           TagRuleNetwork(Environment *,long *,long *,long *,long *);
+   void                           MarkRuleNetwork(Environment *,bool);
+   void                           TagRuleNetwork(Environment *,unsigned long *,unsigned long *,unsigned long *,unsigned long *);
    bool                           FindEntityInPartialMatch(struct patternEntity *,struct partialMatch *);
    unsigned long                  ComputeRightHashValue(Environment *,struct patternNodeHeader *);
    void                           UpdateBetaPMLinks(Environment *,struct partialMatch *,struct partialMatch *,struct partialMatch *,
@@ -99,7 +99,7 @@
    void                           UnlinkBetaPMFromNodeAndLineage(Environment *,struct joinNode *,struct partialMatch *,int);
    void                           UnlinkNonLeftLineage(Environment *,struct joinNode *,struct partialMatch *,int);
    struct partialMatch           *CreateEmptyPartialMatch(Environment *);
-   void                           MarkRuleJoins(struct joinNode *,int);
+   void                           MarkRuleJoins(struct joinNode *,bool);
    void                           AddBlockedLink(struct partialMatch *,struct partialMatch *);
    void                           RemoveBlockedLink(struct partialMatch *);
    unsigned long                  PrintBetaMemory(Environment *,const char *,struct betaMemory *,bool,const char *,int);

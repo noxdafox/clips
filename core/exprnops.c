@@ -210,10 +210,10 @@ bool IdenticalExpression(
 /*   the nextArg pointer but not the argList        */
 /*   pointer.                                       */
 /****************************************************/
-int CountArguments(
+unsigned short CountArguments(
   struct expr *testPtr)
   {
-   int size = 0;
+   unsigned short size = 0;
 
    while (testPtr != NULL)
      {
@@ -221,7 +221,7 @@ int CountArguments(
       testPtr = testPtr->nextArg;
      }
 
-   return(size);
+   return size;
   }
 
 /******************************************/
@@ -288,10 +288,10 @@ bool ExpressionContainsVariables(
 /* ExpressionSize: Returns the number of */
 /*   structures stored in an expression. */
 /*****************************************/
-long ExpressionSize(
+unsigned long ExpressionSize(
   struct expr *testPtr)
   {
-   long size = 0;
+   unsigned long size = 0;
 
    while (testPtr != NULL)
      {
@@ -300,7 +300,7 @@ long ExpressionSize(
         { size += ExpressionSize(testPtr->argList); }
       testPtr = testPtr->nextArg;
      }
-   return(size);
+   return size;
   }
 
 /************************************************/

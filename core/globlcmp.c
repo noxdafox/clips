@@ -53,13 +53,14 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static bool                    ConstructToCode(Environment *,const char *,const char *,char *,int,FILE *,int,int);
+   static bool                    ConstructToCode(Environment *,const char *,const char *,char *,unsigned int,
+                                                  FILE *,unsigned int,unsigned int);
    static void                    DefglobalToCode(Environment *,FILE *,Defglobal *,
-                                                 int,int,int);
-   static void                    DefglobalModuleToCode(Environment *,FILE *,Defmodule *,int,int,int);
-   static void                    CloseDefglobalFiles(Environment *,FILE *,FILE *,int);
+                                                 unsigned int,unsigned int,unsigned int);
+   static void                    DefglobalModuleToCode(Environment *,FILE *,Defmodule *,unsigned int,unsigned int,unsigned int);
+   static void                    CloseDefglobalFiles(Environment *,FILE *,FILE *,unsigned int);
    static void                    BeforeDefglobalsToCode(Environment *);
-   static void                    InitDefglobalsCode(Environment *,FILE *,int,int);
+   static void                    InitDefglobalsCode(Environment *,FILE *,unsigned,unsigned);
 
 /***************************************************************/
 /* DefglobalCompilerSetup: Initializes the defglobal construct */
@@ -91,8 +92,8 @@ static void BeforeDefglobalsToCode(
 static void InitDefglobalsCode(
   Environment *theEnv,
   FILE *initFP,
-  int imageID,
-  int maxIndices)
+  unsigned imageID,
+  unsigned maxIndices)
   {
 #if MAC_XCD
 #pragma unused(maxIndices)
@@ -112,16 +113,16 @@ static bool ConstructToCode(
   const char *fileName,
   const char *pathName,
   char *fileNameBuffer,
-  int fileID,
+  unsigned int fileID,
   FILE *headerFP,
-  int imageID,
-  int maxIndices)
+  unsigned int imageID,
+  unsigned int maxIndices)
   {
-   int fileCount = 1;
+   unsigned int fileCount = 1;
    Defmodule *theModule;
    Defglobal *theDefglobal;
-   int moduleCount = 0, moduleArrayCount = 0, moduleArrayVersion = 1;
-   int defglobalArrayCount = 0, defglobalArrayVersion = 1;
+   unsigned int moduleCount = 0, moduleArrayCount = 0, moduleArrayVersion = 1;
+   unsigned int defglobalArrayCount = 0, defglobalArrayVersion = 1;
    FILE *moduleFile = NULL, *defglobalFile = NULL;
 
    /*================================================*/
@@ -194,10 +195,10 @@ static void CloseDefglobalFiles(
   Environment *theEnv,
   FILE *moduleFile,
   FILE *defglobalFile,
-  int maxIndices)
+  unsigned int maxIndices)
   {
-   int count = maxIndices;
-   int arrayVersion = 0;
+   unsigned int count = maxIndices;
+   unsigned int arrayVersion = 0;
 
    if (defglobalFile != NULL)
      {
@@ -220,9 +221,9 @@ static void DefglobalModuleToCode(
   Environment *theEnv,
   FILE *theFile,
   Defmodule *theModule,
-  int imageID,
-  int maxIndices,
-  int moduleCount)
+  unsigned int imageID,
+  unsigned int maxIndices,
+  unsigned int moduleCount)
   {
 #if MAC_XCD
 #pragma unused(moduleCount)
@@ -244,9 +245,9 @@ static void DefglobalToCode(
   Environment *theEnv,
   FILE *theFile,
   Defglobal *theDefglobal,
-  int imageID,
-  int maxIndices,
-  int moduleCount)
+  unsigned int imageID,
+  unsigned int maxIndices,
+  unsigned int moduleCount)
   {
    /*==================*/
    /* Defglobal Header */
@@ -270,7 +271,7 @@ static void DefglobalToCode(
    /* Current Value. */
    /*================*/
 
-   fprintf(theFile,"{NULL}");
+   fprintf(theFile,"{ { NULL } }");
 
    /*=====================*/
    /* Initial Expression. */
@@ -289,11 +290,11 @@ static void DefglobalToCode(
 void DefglobalCModuleReference(
   Environment *theEnv,
   FILE *theFile,
-  int count,
-  int imageID,
-  int maxIndices)
+  unsigned long count,
+  unsigned int imageID,
+  unsigned int maxIndices)
   {
-   fprintf(theFile,"MIHS &%s%d_%d[%d]",
+   fprintf(theFile,"MIHS &%s%u_%lu[%lu]",
                       ModulePrefix(DefglobalData(theEnv)->DefglobalCodeItem),
                       imageID,
                       (count / maxIndices) + 1,
@@ -308,15 +309,15 @@ void DefglobalCConstructReference(
   Environment *theEnv,
   FILE *theFile,
   Defglobal *theGlobal,
-  int imageID,
-  int maxIndices)
+  unsigned int imageID,
+  unsigned int maxIndices)
   {
 
    if (theGlobal == NULL)
      { fprintf(theFile,"NULL"); }
    else
      {
-      fprintf(theFile,"&%s%d_%ld[%ld]",ConstructPrefix(DefglobalData(theEnv)->DefglobalCodeItem),
+      fprintf(theFile,"&%s%u_%lu[%lu]",ConstructPrefix(DefglobalData(theEnv)->DefglobalCodeItem),
                       imageID,
                       (theGlobal->header.bsaveID / maxIndices) + 1,
                       theGlobal->header.bsaveID % maxIndices);

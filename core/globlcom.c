@@ -171,7 +171,7 @@ void ShowDefglobalsCommand(
   UDFValue *returnValue)
   {
    Defmodule *theModule;
-   int numArgs;
+   unsigned int numArgs;
    bool error;
 
    numArgs = UDFArgumentCount(context);
@@ -271,7 +271,7 @@ static void PrintDefglobalValueForm(
    PrintString(theEnv,logicalName,"?*");
    PrintString(theEnv,logicalName,theGlobal->header.name->contents);
    PrintString(theEnv,logicalName,"* = ");
-   PrintUDFValue(theEnv,logicalName,&theGlobal->current);
+   PrintCLIPSValue(theEnv,logicalName,&theGlobal->current);
   }
 
 #endif /* DEBUGGING_FUNCTIONS */

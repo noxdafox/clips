@@ -114,12 +114,12 @@
 #endif
 #if DEBUGGING_FUNCTIONS
    static long long               ListAlphaMatches(Environment *,struct joinInformation *,int);
-   static long long               ListBetaMatches(Environment *,struct joinInformation *,long,long,int);
+   static long long               ListBetaMatches(Environment *,struct joinInformation *,long,unsigned short,int);
    static void                    ListBetaJoinActivity(Environment *,struct joinInformation *,long,long,int,UDFValue *);
-   static long                    AlphaJoinCountDriver(Environment *,struct joinNode *);
-   static long                    BetaJoinCountDriver(Environment *,struct joinNode *);
-   static void                    AlphaJoinsDriver(Environment *,struct joinNode *,long,struct joinInformation *);
-   static void                    BetaJoinsDriver(Environment *,struct joinNode *,long,struct joinInformation *,struct betaMemory *,struct joinNode *);
+   static unsigned short          AlphaJoinCountDriver(Environment *,struct joinNode *);
+   static unsigned short          BetaJoinCountDriver(Environment *,struct joinNode *);
+   static void                    AlphaJoinsDriver(Environment *,struct joinNode *,unsigned short,struct joinInformation *);
+   static void                    BetaJoinsDriver(Environment *,struct joinNode *,unsigned short,struct joinInformation *,struct betaMemory *,struct joinNode *);
    static int                     CountPatterns(Environment *,struct joinNode *,bool);
    static const char             *BetaHeaderString(Environment *,struct joinInformation *,long,long);
    static const char             *ActivityHeaderString(Environment *,struct joinInformation *,long,long);
@@ -344,7 +344,7 @@ void Matches(
    Defrule *rulePtr;
    Defrule *topDisjunct = theDefrule;
    long joinIndex;
-   long arraySize;
+   unsigned short arraySize;
    struct joinInformation *theInfo;
    long long alphaMatchCount = 0;
    long long betaMatchCount = 0;
@@ -467,14 +467,14 @@ void Matches(
 /*   over a rule's joins to determine the number of */
 /*   alpha joins.                                   */
 /****************************************************/
-static long AlphaJoinCountDriver(
+static unsigned short AlphaJoinCountDriver(
   Environment *theEnv,
   struct joinNode *theJoin)
   {
-   long alphaCount = 0;
+   unsigned short alphaCount = 0;
 
    if (theJoin == NULL)
-     { return(alphaCount); }
+     { return alphaCount; }
 
    if (theJoin->joinFromTheRight)
      { return AlphaJoinCountDriver(theEnv,(struct joinNode *) theJoin->rightSideEntryStructure); }
@@ -483,14 +483,14 @@ static long AlphaJoinCountDriver(
 
    alphaCount++;
 
-   return(alphaCount);
+   return alphaCount;
   }
 
 /***********************************************/
 /* AlphaJoinCount: Returns the number of alpha */
 /*   joins associated with the specified rule. */
 /***********************************************/
-long AlphaJoinCount(
+unsigned short AlphaJoinCount(
   Environment *theEnv,
   Defrule *theDefrule)
   {
@@ -504,7 +504,7 @@ long AlphaJoinCount(
 static void AlphaJoinsDriver(
   Environment *theEnv,
   struct joinNode *theJoin,
-  long alphaIndex,
+  unsigned short alphaIndex,
   struct joinInformation *theInfo)
   {
    if (theJoin == NULL)
@@ -531,7 +531,7 @@ static void AlphaJoinsDriver(
 void AlphaJoins(
   Environment *theEnv,
   Defrule *theDefrule,
-  long alphaCount,
+  unsigned short alphaCount,
   struct joinInformation *theInfo)
   {
    AlphaJoinsDriver(theEnv,theDefrule->lastJoin->lastLevel,alphaCount,theInfo);
@@ -542,14 +542,14 @@ void AlphaJoins(
 /*   over a rule's joins to determine the number of */
 /*   beta joins.                                   */
 /****************************************************/
-static long BetaJoinCountDriver(
+static unsigned short BetaJoinCountDriver(
   Environment *theEnv,
   struct joinNode *theJoin)
   {
-   long betaCount = 0;
+   unsigned short betaCount = 0;
 
    if (theJoin == NULL)
-     { return(betaCount); }
+     { return betaCount; }
 
    betaCount++;
 
@@ -558,14 +558,14 @@ static long BetaJoinCountDriver(
    else if (theJoin->lastLevel != NULL)
      { betaCount += BetaJoinCountDriver(theEnv,theJoin->lastLevel); }
 
-   return(betaCount);
+   return betaCount;
   }
 
 /***********************************************/
 /* BetaJoinCount: Returns the number of beta   */
 /*   joins associated with the specified rule. */
 /***********************************************/
-long BetaJoinCount(
+unsigned short BetaJoinCount(
   Environment *theEnv,
   Defrule *theDefrule)
   {
@@ -579,12 +579,13 @@ long BetaJoinCount(
 static void BetaJoinsDriver(
   Environment *theEnv,
   struct joinNode *theJoin,
-  long betaIndex,
+  unsigned short betaIndex,
   struct joinInformation *theJoinInfoArray,
   struct betaMemory *lastMemory,
   struct joinNode *nextJoin)
   {
-   int theCE = 0, theCount;
+   unsigned short theCE = 0;
+   int theCount;
    struct joinNode *tmpPtr;
 
    if (theJoin == NULL)
@@ -626,13 +627,9 @@ static void BetaJoinsDriver(
    /*==========================*/
 
    if (theJoin->joinFromTheRight)
-     {
-      BetaJoinsDriver(theEnv,(struct joinNode *) theJoin->rightSideEntryStructure,betaIndex-1,theJoinInfoArray,theJoin->rightMemory,theJoin);
-     }
+     { BetaJoinsDriver(theEnv,(struct joinNode *) theJoin->rightSideEntryStructure,betaIndex-1,theJoinInfoArray,theJoin->rightMemory,theJoin); }
    else if (theJoin->lastLevel != NULL)
-     {
-      BetaJoinsDriver(theEnv,theJoin->lastLevel,betaIndex-1,theJoinInfoArray,theJoin->leftMemory,theJoin);
-     }
+     { BetaJoinsDriver(theEnv,theJoin->lastLevel,betaIndex-1,theJoinInfoArray,theJoin->leftMemory,theJoin); }
 
    return;
   }
@@ -644,7 +641,7 @@ static void BetaJoinsDriver(
 void BetaJoins(
   Environment *theEnv,
   Defrule *theDefrule,
-  long betaArraySize,
+  unsigned short betaArraySize,
   struct joinInformation *theInfo)
   {
    BetaJoinsDriver(theEnv,theDefrule->lastJoin->lastLevel,betaArraySize,theInfo,theDefrule->lastJoin->leftMemory,theDefrule->lastJoin);
@@ -656,9 +653,9 @@ void BetaJoins(
 /***********************************************/
 struct joinInformation *CreateJoinArray(
    Environment *theEnv,
-   long size)
+   unsigned short size)
    {
-    if (size == 0) return (NULL);
+    if (size == 0) return NULL;
 
     return (struct joinInformation *) genalloc(theEnv,sizeof(struct joinInformation) * size);
    }
@@ -670,7 +667,7 @@ struct joinInformation *CreateJoinArray(
 void FreeJoinArray(
    Environment *theEnv,
    struct joinInformation *theArray,
-   long size)
+   unsigned short size)
    {
     if (size == 0) return;
 
@@ -907,12 +904,12 @@ static long long ListBetaMatches(
   Environment *theEnv,
   struct joinInformation *infoArray,
   long joinIndex,
-  long arraySize,
+  unsigned short arraySize,
   int output)
   {
    long betaCount = 0;
    struct joinInformation *theInfo;
-   long count;
+   unsigned long count;
 
    if (GetHaltExecution(theEnv) == true)
      { return(betaCount); }
@@ -943,7 +940,7 @@ static long long ListBetaMatches(
       PrintString(theEnv,STDOUT,"\n");
      }
 
-   return(betaCount);
+   return betaCount;
   }
 
 /******************/
@@ -1046,7 +1043,7 @@ void JoinActivity(
   {
    Defrule *rulePtr;
    long disjunctCount, disjunctIndex, joinIndex;
-   long arraySize;
+   unsigned short arraySize;
    struct joinInformation *theInfo;
 
    /*==========================*/
@@ -1310,7 +1307,7 @@ void TimetagFunction(
       return;
      }
 
-   returnValue->integerValue = CreateInteger(theEnv,((struct patternEntity *) ptr)->timeTag);
+   returnValue->integerValue = CreateInteger(theEnv,(long long) ((struct patternEntity *) ptr)->timeTag);
   }
 
 #endif /* DEBUGGING_FUNCTIONS */
@@ -1386,7 +1383,7 @@ static void ShowJoins(
    struct joinNode *joinList[MAXIMUM_NUMBER_OF_PATTERNS];
    int numberOfJoins;
    char rhsType;
-   int disjunct = 0;
+   unsigned int disjunct = 0;
    unsigned long count = 0;
 
    rulePtr = theRule;
@@ -1403,7 +1400,7 @@ static void ShowJoins(
       if (disjunct > 0)
         {
          PrintString(theEnv,STDOUT,"Disjunct #");
-         PrintInteger(theEnv,STDOUT, (long long) disjunct++);
+         PrintUnsignedInteger(theEnv,STDOUT,disjunct++);
          PrintString(theEnv,STDOUT,"\n");
         }
 
@@ -1444,7 +1441,7 @@ static void ShowJoins(
          else
            { rhsType = ' '; }
 
-         gensprintf(buffer,"%2d%c%c%c%c : ",(int) joinList[numberOfJoins]->depth,
+         gensprintf(buffer,"%2hu%c%c%c%c : ",joinList[numberOfJoins]->depth,
                                      (joinList[numberOfJoins]->firstJoin) ? 'f' : ' ',
                                      rhsType,
                                      (joinList[numberOfJoins]->joinFromTheRight) ? 'j' : ' ',

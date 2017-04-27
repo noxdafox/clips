@@ -69,8 +69,7 @@
 /****************************************/
 
 #if (! RUN_TIME)
-   static long                    ListToPacked(struct expr *,
-                                               struct expr *,long);
+   static unsigned long           ListToPacked(struct expr *,struct expr *,unsigned long);
 #endif
    static EXPRESSION_HN          *FindHashedExpression(Environment *,Expression *,unsigned *,EXPRESSION_HN **);
    static unsigned                HashExpression(Expression *);
@@ -93,7 +92,7 @@ void InitExpressionData(
 #endif
 
    ExpressionData(theEnv)->ExpressionHashTable = (EXPRESSION_HN **)
-     gm2(theEnv,(int) (sizeof(EXPRESSION_HN *) * EXPRESSION_HASH_SIZE));
+     gm2(theEnv,sizeof(EXPRESSION_HN *) * EXPRESSION_HASH_SIZE);
    for (i = 0 ; i < EXPRESSION_HASH_SIZE ; i++)
      ExpressionData(theEnv)->ExpressionHashTable[i] = NULL;
   }
@@ -126,7 +125,7 @@ static void DeallocateExpressionData(
      }
 
    rm(theEnv,ExpressionData(theEnv)->ExpressionHashTable,
-      (int) (sizeof(EXPRESSION_HN *) * EXPRESSION_HASH_SIZE));
+      sizeof(EXPRESSION_HN *) * EXPRESSION_HASH_SIZE);
 
 #if (BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE)
    if ((ExpressionData(theEnv)->NumberOfExpressions != 0) && Bloaded(theEnv))
@@ -209,25 +208,26 @@ struct expr *PackExpression(
   {
    struct expr *packPtr;
 
-   if (original == NULL) return (NULL);
+   if (original == NULL) return NULL;
+   
    packPtr = (struct expr *)
-             gm2(theEnv,(long) sizeof (struct expr) *
-                 (long) ExpressionSize(original));
-   ListToPacked(original,packPtr,0L);
-   return(packPtr);
+             gm2(theEnv,sizeof (struct expr) * ExpressionSize(original));
+   ListToPacked(original,packPtr,0);
+   
+   return packPtr;
   }
 
 /***********************************************************/
 /* ListToPacked: Copies a list of expressions to an array. */
 /***********************************************************/
-static long ListToPacked(
+static unsigned long ListToPacked(
   struct expr *original,
   struct expr *destination,
-  long count)
+  unsigned long count)
   {
-   long i;
+   unsigned long i;
 
-   if (original == NULL) { return(count); }
+   if (original == NULL) { return count; }
 
    while (original != NULL)
      {
@@ -242,7 +242,7 @@ static long ListToPacked(
       else
         {
          destination[i].argList =
-           (struct expr *) &destination[(long) count];
+           (struct expr *) &destination[count];
          count = ListToPacked(original->argList,destination,count);
         }
 
@@ -250,14 +250,13 @@ static long ListToPacked(
         { destination[i].nextArg = NULL; }
       else
         {
-         destination[i].nextArg =
-           (struct expr *) &destination[(long) count];
+         destination[i].nextArg = &destination[count];
         }
 
       original = original->nextArg;
      }
 
-   return(count);
+   return count;
   }
 
 #endif /* (! RUN_TIME) */
@@ -272,8 +271,7 @@ void ReturnPackedExpression(
   {
    if (packPtr != NULL)
      {
-      rm(theEnv,packPtr,(long) sizeof (struct expr) *
-                         ExpressionSize(packPtr));
+      rm(theEnv,packPtr,sizeof (struct expr) * ExpressionSize(packPtr));
      }
   }
 
@@ -356,13 +354,13 @@ static unsigned HashExpression(
      tally += HashExpression(theExp->argList) * PRIME_ONE;
    while (theExp != NULL)
      {
-      tally += (unsigned long) (theExp->type * PRIME_TWO);
+      tally += theExp->type * PRIME_TWO;
       fis.uv = 0;
       fis.vv = theExp->value;
       tally += fis.uv;
       theExp = theExp->nextArg;
      }
-   return((unsigned) (tally % EXPRESSION_HASH_SIZE));
+   return (unsigned) (tally % EXPRESSION_HASH_SIZE);
   }
 
 /***************************************************
@@ -454,7 +452,7 @@ Expression *AddHashedExpression(
   SIDE EFFECTS : None
   NOTES        : None
  ***************************************************/
-long HashedExpressionIndex(
+unsigned long HashedExpressionIndex(
   Environment *theEnv,
   Expression *theExp)
   {
@@ -462,9 +460,9 @@ long HashedExpressionIndex(
    unsigned hashval;
 
    if (theExp == NULL)
-     return(-1L);
+     return ULONG_MAX;
    exphash = FindHashedExpression(theEnv,theExp,&hashval,&prv);
-   return((exphash != NULL) ? exphash->bsaveID : -1L);
+   return((exphash != NULL) ? exphash->bsaveID : ULONG_MAX);
   }
 
 #endif /* (BLOAD_AND_BSAVE || BLOAD_ONLY || BLOAD || CONSTRUCT_COMPILER) && (! RUN_TIME) */

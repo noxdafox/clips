@@ -97,47 +97,6 @@ void InitializePrintUtilityData(
    AllocateEnvironmentData(theEnv,PRINT_UTILITY_DATA,sizeof(struct printUtilityData),NULL);
   }
 
-/***********************************************************/
-/* PrintInChunks:  Prints a string in chunks to accomodate */
-/*   systems which have a limit on the maximum size of a   */
-/*   string which can be printed.                          */
-/***********************************************************/
-void PrintInChunks(
-  Environment *theEnv,
-  const char *logicalName,
-  const char *bigString)
-  {
-   /*=====================================================*/
-   /* This function was originally added because VMS had  */
-   /* a bug that didn't allow printing a string greater   */
-   /* than 512 bytes. Since this was over 25 years ago,   */
-   /* we'll assume no modern compiler has this limitation */
-   /* and just print the entire string.                   */
-   /*=====================================================*/
-
-   PrintString(theEnv,logicalName,bigString);
-
-/*
-   char tc, *subString;
-
-   subString = bigString;
-
-   if (subString == NULL) return;
-
-   while (((int) strlen(subString)) > 500)
-     {
-      if (EvaluationData(theEnv)->HaltExecution) return;
-      tc = subString[500];
-      subString[500] = EOS;
-      PrintString(theEnv,logicalName,subString);
-      subString[500] = tc;
-      subString += 500;
-     }
-
-   PrintString(theEnv,logicalName,subString);
-*/
-  }
-
 /************************************************************/
 /* PrintFloat: Controls printout of floating point numbers. */
 /************************************************************/
@@ -166,13 +125,28 @@ void PrintInteger(
    PrintString(theEnv,logicalName,printBuffer);
   }
 
+/*******************************************/
+/* PrintUnsignedInteger: Controls printout */
+/*   of unsigned integers.                 */
+/*******************************************/
+void PrintUnsignedInteger(
+  Environment *theEnv,
+  const char *logicalName,
+  unsigned long long number)
+  {
+   char printBuffer[32];
+
+   gensprintf(printBuffer,"%llu",number);
+   PrintString(theEnv,logicalName,printBuffer);
+  }
+
 /**************************************/
 /* PrintAtom: Prints an atomic value. */
 /**************************************/
 void PrintAtom(
   Environment *theEnv,
   const char *logicalName,
-  int type,
+  unsigned short type,
   void *value)
   {
    CLIPSExternalAddress *theAddress;
@@ -254,14 +228,14 @@ void PrintAtom(
 void PrintTally(
   Environment *theEnv,
   const char *logicalName,
-  long long count,
+  unsigned long long count,
   const char *singular,
   const char *plural)
   {
    if (count == 0) return;
 
    PrintString(theEnv,logicalName,"For a total of ");
-   PrintInteger(theEnv,logicalName,count);
+   PrintUnsignedInteger(theEnv,logicalName,count);
    PrintString(theEnv,logicalName," ");
 
    if (count == 1) PrintString(theEnv,logicalName,singular);
@@ -620,7 +594,7 @@ const char *DataObjectToString(
       case EXTERNAL_ADDRESS_TYPE:
         theAddress = theDO->externalAddressValue;
         /* TBD Need specific routine for creating name string. */
-        gensprintf(buffer,"<Pointer-%d-%p>",(int) theAddress->type,theDO->value);
+        gensprintf(buffer,"<Pointer-%hu-%p>",theAddress->type,theDO->value);
         thePtr = CreateString(theEnv,buffer);
         return thePtr->contents;
 

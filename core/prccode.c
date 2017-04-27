@@ -108,7 +108,7 @@ typedef struct
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static void                    EvaluateProcParameters(Environment *,Expression *,int,const char *,const char *);
+   static void                    EvaluateProcParameters(Environment *,Expression *,unsigned int,const char *,const char *);
    static bool                    RtnProcParam(Environment *,void *,UDFValue *);
    static bool                    GetProcBind(Environment *,void *,UDFValue *);
    static bool                    PutProcBind(Environment *,void *,UDFValue *);
@@ -117,7 +117,7 @@ typedef struct
    static void                    ReleaseProcParameters(Environment *);
 
 #if (! BLOAD_ONLY) && (! RUN_TIME)
-   static int                     FindProcParameter(CLIPSLexeme *,Expression *,CLIPSLexeme *);
+   static unsigned int            FindProcParameter(CLIPSLexeme *,Expression *,CLIPSLexeme *);
    static bool                    ReplaceProcBinds(Environment *,Expression *,
                                                    int (*)(Environment *,Expression *,void *),void *);
    static Expression             *CompactActions(Environment *,Expression *);
@@ -188,7 +188,7 @@ void InstallProcedurePrimitives(
    InstallPrimitive(theEnv,&ProceduralPrimitiveData(theEnv)->ProcGetInfo,PROC_GET_BIND);
    InstallPrimitive(theEnv,&ProceduralPrimitiveData(theEnv)->ProcBindInfo,PROC_BIND);
 
-   ProceduralPrimitiveData(theEnv)->Oldindex = -1;
+   ProceduralPrimitiveData(theEnv)->Oldindex = UINT_MAX;
 
    /* ===============================================
       Make sure a default evaluation function is
@@ -262,8 +262,8 @@ Expression *ParseProcParameters(
   struct token *tkn,
   Expression *parameterList,
   CLIPSLexeme **wildcard,
-  int *min,
-  int *max,
+  unsigned short *min,
+  unsigned short *max,
   bool *error,
   bool (*checkfunc)(Environment *,const char *))
   {
@@ -336,7 +336,7 @@ Expression *ParseProcParameters(
       SavePPBuffer(theEnv,")");
      }
    *error = false;
-   *max = (*wildcard != NULL) ? -1 : *min;
+   *max = (*wildcard != NULL) ? PARAMETERS_UNBOUNDED : *min;
    return(parameterList);
   }
 
@@ -392,7 +392,7 @@ Expression *ParseProcActions(
   CLIPSLexeme *wildcard,
   int (*altvarfunc)(Environment *,Expression *,void *),
   int (*altbindfunc)(Environment *,Expression *,void *),
-  int *lvarcnt,
+  unsigned short *lvarcnt,
   void *userBuffer)
   {
    Expression *actions,*pactions;
@@ -496,8 +496,8 @@ int ReplaceProcVars( // TBD should be bool? returns -1, 0, 1
   int (*altvarfunc)(Environment *,Expression *,void *),
   void *specdata)
   {
-   int position,altcode;
-   int boundPosn;
+   int altcode;
+   unsigned position, boundPosn;
    Expression *arg_lvl,*altvarexp;
    CLIPSLexeme *bindName;
    PACKED_PROC_VAR pvar;
@@ -559,8 +559,8 @@ int ReplaceProcVars( // TBD should be bool? returns -1, 0, 1
 
          else if ((position > 0) && (boundPosn == 0))
            {
-            actions->type = (unsigned short) ((bindName != wildcard) ? PROC_PARAM : PROC_WILD_PARAM);
-            actions->value = AddBitMap(theEnv,&position,(int) sizeof(int));
+            actions->type = ((bindName != wildcard) ? PROC_PARAM : PROC_WILD_PARAM);
+            actions->value = AddBitMap(theEnv,&position,sizeof(int));
            }
 
          /*=========================================================*/
@@ -587,11 +587,11 @@ int ReplaceProcVars( // TBD should be bool? returns -1, 0, 1
             else
               altvarexp = NULL;
             actions->type = PROC_GET_BIND;
-            ClearBitString(&pvar,(int) sizeof(PACKED_PROC_VAR));
+            ClearBitString(&pvar,sizeof(PACKED_PROC_VAR));
             pvar.first = boundPosn;
             pvar.second = position;
             pvar.secondFlag = (bindName != wildcard) ? 0 : 1;
-            actions->value = AddBitMap(theEnv,&pvar,(int) sizeof(PACKED_PROC_VAR));
+            actions->value = AddBitMap(theEnv,&pvar,sizeof(PACKED_PROC_VAR));
             actions->argList = GenConstant(theEnv,SYMBOL_TYPE,bindName);
             actions->argList->nextArg = altvarexp;
            }
@@ -624,7 +624,7 @@ int ReplaceProcVars( // TBD should be bool? returns -1, 0, 1
            {
             actions->type = PROC_BIND;
             boundPosn = SearchParsedBindNames(theEnv,actions->argList->lexemeValue);
-            actions->value = AddBitMap(theEnv,&boundPosn,(int) sizeof(int));
+            actions->value = AddBitMap(theEnv,&boundPosn,sizeof(int));
             arg_lvl = actions->argList->nextArg;
             rtn_struct(theEnv,expr,actions->argList);
             actions->argList = arg_lvl;
@@ -651,7 +651,7 @@ Expression *GenProcWildcardReference(
   Environment *theEnv,
   int theIndex)
   {
-   return(GenConstant(theEnv,PROC_WILD_PARAM,AddBitMap(theEnv,&theIndex,(int) sizeof(int))));
+   return(GenConstant(theEnv,PROC_WILD_PARAM,AddBitMap(theEnv,&theIndex,sizeof(int))));
   }
 
 #endif
@@ -689,7 +689,7 @@ Expression *GenProcWildcardReference(
 void PushProcParameters(
   Environment *theEnv,
   Expression *parameterList,
-  int numberOfParameters,
+  unsigned int numberOfParameters,
   const char *pname,
   const char *bodytype,
   void (*UnboundErrFunc)(Environment *))
@@ -842,7 +842,7 @@ static void ReleaseProcParameters(
 Expression *GetProcParamExpressions(
   Environment *theEnv)
   {
-   int i;
+   unsigned int i;
 
    if ((ProceduralPrimitiveData(theEnv)->ProcParamArray == NULL) || (ProceduralPrimitiveData(theEnv)->ProcParamExpressions != NULL))
      return(ProceduralPrimitiveData(theEnv)->ProcParamExpressions);
@@ -887,12 +887,12 @@ void EvaluateProcActions(
   Environment *theEnv,
   Defmodule *theModule,
   Expression *actions,
-  int lvarcnt,
+  unsigned short lvarcnt,
   UDFValue *returnValue,
   void (*crtproc)(Environment *))
   {
    UDFValue *oldLocalVarArray;
-   int i;
+   unsigned short i;
    Defmodule *oldModule;
    Expression *oldActions;
    struct trackedMemory *theTM;
@@ -963,7 +963,7 @@ void PrintProcParamArray(
   Environment *theEnv,
   const char *logName)
   {
-   int i;
+   unsigned int i;
 
    PrintString(theEnv,logName," (");
    for (i = 0 ; i < ProceduralPrimitiveData(theEnv)->ProcParamArraySize ; i++)
@@ -991,11 +991,11 @@ void PrintProcParamArray(
 void GrabProcWildargs(
   Environment *theEnv,
   UDFValue *returnValue,
-  int theIndex)
+  unsigned int theIndex)
   {
-   int i,j;
-   long k; /* 6.04 Bug Fix */
-   long size;
+   unsigned int i, j;
+   size_t k; /* 6.04 Bug Fix */
+   unsigned long size;
    UDFValue *val;
 
    returnValue->begin = 0;
@@ -1017,8 +1017,9 @@ void GrabProcWildargs(
         AddToMultifieldList(theEnv,ProceduralPrimitiveData(theEnv)->WildcardValue->multifieldValue);
      }
    ProceduralPrimitiveData(theEnv)->Oldindex = theIndex;
-   size = ProceduralPrimitiveData(theEnv)->ProcParamArraySize - theIndex + 1;
-   if (size <= 0)
+   size = ProceduralPrimitiveData(theEnv)->ProcParamArraySize + 1 - theIndex;
+     
+   if (size == 0)
      {
       returnValue->range = 0;
       ProceduralPrimitiveData(theEnv)->WildcardValue->range = 0;
@@ -1033,7 +1034,7 @@ void GrabProcWildargs(
      }
    returnValue->range = size;
    ProceduralPrimitiveData(theEnv)->WildcardValue->range = size;
-   returnValue->value = ProceduralPrimitiveData(theEnv)->WildcardValue->value = CreateUnmanagedMultifield(theEnv,(unsigned long) size);
+   returnValue->value = ProceduralPrimitiveData(theEnv)->WildcardValue->value = CreateUnmanagedMultifield(theEnv,size);
    for (i = theIndex-1 , j = 0 ; i < ProceduralPrimitiveData(theEnv)->ProcParamArraySize ; i++)
      {
       if (ProceduralPrimitiveData(theEnv)->ProcParamArray[i].header->type != MULTIFIELD_TYPE)
@@ -1082,7 +1083,7 @@ void GrabProcWildargs(
 static void EvaluateProcParameters(
   Environment *theEnv,
   Expression *parameterList,
-  int numberOfParameters,
+  unsigned int numberOfParameters,
   const char *pname,
   const char *bodytype)
   {
@@ -1216,7 +1217,7 @@ static bool GetProcBind(
       returnValue->range = src->range;
      }
    else
-     GrabProcWildargs(theEnv,returnValue,(int) pvar->second);
+     GrabProcWildargs(theEnv,returnValue,pvar->second);
    return true;
   }
 
@@ -1282,7 +1283,7 @@ static bool RtnProcWild(
   void *value,
   UDFValue *returnValue)
   {
-   GrabProcWildargs(theEnv,returnValue,*(int *) ((CLIPSBitMap *) value)->contents);
+   GrabProcWildargs(theEnv,returnValue,*(unsigned *) ((CLIPSBitMap *) value)->contents);
    return true;
   }
 
@@ -1301,12 +1302,12 @@ static bool RtnProcWild(
   SIDE EFFECTS : None
   NOTES        : None
  ***************************************************/
-static int FindProcParameter(
+static unsigned int FindProcParameter(
   CLIPSLexeme *name,
   Expression *parameterList,
   CLIPSLexeme *wildcard)
   {
-   int i = 1;
+   unsigned int i = 1;
 
    while (parameterList != NULL)
      {
@@ -1321,6 +1322,7 @@ static int FindProcParameter(
       =================================================================== */
    if (name == wildcard)
      { return i; }
+     
    return 0;
   }
 

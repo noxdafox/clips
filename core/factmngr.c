@@ -362,7 +362,7 @@ void DecrementFactBasisCount(
   Fact *factPtr)
   {
    Multifield *theSegment;
-   int i;
+   size_t i;
 
    DecrementFactReferenceCount(factPtr);
 
@@ -374,7 +374,7 @@ void DecrementFactBasisCount(
    else
      { theSegment = &factPtr->theProposition; }
 
-   for (i = 0 ; i < (int) theSegment->length ; i++)
+   for (i = 0 ; i < theSegment->length ; i++)
      { AtomDeinstall(theEnv,theSegment->contents[i].header->type,theSegment->contents[i].value); }
 
    if ((factPtr->basisSlots != NULL) && (factPtr->basisSlots->busyCount == 0))
@@ -393,7 +393,7 @@ void IncrementFactBasisCount(
   Fact *factPtr)
   {
    Multifield *theSegment;
-   int i;
+   size_t i;
 
    IncrementFactReferenceCount(factPtr);
 
@@ -413,7 +413,7 @@ void IncrementFactBasisCount(
       theSegment = factPtr->basisSlots;
      }
 
-   for (i = 0 ; i < (int) theSegment->length ; i++)
+   for (i = 0 ; i < theSegment->length ; i++)
      {
       AtomInstall(theEnv,theSegment->contents[i].header->type,theSegment->contents[i].value);
      }
@@ -472,8 +472,7 @@ void PrintFact(
      {
       PrintString(theEnv,logicalName," ");
       PrintMultifieldDriver(theEnv,logicalName,theMultifield,0,
-                            (long) (theMultifield->length - 1),
-                            false);
+                            theMultifield->length,false);
      }
 
    PrintString(theEnv,logicalName,")");
@@ -487,7 +486,7 @@ void MatchFactFunction(
   Environment *theEnv,
   Fact *theFact)
   {
-   FactPatternMatch(theEnv,theFact,theFact->whichDeftemplate->patternNetwork,0,NULL,NULL);
+   FactPatternMatch(theEnv,theFact,theFact->whichDeftemplate->patternNetwork,0,0,NULL,NULL);
   }
 
 /**********************************************/
@@ -670,15 +669,6 @@ bool RetractDriver(
 
    ForceLogicalRetractions(theEnv);
 
-   /*===========================================*/
-   /* Force periodic cleanup if the retract was */
-   /* executed from an embedded application.    */
-   /*===========================================*/
-
-   if ((UtilityData(theEnv)->CurrentGarbageFrame->topLevel) && (! CommandLineData(theEnv)->EvaluatingTopLevelCommand) &&
-       (EvaluationData(theEnv)->CurrentExpression == NULL) && (UtilityData(theEnv)->GarbageCollectionLocks == 0))
-     { CleanCurrentGarbageFrame(theEnv,NULL); }
-
    /*==================================*/
    /* Update busy counts and ephemeral */
    /* garbage information.             */
@@ -710,7 +700,15 @@ static bool RetractCallback(
 bool Retract(
   Fact *theFact)
   {
-   return RetractDriver(theFact->whichDeftemplate->header.env,theFact,false,NULL);
+   GCBlock gcb;
+   bool rv;
+   Environment *theEnv = theFact->whichDeftemplate->header.env;
+   
+   GCBlockStart(theEnv,&gcb);
+   rv = RetractDriver(theEnv,theFact,false,NULL);
+   GCBlockEnd(theEnv,&gcb);
+   
+   return rv;
   }
 
 /*******************************************************************/
@@ -735,10 +733,10 @@ static void RemoveGarbageFacts(
       if (factPtr->patternHeader.busyCount == 0)
         {
          Multifield *theSegment;
-         int i;
+         size_t i;
          
          theSegment = &factPtr->theProposition;
-         for (i = 0 ; i < (int) theSegment->length ; i++)
+         for (i = 0 ; i < theSegment->length ; i++)
            { AtomDeinstall(theEnv,theSegment->contents[i].header->type,theSegment->contents[i].value); }
 
          ReturnFact(theEnv,factPtr);
@@ -902,7 +900,7 @@ Fact *AssertDriver(
    if (reuseIndex == 0)
      {
       Multifield *theSegment = &theFact->theProposition;
-      for (i = 0 ; i < (unsigned long) theSegment->length ; i++)
+      for (i = 0 ; i < theSegment->length ; i++)
         {
          AtomInstall(theEnv,theSegment->contents[i].header->type,theSegment->contents[i].value);
         }
@@ -960,7 +958,7 @@ Fact *AssertDriver(
    /*=============================================*/
 
    EngineData(theEnv)->JoinOperationInProgress = true;
-   FactPatternMatch(theEnv,theFact,theFact->whichDeftemplate->patternNetwork,0,NULL,NULL);
+   FactPatternMatch(theEnv,theFact,theFact->whichDeftemplate->patternNetwork,0,0,NULL,NULL);
    EngineData(theEnv)->JoinOperationInProgress = false;
 
    /*===================================================*/
@@ -976,18 +974,6 @@ Fact *AssertDriver(
    /*=========================================*/
 
    if (EngineData(theEnv)->ExecutingRule == NULL) FlushGarbagePartialMatches(theEnv);
-
-   /*==========================================*/
-   /* Force periodic cleanup if the assert was */
-   /* executed from an embedded application.   */
-   /*==========================================*/
-
-   if ((UtilityData(theEnv)->CurrentGarbageFrame->topLevel) && (! CommandLineData(theEnv)->EvaluatingTopLevelCommand) &&
-       (EvaluationData(theEnv)->CurrentExpression == NULL) && (UtilityData(theEnv)->GarbageCollectionLocks == 0))
-     {
-      CleanCurrentGarbageFrame(theEnv,NULL);
-      CallPeriodicTasks(theEnv);
-     }
 
    /*===============================*/
    /* Return a pointer to the fact. */
@@ -1033,7 +1019,7 @@ Fact *CreateFact(
   Deftemplate *theDeftemplate)
   {
    Fact *newFact;
-   int i;
+   unsigned short i;
 
    /*=================================*/
    /* A deftemplate must be specified */
@@ -1050,7 +1036,7 @@ Fact *CreateFact(
      {
       newFact = CreateFactBySize(theEnv,theDeftemplate->numberOfSlots);
       for (i = 0;
-           i < (int) theDeftemplate->numberOfSlots;
+           i < theDeftemplate->numberOfSlots;
            i++)
         { newFact->theProposition.contents[i].voidValue = VoidConstant(theEnv); }
      }
@@ -1084,7 +1070,7 @@ bool GetFactSlot(
   CLIPSValue *theValue)
   {
    Deftemplate *theDeftemplate;
-   short whichSlot;
+   unsigned short whichSlot;
    Environment *theEnv = theFact->whichDeftemplate->header.env;
 
    /*===============================================*/
@@ -1120,7 +1106,7 @@ bool GetFactSlot(
    /* slot value wasn't available.                         */
    /*======================================================*/
 
-   theValue->value = theFact->theProposition.contents[whichSlot-1].value;
+   theValue->value = theFact->theProposition.contents[whichSlot].value;
 
    if (theValue->header->type == VOID_TYPE) return false;
 
@@ -1139,7 +1125,7 @@ bool PutFactSlot(
   {
    Deftemplate *theDeftemplate;
    struct templateSlot *theSlot;
-   short whichSlot;
+   unsigned short whichSlot;
 
    /*===============================================*/
    /* Get the deftemplate associated with the fact. */
@@ -1187,13 +1173,13 @@ bool PutFactSlot(
    /* Set the slot value. */
    /*=====================*/
 
-   if (theFact->theProposition.contents[whichSlot-1].header->type == MULTIFIELD_TYPE)
-     { ReturnMultifield(theEnv,theFact->theProposition.contents[whichSlot-1].multifieldValue); }
+   if (theFact->theProposition.contents[whichSlot].header->type == MULTIFIELD_TYPE)
+     { ReturnMultifield(theEnv,theFact->theProposition.contents[whichSlot].multifieldValue); }
 
    if (theValue->header->type == MULTIFIELD_TYPE)
-     { theFact->theProposition.contents[whichSlot-1].multifieldValue = CopyMultifield(theEnv,theValue->multifieldValue); }
+     { theFact->theProposition.contents[whichSlot].multifieldValue = CopyMultifield(theEnv,theValue->multifieldValue); }
    else
-     { theFact->theProposition.contents[whichSlot-1].value = theValue->value; }
+     { theFact->theProposition.contents[whichSlot].value = theValue->value; }
 
    return true;
   }
@@ -1209,7 +1195,7 @@ bool AssignFactSlotDefaults(
   {
    Deftemplate *theDeftemplate;
    struct templateSlot *slotPtr;
-   int i;
+   unsigned short i;
    UDFValue theResult;
 
    /*===============================================*/
@@ -1231,7 +1217,7 @@ bool AssignFactSlotDefaults(
    /*============================================*/
 
    for (i = 0, slotPtr = theDeftemplate->slotList;
-        i < (int) theDeftemplate->numberOfSlots;
+        i < theDeftemplate->numberOfSlots;
         i++, slotPtr = slotPtr->next)
      {
       /*===================================*/
@@ -1311,7 +1297,7 @@ bool DeftemplateSlotDefault(
 
    else if (slotPtr->defaultDynamic)
      {
-      if (! EvaluateAndStoreInDataObject(theEnv,(int) slotPtr->multislot,
+      if (! EvaluateAndStoreInDataObject(theEnv,slotPtr->multislot,
                                          (Expression *) slotPtr->defaultList,
                                          theResult,garbageMultifield))
         { return false; }
@@ -1325,7 +1311,7 @@ bool DeftemplateSlotDefault(
    else
      {
       DeriveDefaultFromConstraints(theEnv,slotPtr->constraints,theResult,
-                                  (int) slotPtr->multislot,garbageMultifield);
+                                   slotPtr->multislot,garbageMultifield);
      }
 
    /*==========================================*/
@@ -1347,7 +1333,7 @@ bool CopyFactSlotValues(
   {
    Deftemplate *theDeftemplate;
    struct templateSlot *slotPtr;
-   int i;
+   unsigned short i;
 
    /*===================================*/
    /* Both facts must be the same type. */
@@ -1363,7 +1349,7 @@ bool CopyFactSlotValues(
    /*===================================================*/
 
    for (i = 0, slotPtr = theDeftemplate->slotList;
-        i < (int) theDeftemplate->numberOfSlots;
+        i < theDeftemplate->numberOfSlots;
         i++, slotPtr = slotPtr->next)
      {
       if (theSourceFact->theProposition.contents[i].header->type != MULTIFIELD_TYPE)
@@ -1392,10 +1378,10 @@ bool CopyFactSlotValues(
 /*********************************************/
 Fact *CreateFactBySize(
   Environment *theEnv,
-  unsigned size)
+  size_t size)
   {
    Fact *theFact;
-   unsigned newSize;
+   size_t newSize;
 
    if (size <= 0) newSize = 1;
    else newSize = size;
@@ -1648,17 +1634,28 @@ Fact *AssertString(
   Environment *theEnv,
   const char *theString)
   {
-   Fact *theFact;
+   Fact *theFact, *rv;
+   GCBlock gcb;
    int danglingConstructs;
    danglingConstructs = ConstructData(theEnv)->DanglingConstructs;
 
-   if ((theFact = StringToFact(theEnv,theString)) == NULL) return NULL;
+   GCBlockStart(theEnv,&gcb);
+
+   if ((theFact = StringToFact(theEnv,theString)) == NULL)
+     {
+      GCBlockEnd(theEnv,&gcb);
+      return NULL;
+     }
 
    if ((! CommandLineData(theEnv)->EvaluatingTopLevelCommand) &&
        (EvaluationData(theEnv)->CurrentExpression == NULL))
      { ConstructData(theEnv)->DanglingConstructs = danglingConstructs; }
 
-   return Assert(theEnv,theFact);
+   rv = Assert(theEnv,theFact);
+   
+   GCBlockEnd(theEnv,&gcb);
+   
+   return rv;
   }
 
 /******************************************************/
@@ -2255,7 +2252,7 @@ bool FBPutSlot(
   {
    Environment *theEnv = theFB->fbEnv;
    struct templateSlot *theSlot;
-   short whichSlot;
+   unsigned short whichSlot;
    CLIPSValue oldValue;
    int i;
       
@@ -2287,7 +2284,7 @@ bool FBPutSlot(
    /* Set the slot value. */
    /*=====================*/
    
-   oldValue.value = theFB->fbValueArray[whichSlot-1].value;
+   oldValue.value = theFB->fbValueArray[whichSlot].value;
    
    if (oldValue.header->type == MULTIFIELD_TYPE)
      {
@@ -2306,11 +2303,11 @@ bool FBPutSlot(
      { ReturnMultifield(theEnv,oldValue.multifieldValue); }
 
    if (slotValue->header->type == MULTIFIELD_TYPE)
-     { theFB->fbValueArray[whichSlot-1].multifieldValue = CopyMultifield(theEnv,slotValue->multifieldValue); }
+     { theFB->fbValueArray[whichSlot].multifieldValue = CopyMultifield(theEnv,slotValue->multifieldValue); }
    else
-     { theFB->fbValueArray[whichSlot-1].value = slotValue->value; }
+     { theFB->fbValueArray[whichSlot].value = slotValue->value; }
       
-   IncrementReferenceCount(theEnv,theFB->fbValueArray[whichSlot-1].header);
+   IncrementReferenceCount(theEnv,theFB->fbValueArray[whichSlot].header);
    
    return true;
   }
@@ -2367,7 +2364,10 @@ void FBAbort(
   FactBuilder *theFB)
   {
    Environment *theEnv = theFB->fbEnv;
+   GCBlock gcb;
    int i;
+   
+   GCBlockStart(theEnv,&gcb);
    
    for (i = 0; i < theFB->fbDeftemplate->numberOfSlots; i++)
      {
@@ -2378,6 +2378,8 @@ void FBAbort(
         
       theFB->fbValueArray[i].voidValue = VoidConstant(theEnv);
      }
+     
+   GCBlockEnd(theEnv,&gcb);
   }
 
 /********************/
@@ -2682,7 +2684,7 @@ bool FMPutSlot(
   {
    Environment *theEnv = theFM->fmEnv;
    struct templateSlot *theSlot;
-   short whichSlot;
+   unsigned short whichSlot;
    CLIPSValue oldValue;
    CLIPSValue oldFactValue;
    int i;
@@ -2736,8 +2738,8 @@ bool FMPutSlot(
    /* Set the slot value. */
    /*=====================*/
 
-   oldValue.value = theFM->fmValueArray[whichSlot-1].value;
-   oldFactValue.value = theFM->fmOldFact->theProposition.contents[whichSlot-1].value;
+   oldValue.value = theFM->fmValueArray[whichSlot].value;
+   oldFactValue.value = theFM->fmOldFact->theProposition.contents[whichSlot].value;
 
    if (oldFactValue.header->type == MULTIFIELD_TYPE)
      {
@@ -2746,8 +2748,8 @@ bool FMPutSlot(
          DecrementReferenceCount(theFM->fmEnv,oldValue.header);
          if (oldValue.header->type == MULTIFIELD_TYPE)
            { ReturnMultifield(theFM->fmEnv,oldValue.multifieldValue); }
-         theFM->fmValueArray[whichSlot-1].voidValue = theFM->fmEnv->VoidConstant;
-         ClearBitMap(theFM->changeMap,whichSlot-1);
+         theFM->fmValueArray[whichSlot].voidValue = theFM->fmEnv->VoidConstant;
+         ClearBitMap(theFM->changeMap,whichSlot);
          return true;
         }
 
@@ -2759,8 +2761,8 @@ bool FMPutSlot(
       if (slotValue->value == oldFactValue.value)
         {
          DecrementReferenceCount(theFM->fmEnv,oldValue.header);
-         theFM->fmValueArray[whichSlot-1].voidValue = theFM->fmEnv->VoidConstant;
-         ClearBitMap(theFM->changeMap,whichSlot-1);
+         theFM->fmValueArray[whichSlot].voidValue = theFM->fmEnv->VoidConstant;
+         ClearBitMap(theFM->changeMap,whichSlot);
          return true;
         }
         
@@ -2768,7 +2770,7 @@ bool FMPutSlot(
         { return true; }
      }
 
-   SetBitMap(theFM->changeMap,whichSlot-1);
+   SetBitMap(theFM->changeMap,whichSlot);
 
    DecrementReferenceCount(theFM->fmEnv,oldValue.header);
 
@@ -2776,11 +2778,11 @@ bool FMPutSlot(
      { ReturnMultifield(theFM->fmEnv,oldValue.multifieldValue); }
       
    if (slotValue->header->type == MULTIFIELD_TYPE)
-     { theFM->fmValueArray[whichSlot-1].multifieldValue = CopyMultifield(theFM->fmEnv,slotValue->multifieldValue); }
+     { theFM->fmValueArray[whichSlot].multifieldValue = CopyMultifield(theFM->fmEnv,slotValue->multifieldValue); }
    else
-     { theFM->fmValueArray[whichSlot-1].value = slotValue->value; }
+     { theFM->fmValueArray[whichSlot].value = slotValue->value; }
 
-   IncrementReferenceCount(theFM->fmEnv,theFM->fmValueArray[whichSlot-1].header);
+   IncrementReferenceCount(theFM->fmEnv,theFM->fmValueArray[whichSlot].header);
 
    return true;
   }
@@ -2818,9 +2820,12 @@ Fact *FMModify(
 void FMDispose(
   FactModifier *theFM)
   {
+   GCBlock gcb;
    Environment *theEnv = theFM->fmEnv;
    int i;
 
+   GCBlockStart(theEnv,&gcb);
+   
    /*========================*/
    /* Clear the value array. */
    /*========================*/
@@ -2854,6 +2859,8 @@ void FMDispose(
      { DecrementFactReferenceCount(theFM->fmOldFact); }
       
    rtn_struct(theEnv,factModifier,theFM);
+
+   GCBlockEnd(theEnv,&gcb);
   }
 
 /************/
@@ -2862,8 +2869,11 @@ void FMDispose(
 void FMAbort(
   FactModifier *theFM)
   {
+   GCBlock gcb;
    Environment *theEnv = theFM->fmEnv;
    int i;
+   
+   GCBlockStart(theEnv,&gcb);
    
    if (theFM->fmOldFact != NULL)
      {
@@ -2880,6 +2890,8 @@ void FMAbort(
      
    if (theFM->changeMap != NULL)
      { ClearBitString((void *) theFM->changeMap,CountToBitMapSize(theFM->fmOldFact->whichDeftemplate->numberOfSlots)); }
+
+   GCBlockEnd(theEnv,&gcb);
   }
 
 /**************/

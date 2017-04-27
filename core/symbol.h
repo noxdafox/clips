@@ -171,11 +171,11 @@ struct symbolData
    CLIPSBitMap **BitMapTable;
    CLIPSExternalAddress **ExternalAddressTable;
 #if BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE || BLOAD_INSTANCES || BSAVE_INSTANCES
-   long NumberOfSymbols;
-   long NumberOfFloats;
-   long NumberOfIntegers;
-   long NumberOfBitMaps;
-   long NumberOfExternalAddresses;
+   unsigned long NumberOfSymbols;
+   unsigned long NumberOfFloats;
+   unsigned long NumberOfIntegers;
+   unsigned long NumberOfBitMaps;
+   unsigned long NumberOfExternalAddresses;
    CLIPSLexeme **SymbolArray;
    CLIPSFloat **FloatArray;
    CLIPSInteger **IntegerArray;
@@ -193,8 +193,8 @@ struct symbolData
    CLIPSLexeme                   *FindSymbolHN(Environment *,const char *,unsigned short);
    CLIPSFloat                    *CreateFloat(Environment *,double);
    CLIPSInteger                  *CreateInteger(Environment *,long long);
-   void                          *AddBitMap(Environment *,void *,unsigned);
-   CLIPSExternalAddress          *CreateExternalAddress(Environment *,void *,unsigned);
+   void                          *AddBitMap(Environment *,void *,unsigned short);
+   CLIPSExternalAddress          *CreateExternalAddress(Environment *,void *,unsigned short);
    CLIPSExternalAddress          *CreateCExternalAddress(Environment *,void *);
    CLIPSInteger                  *FindLongHN(Environment *,long long);
    unsigned long                  HashSymbol(const char *,unsigned long);
@@ -227,7 +227,7 @@ struct symbolData
    struct symbolMatch            *FindSymbolMatches(Environment *,const char *,unsigned *,size_t *);
    void                           ReturnSymbolMatches(Environment *,struct symbolMatch *);
    CLIPSLexeme                   *GetNextSymbolMatch(Environment *,const char *,size_t,CLIPSLexeme *,bool,size_t *);
-   void                           ClearBitString(void *,unsigned);
+   void                           ClearBitString(void *,size_t);
    void                           SetAtomicValueIndices(Environment *,bool);
    void                           RestoreAtomicValueBuckets(Environment *);
    void                           EphemerateValue(Environment *,void *);

@@ -69,11 +69,11 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static int                         SymbolHashNodesToCode(Environment *,const char *,const char *,char *,int);
-   static int                         BitMapHashNodesToCode(Environment *,const char *,const char *,char *,int);
-   static int                         BitMapValuesToCode(Environment *,const char *,const char *, char *,int);
-   static int                         FloatHashNodesToCode(Environment *,const char *,const char *,char *,int);
-   static int                         IntegerHashNodesToCode(Environment *,const char *,const char *,char *,int);
+   static unsigned int                SymbolHashNodesToCode(Environment *,const char *,const char *,char *,unsigned int);
+   static unsigned int                BitMapHashNodesToCode(Environment *,const char *,const char *,char *,unsigned int);
+   static unsigned int                BitMapValuesToCode(Environment *,const char *,const char *, char *,unsigned int);
+   static unsigned int                FloatHashNodesToCode(Environment *,const char *,const char *,char *,unsigned int);
+   static unsigned int                IntegerHashNodesToCode(Environment *,const char *,const char *,char *,unsigned int);
    static int                         HashTablesToCode(Environment *,const char *,const char *,char *);
    static void                        PrintCString(FILE *,const char *);
 
@@ -87,7 +87,7 @@ void AtomicValuesToCode(
   const char *pathName,
   char *fileNameBuffer)
   {
-   int version; // TBD Necessary?
+   unsigned int version; // TBD Necessary?
 
    SetAtomicValueIndices(theEnv,true);
 
@@ -105,17 +105,17 @@ void AtomicValuesToCode(
 /*   symbol hash table entries for a run-time module */
 /*   created using the constructs-to-c function.     */
 /*****************************************************/
-static int SymbolHashNodesToCode(
+static unsigned int SymbolHashNodesToCode(
   Environment *theEnv,
   const char *fileName,
   const char *pathName,
   char *fileNameBuffer,
-  int version)
+  unsigned int version)
   {
    unsigned long i, j;
    CLIPSLexeme *hashPtr;
-   int count;
-   int numberOfEntries;
+   unsigned int count;
+   unsigned int numberOfEntries;
    CLIPSLexeme **symbolTable;
    bool newHeader = true;
    int arrayVersion = 1;
@@ -136,16 +136,16 @@ static int SymbolHashNodesToCode(
         { numberOfEntries++; }
      }
 
-   if (numberOfEntries == 0) return(version);
+   if (numberOfEntries == 0) return version;
 
-   for (i = 1; i <= (unsigned long) (numberOfEntries / ConstructCompilerData(theEnv)->MaxIndices) + 1 ; i++)
+   for (i = 1; i <= (numberOfEntries / ConstructCompilerData(theEnv)->MaxIndices) + 1 ; i++)
      { fprintf(ConstructCompilerData(theEnv)->HeaderFP,"extern CLIPSLexeme S%d_%ld[];\n",ConstructCompilerData(theEnv)->ImageID,i); }
 
    /*==================*/
    /* Create the file. */
    /*==================*/
 
-   if ((fp = NewCFile(theEnv,fileName,pathName,fileNameBuffer,1,version,false)) == NULL) return(-1);
+   if ((fp = NewCFile(theEnv,fileName,pathName,fileNameBuffer,1,version,false)) == NULL) return version;
 
    /*===================*/
    /* List the entries. */
@@ -176,7 +176,7 @@ static int SymbolHashNodesToCode(
            { fprintf(fp,"NULL,"); }
          else
            {
-            if ((j + 1) >= (unsigned long) ConstructCompilerData(theEnv)->MaxIndices)
+            if ((j + 1) >= ConstructCompilerData(theEnv)->MaxIndices)
               { fprintf(fp,"&S%d_%d[%d],",ConstructCompilerData(theEnv)->ImageID,arrayVersion + 1,0); }
             else
               { fprintf(fp,"&S%d_%d[%ld],",ConstructCompilerData(theEnv)->ImageID,arrayVersion,j + 1); }
@@ -188,7 +188,7 @@ static int SymbolHashNodesToCode(
          count++;
          j++;
 
-         if ((count == numberOfEntries) || (j >= (unsigned) ConstructCompilerData(theEnv)->MaxIndices))
+         if ((count == numberOfEntries) || (j >= ConstructCompilerData(theEnv)->MaxIndices))
            {
             fprintf(fp,"}};\n");
             GenClose(theEnv,fp);
@@ -215,22 +215,22 @@ static int SymbolHashNodesToCode(
 /*   bit map hash table entries for a run-time module */
 /*   created using the constructs-to-c function.      */
 /******************************************************/
-static int BitMapHashNodesToCode(
+static unsigned int BitMapHashNodesToCode(
   Environment *theEnv,
   const char *fileName,
   const char *pathName,
   char *fileNameBuffer,
-  int version)
+  unsigned int version)
   {
-   int i, j;
+   unsigned int i, j;
    CLIPSBitMap *hashPtr;
-   int count;
-   int numberOfEntries;
+   unsigned int count;
+   unsigned int numberOfEntries;
    CLIPSBitMap **bitMapTable;
    bool newHeader = true;
-   int arrayVersion = 1;
+   unsigned int arrayVersion = 1;
    FILE *fp;
-   int longsReqdPartition = 1,longsReqdPartitionCount = 0;
+   unsigned int longsReqdPartition = 1, longsReqdPartitionCount = 0;
 
    /*====================================*/
    /* Count the total number of entries. */
@@ -247,7 +247,7 @@ static int BitMapHashNodesToCode(
         { numberOfEntries++; }
      }
 
-   if (numberOfEntries == 0) return(version);
+   if (numberOfEntries == 0) return version;
 
    for (i = 1; i <= (numberOfEntries / ConstructCompilerData(theEnv)->MaxIndices) + 1 ; i++)
      { fprintf(ConstructCompilerData(theEnv)->HeaderFP,"extern struct clipsBitMap B%d_%d[];\n",ConstructCompilerData(theEnv)->ImageID,i); }
@@ -256,7 +256,7 @@ static int BitMapHashNodesToCode(
    /* Create the file. */
    /*==================*/
 
-   if ((fp = NewCFile(theEnv,fileName,pathName,fileNameBuffer,1,version,false)) == NULL) return(-1);
+   if ((fp = NewCFile(theEnv,fileName,pathName,fileNameBuffer,1,version,false)) == NULL) return version;
 
    /*===================*/
    /* List the entries. */
@@ -293,7 +293,7 @@ static int BitMapHashNodesToCode(
                      ConstructCompilerData(theEnv)->ImageID,longsReqdPartition,longsReqdPartitionCount,
                      hashPtr->size);
 
-         longsReqdPartitionCount += (int) (hashPtr->size / sizeof(unsigned long));
+         longsReqdPartitionCount += (hashPtr->size / sizeof(unsigned long));
          if ((hashPtr->size % sizeof(unsigned long)) != 0)
            longsReqdPartitionCount++;
          if (longsReqdPartitionCount >= ConstructCompilerData(theEnv)->MaxIndices)
@@ -332,24 +332,24 @@ static int BitMapHashNodesToCode(
 /*   map strings for a run-time module created using */
 /*   the constructs-to-c function.                   */
 /*****************************************************/
-static int BitMapValuesToCode(
+static unsigned int BitMapValuesToCode(
   Environment *theEnv,
   const char *fileName,
   const char *pathName,
   char *fileNameBuffer,
-  int version)
+  unsigned int version)
   {
-   int i, j, k;
+   unsigned int i, j, k;
    unsigned l;
    CLIPSBitMap *hashPtr;
-   int count;
-   int numberOfEntries;
+   unsigned int count;
+   unsigned int numberOfEntries;
    CLIPSBitMap **bitMapTable;
    bool newHeader = true;
-   int arrayVersion = 1;
+   unsigned int arrayVersion = 1;
    FILE *fp;
    unsigned long tmpLong;
-   int longsReqd;
+   unsigned int longsReqd;
 
    /*====================================*/
    /* Count the total number of entries. */
@@ -364,13 +364,13 @@ static int BitMapValuesToCode(
            hashPtr != NULL;
            hashPtr = hashPtr->next)
         {
-         numberOfEntries += (int) (hashPtr->size / sizeof(unsigned long));
+         numberOfEntries += (hashPtr->size / sizeof(unsigned long));
          if ((hashPtr->size % sizeof(unsigned long)) != 0)
            { numberOfEntries++; }
         }
      }
 
-   if (numberOfEntries == 0) return(version);
+   if (numberOfEntries == 0) return version;
 
    for (i = 1; i <= (numberOfEntries / ConstructCompilerData(theEnv)->MaxIndices) + 1 ; i++)
      { fprintf(ConstructCompilerData(theEnv)->HeaderFP,"extern unsigned long L%d_%d[];\n",ConstructCompilerData(theEnv)->ImageID,i); }
@@ -379,7 +379,7 @@ static int BitMapValuesToCode(
    /* Create the file. */
    /*==================*/
 
-   if ((fp = NewCFile(theEnv,fileName,pathName,fileNameBuffer,1,version,false)) == NULL) return(-1);
+   if ((fp = NewCFile(theEnv,fileName,pathName,fileNameBuffer,1,version,false)) == NULL) return version;
 
    /*===================*/
    /* List the entries. */
@@ -399,7 +399,7 @@ static int BitMapValuesToCode(
             newHeader = false;
            }
 
-         longsReqd = (int) (hashPtr->size / sizeof(unsigned long));
+         longsReqd = (hashPtr->size / sizeof(unsigned long));
          if ((hashPtr->size % sizeof(unsigned long)) != 0)
            longsReqd++;
 
@@ -446,21 +446,21 @@ static int BitMapValuesToCode(
 /*   float hash table entries for a run-time module */
 /*   created using the constructs-to-c function.    */
 /****************************************************/
-static int FloatHashNodesToCode(
+static unsigned int FloatHashNodesToCode(
   Environment *theEnv,
   const char *fileName,
   const char *pathName,
   char *fileNameBuffer,
-  int version)
+  unsigned int version)
   {
-   int i, j;
+   unsigned int i, j;
    CLIPSFloat *hashPtr;
-   int count;
-   int numberOfEntries;
+   unsigned int count;
+   unsigned int numberOfEntries;
    CLIPSFloat **floatTable;
    bool newHeader = true;
    FILE *fp;
-   int arrayVersion = 1;
+   unsigned int arrayVersion = 1;
 
    /*====================================*/
    /* Count the total number of entries. */
@@ -477,7 +477,7 @@ static int FloatHashNodesToCode(
         { numberOfEntries++; }
      }
 
-   if (numberOfEntries == 0) return(version);
+   if (numberOfEntries == 0) return version;
 
    for (i = 1; i <= (numberOfEntries / ConstructCompilerData(theEnv)->MaxIndices) + 1 ; i++)
      { fprintf(ConstructCompilerData(theEnv)->HeaderFP,"extern CLIPSFloat F%d_%d[];\n",ConstructCompilerData(theEnv)->ImageID,i); }
@@ -486,7 +486,7 @@ static int FloatHashNodesToCode(
    /* Create the file. */
    /*==================*/
 
-   if ((fp = NewCFile(theEnv,fileName,pathName,fileNameBuffer,1,version,false)) == NULL) return(-1);
+   if ((fp = NewCFile(theEnv,fileName,pathName,fileNameBuffer,1,version,false)) == NULL) return version;
 
    /*===================*/
    /* List the entries. */
@@ -551,21 +551,21 @@ static int FloatHashNodesToCode(
 /*   integer hash table entries for a run-time module */
 /*   created using the constructs-to-c function.      */
 /******************************************************/
-static int IntegerHashNodesToCode(
+static unsigned int IntegerHashNodesToCode(
   Environment *theEnv,
   const char *fileName,
   const char *pathName,
   char *fileNameBuffer,
-  int version)
+  unsigned int version)
   {
-   int i, j;
+   unsigned int i, j;
    CLIPSInteger *hashPtr;
-   int count;
-   int numberOfEntries;
+   unsigned int count;
+   unsigned int numberOfEntries;
    CLIPSInteger **integerTable;
    bool newHeader = true;
    FILE *fp;
-   int arrayVersion = 1;
+   unsigned int arrayVersion = 1;
 
    /*====================================*/
    /* Count the total number of entries. */
@@ -591,7 +591,7 @@ static int IntegerHashNodesToCode(
    /* Create the file. */
    /*==================*/
 
-   if ((fp = NewCFile(theEnv,fileName,pathName,fileNameBuffer,1,version,false)) == NULL) return(-1);
+   if ((fp = NewCFile(theEnv,fileName,pathName,fileNameBuffer,1,version,false)) == NULL) return version;
 
    /*===================*/
    /* List the entries. */
@@ -777,10 +777,10 @@ void PrintSymbolReference(
   CLIPSLexeme *theSymbol)
   {
    if (theSymbol == NULL) fprintf(theFile,"NULL");
-   else fprintf(theFile,"&S%d_%d[%d]",
+   else fprintf(theFile,"&S%u_%u[%u]",
                         ConstructCompilerData(theEnv)->ImageID,
-                        (int) (theSymbol->bucket / ConstructCompilerData(theEnv)->MaxIndices) + 1,
-                        (int) theSymbol->bucket % ConstructCompilerData(theEnv)->MaxIndices);
+                        (theSymbol->bucket / ConstructCompilerData(theEnv)->MaxIndices) + 1,
+                        theSymbol->bucket % ConstructCompilerData(theEnv)->MaxIndices);
   }
 
 /****************************************************/
@@ -792,10 +792,10 @@ void PrintFloatReference(
   FILE *theFile,
   CLIPSFloat *theFloat)
   {
-   fprintf(theFile,"&F%d_%d[%d]",
+   fprintf(theFile,"&F%u_%u[%u]",
                    ConstructCompilerData(theEnv)->ImageID,
-                   (int) (theFloat->bucket / ConstructCompilerData(theEnv)->MaxIndices) + 1,
-                   (int) theFloat->bucket % ConstructCompilerData(theEnv)->MaxIndices);
+                   (theFloat->bucket / ConstructCompilerData(theEnv)->MaxIndices) + 1,
+                   theFloat->bucket % ConstructCompilerData(theEnv)->MaxIndices);
   }
 
 /******************************************************/
@@ -807,10 +807,10 @@ void PrintIntegerReference(
   FILE *theFile,
   CLIPSInteger *theInteger)
   {
-   fprintf(theFile,"&I%d_%d[%d]",
+   fprintf(theFile,"&I%u_%u[%u]",
                    ConstructCompilerData(theEnv)->ImageID,
-                   (int) (theInteger->bucket / ConstructCompilerData(theEnv)->MaxIndices) + 1,
-                   (int) theInteger->bucket % ConstructCompilerData(theEnv)->MaxIndices);
+                   (theInteger->bucket / ConstructCompilerData(theEnv)->MaxIndices) + 1,
+                   theInteger->bucket % ConstructCompilerData(theEnv)->MaxIndices);
   }
 
 /*****************************************************/
@@ -823,10 +823,10 @@ void PrintBitMapReference(
   CLIPSBitMap *theBitMap)
   {
    if (theBitMap == NULL) fprintf(theFile,"NULL");
-   else fprintf(theFile,"&B%d_%d[%d]",
+   else fprintf(theFile,"&B%u_%u[%u]",
                         ConstructCompilerData(theEnv)->ImageID,
-                        (int) (theBitMap->bucket / ConstructCompilerData(theEnv)->MaxIndices) + 1,
-                        (int) theBitMap->bucket % ConstructCompilerData(theEnv)->MaxIndices);
+                        (theBitMap->bucket / ConstructCompilerData(theEnv)->MaxIndices) + 1,
+                        theBitMap->bucket % ConstructCompilerData(theEnv)->MaxIndices);
   }
 
 /*********************************************************/

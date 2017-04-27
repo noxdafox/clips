@@ -115,7 +115,7 @@
                                                                 void (*)(Environment *,const char *,Defclass *,unsigned),
                                                                 void (*)(Defclass *,unsigned,bool),
                                                                 Expression *);
-   static bool                    WatchClassHandlers(Environment *,Defclass *,const char *,int,const char *,bool,bool,
+   static bool                    WatchClassHandlers(Environment *,Defclass *,const char *,unsigned short,const char *,bool,bool,
                                                      void (*)(Environment *,const char *,Defclass *,unsigned),
                                                      void (*)(Defclass *,unsigned,bool));
    static void                    PrintHandlerWatchFlag(Environment *,const char *,Defclass *,unsigned);
@@ -325,7 +325,7 @@ unsigned GetNextDefmessageHandler(
  *****************************************************/
 DefmessageHandler *GetDefmessageHandlerPointer(
   Defclass *theDefclass,
-  int theIndex)
+  unsigned int theIndex)
   {
    return &theDefclass->handlers[theIndex-1];
   }
@@ -403,7 +403,7 @@ unsigned FindDefmessageHandler(
    if (hsym == NULL)
      { return 0; }
 
-   theIndex = FindHandlerByIndex(theDefclass,hsym,(unsigned) htype);
+   theIndex = FindHandlerByIndex(theDefclass,hsym,htype);
    return (unsigned) (theIndex+1);
   }
 
@@ -506,7 +506,11 @@ bool UndefmessageHandler(
   Environment *allEnv)
   {
    Environment *theEnv;
-   
+#if (! RUN_TIME) &&  (! BLOAD_ONLY)
+   bool success;
+   GCBlock gcb;
+#endif
+
    if (theDefclass == NULL)
      { theEnv = allEnv; }
    else
@@ -526,28 +530,38 @@ bool UndefmessageHandler(
       return false;
      }
 #endif
+   GCBlockStart(theEnv,&gcb);
    if (theDefclass == NULL)
      {
       if (mhi != 0)
         {
          PrintErrorID(theEnv,"MSGCOM",1,false);
          PrintString(theEnv,WERROR,"Incomplete message-handler specification for deletion.\n");
+         GCBlockEnd(theEnv,&gcb);
          return false;
         }
-      return WildDeleteHandler(theEnv,NULL,NULL,NULL);
+      success = WildDeleteHandler(theEnv,NULL,NULL,NULL);
+      GCBlockEnd(theEnv,&gcb);
+      return success;
      }
 
    if (mhi == 0)
-     { return WildDeleteHandler(theEnv,theDefclass,NULL,NULL); }
+     {
+      success = WildDeleteHandler(theEnv,theDefclass,NULL,NULL);
+      GCBlockEnd(theEnv,&gcb);
+      return success;
+     }
 
    if (HandlersExecuting(theDefclass))
      {
       HandlerDeleteError(theEnv,DefclassName(theDefclass));
+      GCBlockEnd(theEnv,&gcb);
       return false;
      }
 
    theDefclass->handlers[mhi-1].mark = 1;
    DeallocateMarkedHandlers(theEnv,theDefclass);
+   GCBlockEnd(theEnv,&gcb);
    return true;
 #endif
   }
@@ -601,7 +615,7 @@ void PPDefmessageHandlerCommand(
    if (csym != NULL)
      cls = LookupDefclassByMdlOrScope(theEnv,csym->contents);
    if (((cls == NULL) || (msym == NULL)) ? true :
-       ((hnd = FindHandlerByAddress(cls,msym,(unsigned) mtype)) == NULL))
+       ((hnd = FindHandlerByAddress(cls,msym,mtype)) == NULL))
      {
       PrintErrorID(theEnv,"MSGCOM",2,false);
       PrintString(theEnv,WERROR,"Unable to find message-handler ");
@@ -615,7 +629,7 @@ void PPDefmessageHandlerCommand(
       return;
      }
    if (hnd->header.ppForm != NULL)
-     PrintInChunks(theEnv,STDOUT,hnd->header.ppForm);
+     PrintString(theEnv,STDOUT,hnd->header.ppForm);
   }
 
 /*****************************************************************************
@@ -717,7 +731,7 @@ void ListDefmessageHandlers(
   const char *logName,
   bool inhp)
   {
-   long cnt;
+   unsigned long cnt;
    PACKED_CLASS_LINKS plinks;
 
    if (theDefclass != NULL)
@@ -789,21 +803,21 @@ void PreviewSend(
   SIDE EFFECTS : None
   NOTES        : Used by DescribeClass()
  ****************************************************/
-long DisplayHandlersInLinks(
+unsigned long DisplayHandlersInLinks(
   Environment *theEnv,
   const char *logName,
   PACKED_CLASS_LINKS *plinks,
-  int theIndex)
+  unsigned int theIndex)
   {
-   long i;
-   long cnt;
+   unsigned long i;
+   unsigned long cnt;
 
-   cnt = (long) plinks->classArray[theIndex]->handlerCount;
-   if (((int) theIndex) < (plinks->classCount - 1))
+   cnt = plinks->classArray[theIndex]->handlerCount;
+   if ((theIndex + 1) < plinks->classCount)
      cnt += DisplayHandlersInLinks(theEnv,logName,plinks,theIndex + 1);
    for (i = 0 ; i < plinks->classArray[theIndex]->handlerCount ; i++)
      PrintHandler(theEnv,logName,&plinks->classArray[theIndex]->handlers[i],true);
-   return(cnt);
+   return cnt;
   }
 
 #endif
@@ -863,30 +877,32 @@ static bool WildDeleteHandler(
   CLIPSLexeme *msym,
   const char *tname)
   {
-   int mtype;
+   unsigned short mtype;
 
    if (msym == NULL)
      msym = CreateSymbol(theEnv,"*");
    if (tname != NULL)
      {
-      mtype = (int) HandlerType(theEnv,"undefmessage-handler",tname);
+      mtype = HandlerType(theEnv,"undefmessage-handler",tname);
       if (mtype == MERROR)
         return false;
      }
    else
-     mtype = -1;
+     mtype = MALL_TYPES;
    if (cls == NULL)
      {
       bool success = true;
 
-      for (cls = GetNextDefclass(theEnv,NULL) ;
-           cls != NULL ;
+      for (cls = GetNextDefclass(theEnv,NULL);
+           cls != NULL;
            cls = GetNextDefclass(theEnv,cls))
         if (DeleteHandler(theEnv,cls,msym,mtype,false) == false)
           success = false;
-      return(success);
+         
+      return success;
      }
-   return(DeleteHandler(theEnv,cls,msym,mtype,true));
+     
+   return DeleteHandler(theEnv,cls,msym,mtype,true);
   }
 
 #endif
@@ -978,8 +994,8 @@ static bool DefmessageHandlerWatchSupport(
    Defmodule *theModule;
    Defclass *theClass;
    const char *theHandlerStr;
-   int theType;
-   int argIndex = 2;
+   unsigned short theType;
+   unsigned int argIndex = 2;
    UDFValue tmpData;
 
    /* ===============================
@@ -1002,7 +1018,7 @@ static bool DefmessageHandlerWatchSupport(
          theClass = GetNextDefclass(theEnv,NULL);
          while (theClass != NULL)
             {
-             if (WatchClassHandlers(theEnv,theClass,NULL,-1,logName,newState,
+             if (WatchClassHandlers(theEnv,theClass,NULL,MALL_TYPES,logName,newState,
                                     true,printFunc,traceFunc) == false)
                  return false;
              theClass = GetNextDefclass(theEnv,theClass);
@@ -1054,23 +1070,25 @@ static bool DefmessageHandlerWatchSupport(
                ExpectedTypeError1(theEnv,funcName,argIndex,"handler type");
                return false;
               }
-            if ((theType = (int) HandlerType(theEnv,funcName,tmpData.lexemeValue->contents)) == MERROR)
+            if ((theType = HandlerType(theEnv,funcName,tmpData.lexemeValue->contents)) == MERROR)
               return false;
            }
          else
-           theType = -1;
+           theType = MALL_TYPES;
         }
       else
         {
          theHandlerStr = NULL;
-         theType = -1;
+         theType = MALL_TYPES;
         }
+        
       if (WatchClassHandlers(theEnv,theClass,theHandlerStr,theType,logName,
                              newState,false,printFunc,traceFunc) == false)
         {
          ExpectedTypeError1(theEnv,funcName,argIndex,"handler");
          return false;
         }
+        
       argIndex++;
       argExprs = GetNextArgument(argExprs);
      }
@@ -1097,7 +1115,7 @@ static bool WatchClassHandlers(
   Environment *theEnv,
   Defclass *theClass,
   const char *theHandlerStr,
-  int theType,
+  unsigned short theType,
   const char *logName,
   bool newState,
   bool indentp,
@@ -1110,8 +1128,8 @@ static bool WatchClassHandlers(
    theHandler = GetNextDefmessageHandler(theClass,0);
    while (theHandler != 0)
      {
-      if ((theType == -1) ? true :
-          (theType == (int) theClass->handlers[theHandler-1].type))
+      if ((theType == MALL_TYPES) ? true :
+          (theType == theClass->handlers[theHandler-1].type))
         {
          if ((theHandlerStr == NULL) ? true :
              (strcmp(theHandlerStr,DefmessageHandlerName(theClass,theHandler)) == 0))
@@ -1129,7 +1147,7 @@ static bool WatchClassHandlers(
         }
       theHandler = GetNextDefmessageHandler(theClass,theHandler);
      }
-   if ((theHandlerStr != NULL) && (theType != -1) && (found == false))
+   if ((theHandlerStr != NULL) && (theType != MALL_TYPES) && (found == false))
      return false;
    return true;
   }

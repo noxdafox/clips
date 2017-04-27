@@ -242,7 +242,7 @@ bool ClearDefmethods(
         success = false;
       gfunc = GetNextDefgeneric(theEnv,gfunc);
      }
-   return(success);
+   return success;
   }
 
 /*****************************************************************
@@ -259,8 +259,8 @@ bool RemoveAllExplicitMethods(
   Environment *theEnv,
   Defgeneric *gfunc)
   {
-   long i,j;
-   unsigned systemMethodCount = 0;
+   unsigned short i, j;
+   unsigned short systemMethodCount = 0;
    Defmethod *narr;
 
    if (MethodsExecuting(gfunc) == false)
@@ -284,7 +284,7 @@ bool RemoveAllExplicitMethods(
             i++;
            }
          rm(theEnv,gfunc->methods,(sizeof(Defmethod) * gfunc->mcnt));
-         gfunc->mcnt = (short) systemMethodCount;
+         gfunc->mcnt = systemMethodCount;
          gfunc->methods = narr;
         }
       else
@@ -544,16 +544,19 @@ bool SubsumeType(
   SIDE EFFECTS : None
   NOTES        : None
  *****************************************************/
-long FindMethodByIndex(
+unsigned short FindMethodByIndex(
   Defgeneric *gfunc,
-  unsigned theIndex)
+  unsigned short theIndex)
   {
-   long i;
+   unsigned short i;
 
    for (i = 0 ; i < gfunc->mcnt ; i++)
-     if (gfunc->methods[i].index == theIndex)
-       return i;
-   return -1;
+     {
+      if (gfunc->methods[i].index == theIndex)
+        { return i; }
+     }
+        
+   return METHOD_NOT_FOUND;
   }
 
 #if DEBUGGING_FUNCTIONS || PROFILING_FUNCTIONS
@@ -576,19 +579,19 @@ void PrintMethod(
 #if MAC_XCD
 #pragma unused(theEnv)
 #endif
-   long j,k;
+   unsigned short j,k;
    RESTRICTION *rptr;
    char numbuf[15];
 
    SBReset(theSB);
    if (meth->system)
      SBAppend(theSB,"SYS");
-   gensprintf(numbuf,"%-2d ",meth->index); //TBD
+   gensprintf(numbuf,"%-2hu ",meth->index);
    SBAppend(theSB,numbuf);
    for (j = 0 ; j < meth->restrictionCount ; j++)
      {
       rptr = &meth->restrictions[j];
-      if ((((int) j) == meth->restrictionCount-1) && (meth->maxRestrictions == -1))
+      if (((j + 1) == meth->restrictionCount) && (meth->maxRestrictions == RESTRICTIONS_UNBOUNDED))
         {
          if ((rptr->tcnt == 0) && (rptr->query == NULL))
            {
@@ -606,7 +609,7 @@ void PrintMethod(
 #else
          SBAppend(theSB,TypeName(theEnv,((CLIPSInteger *) rptr->types[k])->contents));
 #endif
-         if (((int) k) < (((int) rptr->tcnt) - 1))
+         if ((k + 1) < rptr->tcnt)
            SBAppend(theSB," ");
         }
       if (rptr->query != NULL)
@@ -616,7 +619,7 @@ void PrintMethod(
          SBAppend(theSB,"<qry>");
         }
       SBAppend(theSB,")");
-      if (((int) j) != (((int) meth->restrictionCount)-1))
+      if ((j + 1) != meth->restrictionCount)
         SBAppend(theSB," ");
      }
   }
@@ -729,26 +732,26 @@ Defgeneric *CheckGenericExists(
   INPUTS       : 1) Calling function
                  2) Generic function address
                  3) Index of method
-  RETURNS      : Method array index (-1 if not found)
+  RETURNS      : Method array index (METHOD_NOT_FOUND if not found)
   SIDE EFFECTS : None
   NOTES        : None
  ***************************************************/
-long CheckMethodExists(
+unsigned short CheckMethodExists(
   Environment *theEnv,
   const char *fname,
   Defgeneric *gfunc,
-  unsigned mi)
+  unsigned short mi)
   {
-   long fi;
+   unsigned short fi;
 
    fi = FindMethodByIndex(gfunc,mi);
-   if (fi == -1)
+   if (fi == METHOD_NOT_FOUND)
      {
       PrintErrorID(theEnv,"GENRCFUN",2,false);
       PrintString(theEnv,WERROR,"Unable to find method ");
       PrintString(theEnv,WERROR,DefgenericName(gfunc));
       PrintString(theEnv,WERROR," #");
-      PrintInteger(theEnv,WERROR,mi);
+      PrintUnsignedInteger(theEnv,WERROR,mi);
       PrintString(theEnv,WERROR," in function ");
       PrintString(theEnv,WERROR,fname);
       PrintString(theEnv,WERROR,".\n");

@@ -440,7 +440,7 @@ void ProfileResetCommand(
 #endif
 #if DEFGENERIC_CONSTRUCT
    Defgeneric *theDefgeneric;
-   unsigned int methodIndex;
+   unsigned short methodIndex;
    Defmethod *theMethod;
 #endif
 #if OBJECT_SYSTEM
@@ -597,7 +597,7 @@ static void OutputConstructsCodeInfo(
 #if DEFGENERIC_CONSTRUCT
    Defgeneric *theDefgeneric;
    Defmethod *theMethod;
-   unsigned methodIndex;
+   unsigned short methodIndex;
    StringBuilder *theSB;
 #endif
 #if OBJECT_SYSTEM

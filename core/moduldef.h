@@ -94,7 +94,7 @@ struct constructHeader
    CLIPSLexeme *name;
    const char *ppForm;
    DefmoduleItemHeader *whichModule;
-   long bsaveID;
+   unsigned long bsaveID;
    ConstructHeader *next;
    struct userData *usrData;
    Environment *env;
@@ -186,11 +186,11 @@ struct portItem
 struct moduleItem
   {
    const char *name;
-   int moduleIndex;
+   unsigned moduleIndex;
    void *(*allocateFunction)(Environment *);
    void  (*freeFunction)(Environment *,void *);
-   void *(*bloadModuleReference)(Environment *,int);
-   void  (*constructsToCModuleReference)(Environment *,FILE *,int,int,int);
+   void *(*bloadModuleReference)(Environment *,unsigned long);
+   void  (*constructsToCModuleReference)(Environment *,FILE *,unsigned long,unsigned int,unsigned int);
    FindConstructFunction *findFunction;
    ModuleItem *next;
   };
@@ -213,21 +213,21 @@ struct defmoduleData
    Defmodule *ListOfDefmodules;
    Defmodule *CurrentModule;
    Defmodule *LastDefmodule;
-   int NumberOfModuleItems;
+   unsigned NumberOfModuleItems;
    struct moduleItem *ListOfModuleItems;
    long ModuleChangeIndex;
    bool MainModuleRedefinable;
 #if (! RUN_TIME) && (! BLOAD_ONLY)
    struct portConstructItem *ListOfPortConstructItems;
-   long NumberOfDefmodules;
+   unsigned short NumberOfDefmodules;
    struct voidCallFunctionItem *AfterModuleDefinedFunctions;
 #endif
 #if CONSTRUCT_COMPILER && (! RUN_TIME)
    struct CodeGeneratorItem *DefmoduleCodeItem;
 #endif
 #if (BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE) && (! RUN_TIME)
-   long BNumberOfDefmodules;
-   long NumberOfPortItems;
+   unsigned long BNumberOfDefmodules;
+   unsigned long NumberOfPortItems;
    struct portItem *PortItemArray;
    Defmodule *DefmoduleArray;
 #endif
@@ -242,19 +242,19 @@ struct defmoduleData
    Defmodule                     *GetNextDefmodule(Environment *,Defmodule *);
    void                           RemoveAllDefmodules(Environment *,void *);
    int                            AllocateModuleStorage(void);
-   int                            RegisterModuleItem(Environment *,const char *,
+   unsigned                       RegisterModuleItem(Environment *,const char *,
                                                      AllocateModuleFunction *,
                                                      FreeModuleFunction *,
-                                                     void *(*)(Environment *,int),
-                                                     void (*)(Environment *,FILE *,int,int,int),
+                                                     void *(*)(Environment *,unsigned long),
+                                                     void (*)(Environment *,FILE *,unsigned long,unsigned int,unsigned int),
                                                      FindConstructFunction *);
-   void                          *GetModuleItem(Environment *,Defmodule *,int);
-   void                           SetModuleItem(Environment *,Defmodule *,int,void *);
+   void                          *GetModuleItem(Environment *,Defmodule *,unsigned);
+   void                           SetModuleItem(Environment *,Defmodule *,unsigned,void *);
    Defmodule                     *GetCurrentModule(Environment *);
    Defmodule                     *SetCurrentModule(Environment *,Defmodule *);
    void                           GetCurrentModuleCommand(Environment *,UDFContext *,UDFValue *);
    void                           SetCurrentModuleCommand(Environment *,UDFContext *,UDFValue *);
-   int                            GetNumberOfModuleItems(Environment *);
+   unsigned                       GetNumberOfModuleItems(Environment *);
    void                           CreateMainModule(Environment *,void *);
    void                           SetListOfDefmodules(Environment *,Defmodule *);
    struct moduleItem             *GetListOfModuleItems(Environment *);
@@ -264,7 +264,7 @@ struct defmoduleData
    void                           AddAfterModuleChangeFunction(Environment *,const char *,VoidCallFunction *,int,void *);
    void                           IllegalModuleSpecifierMessage(Environment *);
    void                           AllocateDefmoduleGlobals(Environment *);
-   long                           GetNumberOfDefmodules(Environment *);
+   unsigned short                 GetNumberOfDefmodules(Environment *);
 
 #endif /* _H_moduldef */
 

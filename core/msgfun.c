@@ -134,8 +134,9 @@ bool CheckHandlerArgCount(
    DefmessageHandler *hnd;
 
    hnd = MessageHandlerData(theEnv)->CurrentCore->hnd;
-   if ((hnd->maxParams == -1) ? (ProceduralPrimitiveData(theEnv)->ProcParamArraySize < hnd->minParams) :
-       (ProceduralPrimitiveData(theEnv)->ProcParamArraySize != hnd->minParams))
+   if ((hnd->maxParams == PARAMETERS_UNBOUNDED) ?
+          (ProceduralPrimitiveData(theEnv)->ProcParamArraySize < hnd->minParams) : // TBD
+          (ProceduralPrimitiveData(theEnv)->ProcParamArraySize != hnd->minParams))
      {
       SetEvaluationError(theEnv,true);
       PrintErrorID(theEnv,"MSGFUN",2,false);
@@ -146,11 +147,11 @@ bool CheckHandlerArgCount(
       PrintString(theEnv,WERROR," in class ");
       PrintString(theEnv,WERROR,DefclassName(hnd->cls));
       PrintString(theEnv,WERROR," expected ");
-      if (hnd->maxParams == -1)
+      if (hnd->maxParams == PARAMETERS_UNBOUNDED)
         PrintString(theEnv,WERROR,"at least ");
       else
         PrintString(theEnv,WERROR,"exactly ");
-      PrintInteger(theEnv,WERROR,(long long) (hnd->minParams-1));
+      PrintUnsignedInteger(theEnv,WERROR,hnd->minParams-1);
       PrintString(theEnv,WERROR," argument(s).\n");
       return false;
      }
@@ -244,7 +245,7 @@ void NewSystemHandler(
   const char *cname,
   const char *mname,
   const char *fname,
-  int extraargs)
+  unsigned short extraargs)
   {
    Defclass *cls;
    DefmessageHandler *hnd;
@@ -253,7 +254,7 @@ void NewSystemHandler(
    hnd = InsertHandlerHeader(theEnv,cls,CreateSymbol(theEnv,mname),MPRIMARY);
    IncrementLexemeCount(hnd->header.name);
    hnd->system = 1;
-   hnd->minParams = hnd->maxParams = (short) (extraargs + 1);
+   hnd->minParams = hnd->maxParams = extraargs + 1;
    hnd->localVarCount = 0;
    hnd->actions = get_struct(theEnv,expr);
    hnd->actions->argList = NULL;
@@ -280,12 +281,12 @@ DefmessageHandler *InsertHandlerHeader(
   Environment *theEnv,
   Defclass *cls,
   CLIPSLexeme *mname,
-  int mtype)
+  unsigned mtype)
   {
    DefmessageHandler *nhnd,*hnd;
    unsigned *narr,*arr;
-   long i;
-   long j,ni = -1;
+   unsigned short i;
+   unsigned short j, ni = USHRT_MAX;
 
    hnd = cls->handlers;
    arr = cls->handlerOrderMap;
@@ -294,7 +295,7 @@ DefmessageHandler *InsertHandlerHeader(
    GenCopyMemory(DefmessageHandler,cls->handlerCount,nhnd,hnd);
    for (i = 0 , j = 0 ; i < cls->handlerCount ; i++ , j++)
      {
-      if (ni == -1)
+      if (ni == USHRT_MAX)
         {
          if ((hnd[arr[i]].header.name->bucket > mname->bucket) ? true :
              (hnd[arr[i]].header.name == mname))
@@ -305,8 +306,8 @@ DefmessageHandler *InsertHandlerHeader(
         }
       narr[j] = arr[i];
      }
-   if (ni == -1)
-     ni = (int) cls->handlerCount;
+   if (ni == USHRT_MAX)
+     ni = cls->handlerCount;
    narr[ni] = cls->handlerCount;
    nhnd[cls->handlerCount].system = 0;
    nhnd[cls->handlerCount].type = mtype;
@@ -387,10 +388,10 @@ bool DeleteHandler(
    Environment *theEnv,
    Defclass *cls,
    CLIPSLexeme *mname,
-   int mtype,
+   unsigned short mtype,
    bool indicate_missing)
   {
-   long i;
+   unsigned short i;
    DefmessageHandler *hnd;
    bool found,success = true;
 
@@ -408,12 +409,12 @@ bool DeleteHandler(
       HandlerDeleteError(theEnv,DefclassName(cls));
       return false;
      }
-   if (mtype == -1)
+   if (mtype == MALL_TYPES)
      {
       found = false;
       for (i = MAROUND ; i <= MAFTER ; i++)
         {
-         hnd = FindHandlerByAddress(cls,mname,(unsigned) i);
+         hnd = FindHandlerByAddress(cls,mname,i);
          if (hnd != NULL)
            {
             found = true;
@@ -442,7 +443,7 @@ bool DeleteHandler(
          if (strcmp(mname->contents,"*") == 0)
            {
             for (i = 0 ; i < cls->handlerCount ; i++)
-              if ((cls->handlers[i].type == (unsigned) mtype) &&
+              if ((cls->handlers[i].type == mtype) &&
                   (cls->handlers[i].system == 0))
                 cls->handlers[i].mark = 1;
            }
@@ -466,7 +467,7 @@ bool DeleteHandler(
         }
      }
    DeallocateMarkedHandlers(theEnv,cls);
-   return(success);
+   return success;
   }
 
 /***************************************************
@@ -485,7 +486,7 @@ void DeallocateMarkedHandlers(
   Environment *theEnv,
   Defclass *cls)
   {
-   short count;
+   unsigned short count;
    DefmessageHandler *hnd,*nhnd;
    unsigned *arr,*narr;
    long i,j;
@@ -523,7 +524,7 @@ void DeallocateMarkedHandlers(
      }
    else
      {
-      count = (short) (cls->handlerCount - count);
+      count = (cls->handlerCount - count);
       hnd = cls->handlers;
       arr = cls->handlerOrderMap;
       nhnd = (DefmessageHandler *) gm2(theEnv,(sizeof(DefmessageHandler) * count));
@@ -573,24 +574,25 @@ void DeallocateMarkedHandlers(
   SIDE EFFECTS : None
   NOTES        : None
  *****************************************************/
-unsigned HandlerType(
+unsigned short HandlerType(
   Environment *theEnv,
   const char *func,
   const char *str)
   {
-   unsigned i;
+   unsigned short i;
 
    for (i = MAROUND ; i <= MAFTER ; i++)
-     if (strcmp(str,MessageHandlerData(theEnv)->hndquals[i]) == 0)
-       {
-        return(i);
-       }
-
+     {
+      if (strcmp(str,MessageHandlerData(theEnv)->hndquals[i]) == 0)
+        { return i; }
+     }
+     
    PrintErrorID(theEnv,"MSGFUN",7,false);
    PrintString(theEnv,"werror","Unrecognized message-handler type in ");
    PrintString(theEnv,"werror",func);
    PrintString(theEnv,"werror",".\n");
-   return(MERROR);
+   
+   return MERROR;
   }
 
 /*****************************************************************
@@ -680,7 +682,7 @@ void PrintHandler(
 DefmessageHandler *FindHandlerByAddress(
   Defclass *cls,
   CLIPSLexeme *name,
-  unsigned type)
+  unsigned short type)
   {
    int b;
    long i;
@@ -689,6 +691,7 @@ DefmessageHandler *FindHandlerByAddress(
 
    if ((b = FindHandlerNameGroup(cls,name)) == -1)
      return NULL;
+     
    arr = cls->handlerOrderMap;
    hnd = cls->handlers;
    for (i = (unsigned) b ; i < cls->handlerCount ; i++)
@@ -698,6 +701,7 @@ DefmessageHandler *FindHandlerByAddress(
       if (hnd[arr[i]].type == type)
         return(&hnd[arr[i]]);
      }
+     
    return NULL;
   }
 
@@ -890,7 +894,7 @@ HANDLER_LINK *FindPreviewApplicableHandlers(
   Defclass *cls,
   CLIPSLexeme *mname)
   {
-   int i;
+   unsigned int i;
    HANDLER_LINK *tops[4],*bots[4];
 
    for (i = MAROUND ; i <= MAFTER ; i++)
@@ -927,7 +931,7 @@ void WatchMessage(
    PrintString(theEnv,logName," ");
    PrintString(theEnv,logName,MessageHandlerData(theEnv)->CurrentMessageName->contents);
    PrintString(theEnv,logName," ED:");
-   PrintInteger(theEnv,logName,(long long) EvaluationData(theEnv)->CurrentEvaluationDepth);
+   PrintInteger(theEnv,logName,EvaluationData(theEnv)->CurrentEvaluationDepth);
    PrintProcParamArray(theEnv,logName);
   }
 
@@ -961,7 +965,7 @@ void WatchHandler(
    hnd = hndl->hnd;
    PrintHandler(theEnv,logName,hnd,true);
    PrintString(theEnv,logName,"       ED:");
-   PrintInteger(theEnv,logName,(long long) EvaluationData(theEnv)->CurrentEvaluationDepth);
+   PrintInteger(theEnv,logName,EvaluationData(theEnv)->CurrentEvaluationDepth);
    PrintProcParamArray(theEnv,logName);
   }
 

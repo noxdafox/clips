@@ -113,8 +113,8 @@
 /***************************************/
 
 #if DEBUGGING_FUNCTIONS
-   static long                    ListInstancesInModule(Environment *,int,const char *,const char *,bool,bool);
-   static long                    TabulateInstances(Environment *,int,const char *,Defclass *,bool,bool);
+   static unsigned long           ListInstancesInModule(Environment *,int,const char *,const char *,bool,bool);
+   static unsigned long           TabulateInstances(Environment *,int,const char *,Defclass *,bool,bool);
 #endif
 
    static void                    PrintInstance(Environment *,const char *,Instance *,const char *);
@@ -248,7 +248,7 @@ static void DeallocateInstanceData(
    /*=================================*/
 
    rm(theEnv,InstanceData(theEnv)->InstanceTable,
-      (int) (sizeof(Instance *) * INSTANCE_TABLE_HASH_SIZE));
+      (sizeof(Instance *) * INSTANCE_TABLE_HASH_SIZE));
 
    /*=======================*/
    /* Return all instances. */
@@ -325,8 +325,19 @@ static void DeallocateInstanceData(
 bool DeleteInstance(
   Instance *theInstance)
   {
+   GCBlock gcb;
+   bool success;
+   
    if (theInstance != NULL)
-     { return QuashInstance(theInstance->cls->header.env,theInstance); }
+     {
+      Environment *theEnv = theInstance->cls->header.env;
+      
+      GCBlockStart(theEnv,&gcb);
+      success = QuashInstance(theEnv,theInstance);
+      GCBlockEnd(theEnv,&gcb);
+      
+      return success;
+     }
      
    return false;
   }
@@ -344,7 +355,10 @@ bool DeleteAllInstances(
   Environment *theEnv)
   {
    Instance *ins, *itmp;
+   GCBlock gcb;
    bool success = true;
+   
+   GCBlockStart(theEnv,&gcb);
 
    ins = InstanceData(theEnv)->InstanceList;
    while (ins != NULL)
@@ -355,12 +369,7 @@ bool DeleteAllInstances(
         { success = false; }
      }
 
-   if ((UtilityData(theEnv)->CurrentGarbageFrame->topLevel) && (! CommandLineData(theEnv)->EvaluatingTopLevelCommand) &&
-       (EvaluationData(theEnv)->CurrentExpression == NULL) && (UtilityData(theEnv)->GarbageCollectionLocks == 0))
-     {
-      CleanCurrentGarbageFrame(theEnv,NULL);
-      CallPeriodicTasks(theEnv);
-     }
+   GCBlockEnd(theEnv,&gcb);
 
    return success;
   }
@@ -387,7 +396,10 @@ bool UnmakeAllInstances(
   Environment *theEnv)
   {
    bool success = true, svmaintain;
+   GCBlock gcb;
    Instance *theInstance;
+   
+   GCBlockStart(theEnv,&gcb);
    
    svmaintain = InstanceData(theEnv)->MaintainGarbageInstances;
    InstanceData(theEnv)->MaintainGarbageInstances = true;
@@ -408,12 +420,7 @@ bool UnmakeAllInstances(
    InstanceData(theEnv)->MaintainGarbageInstances = svmaintain;
    CleanupInstances(theEnv,NULL);
 
-   if ((UtilityData(theEnv)->CurrentGarbageFrame->topLevel) && (! CommandLineData(theEnv)->EvaluatingTopLevelCommand) &&
-       (EvaluationData(theEnv)->CurrentExpression == NULL) && (UtilityData(theEnv)->GarbageCollectionLocks == 0))
-     {
-      CleanCurrentGarbageFrame(theEnv,NULL);
-      CallPeriodicTasks(theEnv);
-     }
+   GCBlockEnd(theEnv,&gcb);
 
    return success;
   }
@@ -430,7 +437,10 @@ bool UnmakeInstance(
   Instance *theInstance)
   {
    bool success = true, svmaintain;
+   GCBlock gcb;
    Environment *theEnv = theInstance->cls->header.env;
+   
+   GCBlockStart(theEnv,&gcb);
   
    svmaintain = InstanceData(theEnv)->MaintainGarbageInstances;
    InstanceData(theEnv)->MaintainGarbageInstances = true;
@@ -447,12 +457,7 @@ bool UnmakeInstance(
    InstanceData(theEnv)->MaintainGarbageInstances = svmaintain;
    CleanupInstances(theEnv,NULL);
 
-   if ((UtilityData(theEnv)->CurrentGarbageFrame->topLevel) && (! CommandLineData(theEnv)->EvaluatingTopLevelCommand) &&
-       (EvaluationData(theEnv)->CurrentExpression == NULL) && (UtilityData(theEnv)->GarbageCollectionLocks == 0))
-     {
-      CleanCurrentGarbageFrame(theEnv,NULL);
-      CallPeriodicTasks(theEnv);
-     }
+   GCBlockEnd(theEnv,&gcb);
 
    return success;
   }
@@ -569,7 +574,7 @@ void Instances(
   bool inheritFlag)
   {
    int id;
-   long count = 0L;
+   unsigned long count = 0L;
 
    /*==============================================*/
    /* Grab a traversal id to avoid printing out    */
@@ -641,13 +646,18 @@ Instance *MakeInstance(
   const char *mkstr)
   {
    const char *router = "***MKINS***";
+   GCBlock gcb;
    struct token tkn;
    Expression *top;
    UDFValue returnValue;
+   Instance *rv;
 
    returnValue.value = FalseSymbol(theEnv);
    if (OpenStringSource(theEnv,router,mkstr,0) == 0)
      return NULL;
+     
+   GCBlockStart(theEnv,&gcb);
+   
    GetToken(theEnv,router,&tkn);
    if (tkn.tknType == LEFT_PARENTHESIS_TOKEN)
      {
@@ -670,17 +680,14 @@ Instance *MakeInstance(
      SyntaxErrorMessage(theEnv,"instance definition");
    CloseStringSource(theEnv,router);
 
-   if ((UtilityData(theEnv)->CurrentGarbageFrame->topLevel) && (! CommandLineData(theEnv)->EvaluatingTopLevelCommand) &&
-       (EvaluationData(theEnv)->CurrentExpression == NULL) && (UtilityData(theEnv)->GarbageCollectionLocks == 0))
-     {
-      CleanCurrentGarbageFrame(theEnv,NULL);
-      CallPeriodicTasks(theEnv);
-     }
-
    if (returnValue.value == FalseSymbol(theEnv))
-     return NULL;
+     { rv = NULL; }
+   else
+     { rv = FindInstanceBySymbol(theEnv,returnValue.lexemeValue); }
 
-   return FindInstanceBySymbol(theEnv,returnValue.lexemeValue);
+   GCBlockEnd(theEnv,&gcb);
+   
+   return rv;
   }
 
 /***************************************************************
@@ -760,7 +767,6 @@ bool DirectGetSlot(
   CLIPSValue *returnValue)
   {
    InstanceSlot *sp;
-   UDFValue temp;
    Environment *theEnv = theInstance->cls->header.env;
    
    if (theInstance->garbage == 1)
@@ -769,6 +775,7 @@ bool DirectGetSlot(
       returnValue->value = FalseSymbol(theEnv);
       return false;
      }
+     
    sp = FindISlotByName(theEnv,theInstance,sname);
    if (sp == NULL)
      {
@@ -778,14 +785,6 @@ bool DirectGetSlot(
      }
 
    returnValue->value = sp->value;
-
-   if ((UtilityData(theEnv)->CurrentGarbageFrame->topLevel) && (! CommandLineData(theEnv)->EvaluatingTopLevelCommand) &&
-       (EvaluationData(theEnv)->CurrentExpression == NULL) && (UtilityData(theEnv)->GarbageCollectionLocks == 0))
-     {
-      CLIPSToUDFValue(returnValue,&temp);
-      CleanCurrentGarbageFrame(theEnv,&temp);
-      CallPeriodicTasks(theEnv);
-     }
      
    return true;
   }
@@ -807,6 +806,8 @@ bool DirectPutSlot(
   {
    InstanceSlot *sp;
    UDFValue junk, temp;
+   GCBlock gcb;
+   bool rv;
    Environment *theEnv = theInstance->cls->header.env;
    
    if ((theInstance->garbage == 1) || (val == NULL))
@@ -814,6 +815,7 @@ bool DirectPutSlot(
       SetEvaluationError(theEnv,true);
       return false;
      }
+     
    sp = FindISlotByName(theEnv,theInstance,sname);
    if (sp == NULL)
      {
@@ -821,18 +823,12 @@ bool DirectPutSlot(
       return false;
      }
 
+   GCBlockStart(theEnv,&gcb);
    CLIPSToUDFValue(val,&temp);
-   if (PutSlotValue(theEnv,theInstance,sp,&temp,&junk,"external put"))
-     {
-      if ((UtilityData(theEnv)->CurrentGarbageFrame->topLevel) && (! CommandLineData(theEnv)->EvaluatingTopLevelCommand) &&
-          (EvaluationData(theEnv)->CurrentExpression == NULL) && (UtilityData(theEnv)->GarbageCollectionLocks == 0))
-        {
-         CleanCurrentGarbageFrame(theEnv,NULL);
-         CallPeriodicTasks(theEnv);
-        }
-      return true;
-     }
-   return false;
+   rv = PutSlotValue(theEnv,theInstance,sp,&temp,&junk,"external put");
+   GCBlockEnd(theEnv,&gcb);
+   
+   return rv;
   }
 
 /***************************************************
@@ -1174,7 +1170,7 @@ void UnmakeInstanceCommand(
   {
    UDFValue theArg;
    Instance *ins;
-   int argNumber = 1;
+   unsigned int argNumber = 1;
    bool rtn = true;
 
    while (UDFHasNextArgument(context))
@@ -1521,7 +1517,7 @@ void InstanceExistPCommand(
   NOTES        : Assumes defclass scope flags
                  are up to date
  ***************************************************/
-static long ListInstancesInModule(
+static unsigned long ListInstancesInModule(
   Environment *theEnv,
   int id,
   const char *logicalName,
@@ -1531,7 +1527,7 @@ static long ListInstancesInModule(
   {
    Defclass *theDefclass;
    Instance *theInstance;
-   long count = 0L;
+   unsigned long count = 0L;
 
    /* ===================================
       For the specified module, print out
@@ -1607,7 +1603,7 @@ static long ListInstancesInModule(
   SIDE EFFECTS : None
   NOTES        : None
  ******************************************************/
-static long TabulateInstances(
+static unsigned long TabulateInstances(
   Environment *theEnv,
   int id,
   const char *logicalName,
@@ -1616,32 +1612,35 @@ static long TabulateInstances(
   bool allModulesFlag)
   {
    Instance *ins;
-   long i;
-   long count = 0;
+   unsigned long i;
+   unsigned long count = 0;
 
    if (TestTraversalID(cls->traversalRecord,id))
-     return(0L);
+     return 0L;
+     
    SetTraversalID(cls->traversalRecord,id);
    for (ins = cls->instanceList ; ins != NULL ; ins = ins->nxtClass)
      {
       if (EvaluationData(theEnv)->HaltExecution)
-        return(count);
+        return count;
       if (allModulesFlag)
         PrintString(theEnv,logicalName,"   ");
       PrintInstanceNameAndClass(theEnv,logicalName,ins,true);
       count++;
      }
+     
    if (inheritFlag)
      {
       for (i = 0 ; i < cls->directSubclasses.classCount ; i++)
         {
          if (EvaluationData(theEnv)->HaltExecution)
-           return(count);
+           return count;
          count += TabulateInstances(theEnv,id,logicalName,
                      cls->directSubclasses.classArray[i],inheritFlag,allModulesFlag);
         }
      }
-   return(count);
+    
+   return count;
   }
 
 #endif
@@ -1676,13 +1675,13 @@ static void PrintInstance(
       if (sp->type != MULTIFIELD_TYPE)
         {
          PrintString(theEnv,logicalName," ");
-         PrintAtom(theEnv,logicalName,(int) sp->type,sp->value);
+         PrintAtom(theEnv,logicalName,sp->type,sp->value);
         }
       else if (sp->multifieldValue->length != 0)
         {
          PrintString(theEnv,logicalName," ");
          PrintMultifieldDriver(theEnv,logicalName,sp->multifieldValue,0,
-                               sp->multifieldValue->length - 1,false);
+                               sp->multifieldValue->length,false);
         }
       PrintString(theEnv,logicalName,")");
      }

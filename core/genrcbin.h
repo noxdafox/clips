@@ -44,11 +44,11 @@
 struct defgenericBinaryData
   {
    Defgeneric *DefgenericArray;
-   long ModuleCount;
-   long GenericCount;
-   long MethodCount;
-   long RestrictionCount;
-   long TypeCount;
+   unsigned long ModuleCount;
+   unsigned long GenericCount;
+   unsigned long MethodCount;
+   unsigned long RestrictionCount;
+   unsigned long TypeCount;
    DEFGENERIC_MODULE *ModuleArray;
    Defmethod *MethodArray;
    RESTRICTION *RestrictionArray;
@@ -57,10 +57,10 @@ struct defgenericBinaryData
 
 #define DefgenericBinaryData(theEnv) ((struct defgenericBinaryData *) GetEnvironmentData(theEnv,GENRCBIN_DATA))
 
-#define GenericPointer(i) (((i) == -1L) ? NULL : &DefgenericBinaryData(theEnv)->DefgenericArray[i])
+#define GenericPointer(i) (((i) == ULONG_MAX) ? NULL : &DefgenericBinaryData(theEnv)->DefgenericArray[i])
 
    void                           SetupGenericsBload(Environment *);
-   void                          *BloadDefgenericModuleReference(Environment *,int);
+   void                          *BloadDefgenericModuleReference(Environment *,unsigned long);
 
 #endif /* _H_genrcbin */
 

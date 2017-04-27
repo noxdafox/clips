@@ -189,17 +189,17 @@ CLIPS> (length$)                           ; 10.3.6
 CLIPS> (length$ "x" 3)                     ; 10.3.6
 [ARGACCES4] Function length$ expected exactly 1 argument(s)
 CLIPS> (length$ [def])                     ; 10.3.6
-[ARGACCES5] Function length$ expected argument #1 to be of type symbol, string, or multifield
+[ARGACCES5] Function length$ expected argument #1 to be of type multifield
 CLIPS> (length$ 4.3)                       ; 10.3.6
-[ARGACCES5] Function length$ expected argument #1 to be of type symbol, string, or multifield
+[ARGACCES5] Function length$ expected argument #1 to be of type multifield
 CLIPS> (length$ 567)                       ; 10.3.6
-[ARGACCES5] Function length$ expected argument #1 to be of type symbol, string, or multifield
+[ARGACCES5] Function length$ expected argument #1 to be of type multifield
 CLIPS> (length$ blah-blah-blah)            ; 10.3.6
-14
+[ARGACCES5] Function length$ expected argument #1 to be of type multifield
 CLIPS> (length$ "")                        ; 10.3.6
-0
+[ARGACCES5] Function length$ expected argument #1 to be of type multifield
 CLIPS> (length$ "Hello world")             ; 10.3.6
-11
+[ARGACCES5] Function length$ expected argument #1 to be of type multifield
 CLIPS> (length$ (create$))                 ; 10.3.6
 0
 CLIPS> (length$ (create$ a b c))           ; 10.3.6
@@ -207,7 +207,7 @@ CLIPS> (length$ (create$ a b c))           ; 10.3.6
 CLIPS> (length$ (create$ a b c d e f g))   ; 10.3.6
 7
 CLIPS> (length$ "cat")                     ; 10.3.6
-3
+[ARGACCES5] Function length$ expected argument #1 to be of type multifield
 CLIPS> (explode$)                      ; 10.3.7
 [ARGACCES4] Function explode$ expected exactly 1 argument(s)
 CLIPS> (explode$ "x" 3)                ; 10.3.7

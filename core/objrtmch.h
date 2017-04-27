@@ -102,14 +102,14 @@ typedef struct objectPatternNode
    unsigned whichField     : 8;
    unsigned short leaveFields;
    unsigned long long matchTimeTag;
-   int slotNameID;
+   unsigned short slotNameID;
    Expression *networkTest;
    struct objectPatternNode *nextLevel;
    struct objectPatternNode *lastLevel;
    struct objectPatternNode *leftNode;
    struct objectPatternNode *rightNode;
    OBJECT_ALPHA_NODE *alphaNode;
-   long bsaveID;
+   unsigned long bsaveID;
   } OBJECT_PATTERN_NODE;
 
 struct objectAlphaNode
@@ -120,7 +120,7 @@ struct objectAlphaNode
    OBJECT_PATTERN_NODE *patternNode;
    struct objectAlphaNode *nxtInGroup,
                           *nxtTerminal;
-   long bsaveID;
+   unsigned long bsaveID;
   };
 
 typedef struct objectMatchAction

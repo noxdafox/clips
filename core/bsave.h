@@ -75,7 +75,7 @@ struct BinaryItem
 #if BLOAD_AND_BSAVE
 typedef struct bloadcntsv
   {
-   long val;
+   unsigned long val;
    struct bloadcntsv *nxt;
   } BLOADCNTSV;
 #endif
@@ -83,7 +83,9 @@ typedef struct bloadcntsv
 typedef struct bsave_expr
   {
    unsigned short type;
-   long value,arg_list,next_arg;
+   unsigned long value;
+   unsigned long arg_list;
+   unsigned long next_arg;
   } BSAVE_EXPRESSION;
 
 #define CONSTRUCT_HEADER_SIZE 20
@@ -105,8 +107,8 @@ struct bsaveData
 #if BLOAD_AND_BSAVE
    bool                    Bsave(Environment *,const char *);
    void                    MarkNeededItems(Environment *,struct expr *);
-   void                    SaveBloadCount(Environment *,long);
-   void                    RestoreBloadCount(Environment *,long *);
+   void                    SaveBloadCount(Environment *,unsigned long);
+   void                    RestoreBloadCount(Environment *,unsigned long *);
 #endif
    bool                    AddBinaryItem(Environment *,const char *,int,
                                          void (*)(Environment *),

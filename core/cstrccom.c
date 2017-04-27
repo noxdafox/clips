@@ -193,7 +193,7 @@ ConstructHeader *FindNamedConstructInModuleOrImports(
   Construct *constructClass)
   {
    ConstructHeader *theConstruct;
-   int count;
+   unsigned int count;
 
    /*================================================*/
    /* First look in the current or specified module. */
@@ -431,13 +431,11 @@ bool PPConstruct(
    if ((*constructClass->getPPFormFunction)(constructPtr) == NULL)
      { return true; }
 
-   /*============================================*/
-   /* Print the pretty print string in smaller   */
-   /* chunks. (VMS had a bug that didn't allow   */
-   /* printing a string greater than 512 bytes.) */
-   /*============================================*/
+   /*================================*/
+   /* Print the pretty print string. */
+   /*================================*/
 
-   PrintInChunks(theEnv,logicalName,(*constructClass->getPPFormFunction)(constructPtr));
+   PrintString(theEnv,logicalName,(*constructClass->getPPFormFunction)(constructPtr));
 
    /*=======================================*/
    /* Return true to indicate the construct */
@@ -499,7 +497,7 @@ Defmodule *GetConstructModule(
   Construct *constructClass)
   {
    ConstructHeader *constructPtr;
-   int count;
+   unsigned int count;
    unsigned position;
    CLIPSLexeme *theName;
 
@@ -529,6 +527,76 @@ Defmodule *GetConstructModule(
    return(constructPtr->whichModule->theModule);
   }
 
+/****************************************/
+/* UndefconstructAll: Generic C routine */
+/*   for deleting all constructs.       */
+/****************************************/
+bool UndefconstructAll(
+  Environment *theEnv,
+  Construct *constructClass)
+  {
+#if BLOAD_ONLY || RUN_TIME
+#if MAC_XCD
+#pragma unused(constructClass)
+#pragma unused(theEnv)
+#endif
+   return false;
+#else
+   ConstructHeader *currentConstruct, *nextConstruct;
+   bool success = true;
+   GCBlock gcb;
+
+   /*===================================================*/
+   /* Loop through all of the constructs in the module. */
+   /*===================================================*/
+
+   GCBlockStart(theEnv,&gcb);
+   
+   currentConstruct = (*constructClass->getNextItemFunction)(theEnv,NULL);
+   while (currentConstruct != NULL)
+     {
+      /*==============================*/
+      /* Remember the next construct. */
+      /*==============================*/
+
+      nextConstruct = (*constructClass->getNextItemFunction)(theEnv,currentConstruct);
+
+      /*=============================*/
+      /* Try deleting the construct. */
+      /*=============================*/
+
+      if ((*constructClass->isConstructDeletableFunction)(currentConstruct))
+        {
+         RemoveConstructFromModule(theEnv,currentConstruct);
+         (*constructClass->freeFunction)(theEnv,currentConstruct);
+        }
+      else
+        {
+         CantDeleteItemErrorMessage(theEnv,constructClass->constructName,
+                        (*constructClass->getConstructNameFunction)(currentConstruct)->contents);
+         success = false;
+        }
+
+      /*================================*/
+      /* Move on to the next construct. */
+      /*================================*/
+
+      currentConstruct = nextConstruct;
+     }
+     
+   GCBlockEnd(theEnv,&gcb);
+   CallPeriodicTasks(theEnv);
+   
+   /*============================================*/
+   /* Return true if all constructs successfully */
+   /* deleted, otherwise false.                  */
+   /*============================================*/
+
+   return success;
+
+#endif
+  }
+
 /*************************************/
 /* Undefconstruct: Generic C routine */
 /*   for deleting a construct.       */
@@ -546,8 +614,7 @@ bool Undefconstruct(
 #endif
    return false;
 #else
-   ConstructHeader *currentConstruct, *nextConstruct;
-   bool success;
+   GCBlock gcb;
 
    /*================================================*/
    /* Delete all constructs of the specified type if */
@@ -555,65 +622,7 @@ bool Undefconstruct(
    /*================================================*/
 
    if (theConstruct == NULL)
-     {
-      success = true;
-
-      /*===================================================*/
-      /* Loop through all of the constructs in the module. */
-      /*===================================================*/
-
-      currentConstruct = (*constructClass->getNextItemFunction)(theEnv,NULL);
-      while (currentConstruct != NULL)
-        {
-         /*==============================*/
-         /* Remember the next construct. */
-         /*==============================*/
-
-         nextConstruct = (*constructClass->getNextItemFunction)(theEnv,currentConstruct);
-
-         /*=============================*/
-         /* Try deleting the construct. */
-         /*=============================*/
-
-         if ((*constructClass->isConstructDeletableFunction)(currentConstruct))
-           {
-            RemoveConstructFromModule(theEnv,currentConstruct);
-            (*constructClass->freeFunction)(theEnv,currentConstruct);
-           }
-         else
-           {
-            CantDeleteItemErrorMessage(theEnv,constructClass->constructName,
-                        (*constructClass->getConstructNameFunction)(currentConstruct)->contents);
-            success = false;
-           }
-
-         /*================================*/
-         /* Move on to the next construct. */
-         /*================================*/
-
-         currentConstruct = nextConstruct;
-        }
-
-      /*=======================================*/
-      /* Perform periodic cleanup if embedded. */
-      /*=======================================*/
-
-      if ((UtilityData(theEnv)->CurrentGarbageFrame->topLevel) &&
-          (! CommandLineData(theEnv)->EvaluatingTopLevelCommand) &&
-          (EvaluationData(theEnv)->CurrentExpression == NULL) &&
-          (UtilityData(theEnv)->GarbageCollectionLocks == 0))
-        {
-         CleanCurrentGarbageFrame(theEnv,NULL);
-         CallPeriodicTasks(theEnv);
-        }
-
-      /*============================================*/
-      /* Return true if all constructs successfully */
-      /* deleted, otherwise false.                  */
-      /*============================================*/
-
-      return(success);
-     }
+     { return UndefconstructAll(theEnv,constructClass); }
 
    /*==================================================*/
    /* Return false if the construct cannot be deleted. */
@@ -621,6 +630,12 @@ bool Undefconstruct(
 
    if ((*constructClass->isConstructDeletableFunction)(theConstruct) == false)
      { return false; }
+     
+   /*===================================*/
+   /* Start a garbage collection block. */
+   /*===================================*/
+   
+   GCBlockStart(theEnv,&gcb);
 
    /*===========================*/
    /* Remove the construct from */
@@ -635,18 +650,11 @@ bool Undefconstruct(
 
    (*constructClass->freeFunction)(theEnv,theConstruct);
 
-   /*=======================================*/
-   /* Perform periodic cleanup if embedded. */
-   /*=======================================*/
-
-   if ((UtilityData(theEnv)->CurrentGarbageFrame->topLevel) &&
-       (! CommandLineData(theEnv)->EvaluatingTopLevelCommand) &&
-       (EvaluationData(theEnv)->CurrentExpression == NULL) &&
-       (UtilityData(theEnv)->GarbageCollectionLocks == 0))
-     {
-      CleanCurrentGarbageFrame(theEnv,NULL);
-      CallPeriodicTasks(theEnv);
-     }
+   /*===================================*/
+   /* End the garbage collection block. */
+   /*===================================*/
+   
+   GCBlockEnd(theEnv,&gcb);
 
    /*=============================*/
    /* Return true to indicate the */
@@ -699,7 +707,7 @@ void SaveConstruct(
       ppform = (*constructClass->getPPFormFunction)(theConstruct);
       if (ppform != NULL)
         {
-         PrintInChunks(theEnv,logicalName,ppform);
+         PrintString(theEnv,logicalName,ppform);
          PrintString(theEnv,logicalName,"\n");
         }
       }
@@ -746,7 +754,7 @@ void GetConstructListFunction(
   {
    Defmodule *theModule;
    UDFValue result;
-   int numArgs;
+   unsigned int numArgs;
    Environment *theEnv = context->environment;
 
    /*====================================*/
@@ -984,7 +992,7 @@ void ListConstructCommand(
   {
    Defmodule *theModule;
    UDFValue result;
-   int numArgs;
+   unsigned int numArgs;
    Environment *theEnv = context->environment;
 
    /*====================================*/
@@ -1048,7 +1056,7 @@ void ListConstruct(
   {
    ConstructHeader *constructPtr;
    CLIPSLexeme *constructName;
-   long count = 0;
+   unsigned long count = 0;
    bool allModules = false;
 
    /*==========================*/
@@ -1130,7 +1138,7 @@ void ListConstruct(
    /*=================================================*/
 
    PrintTally(theEnv,STDOUT,count,constructClass->constructName,
-                             constructClass->pluralName);
+              constructClass->pluralName);
 
    RestoreCurrentModule(theEnv);
   }
@@ -1171,7 +1179,7 @@ const char *GetConstructPPForm(
 ConstructHeader *GetNextConstructItem(
   Environment *theEnv,
   ConstructHeader *theConstruct,
-  int moduleIndex)
+  unsigned moduleIndex)
   {
    struct defmoduleItemHeader *theModuleItem;
 
@@ -1197,7 +1205,7 @@ ConstructHeader *GetNextConstructItem(
 struct defmoduleItemHeader *GetConstructModuleItemByIndex(
   Environment *theEnv,
   Defmodule *theModule,
-  int moduleIndex)
+  unsigned moduleIndex)
   {
    if (theModule != NULL)
      {
@@ -1235,10 +1243,10 @@ void FreeConstructHeaderModule(
 /* DoForAllConstructs: Executes an action for */
 /*   all constructs of a specified type.      */
 /**********************************************/
-long DoForAllConstructs(
+void DoForAllConstructs(
   Environment *theEnv,
   void (*actionFunction)(Environment *,ConstructHeader *,void *),
-  int moduleItemIndex,
+  unsigned moduleItemIndex,
   bool interruptable,
   void *userBuffer)
   {
@@ -1288,7 +1296,7 @@ long DoForAllConstructs(
             if (GetHaltExecution(theEnv) == true)
               {
                RestoreCurrentModule(theEnv);
-               return(-1L);
+               return;
               }
            }
 
@@ -1312,12 +1320,6 @@ long DoForAllConstructs(
    /*=============================*/
 
    RestoreCurrentModule(theEnv);
-
-   /*=========================================*/
-   /* Return the number of modules traversed. */
-   /*=========================================*/
-
-   return(moduleCount);
   }
 
 /******************************************************/
@@ -1328,8 +1330,8 @@ void DoForAllConstructsInModule(
   Environment *theEnv,
   Defmodule *theModule,
   ConstructActionFunction *actionFunction,
-  int moduleItemIndex,
-  int interruptable,
+  unsigned moduleItemIndex,
+  bool interruptable,
   void *userBuffer)
   {
    ConstructHeader *theConstruct;
@@ -1476,7 +1478,7 @@ static bool ConstructWatchSupport(
    Defmodule *theModule;
    ConstructHeader *theConstruct;
    UDFValue constructName;
-   int argIndex = 2;
+   unsigned int argIndex = 2;
 
    /*========================================*/
    /* If no constructs are specified, then   */
@@ -1641,7 +1643,7 @@ ConstructHeader *LookupConstruct(
   {
    ConstructHeader *theConstruct;
    const char *constructType;
-   int moduleCount;
+   unsigned int moduleCount;
 
    /*============================================*/
    /* Look for the specified construct in the    */

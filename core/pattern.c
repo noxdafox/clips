@@ -398,7 +398,7 @@ void GetNextPatternEntity(
 /**************************************************************/
 void DetachPattern(
   Environment *theEnv,
-  int rhsType,
+  unsigned short rhsType,
   struct patternNodeHeader *theHeader)
   {
    if (rhsType == 0) return;
@@ -494,7 +494,7 @@ struct patternParser *FindPatternParser(
 /******************************************************/
 struct patternParser *GetPatternParser(
   Environment *theEnv,
-  int rhsType)
+  unsigned short rhsType)
   {
    if (rhsType == 0) return NULL;
 
@@ -511,8 +511,8 @@ void PatternNodeHeaderToCode(
   Environment *theEnv,
   FILE *fp,
   struct patternNodeHeader *theHeader,
-  int imageID,
-  int maxIndices)
+  unsigned int imageID,
+  unsigned int maxIndices)
   {
    fprintf(fp,"{NULL,NULL,");
 
@@ -520,10 +520,10 @@ void PatternNodeHeaderToCode(
      { fprintf(fp,"NULL,"); }
    else
      {
-      fprintf(fp,"&%s%d_%d[%d],",
+      fprintf(fp,"&%s%u_%lu[%lu],",
                  JoinPrefix(),imageID,
-                 (((int) theHeader->entryJoin->bsaveID) / maxIndices) + 1,
-                 ((int) theHeader->entryJoin->bsaveID) % maxIndices);
+                 (theHeader->entryJoin->bsaveID / maxIndices) + 1,
+                 theHeader->entryJoin->bsaveID % maxIndices);
      }
 
    PrintHashedExpressionReference(theEnv,fp,theHeader->rightHash,imageID,maxIndices);
@@ -582,14 +582,14 @@ struct lhsParseNode *RestrictionParse(
   struct token *theToken,
   bool multifieldSlot,
   CLIPSLexeme *theSlot,
-  short slotNumber,
+  unsigned short slotNumber,
   CONSTRAINT_RECORD *theConstraints,
-  short position)
+  unsigned short position)
   {
    struct lhsParseNode *topNode = NULL, *lastNode = NULL, *nextNode;
    int numberOfSingleFields = 0;
    int numberOfMultifields = 0;
-   short startPosition = position;
+   unsigned short startPosition = position;
    bool error = false;
    CONSTRAINT_RECORD *tempConstraints;
 
@@ -849,13 +849,13 @@ static void TallyFieldTypes(
 
       if ((tempNode1->pnType == SF_VARIABLE_NODE) || (tempNode1->pnType == SF_WILDCARD_NODE))
         {
-         tempNode1->singleFieldsAfter = (unsigned short) (totalSingleFields - (runningSingleFields + 1));
-         tempNode1->multiFieldsAfter = (unsigned short) (totalMultiFields - runningMultiFields);
+         tempNode1->singleFieldsAfter = totalSingleFields - (runningSingleFields + 1);
+         tempNode1->multiFieldsAfter = totalMultiFields - runningMultiFields;
         }
       else
         {
-         tempNode1->singleFieldsAfter = (unsigned short) (totalSingleFields - runningSingleFields);
-         tempNode1->multiFieldsAfter = (unsigned short) (totalMultiFields - (runningMultiFields + 1));
+         tempNode1->singleFieldsAfter = totalSingleFields - runningSingleFields;
+         tempNode1->multiFieldsAfter = totalMultiFields - (runningMultiFields + 1);
         }
 
       /*=====================================================*/

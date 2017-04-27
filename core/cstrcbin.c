@@ -57,7 +57,7 @@
  ***************************************************/
 void MarkConstructHeaderNeededItems(
   ConstructHeader *theConstruct,
-  long theBsaveID)
+  unsigned long theBsaveID)
   {
    theConstruct->name->neededSymbol = true;
    theConstruct->bsaveID = theBsaveID;
@@ -85,20 +85,20 @@ void AssignBsaveConstructHeaderVals(
   ConstructHeader *theConstruct)
   {
    if (theConstruct->name != NULL)
-     { theBsaveConstruct->name = (long) theConstruct->name->bucket; }
+     { theBsaveConstruct->name = theConstruct->name->bucket; }
    else
-     { theBsaveConstruct->name = -1L; }
+     { theBsaveConstruct->name = ULONG_MAX; }
    
    if ((theConstruct->whichModule != NULL) &&
        (theConstruct->whichModule->theModule != NULL))
      { theBsaveConstruct->whichModule = theConstruct->whichModule->theModule->header.bsaveID; }
    else
-     { theBsaveConstruct->whichModule = -1L; }
+     { theBsaveConstruct->whichModule = ULONG_MAX; }
      
    if (theConstruct->next != NULL)
      theBsaveConstruct->next = theConstruct->next->bsaveID;
    else
-     theBsaveConstruct->next = -1L;
+     theBsaveConstruct->next = ULONG_MAX;
   }
 
 #endif /* BLOAD_AND_BSAVE */
@@ -126,14 +126,14 @@ void UpdateConstructHeader(
   struct bsaveConstructHeader *theBsaveConstruct,
   ConstructHeader *theConstruct,
   ConstructType theType,
-  int itemModuleSize,
+  size_t itemModuleSize,
   void *itemModuleArray,
-  int itemSize,
+  size_t itemSize,
   void *itemArray)
   {
-   long moduleOffset, itemOffset;
+   unsigned long moduleOffset, itemOffset;
 
-   if (theBsaveConstruct->whichModule != -1L)
+   if (theBsaveConstruct->whichModule != ULONG_MAX)
      {
       moduleOffset = itemModuleSize * theBsaveConstruct->whichModule;
       theConstruct->whichModule =
@@ -142,7 +142,7 @@ void UpdateConstructHeader(
    else
      { theConstruct->whichModule = NULL; }
      
-   if (theBsaveConstruct->name != -1L)
+   if (theBsaveConstruct->name != ULONG_MAX)
      {
       theConstruct->name = SymbolPointer(theBsaveConstruct->name);
       IncrementLexemeCount(theConstruct->name);
@@ -150,7 +150,7 @@ void UpdateConstructHeader(
    else
      { theConstruct->name = NULL; }
      
-   if (theBsaveConstruct->next != -1L)
+   if (theBsaveConstruct->next != ULONG_MAX)
      {
       itemOffset = itemSize * theBsaveConstruct->next;
       theConstruct->next = (ConstructHeader *) &((char *) itemArray)[itemOffset];

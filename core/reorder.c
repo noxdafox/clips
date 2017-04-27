@@ -105,15 +105,13 @@ struct groupReference
    static struct lhsParseNode    *CreateInitialPattern(Environment *);
    static struct lhsParseNode    *ReorderDriver(Environment *,struct lhsParseNode *,bool *,int,int);
    static struct lhsParseNode    *AddRemainingInitialPatterns(Environment *,struct lhsParseNode *);
-   static struct lhsParseNode    *AssignPatternIndices(struct lhsParseNode *,short,int,short);
-   static void                    PropagateIndexSlotPatternValues(struct lhsParseNode *,
-                                                                  short,short,
-                                                                  CLIPSLexeme *,
-                                                                  short);
-   static void                    PropagateJoinDepth(struct lhsParseNode *,short);
+   static struct lhsParseNode    *AssignPatternIndices(struct lhsParseNode *,short,int,unsigned short);
+   static void                    PropagateIndexSlotPatternValues(struct lhsParseNode *,short,unsigned short,
+                                                                  CLIPSLexeme *,unsigned short);
+   static void                    PropagateJoinDepth(struct lhsParseNode *,unsigned short);
    static void                    PropagateNandDepth(struct lhsParseNode *,int,int);
    static void                    MarkExistsNands(struct lhsParseNode *);
-   static int                     PropagateWhichCE(struct lhsParseNode *,int);
+   static unsigned short          PropagateWhichCE(struct lhsParseNode *,unsigned short);
    /*
    static void                    PrintNodes(void *,const char *,struct lhsParseNode *);
    */
@@ -1220,9 +1218,9 @@ struct lhsParseNode *GetLHSParseNode(
    newNode->referringNode = NULL;
    newNode->patternType = NULL;
    newNode->pattern = -1;
-   newNode->index = -1;
+   newNode->index = NO_INDEX;
    newNode->slot = NULL;
-   newNode->slotNumber = -1;
+   newNode->slotNumber = UNSPECIFIED_SLOT;
    newNode->beginNandDepth = 1;
    newNode->endNandDepth = 1;
    newNode->joinDepth = 0;
@@ -1287,7 +1285,7 @@ struct lhsParseNode *ExpressionToLHSParseNodes(
   {
    struct lhsParseNode *newList, *theList;
    struct functionDefinition *theFunction;
-   int i;
+   unsigned int i;
    unsigned theRestriction2;
 
    /*===========================================*/
@@ -1322,7 +1320,7 @@ struct lhsParseNode *ExpressionToLHSParseNodes(
      {
       if (theList->pnType == SF_VARIABLE_NODE)
         {
-         theRestriction2 = GetNthRestriction2(theEnv,theFunction,i);
+         theRestriction2 = GetNthRestriction(theEnv,theFunction,i);
          theList->constraints = ArgumentTypeToConstraintRecord(theEnv,theRestriction2);
          theList->derivedConstraints = true;
         }
@@ -1607,7 +1605,7 @@ static struct lhsParseNode *AssignPatternIndices(
   struct lhsParseNode *theLHS,
   short startIndex,
   int nandDepth,
-  short joinDepth)
+  unsigned short joinDepth)
   {
    struct lhsParseNode *theField;
 
@@ -1650,7 +1648,7 @@ static struct lhsParseNode *AssignPatternIndices(
          if (joinDepth == 0)
            { joinDepth++; }
          theLHS->joinDepth = joinDepth - 1;
-         PropagateJoinDepth(theLHS->expression,(short) (joinDepth - 1));
+         PropagateJoinDepth(theLHS->expression,joinDepth - 1);
          PropagateNandDepth(theLHS->expression,theLHS->beginNandDepth,theLHS->endNandDepth);
          if (theLHS->endNandDepth < nandDepth) return(theLHS);
         }
@@ -1666,7 +1664,7 @@ static struct lhsParseNode *AssignPatternIndices(
         {
          if (theLHS->expression != NULL)
            {
-            PropagateJoinDepth(theLHS->expression,(short) joinDepth);
+            PropagateJoinDepth(theLHS->expression,joinDepth);
             PropagateNandDepth(theLHS->expression,theLHS->beginNandDepth,theLHS->endNandDepth);
            }
 
@@ -1709,9 +1707,9 @@ static struct lhsParseNode *AssignPatternIndices(
 static void PropagateIndexSlotPatternValues(
   struct lhsParseNode *theField,
   short thePattern,
-  short theIndex,
+  unsigned short theIndex,
   CLIPSLexeme *theSlot,
-  short theSlotNumber)
+  unsigned short theSlotNumber)
   {
    struct lhsParseNode *tmpNode, *andField;
 
@@ -1729,7 +1727,8 @@ static void PropagateIndexSlotPatternValues(
    if (theField->multifieldSlot)
      {
       theField->pattern = thePattern;
-      if (theIndex > 0) theField->index = theIndex;
+      if ((theIndex > 0) && (theIndex != NO_INDEX))
+         { theField->index = theIndex; }
       theField->slot = theSlot;
       theField->slotNumber = theSlotNumber;
 
@@ -1764,7 +1763,8 @@ static void PropagateIndexSlotPatternValues(
       for (andField = theField; andField != NULL; andField = andField->right)
         {
          andField->pattern = thePattern;
-         if (theIndex > 0) andField->index = theIndex;
+         if ((theIndex > 0) && (theIndex != NO_INDEX))
+           { andField->index = theIndex; }
          andField->slot = theSlot;
          andField->slotNumber = theSlotNumber;
         }
@@ -1799,7 +1799,7 @@ void AssignPatternMarkedFlag(
 /*****************************************************************/
 static void PropagateJoinDepth(
   struct lhsParseNode *theField,
-  short joinDepth)
+  unsigned short joinDepth)
   {
    while (theField != NULL)
      {
@@ -1840,9 +1840,9 @@ static void PropagateNandDepth(
 /* PropagateWhichCE: Recursively assigns */
 /*   an index indicating the user CE.    */
 /*****************************************/
-static int PropagateWhichCE(
+static unsigned short PropagateWhichCE(
   struct lhsParseNode *theField,
-  int whichCE)
+  unsigned short whichCE)
   {
    while (theField != NULL)
      {
@@ -2015,9 +2015,9 @@ static void PrintNodes(
            if (theNode->negated) PrintString(theEnv,fileid,"n");
            if (theNode->exists) PrintString(theEnv,fileid,"x");
            if (theNode->logical) PrintString(theEnv,fileid,"l");
-           PrintInteger(theEnv,fileid,(long long) theNode->beginNandDepth);
+           PrintUnsignedInteger(theEnv,fileid,theNode->beginNandDepth);
            PrintString(theEnv,fileid,"-");
-           PrintInteger(theEnv,fileid,(long long) theNode->endNandDepth);
+           PrintUnsignedInteger(theEnv,fileid,theNode->endNandDepth);
            PrintString(theEnv,fileid," ");
            PrintString(theEnv,fileid,ValueToString(theNode->right->bottom->value));
            PrintString(theEnv,fileid,")");
@@ -2025,9 +2025,9 @@ static void PrintNodes(
 
          case TEST_CE:
            PrintString(theEnv,fileid,"(test ");
-           PrintInteger(theEnv,fileid,(long long) theNode->beginNandDepth);
+           PrintUnsignedInteger(theEnv,fileid,theNode->beginNandDepth);
            PrintString(theEnv,fileid,"-");
-           PrintInteger(theEnv,fileid,(long long) theNode->endNandDepth);
+           PrintUnsignedInteger(theEnv,fileid,theNode->endNandDepth);
            PrintString(theEnv,fileid,")");
            break;
 

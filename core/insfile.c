@@ -107,14 +107,14 @@
    ***************************************** */
 struct bsaveSlotValue
   {
-   long slotName;
-   unsigned valueCount;
+   unsigned long slotName;
+   unsigned long valueCount;
   };
 
 struct bsaveSlotValueAtom
   {
    unsigned short type;
-   long value;
+   unsigned long value;
   };
 
 struct classItem
@@ -141,7 +141,7 @@ struct classItem
 #if BSAVE_INSTANCES
    static void                    WriteBinaryHeader(Environment *,FILE *);
    static void                    MarkSingleInstance(Environment *,FILE *,Instance *);
-   static void                    MarkNeededAtom(Environment *,int,void *);
+   static void                    MarkNeededAtom(Environment *,unsigned short,void *);
    static void                    SaveSingleInstanceBinary(Environment *,FILE *,Instance *);
    static void                    SaveAtomBinary(Environment *,unsigned short,void *,FILE *);
 #endif
@@ -275,14 +275,14 @@ long LoadInstances(
 long LoadInstancesFromString(
   Environment *theEnv,
   const char *theString,
-  long theMax)
+  size_t theMax)
   {
    long theCount;
    const char * theStrRouter = "*** load-instances-from-string ***";
 
-   if ((theMax == -1) ? (! OpenStringSource(theEnv,theStrRouter,theString,0)) :
-                        (! OpenTextSource(theEnv,theStrRouter,theString,0,theMax)))
-     { return(-1L); }
+   if ((theMax == SIZE_MAX) ? (! OpenStringSource(theEnv,theStrRouter,theString,0)) :
+                              (! OpenTextSource(theEnv,theStrRouter,theString,0,theMax)))
+     { return -1; }
 
    theCount = LoadOrRestoreInstances(theEnv,theStrRouter,true,false);
 
@@ -349,14 +349,14 @@ long RestoreInstances(
 long RestoreInstancesFromString(
   Environment *theEnv,
   const char *theString,
-  long theMax)
+  size_t theMax)
   {
    long theCount;
    const char *theStrRouter = "*** load-instances-from-string ***";
 
-   if ((theMax == -1) ? (! OpenStringSource(theEnv,theStrRouter,theString,0)) :
-                        (! OpenTextSource(theEnv,theStrRouter,theString,0,(unsigned) theMax)))
-     { return(-1L); }
+   if ((theMax == SIZE_MAX) ? (! OpenStringSource(theEnv,theStrRouter,theString,0)) :
+                              (! OpenTextSource(theEnv,theStrRouter,theString,0,theMax)))
+     { return(-1); }
 
    theCount = LoadOrRestoreInstances(theEnv,theStrRouter,false,false);
 
@@ -410,21 +410,22 @@ long BinaryLoadInstances(
   const char *theFile)
   {
    long i,instanceCount;
+   GCBlock gcb;
 
    if (GenOpenReadBinary(theEnv,"bload-instances",theFile) == 0)
      {
       OpenErrorMessage(theEnv,"bload-instances",theFile);
       SetEvaluationError(theEnv,true);
-      return(-1L);
+      return -1L;
      }
    if (VerifyBinaryHeader(theEnv,theFile) == false)
      {
       GenCloseBinary(theEnv);
       SetEvaluationError(theEnv,true);
-      return(-1L);
+      return -1L;
      }
 
-   IncrementGCLocks(theEnv);
+   GCBlockStart(theEnv,&gcb);
    ReadNeededAtomicValues(theEnv);
 
    InstanceFileData(theEnv)->BinaryInstanceFileOffset = 0L;
@@ -440,8 +441,8 @@ long BinaryLoadInstances(
          FreeAtomicValueStorage(theEnv);
          GenCloseBinary(theEnv);
          SetEvaluationError(theEnv,true);
-         DecrementGCLocks(theEnv);
-         return(i);
+         GCBlockEnd(theEnv,&gcb);
+         return i;
         }
      }
 
@@ -449,8 +450,8 @@ long BinaryLoadInstances(
    FreeAtomicValueStorage(theEnv);
    GenCloseBinary(theEnv);
 
-   DecrementGCLocks(theEnv);
-   return(instanceCount);
+   GCBlockEnd(theEnv,&gcb);
+   return instanceCount;
   }
 
 #endif
@@ -673,7 +674,7 @@ static long InstancesSaveCommandParser(
   {
    const char *fileFound;
    UDFValue temp;
-   int argCount;
+   unsigned int argCount;
    SaveScope saveCode = LOCAL_SAVE;
    Expression *classList = NULL;
    bool inheritFlag = false;
@@ -750,7 +751,7 @@ static struct classItem *ProcessSaveClassList(
    UDFValue tmp;
    Defclass *theDefclass;
    Defmodule *currentModule;
-   int argIndex = inheritFlag ? 4 : 3;
+   unsigned int argIndex = inheritFlag ? 4 : 3;
 
    currentModule = GetCurrentModule(theEnv);
    while (classExps != NULL)
@@ -943,7 +944,7 @@ static long SaveOrMarkInstancesOfClass(
   {
    Instance *theInstance;
    Defclass *subclass;
-   long i;
+   unsigned long i;
    long instanceCount = 0L;
 
    if (TestTraversalID(theDefclass->traversalRecord,traversalID))
@@ -1006,13 +1007,13 @@ static void SaveSingleInstanceText(
       if (sp->type != MULTIFIELD_TYPE)
         {
          PrintString(theEnv,logicalName," ");
-         PrintAtom(theEnv,logicalName,(int) sp->type,sp->value);
+         PrintAtom(theEnv,logicalName,sp->type,sp->value);
         }
       else if (sp->multifieldValue->length != 0)
         {
          PrintString(theEnv,logicalName," ");
          PrintMultifieldDriver(theEnv,logicalName,sp->multifieldValue,0,
-                               (long) (sp->multifieldValue->length - 1),false);
+                               sp->multifieldValue->length,false);
         }
       PrintString(theEnv,logicalName,")");
      }
@@ -1060,14 +1061,14 @@ static void MarkSingleInstance(
 #pragma unused(theOutput)
 #endif
    InstanceSlot *sp;
-   long i;
+   unsigned int i;
    size_t j;
 
-   InstanceFileData(theEnv)->BinaryInstanceFileSize += (unsigned long) (sizeof(long) * 2);
+   InstanceFileData(theEnv)->BinaryInstanceFileSize += (sizeof(long) * 2);
    theInstance->name->neededSymbol = true;
    theInstance->cls->header.name->neededSymbol = true;
    InstanceFileData(theEnv)->BinaryInstanceFileSize +=
-       (unsigned long) ((sizeof(long) * 2) +
+                       ((sizeof(long) * 2) +
                         (sizeof(struct bsaveSlotValue) *
                          theInstance->cls->instanceSlotCount) +
                         sizeof(unsigned long) +
@@ -1083,7 +1084,7 @@ static void MarkSingleInstance(
                                  sp->multifieldValue->contents[j].value);
         }
       else
-        MarkNeededAtom(theEnv,(int) sp->type,sp->value);
+        MarkNeededAtom(theEnv,sp->type,sp->value);
      }
   }
 
@@ -1099,10 +1100,10 @@ static void MarkSingleInstance(
  ***************************************************/
 static void MarkNeededAtom(
   Environment *theEnv,
-  int type,
+  unsigned short type,
   void *value)
   {
-   InstanceFileData(theEnv)->BinaryInstanceFileSize += (unsigned long) sizeof(struct bsaveSlotValueAtom);
+   InstanceFileData(theEnv)->BinaryInstanceFileSize += sizeof(struct bsaveSlotValueAtom);
 
    /* =====================================
       Assumes slot value atoms  can only be
@@ -1143,34 +1144,39 @@ static void SaveSingleInstanceBinary(
   FILE *bsaveFP,
   Instance *theInstance)
   {
-   long nameIndex;
-   long i,j;
+   unsigned long nameIndex;
+   unsigned long i;
+   size_t j;
    InstanceSlot *sp;
    struct bsaveSlotValue bs;
-   long totalValueCount = 0L;
-   long slotLen;
+   unsigned long totalValueCount = 0;
+   size_t slotLen;
 
-   /* ===========================
-      Write out the instance name
-      =========================== */
-   nameIndex = (long) theInstance->name->bucket;
-   fwrite(&nameIndex,(int) sizeof(long),1,bsaveFP);
+   /*==============================*/
+   /* Write out the instance name. */
+   /*==============================*/
+   
+   nameIndex = theInstance->name->bucket;
+   fwrite(&nameIndex,sizeof(unsigned long),1,bsaveFP);
 
-   /* ========================
-      Write out the class name
-      ======================== */
-   nameIndex = (long) theInstance->cls->header.name->bucket;
-   fwrite(&nameIndex,(int) sizeof(long),1,bsaveFP);
+   /*===========================*/
+   /* Write out the class name. */
+   /*===========================*/
+   
+   nameIndex = theInstance->cls->header.name->bucket;
+   fwrite(&nameIndex,sizeof(unsigned long),1,bsaveFP);
 
-   /* ======================================
-      Write out the number of slot-overrides
-      ====================================== */
+   /*=========================================*/
+   /* Write out the number of slot-overrides. */
+   /*=========================================*/
+   
    fwrite(&theInstance->cls->instanceSlotCount,
-          (int) sizeof(short),1,bsaveFP);
+          sizeof(short),1,bsaveFP);
 
-   /* =========================================
-      Write out the slot names and value counts
-      ========================================= */
+   /*============================================*/
+   /* Write out the slot names and value counts. */
+   /*============================================*/
+   
    for (i = 0 ; i < theInstance->cls->instanceSlotCount ; i++)
      {
       sp = theInstance->slotAddresses[i];
@@ -1178,10 +1184,10 @@ static void SaveSingleInstanceBinary(
       /* ===============================================
          Write out the number of atoms in the slot value
          =============================================== */
-      bs.slotName = (long) sp->desc->slotName->name->bucket;
+      bs.slotName = sp->desc->slotName->name->bucket;
       bs.valueCount = sp->desc->multiple ? sp->multifieldValue->length : 1;
-      fwrite(&bs,(int) sizeof(struct bsaveSlotValue),1,bsaveFP);
-      totalValueCount += (unsigned long) bs.valueCount;
+      fwrite(&bs,sizeof(struct bsaveSlotValue),1,bsaveFP);
+      totalValueCount += bs.valueCount;
      }
 
    /* ==================================
@@ -1189,7 +1195,7 @@ static void SaveSingleInstanceBinary(
       atoms for the whole instance
       ================================== */
    if (theInstance->cls->instanceSlotCount != 0) // (totalValueCount != 0L) : Bug fix if any slots, write out count
-     fwrite(&totalValueCount,(int) sizeof(unsigned long),1,bsaveFP);
+     fwrite(&totalValueCount,sizeof(unsigned long),1,bsaveFP);
 
    /* ==============================
       Write out the slot value atoms
@@ -1209,7 +1215,7 @@ static void SaveSingleInstanceBinary(
                                  sp->multifieldValue->contents[j].value,bsaveFP);
         }
       else
-        SaveAtomBinary(theEnv,(unsigned short) sp->type,sp->value,bsaveFP);
+        SaveAtomBinary(theEnv,sp->type,sp->value,bsaveFP);
      }
   }
 
@@ -1244,22 +1250,23 @@ static void SaveAtomBinary(
       case SYMBOL_TYPE:
       case STRING_TYPE:
       case INSTANCE_NAME_TYPE:
-         bsa.value = (long) ((CLIPSLexeme *) value)->bucket;
+         bsa.value = ((CLIPSLexeme *) value)->bucket;
          break;
       case FLOAT_TYPE:
-         bsa.value = (long) ((CLIPSFloat *) value)->bucket;
+         bsa.value = ((CLIPSFloat *) value)->bucket;
          break;
       case INTEGER_TYPE:
-         bsa.value = (long) ((CLIPSInteger *) value)->bucket;
+         bsa.value = ((CLIPSInteger *) value)->bucket;
          break;
       case INSTANCE_ADDRESS_TYPE:
          bsa.type = INSTANCE_NAME_TYPE;
-         bsa.value = (long) GetFullInstanceName(theEnv,(Instance *) value)->bucket;
+         bsa.value = GetFullInstanceName(theEnv,(Instance *) value)->bucket;
          break;
       default:
-         bsa.value = -1L;
+         bsa.value = ULONG_MAX;
      }
-   fwrite(&bsa,(int) sizeof(struct bsaveSlotValueAtom),1,bsaveFP);
+     
+   fwrite(&bsa,sizeof(struct bsaveSlotValueAtom),1,bsaveFP);
   }
 
 #endif
@@ -1391,7 +1398,7 @@ static bool VerifyBinaryHeader(
   {
    char buf[20];
 
-   GenReadBinary(theEnv,buf,(unsigned long) (strlen(InstanceFileData(theEnv)->InstanceBinaryPrefixID) + 1));
+   GenReadBinary(theEnv,buf,(strlen(InstanceFileData(theEnv)->InstanceBinaryPrefixID) + 1));
    if (strcmp(buf,InstanceFileData(theEnv)->InstanceBinaryPrefixID) != 0)
      {
       PrintErrorID(theEnv,"INSFILE",2,false);
@@ -1399,7 +1406,7 @@ static bool VerifyBinaryHeader(
       PrintString(theEnv,WERROR," file is not a binary instances file.\n");
       return false;
      }
-   GenReadBinary(theEnv,buf,(unsigned long) (strlen(InstanceFileData(theEnv)->InstanceBinaryVersionID) + 1));
+   GenReadBinary(theEnv,buf,(strlen(InstanceFileData(theEnv)->InstanceBinaryVersionID) + 1));
    if (strcmp(buf,InstanceFileData(theEnv)->InstanceBinaryVersionID) != 0)
      {
       PrintErrorID(theEnv,"INSFILE",3,false);
@@ -1427,7 +1434,7 @@ static bool LoadSingleBinaryInstance(
   {
    CLIPSLexeme *instanceName,
              *className;
-   short slotCount;
+   unsigned short slotCount;
    Defclass *theDefclass;
    Instance *newInstance;
    struct bsaveSlotValue *bsArray;
@@ -1453,7 +1460,7 @@ static bool LoadSingleBinaryInstance(
    /* ==================
       Get the slot count
       ================== */
-   BufferedRead(theEnv,&slotCount,(unsigned long) sizeof(short));
+   BufferedRead(theEnv,&slotCount,(unsigned long) sizeof(unsigned short));
 
    /* =============================
       Make sure the defclass exists
@@ -1495,7 +1502,7 @@ static bool LoadSingleBinaryInstance(
    if (totalValueCount != 0L)
      {
       bsaArray = (struct bsaveSlotValueAtom *)
-                  gm2(theEnv,(long) (totalValueCount * sizeof(struct bsaveSlotValueAtom)));
+                  gm2(theEnv,(totalValueCount * sizeof(struct bsaveSlotValueAtom)));
       BufferedRead(theEnv,bsaArray,
                    (unsigned long) (totalValueCount * sizeof(struct bsaveSlotValueAtom)));
      }
@@ -1526,8 +1533,7 @@ static bool LoadSingleBinaryInstance(
    rm(theEnv,bsArray,(sizeof(struct bsaveSlotValue) * slotCount));
 
    if (totalValueCount != 0L)
-     rm(theEnv,bsaArray,
-         (long) (totalValueCount * sizeof(struct bsaveSlotValueAtom)));
+     rm(theEnv,bsaArray,(totalValueCount * sizeof(struct bsaveSlotValueAtom)));
 
    return true;
 
@@ -1535,8 +1541,7 @@ LoadError:
    BinaryLoadInstanceError(theEnv,instanceName,theDefclass);
    QuashInstance(theEnv,newInstance);
    rm(theEnv,bsArray,(sizeof(struct bsaveSlotValue) * slotCount));
-   rm(theEnv,bsaArray,
-       (long) (totalValueCount * sizeof(struct bsaveSlotValueAtom)));
+   rm(theEnv,bsaArray,(totalValueCount * sizeof(struct bsaveSlotValueAtom)));
    return false;
   }
 
@@ -1627,18 +1632,22 @@ static void *GetBinaryAtomValue(
       case STRING_TYPE:
       case INSTANCE_NAME_TYPE:
          return((void *) SymbolPointer(ba->value));
+         
       case FLOAT_TYPE:
          return((void *) FloatPointer(ba->value));
+         
       case INTEGER_TYPE:
          return((void *) IntegerPointer(ba->value));
+         
       case FACT_ADDRESS_TYPE:
 #if DEFTEMPLATE_CONSTRUCT && DEFRULE_CONSTRUCT
          return((void *) &FactData(theEnv)->DummyFact);
 #else
          return NULL;
 #endif
+
       case EXTERNAL_ADDRESS_TYPE:
-        return NULL; // TBD Null Pointer Constant?
+        return NULL;
 
       default:
         {

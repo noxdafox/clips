@@ -107,7 +107,7 @@
 /****************/
 /* moduleIndex: */
 /****************/
-- (int) moduleIndex
+- (NSInteger) moduleIndex
   {
    return moduleIndex;
   }
@@ -115,7 +115,7 @@
 /*******************/
 /* setModuleIndex: */
 /*******************/
-- (void) setModuleIndex: (int) theModule
+- (void) setModuleIndex: (NSInteger) theModule
   {
    moduleIndex = theModule;
    [self rearrangeObjects];

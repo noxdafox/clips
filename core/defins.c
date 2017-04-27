@@ -122,8 +122,6 @@
    static CLIPSLexeme            *ParseDefinstancesName(Environment *,const char *,bool *);
    static void                    RemoveDefinstances(Environment *,Definstances *);
    static void                    SaveDefinstances(Environment *,Defmodule *,const char *,void *);
-   static bool                    RemoveAllDefinstances(Environment *);
-   static void                    DefinstancesDeleteError(Environment *,const char *);
 #endif
 
 #if ! RUN_TIME
@@ -441,34 +439,18 @@ bool Undefinstances(
   Definstances *theDefinstances,
   Environment *allEnv)
   {
-#if RUN_TIME || BLOAD_ONLY
-#if MAC_XCD
-#pragma unused(allEnv,theDefinstances)
-#endif
-   return false;
-#else
    Environment *theEnv;
    
    if (theDefinstances == NULL)
-     { theEnv = allEnv; }
+     {
+      theEnv = allEnv;
+      return Undefconstruct(theEnv,NULL,DefinstancesData(theEnv)->DefinstancesConstruct);
+     }
    else
-     { theEnv = theDefinstances->header.env; }
-
-#if BLOAD || BLOAD_AND_BSAVE
-   if (Bloaded(theEnv))
-     return false;
-#endif
-   if (theDefinstances == NULL)
-     { return RemoveAllDefinstances(theEnv); }
-
-   if (DefinstancesIsDeletable(theDefinstances) == false)
-     { return false; }
-
-   RemoveConstructFromModule(theEnv,&theDefinstances->header);
-   RemoveDefinstances(theEnv,theDefinstances);
-
-   return true;
-#endif
+     {
+      theEnv = theDefinstances->header.env;
+      return Undefconstruct(theEnv,&theDefinstances->header,DefinstancesData(theEnv)->DefinstancesConstruct);
+     }
   }
 
 #if DEBUGGING_FUNCTIONS
@@ -758,7 +740,7 @@ static void RemoveDefinstances(
   Environment *theEnv,
   Definstances *theDefinstances)
   {
-   DecrementLexemeReferenceCount(theEnv,GetDefinstancesNamePointer(theEnv,theDefinstances));
+   DecrementLexemeReferenceCount(theEnv,theDefinstances->header.name);
    ExpressionDeinstall(theEnv,theDefinstances->mkinstance);
    ReturnPackedExpression(theEnv,theDefinstances->mkinstance);
    SetDefinstancesPPForm(theEnv,theDefinstances,NULL);
@@ -782,62 +764,6 @@ static void SaveDefinstances(
   void *context)
   {
    SaveConstruct(theEnv,theModule,logName,DefinstancesData(theEnv)->DefinstancesConstruct);
-  }
-
-/***************************************************
-  NAME         : RemoveAllDefinstances
-  DESCRIPTION  : Removes all definstances constructs
-  INPUTS       : None
-  RETURNS      : True if successful,
-                 false otherwise
-  SIDE EFFECTS : All definstances deallocated
-  NOTES        : None
- ***************************************************/
-static bool RemoveAllDefinstances(
-  Environment *theEnv)
-  {
-   Definstances *dptr,*dhead;
-   bool success = true;
-
-#if BLOAD || BLOAD_AND_BSAVE
-
-   if (Bloaded(theEnv))
-     return false;
-#endif
-  dhead = GetNextDefinstances(theEnv,NULL);
-  while (dhead != NULL)
-    {
-     dptr = dhead;
-     dhead = GetNextDefinstances(theEnv,dhead);
-     if (DefinstancesIsDeletable(dptr))
-       {
-        RemoveConstructFromModule(theEnv,&dptr->header);
-        RemoveDefinstances(theEnv,dptr);
-       }
-     else
-       {
-        DefinstancesDeleteError(theEnv,DefinstancesName(dptr));
-        success = false;
-       }
-    }
-   return(success);
-  }
-
-/***************************************************
-  NAME         : DefinstancesDeleteError
-  DESCRIPTION  : Prints an error message for
-                 unsuccessful definstances
-                 deletion attempts
-  INPUTS       : The name of the definstances
-  RETURNS      : Nothing useful
-  SIDE EFFECTS : Error message printed
-  NOTES        : None
- ***************************************************/
-static void DefinstancesDeleteError(
-  Environment *theEnv,
-  const char *dname)
-  {
-   CantDeleteItemErrorMessage(theEnv,"definstances",dname);
   }
 
 #endif

@@ -42,7 +42,6 @@
 #include <ctype.h>
 #include <stdio.h>
 #include <string.h>
-#include <limits.h>
 #include <errno.h>
 #include <stdlib.h>
 
@@ -201,7 +200,7 @@ void GetToken(
              theToken->tknType = SF_VARIABLE_TOKEN;
 #if DEFGLOBAL_CONSTRUCT
              if ((theToken->lexemeValue->contents[0] == '*') &&
-                 (((int) strlen(theToken->lexemeValue->contents)) > 1) &&
+                 ((strlen(theToken->lexemeValue->contents)) > 1) &&
                  (theToken->lexemeValue->contents[strlen(theToken->lexemeValue->contents) - 1] == '*'))
                {
                 size_t count;
@@ -247,7 +246,7 @@ void GetToken(
                theToken->tknType = MF_VARIABLE_TOKEN;
 #if DEFGLOBAL_CONSTRUCT
              if ((theToken->lexemeValue->contents[0] == '*') &&
-                 ((int) (strlen(theToken->lexemeValue->contents)) > 1) &&
+                 (strlen(theToken->lexemeValue->contents) > 1) &&
                  (theToken->lexemeValue->contents[strlen(theToken->lexemeValue->contents) - 1] == '*'))
                {
                 size_t count;

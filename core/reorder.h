@@ -89,6 +89,9 @@ typedef enum
    UNKNOWN_NODE
   } ParseNodeType;
 
+#define UNSPECIFIED_SLOT USHRT_MAX
+#define NO_INDEX USHRT_MAX
+
 /***********************************************************************/
 /* lhsParseNode structure: Stores information about the intermediate   */
 /*   parsed representation of the lhs of a rule.                       */
@@ -121,12 +124,12 @@ struct lhsParseNode
    struct lhsParseNode *referringNode;
    struct patternParser *patternType;
    short pattern;
-   short index;
+   unsigned short index; // TBD is this 1 or 0 based?
    CLIPSLexeme *slot;
-   short slotNumber;
+   unsigned short slotNumber; // TBD 1 or 0 based?
    int beginNandDepth;
    int endNandDepth;
-   int joinDepth;
+   unsigned short joinDepth;
    struct expr *networkTest;
    struct expr *externalNetworkTest;
    struct expr *secondaryNetworkTest;

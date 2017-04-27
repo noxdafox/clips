@@ -159,7 +159,6 @@ struct utilityData
   {
    struct voidCallFunctionItem *ListOfCleanupFunctions;
    struct voidCallFunctionItem *ListOfPeriodicFunctions;
-   short GarbageCollectionLocks;
    bool PeriodicFunctionsEnabled;
    bool YieldFunctionEnabled;
    void (*YieldTimeFunction)(void);
@@ -210,8 +209,6 @@ struct utilityData
    BoolCallFunctionItem          *GetBoolFunctionFromCallList(Environment *,const char *,BoolCallFunctionItem *);
    unsigned long                  ItemHashValue(Environment *,unsigned short,void *,unsigned long);
    void                           YieldTime(Environment *);
-   void                           IncrementGCLocks(Environment *);
-   void                           DecrementGCLocks(Environment *);
    bool                           EnablePeriodicFunctions(Environment *,bool);
    bool                           EnableYieldFunction(Environment *,bool);
    struct trackedMemory          *AddTrackedMemory(Environment *,void *,size_t);

@@ -105,7 +105,7 @@ void EqFunction(
   UDFValue *returnValue)
   {
    UDFValue item, nextItem;
-   int numArgs, i;
+   unsigned int numArgs, i;
    struct expr *theExpression;
 
    /*====================================*/
@@ -178,7 +178,7 @@ void NeqFunction(
   UDFValue *returnValue)
   {
    UDFValue item, nextItem;
-   int numArgs, i;
+   unsigned int numArgs, i;
    struct expr *theExpression;
 
    /*====================================*/

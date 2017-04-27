@@ -169,10 +169,12 @@ void Send(
    bool error;
    Expression *iexp;
    CLIPSLexeme *msym;
+   // TBD GCBlock gcb;
    UDFValue result;
 
-   if ((UtilityData(theEnv)->CurrentGarbageFrame->topLevel) && (! CommandLineData(theEnv)->EvaluatingTopLevelCommand) &&
-       (EvaluationData(theEnv)->CurrentExpression == NULL) && (UtilityData(theEnv)->GarbageCollectionLocks == 0))
+   if ((UtilityData(theEnv)->CurrentGarbageFrame->topLevel) &&
+       (! CommandLineData(theEnv)->EvaluatingTopLevelCommand) &&
+       (EvaluationData(theEnv)->CurrentExpression == NULL))
      {
       CleanCurrentGarbageFrame(theEnv,NULL);
       CallPeriodicTasks(theEnv);
@@ -182,6 +184,7 @@ void Send(
 
    if (returnValue != NULL)
      { returnValue->value = FalseSymbol(theEnv); }
+     
    msym = FindSymbolHN(theEnv,msg,SYMBOL_BIT);
    if (msym == NULL)
      {
@@ -189,6 +192,7 @@ void Send(
       SetEvaluationError(theEnv,true);
       return;
      }
+     
    iexp = GenConstant(theEnv,idata->header->type,idata->value);
    iexp->nextArg = ParseConstantArguments(theEnv,args,&error);
    if (error == true)
@@ -197,11 +201,15 @@ void Send(
       SetEvaluationError(theEnv,true);
       return;
      }
+     
    PerformMessage(theEnv,&result,iexp,msym);
-   NormalizeMultifield(theEnv,&result);
-   if (returnValue != NULL)
-     { returnValue->value = result.value; }
    ReturnExpression(theEnv,iexp);
+   
+   if (returnValue != NULL)
+     {
+      NormalizeMultifield(theEnv,&result);
+      returnValue->value = result.value;
+     }
   }
 
 /*****************************************************
@@ -569,7 +577,7 @@ HANDLER_LINK *JoinHandlerLinks(
 
    bots[MPRIMARY]->nxt = tops[MAFTER];
 
-   return(mlink);
+   return mlink;
   }
 
 /***************************************************
@@ -819,7 +827,7 @@ bool HandlerSlotPutFunction(
       ====================================== */
    if (GetFirstArgument())
      {
-      if (EvaluateAndStoreInDataObject(theEnv,(int) sp->desc->multiple,
+      if (EvaluateAndStoreInDataObject(theEnv,sp->desc->multiple,
                                        GetFirstArgument(),&theSetVal,true) == false)
          goto HandlerPutError2;
      }
@@ -946,7 +954,7 @@ void DynamicHandlerPutSlot(
      }
    if (GetFirstArgument()->nextArg)
      {
-      if (EvaluateAndStoreInDataObject(theEnv,(int) sp->desc->multiple,
+      if (EvaluateAndStoreInDataObject(theEnv,sp->desc->multiple,
                         GetFirstArgument()->nextArg,&temp,true) == false)
         return;
      }
@@ -1206,7 +1214,7 @@ static HANDLER_LINK *FindApplicableHandlers(
   Defclass *cls,
   CLIPSLexeme *mname)
   {
-   int i;
+   unsigned int i;
    HANDLER_LINK *tops[4],*bots[4];
 
    for (i = MAROUND ; i <= MAFTER ; i++)

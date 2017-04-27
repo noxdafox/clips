@@ -106,10 +106,10 @@
    static struct expr            *ParseRuleRHS(Environment *,const char *);
    static int                     ReplaceRHSVariable(Environment *,struct expr *,void *);
    static Defrule                *ProcessRuleLHS(Environment *,struct lhsParseNode *,struct expr *,CLIPSLexeme *,bool *);
-   static Defrule                *CreateNewDisjunct(Environment *,CLIPSLexeme *,int,struct expr *,
-                                                    int,unsigned,struct joinNode *);
-   static int                     RuleComplexity(Environment *,struct lhsParseNode *);
-   static int                     ExpressionComplexity(Environment *,struct expr *);
+   static Defrule                *CreateNewDisjunct(Environment *,CLIPSLexeme *,unsigned short,struct expr *,
+                                                    unsigned int,unsigned,struct joinNode *);
+   static unsigned short          RuleComplexity(Environment *,struct lhsParseNode *);
+   static unsigned short          ExpressionComplexity(Environment *,struct expr *);
    static int                     LogicalAnalysis(Environment *,struct lhsParseNode *);
    static void                    AddToDefruleList(Defrule *);
 #endif
@@ -304,8 +304,8 @@ static Defrule *ProcessRuleLHS(
    Defrule *topDisjunct = NULL, *currentDisjunct, *lastDisjunct = NULL;
    struct expr *newActions, *packPtr;
    int logicalJoin;
-   int localVarCnt;
-   int complexity;
+   unsigned short localVarCnt;
+   unsigned short complexity;
    struct joinNode *lastJoin;
    bool emptyLHS;
 
@@ -494,9 +494,9 @@ static Defrule *ProcessRuleLHS(
 static Defrule *CreateNewDisjunct(
   Environment *theEnv,
   CLIPSLexeme *ruleName,
-  int localVarCnt,
+  unsigned short localVarCnt,
   struct expr *theActions,
-  int complexity,
+  unsigned int complexity,
   unsigned logicalJoin,
   struct joinNode *lastJoin)
   {
@@ -696,12 +696,12 @@ static struct expr *ParseRuleRHS(
 /* RuleComplexity: Returns the complexity of a rule for use */
 /*   by the LEX and MEA conflict resolution strategies.     */
 /************************************************************/
-static int RuleComplexity(
+static unsigned short RuleComplexity(
   Environment *theEnv,
   struct lhsParseNode *theLHS)
   {
    struct lhsParseNode *thePattern, *tempPattern;
-   int complexity = 0;
+   unsigned short complexity = 0;
 
    while (theLHS != NULL)
      {
@@ -726,17 +726,17 @@ static int RuleComplexity(
       theLHS = theLHS->bottom;
      }
 
-   return(complexity);
+   return complexity;
   }
 
 /********************************************************************/
 /* ExpressionComplexity: Determines the complexity of a expression. */
 /********************************************************************/
-static int ExpressionComplexity(
+static unsigned short ExpressionComplexity(
   Environment *theEnv,
   struct expr *exprPtr)
   {
-   int complexity = 0;
+   unsigned short complexity = 0;
 
    while (exprPtr != NULL)
      {
@@ -767,7 +767,7 @@ static int ExpressionComplexity(
       exprPtr = exprPtr->nextArg;
      }
 
-   return(complexity);
+   return complexity;
   }
 
 /********************************************/
