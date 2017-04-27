@@ -41,6 +41,8 @@ static void CLIPSCPPExit(Environment *,int,void *);
 static Value *ConvertSingleFieldValue(Environment *,int,void *);
 static DataObject ConvertDataObject(Environment *,CLIPSValue *);
 
+static void CLIPSCPPPeriodicCallback(Environment *,void *);
+
 /*#####################*/
 /* CLIPSCPPEnv Methods */
 /*#####################*/
@@ -485,6 +487,49 @@ bool CLIPSCPPEnv::DeleteRouter(
    return __DeleteRouter(theEnv,routerName);
 #endif
   }
+    
+/***********************/
+/* AddPeriodicFunction */
+/***********************/
+bool CLIPSCPPEnv::AddPeriodicFunction(
+  char *periodicFunctionName,
+  int priority,
+  CLIPSCPPPeriodicFunction *periodicFunction)
+  {
+#ifndef CLIPS_DLL_WRAPPER
+   return ::AddPeriodicFunction(theEnv,periodicFunctionName,CLIPSCPPPeriodicCallback,
+                                priority,periodicFunction);
+#else
+   return __AddPeriodicFunction(theEnv,periodicFunctionName,CLIPSCPPPeriodicCallback,
+                                priority,periodicFunction);
+#endif
+  }
+
+/**************************/
+/* RemovePeriodicFunction */
+/**************************/
+bool CLIPSCPPEnv::RemovePeriodicFunction(
+  char *periodicFunctionName)
+  {
+#ifndef CLIPS_DLL_WRAPPER
+   return ::RemovePeriodicFunction(theEnv,periodicFunctionName);
+#else
+   return __RemovePeriodicFunction(theEnv,periodicFunctionName);
+#endif
+  }
+  
+/***************************/
+/* EnablePeriodicFunctions */
+/***************************/
+bool CLIPSCPPEnv::EnablePeriodicFunctions(
+  bool value)
+  {
+#ifndef CLIPS_DLL_WRAPPER
+   return ::EnablePeriodicFunctions(theEnv,value);
+#else
+   return __EnablePeriodicFunctions(theEnv,value);
+#endif
+  }
 
 /********************/
 /* InputBufferCount */
@@ -548,6 +593,18 @@ void CLIPSCPPEnv::AppendToDribble(
 #else
    __AppendDribble(theEnv,command);
 #endif
+  }
+
+/*##################################*/
+/* CLIPSCPPPeriodicFunction Methods */
+/*##################################*/
+
+/************/
+/* Callback */
+/************/
+void CLIPSCPPPeriodicFunction::Callback(
+  CLIPSCPPEnv *theCPPEnv)
+  { 
   }
 
 /*########################*/
@@ -1572,6 +1629,25 @@ std::ostream& MultifieldValue::print (std::ostream& o) const
 MultifieldValue *MultifieldValue::clone() const
   { 
    return new MultifieldValue(*this); 
+  }
+
+/*###################################*/
+/* Static PeriodicFunction Functions */
+/*###################################*/
+
+static void CLIPSCPPPeriodicCallback(
+  Environment *theEnv,
+  void *context)
+  {
+#ifndef CLIPS_DLL_WRAPPER
+   CLIPSCPPPeriodicFunction *thePF = (CLIPSCPPPeriodicFunction *) context;
+   CLIPSCPPEnv *theCPPEnv = (CLIPSCPPEnv *) GetEnvironmentContext(theEnv);
+#else
+   CLIPSCPPPeriodicFunction *thePF = (CLIPSCPPPeriodicFunction *) context;
+   CLIPSCPPEnv *theCPPEnv = (CLIPSCPPEnv *) __GetEnvironmentContext(theEnv);
+#endif
+   
+   thePF->Callback(theCPPEnv);
   }
 
 /*#########################*/

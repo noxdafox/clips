@@ -328,6 +328,7 @@
     <ClCompile Include="Source\Integration\CLIPSCLRAssemblyInfo.cpp" />
     <ClCompile Include="Source\Integration\clipscpplib.cpp" />
     <ClCompile Include="Source\Integration\CLIPSNET_Environment.cpp" />
+    <ClCompile Include="Source\Integration\CLIPSNET_PeriodicCallback.cpp" />
     <ClCompile Include="Source\Integration\CLIPSNET_Router.cpp" />
     <ClCompile Include="Source\Integration\CLIPSNET_Values.cpp" />
   </ItemGroup>
@@ -507,6 +508,7 @@
     <ClInclude Include="Source\CLIPS\watch.h" />
     <ClInclude Include="Source\Integration\clipscpp.h" />
     <ClInclude Include="Source\Integration\CLIPSNET_Environment.h" />
+    <ClInclude Include="Source\Integration\CLIPSNET_PeriodicCallback.h" />
     <ClInclude Include="Source\Integration\CLIPSNET_Router.h" />
     <ClInclude Include="Source\Integration\CLIPSNET_Values.h" />
   </ItemGroup>

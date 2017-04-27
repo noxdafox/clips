@@ -22,11 +22,16 @@ using CLIPSNET;
 
 namespace CLIPSIDE
   {
-   /// <summary>
-   /// Interaction logic for CommandPromptTextArea.xaml
-   /// </summary>
+   public delegate void StartCommandDelegate();
+   public delegate void PeriodicCommandDelegate();
+   public delegate void FinishCommandDelegate();
+
    public partial class CommandPromptTextBox : RouterTextBox
      {
+      public event StartCommandDelegate StartCommandEvent;
+      public event PeriodicCommandDelegate PeriodicCommandEvent;
+      public event FinishCommandDelegate FinishCommandEvent;
+
       private CLIPSNET.Environment clips;
       private String executingCommand;
       private BackgroundWorker commandBackgroundWorker = new BackgroundWorker();
@@ -70,6 +75,36 @@ namespace CLIPSIDE
          commandHistory.Add("");
         }
           
+      /*****************************/
+      /* StartCommandDelegateCount */
+      /*****************************/
+      public int StartCommandDelegateCount()
+        {
+         if (StartCommandEvent == null) return 0;
+
+         return StartCommandEvent.GetInvocationList().Length;
+        }
+
+      /********************************/
+      /* PeriodicCommandDelegateCount */
+      /********************************/
+      public int PeriodicCommandDelegateCount()
+        {
+         if (PeriodicCommandEvent == null) return 0;
+
+         return PeriodicCommandEvent.GetInvocationList().Length;
+        }
+          
+      /******************************/
+      /* FinishCommandDelegateCount */
+      /******************************/
+      public int FinishCommandDelegateCount()
+        {
+         if (FinishCommandEvent == null) return 0;
+
+         return FinishCommandEvent.GetInvocationList().Length;
+        }
+
       /********************/
       /* OnPreviewKeyDown */
       /********************/
@@ -404,6 +439,14 @@ namespace CLIPSIDE
          return isExecuting;
         }
 
+      /******************/
+      /* GetEnvironment */
+      /******************/
+      public CLIPSNET.Environment GetEnvironment() 
+        {
+         return clips;
+        }
+
       /****************/
       /* SetExecuting */
       /****************/
@@ -420,7 +463,6 @@ namespace CLIPSIDE
         {
          clips.SetHaltRules(true);
         }
-
  
       /*****************/
       /* HaltExecution */
@@ -454,15 +496,21 @@ namespace CLIPSIDE
          */
         }
         
+      /******************/
+      /* PeriodicDoWork */
+      /******************/
+      private void PeriodicDoWork()
+        {
+         if (PeriodicCommandDelegateCount() != 0)
+           { PeriodicCommandEvent(); }
+        }
+
       /*****************/
       /* CommandDoWork */
       /*****************/
       private void CommandDoWork(object sender, DoWorkEventArgs e)
          {
           DoExecuteCommand(executingCommand);
-          //BackgroundWorker worker = sender as BackgroundWorker;
-
-          //RunExample(worker,e,autoEnv);
          }
          
       /************************/
@@ -476,6 +524,9 @@ namespace CLIPSIDE
             { /* Do Nothing */ }
 
           SetExecuting(false);
+
+         if (FinishCommandDelegateCount() != 0)
+           { FinishCommandEvent(); }
          }
 
       /******************/
@@ -491,6 +542,9 @@ namespace CLIPSIDE
          this.commandBackgroundWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(CommandDoWork);
          this.commandBackgroundWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(CommandWorkCompleted);
 
+         if (StartCommandDelegateCount() != 0)
+           { StartCommandEvent(); }
+         
          commandBackgroundWorker.RunWorkerAsync();
         }
 

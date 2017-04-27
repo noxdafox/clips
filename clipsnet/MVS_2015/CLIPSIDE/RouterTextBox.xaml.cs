@@ -444,8 +444,6 @@ namespace CLIPSIDE
            { this.CaretBrush =  new SolidColorBrush(Color.FromArgb(0, 0, 0, 0)); }
         } 
          
-
-
       /*********************/
       /* DumpOutputAction: */
       /*********************/

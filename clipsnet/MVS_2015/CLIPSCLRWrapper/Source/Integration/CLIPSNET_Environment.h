@@ -3,12 +3,27 @@
 #include "clipscpp.h"
 #include "CLIPSNET_Values.h"
 #include "CLIPSNET_Router.h"
+#include "CLIPSNET_PeriodicCallback.h"
 
 using namespace System;
 using namespace CLIPS;
 
 namespace CLIPSNET
   {
+   public delegate void PeriodicCallbackDelegate();
+
+   /*######################################*/
+   /* DelegatePeriodicCallback declaration */
+   /*######################################*/
+   ref class DelegatePeriodicCallback : PeriodicCallback
+     {
+      public:
+        DelegatePeriodicCallback();
+        void Callback (void) override;
+
+        event PeriodicCallbackDelegate ^ CallbackEvents;
+     };
+
    /*###################*/
    /* Environment class */
    /*###################*/
@@ -18,6 +33,8 @@ namespace CLIPSNET
       public:
         Environment();
         ~Environment();
+
+        event PeriodicCallbackDelegate ^ PeriodicCallbackEvent;
 
         void CommandLoop();
         long long Run();
@@ -38,6 +55,9 @@ namespace CLIPSNET
         PrimitiveValue ^ Eval(String ^);
         void AddRouter(String ^,int ,Router ^);
         void DeleteRouter(String ^);
+        void AddPeriodicCallback(String ^,int ,PeriodicCallback ^);
+        void RemovePeriodicCallback(String ^);
+        bool EnablePeriodicFunctions(bool);
         FactAddressValue ^ AssertString(String ^);
         size_t InputBufferCount();
         String ^ GetInputBuffer();

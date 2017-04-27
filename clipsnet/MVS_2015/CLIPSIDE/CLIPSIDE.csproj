@@ -114,6 +114,13 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="AgendaBrowser.xaml.cs">
+      <DependentUpon>AgendaBrowser.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ClosableTab.cs" />
+    <Compile Include="CloseableHeader.xaml.cs">
+      <DependentUpon>CloseableHeader.xaml</DependentUpon>
+    </Compile>
     <Compile Include="CommandPromptTextBox.xaml.cs">
       <DependentUpon>CommandPromptTextBox.xaml</DependentUpon>
     </Compile>
@@ -121,6 +128,14 @@
     <Compile Include="RouterTextBox.xaml.cs">
       <DependentUpon>RouterTextBox.xaml</DependentUpon>
     </Compile>
+    <Page Include="AgendaBrowser.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="CloseableHeader.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="CommandPromptTextBox.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -187,6 +202,9 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Themes\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

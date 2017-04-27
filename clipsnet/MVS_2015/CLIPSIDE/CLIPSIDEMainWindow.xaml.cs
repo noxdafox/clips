@@ -7,6 +7,8 @@ using Microsoft.Win32;
 using System.Windows.Threading;
 using System.ComponentModel;
 
+using CLIPSNET;
+
 namespace CLIPSIDE
   {
    public static class IDECommands
@@ -70,11 +72,51 @@ namespace CLIPSIDE
                              new InputGestureCollection()
                                { new KeyGesture(Key.H,ModifierKeys.Control | ModifierKeys.Shift) }
                             );
+
+      public static readonly RoutedCommand AgendaBrowser = 
+         new RoutedUICommand("AgendaBrowser",
+                             "AgendaBrowser", 
+                             typeof(IDECommands)
+                            );
+
+      public static readonly RoutedCommand FactBrowser = 
+         new RoutedUICommand("FactBrowser",
+                             "FactBrowser", 
+                             typeof(IDECommands)
+                            );
+
+      public static readonly RoutedCommand InstanceBrowser = 
+         new RoutedUICommand("InstanceBrowser",
+                             "InstanceBrowser", 
+                             typeof(IDECommands)
+                            );
      }
 
   public partial class MainWindow : Window
      {
+      private class IDEPeriodicCallback : PeriodicCallback
+        { 
+         MainWindow mw;
+
+         public IDEPeriodicCallback(
+           MainWindow theMW)
+           { 
+            mw = theMW; 
+           }
+
+         public override void Callback()
+           {
+            System.Console.WriteLine("Yea! Callback achieved!");
+
+            mw.dialog.GetEnvironment().EnablePeriodicFunctions(false);
+           }
+        }
+
       private IDEPreferences preferences;
+      private int agendaCount = 1;
+      private int factsCount = 1;
+      private int instancesCount = 1;
+      private int windowCount = 0;
 
       /**************/
       /* MainWindow */
@@ -91,8 +133,25 @@ namespace CLIPSIDE
            { this.SetCurrentDirectory(currentDirectory); }
          else
            { this.SetCurrentDirectory(Directory.GetCurrentDirectory()); }
+
+         IDEPeriodicCallback theCB = new IDEPeriodicCallback(this);
+
+         this.dialog.GetEnvironment().AddPeriodicCallback("IDECallback",0,theCB);
+         this.dialog.GetEnvironment().EnablePeriodicFunctions(true);
+
+         System.Windows.Threading.DispatcherTimer dispatcherTimer = new System.Windows.Threading.DispatcherTimer();
+
+         dispatcherTimer.Tick += IDEPeriodicTimer;
+         dispatcherTimer.Interval = TimeSpan.FromMilliseconds(100);
+         
+         dispatcherTimer.Start();
         }
-        
+
+      private void IDEPeriodicTimer(object sender, EventArgs e)
+        {
+         this.dialog.GetEnvironment().EnablePeriodicFunctions(true);
+        }
+
       /**********/
       /* OnLoad */
       /**********/
@@ -363,6 +422,113 @@ namespace CLIPSIDE
         ExecutedRoutedEventArgs e)
         {
          dialog.HaltExecution();
+        }
+
+      /****************************/
+      /* AgendaBrowser_CanExecute */
+      /****************************/
+      private void AgendaBrowser_CanExecute(
+        object sender, 
+        CanExecuteRoutedEventArgs e)
+        {
+         e.CanExecute = true;
+        }
+
+      /**************************/      
+      /* AgendaBrowser_Executed */
+      /**************************/      
+      private void AgendaBrowser_Executed(
+        object sender, 
+        ExecutedRoutedEventArgs e)
+        {
+         ClosableTab theTabItem = new ClosableTab();
+         theTabItem.Title = "Agenda #" + agendaCount++;
+         OpenTabItem(theTabItem);
+
+         AgendaBrowser theBrowser = new AgendaBrowser(this);
+         theTabItem.Content = theBrowser;
+        }
+
+      /**************************/
+      /* FactBrowser_CanExecute */
+      /**************************/
+      private void FactBrowser_CanExecute(
+        object sender, 
+        CanExecuteRoutedEventArgs e)
+        {
+         e.CanExecute = true;
+        }
+
+      /************************/      
+      /* FactBrowser_Executed */
+      /************************/      
+      private void FactBrowser_Executed(
+        object sender, 
+        ExecutedRoutedEventArgs e)
+        {
+         ClosableTab theTabItem = new ClosableTab();
+         theTabItem.Title = "Facts #" + factsCount++;
+         OpenTabItem(theTabItem);
+        }
+
+      /******************************/
+      /* InstanceBrowser_CanExecute */
+      /******************************/
+      private void InstanceBrowser_CanExecute(
+        object sender, 
+        CanExecuteRoutedEventArgs e)
+        {
+         e.CanExecute = true;
+        }
+
+      /****************************/      
+      /* InstanceBrowser_Executed */
+      /****************************/      
+      private void InstanceBrowser_Executed(
+        object sender, 
+        ExecutedRoutedEventArgs e)
+        {
+         ClosableTab theTabItem = new ClosableTab();
+         theTabItem.Title = "Instances #" + instancesCount++;
+         OpenTabItem(theTabItem);
+        }
+
+      /***************/
+      /* OpenTabItem */
+      /***************/
+      public void OpenTabItem(
+        ClosableTab theTabItem)
+        {
+         if (this.mainGrid.RowDefinitions[3].Height.Value == 0.0)
+           { 
+            this.mainGrid.RowDefinitions[1].Height = new GridLength(1,GridUnitType.Star);
+            this.mainGrid.RowDefinitions[3].Height = new GridLength(1,GridUnitType.Star); 
+           }
+
+         theTabItem.TabClosedEvent += new TabClosedDelegate(CloseTabItem);
+         this.debugTabControl.Items.Add(theTabItem);
+   
+         windowCount++;
+         theTabItem.Focus();
+        }
+        
+      /****************/
+      /* CloseTabItem */
+      /****************/
+      public void CloseTabItem(
+        ClosableTab theTabItem)
+        {
+         if (theTabItem.Content is AgendaBrowser)
+           { ((AgendaBrowser)  theTabItem.Content).DetachIDE(); }
+
+         windowCount--;
+
+         theTabItem.TabClosedEvent -= CloseTabItem;
+         if (windowCount == 0)
+           { 
+            this.mainGrid.RowDefinitions[3].Height = new GridLength(0); 
+            this.dialog.Focus();
+           }
         }
      }
   }

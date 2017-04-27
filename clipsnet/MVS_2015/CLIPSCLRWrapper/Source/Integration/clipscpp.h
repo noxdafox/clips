@@ -24,6 +24,8 @@ enum CLIPSCPPType
 
 class CLIPSCPPRouter;
 
+class CLIPSCPPPeriodicFunction;
+
 class DataObject;
 class FactAddressValue;
 
@@ -57,6 +59,9 @@ class CLIPSCPPEnv
       FactAddressValue *AssertString(char *);
       bool AddRouter(char *,int,CLIPSCPPRouter *);
       bool DeleteRouter(char *);
+      bool AddPeriodicFunction(char *,int,CLIPSCPPPeriodicFunction *);
+      bool RemovePeriodicFunction(char *);
+      bool EnablePeriodicFunctions(bool);
       size_t InputBufferCount();
       const char *GetInputBuffer();
       void SetInputBuffer(const char *);
@@ -84,7 +89,13 @@ class CLIPSCPPRouter
       const static char *PROMPT;
       const static char *DISPLAY;
   };
-  
+
+class CLIPSCPPPeriodicFunction
+  {
+   public:
+      virtual void Callback(CLIPSCPPEnv *);
+  };
+    
 class Value
   {
    public:

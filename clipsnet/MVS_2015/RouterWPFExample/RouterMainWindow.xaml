@@ -9,15 +9,18 @@
     <Grid>
         <Grid HorizontalAlignment="Left" VerticalAlignment="Top"/>
         <local:RouterTextBox x:Name="autoTextBox" Margin="-1,0,1,0" Grid.Row="1" AcceptsReturn="True" IsReadOnly="False" FontFamily="Consolas" FontSize="16" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto"/>
-        <local:RouterTextBox x:Name="animalTextBox" Margin="-1,0,1,0" Grid.Row="2" AcceptsReturn="True" IsReadOnly="False" FontFamily="Consolas" FontSize="16" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto"/>
+        <GridSplitter Grid.Row="2" Height="5" HorizontalAlignment="Stretch" BorderThickness="0" >
+        </GridSplitter>
+        <local:RouterTextBox x:Name="animalTextBox" Margin="-1,0,1,0" Grid.Row="3" AcceptsReturn="True" IsReadOnly="False" FontFamily="Consolas" FontSize="16" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto"/>
         <StackPanel x:Name="buttonsPanel" HorizontalAlignment="Center" Margin="0" Grid.Row="0" VerticalAlignment="Center" Orientation="Horizontal">
             <Button x:Name="RestartAuto" Content="Restart Auto" Margin="10,0" Padding="5,1" IsEnabled="False" Click="RestartAutoClicked" />
             <Button x:Name="RestartAnimal" Content="Restart Animal" Margin="10,0" Padding="5,1" IsEnabled="False" Click="RestartAnimalClicked" />
         </StackPanel>
         <Grid.RowDefinitions>
             <RowDefinition Height="80"/>
-            <RowDefinition Height="1*"/>
-            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*" MinHeight="50"/>
+            <RowDefinition Height="10"/>
+            <RowDefinition Height="1*" MinHeight="50"/>
         </Grid.RowDefinitions>
 
     </Grid>

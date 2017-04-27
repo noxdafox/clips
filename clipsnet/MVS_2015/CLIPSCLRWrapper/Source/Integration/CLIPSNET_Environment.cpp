@@ -9,10 +9,23 @@ using namespace CLIPS;
 
 namespace CLIPSNET
   {	 
+   DelegatePeriodicCallback::DelegatePeriodicCallback() 
+     {
+     
+     }
+
+   void DelegatePeriodicCallback::Callback()
+     {
+      CallbackEvents();
+     }
+
    /***************/
    /* Environment */
    /***************/
-   Environment::Environment() : m_Env( new CLIPSCPPEnv ) {}
+   Environment::Environment() : m_Env( new CLIPSCPPEnv ) 
+     {
+     
+     }
    
    /****************/
    /* ~Environment */
@@ -50,8 +63,9 @@ namespace CLIPSNET
    /* CommandLoopOnceThenBatch */
    /****************************/
    void Environment::CommandLoopOnceThenBatch()
-     { return m_Env->CommandLoopOnceThenBatch(); }
-
+     { 
+      return m_Env->CommandLoopOnceThenBatch(); 
+     }
 
    /***************/
    /* PrintBanner */
@@ -221,6 +235,49 @@ namespace CLIPSNET
         }
       else
         { m_Env->DeleteRouter(""); }
+     }
+  
+   /***********************/
+   /* AddPeriodicCallback */
+   /***********************/
+   void Environment::AddPeriodicCallback(
+	  String ^ callbackName,
+	  int priority,
+	  PeriodicCallback ^ theCallback)
+     { 
+      array<Byte>^ ebCallbackName = Encoding::UTF8->GetBytes(callbackName);
+      if (ebCallbackName->Length)
+        {
+         pin_ptr<Byte> pbCallbackName = &ebCallbackName[0];
+         m_Env->AddPeriodicFunction((char *) pbCallbackName,priority,(CLIPS::CLIPSCPPPeriodicFunction *) theCallback->PeriodicCallbackBridge());
+        }
+      else
+        { m_Env->AddPeriodicFunction("",priority,(CLIPS::CLIPSCPPPeriodicFunction *) theCallback->PeriodicCallbackBridge()); }
+     }
+
+   /**************************/
+   /* RemovePeriodicCallback */
+   /**************************/
+   void Environment::RemovePeriodicCallback(
+	  String ^ callbackName)
+     { 
+      array<Byte>^ ebCallbackName = Encoding::UTF8->GetBytes(callbackName);
+      if (ebCallbackName->Length)
+        {
+         pin_ptr<Byte> pbCallbackName = &ebCallbackName[0];
+         m_Env->DeleteRouter((char *) pbCallbackName);
+        }
+      else
+        { m_Env->RemovePeriodicFunction(""); }
+     }
+
+   /***************************/
+   /* EnablePeriodicFunctions */
+   /***************************/
+   bool Environment::EnablePeriodicFunctions(
+     bool value)
+     {
+      return m_Env->EnablePeriodicFunctions(value);
      }
 
    /********************/
