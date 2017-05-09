@@ -515,6 +515,22 @@ JNIEXPORT void JNICALL Java_net_sf_clipsrules_jni_Environment_setAgendaChanged
 
 /*
  * Class:     net_sf_clipsrules_jni_Environment
+ * Method:    getFocusChanged
+ * Signature: (J)Z
+ */
+JNIEXPORT jboolean JNICALL Java_net_sf_clipsrules_jni_Environment_getFocusChanged
+  (JNIEnv *, jobject, jlong);
+
+/*
+ * Class:     net_sf_clipsrules_jni_Environment
+ * Method:    setFocusChanged
+ * Signature: (JZ)V
+ */
+JNIEXPORT void JNICALL Java_net_sf_clipsrules_jni_Environment_setFocusChanged
+  (JNIEnv *, jobject, jlong, jboolean);
+
+/*
+ * Class:     net_sf_clipsrules_jni_Environment
  * Method:    getFactListChanged
  * Signature: (J)Z
  */

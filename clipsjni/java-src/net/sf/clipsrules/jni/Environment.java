@@ -1149,6 +1149,33 @@ public class Environment
       setAgendaChanged(theEnvironment,value);
      }
 
+   /********************/
+   /* getFocusChanged: */
+   /********************/
+   private native boolean getFocusChanged(long env);
+
+   /********************/
+   /* getFocusChanged: */
+   /********************/
+   public boolean getFocusChanged()
+     {
+      return getFocusChanged(theEnvironment);
+     }
+
+   /********************/
+   /* setFocusChanged: */
+   /********************/
+   private native void setFocusChanged(long env,boolean value);
+
+   /********************/
+   /* setFocusChanged: */
+   /********************/
+   public void setFocusChanged(
+     boolean value)
+     {
+      setFocusChanged(theEnvironment,value);
+     }
+
    /***********************/
    /* getFactListChanged: */
    /***********************/

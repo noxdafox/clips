@@ -218,10 +218,12 @@ public class CLIPSIDE extends JFrame
      
       if (theEvent.getExecutionEvent().equals(CommandExecutionEvent.PERIODIC_EVENT) ||
           theEvent.getExecutionEvent().equals(CommandExecutionEvent.FINISH_EVENT))
-        {
-         if (dialogWindow.getEnvironment().getAgendaChanged())
+        {         
+         if (dialogWindow.getEnvironment().getAgendaChanged() ||
+             dialogWindow.getEnvironment().getFocusChanged())
            {
             dialogWindow.getEnvironment().setAgendaChanged(false);
+            dialogWindow.getEnvironment().setFocusChanged(false);
             agendaBrowserManager.updateAllBrowsers();
            } 
 

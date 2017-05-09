@@ -235,6 +235,42 @@ JNIEXPORT void JNICALL Java_net_sf_clipsrules_jni_Environment_setAgendaChanged(
    SetAgendaChanged(theCLIPSEnv,value);
   }
 
+
+/**********************************************************/
+/* Java_net_sf_clipsrules_jni_Environment_getFocusChanged */
+/* Class:     net_sf_clipsrules_jni_Environment           */
+/* Method:    getFocusChanged                             */
+/* Signature: (J)Z                                        */
+/**********************************************************/
+JNIEXPORT jboolean JNICALL Java_net_sf_clipsrules_jni_Environment_getFocusChanged(
+  JNIEnv *env, 
+  jobject obj, 
+  jlong clipsEnv)
+  {
+   jboolean rv;
+   Environment *theCLIPSEnv = JLongToPointer(clipsEnv);
+   
+   rv = GetFocusChanged(theCLIPSEnv);
+   return rv;
+  } 
+
+/**********************************************************/
+/* Java_net_sf_clipsrules_jni_Environment_setFocusChanged */
+/* Class:     net_sf_clipsrules_jni_Environment           */
+/* Method:    setFocusChanged                             */
+/* Signature: (JZ)Z                                       */
+/**********************************************************/
+JNIEXPORT void JNICALL Java_net_sf_clipsrules_jni_Environment_setFocusChanged(
+  JNIEnv *env, 
+  jobject obj, 
+  jlong clipsEnv,
+  jboolean value)
+  {
+   Environment *theCLIPSEnv = JLongToPointer(clipsEnv);
+   
+   SetFocusChanged(theCLIPSEnv,value);
+  }
+
 /*********************************************************/
 /* Java_net_sf_clipsrules_jni_Environment_getDefruleText */
 /* Class:     net_sf_clipsrules_jni_Environment          */

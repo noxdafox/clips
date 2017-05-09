@@ -1,4 +1,3 @@
-
 #include "net_sf_clipsrules_jni_Environment.h"
 
 #include "clipsjni_data.h"
