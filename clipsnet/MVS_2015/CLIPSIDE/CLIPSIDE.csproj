@@ -117,6 +117,7 @@
     <Compile Include="AgendaBrowser.xaml.cs">
       <DependentUpon>AgendaBrowser.xaml</DependentUpon>
     </Compile>
+    <Compile Include="AgendaBrowserManager.cs" />
     <Compile Include="ClosableTab.cs" />
     <Compile Include="CloseableHeader.xaml.cs">
       <DependentUpon>CloseableHeader.xaml</DependentUpon>

@@ -115,8 +115,15 @@ namespace CLIPSIDE
 
          public override void Print(String logicalName, String printString)
            {
-            Application.Current.Dispatcher.Invoke(DispatcherPriority.Normal,
-                                                  new Action(delegate { m_RouterTextBox.CreateTimer(printString); }));
+            RouterThreadBridge theBridge = this.m_RouterTextBox.m_ThreadBridge;
+
+            lock(theBridge)
+              {
+               if (theBridge.closed) return;
+
+               Application.Current.Dispatcher.Invoke(DispatcherPriority.Normal,
+                                                     new Action(delegate { m_RouterTextBox.CreateTimer(printString); }));
+              }
            }
        
          /********/

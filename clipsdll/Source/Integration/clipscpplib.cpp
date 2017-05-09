@@ -41,6 +41,8 @@ static void CLIPSCPPExit(Environment *,int,void *);
 static Value *ConvertSingleFieldValue(Environment *,int,void *);
 static DataObject ConvertDataObject(Environment *,CLIPSValue *);
 
+static void CLIPSCPPPeriodicCallback(Environment *,void *);
+
 /*#####################*/
 /* CLIPSCPPEnv Methods */
 /*#####################*/
@@ -454,6 +456,56 @@ int CLIPSCPPEnv::Unwatch(
 #endif
   }
   
+/********************/
+/* GetAgendaChanged */
+/********************/
+bool CLIPSCPPEnv::GetAgendaChanged()
+  {
+#ifndef CLIPS_DLL_WRAPPER
+    return ::GetAgendaChanged(theEnv);
+#else
+    return __GetAgendaChanged(theEnv);
+#endif
+  }
+
+/********************/
+/* SetAgendaChanged */
+/********************/
+void CLIPSCPPEnv::SetAgendaChanged(
+  bool newValue)
+  {
+#ifndef CLIPS_DLL_WRAPPER
+    return ::SetAgendaChanged(theEnv,newValue);
+#else
+    return __SetAgendaChanged(theEnv,newValue);
+#endif
+  }
+
+/*******************/
+/* GetFocusChanged */
+/*******************/
+bool CLIPSCPPEnv::GetFocusChanged()
+  {
+#ifndef CLIPS_DLL_WRAPPER
+    return ::GetFocusChanged(theEnv);
+#else
+    return __GetFocusChanged(theEnv);
+#endif
+  }
+
+/*******************/
+/* SetFocusChanged */
+/*******************/
+void CLIPSCPPEnv::SetFocusChanged(
+  bool newValue)
+  {
+#ifndef CLIPS_DLL_WRAPPER
+    return ::SetFocusChanged(theEnv,newValue);
+#else
+    return __SetFocusChanged(theEnv,newValue);
+#endif
+  }
+
 /*************/
 /* AddRouter */
 /*************/
@@ -483,6 +535,49 @@ bool CLIPSCPPEnv::DeleteRouter(
    return ::DeleteRouter(theEnv,routerName);
 #else
    return __DeleteRouter(theEnv,routerName);
+#endif
+  }
+    
+/***********************/
+/* AddPeriodicFunction */
+/***********************/
+bool CLIPSCPPEnv::AddPeriodicFunction(
+  char *periodicFunctionName,
+  int priority,
+  CLIPSCPPPeriodicFunction *periodicFunction)
+  {
+#ifndef CLIPS_DLL_WRAPPER
+   return ::AddPeriodicFunction(theEnv,periodicFunctionName,CLIPSCPPPeriodicCallback,
+                                priority,periodicFunction);
+#else
+   return __AddPeriodicFunction(theEnv,periodicFunctionName,CLIPSCPPPeriodicCallback,
+                                priority,periodicFunction);
+#endif
+  }
+
+/**************************/
+/* RemovePeriodicFunction */
+/**************************/
+bool CLIPSCPPEnv::RemovePeriodicFunction(
+  char *periodicFunctionName)
+  {
+#ifndef CLIPS_DLL_WRAPPER
+   return ::RemovePeriodicFunction(theEnv,periodicFunctionName);
+#else
+   return __RemovePeriodicFunction(theEnv,periodicFunctionName);
+#endif
+  }
+  
+/***************************/
+/* EnablePeriodicFunctions */
+/***************************/
+bool CLIPSCPPEnv::EnablePeriodicFunctions(
+  bool value)
+  {
+#ifndef CLIPS_DLL_WRAPPER
+   return ::EnablePeriodicFunctions(theEnv,value);
+#else
+   return __EnablePeriodicFunctions(theEnv,value);
 #endif
   }
 
@@ -548,6 +643,18 @@ void CLIPSCPPEnv::AppendToDribble(
 #else
    __AppendDribble(theEnv,command);
 #endif
+  }
+
+/*##################################*/
+/* CLIPSCPPPeriodicFunction Methods */
+/*##################################*/
+
+/************/
+/* Callback */
+/************/
+void CLIPSCPPPeriodicFunction::Callback(
+  CLIPSCPPEnv *theCPPEnv)
+  { 
   }
 
 /*########################*/
@@ -1574,6 +1681,25 @@ MultifieldValue *MultifieldValue::clone() const
    return new MultifieldValue(*this); 
   }
 
+/*###################################*/
+/* Static PeriodicFunction Functions */
+/*###################################*/
+
+static void CLIPSCPPPeriodicCallback(
+  Environment *theEnv,
+  void *context)
+  {
+#ifndef CLIPS_DLL_WRAPPER
+   CLIPSCPPPeriodicFunction *thePF = (CLIPSCPPPeriodicFunction *) context;
+   CLIPSCPPEnv *theCPPEnv = (CLIPSCPPEnv *) GetEnvironmentContext(theEnv);
+#else
+   CLIPSCPPPeriodicFunction *thePF = (CLIPSCPPPeriodicFunction *) context;
+   CLIPSCPPEnv *theCPPEnv = (CLIPSCPPEnv *) __GetEnvironmentContext(theEnv);
+#endif
+   
+   thePF->Callback(theCPPEnv);
+  }
+
 /*#########################*/
 /* Static Router Functions */
 /*#########################*/
@@ -1675,3 +1801,310 @@ static void CLIPSCPPExit(
    theRouter->Exit(theCPPEnv,exitCode);
   }
 
+/*#######################*/
+/* CLIPSCPPFocus Methods */
+/*#######################*/
+
+/*****************/
+/* CLIPSCPPFocus */
+/*****************/
+CLIPSCPPFocus::CLIPSCPPFocus()
+  {
+  }
+
+/*****************/
+/* CLIPSCPPFocus */
+/*****************/
+CLIPSCPPFocus::CLIPSCPPFocus(
+  const char *initialString)
+  {
+   moduleName.assign(initialString);
+  }
+
+/******************/
+/* GetModuleName */
+/******************/
+std::string *CLIPSCPPFocus::GetModuleName()
+  {
+   return &this->moduleName;
+  }
+
+/******************/
+/* ~CLIPSCPPFocus */
+/******************/
+CLIPSCPPFocus::~CLIPSCPPFocus()
+  { 
+  }
+
+/*############################*/
+/* CLIPSCPPFocusStack Methods */
+/*############################*/
+
+/**********************/
+/* CLIPSCPPFocusStack */
+/**********************/
+CLIPSCPPFocusStack::CLIPSCPPFocusStack()
+  {
+  }
+
+CLIPSCPPFocusStack::CLIPSCPPFocusStack(size_t size)
+  {
+   stack.reserve(size);
+  }
+
+/***********************/
+/* ~CLIPSCPPFocusStack */
+/***********************/
+CLIPSCPPFocusStack::~CLIPSCPPFocusStack()
+  { 
+   size_t i;
+   
+   for (i = 0; i < stack.size(); i++)
+     { delete stack[i]; }
+  }
+
+/************/
+/* GetStack */
+/************/
+std::vector<CLIPSCPPFocus *> *CLIPSCPPFocusStack::GetStack()
+  {
+   return &this->stack;
+  }
+ 
+/*******/
+/* add */
+/*******/
+void CLIPSCPPFocusStack::add(
+  CLIPSCPPFocus *theValue)
+  {
+   stack.push_back(theValue);
+  }
+
+/*############################*/
+/* CLIPSCPPActivation Methods */
+/*############################*/
+
+/**********************/
+/* CLIPSCPPActivation */
+/**********************/
+CLIPSCPPActivation::CLIPSCPPActivation()
+  {
+  }
+
+/**********************/
+/* CLIPSCPPActivation */
+/**********************/
+CLIPSCPPActivation::CLIPSCPPActivation(
+  const char *ruleName,
+  int salience,
+  const char *basis)
+  {
+   this->ruleName.assign(ruleName);
+   this->salience = salience;
+   this->basis.assign(basis);
+  }
+
+/***************/
+/* GetRuleName */
+/***************/
+std::string *CLIPSCPPActivation::GetRuleName()
+  {
+   return &this->ruleName;
+  }
+
+/***************/
+/* GetSalience */
+/***************/
+int CLIPSCPPActivation::GetSalience()
+  {
+   return this->salience;
+  }
+
+/************/
+/* GetBasis */
+/************/
+std::string *CLIPSCPPActivation::GetBasis()
+  {
+   return &this->basis;
+  }
+
+/***********************/
+/* ~CLIPSCPPActivation */
+/***********************/
+CLIPSCPPActivation::~CLIPSCPPActivation()
+  { 
+  }
+
+/*########################*/
+/* CLIPSCPPAgenda Methods */
+/*########################*/
+
+/******************/
+/* CLIPSCPPAgenda */
+/******************/
+CLIPSCPPAgenda::CLIPSCPPAgenda()
+  {
+  }
+
+CLIPSCPPAgenda::CLIPSCPPAgenda(size_t size)
+  {
+   activations.reserve(size);
+  }
+
+/*******************/
+/* ~CLIPSCPPAgenda */
+/*******************/
+CLIPSCPPAgenda::~CLIPSCPPAgenda()
+  { 
+   size_t i;
+   
+   for (i = 0; i < activations.size(); i++)
+     { delete activations[i]; }
+  }
+
+/******************/
+/* GetActivations */
+/******************/
+std::vector<CLIPSCPPActivation *> *CLIPSCPPAgenda::GetActivations()
+  {
+   return &this->activations;
+  }
+ 
+/*******/
+/* add */
+/*******/
+void CLIPSCPPAgenda::add(
+  CLIPSCPPActivation *theValue)
+  {
+   activations.push_back(theValue);
+  }
+  
+/*****************/
+/* GetFocusStack */
+/*****************/
+CLIPSCPPFocusStack *CLIPSCPPEnv::GetFocusStack()
+  {
+   CLIPSCPPFocusStack *theCPPFS;
+   CLIPSCPPFocus *theCPPF;
+   size_t moduleCount = 0;
+   FocalModule *theFocus;
+
+   for (theFocus = EngineData(theEnv)->CurrentFocus;
+        theFocus != NULL;
+        theFocus = theFocus->next)
+     { moduleCount++; }
+
+   theCPPFS = new CLIPSCPPFocusStack(moduleCount);
+
+   for (theFocus = EngineData(theEnv)->CurrentFocus;
+        theFocus != NULL;
+        theFocus = theFocus->next)
+     {
+      theCPPF = new CLIPSCPPFocus(theFocus->theModule->header.name->contents);
+      theCPPFS->add(theCPPF);
+     }
+
+   return theCPPFS;
+  }
+
+/*************/
+/* GetAgenda */
+/*************/
+CLIPSCPPAgenda *CLIPSCPPEnv::GetAgenda(
+  const char *moduleName)
+  {
+   CLIPSCPPAgenda *theCPPAgenda;
+   Activation *theActivation;
+   CLIPSCPPActivation *theCPPActivation;
+   size_t activationCount = 0;
+   Defmodule *theModule;
+   struct defruleModule *theModuleItem;
+   char bindingsBuffer[1024]; // TBD Replace
+
+#ifndef CLIPS_DLL_WRAPPER
+   theModule = FindDefmodule(theEnv,moduleName);
+   if (theModule == NULL) return NULL;
+
+   SaveCurrentModule(theEnv);
+   SetCurrentModule(theEnv,theModule);
+
+   theModuleItem = (struct defruleModule *)
+                   GetModuleItem(theEnv,NULL,DefruleData(theEnv)->DefruleModuleIndex);
+
+   RestoreCurrentModule(theEnv);
+
+   if (theModuleItem == NULL) return NULL;
+
+   /*==================================*/
+   /* Count the number of activations. */
+   /*==================================*/
+   
+   for (theActivation = theModuleItem->agenda;
+        theActivation != NULL;
+        theActivation = GetNextActivation(theEnv,theActivation))
+     { activationCount++; }
+
+   theCPPAgenda = new CLIPSCPPAgenda(activationCount); 
+
+   /*================================*/
+   /* Add activations to the agenda. */
+   /*================================*/
+
+   for (theActivation = theModuleItem->agenda;
+        theActivation != NULL;
+        theActivation = GetNextActivation(theEnv,theActivation))
+     {
+      GetActivationBasisPPForm(theEnv,bindingsBuffer,1024,theActivation);
+
+      theCPPActivation = new CLIPSCPPActivation(theActivation->theRule->header.name->contents,
+                                                theActivation->salience,
+                                                bindingsBuffer);
+
+      theCPPAgenda->add(theCPPActivation); 
+     }
+#else
+   theModule = __FindDefmodule(theEnv,moduleName);
+   if (theModule == NULL) return NULL;
+
+   __SaveCurrentModule(theEnv);
+   __SetCurrentModule(theEnv,theModule);
+
+   theModuleItem = (struct defruleModule *)
+                   __GetModuleItem(theEnv,NULL,DefruleData(theEnv)->DefruleModuleIndex);
+
+   __RestoreCurrentModule(theEnv);
+
+   if (theModuleItem == NULL) return NULL;
+   
+   /*==================================*/
+   /* Count the number of activations. */
+   /*==================================*/
+   
+   for (theActivation = theModuleItem->agenda;
+        theActivation != NULL;
+        theActivation = __GetNextActivation(theEnv,theActivation))
+     { activationCount++; }
+
+   theCPPAgenda = new CLIPSCPPAgenda(activationCount); 
+
+   /*================================*/
+   /* Add activations to the agenda. */
+   /*================================*/
+
+   for (theActivation = theModuleItem->agenda;
+        theActivation != NULL;
+        theActivation = __GetNextActivation(theEnv,theActivation))
+     {
+      __GetActivationBasisPPForm(theEnv,bindingsBuffer,1024,theActivation);
+
+      theCPPActivation = new CLIPSCPPActivation(theActivation->theRule->header.name->contents,
+                                                theActivation->salience,
+                                                bindingsBuffer);
+
+      theCPPAgenda->add(theCPPActivation); 
+     }
+
+
+#endif
+   return theCPPAgenda;
+  }

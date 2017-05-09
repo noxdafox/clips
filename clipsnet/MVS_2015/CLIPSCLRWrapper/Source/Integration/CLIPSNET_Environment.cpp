@@ -424,4 +424,112 @@ namespace CLIPSNET
       if (rv == 0) return false;
       else return true;
      }
+
+   /*****************/
+   /* GetFocusStack */
+   /*****************/
+   FocusStack ^ Environment::GetFocusStack()
+     {
+      CLIPSCPPFocusStack *theCPPStack = m_Env->GetFocusStack();
+      CLIPSCPPFocus *theCPPFocus;
+      FocusStack ^ theStack;
+      size_t i;
+      std::vector<CLIPSCPPFocus *> *v;
+      std::string *theCPPString;
+	   const char *theCString;
+	   List<Focus ^> ^ theList;
+
+      v = theCPPStack->GetStack();
+
+      theList = gcnew List<Focus ^>;
+
+      for (i = 0; i < v->size(); i++)
+        {
+         theCPPFocus = v->at(i);
+         theCPPString = theCPPFocus->GetModuleName();
+		   theCString = theCPPString->c_str();
+         theList->Add(gcnew Focus(gcnew String(theCString)));
+        }
+
+      theStack = gcnew FocusStack(theList);
+
+      delete theCPPStack;
+
+      return theStack;
+     }
+
+   /*************/
+   /* GetAgenda */
+   /*************/
+   Agenda ^ Environment::GetAgenda(
+     String ^ moduleName)
+     {
+      array<Byte>^ ebModuleNameString = Encoding::UTF8->GetBytes(moduleName);
+      pin_ptr<Byte> pbModuleNameString;
+      CLIPSCPPActivation *theCPPActivation;
+      CLIPSCPPAgenda *theCPPAgenda;
+      Agenda ^ theAgenda;
+      size_t i;
+      std::vector<CLIPSCPPActivation *> *v;
+      std::string *theCPPRuleName, *theCPPBasis;
+	   const char *theCRuleName, *theCBasis;
+	   List<Activation ^> ^ theList;
+
+      if (ebModuleNameString->Length == 0) return nullptr;
+      pbModuleNameString = &ebModuleNameString[0];
+
+      theCPPAgenda = m_Env->GetAgenda((char *) pbModuleNameString);
+
+      v = theCPPAgenda->GetActivations();
+
+      theList = gcnew List<Activation ^>;
+
+      for (i = 0; i < v->size(); i++)
+        {
+         theCPPActivation = v->at(i);
+         theCPPRuleName = theCPPActivation->GetRuleName();
+		   theCRuleName = theCPPRuleName->c_str();
+         theCPPBasis = theCPPActivation->GetBasis();
+		   theCBasis = theCPPBasis->c_str();
+         theList->Add(gcnew Activation(gcnew String(theCRuleName),theCPPActivation->GetSalience(),gcnew String(theCBasis)));
+        }
+
+      theAgenda = gcnew Agenda(theList);
+
+      delete theCPPAgenda;
+
+      return theAgenda;    
+     }
+
+   Agenda ^ Environment::GetAgenda(
+     Focus ^ theFocus)
+     {
+      return GetAgenda(theFocus->ModuleName);
+     }
+ 
+   bool Environment::GetAgendaChanged()
+     {
+      return m_Env->GetAgendaChanged();
+     }
+
+   void Environment::SetAgendaChanged(
+     bool newValue)
+     {
+      m_Env->SetAgendaChanged(newValue);
+     }
+
+   bool Environment::GetFocusChanged()
+     {
+      return m_Env->GetFocusChanged();
+     }
+
+   void Environment::SetFocusChanged(
+     bool newValue)
+     {
+      m_Env->SetFocusChanged(newValue);
+     }
   };
+
+
+
+  	  

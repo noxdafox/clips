@@ -682,6 +682,7 @@ namespace CLIPSIDE
    
          clips.SetInputBuffer(newCommand);
          this.AppendText(newCommand);
+         this.Focus();
                
          /*==========================*/
          /* Process the new command. */

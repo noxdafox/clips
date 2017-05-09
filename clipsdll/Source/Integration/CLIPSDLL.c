@@ -309,3 +309,103 @@ void __declspec(dllexport) __SetEvaluationError(
   {
    SetEvaluationError(theEnv,value);
   }
+
+ bool __declspec(dllexport) __GetAgendaChanged(
+  Environment *theEnv)
+  {
+   return GetAgendaChanged(theEnv);
+  }
+
+void __declspec(dllexport) __SetAgendaChanged(
+  Environment *theEnv,
+  bool value)
+  {
+   SetAgendaChanged(theEnv,value);
+  }
+
+bool __declspec(dllexport) __GetFocusChanged(
+  Environment *theEnv)
+  {
+   return GetFocusChanged(theEnv);
+  }
+
+void __declspec(dllexport) __SetFocusChanged(
+  Environment *theEnv,
+  bool value)
+  {
+   SetFocusChanged(theEnv,value);
+  }
+
+bool __declspec(dllexport) __EnablePeriodicFunctions(
+  Environment *theEnv,
+  bool value)
+  {
+   return EnablePeriodicFunctions(theEnv,value);
+  }
+
+bool __declspec(dllexport) __AddPeriodicFunction(
+  Environment *theEnv,
+  const char *name,
+  VoidCallFunction *theFunction,
+  int priority,
+  void *context)
+  {
+   return AddPeriodicFunction(theEnv,name,theFunction,priority,context);
+  }
+
+bool __declspec(dllexport) __RemovePeriodicFunction(
+  Environment *theEnv,
+  const char *name)
+  {
+   return RemovePeriodicFunction(theEnv,name);
+  }
+
+Defmodule __declspec(dllexport) *__FindDefmodule(
+  Environment *theEnv,
+  const char *defmoduleName)
+  {
+   return FindDefmodule(theEnv,defmoduleName);
+  }
+
+void __declspec(dllexport) __SaveCurrentModule(
+  Environment *theEnv)
+  {
+   SaveCurrentModule(theEnv);
+  }
+
+Defmodule __declspec(dllexport) *__SetCurrentModule(
+  Environment *theEnv,
+  Defmodule *newModule)
+  {
+   return SetCurrentModule(theEnv,newModule);
+  }
+
+void __declspec(dllexport) * __GetModuleItem(
+  Environment *theEnv,
+  Defmodule *theModule,
+  unsigned moduleItemIndex)
+  {
+   return GetModuleItem(theEnv,theModule,moduleItemIndex);
+  }
+ 
+void __declspec(dllexport) __RestoreCurrentModule(
+  Environment *theEnv)
+  {
+   RestoreCurrentModule(theEnv);
+  }
+
+Activation __declspec(dllexport) * __GetNextActivation(
+  Environment *theEnv,
+  Activation *actPtr)
+  {
+   return GetNextActivation(theEnv,actPtr);
+  }
+
+void __declspec(dllexport) __GetActivationBasisPPForm(
+  Environment *theEnv,
+  char *buffer,
+  size_t bufferLength,
+  Activation *theActivation)
+  {
+   GetActivationBasisPPForm(theEnv,buffer,bufferLength,theActivation);
+  }

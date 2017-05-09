@@ -1,6 +1,8 @@
 #pragma once
 
 #include "clipscpp.h"
+#include "CLIPSNET_Agenda.h"
+#include "CLIPSNET_FocusStack.h"
 #include "CLIPSNET_Values.h"
 #include "CLIPSNET_Router.h"
 #include "CLIPSNET_PeriodicCallback.h"
@@ -67,6 +69,13 @@ namespace CLIPSNET
         void CommandLoopOnceThenBatch();
         void PrintBanner();
         void PrintPrompt();
+        FocusStack ^ GetFocusStack();
+        Agenda ^ GetAgenda(String ^);
+        Agenda ^ GetAgenda(Focus ^);
+        bool GetAgendaChanged();
+        void SetAgendaChanged(bool);
+        bool GetFocusChanged();
+        void SetFocusChanged(bool);
         virtual String^ ToString() override;
 
       protected:

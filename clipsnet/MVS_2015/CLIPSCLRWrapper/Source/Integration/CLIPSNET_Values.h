@@ -201,7 +201,7 @@ namespace CLIPSNET
 		 virtual String^ ToString() override;
        virtual int GetHashCode() override;
        virtual bool Equals(Object ^ obj) override; 
-        virtual CLIPSNETType CLIPSType() override;
+       virtual CLIPSNETType CLIPSType() override;
 	 };
 
    /*###############################*/

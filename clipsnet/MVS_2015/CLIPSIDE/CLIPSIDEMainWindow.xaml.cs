@@ -94,6 +94,13 @@ namespace CLIPSIDE
 
   public partial class MainWindow : Window
      {
+      private AgendaBrowserManager agendaBrowserManager;
+      private IDEPreferences preferences;
+      private int agendaCount = 1;
+      private int factsCount = 1;
+      private int instancesCount = 1;
+      private int windowCount = 0;
+
       private class IDEPeriodicCallback : PeriodicCallback
         { 
          MainWindow mw;
@@ -106,17 +113,10 @@ namespace CLIPSIDE
 
          public override void Callback()
            {
-            System.Console.WriteLine("Yea! Callback achieved!");
-
             mw.dialog.GetEnvironment().EnablePeriodicFunctions(false);
+            mw.UpdateBrowsers();
            }
         }
-
-      private IDEPreferences preferences;
-      private int agendaCount = 1;
-      private int factsCount = 1;
-      private int instancesCount = 1;
-      private int windowCount = 0;
 
       /**************/
       /* MainWindow */
@@ -134,11 +134,16 @@ namespace CLIPSIDE
          else
            { this.SetCurrentDirectory(Directory.GetCurrentDirectory()); }
 
+         agendaBrowserManager = new AgendaBrowserManager(this);
+
          IDEPeriodicCallback theCB = new IDEPeriodicCallback(this);
 
          this.dialog.GetEnvironment().AddPeriodicCallback("IDECallback",0,theCB);
          this.dialog.GetEnvironment().EnablePeriodicFunctions(true);
 
+         this.dialog.StartCommandEvent += new StartCommandDelegate(StartExecutionEventOccurred); 
+         this.dialog.FinishCommandEvent += new FinishCommandDelegate(FinishExecutionEventOccurred); 
+ 
          System.Windows.Threading.DispatcherTimer dispatcherTimer = new System.Windows.Threading.DispatcherTimer();
 
          dispatcherTimer.Tick += IDEPeriodicTimer;
@@ -147,9 +152,45 @@ namespace CLIPSIDE
          dispatcherTimer.Start();
         }
 
+      public CLIPSNET.Environment GetEnvironment()
+        {
+         return this.dialog.GetEnvironment();
+        }
+
       private void IDEPeriodicTimer(object sender, EventArgs e)
         {
          this.dialog.GetEnvironment().EnablePeriodicFunctions(true);
+        }
+
+      /*******************************/
+      /* StartExecutionEventOccurred */
+      /*******************************/
+      private void StartExecutionEventOccurred()
+        {
+         agendaBrowserManager.UpdateAgendaBrowserButtons(true);
+        }
+
+      /********************************/
+      /* FinishExecutionEventOccurred */
+      /********************************/
+      private void FinishExecutionEventOccurred()
+        {
+         agendaBrowserManager.UpdateAgendaBrowserButtons(false);
+         UpdateBrowsers();
+        }
+        
+      /******************/
+      /* UpdateBrowsers */
+      /******************/
+      private void UpdateBrowsers()
+        {
+         if (this.dialog.GetEnvironment().GetAgendaChanged() ||
+             this.dialog.GetEnvironment().GetFocusChanged())
+           {
+            this.dialog.GetEnvironment().SetAgendaChanged(false);
+            this.dialog.GetEnvironment().SetFocusChanged(false);
+            this.agendaBrowserManager.UpdateAllBrowsers();
+           }
         }
 
       /**********/
@@ -173,7 +214,7 @@ namespace CLIPSIDE
       /****************/
       private void Quit_OnClick(object sender, RoutedEventArgs e)
         {
-          Application.Current.Shutdown();
+         Application.Current.Shutdown();
         }
 
       /*********************/
@@ -445,7 +486,7 @@ namespace CLIPSIDE
          theTabItem.Title = "Agenda #" + agendaCount++;
          OpenTabItem(theTabItem);
 
-         AgendaBrowser theBrowser = new AgendaBrowser(this);
+         AgendaBrowser theBrowser = agendaBrowserManager.CreateBrowser();
          theTabItem.Content = theBrowser;
         }
 
@@ -519,7 +560,10 @@ namespace CLIPSIDE
         ClosableTab theTabItem)
         {
          if (theTabItem.Content is AgendaBrowser)
-           { ((AgendaBrowser)  theTabItem.Content).DetachIDE(); }
+           { 
+            agendaBrowserManager.RemoveBrowser((AgendaBrowser)  theTabItem.Content);
+            ((AgendaBrowser) theTabItem.Content).DetachIDE(); 
+           }
 
          windowCount--;
 

@@ -15,12 +15,19 @@ using System.Windows.Shapes;
 using System.Threading;
 using System.Windows.Threading;
 
+using CLIPSNET;
+
 namespace CLIPSIDE
   {
    public partial class AgendaBrowser : UserControl
      { 
       private MainWindow ide = null;
-
+      private FocusStack focusStack = null;
+      private Dictionary<Focus,Agenda> agendaMap = null;
+      
+      /*****************/
+      /* AgendaBrowser */
+      /*****************/
       public AgendaBrowser()
         {
          InitializeComponent();
@@ -31,22 +38,13 @@ namespace CLIPSIDE
          ide = theMW;
          if (ide != null)
            { 
-            ide.dialog.StartCommandEvent += new StartCommandDelegate(StartCommandEventHandler); 
-            ide.dialog.FinishCommandEvent += new FinishCommandDelegate(FinishCommandEventHandler); 
             UpdateButtonsDriver(ide.dialog.GetExecuting());
            }
         }
-
-      private void StartCommandEventHandler()
-        {
-         UpdateButtons(true);
-        }
-
-      private void FinishCommandEventHandler()
-        {
-         UpdateButtons(false);
-        }
-
+        
+      /****************/
+      /* ResetClicked */
+      /****************/
       private void ResetClicked(
         object sender,
         RoutedEventArgs e)
@@ -55,6 +53,9 @@ namespace CLIPSIDE
            { ide.dialog.ReplaceCommand("(reset)\n"); }
         }
 
+      /**************/
+      /* RunClicked */
+      /**************/
       private void RunClicked(
         object sender,
         RoutedEventArgs e)
@@ -63,6 +64,9 @@ namespace CLIPSIDE
            { ide.dialog.ReplaceCommand("(run)\n"); }
         }
 
+      /***************/
+      /* StepClicked */
+      /***************/
       private void StepClicked(
         object sender,
         RoutedEventArgs e)
@@ -70,7 +74,10 @@ namespace CLIPSIDE
          if (ide != null)
            { ide.dialog.ReplaceCommand("(run 1)\n"); }
         }
-
+              
+      /********************/
+      /* HaltRulesClicked */
+      /********************/
       private void HaltRulesClicked(
         object sender,
         RoutedEventArgs e)
@@ -78,14 +85,12 @@ namespace CLIPSIDE
          if (ide != null)
            { ide.dialog.HaltRules(); }
         }
-
+        
+      /*************/
+      /* DetachIDE */
+      /*************/
       public void DetachIDE()
         {
-         if (ide != null)
-           {
-            ide.dialog.StartCommandEvent -= StartCommandEventHandler;
-            ide.dialog.FinishCommandEvent -= FinishCommandEventHandler;
-           }
         }
 
       /***********************/
@@ -119,5 +124,63 @@ namespace CLIPSIDE
          Application.Current.Dispatcher.Invoke(DispatcherPriority.Normal,
                                                 new Action(delegate { UpdateButtonsDriver(isExecuting); }));
         }
-     }
+
+     /**************/
+     /* UpdateData */
+     /**************/
+     public void UpdateData(
+        FocusStack theFocusStack,
+        Dictionary<Focus,Agenda> theAgendaMap)
+        {
+         Application.Current.Dispatcher.Invoke(DispatcherPriority.Normal,
+                                                new Action(delegate { AssignData(theFocusStack,theAgendaMap); }));
+        }
+
+      /**************/
+      /* AssignData */
+      /**************/
+      private void AssignData(
+        FocusStack theFocusStack,
+        Dictionary<Focus,Agenda> theAgendaMap)
+        {
+         focusStack = theFocusStack;
+         agendaMap = theAgendaMap;
+
+         focusStackDataGridView.ItemsSource = theFocusStack.GetStack();
+
+         if (theFocusStack.Count == 0)
+           { activationDataGridView.ItemsSource = null; }
+         else
+           { activationDataGridView.ItemsSource = theAgendaMap[theFocusStack.GetStack().First()].GetActivations(); }
+
+         if (theFocusStack.Count != 0)
+           {
+            focusStackDataGridView.SelectedItem = theFocusStack.GetStack().First();
+
+            if (theAgendaMap[theFocusStack.GetStack().First()].GetActivations().Count != 0)
+              { 
+               activationDataGridView.SelectedItem = theAgendaMap[theFocusStack.GetStack().First()].GetActivations().First(); 
+              }
+           }
+        }
+
+      /**********************/
+      /* ModuleFocusChanged */
+      /**********************/
+      private void ModuleFocusChanged(object sender,SelectionChangedEventArgs e)
+        {
+         Focus theFocus;
+         Agenda theAgenda;
+
+         if (e.RemovedItems.Count != 1) return;
+         if (e.AddedItems.Count != 1) return;
+
+         theFocus = (Focus) e.AddedItems[0];
+         theAgenda = agendaMap[theFocus];
+
+         activationDataGridView.ItemsSource = theAgenda.GetActivations();
+         if (theAgenda.GetActivations().Count != 0)
+           { activationDataGridView.SelectedItem = theAgenda.GetActivations().First(); }
+        }
+      }
   }

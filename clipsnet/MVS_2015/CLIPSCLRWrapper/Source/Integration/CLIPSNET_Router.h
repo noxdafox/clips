@@ -19,16 +19,16 @@ namespace CLIPSNET
       public:
         Router();
         ~Router();
-       virtual bool Query(String ^ logicalName);
-       virtual void Print(String ^ logicalName, String ^ printString);
-       virtual int Getc(String ^ logicalName);
-		virtual int Ungetc(String ^ logicalName,int theChar);
-		CLIPSCPPRouterBridge * RouterBridge();
+        virtual bool Query(String ^ logicalName);
+        virtual void Print(String ^ logicalName, String ^ printString);
+        virtual int Getc(String ^ logicalName);
+        virtual int Ungetc(String ^ logicalName,int theChar);
+        CLIPSCPPRouterBridge * RouterBridge();
 
-      const static String ^STANDARD_OUTPUT = gcnew String(CLIPSCPPRouter::STANDARD_OUTPUT);
-      const static String ^STANDARD_INPUT = gcnew String(CLIPSCPPRouter::STANDARD_INPUT);
-      const static String ^WARNING = gcnew String(CLIPSCPPRouter::WARNING);
-      const static String ^ERROR = gcnew String(CLIPSCPPRouter::ERROR);
+        const static String ^STANDARD_OUTPUT = gcnew String(CLIPSCPPRouter::STANDARD_OUTPUT);
+        const static String ^STANDARD_INPUT = gcnew String(CLIPSCPPRouter::STANDARD_INPUT);
+        const static String ^WARNING = gcnew String(CLIPSCPPRouter::WARNING);
+        const static String ^ERROR = gcnew String(CLIPSCPPRouter::ERROR);
 
       protected:
         !Router();

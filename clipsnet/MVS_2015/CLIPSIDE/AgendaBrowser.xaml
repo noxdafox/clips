@@ -66,9 +66,9 @@
                     <ColumnDefinition Width="3*"/>
                 </Grid.ColumnDefinitions>
 
-                <DataGrid x:Name="focusStackDataGridView" Margin="0" RowHeaderWidth="0" AutoGenerateColumns="False" CanUserResizeRows="False" CanUserAddRows="False" Grid.Column="0">
+                <DataGrid x:Name="focusStackDataGridView" Margin="0" RowHeaderWidth="0" AutoGenerateColumns="False" CanUserResizeRows="False" CanUserAddRows="False" Grid.Column="0" SelectedIndex="1" CanUserSortColumns="False" SelectionMode="Single" SelectionChanged="ModuleFocusChanged">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Binding="{Binding Path=FocusStack}" Header="Focus Stack" IsReadOnly="True" CanUserResize="False" Width="*"/>
+                        <DataGridTextColumn Binding="{Binding Path=ModuleName}" Header="Focus Stack" IsReadOnly="True" CanUserResize="False" Width="*"/>
                     </DataGrid.Columns>
                 </DataGrid>
 
@@ -86,10 +86,10 @@
 
                 </GridSplitter>
 
-                <DataGrid x:Name="activationDataGridView" Margin="0" RowHeaderWidth="0" AutoGenerateColumns="False" CanUserResizeRows="False" CanUserAddRows="False" Grid.Column="2">
+                <DataGrid x:Name="activationDataGridView" Margin="0" RowHeaderWidth="0" AutoGenerateColumns="False" CanUserResizeRows="False" CanUserAddRows="False" Grid.Column="2" SelectedIndex="1" CanUserSortColumns="False" SelectionMode="Single">
                     <DataGrid.Columns>
                         <DataGridTextColumn Binding="{Binding Path=Salience}" Header="Salience" IsReadOnly="True" Width="1*" MinWidth="60"/>
-                        <DataGridTextColumn Binding="{Binding Path=Rule}" Header="Rule" IsReadOnly="True" Width="4*" MinWidth="60"/>
+                        <DataGridTextColumn Binding="{Binding Path=RuleName}" Header="Rule" IsReadOnly="True" Width="4*" MinWidth="60"/>
                         <DataGridTextColumn Binding="{Binding Path=Basis}" Header="Basis" IsReadOnly="True" Width="2*" MinWidth="60"/>
                     </DataGrid.Columns>
                 </DataGrid>

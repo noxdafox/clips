@@ -327,7 +327,11 @@
     <ClCompile Include="Source\CLIPS\watch.c" />
     <ClCompile Include="Source\Integration\CLIPSCLRAssemblyInfo.cpp" />
     <ClCompile Include="Source\Integration\clipscpplib.cpp" />
+    <ClCompile Include="Source\Integration\CLIPSNET_Activation.cpp" />
+    <ClCompile Include="Source\Integration\CLIPSNET_Agenda.cpp" />
     <ClCompile Include="Source\Integration\CLIPSNET_Environment.cpp" />
+    <ClCompile Include="Source\Integration\CLIPSNET_Focus.cpp" />
+    <ClCompile Include="Source\Integration\CLIPSNET_FocusStack.cpp" />
     <ClCompile Include="Source\Integration\CLIPSNET_PeriodicCallback.cpp" />
     <ClCompile Include="Source\Integration\CLIPSNET_Router.cpp" />
     <ClCompile Include="Source\Integration\CLIPSNET_Values.cpp" />
@@ -507,7 +511,11 @@
     <ClInclude Include="Source\CLIPS\utility.h" />
     <ClInclude Include="Source\CLIPS\watch.h" />
     <ClInclude Include="Source\Integration\clipscpp.h" />
+    <ClInclude Include="Source\Integration\CLIPSNET_Activation.h" />
+    <ClInclude Include="Source\Integration\CLIPSNET_Agenda.h" />
     <ClInclude Include="Source\Integration\CLIPSNET_Environment.h" />
+    <ClInclude Include="Source\Integration\CLIPSNET_Focus.h" />
+    <ClInclude Include="Source\Integration\CLIPSNET_FocusStack.h" />
     <ClInclude Include="Source\Integration\CLIPSNET_PeriodicCallback.h" />
     <ClInclude Include="Source\Integration\CLIPSNET_Router.h" />
     <ClInclude Include="Source\Integration\CLIPSNET_Values.h" />

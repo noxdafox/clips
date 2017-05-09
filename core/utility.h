@@ -73,10 +73,6 @@
 
 #include <stdlib.h>
 
-typedef bool BoolCallFunction(Environment *,void *);
-typedef void VoidCallFunction(Environment *,void *);
-typedef void VoidCallFunctionWithArg(Environment *,void *,void *);
-
 typedef struct callFunctionItem CallFunctionItem;
 typedef struct callFunctionItemWithArg CallFunctionItemWithArg;
 typedef struct boolCallFunctionItem BoolCallFunctionItem;

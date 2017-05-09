@@ -2,7 +2,9 @@
 #define CLIPSWin32_H
 
 #include "setup.h"
+#include "agenda.h"
 #include "entities.h"
+#include "moduldef.h"
 #include "router.h"
 
 #ifdef CLIPSDLL_SOURCE
@@ -27,6 +29,8 @@ bool DECLSPEC __WatchString(Environment *,const char *);
 bool DECLSPEC __UnwatchString(Environment *,const char *);
 bool DECLSPEC __GetHaltExecution(Environment *);
 bool DECLSPEC __GetHaltRules(Environment *);
+bool DECLSPEC __GetAgendaChanged(Environment *);
+bool DECLSPEC __GetFocusChanged(Environment *);
 bool DECLSPEC __GetEvaluationError(Environment *);
 bool DECLSPEC __AddRouter(Environment *,const char *,int,
                           RouterQueryFunction *,RouterPrintFunction *,
@@ -46,7 +50,14 @@ void DECLSPEC __DirectGetSlot(Instance *,const char *,CLIPSValue *);
 void DECLSPEC __SetHaltExecution(Environment *,bool);
 void DECLSPEC __SetHaltCommandLoopBatch(Environment *,bool);
 void DECLSPEC __SetHaltRules(Environment *,bool);
+void DECLSPEC __SetAgendaChanged(Environment *,bool);
+void DECLSPEC __SetFocusChanged(Environment *,bool);
 void DECLSPEC __SetEvaluationError(Environment *,bool);
+bool DECLSPEC __EnablePeriodicFunctions(Environment *,bool);
+
+bool __declspec(dllexport) __AddPeriodicFunction(Environment *,const char *,VoidCallFunction *,int,void *);
+bool __declspec(dllexport) __RemovePeriodicFunction(Environment *,const char *);
+
 void DECLSPEC __PrintPrompt(Environment *);
 void DECLSPEC __PrintBanner(Environment *);
 void DECLSPEC __CommandLoopOnceThenBatch(Environment *);
@@ -65,5 +76,13 @@ long long DECLSPEC __Run(Environment *,long long);
 const char DECLSPEC * __InstanceName(Environment *,Instance *);
   
 Environment DECLSPEC * __CreateEnvironment(void);
+
+Defmodule DECLSPEC * __FindDefmodule(Environment *,const char *);
+void DECLSPEC __SaveCurrentModule(Environment *);
+Defmodule DECLSPEC * __SetCurrentModule(Environment *,Defmodule *);
+void DECLSPEC * __GetModuleItem(Environment *,Defmodule *,unsigned);
+void DECLSPEC __RestoreCurrentModule(Environment *);
+Activation DECLSPEC * __GetNextActivation(Environment *,Activation *);
+void DECLSPEC __GetActivationBasisPPForm(Environment *,char *,size_t bufferLength,Activation *);
 
 #endif
