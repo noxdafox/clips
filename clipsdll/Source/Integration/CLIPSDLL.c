@@ -9,9 +9,11 @@
 #include "cstrcpsr.h"
 #include "engine.h"
 #include "envrnbld.h"
+#include "factfun.h"
 #include "factmngr.h"
 #include "fileutil.h"
 #include "inscom.h"
+#include "prntutil.h"
 #include "router.h"
 #include "strngfun.h"
 #include "strngrtr.h"
@@ -336,6 +338,32 @@ void __declspec(dllexport) __SetFocusChanged(
    SetFocusChanged(theEnv,value);
   }
 
+bool __declspec(dllexport) __GetFactListChanged(
+  Environment *theEnv)
+  {
+   return GetFactListChanged(theEnv);
+  }
+
+void __declspec(dllexport) __SetFactListChanged(
+  Environment *theEnv,
+  bool value)
+  {
+   SetFactListChanged(theEnv,value);
+  }
+  
+bool __declspec(dllexport) __GetInstancesChanged(
+  Environment *theEnv)
+  {
+   return GetInstancesChanged(theEnv);
+  }
+
+void __declspec(dllexport) __SetInstancesChanged(
+  Environment *theEnv,
+  bool value)
+  {
+   SetInstancesChanged(theEnv,value);
+  }
+
 bool __declspec(dllexport) __EnablePeriodicFunctions(
   Environment *theEnv,
   bool value)
@@ -408,4 +436,96 @@ void __declspec(dllexport) __GetActivationBasisPPForm(
   Activation *theActivation)
   {
    GetActivationBasisPPForm(theEnv,buffer,bufferLength,theActivation);
+  }
+
+Defmodule __declspec(dllexport) * __GetNextDefmodule(
+  Environment *theEnv,
+  Defmodule *defmodulePtr)
+  {
+   return GetNextDefmodule(theEnv,defmodulePtr);
+  }
+
+const char __declspec(dllexport) * __DefmoduleName(
+  Defmodule *theDefmodule)
+  {
+   return DefmoduleName(theDefmodule);  
+  } 
+
+Fact __declspec(dllexport) * __GetNextFact(
+  Environment *theEnv,
+  Fact *factPtr)
+  {
+   return GetNextFact(theEnv,factPtr);
+  }
+
+Deftemplate __declspec(dllexport) * __GetNextDeftemplate(
+  Environment *theEnv,
+  Deftemplate *deftemplatePtr)
+  {
+   return GetNextDeftemplate(theEnv,deftemplatePtr);
+  }
+
+Deftemplate __declspec(dllexport) * __FactDeftemplate(
+  Fact *theFact)
+  {
+   return FactDeftemplate(theFact);
+  }
+
+void __declspec(dllexport) __FactSlotNames(
+  Fact *theFact,
+  CLIPSValue *returnValue)
+  {
+   FactSlotNames(theFact,returnValue);
+  }
+
+void __FactSlotValue(
+  Environment *theEnv,
+  Fact *theFact,
+  const char *theSlotName,
+  CLIPSValue *returnValue)
+  {
+   FactSlotValue(theEnv,theFact,theSlotName,returnValue);
+  }
+
+DefaultType __DeftemplateSlotDefaultP(
+  Deftemplate *theDeftemplate,
+  const char *slotName)
+  {
+   return DeftemplateSlotDefaultP(theDeftemplate,slotName);
+  }
+
+bool __DeftemplateSlotDefaultValue(
+  Deftemplate *theDeftemplate,
+  const char *slotName,
+  CLIPSValue *theValue)
+  {
+   return DeftemplateSlotDefaultValue(theDeftemplate,slotName,theValue);
+  }
+
+void * __CreateDeftemplateScopeMap(
+  Environment *theEnv,
+  Deftemplate *theDeftemplate)
+  {
+   return CreateDeftemplateScopeMap(theEnv,theDeftemplate);
+  }
+
+bool __DOsEqual(
+  UDFValue *dobj1,
+  UDFValue *dobj2)
+  {
+   return DOsEqual(dobj1,dobj2);
+  }
+
+void __CLIPSToUDFValue(
+  CLIPSValue *cv,
+  UDFValue *uv)
+  {
+   CLIPSToUDFValue(cv,uv);
+  }
+
+const char * __DataObjectToString(
+  Environment *theEnv,
+  UDFValue *theDO)
+  {
+   return DataObjectToString(theEnv,theDO);
   }

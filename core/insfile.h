@@ -67,10 +67,10 @@ struct instanceFileData
    size_t BinaryInstanceFileSize;
 
 #if BLOAD_INSTANCES
-   unsigned long BinaryInstanceFileOffset;
+   size_t BinaryInstanceFileOffset;
    char *CurrentReadBuffer;
-   unsigned long CurrentReadBufferSize;
-   unsigned long CurrentReadBufferOffset;
+   size_t CurrentReadBufferSize;
+   size_t CurrentReadBufferOffset;
 #endif
   };
 

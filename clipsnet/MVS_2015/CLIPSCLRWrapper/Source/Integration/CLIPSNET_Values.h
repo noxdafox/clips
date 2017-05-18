@@ -31,7 +31,7 @@ namespace CLIPSNET
 	     ~PrimitiveValue();
 
       public:
-	     virtual String^ ToString() override;
+        virtual String^ ToString() override;
         virtual int GetHashCode() override;
         virtual bool Equals(Object ^ obj) override; 
         virtual CLIPSNETType CLIPSType();
@@ -249,7 +249,7 @@ namespace CLIPSNET
 
         List<PrimitiveValue ^> ^ GetMultifieldValue();
  
-	     virtual String^ ToString() override;
+	    virtual String^ ToString() override;
         virtual int GetHashCode() override;
         virtual bool Equals(Object ^ obj) override; 
         virtual System::Collections::IEnumerator ^ GetEnumerator();

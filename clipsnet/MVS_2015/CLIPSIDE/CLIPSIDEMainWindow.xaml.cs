@@ -95,6 +95,7 @@ namespace CLIPSIDE
   public partial class MainWindow : Window
      {
       private AgendaBrowserManager agendaBrowserManager;
+      private FactBrowserManager factBrowserManager;
       private IDEPreferences preferences;
       private int agendaCount = 1;
       private int factsCount = 1;
@@ -135,6 +136,7 @@ namespace CLIPSIDE
            { this.SetCurrentDirectory(Directory.GetCurrentDirectory()); }
 
          agendaBrowserManager = new AgendaBrowserManager(this);
+         factBrowserManager = new FactBrowserManager(this);
 
          IDEPeriodicCallback theCB = new IDEPeriodicCallback(this);
 
@@ -190,6 +192,12 @@ namespace CLIPSIDE
             this.dialog.GetEnvironment().SetAgendaChanged(false);
             this.dialog.GetEnvironment().SetFocusChanged(false);
             this.agendaBrowserManager.UpdateAllBrowsers();
+           }
+
+         if (this.dialog.GetEnvironment().GetFactListChanged())
+           {
+            this.dialog.GetEnvironment().SetFactListChanged(false);
+            this.factBrowserManager.UpdateAllBrowsers();
            }
         }
 
@@ -510,6 +518,9 @@ namespace CLIPSIDE
          ClosableTab theTabItem = new ClosableTab();
          theTabItem.Title = "Facts #" + factsCount++;
          OpenTabItem(theTabItem);
+
+         FactBrowser theBrowser = factBrowserManager.CreateBrowser();
+         theTabItem.Content = theBrowser;
         }
 
       /******************************/
@@ -563,6 +574,12 @@ namespace CLIPSIDE
            { 
             agendaBrowserManager.RemoveBrowser((AgendaBrowser)  theTabItem.Content);
             ((AgendaBrowser) theTabItem.Content).DetachIDE(); 
+           }
+
+         if (theTabItem.Content is FactBrowser)
+           { 
+            factBrowserManager.RemoveBrowser((FactBrowser)  theTabItem.Content);
+            ((FactBrowser) theTabItem.Content).DetachIDE(); 
            }
 
          windowCount--;

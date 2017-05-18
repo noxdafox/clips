@@ -2,6 +2,7 @@
 #include <string>
 #include <iostream>
 #include <vector>
+#include <unordered_map>
 
 #include "envrnmnt.h"
 
@@ -25,9 +26,12 @@ enum CLIPSCPPType
 class CLIPSCPPRouter;
 class CLIPSCPPPeriodicFunction;
 class CLIPSCPPFocus;
+class CLIPSCPPModule;
 class CLIPSCPPFocusStack;
 class CLIPSCPPActivation;
 class CLIPSCPPAgenda;
+class CLIPSCPPFactInstance;
+class CLIPSCPPSlotValue;
 
 class DataObject;
 class FactAddressValue;
@@ -72,12 +76,19 @@ class CLIPSCPPEnv
       void AppendToDribble(const char *);
       void PrintBanner();
       void PrintPrompt();
+      void CLIPSCPPEnv::GetFactScopes(std::unordered_map<unsigned long long,std::vector<bool>>&);
+	  std::vector<CLIPSCPPFactInstance> *GetFactList();
+	  std::vector<CLIPSCPPModule> *GetModuleList();
       CLIPSCPPFocusStack *GetFocusStack();
       CLIPSCPPAgenda *GetAgenda(const char *);
       bool GetAgendaChanged();
       void SetAgendaChanged(bool);
       bool GetFocusChanged();
       void SetFocusChanged(bool);
+      bool GetFactListChanged();
+      void SetFactListChanged(bool);
+      bool GetInstancesChanged();
+      void SetInstancesChanged(bool);
   };
 
 class CLIPSCPPRouter
@@ -120,10 +131,23 @@ class CLIPSCPPFocusStack
      virtual ~CLIPSCPPFocusStack();
      
      void add(CLIPSCPPFocus *);
-	  std::vector<CLIPSCPPFocus *> *GetStack();
+     std::vector<CLIPSCPPFocus *> *GetStack();
 
    private:
      std::vector<CLIPSCPPFocus *> stack;
+  };
+
+class CLIPSCPPModule
+  {
+   public:
+     CLIPSCPPModule();
+     CLIPSCPPModule(const char *);
+     virtual ~CLIPSCPPModule();
+
+     std::string *GetModuleName();
+
+   private:
+     std::string moduleName;
   };
 
 class CLIPSCPPActivation
@@ -157,6 +181,43 @@ class CLIPSCPPAgenda
      std::vector<CLIPSCPPActivation *> activations;
   };
 
+class CLIPSCPPSlotValue
+  {
+   public:
+     CLIPSCPPSlotValue();
+     CLIPSCPPSlotValue(const char *,const char *,bool);
+     virtual ~CLIPSCPPSlotValue();
+
+     bool IsDefault();
+     std::string *GetSlotName();
+     std::string *GetSlotValue();
+
+   private:
+     std::string slotName;
+     std::string slotValue;
+     bool isDefault;
+ 
+  };
+
+class CLIPSCPPFactInstance
+  {
+   public:
+     CLIPSCPPFactInstance();
+     CLIPSCPPFactInstance(unsigned long long,const char *,const char *,std::vector<CLIPSCPPSlotValue>);
+     virtual ~CLIPSCPPFactInstance();
+
+     unsigned long long GetTypeAddress();
+     std::string *GetName();
+     std::string *GetRelationName();
+     std::vector<CLIPSCPPSlotValue> *GetSlotValues();
+
+   private:
+     unsigned long long typeAddress;
+     std::string name;
+     std::string relationName;
+     std::vector<CLIPSCPPSlotValue> slotValues;
+  };
+
 class CLIPSCPPPeriodicFunction
   {
    public:
@@ -174,7 +235,7 @@ class Value
      friend std::ostream& operator<< (std::ostream& o, const Value* s);
      virtual std::ostream& print(std::ostream& o) const = 0;
      virtual Value *clone() const = 0; 
-	  virtual CLIPSCPPType GetCLIPSType();
+     virtual CLIPSCPPType GetCLIPSType();
   };
 
 class VoidValue : public Value

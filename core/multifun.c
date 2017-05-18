@@ -577,7 +577,7 @@ void ExplodeFunction(
   {
    UDFValue value;
    Multifield *theMultifield;
-   unsigned long end;
+   size_t end;
 
    /*==================================*/
    /* The argument should be a string. */

@@ -917,7 +917,7 @@ static void ProcessPatternNode(
    unsigned short patternSlotField;
    size_t objectSlotField;
    size_t objectSlotLength;
-   unsigned long repeatCount;
+   size_t repeatCount;
    InstanceSlot *objectSlot;
    struct multifieldMarker *newMark;
    UDFValue theResult;

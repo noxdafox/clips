@@ -173,7 +173,8 @@ static void StrOrSymCatFunction(
    UDFValue theArg;
    unsigned int numArgs;
    unsigned int i;
-   unsigned int total, j;
+   size_t total;
+   size_t j;
    char *theString;
    CLIPSLexeme **arrayOfStrings;
    CLIPSLexeme *hashPtr;

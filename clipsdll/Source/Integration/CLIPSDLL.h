@@ -6,6 +6,8 @@
 #include "entities.h"
 #include "moduldef.h"
 #include "router.h"
+#include "tmpltdef.h"
+#include "tmpltfun.h"
 
 #ifdef CLIPSDLL_SOURCE
 #define DECLSPEC __declspec(dllexport)
@@ -31,6 +33,8 @@ bool DECLSPEC __GetHaltExecution(Environment *);
 bool DECLSPEC __GetHaltRules(Environment *);
 bool DECLSPEC __GetAgendaChanged(Environment *);
 bool DECLSPEC __GetFocusChanged(Environment *);
+bool DECLSPEC __GetFactListChanged(Environment *);
+bool DECLSPEC __GetInstancesChanged(Environment *);
 bool DECLSPEC __GetEvaluationError(Environment *);
 bool DECLSPEC __AddRouter(Environment *,const char *,int,
                           RouterQueryFunction *,RouterPrintFunction *,
@@ -52,6 +56,8 @@ void DECLSPEC __SetHaltCommandLoopBatch(Environment *,bool);
 void DECLSPEC __SetHaltRules(Environment *,bool);
 void DECLSPEC __SetAgendaChanged(Environment *,bool);
 void DECLSPEC __SetFocusChanged(Environment *,bool);
+void DECLSPEC __SetFactListChanged(Environment *,bool);
+void DECLSPEC __SetInstancesChanged(Environment *,bool);
 void DECLSPEC __SetEvaluationError(Environment *,bool);
 bool DECLSPEC __EnablePeriodicFunctions(Environment *,bool);
 
@@ -84,5 +90,20 @@ void DECLSPEC * __GetModuleItem(Environment *,Defmodule *,unsigned);
 void DECLSPEC __RestoreCurrentModule(Environment *);
 Activation DECLSPEC * __GetNextActivation(Environment *,Activation *);
 void DECLSPEC __GetActivationBasisPPForm(Environment *,char *,size_t bufferLength,Activation *);
+Defmodule DECLSPEC * __GetNextDefmodule(Environment *,Defmodule *);
+const char DECLSPEC * __DefmoduleName(Defmodule *);
+
+Fact DECLSPEC * __GetNextFact(Environment *,Fact *);
+Deftemplate DECLSPEC * __GetNextDeftemplate(Environment *,Deftemplate *);
+
+Deftemplate DECLSPEC * __FactDeftemplate(Fact *);
+void DECLSPEC __FactSlotNames(Fact *,CLIPSValue *);
+void DECLSPEC __FactSlotValue(Environment *,Fact *,const char *,CLIPSValue *);
+DefaultType DECLSPEC __DeftemplateSlotDefaultP(Deftemplate *,const char *);
+bool DECLSPEC __DeftemplateSlotDefaultValue(Deftemplate *,const char *,CLIPSValue *);
+void DECLSPEC * __CreateDeftemplateScopeMap(Environment *,Deftemplate *);
+bool DECLSPEC __DOsEqual(UDFValue *,UDFValue *);
+void DECLSPEC __CLIPSToUDFValue(CLIPSValue *,UDFValue *);
+const char DECLSPEC * __DataObjectToString(Environment *,UDFValue *);
 
 #endif

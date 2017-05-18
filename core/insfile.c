@@ -154,7 +154,7 @@ struct classItem
    static void                    BinaryLoadInstanceError(Environment *,CLIPSLexeme *,Defclass *);
    static void                    CreateSlotValue(Environment *,UDFValue *,struct bsaveSlotValueAtom *,unsigned long);
    static void                   *GetBinaryAtomValue(Environment *,struct bsaveSlotValueAtom *);
-   static void                    BufferedRead(Environment *,void *,unsigned long);
+   static void                    BufferedRead(Environment *,void *,size_t);
    static void                    FreeReadBuffer(Environment *);
 #endif
 
@@ -1185,7 +1185,7 @@ static void SaveSingleInstanceBinary(
          Write out the number of atoms in the slot value
          =============================================== */
       bs.slotName = sp->desc->slotName->name->bucket;
-      bs.valueCount = sp->desc->multiple ? sp->multifieldValue->length : 1;
+      bs.valueCount = (unsigned long) (sp->desc->multiple ? sp->multifieldValue->length : 1);
       fwrite(&bs,sizeof(struct bsaveSlotValue),1,bsaveFP);
       totalValueCount += bs.valueCount;
      }
@@ -1448,19 +1448,19 @@ static bool LoadSingleBinaryInstance(
    /* =====================
       Get the instance name
       ===================== */
-   BufferedRead(theEnv,&nameIndex,(unsigned long) sizeof(long));
+   BufferedRead(theEnv,&nameIndex,sizeof(long));
    instanceName = SymbolPointer(nameIndex);
 
    /* ==================
       Get the class name
       ================== */
-   BufferedRead(theEnv,&nameIndex,(unsigned long) sizeof(long));
+   BufferedRead(theEnv,&nameIndex,sizeof(long));
    className = SymbolPointer(nameIndex);
 
    /* ==================
       Get the slot count
       ================== */
-   BufferedRead(theEnv,&slotCount,(unsigned long) sizeof(unsigned short));
+   BufferedRead(theEnv,&slotCount,sizeof(unsigned short));
 
    /* =============================
       Make sure the defclass exists
@@ -1495,16 +1495,15 @@ static bool LoadSingleBinaryInstance(
       value atoms into big arrays
       ==================================== */
    bsArray = (struct bsaveSlotValue *) gm2(theEnv,(sizeof(struct bsaveSlotValue) * slotCount));
-   BufferedRead(theEnv,bsArray,(unsigned long) (sizeof(struct bsaveSlotValue) * slotCount));
+   BufferedRead(theEnv,bsArray,(sizeof(struct bsaveSlotValue) * slotCount));
 
-   BufferedRead(theEnv,&totalValueCount,(unsigned long) sizeof(unsigned long));
+   BufferedRead(theEnv,&totalValueCount,sizeof(unsigned long));
 
    if (totalValueCount != 0L)
      {
       bsaArray = (struct bsaveSlotValueAtom *)
                   gm2(theEnv,(totalValueCount * sizeof(struct bsaveSlotValueAtom)));
-      BufferedRead(theEnv,bsaArray,
-                   (unsigned long) (totalValueCount * sizeof(struct bsaveSlotValueAtom)));
+      BufferedRead(theEnv,bsaArray,(totalValueCount * sizeof(struct bsaveSlotValueAtom)));
      }
 
    /* =========================
@@ -1672,9 +1671,9 @@ static void *GetBinaryAtomValue(
 static void BufferedRead(
   Environment *theEnv,
   void *buf,
-  unsigned long bufsz)
+  size_t bufsz)
   {
-   unsigned long i,amountLeftToRead;
+   size_t i, amountLeftToRead;
 
    if (InstanceFileData(theEnv)->CurrentReadBuffer != NULL)
      {
@@ -1691,7 +1690,7 @@ static void BufferedRead(
         {
          if (InstanceFileData(theEnv)->CurrentReadBufferOffset < InstanceFileData(theEnv)->CurrentReadBufferSize)
            {
-            for (i = 0L ; i < amountLeftToRead ; i++)
+            for (i = 0 ; i < amountLeftToRead ; i++)
               ((char *) buf)[i] = InstanceFileData(theEnv)->CurrentReadBuffer[i + InstanceFileData(theEnv)->CurrentReadBufferOffset];
             bufsz -= amountLeftToRead;
             buf = (void *) (((char *) buf) + amountLeftToRead);

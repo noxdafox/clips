@@ -761,8 +761,8 @@ Fact *AssertDriver(
   Fact *templatePosition,
   char *changeMap)
   {
-   unsigned long hashValue;
-   unsigned long length, i;
+   size_t hashValue;
+   size_t length, i;
    CLIPSValue *theField;
    Fact *duplicate;
    struct callFunctionItemWithArg *theAssertFunction;

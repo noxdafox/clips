@@ -1142,11 +1142,11 @@ void DeallocateCallListWithArg(
 /* ItemHashValue: Returns the hash value */
 /*   for the specified value.            */
 /*****************************************/
-unsigned long ItemHashValue(
+size_t ItemHashValue(
   Environment *theEnv,
   unsigned short theType,
   void *theValue,
-  unsigned long theRange)
+  size_t theRange)
   {
 #if OBJECT_SYSTEM
    union
@@ -1159,10 +1159,10 @@ unsigned long ItemHashValue(
    switch(theType)
      {
       case FLOAT_TYPE:
-        return(HashFloat(((CLIPSFloat *) theValue)->contents,theRange));
+        return HashFloat(((CLIPSFloat *) theValue)->contents,theRange);
 
       case INTEGER_TYPE:
-        return(HashInteger(((CLIPSInteger *) theValue)->contents,theRange));
+        return HashInteger(((CLIPSInteger *) theValue)->contents,theRange);
 
       case SYMBOL_TYPE:
       case STRING_TYPE:
@@ -1172,11 +1172,11 @@ unsigned long ItemHashValue(
         return HashSymbol(((CLIPSLexeme *) theValue)->contents,theRange);
 
       case MULTIFIELD_TYPE:
-        return(HashMultifield((Multifield *) theValue,theRange));
+        return HashMultifield((Multifield *) theValue,theRange);
 
 #if DEFTEMPLATE_CONSTRUCT
       case FACT_ADDRESS_TYPE:
-        return(((Fact *) theValue)->hashValue % theRange);
+        return (((Fact *) theValue)->hashValue % theRange);
 #endif
 
       case EXTERNAL_ADDRESS_TYPE:
@@ -1186,7 +1186,7 @@ unsigned long ItemHashValue(
       case INSTANCE_ADDRESS_TYPE:
         fis.uv = 0;
         fis.vv = theValue;
-        return(fis.uv % theRange);
+        return (fis.uv % theRange);
 #endif
      }
 

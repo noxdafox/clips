@@ -1,5 +1,6 @@
 #include <iostream>
 #include <stdexcept>
+#include <unordered_map>
 
 #include "clipscpp.h"
 
@@ -20,13 +21,17 @@ using std::string;
 #include "cstrcpsr.h"
 #include "engine.h"
 #include "envrnbld.h"
+#include "factfun.h"
 #include "factmngr.h"
 #include "fileutil.h"
 #include "inscom.h"
+#include "prntutil.h"
 #include "router.h"
 #include "strngfun.h"
 #include "strngrtr.h"
 #include "sysdep.h"
+#include "tmpltdef.h"
+#include "tmpltfun.h"
 #include "watch.h"
 
 /*##################*/
@@ -503,6 +508,56 @@ void CLIPSCPPEnv::SetFocusChanged(
     return ::SetFocusChanged(theEnv,newValue);
 #else
     return __SetFocusChanged(theEnv,newValue);
+#endif
+  }
+
+/**********************/
+/* GetFactListChanged */
+/**********************/
+bool CLIPSCPPEnv::GetFactListChanged()
+  {
+#ifndef CLIPS_DLL_WRAPPER
+    return ::GetFactListChanged(theEnv);
+#else
+    return __GetFactListChanged(theEnv);
+#endif
+  }
+
+/**********************/
+/* SetFactListChanged */
+/**********************/
+void CLIPSCPPEnv::SetFactListChanged(
+  bool newValue)
+  {
+#ifndef CLIPS_DLL_WRAPPER
+    return ::SetFactListChanged(theEnv,newValue);
+#else
+    return __SetFactListChanged(theEnv,newValue);
+#endif
+  }
+
+/***********************/
+/* GetInstancesChanged */
+/***********************/
+bool CLIPSCPPEnv::GetInstancesChanged()
+  {
+#ifndef CLIPS_DLL_WRAPPER
+    return ::GetInstancesChanged(theEnv);
+#else
+    return __GetInstancesChanged(theEnv);
+#endif
+  }
+
+/***********************/
+/* SetInstancesChanged */
+/***********************/
+void CLIPSCPPEnv::SetInstancesChanged(
+  bool newValue)
+  {
+#ifndef CLIPS_DLL_WRAPPER
+    return ::SetInstancesChanged(theEnv,newValue);
+#else
+    return __SetInstancesChanged(theEnv,newValue);
 #endif
   }
 
@@ -1801,6 +1856,41 @@ static void CLIPSCPPExit(
    theRouter->Exit(theCPPEnv,exitCode);
   }
 
+/*########################*/
+/* CLIPSCPPModule Methods */
+/*########################*/
+
+/******************/
+/* CLIPSCPPModule */
+/******************/
+CLIPSCPPModule::CLIPSCPPModule()
+  {
+  }
+
+/******************/
+/* CLIPSCPPModule */
+/******************/
+CLIPSCPPModule::CLIPSCPPModule(
+  const char *initialString)
+  {
+   moduleName.assign(initialString);
+  }
+
+/******************/
+/* GetModuleName */
+/******************/
+std::string *CLIPSCPPModule::GetModuleName()
+  {
+   return &this->moduleName;
+  }
+
+/*******************/
+/* ~CLIPSCPPModule */
+/*******************/
+CLIPSCPPModule::~CLIPSCPPModule()
+  { 
+  }
+
 /*#######################*/
 /* CLIPSCPPFocus Methods */
 /*#######################*/
@@ -2007,6 +2097,46 @@ CLIPSCPPFocusStack *CLIPSCPPEnv::GetFocusStack()
    return theCPPFS;
   }
 
+/*****************/
+/* GetModuleList */
+/*****************/
+std::vector<CLIPSCPPModule> *CLIPSCPPEnv::GetModuleList()
+  {
+   vector<CLIPSCPPModule> * theList;
+   Defmodule *theDefmodule;
+   size_t defmoduleCount = 0;
+
+#ifndef CLIPS_DLL_WRAPPER
+   for (theDefmodule = GetNextDefmodule(theEnv,NULL);
+        theDefmodule != NULL;
+        theDefmodule = GetNextDefmodule(theEnv,theDefmodule))
+     { defmoduleCount++; }
+
+   theList = new vector<CLIPSCPPModule>();
+   theList->reserve(defmoduleCount);
+   
+   for (theDefmodule = GetNextDefmodule(theEnv,NULL);
+        theDefmodule != NULL;
+        theDefmodule = GetNextDefmodule(theEnv,theDefmodule))
+     { theList->push_back(CLIPSCPPModule(DefmoduleName(theDefmodule))); }
+#else
+   for (theDefmodule = __GetNextDefmodule(theEnv,NULL);
+        theDefmodule != NULL;
+        theDefmodule = __GetNextDefmodule(theEnv,theDefmodule))
+     { defmoduleCount++; }
+
+   theList = new vector<CLIPSCPPModule>();
+   theList->reserve(defmoduleCount);
+   
+   for (theDefmodule = __GetNextDefmodule(theEnv,NULL);
+        theDefmodule != NULL;
+        theDefmodule = __GetNextDefmodule(theEnv,theDefmodule))
+     { theList->push_back(CLIPSCPPModule(__DefmoduleName(theDefmodule))); }
+#endif
+
+   return theList;
+  }
+
 /*************/
 /* GetAgenda */
 /*************/
@@ -2107,4 +2237,356 @@ CLIPSCPPAgenda *CLIPSCPPEnv::GetAgenda(
 
 #endif
    return theCPPAgenda;
+  }
+
+/*##############################*/
+/* CLIPSCPPFactInstance Methods */
+/*##############################*/
+
+/************************/
+/* CLIPSCPPFactInstance */
+/************************/
+CLIPSCPPFactInstance::CLIPSCPPFactInstance()
+  {
+  }
+
+CLIPSCPPFactInstance::CLIPSCPPFactInstance(
+  unsigned long long theTypeAddress,
+  const char *theName,
+  const char *theRelationName,
+  std::vector<CLIPSCPPSlotValue> theSlotValues)
+  {
+   this->typeAddress = theTypeAddress;
+   this->name.assign(theName);
+   this->relationName.assign(theRelationName);
+   this->slotValues = theSlotValues;
+  }
+
+/*************************/
+/* ~CLIPSCPPFactInstance */
+/*************************/
+CLIPSCPPFactInstance::~CLIPSCPPFactInstance()
+  { 
+  }
+
+/******************/
+/* GetTypeAddress */
+/******************/
+unsigned long long CLIPSCPPFactInstance::GetTypeAddress()
+  {
+   return this->typeAddress;
+  }
+
+/***********/
+/* GetName */
+/***********/
+std::string *CLIPSCPPFactInstance::GetName()
+  {
+   return &this->name;
+  }
+
+/*******************/
+/* GetRelationName */
+/*******************/
+std::string *CLIPSCPPFactInstance::GetRelationName()
+  {
+   return &this->relationName;
+  }
+
+/*****************/
+/* GetSlotValues */
+/*****************/
+std::vector<CLIPSCPPSlotValue> *CLIPSCPPFactInstance::GetSlotValues()
+  {
+   return &this->slotValues;
+  }
+
+/*###########################*/
+/* CLIPSCPPSlotValue Methods */
+/*###########################*/
+
+/*********************/
+/* CLIPSCPPSlotValue */
+/*********************/
+CLIPSCPPSlotValue::CLIPSCPPSlotValue()
+  {
+  }
+
+CLIPSCPPSlotValue::CLIPSCPPSlotValue(
+  const char *theSlotName,
+  const char *theSlotValue,
+  bool isDefaultValue)
+  {
+   this->slotName.assign(theSlotName);
+   this->slotValue.assign(theSlotValue);
+   this->isDefault = isDefaultValue;
+  }
+
+/**********************/
+/* ~CLIPSCPPSlotValue */
+/**********************/
+CLIPSCPPSlotValue::~CLIPSCPPSlotValue()
+  { 
+  }
+
+/***************/
+/* GetSlotName */
+/***************/
+std::string *CLIPSCPPSlotValue::GetSlotName()
+  {
+   return &this->slotName;
+  }
+
+/*************/
+/* IsDefault */
+/*************/
+bool CLIPSCPPSlotValue::IsDefault()
+  {
+   return this->isDefault;
+  }
+
+/****************/
+/* GetSlotValue */
+/****************/
+std::string *CLIPSCPPSlotValue::GetSlotValue() // TBD Return string not pointer to string
+  {
+   return &this->slotValue;    // TBD http://stackoverflow.com/questions/7945638/should-i-use-pointer-to-stdstring
+  }
+
+/*****************/
+/* GetFactScopes */
+/*****************/
+void CLIPSCPPEnv::GetFactScopes(
+  std::unordered_map<unsigned long long,vector<bool>>& scopes)
+  {
+   Defmodule *theModule;
+   size_t moduleCount = 0, whichBit;
+   struct deftemplateModule *theModuleItem;
+   Deftemplate *theDeftemplate;
+   CLIPSBitMap *theScopeMap;
+   size_t theDeftemplateIndex;
+
+   scopes.clear();
+
+#ifndef CLIPS_DLL_WRAPPER
+   /*==============================*/
+   /* Count the number of modules. */
+   /*==============================*/
+
+   for (theModule = GetNextDefmodule(theEnv,NULL);
+        theModule != NULL;
+        theModule = GetNextDefmodule(theEnv,theModule))
+     { moduleCount++; }
+
+   /*===========================================================*/
+   /* Iterate over each module creating the deftemplate scopes. */
+   /*===========================================================*/
+
+   for (theModule = GetNextDefmodule(theEnv,NULL);
+        theModule != NULL;
+        theModule = GetNextDefmodule(theEnv,theModule))
+     {
+      theModuleItem = (struct deftemplateModule *) 
+                      GetModuleItem(theEnv,theModule,DeftemplateData(theEnv)->DeftemplateModuleIndex);
+
+      for (theDeftemplate = (Deftemplate *) theModuleItem->header.firstItem;
+           theDeftemplate != NULL;
+           theDeftemplate = (Deftemplate *) GetNextDeftemplate(theEnv,theDeftemplate))
+        { 
+         if (theDeftemplate->factList == NULL) continue;
+
+         theDeftemplateIndex = (size_t) theDeftemplate;
+
+         theScopeMap = (CLIPSBitMap *) CreateDeftemplateScopeMap(theEnv,theDeftemplate);
+         scopes[theDeftemplateIndex] = vector<bool>(moduleCount);
+
+         for (whichBit = 0; whichBit < moduleCount; whichBit++)
+           {
+            if (TestBitMap(theScopeMap->contents,whichBit))
+              { scopes[theDeftemplateIndex][whichBit] = true; }
+           }
+        }
+     }
+#else
+   /*==============================*/
+   /* Count the number of modules. */
+   /*==============================*/
+
+   for (theModule = __GetNextDefmodule(theEnv,NULL);
+        theModule != NULL;
+        theModule = __GetNextDefmodule(theEnv,theModule))
+     { moduleCount++; }
+
+   /*===========================================================*/
+   /* Iterate over each module creating the deftemplate scopes. */
+   /*===========================================================*/
+
+   for (theModule = __GetNextDefmodule(theEnv,NULL);
+        theModule != NULL;
+        theModule = __GetNextDefmodule(theEnv,theModule))
+     {
+      theModuleItem = (struct deftemplateModule *) 
+                      __GetModuleItem(theEnv,theModule,DeftemplateData(theEnv)->DeftemplateModuleIndex);
+
+      for (theDeftemplate = (Deftemplate *) theModuleItem->header.firstItem;
+           theDeftemplate != NULL;
+           theDeftemplate = __GetNextDeftemplate(theEnv,theDeftemplate))
+        { 
+         if (theDeftemplate->factList == NULL) continue;
+
+         theDeftemplateIndex = (size_t) theDeftemplate;
+
+         theScopeMap = (CLIPSBitMap *) __CreateDeftemplateScopeMap(theEnv,theDeftemplate);
+         scopes[theDeftemplateIndex] = vector<bool>(moduleCount);
+
+         for (whichBit = 0; whichBit < moduleCount; whichBit++)
+           {
+            if (TestBitMap(theScopeMap->contents,whichBit))
+              { scopes[theDeftemplateIndex][whichBit] = true; }
+           }
+        }
+     }
+#endif
+  }
+
+/***************/
+/* GetFactList */
+/***************/
+vector<CLIPSCPPFactInstance> *CLIPSCPPEnv::GetFactList()
+  {
+   vector<CLIPSCPPFactInstance> *theCPPFactList;
+   Fact *theFact;
+   size_t factCount = 0;
+   CLIPSValue slotNames, temp;
+   UDFValue slotValue, defaultValue;
+   size_t i;
+   char factNameBuffer[32]; 
+
+#ifndef CLIPS_DLL_WRAPPER
+   /*============================*/
+   /* Count the number of facts. */
+   /*============================*/
+   
+   for (theFact = GetNextFact(theEnv,NULL);
+        theFact != NULL;
+        theFact = GetNextFact(theEnv,theFact))
+     { factCount++; }
+
+   theCPPFactList = new vector<CLIPSCPPFactInstance>(); 
+   theCPPFactList->reserve(factCount);
+
+   /*=============================*/
+   /* Add facts to the fact list. */
+   /*=============================*/
+
+   for (theFact = GetNextFact(theEnv,NULL);
+        theFact != NULL;
+        theFact = GetNextFact(theEnv,theFact))
+     {
+      vector<CLIPSCPPSlotValue> theCPPSlotValues;
+
+      /*===================================*/
+      /* Determine the number of slots and */
+      /* create a vector to contain them.  */
+      /*===================================*/
+
+      FactSlotNames(theFact,&slotNames);
+
+      theCPPSlotValues.reserve(slotNames.multifieldValue->length);
+
+      for (i = 0; i < slotNames.multifieldValue->length; i++)
+        {
+         const char *theCSlotName, *theCSlotValue;
+         bool defaulted = false;
+
+         theCSlotName = slotNames.multifieldValue->contents[i].lexemeValue->contents;
+
+         FactSlotValue(theEnv,theFact,slotNames.multifieldValue->contents[i].lexemeValue->contents,&temp);
+         CLIPSToUDFValue(&temp,&slotValue);
+         
+         if (DeftemplateSlotDefaultP(FactDeftemplate(theFact),theCSlotName) == STATIC_DEFAULT)
+           {
+            DeftemplateSlotDefaultValue(FactDeftemplate(theFact),theCSlotName,&temp);
+            CLIPSToUDFValue(&temp,&defaultValue);
+                             
+            if (DOsEqual(&slotValue,&defaultValue))
+              { defaulted = true; }
+           }
+
+         theCSlotValue = DataObjectToString(theEnv,&slotValue);
+         theCPPSlotValues.push_back(CLIPSCPPSlotValue(theCSlotName,theCSlotValue,defaulted));
+        }
+
+      sprintf(factNameBuffer,"f-%lld", FactIndex(theFact));
+
+      theCPPFactList->push_back(CLIPSCPPFactInstance((size_t) theFact->whichDeftemplate,
+                                                     factNameBuffer,
+                                                     theFact->whichDeftemplate->header.name->contents,
+                                                     theCPPSlotValues)); 
+     }
+#else
+   /*============================*/
+   /* Count the number of facts. */
+   /*============================*/
+   
+   for (theFact = __GetNextFact(theEnv,NULL);
+        theFact != NULL;
+        theFact = __GetNextFact(theEnv,theFact))
+     { factCount++; }
+
+   theCPPFactList = new vector<CLIPSCPPFactInstance>(); 
+   theCPPFactList->reserve(factCount);
+
+   /*=============================*/
+   /* Add facts to the fact list. */
+   /*=============================*/
+
+   for (theFact = __GetNextFact(theEnv,NULL);
+        theFact != NULL;
+        theFact = __GetNextFact(theEnv,theFact))
+     {
+      vector<CLIPSCPPSlotValue> theCPPSlotValues;
+
+      /*===================================*/
+      /* Determine the number of slots and */
+      /* create a vector to contain them.  */
+      /*===================================*/
+
+      __FactSlotNames(theFact,&slotNames);
+
+      theCPPSlotValues.reserve(slotNames.multifieldValue->length);
+
+      for (i = 0; i < slotNames.multifieldValue->length; i++)
+        {
+         const char *theCSlotName, *theCSlotValue;
+         bool defaulted = false;
+
+         theCSlotName = slotNames.multifieldValue->contents[i].lexemeValue->contents;
+
+         __FactSlotValue(theEnv,theFact,slotNames.multifieldValue->contents[i].lexemeValue->contents,&temp);
+         __CLIPSToUDFValue(&temp,&slotValue);
+         
+         if (__DeftemplateSlotDefaultP(__FactDeftemplate(theFact),theCSlotName) == STATIC_DEFAULT)
+           {
+            __DeftemplateSlotDefaultValue(__FactDeftemplate(theFact),theCSlotName,&temp);
+            __CLIPSToUDFValue(&temp,&defaultValue);
+                             
+            if (__DOsEqual(&slotValue,&defaultValue))
+              { defaulted = true; }
+           }
+
+         theCSlotValue = __DataObjectToString(theEnv,&slotValue);
+         theCPPSlotValues.push_back(CLIPSCPPSlotValue(theCSlotName,theCSlotValue,defaulted));
+        }
+
+      sprintf(factNameBuffer,"f-%lld", __FactIndex(theFact));
+
+      theCPPFactList->push_back(CLIPSCPPFactInstance((size_t) theFact->whichDeftemplate,
+                                                     factNameBuffer,
+                                                     theFact->whichDeftemplate->header.name->contents,
+                                                     theCPPSlotValues)); 
+     }
+#endif
+
+   return theCPPFactList;
   }

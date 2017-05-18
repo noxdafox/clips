@@ -118,7 +118,7 @@ struct multifieldMarker
       void *whichSlot;
       unsigned short whichSlotNumber;
      } where;
-    unsigned long startPosition;
+    size_t startPosition;
     size_t range;
     MultifieldMarker *next;
    };

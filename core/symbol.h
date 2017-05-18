@@ -197,11 +197,11 @@ struct symbolData
    CLIPSExternalAddress          *CreateExternalAddress(Environment *,void *,unsigned short);
    CLIPSExternalAddress          *CreateCExternalAddress(Environment *,void *);
    CLIPSInteger                  *FindLongHN(Environment *,long long);
-   unsigned long                  HashSymbol(const char *,unsigned long);
-   unsigned long                  HashFloat(double,unsigned long);
-   unsigned long                  HashInteger(long long,unsigned long);
-   unsigned long                  HashBitMap(const char *,unsigned long,unsigned);
-   unsigned long                  HashExternalAddress(void *,unsigned long);
+   size_t                         HashSymbol(const char *,size_t);
+   size_t                         HashFloat(double,size_t);
+   size_t                         HashInteger(long long,size_t);
+   size_t                         HashBitMap(const char *,size_t,unsigned);
+   size_t                         HashExternalAddress(void *,size_t);
    void                           IncrementLexemeReferenceCount(Environment *,CLIPSLexeme *);
    void                           IncrementFloatReferenceCount(Environment *,CLIPSFloat *);
    void                           IncrementIntegerReferenceCount(Environment *,CLIPSInteger *);

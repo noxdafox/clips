@@ -77,7 +77,7 @@ struct multifieldBuilder
    size_t bufferMaximum;
   };
 
-   Multifield                    *CreateUnmanagedMultifield(Environment *,unsigned long);
+   Multifield                    *CreateUnmanagedMultifield(Environment *,size_t);
    void                           ReturnMultifield(Environment *,Multifield *);
    void                           IncrementMultifieldReferenceCount(Environment *,Multifield *);
    void                           DecrementMultifieldReferenceCount(Environment *,Multifield *);
@@ -95,7 +95,7 @@ struct multifieldBuilder
    Multifield                    *CopyMultifield(Environment *,Multifield *);
    bool                           MultifieldsEqual(Multifield *,Multifield *);
    Multifield                    *DOToMultifield(Environment *,UDFValue *);
-   unsigned long                  HashMultifield(Multifield *,unsigned long);
+   size_t                         HashMultifield(Multifield *,size_t);
    Multifield                    *GetMultifieldList(Environment *);
    CLIPSLexeme                   *ImplodeMultifield(Environment *,UDFValue *);
    void                           EphemerateMultifield(Environment *,Multifield *);

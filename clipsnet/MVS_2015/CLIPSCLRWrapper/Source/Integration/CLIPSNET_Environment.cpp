@@ -424,6 +424,111 @@ namespace CLIPSNET
       if (rv == 0) return false;
       else return true;
      }
+   
+   /*****************/
+   /* GetFactScopes */
+   /*****************/
+   Dictionary<unsigned long long,BitArray ^> ^ Environment::GetFactScopes()
+     {
+      Dictionary<unsigned long long,BitArray ^> ^ scopes;
+      std::unordered_map<unsigned long long,std::vector<bool>> theCPPScopes;
+      std::unordered_map<unsigned long long,std::vector<bool>>::iterator it;
+
+      m_Env->GetFactScopes(theCPPScopes);
+
+      scopes = gcnew Dictionary<unsigned long long,BitArray ^>();
+
+      for (it = theCPPScopes.begin(); it != theCPPScopes.end(); it++)
+        {
+         unsigned long long key = it->first;
+         std::vector<bool> value = it->second;
+         size_t i;
+
+         BitArray ^ theArray = gcnew BitArray((int) it->second.size());
+
+         for (i = 0; i < it->second.size(); i++)
+           {
+            if (it->second[i])
+              { theArray->Set((int) i,true); }
+           }
+
+         scopes->Add(it->first,theArray);
+        }
+
+      return scopes;
+     }
+
+   /***************/
+   /* GetFactList */
+   /***************/
+   List<FactInstance ^> ^ Environment::GetFactList()
+     {
+      List<FactInstance ^> ^ theList;
+      std::vector<CLIPSCPPFactInstance> *v = m_Env->GetFactList();
+      size_t i, j;
+
+      theList = gcnew List<FactInstance ^>();
+
+      for (i = 0; i < v->size(); i++)
+        {
+         const char *theCName, *theCRelationName;
+         List<SlotValue ^> ^ theSlots = gcnew List<SlotValue ^>();
+         unsigned long long theTypeAddress;
+         std::vector<CLIPSCPPSlotValue> *theCPPSlots;
+
+         theTypeAddress = v->at(i).GetTypeAddress();
+         theCName = v->at(i).GetName()->c_str();
+         theCRelationName = v->at(i).GetRelationName()->c_str();
+         theCPPSlots = v->at(i).GetSlotValues();
+
+         for (j = 0; j < theCPPSlots->size(); j++)
+           {
+            bool isDefault;
+            const char *theCSlotName, *theCSlotValue;
+
+            theCSlotName = theCPPSlots->at(j).GetSlotName()->c_str();
+            theCSlotValue = theCPPSlots->at(j).GetSlotValue()->c_str();
+            
+            isDefault = theCPPSlots->at(j).IsDefault();
+
+            theSlots->Add(gcnew SlotValue(gcnew String(theCSlotName),
+                                          gcnew String(theCSlotValue),
+                                          isDefault));
+           }
+
+         theList->Add(gcnew FactInstance(theTypeAddress,
+                                         gcnew String(theCName),
+                                         gcnew String(theCRelationName),
+                                         theSlots));
+        }
+
+      delete v;
+
+      return theList;
+     }
+ 
+   /*****************/
+   /* GetModuleList */
+   /*****************/
+   List<Module ^> ^ Environment::GetModuleList()
+     {
+      List<Module ^> ^ theList;
+      std::vector<CLIPSCPPModule> *v = m_Env->GetModuleList();
+      size_t i;
+      const char *theCString;
+
+	  theList = gcnew List<Module ^>();
+
+      for (i = 0; i < v->size(); i++)
+        {
+         theCString = v->at(i).GetModuleName()->c_str();
+         theList->Add(gcnew Module(gcnew String(theCString)));
+        }
+
+      delete v;
+
+      return theList;
+     }
 
    /*****************/
    /* GetFocusStack */
@@ -436,8 +541,8 @@ namespace CLIPSNET
       size_t i;
       std::vector<CLIPSCPPFocus *> *v;
       std::string *theCPPString;
-	   const char *theCString;
-	   List<Focus ^> ^ theList;
+      const char *theCString;
+      List<Focus ^> ^ theList;
 
       v = theCPPStack->GetStack();
 
@@ -447,7 +552,7 @@ namespace CLIPSNET
         {
          theCPPFocus = v->at(i);
          theCPPString = theCPPFocus->GetModuleName();
-		   theCString = theCPPString->c_str();
+   	     theCString = theCPPString->c_str();
          theList->Add(gcnew Focus(gcnew String(theCString)));
         }
 
@@ -527,6 +632,28 @@ namespace CLIPSNET
      bool newValue)
      {
       m_Env->SetFocusChanged(newValue);
+     }
+
+   bool Environment::GetFactListChanged()
+     {
+      return m_Env->GetFactListChanged();
+     }
+
+   void Environment::SetFactListChanged(
+     bool newValue)
+     {
+      m_Env->SetFactListChanged(newValue);
+     }
+
+   bool Environment::GetInstancesChanged()
+     {
+      return m_Env->GetInstancesChanged();
+     }
+
+   void Environment::SetInstancesChanged(
+     bool newValue)
+     {
+      m_Env->SetFactListChanged(newValue);
      }
   };
 

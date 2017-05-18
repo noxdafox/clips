@@ -131,7 +131,7 @@ void UpdateConstructHeader(
   size_t itemSize,
   void *itemArray)
   {
-   unsigned long moduleOffset, itemOffset;
+   size_t moduleOffset, itemOffset;
 
    if (theBsaveConstruct->whichModule != ULONG_MAX)
      {

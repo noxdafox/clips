@@ -22,22 +22,21 @@ namespace CLIPSNET
 
         property int Salience
 	       {
-	        int get() { return salience; };
-           void set(int value) { salience = value; }
+            int get() { return salience; };
+            void set(int value) { salience = value; }
 	       }
 
         property String ^ RuleName
 	       {
-	        String ^ get() { return ruleName; };
-           void set(String ^ value) { ruleName = value; }
+            String ^ get() { return ruleName; };
+            void set(String ^ value) { ruleName = value; }
 	       }
 
         property String ^ Basis
 	       {
-	        String ^ get() { return basis; };
-           void set(String ^ value) { basis = value; }
+            String ^ get() { return basis; };
+            void set(String ^ value) { basis = value; }
 	       }
-
 
         ~Activation();
 

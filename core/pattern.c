@@ -158,7 +158,7 @@ void AddHashedPatternNode(
   unsigned short keyType,
   void *keyValue)
   {
-   unsigned long hashValue;
+   size_t hashValue;
    struct patternNodeHashEntry *newhash, *temp;
 
    hashValue = GetAtomicHashValue(keyType,keyValue,1) + HashExternalAddress(parent,0); /* TBD mult * 30 */
@@ -187,7 +187,7 @@ bool RemoveHashedPatternNode(
   unsigned short keyType,
   void *keyValue)
   {
-   unsigned long hashValue;
+   size_t hashValue;
    struct patternNodeHashEntry *hptr, *prev;
 
    hashValue = GetAtomicHashValue(keyType,keyValue,1) + HashExternalAddress(parent,0); /* TBD mult * 30 */
@@ -228,7 +228,7 @@ void *FindHashedPatternNode(
   unsigned short keyType,
   void *keyValue)
   {
-   unsigned long hashValue;
+   size_t hashValue;
    struct patternNodeHashEntry *hptr;
 
    hashValue = GetAtomicHashValue(keyType,keyValue,1) + HashExternalAddress(parent,0); /* TBD mult * 30 */

@@ -266,7 +266,7 @@ static bool RemoveHashFunction(
   struct functionDefinition *fdPtr)
   {
    struct FunctionHash *fhPtr, *lastPtr = NULL;
-   unsigned long hashValue;
+   size_t hashValue;
 
    hashValue = HashSymbol(fdPtr->callFunctionName->contents,SIZE_FUNCTION_HASH);
 
@@ -450,7 +450,7 @@ struct functionDefinition *FindFunction(
   const char *functionName)
   {
    struct FunctionHash *fhPtr;
-   unsigned long hashValue;
+   size_t hashValue;
    CLIPSLexeme *findValue;
 
    if (ExternalFunctionData(theEnv)->FunctionHashtable == NULL) return NULL;
@@ -478,7 +478,7 @@ void *GetUDFContext(
   const char *functionName)
   {
    struct FunctionHash *fhPtr;
-   unsigned long hashValue;
+   size_t hashValue;
    CLIPSLexeme *findValue;
 
    if (ExternalFunctionData(theEnv)->FunctionHashtable == NULL) return NULL;
@@ -522,7 +522,7 @@ static void AddHashFunction(
   struct functionDefinition *fdPtr)
   {
    struct FunctionHash *newhash, *temp;
-   unsigned long hashValue;
+   size_t hashValue;
 
    if (ExternalFunctionData(theEnv)->FunctionHashtable == NULL) InitializeFunctionHashTable(theEnv);
 

@@ -66,14 +66,14 @@ struct factHashEntry
 
 #define SIZE_FACT_HASH 16231
 
-   void                           AddHashedFact(Environment *,Fact *,unsigned long);
+   void                           AddHashedFact(Environment *,Fact *,size_t);
    bool                           RemoveHashedFact(Environment *,Fact *);
-   unsigned long                  HandleFactDuplication(Environment *,Fact *,Fact **,long long);
+   size_t                         HandleFactDuplication(Environment *,Fact *,Fact **,long long);
    bool                           GetFactDuplication(Environment *);
    bool                           SetFactDuplication(Environment *,bool);
    void                           InitializeFactHashTable(Environment *);
    void                           ShowFactHashTableCommand(Environment *,UDFContext *,UDFValue *);
-   unsigned long                  HashFact(Fact *);
+   size_t                         HashFact(Fact *);
    bool                           FactWillBeAsserted(Environment *,Fact *);
 
 #endif /* _H_facthsh */

@@ -96,7 +96,7 @@ void UpdateDefmoduleItemHeader(
   size_t itemSize,
   void *itemArray)
   {
-   unsigned long firstOffset, lastOffset;
+   size_t firstOffset, lastOffset;
 
    theHeader->theModule = ModulePointer(theBsaveHeader->theModule);
    if (theBsaveHeader->firstItem == ULONG_MAX)

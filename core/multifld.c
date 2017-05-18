@@ -82,12 +82,12 @@
 /******************************/
 Multifield *CreateUnmanagedMultifield(
   Environment *theEnv,
-  unsigned long size) // TBD size_t
+  size_t size)
   {
    Multifield *theSegment;
-   unsigned long newSize = size;
+   size_t newSize = size;
 
-   if (size <= 0) newSize = 1;
+   if (size == 0) newSize = 1;
 
    theSegment = get_var_struct(theEnv,multifield,sizeof(struct clipsValue) * (newSize - 1));
 
@@ -106,7 +106,7 @@ void ReturnMultifield(
   Environment *theEnv,
   Multifield *theSegment)
   {
-   unsigned long newSize;
+   size_t newSize;
 
    if (theSegment == NULL) return;
 
@@ -123,7 +123,7 @@ void IncrementMultifieldReferenceCount(
   Environment *theEnv,
   Multifield *theSegment)
   {
-   unsigned long length, i;
+   size_t length, i;
    CLIPSValue *contents;
 
    if (theSegment == NULL) return;
@@ -144,7 +144,7 @@ void DecrementMultifieldReferenceCount(
   Environment *theEnv,
   Multifield *theSegment)
   {
-   unsigned long length, i;
+   size_t length, i;
    CLIPSValue *contents;
 
    if (theSegment == NULL) return;
@@ -164,7 +164,7 @@ void IncrementCLIPSValueMultifieldReferenceCount(
   Environment *theEnv,
   Multifield *theSegment)
   {
-   unsigned long length, i;
+   size_t length, i;
    CLIPSValue *contents;
 
    if (theSegment == NULL) return;
@@ -185,7 +185,7 @@ void DecrementCLIPSValueMultifieldReferenceCount(
   Environment *theEnv,
   Multifield *theSegment)
   {
-   unsigned long length, i;
+   size_t length, i;
    CLIPSValue *contents;
 
    if (theSegment == NULL) return;
@@ -310,7 +310,7 @@ Multifield *CreateMultifield(
   size_t size)
   {
    Multifield *theSegment;
-   unsigned long newSize;
+   size_t newSize;
 
    if (size == 0) newSize = 1;
    else newSize = size;
@@ -372,7 +372,7 @@ void FlushMultifields(
   Environment *theEnv)
   {
    Multifield *theSegment, *nextPtr, *lastPtr = NULL;
-   unsigned long newSize;
+   size_t newSize;
 
    theSegment = UtilityData(theEnv)->CurrentGarbageFrame->ListOfMultifields;
    while (theSegment != NULL)
@@ -478,7 +478,7 @@ void EphemerateMultifield(
   Environment *theEnv,
   Multifield *theSegment)
   {
-   unsigned long length, i;
+   size_t length, i;
    CLIPSValue *contents;
 
    if (theSegment == NULL) return;
@@ -547,7 +547,7 @@ void StoreInMultifield(
    Multifield *theMultifield;
    Multifield *orig_ptr;
    size_t start, range;
-   unsigned long i, j, k;
+   size_t i, j, k;
    unsigned int argCount;
    unsigned long seg_size;
 
@@ -732,13 +732,13 @@ bool MultifieldsEqual(
 /************************************************************/
 /* HashMultifield: Returns the hash value for a multifield. */
 /************************************************************/
-unsigned long HashMultifield(
+size_t HashMultifield(
   Multifield *theSegment,
-  unsigned long theRange)
+  size_t theRange)
   {
-   unsigned long length, i;
-   unsigned long tvalue;
-   unsigned long count;
+   size_t length, i;
+   size_t tvalue;
+   size_t count;
    CLIPSValue *fieldPtr;
    union
      {
@@ -802,7 +802,7 @@ unsigned long HashMultifield(
 #if OBJECT_SYSTEM
           case INSTANCE_NAME_TYPE:
 #endif
-            tvalue = (unsigned long) HashSymbol(fieldPtr[i].lexemeValue->contents,theRange);
+            tvalue = HashSymbol(fieldPtr[i].lexemeValue->contents,theRange);
             count += tvalue * (i + 29);
             break;
          }
@@ -812,7 +812,7 @@ unsigned long HashMultifield(
    /* Return the hash value. */
    /*========================*/
 
-   return(count);
+   return count;
   }
 
 /**********************/

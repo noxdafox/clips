@@ -203,7 +203,7 @@ struct utilityData
    void                           DeallocateCallListWithArg(Environment *,struct callFunctionItemWithArg *);
    VoidCallFunctionItem          *GetVoidFunctionFromCallList(Environment *,const char *,VoidCallFunctionItem *);
    BoolCallFunctionItem          *GetBoolFunctionFromCallList(Environment *,const char *,BoolCallFunctionItem *);
-   unsigned long                  ItemHashValue(Environment *,unsigned short,void *,unsigned long);
+   size_t                         ItemHashValue(Environment *,unsigned short,void *,size_t);
    void                           YieldTime(Environment *);
    bool                           EnablePeriodicFunctions(Environment *,bool);
    bool                           EnableYieldFunction(Environment *,bool);

@@ -114,6 +114,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="FactBrowser.xaml.cs">
+      <DependentUpon>FactBrowser.xaml</DependentUpon>
+    </Compile>
     <Compile Include="AgendaBrowser.xaml.cs">
       <DependentUpon>AgendaBrowser.xaml</DependentUpon>
     </Compile>
@@ -125,10 +128,15 @@
     <Compile Include="CommandPromptTextBox.xaml.cs">
       <DependentUpon>CommandPromptTextBox.xaml</DependentUpon>
     </Compile>
+    <Compile Include="FactBrowserManager.cs" />
     <Compile Include="IDEPreferences.cs" />
     <Compile Include="RouterTextBox.xaml.cs">
       <DependentUpon>RouterTextBox.xaml</DependentUpon>
     </Compile>
+    <Page Include="FactBrowser.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="AgendaBrowser.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

@@ -995,7 +995,7 @@ void GrabProcWildargs(
   {
    unsigned int i, j;
    size_t k; /* 6.04 Bug Fix */
-   unsigned long size;
+   size_t size;
    UDFValue *val;
 
    returnValue->begin = 0;

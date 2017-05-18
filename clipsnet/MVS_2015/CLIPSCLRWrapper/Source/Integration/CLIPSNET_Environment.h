@@ -2,12 +2,15 @@
 
 #include "clipscpp.h"
 #include "CLIPSNET_Agenda.h"
+#include "CLIPSNET_FactInstance.h"
 #include "CLIPSNET_FocusStack.h"
+#include "CLIPSNET_Module.h"
 #include "CLIPSNET_Values.h"
 #include "CLIPSNET_Router.h"
 #include "CLIPSNET_PeriodicCallback.h"
 
 using namespace System;
+using namespace System::Collections;
 using namespace CLIPS;
 
 namespace CLIPSNET
@@ -23,7 +26,7 @@ namespace CLIPSNET
         DelegatePeriodicCallback();
         void Callback (void) override;
 
-        event PeriodicCallbackDelegate ^ CallbackEvents;
+      event PeriodicCallbackDelegate ^ CallbackEvents;
      };
 
    /*###################*/
@@ -69,6 +72,9 @@ namespace CLIPSNET
         void CommandLoopOnceThenBatch();
         void PrintBanner();
         void PrintPrompt();
+        Dictionary<unsigned long long,BitArray ^> ^ GetFactScopes();
+        List<FactInstance ^> ^ GetFactList();
+		List<Module ^> ^ GetModuleList();
         FocusStack ^ GetFocusStack();
         Agenda ^ GetAgenda(String ^);
         Agenda ^ GetAgenda(Focus ^);
@@ -76,6 +82,10 @@ namespace CLIPSNET
         void SetAgendaChanged(bool);
         bool GetFocusChanged();
         void SetFocusChanged(bool);
+        bool GetFactListChanged();
+        void SetFactListChanged(bool);
+        bool GetInstancesChanged();
+        void SetInstancesChanged(bool);
         virtual String^ ToString() override;
 
       protected:
