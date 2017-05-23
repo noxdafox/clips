@@ -94,11 +94,11 @@ typedef enum
 #endif
 
 #ifndef CREATION_DATE_STRING
-#define CREATION_DATE_STRING "05/09/17"
+#define CREATION_DATE_STRING "05/17/17"
 #endif
 
 #ifndef BANNER_STRING
-#define BANNER_STRING "         CLIPS (Cypher Alpha 05/09/17)\n"
+#define BANNER_STRING "         CLIPS (Cypher Alpha 05/17/17)\n"
 #endif
 
 /*************************/
@@ -175,7 +175,7 @@ typedef enum
 
 #define VOID_TYPE                       9
 
-#define BITMAP                         11
+#define BITMAP_TYPE                    11
 
 #define FCALL                          30
 #define GCALL                          31

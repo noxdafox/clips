@@ -695,7 +695,7 @@ void *AddBitMap(
     peek->count = 0;
     peek->permanent = false;
     peek->size = size;
-    peek->header.type = BITMAP;
+    peek->header.type = BITMAP_TYPE;
 
     /*================================================*/
     /* Add the bitmap to the list of ephemeral items. */

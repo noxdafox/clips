@@ -129,6 +129,9 @@
    static CLIPSLexeme            *CheckDeftemplateAndSlotArguments(UDFContext *,Deftemplate **);
    static void                    FreeTemplateValueArray(Environment *,CLIPSValue *,Deftemplate *);
    static struct expr            *ModAndDupParse(Environment *,struct expr *,const char *,const char *);
+#if (! RUN_TIME) && (! BLOAD_ONLY)
+   static CLIPSLexeme            *FindTemplateForFactAddress(CLIPSLexeme *,struct lhsParseNode *);
+#endif
 
 /****************************************************************/
 /* DeftemplateFunctions: Initializes the deftemplate functions. */
@@ -2193,7 +2196,7 @@ bool UpdateModifyDuplicate(
 /*   deftemplate name associated with the pattern */
 /*   to which a fact address has been bound.      */
 /**************************************************/
-CLIPSLexeme *FindTemplateForFactAddress(
+static CLIPSLexeme *FindTemplateForFactAddress(
   CLIPSLexeme *factAddress,
   struct lhsParseNode *theLHS)
   {

@@ -390,6 +390,10 @@ public class EntityBrowserFrame extends JInternalFrame
    private void performSearch() 
      {
       entityModel.fireTableDataChanged();
+      if (entityTable.getRowCount() != 0)
+        { entityTable.setRowSelectionInterval(0,0); }
+	  else
+        { slotsModel.setItem(null); }
      }
    
    /*########################*/

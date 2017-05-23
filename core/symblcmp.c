@@ -276,7 +276,7 @@ static unsigned int BitMapHashNodesToCode(
             newHeader = false;
            }
            
-         fprintf(fp,"{{BITMAP},");
+         fprintf(fp,"{{BITMAP_TYPE},");
          
          if (hashPtr->next == NULL)
            { fprintf(fp,"NULL,"); }
