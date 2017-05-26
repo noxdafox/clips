@@ -25,10 +25,10 @@ namespace CLIPSNET
         virtual int Ungetc(String ^ logicalName,int theChar);
         CLIPSCPPRouterBridge * RouterBridge();
 
-        const static String ^STANDARD_OUTPUT = gcnew String(CLIPSCPPRouter::STANDARD_OUTPUT);
-        const static String ^STANDARD_INPUT = gcnew String(CLIPSCPPRouter::STANDARD_INPUT);
-        const static String ^WARNING = gcnew String(CLIPSCPPRouter::WARNING);
-        const static String ^ERROR = gcnew String(CLIPSCPPRouter::ERROR);
+        static String ^STANDARD_OUTPUT = gcnew String(CLIPSCPPRouter::STANDARD_OUTPUT);
+        static String ^STANDARD_INPUT = gcnew String(CLIPSCPPRouter::STANDARD_INPUT);
+        static String ^WARNING = gcnew String(CLIPSCPPRouter::WARNING);
+        static String ^ERROR = gcnew String(CLIPSCPPRouter::ERROR);
 
       protected:
         !Router();

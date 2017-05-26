@@ -76,6 +76,9 @@ class CLIPSCPPEnv
       void AppendToDribble(const char *);
       void PrintBanner();
       void PrintPrompt();
+      void PrintString(const char *,const char *);
+      void Print(const char *);
+      void PrintLn(const char *);
       void CLIPSCPPEnv::GetFactScopes(std::unordered_map<unsigned long long,std::vector<bool>>&);
 	  std::vector<CLIPSCPPFactInstance> *GetFactList();
       void CLIPSCPPEnv::GetInstanceScopes(std::unordered_map<unsigned long long,std::vector<bool>>&);

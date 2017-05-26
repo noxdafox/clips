@@ -72,6 +72,9 @@ namespace CLIPSNET
         void CommandLoopOnceThenBatch();
         void PrintBanner();
         void PrintPrompt();
+        void PrintString(String ^,String ^);
+        void Print(String ^);
+        void PrintLn(String ^);
         Dictionary<unsigned long long,BitArray ^> ^ GetFactScopes();
         List<FactInstance ^> ^ GetFactList();
         Dictionary<unsigned long long,BitArray ^> ^ GetInstanceScopes();

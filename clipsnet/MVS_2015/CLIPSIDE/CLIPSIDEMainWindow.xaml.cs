@@ -73,6 +73,14 @@ namespace CLIPSIDE
                                { new KeyGesture(Key.H,ModifierKeys.Control | ModifierKeys.Shift) }
                             );
 
+
+      public static readonly RoutedCommand ClearScrollback = 
+         new RoutedUICommand("ClearScrollback",
+                             "ClearScrollback", 
+                             typeof(IDECommands)
+                            );
+
+
       public static readonly RoutedCommand AgendaBrowser = 
          new RoutedUICommand("AgendaBrowser",
                              "AgendaBrowser", 
@@ -518,6 +526,31 @@ namespace CLIPSIDE
          dialog.HaltExecution();
         }
 
+      /******************************/
+      /* ClearScrollback_CanExecute */
+      /******************************/
+      private void ClearScrollback_CanExecute(
+        object sender, 
+        CanExecuteRoutedEventArgs e)
+        {
+         if (dialog.GetExecuting())
+           { e.CanExecute = false; }
+         else
+           { e.CanExecute = true; }
+        }
+
+      /****************************/      
+      /* ClearScrollback_Executed */
+      /****************************/      
+      private void ClearScrollback_Executed(
+        object sender, 
+        ExecutedRoutedEventArgs e)
+        {
+         this.dialog.Clear();
+         this.GetEnvironment().PrintPrompt();
+         this.GetEnvironment().Print(this.GetEnvironment().GetInputBuffer());
+        }
+
       /****************************/
       /* AgendaBrowser_CanExecute */
       /****************************/
@@ -535,12 +568,30 @@ namespace CLIPSIDE
         object sender, 
         ExecutedRoutedEventArgs e)
         {
-         ClosableTab theTabItem = new ClosableTab();
-         theTabItem.Title = "Agenda #" + agendaCount++;
-         OpenTabItem(theTabItem);
+         if (agendaBrowserManager.BrowserCount() == 0)
+           { 
+            ClosableTab theTabItem = new ClosableTab();
+            theTabItem.Title = "Agenda";
+            OpenTabItem(theTabItem);
 
-         AgendaBrowser theBrowser = agendaBrowserManager.CreateBrowser();
-         theTabItem.Content = theBrowser;
+            AgendaBrowser theBrowser = agendaBrowserManager.CreateBrowser();
+            theTabItem.Content = theBrowser;
+           }
+         else
+           {
+            foreach (ClosableTab theTabItem in this.debugTabControl.Items)
+              {
+               if (theTabItem.Content is AgendaBrowser)
+                 {
+                  AgendaBrowser theBrowser = theTabItem.Content as AgendaBrowser; 
+                  if (agendaBrowserManager.ManagesBrowser(theBrowser))
+                    {
+                     OpenExistingTabItem(theTabItem);
+                     return;
+                    }
+                 }
+              }
+           }
         }
 
       /**************************/
@@ -560,12 +611,31 @@ namespace CLIPSIDE
         object sender, 
         ExecutedRoutedEventArgs e)
         {
-         ClosableTab theTabItem = new ClosableTab();
-         theTabItem.Title = "Facts #" + factsCount++;
-         OpenTabItem(theTabItem);
+         if (factBrowserManager.BrowserCount() == 0)
+           { 
+            ClosableTab theTabItem = new ClosableTab();
+            theTabItem.Title = "Facts";
 
-         EntityBrowser theBrowser = factBrowserManager.CreateBrowser();
-         theTabItem.Content = theBrowser;
+            OpenTabItem(theTabItem);
+
+            EntityBrowser theBrowser = factBrowserManager.CreateBrowser();
+            theTabItem.Content = theBrowser;
+           }
+         else
+           {
+            foreach (ClosableTab theTabItem in this.debugTabControl.Items)
+              {
+               if (theTabItem.Content is EntityBrowser)
+                 {
+                  EntityBrowser theBrowser = theTabItem.Content as EntityBrowser; 
+                  if (factBrowserManager.ManagesBrowser(theBrowser))
+                    {
+                     OpenExistingTabItem(theTabItem);
+                     return;
+                    }
+                 }
+              }
+           }
         }
 
       /******************************/
@@ -585,12 +655,30 @@ namespace CLIPSIDE
         object sender, 
         ExecutedRoutedEventArgs e)
         {
-         ClosableTab theTabItem = new ClosableTab();
-         theTabItem.Title = "Instances #" + instancesCount++;
-         OpenTabItem(theTabItem);
+         if (instanceBrowserManager.BrowserCount() == 0)
+           { 
+            ClosableTab theTabItem = new ClosableTab();
+            theTabItem.Title = "Instances";
+            OpenTabItem(theTabItem);
 
-         EntityBrowser theBrowser = instanceBrowserManager.CreateBrowser();
-         theTabItem.Content = theBrowser;
+            EntityBrowser theBrowser = instanceBrowserManager.CreateBrowser();
+            theTabItem.Content = theBrowser;
+           }
+         else
+           {
+            foreach (ClosableTab theTabItem in this.debugTabControl.Items)
+              {
+               if (theTabItem.Content is EntityBrowser)
+                 {
+                  EntityBrowser theBrowser = theTabItem.Content as EntityBrowser; 
+                  if (instanceBrowserManager.ManagesBrowser(theBrowser))
+                    {
+                     OpenExistingTabItem(theTabItem);
+                     return;
+                    }
+                 }
+              }
+           }
         }
 
       /***************/
@@ -611,7 +699,22 @@ namespace CLIPSIDE
          windowCount++;
          theTabItem.Focus();
         }
-        
+
+      /***********************/
+      /* OpenExistingTabItem */
+      /***********************/
+      public void OpenExistingTabItem(
+        ClosableTab theTabItem)
+        {
+         if (this.mainGrid.RowDefinitions[3].Height.Value == 0.0)
+           { 
+            this.mainGrid.RowDefinitions[1].Height = new GridLength(1,GridUnitType.Star);
+            this.mainGrid.RowDefinitions[3].Height = new GridLength(1,GridUnitType.Star); 
+           }
+
+         theTabItem.Focus();
+        }
+
       /****************/
       /* CloseTabItem */
       /****************/

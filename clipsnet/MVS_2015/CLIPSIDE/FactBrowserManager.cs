@@ -35,6 +35,14 @@ namespace CLIPSIDE
          scopes = new Dictionary<ulong,BitArray>();
         }
       
+      /****************/
+      /* BrowserCount */
+      /****************/
+      public int BrowserCount()
+        {
+         return browsers.Count();
+        }
+
       /*****************/  
       /* CreateBrowser */
       /*****************/

@@ -136,6 +136,29 @@ void __declspec(dllexport) __PrintBanner(
    PrintBanner(theEnv);
   }
 
+void __declspec(dllexport) __PrintString(
+  Environment *theEnv,
+  const char *logicalName,
+  const char *printString)
+  {
+   PrintString(theEnv,logicalName,printString);
+  }
+
+void __declspec(dllexport) __Print(
+  Environment *theEnv,
+  const char *printString)
+  {
+   PrintString(theEnv,STDOUT,printString);
+  }
+
+void __declspec(dllexport) __PrintLn(
+  Environment *theEnv,
+  const char *printString)
+  {
+   PrintString(theEnv,STDOUT,printString);
+   PrintString(theEnv,STDOUT,"\n");
+  }
+
 int __declspec(dllexport) __genchdir(
   const char *directory)
   {

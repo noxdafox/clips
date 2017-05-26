@@ -1,5 +1,6 @@
 
 #include "CLIPSNET_Environment.h"
+#include "CLIPSNET_Router.h"
 
 using namespace System;
 using namespace System::Text;
@@ -736,6 +737,48 @@ namespace CLIPSNET
      bool newValue)
      {
       m_Env->SetFactListChanged(newValue);
+     }
+
+   /***************/
+   /* PrintString */
+   /***************/
+   void Environment::PrintString(
+     String ^ logicalName,
+     String ^ printString)
+     {
+      array<Byte>^ ebLogicalName = Encoding::UTF8->GetBytes(logicalName);
+      array<Byte>^ ebPrintString = Encoding::UTF8->GetBytes(printString);
+
+      if ((ebPrintString->Length != 0) && (ebLogicalName->Length != 0))
+        {
+         pin_ptr<Byte> pbLogicalName = &ebLogicalName[0];
+         pin_ptr<Byte> pbPrintString = &ebPrintString[0];
+
+         m_Env->PrintString((char *) pbLogicalName,(char *) pbPrintString);
+        }
+     }
+
+   /*********/
+   /* Print */
+   /*********/
+   void Environment::Print(
+     String ^ printString)
+     {
+      String ^ logicalName = Router::STANDARD_OUTPUT;
+      PrintString(logicalName,printString);
+     }
+
+   /***********/
+   /* PrintLn */
+   /***********/
+   void Environment::PrintLn(
+     String ^ printString)
+     {
+      String ^ logicalName = Router::STANDARD_OUTPUT;
+      String ^ crlf = "\n";
+
+      PrintString(logicalName,printString);
+      PrintString(logicalName,crlf);
      }
   };
 

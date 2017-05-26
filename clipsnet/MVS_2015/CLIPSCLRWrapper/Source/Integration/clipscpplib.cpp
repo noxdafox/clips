@@ -130,7 +130,40 @@ void CLIPSCPPEnv::PrintPrompt()
    __PrintPrompt(theEnv);
 #endif
   }
+  
+/***************/
+/* PrintString */
+/***************/
+void CLIPSCPPEnv::PrintString(
+  const char *logicalName,
+  const char *printString)
+  {
+#ifndef CLIPS_DLL_WRAPPER
+   ::PrintString(theEnv,logicalName,printString);
+#else
+   __PrintString(theEnv,logicalName,printString);
+#endif
+  }
 
+/*********/
+/* Print */
+/*********/
+void CLIPSCPPEnv::Print(
+  const char *printString)
+  {
+   PrintString(STDOUT,printString);
+  }
+
+/***********/
+/* PrintLn */
+/***********/
+void CLIPSCPPEnv::PrintLn(
+  const char *printString)
+  {
+   PrintString(STDOUT,printString);
+   PrintString(STDOUT,"\n");
+  }
+ 
 /*********/
 /* Clear */
 /*********/

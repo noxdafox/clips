@@ -25,7 +25,15 @@ namespace CLIPSIDE
          focusStack = new FocusStack();
          agendaMap = new Dictionary<Focus,Agenda>();
         }
-      
+            
+      /****************/
+      /* BrowserCount */
+      /****************/
+      public int BrowserCount()
+        {
+         return browsers.Count();
+        }
+
       /*****************/  
       /* CreateBrowser */
       /*****************/
@@ -59,6 +67,15 @@ namespace CLIPSIDE
             agendaMap = null;
            }
         }
+    
+     /******************/
+     /* ManagesBrowser */
+     /******************/
+     public bool ManagesBrowser(
+       AgendaBrowser theBrowser)
+       {
+        return browsers.Contains(theBrowser);
+       }
 
       /*************/
       /* FetchData */

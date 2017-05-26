@@ -56,6 +56,7 @@
         <CommandBinding Command="local:IDECommands.Run" CanExecute="Run_CanExecute" Executed="Run_Executed" />
         <CommandBinding Command="local:IDECommands.HaltRules" CanExecute="HaltRules_CanExecute" Executed="HaltRules_Executed" />
         <CommandBinding Command="local:IDECommands.HaltExecution" CanExecute="HaltExecution_CanExecute" Executed="HaltExecution_Executed" />
+        <CommandBinding Command="local:IDECommands.ClearScrollback" CanExecute="ClearScrollback_CanExecute" Executed="ClearScrollback_Executed" />
         <CommandBinding Command="local:IDECommands.AgendaBrowser" CanExecute="AgendaBrowser_CanExecute" Executed="AgendaBrowser_Executed" />
         <CommandBinding Command="local:IDECommands.FactBrowser" CanExecute="FactBrowser_CanExecute" Executed="FactBrowser_Executed" />
         <CommandBinding Command="local:IDECommands.InstanceBrowser" CanExecute="InstanceBrowser_CanExecute" Executed="InstanceBrowser_Executed" />
@@ -92,6 +93,8 @@
                     <MenuItem Header="Run" Command="local:IDECommands.Run"/>
                     <MenuItem Header="Halt Rules" Command="local:IDECommands.HaltRules"/>
                     <MenuItem Header="Halt Execution" Command="local:IDECommands.HaltExecution"/>
+                    <Separator/>
+                    <MenuItem Header="Clear Scrollback" Command="local:IDECommands.ClearScrollback"/>
                 </MenuItem>
 
 

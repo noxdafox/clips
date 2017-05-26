@@ -62,6 +62,10 @@ void DECLSPEC __SetInstancesChanged(Environment *,bool);
 void DECLSPEC __SetEvaluationError(Environment *,bool);
 bool DECLSPEC __EnablePeriodicFunctions(Environment *,bool);
 
+void DECLSPEC __PrintString(Environment *,const char *,const char *);
+void DECLSPEC __Print(Environment *,const char *);
+void DECLSPEC __PrintLn(Environment *,const char *);
+
 bool __declspec(dllexport) __AddPeriodicFunction(Environment *,const char *,VoidCallFunction *,int,void *);
 bool __declspec(dllexport) __RemovePeriodicFunction(Environment *,const char *);
 

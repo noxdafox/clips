@@ -83,26 +83,26 @@ namespace CLIPSIDE
          /***********/
          
          public void AddText(string text)
-		     {
+           {
             /*=====================================================*/
             /* If we're attempting to modify the control from a    */
             /* different thread from the one that created it, then */
             /* we need to use Invoke to handle the modification.   */
             /*=====================================================*/
 
-           if (! m_RouterTextBox.Dispatcher.CheckAccess())
-			     {	
-			      AddTextCallback d = new AddTextCallback(AddText);
+            if (! m_RouterTextBox.Dispatcher.CheckAccess())
+              {	
+               AddTextCallback d = new AddTextCallback(AddText);
                m_RouterTextBox.Dispatcher.Invoke(d, new object[] { text });
-			     }
+              }
               
             /*===================================*/
             /* Otherwise the thread that created */
             /* it can process the modification.  */
             /*===================================*/
 
-			   else
-			     { 
+            else
+              { 
                m_RouterTextBox.AppendText(text); 
                m_RouterTextBox.Select(m_RouterTextBox.Text.Length,m_RouterTextBox.Text.Length);
                m_RouterTextBox.ScrollToEnd();
