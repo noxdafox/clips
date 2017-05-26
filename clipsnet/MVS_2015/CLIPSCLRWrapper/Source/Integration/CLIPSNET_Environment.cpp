@@ -506,6 +506,88 @@ namespace CLIPSNET
 
       return theList;
      }
+
+   /*********************/
+   /* GetInstanceScopes */
+   /*********************/
+   Dictionary<unsigned long long,BitArray ^> ^ Environment::GetInstanceScopes()
+     {
+      Dictionary<unsigned long long,BitArray ^> ^ scopes;
+      std::unordered_map<unsigned long long,std::vector<bool>> theCPPScopes;
+      std::unordered_map<unsigned long long,std::vector<bool>>::iterator it;
+
+      m_Env->GetInstanceScopes(theCPPScopes);
+
+      scopes = gcnew Dictionary<unsigned long long,BitArray ^>();
+
+      for (it = theCPPScopes.begin(); it != theCPPScopes.end(); it++)
+        {
+         unsigned long long key = it->first;
+         std::vector<bool> value = it->second;
+         size_t i;
+
+         BitArray ^ theArray = gcnew BitArray((int) it->second.size());
+
+         for (i = 0; i < it->second.size(); i++)
+           {
+            if (it->second[i])
+              { theArray->Set((int) i,true); }
+           }
+
+         scopes->Add(it->first,theArray);
+        }
+
+      return scopes;
+     }
+
+   /*******************/
+   /* GetInstanceList */
+   /*******************/
+   List<FactInstance ^> ^ Environment::GetInstanceList()
+     {
+      List<FactInstance ^> ^ theList;
+      std::vector<CLIPSCPPFactInstance> *v = m_Env->GetInstanceList();
+      size_t i, j;
+
+      theList = gcnew List<FactInstance ^>();
+
+      for (i = 0; i < v->size(); i++)
+        {
+         const char *theCName, *theCRelationName;
+         List<SlotValue ^> ^ theSlots = gcnew List<SlotValue ^>();
+         unsigned long long theTypeAddress;
+         std::vector<CLIPSCPPSlotValue> *theCPPSlots;
+
+         theTypeAddress = v->at(i).GetTypeAddress();
+         theCName = v->at(i).GetName()->c_str();
+         theCRelationName = v->at(i).GetRelationName()->c_str();
+         theCPPSlots = v->at(i).GetSlotValues();
+
+         for (j = 0; j < theCPPSlots->size(); j++)
+           {
+            bool isDefault;
+            const char *theCSlotName, *theCSlotValue;
+
+            theCSlotName = theCPPSlots->at(j).GetSlotName()->c_str();
+            theCSlotValue = theCPPSlots->at(j).GetSlotValue()->c_str();
+            
+            isDefault = theCPPSlots->at(j).IsDefault();
+
+            theSlots->Add(gcnew SlotValue(gcnew String(theCSlotName),
+                                          gcnew String(theCSlotValue),
+                                          isDefault));
+           }
+
+         theList->Add(gcnew FactInstance(theTypeAddress,
+                                         gcnew String(theCName),
+                                         gcnew String(theCRelationName),
+                                         theSlots));
+        }
+
+      delete v;
+
+      return theList;
+     }
  
    /*****************/
    /* GetModuleList */

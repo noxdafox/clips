@@ -74,6 +74,8 @@ namespace CLIPSNET
         void PrintPrompt();
         Dictionary<unsigned long long,BitArray ^> ^ GetFactScopes();
         List<FactInstance ^> ^ GetFactList();
+        Dictionary<unsigned long long,BitArray ^> ^ GetInstanceScopes();
+        List<FactInstance ^> ^ GetInstanceList();
 		List<Module ^> ^ GetModuleList();
         FocusStack ^ GetFocusStack();
         Agenda ^ GetAgenda(String ^);

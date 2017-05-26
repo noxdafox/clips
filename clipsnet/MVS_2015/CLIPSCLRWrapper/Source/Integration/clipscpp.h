@@ -78,6 +78,8 @@ class CLIPSCPPEnv
       void PrintPrompt();
       void CLIPSCPPEnv::GetFactScopes(std::unordered_map<unsigned long long,std::vector<bool>>&);
 	  std::vector<CLIPSCPPFactInstance> *GetFactList();
+      void CLIPSCPPEnv::GetInstanceScopes(std::unordered_map<unsigned long long,std::vector<bool>>&);
+	  std::vector<CLIPSCPPFactInstance> *GetInstanceList();
 	  std::vector<CLIPSCPPModule> *GetModuleList();
       CLIPSCPPFocusStack *GetFocusStack();
       CLIPSCPPAgenda *GetAgenda(const char *);

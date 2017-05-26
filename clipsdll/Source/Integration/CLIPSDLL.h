@@ -5,6 +5,7 @@
 #include "agenda.h"
 #include "entities.h"
 #include "moduldef.h"
+#include "object.h"
 #include "router.h"
 #include "tmpltdef.h"
 #include "tmpltfun.h"
@@ -79,7 +80,7 @@ size_t DECLSPEC __InputBufferCount(Environment *);
 long long DECLSPEC __FactIndex(Fact *);
 long long DECLSPEC __Run(Environment *,long long);
 
-const char DECLSPEC * __InstanceName(Environment *,Instance *);
+const char DECLSPEC * __InstanceName(Instance *);
   
 Environment DECLSPEC * __CreateEnvironment(void);
 
@@ -105,5 +106,14 @@ void DECLSPEC * __CreateDeftemplateScopeMap(Environment *,Deftemplate *);
 bool DECLSPEC __DOsEqual(UDFValue *,UDFValue *);
 void DECLSPEC __CLIPSToUDFValue(CLIPSValue *,UDFValue *);
 const char DECLSPEC * __DataObjectToString(Environment *,UDFValue *);
+
+Defclass DECLSPEC * __InstanceClass(Instance *);
+Instance DECLSPEC * __GetNextInstance(Environment *,Instance *);
+Defclass DECLSPEC * __GetNextDefclass(Environment *,Defclass *);
+void DECLSPEC * __CreateClassScopeMap(Environment *,Defclass *);
+const char DECLSPEC * __DefclassName(Defclass *);
+void DECLSPEC __ClassSlots(Defclass *,CLIPSValue *,bool);
+int DECLSPEC __SlotDefaultP(Environment *,Defclass *,const char *);
+bool DECLSPEC __SlotDefaultValue(Defclass *,const char *,CLIPSValue *);
 
 #endif

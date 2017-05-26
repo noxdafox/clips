@@ -16,6 +16,10 @@ using std::string;
 #include "constant.h"
 #include "entities.h"
 #include "router.h"
+#include "classexm.h "
+#include "classfun.h"
+#include "classinf.h"
+#include "classpsr.h"
 #include "constant.h"
 #include "commline.h"
 #include "cstrcpsr.h"
@@ -1574,7 +1578,7 @@ const char *InstanceAddressValue::GetInstanceName() const
 #ifndef CLIPS_DLL_WRAPPER
    return InstanceName(theInstanceAddress);
 #else
-   return __InstanceName(theEnvironment,theInstanceAddress);
+   return __InstanceName(theInstanceAddress);
 #endif
   }
 
@@ -2501,7 +2505,7 @@ vector<CLIPSCPPFactInstance> *CLIPSCPPEnv::GetFactList()
 
          theCSlotName = slotNames.multifieldValue->contents[i].lexemeValue->contents;
 
-         FactSlotValue(theEnv,theFact,slotNames.multifieldValue->contents[i].lexemeValue->contents,&temp);
+         FactSlotValue(theEnv,theFact,theCSlotName,&temp);
          CLIPSToUDFValue(&temp,&slotValue);
          
          if (DeftemplateSlotDefaultP(FactDeftemplate(theFact),theCSlotName) == STATIC_DEFAULT)
@@ -2563,7 +2567,7 @@ vector<CLIPSCPPFactInstance> *CLIPSCPPEnv::GetFactList()
 
          theCSlotName = slotNames.multifieldValue->contents[i].lexemeValue->contents;
 
-         __FactSlotValue(theEnv,theFact,slotNames.multifieldValue->contents[i].lexemeValue->contents,&temp);
+         __FactSlotValue(theEnv,theFact,theCSlotName,&temp);
          __CLIPSToUDFValue(&temp,&slotValue);
          
          if (__DeftemplateSlotDefaultP(__FactDeftemplate(theFact),theCSlotName) == STATIC_DEFAULT)
@@ -2589,4 +2593,240 @@ vector<CLIPSCPPFactInstance> *CLIPSCPPEnv::GetFactList()
 #endif
 
    return theCPPFactList;
+  }
+
+/*********************/
+/* GetInstanceScopes */
+/*********************/
+void CLIPSCPPEnv::GetInstanceScopes(
+  std::unordered_map<unsigned long long,vector<bool>>& scopes)
+  {
+   Defmodule *theModule;
+   size_t moduleCount = 0, whichBit;
+   struct defclassModule *theModuleItem;
+   Defclass *theDefclass;
+   CLIPSBitMap *theScopeMap;
+   size_t theDefclassIndex;
+
+   scopes.clear();
+
+#ifndef CLIPS_DLL_WRAPPER
+   /*==============================*/
+   /* Count the number of modules. */
+   /*==============================*/
+
+   for (theModule = GetNextDefmodule(theEnv,NULL);
+        theModule != NULL;
+        theModule = GetNextDefmodule(theEnv,theModule))
+     { moduleCount++; }
+
+   /*========================================================*/
+   /* Iterate over each module creating the defclass scopes. */
+   /*========================================================*/
+
+   for (theModule = GetNextDefmodule(theEnv,NULL);
+        theModule != NULL;
+        theModule = GetNextDefmodule(theEnv,theModule))
+     {
+      theModuleItem = (struct defclassModule *) 
+                      GetModuleItem(theEnv,theModule,DefclassData(theEnv)->DefclassModuleIndex);
+
+      for (theDefclass = (Defclass *) theModuleItem->header.firstItem;
+           theDefclass != NULL;
+           theDefclass = (Defclass *) GetNextDefclass(theEnv,theDefclass))
+        { 
+         if (theDefclass->instanceList == NULL) continue;
+
+         theDefclassIndex = (size_t) theDefclass;
+
+         theScopeMap = (CLIPSBitMap *) CreateClassScopeMap(theEnv,theDefclass);
+         scopes[theDefclassIndex] = vector<bool>(moduleCount);
+
+         for (whichBit = 0; whichBit < moduleCount; whichBit++)
+           {
+            if (TestBitMap(theScopeMap->contents,whichBit))
+              { scopes[theDefclassIndex][whichBit] = true; }
+           }
+        }
+     }
+#else
+   /*==============================*/
+   /* Count the number of modules. */
+   /*==============================*/
+
+   for (theModule = __GetNextDefmodule(theEnv,NULL);
+        theModule != NULL;
+        theModule = __GetNextDefmodule(theEnv,theModule))
+     { moduleCount++; }
+
+   /*===========================================================*/
+   /* Iterate over each module creating the deftemplate scopes. */
+   /*===========================================================*/
+
+   for (theModule = __GetNextDefmodule(theEnv,NULL);
+        theModule != NULL;
+        theModule = __GetNextDefmodule(theEnv,theModule))
+     {
+      theModuleItem = (struct defclassModule *) 
+                      __GetModuleItem(theEnv,theModule,DefclassData(theEnv)->DefclassModuleIndex);
+
+      for (theDefclass = (Defclass *) theModuleItem->header.firstItem;
+           theDefclass != NULL;
+           theDefclass = __GetNextDefclass(theEnv,theDefclass))
+        { 
+         if (theDefclass->instanceList == NULL) continue;
+
+         theDefclassIndex = (size_t) theDefclass;
+
+         theScopeMap = (CLIPSBitMap *) __CreateClassScopeMap(theEnv,theDefclass);
+         scopes[theDefclassIndex] = vector<bool>(moduleCount);
+
+         for (whichBit = 0; whichBit < moduleCount; whichBit++)
+           {
+            if (TestBitMap(theScopeMap->contents,whichBit))
+              { scopes[theDefclassIndex][whichBit] = true; }
+           }
+        }
+     }
+#endif
+  }
+
+/*******************/
+/* GetInstanceList */
+/*******************/
+vector<CLIPSCPPFactInstance> *CLIPSCPPEnv::GetInstanceList()
+  {
+   vector<CLIPSCPPFactInstance> *theCPPInstanceList;
+   Instance *theInstance;
+   size_t instanceCount = 0;
+   CLIPSValue slotNames, temp;
+   UDFValue slotValue, defaultValue;
+   size_t i;
+   Defclass *theClass; 
+
+#ifndef CLIPS_DLL_WRAPPER
+   /*================================*/
+   /* Count the number of instances. */
+   /*================================*/
+   
+   for (theInstance = GetNextInstance(theEnv,NULL);
+        theInstance != NULL;
+        theInstance = GetNextInstance(theEnv,theInstance))
+     { instanceCount++; }
+
+   theCPPInstanceList = new vector<CLIPSCPPFactInstance>(); 
+   theCPPInstanceList->reserve(instanceCount);
+
+   /*=====================================*/
+   /* Add instances to the instance list. */
+   /*=====================================*/
+
+   for (theInstance = GetNextInstance(theEnv,NULL);
+        theInstance != NULL;
+        theInstance = GetNextInstance(theEnv,theInstance))
+     {
+      vector<CLIPSCPPSlotValue> theCPPSlotValues;
+
+      /*===================================*/
+      /* Determine the number of slots and */
+      /* create a vector to contain them.  */
+      /*===================================*/
+
+      theClass = InstanceClass(theInstance);
+      ClassSlots(theClass,&slotNames,true);
+
+      theCPPSlotValues.reserve(slotNames.multifieldValue->length);
+
+      for (i = 0; i < slotNames.multifieldValue->length; i++)
+        {
+         const char *theCSlotName, *theCSlotValue;
+         bool defaulted = false;
+
+         theCSlotName = slotNames.multifieldValue->contents[i].lexemeValue->contents;
+
+         DirectGetSlot(theInstance,theCSlotName,&temp);
+         CLIPSToUDFValue(&temp,&slotValue);
+         
+         if (SlotDefaultP(theEnv,theClass,theCSlotName) == STATIC_DEFAULT)
+           {
+            SlotDefaultValue(theClass,theCSlotName,&temp);
+            CLIPSToUDFValue(&temp,&defaultValue);
+                             
+            if (DOsEqual(&slotValue,&defaultValue))
+              { defaulted = true; }
+           }
+
+         theCSlotValue = DataObjectToString(theEnv,&slotValue);
+         theCPPSlotValues.push_back(CLIPSCPPSlotValue(theCSlotName,theCSlotValue,defaulted));
+        }
+
+      theCPPInstanceList->push_back(CLIPSCPPFactInstance((size_t) theClass,
+                                                     InstanceName(theInstance),
+                                                     DefclassName(theClass),
+                                                     theCPPSlotValues)); 
+     }
+#else
+   /*============================*/
+   /* Count the number of facts. */
+   /*============================*/
+   
+   for (theInstance = __GetNextInstance(theEnv,NULL);
+        theInstance != NULL;
+        theInstance = __GetNextInstance(theEnv,theInstance))
+     { instanceCount++; }
+
+   theCPPInstanceList = new vector<CLIPSCPPFactInstance>(); 
+   theCPPInstanceList->reserve(instanceCount);
+
+   /*=====================================*/
+   /* Add instances to the instance list. */
+   /*=====================================*/
+
+   for (theInstance = __GetNextInstance(theEnv,NULL);
+        theInstance != NULL;
+        theInstance = __GetNextInstance(theEnv,theInstance))
+     {
+      vector<CLIPSCPPSlotValue> theCPPSlotValues;
+
+      /*===================================*/
+      /* Determine the number of slots and */
+      /* create a vector to contain them.  */
+      /*===================================*/
+
+      theClass = __InstanceClass(theInstance);
+      __ClassSlots(theClass,&slotNames,true);
+
+      theCPPSlotValues.reserve(slotNames.multifieldValue->length);
+
+      for (i = 0; i < slotNames.multifieldValue->length; i++)
+        {
+         const char *theCSlotName, *theCSlotValue;
+         bool defaulted = false;
+
+         theCSlotName = slotNames.multifieldValue->contents[i].lexemeValue->contents;
+
+         __DirectGetSlot(theInstance,theCSlotName,&temp);
+         __CLIPSToUDFValue(&temp,&slotValue);
+         
+         if (__SlotDefaultP(theEnv,theClass,theCSlotName) == STATIC_DEFAULT)
+           {
+            __SlotDefaultValue(theClass,theCSlotName,&temp);
+            __CLIPSToUDFValue(&temp,&defaultValue);
+                             
+            if (__DOsEqual(&slotValue,&defaultValue))
+              { defaulted = true; }
+           }
+
+         theCSlotValue = __DataObjectToString(theEnv,&slotValue);
+         theCPPSlotValues.push_back(CLIPSCPPSlotValue(theCSlotName,theCSlotValue,defaulted));
+        }
+
+      theCPPInstanceList->push_back(CLIPSCPPFactInstance((size_t) theClass,
+                                                         __InstanceName(theInstance),
+                                                         __DefclassName(theClass),
+                                                         theCPPSlotValues)); 
+     }
+#endif
+
+   return theCPPInstanceList;
   }

@@ -9,7 +9,7 @@ using CLIPSNET;
 
 namespace CLIPSIDE
   {
-   class FactBrowserManager
+   class InstanceBrowserManager
      {
       private List<EntityBrowser> browsers = new List<EntityBrowser>();
    
@@ -19,13 +19,13 @@ namespace CLIPSIDE
 
       private MainWindow ide;
 
-      // private String ENTITY_NAME = "Fact";
+      // private String ENTITY_NAME = "Instance";
       // private static int entityCount = 1;
       
-      /**********************/
-      /* FactBrowserManager */
-      /**********************/
-      public FactBrowserManager(
+      /**************************/
+      /* InstanceBrowserManager */
+      /**************************/
+      public InstanceBrowserManager(
         MainWindow theIDE) 
         {
          ide = theIDE;
@@ -85,8 +85,8 @@ namespace CLIPSIDE
       private void FetchData() // TBD Synchronized?
         {
          modules = ide.GetEnvironment().GetModuleList();
-         entities = ide.GetEnvironment().GetFactList();
-         scopes = ide.GetEnvironment().GetFactScopes();
+         entities = ide.GetEnvironment().GetInstanceList();
+         scopes = ide.GetEnvironment().GetInstanceScopes();
         }
 
       /*****************/

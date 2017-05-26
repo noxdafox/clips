@@ -59,6 +59,12 @@
         <CommandBinding Command="local:IDECommands.AgendaBrowser" CanExecute="AgendaBrowser_CanExecute" Executed="AgendaBrowser_Executed" />
         <CommandBinding Command="local:IDECommands.FactBrowser" CanExecute="FactBrowser_CanExecute" Executed="FactBrowser_Executed" />
         <CommandBinding Command="local:IDECommands.InstanceBrowser" CanExecute="InstanceBrowser_CanExecute" Executed="InstanceBrowser_Executed" />
+        <CommandBinding Command="local:IDECommands.CLIPSHomePage" CanExecute="CLIPSHomePage_CanExecute" Executed="CLIPSHomePage_Executed" />
+        <CommandBinding Command="local:IDECommands.OnlineDocumentation" CanExecute="OnlineDocumentation_CanExecute" Executed="OnlineDocumentation_Executed" />
+        <CommandBinding Command="local:IDECommands.OnlineExamples" CanExecute="OnlineExamples_CanExecute" Executed="OnlineExamples_Executed" />
+        <CommandBinding Command="local:IDECommands.CLIPSExpertSystemGroup" CanExecute="CLIPSExpertSystemGroup_CanExecute" Executed="CLIPSExpertSystemGroup_Executed" />
+        <CommandBinding Command="local:IDECommands.SourceForgeForums" CanExecute="SourceForgeForums_CanExecute" Executed="SourceForgeForums_Executed" />
+        <CommandBinding Command="local:IDECommands.StackOverflowQA" CanExecute="StackOverflowQA_CanExecute" Executed="StackOverflowQA_Executed" />
     </Window.CommandBindings>
     <Grid x:Name ="mainGrid" Margin="0,1,0,-1">
 
@@ -95,6 +101,14 @@
                     <MenuItem Header="Instance Browser" Command="local:IDECommands.InstanceBrowser"/>
                 </MenuItem>
 
+                <MenuItem Header="Help">
+                    <MenuItem Header="CLIPS Home Page" Command="local:IDECommands.CLIPSHomePage"/>
+                    <MenuItem Header="Online Documentation" Command="local:IDECommands.OnlineDocumentation"/>
+                    <MenuItem Header="Online Examples" Command="local:IDECommands.OnlineExamples"/>
+                    <MenuItem Header="CLIPS Expert System Group" Command="local:IDECommands.CLIPSExpertSystemGroup"/>
+                    <MenuItem Header="SourceForge Forums" Command="local:IDECommands.SourceForgeForums"/>
+                    <MenuItem Header="StackOverflow Q&amp;A" Command="local:IDECommands.StackOverflowQA"/>
+                </MenuItem>
             </Menu>
             <StackPanel>
                 <Label x:Name="currentDirectoryLabel" Content="Directory" FontSize="14" VerticalContentAlignment="Center" RenderTransformOrigin="0.496,4" Height="37"/>

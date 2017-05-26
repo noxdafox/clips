@@ -84,10 +84,47 @@ namespace CLIPSIDE
                              "FactBrowser", 
                              typeof(IDECommands)
                             );
+                            
 
       public static readonly RoutedCommand InstanceBrowser = 
          new RoutedUICommand("InstanceBrowser",
                              "InstanceBrowser", 
+                             typeof(IDECommands)
+                            );
+
+      public static readonly RoutedCommand CLIPSHomePage = 
+         new RoutedUICommand("CLIPSHomePage",
+                             "CLIPSHomePage", 
+                             typeof(IDECommands)
+                            );
+
+      public static readonly RoutedCommand OnlineDocumentation = 
+         new RoutedUICommand("OnlineDocumentation",
+                             "OnlineDocumentation", 
+                             typeof(IDECommands)
+                            );
+
+      public static readonly RoutedCommand OnlineExamples = 
+         new RoutedUICommand("OnlineExamples",
+                             "OnlineExamples", 
+                             typeof(IDECommands)
+                            );
+
+      public static readonly RoutedCommand CLIPSExpertSystemGroup = 
+         new RoutedUICommand("CLIPSExpertSystemGroup",
+                             "CLIPSExpertSystemGroup", 
+                             typeof(IDECommands)
+                            );
+
+      public static readonly RoutedCommand SourceForgeForums = 
+         new RoutedUICommand("SourceForgeForums",
+                             "SourceForgeForums", 
+                             typeof(IDECommands)
+                            );
+
+      public static readonly RoutedCommand StackOverflowQA = 
+         new RoutedUICommand("StackOverflowQA",
+                             "StackOverflowQA", 
                              typeof(IDECommands)
                             );
      }
@@ -96,6 +133,7 @@ namespace CLIPSIDE
      {
       private AgendaBrowserManager agendaBrowserManager;
       private FactBrowserManager factBrowserManager;
+      private InstanceBrowserManager instanceBrowserManager;
       private IDEPreferences preferences;
       private int agendaCount = 1;
       private int factsCount = 1;
@@ -137,6 +175,7 @@ namespace CLIPSIDE
 
          agendaBrowserManager = new AgendaBrowserManager(this);
          factBrowserManager = new FactBrowserManager(this);
+         instanceBrowserManager = new InstanceBrowserManager(this);
 
          IDEPeriodicCallback theCB = new IDEPeriodicCallback(this);
 
@@ -198,6 +237,12 @@ namespace CLIPSIDE
            {
             this.dialog.GetEnvironment().SetFactListChanged(false);
             this.factBrowserManager.UpdateAllBrowsers();
+           }
+
+         if (this.dialog.GetEnvironment().GetInstancesChanged())
+           {
+            this.dialog.GetEnvironment().SetInstancesChanged(false);
+            this.instanceBrowserManager.UpdateAllBrowsers();
            }
         }
 
@@ -519,7 +564,7 @@ namespace CLIPSIDE
          theTabItem.Title = "Facts #" + factsCount++;
          OpenTabItem(theTabItem);
 
-         FactBrowser theBrowser = factBrowserManager.CreateBrowser();
+         EntityBrowser theBrowser = factBrowserManager.CreateBrowser();
          theTabItem.Content = theBrowser;
         }
 
@@ -543,6 +588,9 @@ namespace CLIPSIDE
          ClosableTab theTabItem = new ClosableTab();
          theTabItem.Title = "Instances #" + instancesCount++;
          OpenTabItem(theTabItem);
+
+         EntityBrowser theBrowser = instanceBrowserManager.CreateBrowser();
+         theTabItem.Content = theBrowser;
         }
 
       /***************/
@@ -576,10 +624,17 @@ namespace CLIPSIDE
             ((AgendaBrowser) theTabItem.Content).DetachIDE(); 
            }
 
-         if (theTabItem.Content is FactBrowser)
-           { 
-            factBrowserManager.RemoveBrowser((FactBrowser)  theTabItem.Content);
-            ((FactBrowser) theTabItem.Content).DetachIDE(); 
+         if (theTabItem.Content is EntityBrowser)
+           {
+            EntityBrowser theBrowser = theTabItem.Content as EntityBrowser;
+
+            if (factBrowserManager.ManagesBrowser(theBrowser))
+              { factBrowserManager.RemoveBrowser(theBrowser); }
+
+            else if (instanceBrowserManager.ManagesBrowser(theBrowser))
+              { instanceBrowserManager.RemoveBrowser(theBrowser); }
+
+            theBrowser.DetachIDE(); 
            }
 
          windowCount--;
@@ -589,6 +644,147 @@ namespace CLIPSIDE
            { 
             this.mainGrid.RowDefinitions[3].Height = new GridLength(0); 
             this.dialog.Focus();
+           }
+        }
+
+      /****************************/
+      /* CLIPSHomePage_CanExecute */
+      /****************************/
+      private void CLIPSHomePage_CanExecute(
+        object sender, 
+        CanExecuteRoutedEventArgs e)
+        {
+         e.CanExecute = true;
+        }
+
+      /**************************/      
+      /* CLIPSHomePage_Executed */
+      /**************************/      
+      private void CLIPSHomePage_Executed(
+        object sender, 
+        ExecutedRoutedEventArgs e)
+        {
+         OpenURL("http://www.clipsrules.net/");
+        }
+
+      /**********************************/
+      /* OnlineDocumentation_CanExecute */
+      /**********************************/
+      private void OnlineDocumentation_CanExecute(
+        object sender, 
+        CanExecuteRoutedEventArgs e)
+        {
+         e.CanExecute = true;
+        }
+
+      /********************************/      
+      /* OnlineDocumentation_Executed */
+      /********************************/      
+      private void OnlineDocumentation_Executed(
+        object sender, 
+        ExecutedRoutedEventArgs e)
+        {
+         OpenURL("http://www.clipsrules.net/?q=Documentation");
+        }
+        
+      /*****************************/
+      /* OnlineExamples_CanExecute */
+      /*****************************/
+      private void OnlineExamples_CanExecute(
+        object sender, 
+        CanExecuteRoutedEventArgs e)
+        {
+         e.CanExecute = true;
+        }
+
+      /***************************/      
+      /* OnlineExamples_Executed */
+      /***************************/      
+      private void OnlineExamples_Executed(
+        object sender, 
+        ExecutedRoutedEventArgs e)
+        {
+         OpenURL("https://sourceforge.net/p/clipsrules/code/HEAD/tree/branches/64x/examples/");
+        }
+        
+      /*************************************/
+      /* CLIPSExpertSystemGroup_CanExecute */
+      /*************************************/
+      private void CLIPSExpertSystemGroup_CanExecute(
+        object sender, 
+        CanExecuteRoutedEventArgs e)
+        {
+         e.CanExecute = true;
+        }
+
+      /***********************************/      
+      /* CLIPSExpertSystemGroup_Executed */
+      /***********************************/      
+      private void CLIPSExpertSystemGroup_Executed(
+        object sender, 
+        ExecutedRoutedEventArgs e)
+        {
+         OpenURL("http://groups.google.com/group/CLIPSESG/");
+        }
+        
+      /********************************/
+      /* SourceForgeForums_CanExecute */
+      /********************************/
+      private void SourceForgeForums_CanExecute(
+        object sender, 
+        CanExecuteRoutedEventArgs e)
+        {
+         e.CanExecute = true;
+        }
+
+      /******************************/      
+      /* SourceForgeForums_Executed */
+      /******************************/      
+      private void SourceForgeForums_Executed(
+        object sender, 
+        ExecutedRoutedEventArgs e)
+        {
+         OpenURL("http://sourceforge.net/p/clipsrules/discussion");
+        }
+        
+      /******************************/
+      /* StackOverflowQA_CanExecute */
+      /******************************/
+      private void StackOverflowQA_CanExecute(
+        object sender, 
+        CanExecuteRoutedEventArgs e)
+        {
+         e.CanExecute = true;
+        }
+
+      /****************************/      
+      /* StackOverflowQA_Executed */
+      /****************************/      
+      private void StackOverflowQA_Executed(
+        object sender, 
+        ExecutedRoutedEventArgs e)
+        {
+         OpenURL("http://stackoverflow.com/questions/tagged/clips");
+        }
+
+      /***********/      
+      /* OpenURL */
+      /***********/      
+      private void OpenURL(
+        String theURL)
+        {
+         try
+           {
+            System.Diagnostics.Process.Start(theURL);
+           }
+         catch (System.ComponentModel.Win32Exception noBrowser)
+           {
+            if (noBrowser.ErrorCode==-2147467259)
+              { MessageBox.Show(noBrowser.Message); }
+           }
+         catch (System.Exception other)
+           {
+            MessageBox.Show(other.Message);
            }
         }
      }

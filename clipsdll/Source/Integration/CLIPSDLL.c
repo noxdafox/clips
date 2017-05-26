@@ -5,6 +5,10 @@
 #include <windows.h>
 
 #include "constant.h"
+#include "classcom.h"
+#include "classexm.h"
+#include "classinf.h"
+#include "classpsr.h"
 #include "commline.h"
 #include "cstrcpsr.h"
 #include "engine.h"
@@ -212,7 +216,6 @@ Fact __declspec(dllexport) * __AssertString(
   }
 
 const char __declspec(dllexport) * __InstanceName(
-  Environment *theEnv,
   Instance *theInstance)
   {
    return InstanceName(theInstance);  
@@ -509,6 +512,13 @@ void * __CreateDeftemplateScopeMap(
    return CreateDeftemplateScopeMap(theEnv,theDeftemplate);
   }
 
+Instance __declspec(dllexport) * __GetNextInstance(
+  Environment *theEnv,
+  Instance *instancePtr)
+  {
+   return GetNextInstance(theEnv,instancePtr);
+  }
+
 bool __DOsEqual(
   UDFValue *dobj1,
   UDFValue *dobj2)
@@ -528,4 +538,54 @@ const char * __DataObjectToString(
   UDFValue *theDO)
   {
    return DataObjectToString(theEnv,theDO);
+  }
+  
+Defclass __declspec(dllexport) * __GetNextDefclass(
+  Environment *theEnv,
+  Defclass *defclassPtr)
+  {
+   return GetNextDefclass(theEnv,defclassPtr);
+  }
+  
+void * __CreateClassScopeMap(
+  Environment *theEnv,
+  Defclass *theDefclass)
+  {
+   return CreateClassScopeMap(theEnv,theDefclass);
+  }
+
+Defclass __declspec(dllexport) * __InstanceClass(
+  Instance *theInstance)
+  {
+   return InstanceClass(theInstance);  
+  } 
+
+const char __declspec(dllexport) * __DefclassName(
+  Defclass *theDefclass)
+  {
+   return DefclassName(theDefclass);  
+  } 
+
+void __declspec(dllexport) __ClassSlots(
+  Defclass *theClass,
+  CLIPSValue *returnValue,
+  bool inherp)
+  {
+   ClassSlots(theClass,returnValue,inherp);
+  }
+
+int __SlotDefaultP(
+  Environment *theEnv,
+  Defclass *theDefclass,
+  const char *slotName)
+  {
+   return SlotDefaultP(theEnv,theDefclass,slotName);
+  }
+
+bool __SlotDefaultValue(
+  Defclass *theDefclass,
+  const char *slotName,
+  CLIPSValue *theValue)
+  {
+   return SlotDefaultValue(theDefclass,slotName,theValue);
   }

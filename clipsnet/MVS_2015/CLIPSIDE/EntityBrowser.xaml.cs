@@ -36,7 +36,7 @@ namespace CLIPSIDE
         }
      }
 
-   public partial class FactBrowser : UserControl
+   public partial class EntityBrowser : UserControl
      { 
       private MainWindow ide = null;
       private List<Module> modules;
@@ -47,15 +47,15 @@ namespace CLIPSIDE
       private FactInstanceCollection entityCollection;
       private SlotValueCollection slotCollection;
 
-      /***************/
-      /* FactBrowser */
-      /***************/
-      public FactBrowser()
+      /*****************/
+      /* EntityBrowser */
+      /*****************/
+      public EntityBrowser()
         {
          InitializeComponent();
         }
 
-      public FactBrowser(MainWindow theMW) : this()
+      public EntityBrowser(MainWindow theMW) : this()
         {
          ide = theMW;
          if (ide != null)
@@ -69,7 +69,7 @@ namespace CLIPSIDE
       public void DetachIDE()
         {
         }
-
+        
      /**************/
      /* UpdateData */
      /**************/
@@ -171,6 +171,8 @@ namespace CLIPSIDE
 
          entitySourceList.Filter -= EntityFilter;
          entitySourceList.Filter += EntityFilter;
+
+         ReselectEntityAndSlots();
         }
 
       /*****************/
@@ -186,8 +188,12 @@ namespace CLIPSIDE
          theEntity = (FactInstance) e.AddedItems[0];
          
          CreateSlotListSource(theEntity);
-         if (theEntity.GetSlotValues().Count != 0)
-           { slotDataGridView.SelectedItem = theEntity.GetSlotValues().First(); }
+
+         if (slotDataGridView.Items.Count != 0)
+           {
+            SlotValue theSV = slotDataGridView.Items[0] as SlotValue;
+            slotDataGridView.SelectedItem = theSV;
+           }
         }
 
       /****************/ 
@@ -253,6 +259,34 @@ namespace CLIPSIDE
          slotSourceList.Filter -= SlotFilter;
          slotSourceList.Filter += SlotFilter;
         }
+        
+      /**************************/
+      /* ReselectEntityAndSlots */
+      /**************************/
+      private void ReselectEntityAndSlots()
+        {
+         if (entityDataGridView.Items.Count != 0)
+           {
+            FactInstance theEntity;
+
+            theEntity = entityDataGridView.Items[0] as FactInstance;
+
+            entityDataGridView.SelectedItem = theEntity;
+
+            CreateSlotListSource(theEntity);
+            if (slotDataGridView.Items.Count != 0)
+              {
+               SlotValue theSV = slotDataGridView.Items[0] as SlotValue;
+               slotDataGridView.SelectedItem = theSV;
+              }
+           }
+         else
+           {
+            slotDataGridView.ItemsSource = null;
+            slotSourceList = null;
+            slotCollection = null;
+           }
+        }
 
       /********************/ 
       /* SearchFieldKeyUp */
@@ -267,24 +301,7 @@ namespace CLIPSIDE
                entitySourceList.Filter -= EntityFilter;
                entitySourceList.Filter += EntityFilter;
 
-               if (entityDataGridView.Items.Count != 0)
-                 {
-                  FactInstance theEntity;
-
-                  theEntity = entityDataGridView.Items[0] as FactInstance;
-
-                  entityDataGridView.SelectedItem = theEntity;
-
-                  CreateSlotListSource(theEntity);
-                  if (theEntity.GetSlotValues().Count != 0)
-                    { slotDataGridView.SelectedItem = theEntity.GetSlotValues().First(); }
-                 }
-               else
-                 {
-                  slotDataGridView.ItemsSource = null;
-                  slotSourceList = null;
-                  slotCollection = null;
-                 }
+               ReselectEntityAndSlots();
               }
            }
         }
