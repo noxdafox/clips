@@ -266,6 +266,18 @@ bool __declspec(dllexport) __UnwatchString(
    return UnwatchString(theEnv,item);
   }
 
+bool __declspec(dllexport) __GetWatchItem(
+  Environment *theEnv,
+  const char *item)
+  {
+   int rv;
+
+   rv = GetWatchItem(theEnv,item);
+
+   if (rv == 1) return true;
+   else return false;
+  }
+
 void __declspec(dllexport) * __GetEnvironmentContext(
   Environment *theEnv)
   {

@@ -143,9 +143,6 @@ namespace CLIPSIDE
       private FactBrowserManager factBrowserManager;
       private InstanceBrowserManager instanceBrowserManager;
       private IDEPreferences preferences;
-      private int agendaCount = 1;
-      private int factsCount = 1;
-      private int instancesCount = 1;
       private int windowCount = 0;
 
       private class IDEPeriodicCallback : PeriodicCallback
@@ -889,6 +886,199 @@ namespace CLIPSIDE
            {
             MessageBox.Show(other.Message);
            }
+        }
+        
+      /***************************/
+      /* UpdateSubmenuWatchItems */
+      /***************************/
+      private void UpdateSubmenuWatchItems(
+        object sender,
+        RoutedEventArgs e)
+        {
+         ActivationsWatchMenuItem.IsChecked = this.dialog.GetEnvironment().GetWatchItem("activations");
+         CompilationsWatchMenuItem.IsChecked = this.dialog.GetEnvironment().GetWatchItem("compilations");
+         DeffunctionsWatchMenuItem.IsChecked = this.dialog.GetEnvironment().GetWatchItem("deffunctions");
+         FactsWatchMenuItem.IsChecked = this.dialog.GetEnvironment().GetWatchItem("facts");
+         FocusWatchMenuItem.IsChecked = this.dialog.GetEnvironment().GetWatchItem("focus");
+         GenericFunctionsWatchMenuItem.IsChecked = this.dialog.GetEnvironment().GetWatchItem("generic-functions");
+         GlobalsWatchMenuItem.IsChecked = this.dialog.GetEnvironment().GetWatchItem("globals");
+         InstancesWatchMenuItem.IsChecked = this.dialog.GetEnvironment().GetWatchItem("instances");
+         MessageHandlersWatchMenuItem.IsChecked = this.dialog.GetEnvironment().GetWatchItem("message-handlers");
+         MessagesWatchMenuItem.IsChecked = this.dialog.GetEnvironment().GetWatchItem("messages");
+         MethodsWatchMenuItem.IsChecked = this.dialog.GetEnvironment().GetWatchItem("methods");
+         RulesWatchMenuItem.IsChecked = this.dialog.GetEnvironment().GetWatchItem("rules");
+         SlotsWatchMenuItem.IsChecked = this.dialog.GetEnvironment().GetWatchItem("slots");
+         StatisticsWatchMenuItem.IsChecked = this.dialog.GetEnvironment().GetWatchItem("statistics");
+        }
+
+      /***************/
+      /* ToggleWatch */
+      /***************/  
+      private void ToggleWatch(
+        String watchItem)
+        {
+         bool currentValue;
+      
+         currentValue = this.dialog.GetEnvironment().GetWatchItem(watchItem); 
+         this.dialog.GetEnvironment().SetWatchItem(watchItem,! currentValue);     
+        }
+        
+      /***************************/
+      /* WatchActivationsClicked */
+      /***************************/
+      private void WatchActivationsClicked(object sender, RoutedEventArgs e)
+        {
+         ToggleWatch("activations");
+        }        
+
+      /****************************/
+      /* WatchCompilationsClicked */
+      /****************************/
+      private void WatchCompilationsClicked(object sender, RoutedEventArgs e)
+        {
+         ToggleWatch("compilations");
+        } 
+               
+      /****************************/
+      /* WatchDeffunctionsClicked */
+      /****************************/
+      private void WatchDeffunctionsClicked(object sender, RoutedEventArgs e)
+        {
+         ToggleWatch("deffunctions");
+        }
+        
+      /*********************/
+      /* WatchFactsClicked */
+      /*********************/
+      private void WatchFactsClicked(object sender, RoutedEventArgs e)
+        {
+         ToggleWatch("facts");
+        }        
+
+      /*********************/
+      /* WatchFocusClicked */
+      /*********************/
+      private void WatchFocusClicked(object sender, RoutedEventArgs e)
+        {
+         ToggleWatch("focus");
+        } 
+               
+      /********************************/
+      /* WatchGenericFunctionsClicked */
+      /********************************/
+      private void WatchGenericFunctionsClicked(object sender, RoutedEventArgs e)
+        {
+         ToggleWatch("generic-functions");
+        }
+        
+      /***********************/
+      /* WatchGlobalsClicked */
+      /***********************/
+      private void WatchGlobalsClicked(object sender, RoutedEventArgs e)
+        {
+         ToggleWatch("globals");
+        }        
+
+      /*************************/
+      /* WatchInstancesClicked */
+      /*************************/
+      private void WatchInstancesClicked(object sender, RoutedEventArgs e)
+        {
+         ToggleWatch("instances");
+        } 
+               
+      /*******************************/
+      /* WatchMessageHandlersClicked */
+      /*******************************/
+      private void WatchMessageHandlersClicked(object sender, RoutedEventArgs e)
+        {
+         ToggleWatch("message-handlers");
+        }
+        
+      /************************/
+      /* WatchMessagesClicked */
+      /************************/
+      private void WatchMessagesClicked(object sender, RoutedEventArgs e)
+        {
+         ToggleWatch("messages");
+        }        
+
+      /***********************/
+      /* WatchMethodsClicked */
+      /***********************/
+      private void WatchMethodsClicked(object sender, RoutedEventArgs e)
+        {
+         ToggleWatch("methods");
+        } 
+               
+      /*********************/
+      /* WatchRulesClicked */
+      /*********************/
+      private void WatchRulesClicked(object sender, RoutedEventArgs e)
+        {
+         ToggleWatch("rules");
+        } 
+
+      /*********************/
+      /* WatchSlotsClicked */
+      /*********************/
+      private void WatchSlotsClicked(object sender, RoutedEventArgs e)
+        {
+         ToggleWatch("slots");
+        } 
+               
+      /**************************/
+      /* WatchStatisticsClicked */
+      /**************************/
+      private void WatchStatisticsClicked(object sender, RoutedEventArgs e)
+        {
+         ToggleWatch("statistics");
+        }
+
+      /*******************/
+      /* WatchAllClicked */
+      /*******************/
+      private void WatchAllClicked(object sender, RoutedEventArgs e)
+        {
+         CLIPSNET.Environment theEnv = this.dialog.GetEnvironment();
+
+         theEnv.Watch("activations");
+         theEnv.Watch("compilations");
+         theEnv.Watch("deffunctions");
+         theEnv.Watch("facts");
+         theEnv.Watch("focus");
+         theEnv.Watch("generic-functions");
+         theEnv.Watch("globals");
+         theEnv.Watch("instances");
+         theEnv.Watch("message-handlers");
+         theEnv.Watch("messages");
+         theEnv.Watch("methods");
+         theEnv.Watch("rules");
+         theEnv.Watch("slots");
+         theEnv.Watch("statistics");
+        } 
+               
+      /********************/
+      /* WatchNoneClicked */
+      /********************/
+      private void WatchNoneClicked(object sender, RoutedEventArgs e)
+        {
+         CLIPSNET.Environment theEnv = this.dialog.GetEnvironment();
+
+         theEnv.Unwatch("activations");
+         theEnv.Unwatch("compilations");
+         theEnv.Unwatch("deffunctions");
+         theEnv.Unwatch("facts");
+         theEnv.Unwatch("focus");
+         theEnv.Unwatch("generic-functions");
+         theEnv.Unwatch("globals");
+         theEnv.Unwatch("instances");
+         theEnv.Unwatch("message-handlers");
+         theEnv.Unwatch("messages");
+         theEnv.Unwatch("methods");
+         theEnv.Unwatch("rules");
+         theEnv.Unwatch("slots");
+         theEnv.Unwatch("statistics");
         }
      }
   }

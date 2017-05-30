@@ -475,7 +475,7 @@ static Value *ConvertSingleFieldValue(
 /*********/
 /* Watch */
 /*********/
-int CLIPSCPPEnv::Watch(
+bool CLIPSCPPEnv::Watch(
   char *item)
   {
 #ifndef CLIPS_DLL_WRAPPER
@@ -488,7 +488,7 @@ int CLIPSCPPEnv::Watch(
 /***********/
 /* Unwatch */
 /***********/
-int CLIPSCPPEnv::Unwatch(
+bool CLIPSCPPEnv::Unwatch(
   char *item)
   {
 #ifndef CLIPS_DLL_WRAPPER
@@ -498,6 +498,37 @@ int CLIPSCPPEnv::Unwatch(
 #endif
   }
   
+/****************/
+/* GetWatchItem */
+/****************/
+bool CLIPSCPPEnv::GetWatchItem(
+  char *item)
+  {
+   int rv;
+
+#ifndef CLIPS_DLL_WRAPPER
+   rv = ::GetWatchItem(theEnv,item);
+#else
+   rv = __GetWatchItem(theEnv,item);
+#endif
+
+   if (rv == 1) return true;
+   else return false;
+  }
+  
+/****************/
+/* SetWatchItem */
+/****************/
+void CLIPSCPPEnv::SetWatchItem(
+  char *item,
+  bool newValue)
+  {
+   if (newValue)
+     { Watch(item); }
+   else
+     { Unwatch(item); }
+  }
+
 /********************/
 /* GetAgendaChanged */
 /********************/

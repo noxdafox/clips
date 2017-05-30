@@ -30,6 +30,7 @@ bool DECLSPEC __Eval(Environment *,const char *,CLIPSValue *);
 bool DECLSPEC __GetFactSlot(Fact *,const char *,CLIPSValue *);
 bool DECLSPEC __WatchString(Environment *,const char *);
 bool DECLSPEC __UnwatchString(Environment *,const char *);
+bool DECLSPEC __GetWatchItem(Environment *,const char *);
 bool DECLSPEC __GetHaltExecution(Environment *);
 bool DECLSPEC __GetHaltRules(Environment *);
 bool DECLSPEC __GetAgendaChanged(Environment *);

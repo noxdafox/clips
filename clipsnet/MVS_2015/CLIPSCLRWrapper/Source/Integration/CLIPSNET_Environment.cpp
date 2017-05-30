@@ -204,6 +204,69 @@ namespace CLIPSNET
       return gcnew FactAddressValue(frv);
      }
      
+   /*********/
+   /* Watch */
+   /*********/
+   bool Environment::Watch(
+     String ^ item)
+     {
+      array<Byte>^ ebItem = Encoding::UTF8->GetBytes(item);
+      if (ebItem->Length)
+        {
+         pin_ptr<Byte> pbItem = &ebItem[0];
+         return m_Env->Watch((char *) pbItem);
+        }
+      else
+        { return false; }
+     }
+     
+   /***********/
+   /* UnWatch */
+   /***********/
+   bool Environment::Unwatch(
+     String ^ item)
+     {
+      array<Byte>^ ebItem = Encoding::UTF8->GetBytes(item);
+      if (ebItem->Length)
+        {
+         pin_ptr<Byte> pbItem = &ebItem[0];
+         return m_Env->Unwatch((char *) pbItem);
+        }
+      else
+        { return false; }
+     }
+      
+   /****************/
+   /* GetWatchItem */
+   /****************/
+   bool Environment::GetWatchItem(
+     String ^ item)
+     {
+      array<Byte>^ ebItem = Encoding::UTF8->GetBytes(item);
+      if (ebItem->Length)
+        {
+         pin_ptr<Byte> pbItem = &ebItem[0];
+         return m_Env->GetWatchItem((char *) pbItem);
+        }
+      else
+        { return false; }
+     }
+    
+   /****************/
+   /* SetWatchItem */
+   /****************/
+   void Environment::SetWatchItem(
+     String ^ item,
+     bool newValue)
+     {
+      array<Byte>^ ebItem = Encoding::UTF8->GetBytes(item);
+      if (ebItem->Length)
+        {
+         pin_ptr<Byte> pbItem = &ebItem[0];
+         m_Env->SetWatchItem((char *) pbItem,newValue);
+        }
+     }
+
    /*************/
    /* AddRouter */
    /*************/

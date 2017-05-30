@@ -59,8 +59,10 @@ class CLIPSCPPEnv
       void LoadFromString(char *);
       void Reset();
       long long Run(long long runLimit = -1);
-      int Watch(char *);
-      int Unwatch(char *);
+      bool Watch(char *);
+      bool Unwatch(char *);
+      bool GetWatchItem(char *);
+      void SetWatchItem(char *,bool);
       DataObject Eval(char *);
       bool Build(char *);
       FactAddressValue *AssertString(char *);

@@ -91,6 +91,10 @@ namespace CLIPSNET
         void SetFactListChanged(bool);
         bool GetInstancesChanged();
         void SetInstancesChanged(bool);
+        bool Watch(String ^);
+        bool Unwatch(String ^);
+        bool GetWatchItem(String ^);
+        void SetWatchItem(String ^,bool);
         virtual String^ ToString() override;
 
       protected:

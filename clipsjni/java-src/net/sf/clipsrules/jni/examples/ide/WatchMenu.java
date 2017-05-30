@@ -105,7 +105,7 @@ public class WatchMenu extends JMenu
       jmiWatchMessageHandlers.setActionCommand(watchMessageHandlersAction);
       add(jmiWatchMessageHandlers);
    
-      jmiWatchMessages = new JCheckBoxMenuItem("Message"); 
+      jmiWatchMessages = new JCheckBoxMenuItem("Messages"); 
       jmiWatchMessages.addActionListener(this);
       jmiWatchMessages.setActionCommand(watchMessagesAction);
       add(jmiWatchMessages);

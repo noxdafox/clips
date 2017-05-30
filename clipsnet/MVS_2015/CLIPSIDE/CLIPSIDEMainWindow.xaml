@@ -99,6 +99,26 @@
 
 
                 <MenuItem Header="Debug">
+                    <MenuItem Header="Watch" SubmenuOpened="UpdateSubmenuWatchItems">
+                        <MenuItem x:Name="ActivationsWatchMenuItem" Header="Activations" Click="WatchActivationsClicked"/>
+                        <MenuItem x:Name="CompilationsWatchMenuItem" Header="Compilations" Click="WatchCompilationsClicked"/>
+                        <MenuItem x:Name="DeffunctionsWatchMenuItem" Header="Deffunctions" Click="WatchDeffunctionsClicked"/>
+                        <MenuItem x:Name="FactsWatchMenuItem" Header="Facts" Click="WatchFactsClicked"/>
+                        <MenuItem x:Name="FocusWatchMenuItem" Header="Focus" Click="WatchFocusClicked"/>
+                        <MenuItem x:Name="GenericFunctionsWatchMenuItem" Header="Generic Functions" Click="WatchGenericFunctionsClicked"/>
+                        <MenuItem x:Name="GlobalsWatchMenuItem" Header="Globals" Click="WatchGlobalsClicked"/>
+                        <MenuItem x:Name="InstancesWatchMenuItem" Header="Instances" Click="WatchInstancesClicked"/>
+                        <MenuItem x:Name="MessageHandlersWatchMenuItem" Header="Message Handlers" Click="WatchMessageHandlersClicked"/>
+                        <MenuItem x:Name="MessagesWatchMenuItem" Header="Messages" Click="WatchMessagesClicked"/>
+                        <MenuItem x:Name="MethodsWatchMenuItem" Header="Methods" Click="WatchMethodsClicked"/>
+                        <MenuItem x:Name="RulesWatchMenuItem" Header="Rules" Click="WatchRulesClicked"/>
+                        <MenuItem x:Name="SlotsWatchMenuItem" Header="Slots" Click="WatchSlotsClicked"/>
+                        <MenuItem x:Name="StatisticsWatchMenuItem" Header="Statistics" Click="WatchStatisticsClicked"/>
+                        <Separator/>
+                        <MenuItem Header="All" Click="WatchAllClicked"/>
+                        <MenuItem Header="None" Click="WatchNoneClicked"/>
+                    </MenuItem>
+                <Separator/>
                     <MenuItem Header="Agenda Browser" Command="local:IDECommands.AgendaBrowser"/>
                     <MenuItem Header="Fact Browser" Command="local:IDECommands.FactBrowser"/>
                     <MenuItem Header="Instance Browser" Command="local:IDECommands.InstanceBrowser"/>
