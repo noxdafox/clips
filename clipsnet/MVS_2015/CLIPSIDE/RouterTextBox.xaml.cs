@@ -203,7 +203,8 @@ namespace CLIPSIDE
          this.AcceptsReturn = true;
          this.IsReadOnly = false;
          DataObject.AddPastingHandler(this,OnPaste);
-         CommandBindings.Add(new CommandBinding(ApplicationCommands.Cut,OnCut)); 
+         CommandBindings.Add(new CommandBinding(ApplicationCommands.Cut,OnCut,CanCut)); 
+         CommandBindings.Add(new CommandBinding(ApplicationCommands.Paste,null,CanPaste)); 
          this.SelectionChanged += new RoutedEventHandler(TextBoxSelectionChanged);
          this.PreviewMouseLeftButtonUp += new MouseButtonEventHandler(TextBox_PreviewMouseLeftButtonUp);
         }
@@ -277,21 +278,45 @@ namespace CLIPSIDE
 
          base.OnDrop(e);
         }
+        
+      /**********/
+      /* CanCut */
+      /**********/
+      protected virtual void CanCut(
+        object sender, 
+        CanExecuteRoutedEventArgs e)
+        {
+         e.CanExecute = true;
+        }
 
       /*********/
       /* OnCut */
       /*********/
-      protected virtual void OnCut(object sender, ExecutedRoutedEventArgs e) 
+      protected virtual void OnCut(
+        object sender,
+        ExecutedRoutedEventArgs e) 
         {
          e.Handled = true; 
         } 
-        // TBD Paste and Drop DumpOutput support
+
+      /************/
+      /* CanPaste */
+      /************/
+      protected virtual void CanPaste(
+        object sender, 
+        CanExecuteRoutedEventArgs e)
+        {
+         e.CanExecute = true;
+        }
+
       /***********/
       /* OnPaste */
       /***********/
-      protected virtual void OnPaste(object sender, DataObjectPastingEventArgs e)
+      protected virtual void OnPaste(
+        object sender,
+        DataObjectPastingEventArgs e)
         {
-         bool isText = e.SourceDataObject.GetDataPresent(DataFormats.UnicodeText, true);
+         bool isText = e.SourceDataObject.GetDataPresent(DataFormats.UnicodeText,true);
          if (! isText) return;
 
          lock (m_ThreadBridge)

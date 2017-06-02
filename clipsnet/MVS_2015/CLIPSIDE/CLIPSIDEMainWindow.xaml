@@ -8,7 +8,6 @@
         mc:Ignorable="d"
         Title="CLIPS IDE" Height="550" Width="800" Loaded="OnLoad" MinWidth="700" MinHeight="400" Closing="OnClosing">
 
-
     <Window.Resources>
         <Style x:Key="GridSplitterPreviewStyle">
             <Setter Property="Control.Template">
@@ -83,6 +82,11 @@
                 <MenuItem Header="_File" Click="Quit_OnClick">
                     <MenuItem Header="_Quit"/>
                 </MenuItem>
+                <MenuItem Header="Edit">
+                    <MenuItem Header="Cut" Command="ApplicationCommands.Cut"/>
+                    <MenuItem Header="Copy" Command="ApplicationCommands.Copy"/>
+                    <MenuItem Header="Paste" Command="ApplicationCommands.Paste"/>
+                </MenuItem>
                 <MenuItem Header="Environment">
                     <MenuItem Header="Clear" Command="local:IDECommands.Clear"/>
                     <MenuItem Header="Load Constructs..." Command="local:IDECommands.LoadConstructs"/>
@@ -131,6 +135,8 @@
                     <MenuItem Header="CLIPS Expert System Group" Command="local:IDECommands.CLIPSExpertSystemGroup"/>
                     <MenuItem Header="SourceForge Forums" Command="local:IDECommands.SourceForgeForums"/>
                     <MenuItem Header="StackOverflow Q&amp;A" Command="local:IDECommands.StackOverflowQA"/>
+                    <Separator/>
+                    <MenuItem Header="About CLIPS IDE" Click="AboutCLIPSClicked"/>
                 </MenuItem>
             </Menu>
             <StackPanel>

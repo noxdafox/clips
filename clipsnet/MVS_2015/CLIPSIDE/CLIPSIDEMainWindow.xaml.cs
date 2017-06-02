@@ -1080,5 +1080,15 @@ namespace CLIPSIDE
          theEnv.Unwatch("slots");
          theEnv.Unwatch("statistics");
         }
+
+      /*********************/
+      /* AboutCLIPSClicked */
+      /*********************/
+      private void AboutCLIPSClicked(object sender, RoutedEventArgs e)
+        {
+         AboutBox theBox = new AboutBox();
+         theBox.Owner = this;
+         theBox.ShowDialog();
+        }
      }
   }

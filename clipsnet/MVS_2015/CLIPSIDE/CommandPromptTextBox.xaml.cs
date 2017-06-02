@@ -736,7 +736,39 @@ namespace CLIPSIDE
       /*#################*/
       /* TextBox Methods */
       /*#################*/
-      
+
+      /************/
+      /* CanPaste */
+      /************/
+      protected override void CanPaste(
+        object sender, 
+        CanExecuteRoutedEventArgs e)
+        {
+         if (this.HasPasteableSelection())
+           { e.CanExecute = true; }
+         else
+           { 
+            e.CanExecute = false; 
+            e.Handled = true;
+           }
+        }
+             
+      /**********/
+      /* CanCut */
+      /**********/
+      protected override void CanCut(
+        object sender, 
+        CanExecuteRoutedEventArgs e)
+        {
+         if (this.HasCuttableSelection())
+           { e.CanExecute = true; }
+         else
+           { 
+            e.CanExecute = false; 
+            e.Handled = true;
+           }
+        }
+
       /*********/
       /* OnCut */
       /*********/
@@ -768,8 +800,6 @@ namespace CLIPSIDE
         object sender, 
         DataObjectPastingEventArgs e)
         {
-         Console.WriteLine("CommandPromptTextBox OnPaste");
-
          if (GetExecuting())
            { 
             base.OnPaste(sender,e); 

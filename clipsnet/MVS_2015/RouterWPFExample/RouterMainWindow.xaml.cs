@@ -101,7 +101,6 @@ namespace RouterWPFExample
 
       private void OnDragOver(object sender, DragEventArgs e)
          {
-          Console.WriteLine("OnDragOver");
          }
 
       private void OnClosing(object sender, CancelEventArgs e)
