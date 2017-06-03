@@ -38,6 +38,7 @@
 		B549629209BA9D6100697F33 /* CogDown.tiff in Resources */ = {isa = PBXBuildFile; fileRef = B549628F09BA9D6100697F33 /* CogDown.tiff */; };
 		B549629309BA9D6100697F33 /* CogGreyed.tiff in Resources */ = {isa = PBXBuildFile; fileRef = B549629009BA9D6100697F33 /* CogGreyed.tiff */; };
 		B549629409BA9D6100697F33 /* CogUp.tiff in Resources */ = {isa = PBXBuildFile; fileRef = B549629109BA9D6100697F33 /* CogUp.tiff */; };
+		B54DCD591EE1D72400014CEC /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B54DCD581EE1D72400014CEC /* Images.xcassets */; };
 		B571D71B09D5E026003FCD41 /* CLIPSTerminalGlue.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = B571D71909D5E026003FCD41 /* CLIPSTerminalGlue.h */; };
 		B571D72509D5E0D4003FCD41 /* CLIPSTerminalGlue.m in Sources */ = {isa = PBXBuildFile; fileRef = B571D72409D5E0D4003FCD41 /* CLIPSTerminalGlue.m */; };
 		B57AFA0C0BA9F90F002491B9 /* CLIPSModule.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = B57AFA0A0BA9F90F002491B9 /* CLIPSModule.h */; };
@@ -562,7 +563,6 @@
 		B5FB532709AD41E2001AE877 /* AppController.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = B5FB531D09AD41E2001AE877 /* AppController.h */; };
 		B5FB532809AD41E2001AE877 /* AppController.m in Sources */ = {isa = PBXBuildFile; fileRef = B5FB531E09AD41E2001AE877 /* AppController.m */; };
 		B5FB532C09AD4203001AE877 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = B5FB532B09AD4203001AE877 /* main.m */; };
-		B5FB533109AD425F001AE877 /* CLIPS.icns in Resources */ = {isa = PBXBuildFile; fileRef = B5FB533009AD425F001AE877 /* CLIPS.icns */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -635,6 +635,7 @@
 		B549628F09BA9D6100697F33 /* CogDown.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = CogDown.tiff; path = Resources/CogDown.tiff; sourceTree = "<group>"; };
 		B549629009BA9D6100697F33 /* CogGreyed.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = CogGreyed.tiff; path = Resources/CogGreyed.tiff; sourceTree = "<group>"; };
 		B549629109BA9D6100697F33 /* CogUp.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = CogUp.tiff; path = Resources/CogUp.tiff; sourceTree = "<group>"; };
+		B54DCD581EE1D72400014CEC /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = "Interface_Source/Images.xcassets"; sourceTree = "<group>"; };
 		B571D71909D5E026003FCD41 /* CLIPSTerminalGlue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CLIPSTerminalGlue.h; path = Interface_Source/CLIPSTerminalGlue.h; sourceTree = "<group>"; };
 		B571D72409D5E0D4003FCD41 /* CLIPSTerminalGlue.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = CLIPSTerminalGlue.m; path = Interface_Source/CLIPSTerminalGlue.m; sourceTree = "<group>"; };
 		B57AFA0A0BA9F90F002491B9 /* CLIPSModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CLIPSModule.h; path = Interface_Source/CLIPSModule.h; sourceTree = "<group>"; };
@@ -996,7 +997,6 @@
 		B5FB531D09AD41E2001AE877 /* AppController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = AppController.h; path = Interface_Source/AppController.h; sourceTree = "<group>"; };
 		B5FB531E09AD41E2001AE877 /* AppController.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = AppController.m; path = Interface_Source/AppController.m; sourceTree = "<group>"; };
 		B5FB532B09AD4203001AE877 /* main.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = main.m; path = Interface_Source/main.m; sourceTree = "<group>"; };
-		B5FB533009AD425F001AE877 /* CLIPS.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = CLIPS.icns; path = Interface_Source/CLIPS.icns; sourceTree = "<group>"; };
 		B5FB533B09AD42E6001AE877 /* CLIPS-Info.plist */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.plist.xml; name = "CLIPS-Info.plist"; path = "Interface_Source/CLIPS-Info.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -1119,6 +1119,7 @@
 		2A37F4B8FDCFA73011CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				B54DCD581EE1D72400014CEC /* Images.xcassets */,
 				1EB429351C34B3AE00093F7A /* CLIPSAgendaBrowser.xib */,
 				1EB4293E1C34C83400093F7A /* CLIPSConstructInspector.xib */,
 				1EB429381C34C5EE00093F7A /* CLIPSFactBrowser.xib */,
@@ -1131,7 +1132,6 @@
 				B549629009BA9D6100697F33 /* CogGreyed.tiff */,
 				B549629109BA9D6100697F33 /* CogUp.tiff */,
 				B5FB533B09AD42E6001AE877 /* CLIPS-Info.plist */,
-				B5FB533009AD425F001AE877 /* CLIPS.icns */,
 				2A37F4B9FDCFA73011CA2CEA /* Credits.rtf */,
 				089C165FFE840EACC02AAC07 /* InfoPlist.strings */,
 			);
@@ -1790,8 +1790,8 @@
 				1EB4293C1C34C77200093F7A /* CLIPSFactBrowser.xib in Resources */,
 				8D15AC2F0486D014006FF6A4 /* InfoPlist.strings in Resources */,
 				1E86D16A1C321BCD00FAB28F /* MainMenu.xib in Resources */,
+				B54DCD591EE1D72400014CEC /* Images.xcassets in Resources */,
 				1EB4293D1C34C77700093F7A /* CLIPSInstanceBrowser.xib in Resources */,
-				B5FB533109AD425F001AE877 /* CLIPS.icns in Resources */,
 				B549629209BA9D6100697F33 /* CogDown.tiff in Resources */,
 				1EBA25201C34CB170013B169 /* CLIPSTextDocument.xib in Resources */,
 				B549629309BA9D6100697F33 /* CogGreyed.tiff in Resources */,
@@ -2358,6 +2358,7 @@
 		1E6F78CF0D502A6500B9DCFB /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_ASSIGN_ENUM = NO;
 				CLANG_WARN_IMPLICIT_SIGN_CONVERSION = YES;
@@ -2477,6 +2478,7 @@
 		C05733C808A9546B00998B17 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_ASSIGN_ENUM = NO;
 				CLANG_WARN_IMPLICIT_SIGN_CONVERSION = YES;

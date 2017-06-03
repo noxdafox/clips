@@ -31,8 +31,6 @@
 	</array>
 	<key>CFBundleExecutable</key>
 	<string>CLIPS IDE</string>
-	<key>CFBundleIconFile</key>
-	<string>CLIPS</string>
 	<key>CFBundleIdentifier</key>
 	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
