@@ -32,8 +32,9 @@ class CLIPSCPPActivation;
 class CLIPSCPPAgenda;
 class CLIPSCPPFactInstance;
 class CLIPSCPPSlotValue;
+class CLIPSCPPUserFunction;
 
-class DataObject;
+class DataObject; // TBD Change to PrimitiveValue
 class FactAddressValue;
 
 class CLIPSCPPEnv
@@ -66,6 +67,9 @@ class CLIPSCPPEnv
       DataObject Eval(char *);
       bool Build(char *);
       FactAddressValue *AssertString(char *);
+      bool AddUserFunction(char *,CLIPSCPPUserFunction *);
+      bool AddUserFunction(char *,char *,unsigned short,unsigned short,char *,CLIPSCPPUserFunction *);
+      bool RemoveUserFunction(char *);
       bool AddRouter(char *,int,CLIPSCPPRouter *);
       bool DeleteRouter(char *);
       bool AddPeriodicFunction(char *,int,CLIPSCPPPeriodicFunction *);
@@ -96,6 +100,13 @@ class CLIPSCPPEnv
       void SetFactListChanged(bool);
       bool GetInstancesChanged();
       void SetInstancesChanged(bool);
+  };
+
+class CLIPSCPPUserFunction
+  {
+   public:
+     virtual DataObject Evaluate(CLIPSCPPEnv *,std::vector<DataObject>);
+     const static unsigned short UNBOUNDED = USHRT_MAX;
   };
 
 class CLIPSCPPRouter
@@ -141,7 +152,7 @@ class CLIPSCPPFocusStack
      std::vector<CLIPSCPPFocus *> *GetStack();
 
    private:
-     std::vector<CLIPSCPPFocus *> stack;
+     std::vector<CLIPSCPPFocus *> stack; // TBD CLIPSCPPFocus
   };
 
 class CLIPSCPPModule
@@ -185,7 +196,7 @@ class CLIPSCPPAgenda
 	  std::vector<CLIPSCPPActivation *> *GetActivations();
 
    private:
-     std::vector<CLIPSCPPActivation *> activations;
+     std::vector<CLIPSCPPActivation *> activations; // TBD CLIPSCPPActivation
   };
 
 class CLIPSCPPSlotValue
@@ -235,7 +246,7 @@ class Value
   {
    public:
      Value();
-     Value(const Value& v);
+     Value(const Value& v); // TBD not defined
      virtual ~Value();
      /* virtual Value& operator= (const Value& v); */
      friend std::ostream& operator<< (std::ostream& o, const Value& s);
@@ -346,7 +357,7 @@ class FloatValue : public Value
 class FactAddressValue : public Value
   { 
    public:
-     FactAddressValue(::Environment *,Fact *);
+     FactAddressValue(Fact *);
      FactAddressValue(const FactAddressValue& v);
      virtual ~FactAddressValue();
      virtual FactAddressValue& operator= (const FactAddressValue& v);
@@ -358,14 +369,13 @@ class FactAddressValue : public Value
      Fact *GetFactAddressValue();
   
    private:
-     ::Environment *theEnvironment;
      Fact *theFactAddress;
   };
  
 class InstanceAddressValue : public Value
   { 
    public:
-     InstanceAddressValue(::Environment *,Instance *);
+     InstanceAddressValue(Instance *);
      InstanceAddressValue(const InstanceAddressValue& v);
      virtual ~InstanceAddressValue();
      virtual InstanceAddressValue& operator= (const InstanceAddressValue& v);
@@ -377,7 +387,6 @@ class InstanceAddressValue : public Value
      Instance *GetInstanceAddressValue();
   
    private:
-     ::Environment *theEnvironment;
      Instance *theInstanceAddress;
   };
   
@@ -393,7 +402,7 @@ class MultifieldValue : public Value
      virtual MultifieldValue *clone() const; 
      void add(Value *);
      CLIPSCPPType GetCLIPSType();
-     std::vector<Value *> *GetMultifieldValue();
+     std::vector<Value *> *GetMultifieldValue(); // TBD Change Value * to Value
 
    private:
      std::vector<Value *> theMultifield;
@@ -425,11 +434,11 @@ class DataObject
      static DataObject Integer(long long);
      static DataObject Float();
      static DataObject Float(double);
-     static DataObject FactAddress(::Environment *,Fact *);
-     static DataObject InstanceAddress(::Environment *,Instance *);
+     static DataObject FactAddress(Fact *);
+     static DataObject InstanceAddress(Instance *);
 
    private:
-     Value *theValue;
+     Value *theValue; // TBD Change Value * to Value
   };
 
 inline DataObject DataObject::Void()
@@ -474,10 +483,9 @@ inline DataObject DataObject::Float()
 inline DataObject DataObject::Float(double theFloat)
   { return DataObject(new FloatValue(theFloat)); }
 
-inline DataObject DataObject::FactAddress(::Environment *theEnv,Fact *theFact)
-  { return DataObject(new FactAddressValue(theEnv,theFact)); }
+inline DataObject DataObject::FactAddress(Fact *theFact)
+  { return DataObject(new FactAddressValue(theFact)); }
 
-inline DataObject DataObject::InstanceAddress(::Environment *theEnv,Instance *theInstance)
-  { return DataObject(new InstanceAddressValue(theEnv,theInstance)); }
-
+inline DataObject DataObject::InstanceAddress(Instance *theInstance)
+  { return DataObject(new InstanceAddressValue(theInstance)); }
 }

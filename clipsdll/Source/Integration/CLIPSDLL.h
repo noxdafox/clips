@@ -121,4 +121,23 @@ void DECLSPEC __ClassSlots(Defclass *,CLIPSValue *,bool);
 int DECLSPEC __SlotDefaultP(Environment *,Defclass *,const char *);
 bool DECLSPEC __SlotDefaultValue(Defclass *,const char *,CLIPSValue *);
 
+bool DECLSPEC __AddUDF(Environment *,const char *,const char *,
+                       unsigned short,unsigned short,const char *,
+                       UserDefinedFunction *,const char *,void *);
+bool DECLSPEC __RemoveUDF(Environment *,const char *);
+
+Multifield DECLSPEC * __CreateMultifield(Environment *,size_t);
+CLIPSLexeme DECLSPEC * __CreateSymbol(Environment *,const char *);
+CLIPSLexeme DECLSPEC * __CreateString(Environment *,const char *);
+CLIPSLexeme DECLSPEC * __CreateInstanceName(Environment *,const char *);
+
+CLIPSFloat DECLSPEC * __CreateFloat(Environment *,double);
+CLIPSInteger DECLSPEC * __CreateInteger(Environment *,long long);
+
+unsigned int DECLSPEC __UDFArgumentCount(UDFContext *);
+bool DECLSPEC __UDFNthArgument(UDFContext *,unsigned int,unsigned,UDFValue *);
+void DECLSPEC __NormalizeMultifield(Environment *,UDFValue *);
+
+void DECLSPEC * __GetUDFContext(Environment *,const char *);
+
 #endif

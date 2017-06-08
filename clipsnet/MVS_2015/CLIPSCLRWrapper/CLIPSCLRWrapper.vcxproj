@@ -337,6 +337,7 @@
     <ClCompile Include="Source\Integration\CLIPSNET_PeriodicCallback.cpp" />
     <ClCompile Include="Source\Integration\CLIPSNET_Router.cpp" />
     <ClCompile Include="Source\Integration\CLIPSNET_SlotValue.cpp" />
+    <ClCompile Include="Source\Integration\CLIPSNET_UserFunction.cpp" />
     <ClCompile Include="Source\Integration\CLIPSNET_Values.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -524,6 +525,7 @@
     <ClInclude Include="Source\Integration\CLIPSNET_PeriodicCallback.h" />
     <ClInclude Include="Source\Integration\CLIPSNET_Router.h" />
     <ClInclude Include="Source\Integration\CLIPSNET_SlotValue.h" />
+    <ClInclude Include="Source\Integration\CLIPSNET_UserFunction.h" />
     <ClInclude Include="Source\Integration\CLIPSNET_Values.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

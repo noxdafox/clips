@@ -11,6 +11,24 @@ using CLIPSNET;
 
 namespace CLIPSIDE
   {
+   public class ClearWindowFunction : UserFunction
+     {
+      MainWindow mw;
+
+      public ClearWindowFunction(
+        MainWindow theWindow) 
+        {
+         mw = theWindow;
+        }
+
+      public override PrimitiveValue Evaluate(List<PrimitiveValue> arguments)
+        {
+         Application.Current.Dispatcher.Invoke(DispatcherPriority.Normal,
+                                               new Action(delegate { mw.dialog.Clear(); }));
+
+         return new VoidValue();
+        }
+     }
    public static class IDECommands
      {
       public static readonly RoutedCommand Clear = 
@@ -186,6 +204,7 @@ namespace CLIPSIDE
 
          this.dialog.GetEnvironment().AddPeriodicCallback("IDECallback",0,theCB);
          this.dialog.GetEnvironment().EnablePeriodicFunctions(true);
+         this.dialog.GetEnvironment().AddUserFunction("clear-window","v",0,0,null,new ClearWindowFunction(this));
 
          this.dialog.StartCommandEvent += new StartCommandDelegate(StartExecutionEventOccurred); 
          this.dialog.FinishCommandEvent += new FinishCommandDelegate(FinishExecutionEventOccurred); 

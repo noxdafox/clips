@@ -16,7 +16,7 @@ namespace CLIPSNET
 
    PrimitiveValue ^ SingleFieldToPrimitiveValue(
      CLIPSCPPType theType,
-	  Value *theValue)
+	 Value *theValue)
      {
 	  std::string *theCPPString;
 	  const char *theCString;
@@ -116,6 +116,113 @@ namespace CLIPSNET
 	    }
 
 	  return rv;
+	 }
+     
+   /******************************/
+   /* PrimitiveValueToDataObject */
+   /******************************/
+   DataObject PrimitiveValueToDataObject(PrimitiveValue ^ thePV)
+     {
+      CLIPSNETType theType = thePV->CLIPSType();
+
+      switch(theType)
+        {
+         case CLIPSNETType::FLOAT:
+           {
+            FloatValue ^ theFloat = (FloatValue ^) thePV;
+            return DataObject(new CLIPS::FloatValue(theFloat->GetFloatValue()));
+           }
+
+         case CLIPSNETType::INTEGER:
+           {
+            IntegerValue ^ theInteger = (IntegerValue ^) thePV;
+            return DataObject(new CLIPS::IntegerValue(theInteger->GetIntegerValue()));
+           }
+ 
+         case CLIPSNETType::STRING:
+           {
+            StringValue ^ theString = (StringValue ^) thePV;
+            const char *cString;
+            array<Byte>^ ebString = Encoding::UTF8->GetBytes(theString->GetLexemeValue());
+            if (ebString->Length)
+              {
+               pin_ptr<Byte> pbString = &ebString[0];
+               cString = (const char *) pbString;
+              }
+            else
+              { cString = ""; }
+
+            return DataObject(new CLIPS::StringValue(cString));
+           }
+
+         case CLIPSNETType::SYMBOL:
+           {
+            SymbolValue ^ theSymbol = (SymbolValue ^) thePV;
+            const char *cString;
+            array<Byte>^ ebString = Encoding::UTF8->GetBytes(theSymbol->GetLexemeValue());
+            if (ebString->Length)
+              {
+               pin_ptr<Byte> pbString = &ebString[0];
+               cString = (const char *) pbString;
+              }
+            else
+              { cString = ""; }
+
+            return DataObject(new CLIPS::SymbolValue(cString));
+           }
+
+         case CLIPSNETType::INSTANCE_NAME:
+           {
+            InstanceNameValue ^ theInstanceName = (InstanceNameValue ^) thePV;
+            const char *cString;
+            array<Byte>^ ebString = Encoding::UTF8->GetBytes(theInstanceName->GetLexemeValue());
+            if (ebString->Length)
+              {
+               pin_ptr<Byte> pbString = &ebString[0];
+               cString = (const char *) pbString;
+              }
+            else
+              { cString = ""; }
+
+            return DataObject(new CLIPS::InstanceNameValue(cString));
+           }
+        
+         case CLIPSNETType::FACT_ADDRESS:
+           {
+            FactAddressValue ^ theFactAddress = (FactAddressValue ^) thePV;
+            CLIPS::FactAddressValue *theCPPFactAddress = theFactAddress->GetFactAddressValue();
+
+            return DataObject(new CLIPS::FactAddressValue(theCPPFactAddress->GetFactAddressValue()));
+           }
+
+         case CLIPSNETType::INSTANCE_ADDRESS:
+           {
+            InstanceAddressValue ^ theInstanceAddress = (InstanceAddressValue ^) thePV;
+            CLIPS::InstanceAddressValue *theCPPInstanceAddress = theInstanceAddress->GetInstanceAddressValue();
+            return DataObject(new CLIPS::InstanceAddressValue(theCPPInstanceAddress->GetInstanceAddressValue()));
+           }
+
+         case CLIPSNETType::VOID:
+           return DataObject(new CLIPS::VoidValue());
+
+         case CLIPSNETType::MULTIFIELD:
+           {
+            MultifieldValue ^ theMultifield = (MultifieldValue ^) thePV;
+            CLIPS::MultifieldValue *theCPPMultifield = new CLIPS::MultifieldValue(theMultifield->Count);
+
+            for (int i = 0; i < theMultifield->Count; i++)
+              {
+               DataObject sv = PrimitiveValueToDataObject(theMultifield[i]);
+
+               if (sv.GetCLIPSType() != CLIPSCPPType::CPP_MULTIFIELD_TYPE)
+                 { theCPPMultifield->add(sv.GetCLIPSValue()->clone()); }
+              }
+
+            return DataObject(theCPPMultifield);
+           }
+        }
+      
+      return DataObject(new CLIPS::VoidValue());
 	 }
 
    /*########################*/

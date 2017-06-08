@@ -13,6 +13,7 @@
 #include "cstrcpsr.h"
 #include "engine.h"
 #include "envrnbld.h"
+#include "extnfunc.h"
 #include "factfun.h"
 #include "factmngr.h"
 #include "fileutil.h"
@@ -609,7 +610,7 @@ void __declspec(dllexport) __ClassSlots(
    ClassSlots(theClass,returnValue,inherp);
   }
 
-int __SlotDefaultP(
+int __declspec(dllexport) __SlotDefaultP(
   Environment *theEnv,
   Defclass *theDefclass,
   const char *slotName)
@@ -617,10 +618,102 @@ int __SlotDefaultP(
    return SlotDefaultP(theEnv,theDefclass,slotName);
   }
 
-bool __SlotDefaultValue(
+bool __declspec(dllexport) __SlotDefaultValue(
   Defclass *theDefclass,
   const char *slotName,
   CLIPSValue *theValue)
   {
    return SlotDefaultValue(theDefclass,slotName,theValue);
+  }
+
+bool __declspec(dllexport) __AddUDF(
+  Environment *theEnv,
+  const char *clipsFunctionName,
+  const char *returnTypes,
+  unsigned short minArgs,
+  unsigned short maxArgs,
+  const char *argumentTypes,
+  UserDefinedFunction *cFunctionPointer,
+  const char *cFunctionName,
+  void *context)
+  {
+   return AddUDF(theEnv,clipsFunctionName,returnTypes,minArgs,maxArgs,argumentTypes,cFunctionPointer,cFunctionName,context);
+  }
+
+bool __declspec(dllexport) __RemoveUDF(
+  Environment *theEnv,
+  const char *functionName)
+  {
+   return RemoveUDF(theEnv,functionName);
+  }
+
+Multifield __declspec(dllexport) * __CreateMultifield(
+  Environment *theEnv,
+  size_t size)
+  {
+   return CreateMultifield(theEnv,size);
+  }
+
+CLIPSLexeme __declspec(dllexport) * __CreateSymbol(
+  Environment *theEnv,
+  const char *str)
+  {
+   return CreateSymbol(theEnv,str);
+  }
+
+CLIPSLexeme __declspec(dllexport) * __CreateString(
+  Environment *theEnv,
+  const char *str)
+  {
+   return CreateString(theEnv,str);
+  }
+  
+CLIPSLexeme __declspec(dllexport) * __CreateInstanceName(
+  Environment *theEnv,
+  const char *str)
+  {
+   return CreateInstanceName(theEnv,str);
+  }
+
+CLIPSFloat __declspec(dllexport) * __CreateFloat(
+  Environment *theEnv,
+  double number)
+  {
+   return CreateFloat(theEnv,number);
+  }
+  
+CLIPSInteger __declspec(dllexport) * __CreateInteger(
+  Environment *theEnv,
+  long long number)
+  {
+   return CreateInteger(theEnv,number);
+  }
+
+unsigned int __declspec(dllexport) __UDFArgumentCount(
+  UDFContext *context)
+  {
+   return UDFArgumentCount(context);
+  }
+
+bool __declspec(dllexport) __UDFNthArgument(
+  UDFContext *context,
+  unsigned int argumentPosition,
+  unsigned expectedType,
+  UDFValue *returnValue)
+  {
+   return UDFNthArgument(context,argumentPosition,expectedType,returnValue);
+  }
+
+void __declspec(dllexport) __NormalizeMultifield(
+  Environment *theEnv,
+  UDFValue *theMF)
+  {
+   NormalizeMultifield(theEnv,theMF);
+  }
+
+void __declspec(dllexport) * __GetUDFContext(
+  Environment *theEnv,
+  const char *functionName)
+  {
+   return GetUDFContext(theEnv,functionName);
   }

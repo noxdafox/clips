@@ -103,8 +103,8 @@ namespace CLIPSNET
 		~LexemeValue();
 
       public:
-	     String ^ GetLexemeValue();
-		  virtual String^ ToString() override;
+        String ^ GetLexemeValue();
+        virtual String^ ToString() override;
         virtual int GetHashCode() override;
         virtual bool Equals(Object ^ obj) override; 
 	 };
@@ -313,6 +313,7 @@ namespace CLIPSNET
    /*###########*/
 
    PrimitiveValue ^ DataObjectToPrimitiveValue (DataObject);
+   DataObject PrimitiveValueToDataObject (PrimitiveValue ^ thePV);
   };
 
 

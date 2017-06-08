@@ -8,6 +8,7 @@
 #include "CLIPSNET_Values.h"
 #include "CLIPSNET_Router.h"
 #include "CLIPSNET_PeriodicCallback.h"
+#include "CLIPSNET_UserFunction.h"
 
 using namespace System;
 using namespace System::Collections;
@@ -63,6 +64,9 @@ namespace CLIPSNET
         void AddPeriodicCallback(String ^,int ,PeriodicCallback ^);
         void RemovePeriodicCallback(String ^);
         bool EnablePeriodicFunctions(bool);
+        void AddUserFunction(String ^,UserFunction ^);
+        void AddUserFunction(String ^,String ^,unsigned short,unsigned short,String ^,UserFunction ^);
+        void RemoveUserFunction(String ^);
         FactAddressValue ^ AssertString(String ^);
         size_t InputBufferCount();
         String ^ GetInputBuffer();

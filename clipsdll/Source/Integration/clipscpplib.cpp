@@ -47,10 +47,13 @@ static void CLIPSCPPPrint(Environment *,const char *,const char *,void *);
 static int CLIPSCPPGetc(Environment *,const char *,void *);
 static int CLIPSCPPUngetc(Environment *,const char *,int,void *);
 static void CLIPSCPPExit(Environment *,int,void *);
-static Value *ConvertSingleFieldValue(Environment *,int,void *);
-static DataObject ConvertDataObject(Environment *,CLIPSValue *);
-
+static Value *ConvertSingleFieldValue(int,void *);
+static DataObject ConvertDataObject(CLIPSValue *);
+static void ConvertToCLIPSValue(Environment *,DataObject,CLIPSValue *);
+static void ConvertSingleFieldToCLIPSValue(Environment *,Value *,CLIPSValue *);
 static void CLIPSCPPPeriodicCallback(Environment *,void *);
+static void CLIPSCPPUserFunctionCallback(Environment *,UDFContext *,UDFValue *);
+
 
 /*#####################*/
 /* CLIPSCPPEnv Methods */
@@ -272,7 +275,7 @@ DataObject CLIPSCPPEnv::Eval(
       throw std::logic_error(excStr); 
      }
      
-   return ConvertDataObject(theEnv,&rv);
+   return ConvertDataObject(&rv);
   }
 
 /********************/
@@ -395,14 +398,185 @@ FactAddressValue *CLIPSCPPEnv::AssertString(
 #endif
      
    if (rv == NULL) return NULL;
-   return new FactAddressValue(theEnv,rv);
+   return new FactAddressValue(rv);
   }
+  
+/***********************/
+/* ConvertToCLIPSValue */
+/***********************/
+static void ConvertToCLIPSValue(
+   Environment *theEnv,
+   DataObject theDO,
+   CLIPSValue *theCV)
+   {
+    switch (theDO.GetCLIPSType())
+      {
+       case CPP_VOID_TYPE:
+       case CPP_SYMBOL_TYPE:
+       case CPP_STRING_TYPE:
+       case CPP_INSTANCE_NAME_TYPE:
+       case CPP_INTEGER_TYPE:
+       case CPP_FLOAT_TYPE:
+       case CPP_FACT_ADDRESS_TYPE:
+       case CPP_INSTANCE_ADDRESS_TYPE:
+       case CPP_EXTERNAL_ADDRESS_TYPE:
+         ConvertSingleFieldToCLIPSValue(theEnv,theDO.GetCLIPSValue(),theCV);
+         break;
+
+       case CPP_MULTIFIELD_TYPE:
+         MultifieldValue *theCPPMultifield = (MultifieldValue *) theDO.GetCLIPSValue();
+         size_t mfLength = theCPPMultifield->GetMultifieldValue()->size();
+         size_t i;
+#ifndef CLIPS_DLL_WRAPPER
+         Multifield *theMultifield = CreateMultifield(theEnv,mfLength);
+#else       
+         Multifield *theMultifield = __CreateMultifield(theEnv,mfLength);
+#endif         
+         std::vector<Value *> *theValues = theCPPMultifield->GetMultifieldValue();
+
+         for (i = 0; i < mfLength; i++)
+           { ConvertSingleFieldToCLIPSValue(theEnv,theValues->at(i),&theMultifield->contents[i]); }
+         
+         theCV->multifieldValue = theMultifield;
+         break;
+      }
+   }
+
+/**********************************/
+/* ConvertSingleFieldToCLIPSValue */
+/**********************************/
+static void ConvertSingleFieldToCLIPSValue(
+   Environment *theEnv,
+   Value *theValue,
+   CLIPSValue *theCV)
+   {
+#ifndef CLIPS_DLL_WRAPPER
+    switch (theValue->GetCLIPSType())
+      {
+       case CPP_VOID_TYPE:
+         theCV->voidValue = VoidConstant(theEnv);
+         break;
+
+       case CPP_SYMBOL_TYPE:
+         {
+          SymbolValue *theSymbol = (SymbolValue *) theValue;
+          theCV->lexemeValue = CreateSymbol(theEnv,theSymbol->GetSymbolValue()->c_str());
+          break;
+         }
+
+       case CPP_STRING_TYPE:
+         {
+          StringValue *theString = (StringValue *) theValue;
+          theCV->lexemeValue = CreateString(theEnv,theString->GetStringValue()->c_str());
+          break;
+         }
+
+       case CPP_INSTANCE_NAME_TYPE:
+         {
+          InstanceNameValue *theInstanceName = (InstanceNameValue *) theValue;
+          theCV->lexemeValue = CreateInstanceName(theEnv,theInstanceName->GetInstanceNameValue()->c_str());
+          break;
+         }
+
+       case CPP_INTEGER_TYPE:
+         {
+          IntegerValue *theInteger = (IntegerValue *) theValue;
+          theCV->integerValue = CreateInteger(theEnv,theInteger->GetIntegerValue());
+          break;
+         }
+
+       case CPP_FLOAT_TYPE:
+         {
+          FloatValue *theFloat = (FloatValue *) theValue;
+          theCV->floatValue = CreateFloat(theEnv,theFloat->GetFloatValue());
+          break;
+         }
+
+       case CPP_FACT_ADDRESS_TYPE:
+         {
+          FactAddressValue *theFactAddress = (FactAddressValue *) theValue;
+          theCV->factValue = theFactAddress->GetFactAddressValue();
+          break;
+         }
+
+       case CPP_INSTANCE_ADDRESS_TYPE:
+         {
+          InstanceAddressValue *theInstanceAddress = (InstanceAddressValue *) theValue;
+          theCV->instanceValue = theInstanceAddress->GetInstanceAddressValue();
+          break;
+         }
+
+       case CPP_EXTERNAL_ADDRESS_TYPE:
+         // TBD
+         break;
+      }
+#else
+    switch (theValue->GetCLIPSType())
+      {
+       case CPP_VOID_TYPE:
+         theCV->voidValue = VoidConstant(theEnv);
+         break;
+
+       case CPP_SYMBOL_TYPE:
+         {
+          SymbolValue *theSymbol = (SymbolValue *) theValue;
+          theCV->lexemeValue = __CreateSymbol(theEnv,theSymbol->GetSymbolValue()->c_str());
+          break;
+         }
+
+       case CPP_STRING_TYPE:
+         {
+          StringValue *theString = (StringValue *) theValue;
+          theCV->lexemeValue = __CreateString(theEnv,theString->GetStringValue()->c_str());
+          break;
+         }
+
+       case CPP_INSTANCE_NAME_TYPE:
+         {
+          InstanceNameValue *theInstanceName = (InstanceNameValue *) theValue;
+          theCV->lexemeValue = __CreateInstanceName(theEnv,theInstanceName->GetInstanceNameValue()->c_str());
+          break;
+         }
+
+       case CPP_INTEGER_TYPE:
+         {
+          IntegerValue *theInteger = (IntegerValue *) theValue;
+          theCV->integerValue = __CreateInteger(theEnv,theInteger->GetIntegerValue());
+          break;
+         }
+
+       case CPP_FLOAT_TYPE:
+         {
+          FloatValue *theFloat = (FloatValue *) theValue;
+          theCV->floatValue = __CreateFloat(theEnv,theFloat->GetFloatValue());
+          break;
+         }
+
+       case CPP_FACT_ADDRESS_TYPE:
+         {
+          FactAddressValue *theFactAddress = (FactAddressValue *) theValue;
+          theCV->factValue = theFactAddress->GetFactAddressValue();
+          break;
+         }
+
+       case CPP_INSTANCE_ADDRESS_TYPE:
+         {
+          InstanceAddressValue *theInstanceAddress = (InstanceAddressValue *) theValue;
+          theCV->instanceValue = theInstanceAddress->GetInstanceAddressValue();
+          break;
+         }
+
+       case CPP_EXTERNAL_ADDRESS_TYPE:
+         // TBD
+         break;
+      }
+#endif
+   }
 
 /*********************/
 /* ConvertDataObject */
 /*********************/
 static DataObject ConvertDataObject(
-  Environment *theEnv,
   CLIPSValue *theCV)
   {
    DataObject tv;
@@ -417,7 +591,8 @@ static DataObject ConvertDataObject(
       case FLOAT_TYPE:
       case FACT_ADDRESS_TYPE:
       case INSTANCE_ADDRESS_TYPE:
-        return DataObject(ConvertSingleFieldValue(theEnv,theCV->header->type,theCV->value));
+      case EXTERNAL_ADDRESS_TYPE:
+        return DataObject(ConvertSingleFieldValue(theCV->header->type,theCV->value));
      
       case MULTIFIELD_TYPE:
         Multifield *theList = theCV->multifieldValue;
@@ -426,7 +601,7 @@ static DataObject ConvertDataObject(
         MultifieldValue *theMultifield = new MultifieldValue(mfLength);
         
         for (i = 0; i < mfLength; i++)
-         { theMultifield->add(ConvertSingleFieldValue(theEnv,theList->contents[i].header->type,theList->contents[i].value)); }
+         { theMultifield->add(ConvertSingleFieldValue(theList->contents[i].header->type,theList->contents[i].value)); }
 
         return DataObject(theMultifield);
      }
@@ -438,7 +613,6 @@ static DataObject ConvertDataObject(
 /* ConvertSingleFieldValue: */
 /****************************/
 static Value *ConvertSingleFieldValue(
-  Environment *theEnv,
   int type,
   void *value)
   {
@@ -463,10 +637,14 @@ static Value *ConvertSingleFieldValue(
         return new FloatValue(((CLIPSFloat *) value)->contents);
 
       case FACT_ADDRESS_TYPE:
-        return new FactAddressValue(theEnv,(Fact *) value);
+        return new FactAddressValue((Fact *) value);
 
       case INSTANCE_ADDRESS_TYPE:
-        return new InstanceAddressValue(theEnv,(Instance *) value);
+        return new InstanceAddressValue((Instance *) value);
+
+      case EXTERNAL_ADDRESS_TYPE:
+        // TBD EXTERNAL_ADDRESS_TYPE
+        break;
      }
 
    return new VoidValue();
@@ -1435,7 +1613,7 @@ FloatValue *FloatValue::clone() const
 /* FactAddressValue */
 /********************/
 FactAddressValue::FactAddressValue(
-  Environment *theEnv,Fact *theFact) : theEnvironment(theEnv), theFactAddress(theFact)
+  Fact *theFact) : theFactAddress(theFact)
   {
 #ifndef CLIPS_DLL_WRAPPER
    IncrementFactReferenceCount(theFact);
@@ -1489,7 +1667,6 @@ FactAddressValue& FactAddressValue::operator = (
 #endif
      }
         
-   theEnvironment = v.theEnvironment;
    theFactAddress = v.theFactAddress;
      
 #ifndef CLIPS_DLL_WRAPPER
@@ -1550,7 +1727,7 @@ DataObject FactAddressValue::GetFactSlot(char *slotName) const
        throw std::logic_error(excStr); 
       }
 
-   return ConvertDataObject(theEnvironment,&theCV);
+   return ConvertDataObject(&theCV);
   }
 
 /***********************/
@@ -1567,7 +1744,7 @@ Fact *FactAddressValue::GetFactAddressValue()
 /* InstanceAddressValue */
 /************************/
 InstanceAddressValue::InstanceAddressValue(
-  Environment *theEnv,Instance *theInstance) : theEnvironment(theEnv), theInstanceAddress(theInstance)
+  Instance *theInstance) : theInstanceAddress(theInstance)
   {
 #ifndef CLIPS_DLL_WRAPPER
    IncrementInstanceReferenceCount(theInstance);
@@ -1614,7 +1791,6 @@ InstanceAddressValue& InstanceAddressValue::operator = (
 
      }
         
-   theEnvironment = v.theEnvironment;
    theInstanceAddress = v.theInstanceAddress;
      
 #ifndef CLIPS_DLL_WRAPPER
@@ -1659,7 +1835,7 @@ DataObject InstanceAddressValue::DirectGetSlot(char *slotName) const
    __DirectGetSlot(theInstanceAddress,slotName,&theCV);
 #endif
    
-   return ConvertDataObject(theEnvironment,&theCV);
+   return ConvertDataObject(&theCV);
   }
 
 /*********/
@@ -2894,3 +3070,121 @@ vector<CLIPSCPPFactInstance> *CLIPSCPPEnv::GetInstanceList()
 
    return theCPPInstanceList;
   }
+
+/************/
+/* Evaluate */
+/************/
+DataObject CLIPSCPPUserFunction::Evaluate(
+  CLIPSCPPEnv *theEnv,
+  std::vector<DataObject> arguments)
+  {
+   return DataObject(&VoidValue());
+  }
+
+/*******************/
+/* AddUserFunction */
+/*******************/
+bool CLIPSCPPEnv::AddUserFunction(
+  char *functionName,
+  CLIPSCPPUserFunction *udf)
+  {
+   return AddUserFunction(functionName,"*",0,UNBOUNDED,NULL,udf);
+  }
+
+/*******************/
+/* AddUserFunction */
+/*******************/
+bool CLIPSCPPEnv::AddUserFunction(
+  char *functionName,
+  char *returnTypes,
+  unsigned short minArgs,
+  unsigned short maxArgs,
+  char *restrictions,
+  CLIPSCPPUserFunction *udf)
+  {
+#ifndef CLIPS_DLL_WRAPPER
+   return ::AddUDF(theEnv,functionName,returnTypes,minArgs,maxArgs,restrictions,
+                   CLIPSCPPUserFunctionCallback,"CLIPSCPPUserFunctionCallback",udf);
+#else
+   return __AddUDF(theEnv,functionName,returnTypes,minArgs,maxArgs,restrictions,
+                   CLIPSCPPUserFunctionCallback,"CLIPSCPPUserFunctionCallback",udf);
+#endif
+  }
+
+/**********************/
+/* RemoveUserFunction */
+/**********************/
+bool CLIPSCPPEnv::RemoveUserFunction(
+  char *functionName)
+  {
+   CLIPSCPPUserFunction *udf;
+#ifndef CLIPS_DLL_WRAPPER
+   udf = (CLIPSCPPUserFunction *) GetUDFContext(theEnv,functionName);
+   if (udf != NULL) delete udf;
+
+   return ::RemoveUDF(theEnv,functionName);
+#else
+   udf = (CLIPSCPPUserFunction *) __GetUDFContext(theEnv,functionName);
+   if (udf != NULL) delete udf;
+
+   return __RemoveUDF(theEnv,functionName);
+#endif
+  }
+  
+/********************************/
+/* CLIPSCPPUserFunctionCallback */
+/********************************/
+static void CLIPSCPPUserFunctionCallback(
+  Environment *theEnv,
+  UDFContext *theUDFContext,
+  UDFValue *result)
+  {
+   int i, argCount;
+   vector<DataObject> arguments;
+   UDFValue theArg;
+   CLIPSValue theValue;
+   DataObject rv;
+   CLIPSCPPUserFunction *udf;
+   CLIPSCPPEnv *theCPPEnv;
+   
+#ifndef CLIPS_DLL_WRAPPER
+   theCPPEnv = (CLIPSCPPEnv *) GetEnvironmentContext(theEnv);
+
+   udf = (CLIPSCPPUserFunction *) theUDFContext->context;
+
+   argCount = UDFArgumentCount(theUDFContext);
+   arguments.reserve(argCount);
+
+   for (i = 1; i <= argCount; i++)
+     {
+      UDFNthArgument(theUDFContext,i,ANY_TYPE_BITS,&theArg);
+      NormalizeMultifield(theEnv,&theArg);
+      theValue.value = theArg.value;
+      arguments.push_back(ConvertDataObject(&theValue));
+     }
+
+   rv = udf->Evaluate(theCPPEnv,arguments);
+   ConvertToCLIPSValue(theEnv,rv,&theValue);
+   CLIPSToUDFValue(&theValue,result);
+#else
+   theCPPEnv = (CLIPSCPPEnv *) __GetEnvironmentContext(theEnv);
+
+   udf = (CLIPSCPPUserFunction *) theUDFContext->context;
+
+   argCount = __UDFArgumentCount(theUDFContext);
+   arguments.reserve(argCount);
+
+   for (i = 1; i <= argCount; i++)
+     {
+      __UDFNthArgument(theUDFContext,i,ANY_TYPE_BITS,&theArg);
+      __NormalizeMultifield(theEnv,&theArg);
+      theValue.value = theArg.value;
+      arguments.push_back(ConvertDataObject(&theValue));
+     }
+
+   rv = udf->Evaluate(theCPPEnv,arguments);
+   ConvertToCLIPSValue(theEnv,rv,&theValue);
+   __CLIPSToUDFValue(&theValue,result);
+#endif
+  }
+ 

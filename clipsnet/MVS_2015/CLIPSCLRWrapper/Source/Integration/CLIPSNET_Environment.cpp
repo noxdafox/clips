@@ -344,6 +344,78 @@ namespace CLIPSNET
       return m_Env->EnablePeriodicFunctions(value);
      }
 
+   /*******************/
+   /* AddUserFunction */
+   /*******************/
+   void Environment::AddUserFunction(
+	  String ^ functionName,
+	  UserFunction ^ theFunction)
+     { 
+      AddUserFunction(functionName,nullptr,0,UserFunction::UNBOUNDED,nullptr,theFunction);
+     }
+
+   /*******************/
+   /* AddUserFunction */
+   /*******************/
+   void Environment::AddUserFunction(
+	  String ^ functionName,
+      String ^ returnTypes,
+      unsigned short minArgs,
+      unsigned short maxArgs,
+      String ^ restrictions,
+	  UserFunction ^ theFunction)
+     { 
+      char *cFunctionName = NULL;
+      char *cReturnTypes = NULL;
+      char *cRestrictions = NULL;
+      array<Byte>^ ebFunctionName = Encoding::UTF8->GetBytes(functionName);
+
+      if (maxArgs == UserFunction::UNBOUNDED)
+        { maxArgs = CLIPSCPPUserFunction::UNBOUNDED; }
+
+      if (ebFunctionName->Length)
+        {
+         pin_ptr<Byte> pbFunctionName = &ebFunctionName[0];
+         cFunctionName = (char *) pbFunctionName;
+        }
+
+     if (returnTypes != nullptr)
+       {
+        array<Byte>^ ebReturnTypes = Encoding::UTF8->GetBytes(returnTypes);
+        if (ebReturnTypes->Length)
+          {
+           pin_ptr<Byte> pbReturnTypes = &ebReturnTypes[0];
+           cReturnTypes = (char *) pbReturnTypes;
+          }   
+       }
+
+     if (restrictions != nullptr)
+       {
+        array<Byte>^ ebRestrictions = Encoding::UTF8->GetBytes(restrictions);
+        if (ebRestrictions->Length)
+          {
+           pin_ptr<Byte> pbRestrictions = &ebRestrictions[0];
+           cRestrictions = (char *) pbRestrictions;
+          }   
+       }
+        
+      m_Env->AddUserFunction(cFunctionName,cReturnTypes,minArgs,maxArgs,cRestrictions,(CLIPS::CLIPSCPPUserFunction *) theFunction->UserFunctionBridge());
+     }
+
+   /**********************/
+   /* RemoveUserFunction */
+   /**********************/
+   void Environment::RemoveUserFunction(
+	  String ^ functionName)
+     { 
+      array<Byte>^ ebFunctionName = Encoding::UTF8->GetBytes(functionName);
+      if (ebFunctionName->Length)
+        {
+         pin_ptr<Byte> pbFunctionName = &ebFunctionName[0];
+         m_Env->RemoveUserFunction((char *) pbFunctionName);
+        }
+     }
+
    /********************/
    /* InputBufferCount */
    /********************/

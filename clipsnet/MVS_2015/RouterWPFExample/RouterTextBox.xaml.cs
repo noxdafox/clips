@@ -92,8 +92,8 @@ namespace RouterWPFExample
 
            if (! m_RouterTextBox.Dispatcher.CheckAccess())
 			     {	
-			      AddTextCallback d = new AddTextCallback(AddText);
-               m_RouterTextBox.Dispatcher.Invoke(d, new object[] { text });
+                  AddTextCallback d = new AddTextCallback(AddText);
+                  m_RouterTextBox.Dispatcher.Invoke(d, new object[] { text });
 			     }
               
             /*===================================*/
