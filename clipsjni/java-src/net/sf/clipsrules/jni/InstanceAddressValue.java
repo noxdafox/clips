@@ -41,11 +41,11 @@ public class InstanceAddressValue extends PrimitiveValue
    public long getInstanceAddress()
      { return getValue().longValue(); }
 
-   /******************/
-   /* directGetSlot: */
-   /******************/     
-   public PrimitiveValue directGetSlot(
-     String slotName)
+   /*****************/
+   /* getSlotValue: */
+   /*****************/     
+   public PrimitiveValue getSlotValue(
+     String slotName) throws CLIPSException
      { return Environment.directGetSlot(this,slotName); }
 
    /********************/

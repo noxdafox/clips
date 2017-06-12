@@ -41,11 +41,11 @@ public class FactAddressValue extends PrimitiveValue
    public long getFactAddress()
      { return getValue().longValue(); }
 
-   /****************/
-   /* getFactSlot: */
-   /****************/     
-   public PrimitiveValue getFactSlot(
-     String slotName) throws Exception
+   /*****************/
+   /* getSlotValue: */
+   /*****************/     
+   public PrimitiveValue getSlotValue(
+     String slotName) throws CLIPSException
      { return Environment.getFactSlot(this,slotName); }
 
    /*****************/

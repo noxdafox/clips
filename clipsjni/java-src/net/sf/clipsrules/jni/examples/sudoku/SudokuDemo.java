@@ -474,8 +474,8 @@ class SudokuDemo implements ActionListener, FocusListener, KeyListener
             
             FactAddressValue fv = (FactAddressValue) mv.get(0);
 
-            messageStr = messageStr + ((NumberValue) fv.getFactSlot("priority")).intValue() + ". " +
-                                      ((LexemeValue) fv.getFactSlot("reason")).lexemeValue() + "<br>";
+            messageStr = messageStr + ((NumberValue) fv.getSlotValue("priority")).intValue() + ". " +
+                                      ((LexemeValue) fv.getSlotValue("reason")).lexemeValue() + "<br>";
            }
         
          JOptionPane.showMessageDialog(jfrm,messageStr,sudokuResources.getString("SolutionTechniques"),JOptionPane.PLAIN_MESSAGE);
@@ -517,7 +517,7 @@ class SudokuDemo implements ActionListener, FocusListener, KeyListener
                   
                FactAddressValue fv = (FactAddressValue) mv.get(0);
                   
-               theTable.setValueAt(" " + fv.getFactSlot("value") + " ",r,c);
+               theTable.setValueAt(" " + fv.getSlotValue("value") + " ",r,c);
               }         
            }
         }

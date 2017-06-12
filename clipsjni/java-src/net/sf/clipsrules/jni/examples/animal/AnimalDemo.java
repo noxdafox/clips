@@ -201,7 +201,7 @@ class AnimalDemo implements ActionListener
       /* Determine the Next/Prev button states. */
       /*========================================*/
       
-      if (fv.getFactSlot("state").toString().equals("conclusion"))
+      if (fv.getSlotValue("state").toString().equals("conclusion"))
         { 
          interviewState = InterviewState.CONCLUSION;
          nextButton.setActionCommand("Restart");
@@ -209,7 +209,7 @@ class AnimalDemo implements ActionListener
          prevButton.setVisible(true);
          choicesPanel.setVisible(false);
         }
-      else if (fv.getFactSlot("state").toString().equals("greeting"))
+      else if (fv.getSlotValue("state").toString().equals("greeting"))
         {
          interviewState = InterviewState.GREETING;
          nextButton.setActionCommand("Next");
@@ -233,10 +233,10 @@ class AnimalDemo implements ActionListener
       choicesPanel.removeAll();
       choicesButtons = new ButtonGroup();
             
-      MultifieldValue damf = (MultifieldValue) fv.getFactSlot("display-answers");
-      MultifieldValue vamf = (MultifieldValue) fv.getFactSlot("valid-answers");
+      MultifieldValue damf = (MultifieldValue) fv.getSlotValue("display-answers");
+      MultifieldValue vamf = (MultifieldValue) fv.getSlotValue("valid-answers");
       
-      String selected = fv.getFactSlot("response").toString();
+      String selected = fv.getSlotValue("response").toString();
       JRadioButton firstButton = null;
       
       for (int i = 0; i < damf.size(); i++) 
@@ -273,13 +273,13 @@ class AnimalDemo implements ActionListener
       /* Set the label to the display text. */
       /*====================================*/
 
-      relationAsserted = ((LexemeValue) fv.getFactSlot("relation-asserted")).lexemeValue();
+      relationAsserted = ((LexemeValue) fv.getSlotValue("relation-asserted")).lexemeValue();
 
       /*====================================*/
       /* Set the label to the display text. */
       /*====================================*/
 
-      String theText = ((StringValue) fv.getFactSlot("display")).stringValue();
+      String theText = ((StringValue) fv.getSlotValue("display")).stringValue();
             
       wrapLabelText(displayLabel,theText);
       

@@ -26,6 +26,8 @@ public class Environment
    public static final String GLOBALS = "globals";
    public static final String MESSAGES = "messages";
    public static final String MESSAGE_HANDLERS = "message-handlers";
+   public static final String NONE = "none";
+   public static final String ALL = "all";
    
    public static final int UNBOUNDED = -1;
       
@@ -527,11 +529,20 @@ public class Environment
    /**********/
    /* build: */
    /**********/
-   public boolean build(String buildStr)
+   public void build(String buildStr) throws CLIPSException
      {
-      return build(theEnvironment,buildStr);
-     }
+      CaptureRouter buildCapture = new CaptureRouter(this,new String [] { Router.ERROR } );
 
+      boolean rv = build(theEnvironment,buildStr);
+      
+      String error = buildCapture.getOutput();
+      
+      this.deleteRouter(buildCapture);
+      
+      if ((! rv) || (! error.isEmpty()))
+        { throw new CLIPSException(error); }
+     }
+        
    /******************/
    /* getModuleList: */
    /******************/
@@ -640,9 +651,20 @@ public class Environment
    /*****************/
    /* assertString: */
    /*****************/
-   public FactAddressValue assertString(String factStr)
+   public FactAddressValue assertString(String factStr) throws CLIPSException
      {
-      return assertString(theEnvironment,factStr);
+      FactAddressValue fav;
+      CaptureRouter assertCapture = new CaptureRouter(this,new String [] { Router.ERROR } );
+
+      fav = assertString(theEnvironment,factStr);
+      
+      String error = assertCapture.getOutput();
+      this.deleteRouter(assertCapture);
+      
+      if ((fav == null) || (! error.isEmpty()))
+        { throw new CLIPSException(error); }
+
+      return fav;
      }
 
    /***********************/
@@ -710,11 +732,18 @@ public class Environment
    /****************/
    public static PrimitiveValue getFactSlot(
      FactAddressValue theFact,
-     String slotName)
+     String slotName) throws CLIPSException
      {
-      return getFactSlot(theFact.getEnvironment(),
-                         theFact.getEnvironment().getEnvironmentAddress(),
-                         theFact.getFactAddress(),slotName);
+      PrimitiveValue theValue;
+      
+      theValue = getFactSlot(theFact.getEnvironment(),
+                             theFact.getEnvironment().getEnvironmentAddress(),
+                             theFact.getFactAddress(),slotName);
+                             
+      if (theValue == null)
+        { throw new CLIPSException("Slot " + slotName + " is invalid"); }
+
+      return theValue;
      }
 
    /*****************/
@@ -725,9 +754,20 @@ public class Environment
    /*****************/
    /* makeInstance: */
    /*****************/
-   public InstanceAddressValue makeInstance(String instanceStr)
+   public InstanceAddressValue makeInstance(String instanceStr) throws CLIPSException
      {
-      return makeInstance(theEnvironment,instanceStr);
+      InstanceAddressValue iav;
+      CaptureRouter miCapture = new CaptureRouter(this,new String [] { Router.ERROR } );
+
+      iav = makeInstance(theEnvironment,instanceStr);
+      
+      String error = miCapture.getOutput();
+      this.deleteRouter(miCapture);
+      
+      if ((iav == null) || (! error.isEmpty()))
+        { throw new CLIPSException(error); }
+
+      return iav;
      }
 
    /********************/
@@ -756,11 +796,18 @@ public class Environment
    /******************/
    public static PrimitiveValue directGetSlot(
      InstanceAddressValue theInstance,
-     String slotName)
+     String slotName) throws CLIPSException
      {
-      return directGetSlot(theInstance.getEnvironment(),
+      PrimitiveValue theValue;
+      
+      theValue = directGetSlot(theInstance.getEnvironment(),
                            theInstance.getEnvironment().getEnvironmentAddress(),
                            theInstance.getInstanceAddress(),slotName);
+                           
+      if (theValue == null)
+        { throw new CLIPSException("Slot " + slotName + " is invalid"); }
+        
+      return theValue;
      }
 
    /***********************/

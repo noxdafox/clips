@@ -222,7 +222,7 @@ JNIEXPORT jobject JNICALL Java_net_sf_clipsrules_jni_Environment_assertString(
    (*env)->ReleaseStringUTFChars(env,factStr,cFactStr);
    
    if (theFact == NULL)
-     { return(NULL); }
+     { return NULL; }
      
    rv = ConvertSingleFieldValue(env,obj,theCLIPSEnv,FACT_ADDRESS_TYPE,theFact);
 
@@ -276,17 +276,21 @@ JNIEXPORT jobject JNICALL Java_net_sf_clipsrules_jni_Environment_getFactSlot(
   {
    jobject rv;
    CLIPSValue theDO;
+   bool found;
    
    Environment *theCLIPSEnv = JLongToPointer(clipsEnv);
    const char *cSlotName = (*env)->GetStringUTFChars(env,slotName,NULL);
 
    void *oldContext = SetEnvironmentContext(theCLIPSEnv,(void *) env);
    
-   GetFactSlot(JLongToPointer(clipsFact),(char *) cSlotName,&theDO);
+   found = GetFactSlot(JLongToPointer(clipsFact),(char *) cSlotName,&theDO);
 
    (*env)->ReleaseStringUTFChars(env,slotName,cSlotName);
    
-   rv = ConvertDataObject(env,javaEnv,theCLIPSEnv,&theDO);
+   if (found)
+     { rv = ConvertDataObject(env,javaEnv,theCLIPSEnv,&theDO); }
+   else
+     { rv = NULL; }
    
    SetEnvironmentContext(JLongToPointer(clipsEnv),oldContext);
    
