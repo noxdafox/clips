@@ -299,6 +299,37 @@ public class TextFrame extends JInternalFrame
         }
      }
      
+   /******************/
+   /* closeTextFrame */
+   /******************/  
+   public void closeTextFrame(
+     IDEPreferences preferences)
+     {
+      if (! changed) 
+        {
+         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+         return;
+        }
+      
+      int confirmResult = JOptionPane.showConfirmDialog(this,
+           "Do you want to save the changes made to the document \"" +
+            this.getTitle() +"\"?",
+            null,
+            JOptionPane.YES_NO_CANCEL_OPTION);
+          
+      if (confirmResult == JOptionPane.YES_OPTION)
+        { 
+         saveTextFrame(preferences);
+         setDefaultCloseOperation(DISPOSE_ON_CLOSE); 
+        }
+      else if (confirmResult == JOptionPane.NO_OPTION)
+        { setDefaultCloseOperation(DISPOSE_ON_CLOSE); }
+      else if (confirmResult == JOptionPane.CANCEL_OPTION)
+        { setDefaultCloseOperation(DO_NOTHING_ON_CLOSE); }
+      else if (confirmResult == JOptionPane.CLOSED_OPTION)
+        { setDefaultCloseOperation(DO_NOTHING_ON_CLOSE); }
+     }
+     
    /*******************/
    /* saveAsTextFrame */
    /*******************/  
@@ -378,6 +409,14 @@ public class TextFrame extends JInternalFrame
    public boolean canRedo()
      {
       return textAreaUndo.canRedo();     
+     }
+
+   /*************/
+   /* isChanged */
+   /*************/
+   public boolean isChanged()
+     {
+      return changed;    
      }
 
    /***********/

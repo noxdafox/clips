@@ -2,6 +2,7 @@ package net.sf.clipsrules.jni.examples.ide;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowEvent;
 import java.awt.print.PageFormat;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
@@ -31,6 +32,7 @@ public class FileMenu extends JMenu
 
    private NewAction newAction;
    private OpenAction openAction;
+   private CloseAction closeAction;
    private SaveAction saveAction;
    private SaveAsAction saveAsAction;
    private PageSetupAction pageSetupAction;
@@ -39,6 +41,7 @@ public class FileMenu extends JMenu
 
    private JMenuItem jmiNew;
    private JMenuItem jmiOpen;
+   private JMenuItem jmiClose;
    private JMenuItem jmiSave;
    private JMenuItem jmiSaveAs;
    private JMenuItem jmiPageSetup;
@@ -63,6 +66,7 @@ public class FileMenu extends JMenu
 
       KeyStroke newDoc = KeyStroke.getKeyStroke(KeyEvent.VK_N,KeyEvent.CTRL_MASK);
       KeyStroke openDoc = KeyStroke.getKeyStroke(KeyEvent.VK_O,KeyEvent.CTRL_MASK);
+      KeyStroke closeDoc = KeyStroke.getKeyStroke(KeyEvent.VK_W,KeyEvent.CTRL_MASK);
       KeyStroke saveDoc = KeyStroke.getKeyStroke(KeyEvent.VK_S,KeyEvent.CTRL_MASK);
       KeyStroke saveAsDoc = KeyStroke.getKeyStroke(KeyEvent.VK_S,KeyEvent.CTRL_MASK | KeyEvent.SHIFT_MASK);
       KeyStroke quitIDE = KeyStroke.getKeyStroke(KeyEvent.VK_Q,KeyEvent.CTRL_MASK);
@@ -73,6 +77,7 @@ public class FileMenu extends JMenu
        
       newAction = new NewAction("New");
       openAction = new OpenAction("Open...");
+      closeAction = new CloseAction("Close");
       saveAction = new SaveAction("Save");
       saveAsAction = new SaveAsAction("Save As...");
       pageSetupAction = new PageSetupAction("Page Setup...");
@@ -92,6 +97,10 @@ public class FileMenu extends JMenu
       this.add(jmiOpen);
 
       this.addSeparator();
+
+      jmiClose = new JMenuItem(closeAction);
+      jmiClose.setAccelerator(closeDoc);
+      this.add(jmiClose);
 
       jmiSave = new JMenuItem(saveAction);
       jmiSave.setAccelerator(saveDoc);
@@ -174,6 +183,27 @@ public class FileMenu extends JMenu
         }
      }
 
+   /***************/
+   /* CloseAction */
+   /***************/
+   class CloseAction extends AbstractAction 
+     {
+      public CloseAction(
+        String text)
+        {
+         super(text);
+        }
+        
+      @Override
+      public void actionPerformed(
+        ActionEvent e)
+        {
+         JInternalFrame theFrame = ide.getDesktopPane().getSelectedFrame();
+         
+         theFrame.doDefaultCloseAction();
+        }
+     }
+     
    /**************/
    /* SaveAction */
    /**************/
@@ -288,7 +318,8 @@ public class FileMenu extends JMenu
       public void actionPerformed(
         ActionEvent e)
         {
-         System.exit(0);
+         WindowEvent windowClosing = new WindowEvent(ide,WindowEvent.WINDOW_CLOSING);
+	     ide.dispatchEvent(windowClosing);
         }
      }
    
@@ -333,6 +364,7 @@ public class FileMenu extends JMenu
      
       if ((theFrame == null) || theFrame.isIcon())
         {
+         jmiClose.setEnabled(false);
          jmiSave.setEnabled(false);
          jmiSaveAs.setEnabled(false);
          return;
@@ -340,6 +372,7 @@ public class FileMenu extends JMenu
        
       if (theFrame instanceof DialogFrame)
         {
+         jmiClose.setEnabled(false);
          jmiSave.setEnabled(false);
          jmiSaveAs.setEnabled(false);
         }
@@ -347,6 +380,7 @@ public class FileMenu extends JMenu
         {
          TextFrame theTextFrame = (TextFrame) theFrame;
          
+         jmiClose.setEnabled(true);
          jmiSaveAs.setEnabled(true);
 
          if (theTextFrame.canSave())
@@ -356,6 +390,7 @@ public class FileMenu extends JMenu
         }
       else
         {
+         jmiClose.setEnabled(true);
          jmiSave.setEnabled(false);
          jmiSaveAs.setEnabled(false);
         }

@@ -77,7 +77,10 @@ public class CLIPSIDE extends JFrame
       ideDesktopPane.setDesktopManager(new BoundsDesktopManager());
       add(ideDesktopPane);
       
-      setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+      setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+
+      createWindowClosingAdaptor();
+              
       setLocation(50,50);
       Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
       setSize((int) (screenSize.width * 0.80),(int) (screenSize.height * 0.80));
@@ -121,6 +124,67 @@ public class CLIPSIDE extends JFrame
 
       UserFunctionExamples.addUserFunctions(clips);
      }  
+
+   /******************************/
+   /* createWindowClosingAdaptor */
+   /******************************/  
+   private void createWindowClosingAdaptor()
+     {
+      addWindowListener(new WindowAdapter() 
+        {
+         public void windowClosing(WindowEvent we)
+           {
+            int i, count, changeCount = 0;
+                        
+            count = jmWindow.getItemCount();
+            for (i = 0; i < count; i++)
+              {
+               JCheckBoxMenuItem jmiWindow = (JCheckBoxMenuItem) jmWindow.getItem(i);
+               JInternalFrame theFrame = (JInternalFrame) jmiWindow.getClientProperty(windowProperty);
+
+               if (theFrame instanceof TextFrame)
+                 { 
+                  TextFrame theTextFrame = (TextFrame) theFrame;
+         
+                  if (theTextFrame.isChanged())
+                    { changeCount++; }
+                 }
+              }
+            
+            if (changeCount == 1)
+              {
+               int confirmResult = JOptionPane.showConfirmDialog(null,
+                  "You have a document with unsaved changes. Do you want to quit?",
+                  null,
+                  JOptionPane.YES_NO_OPTION);
+
+               if (confirmResult == JOptionPane.YES_OPTION)
+                 {
+                  dispose();
+                  System.exit(0);
+                 }
+              }
+            else if (changeCount > 1)
+              {
+               int confirmResult = JOptionPane.showConfirmDialog(null,
+                  "You have " + changeCount + " documents with unsaved changes. Do you want to quit?",
+                  null,
+                  JOptionPane.YES_NO_OPTION);
+                  
+               if (confirmResult == JOptionPane.YES_OPTION)
+                 {
+                  dispose();
+                  System.exit(0);
+                 }
+              }
+            else
+              { 
+               dispose();
+               System.exit(0);
+              }  
+           }
+        });
+     }
 
    /******************/
    /* getPreferences */
@@ -218,7 +282,7 @@ public class CLIPSIDE extends JFrame
      
       if (theEvent.getExecutionEvent().equals(CommandExecutionEvent.PERIODIC_EVENT) ||
           theEvent.getExecutionEvent().equals(CommandExecutionEvent.FINISH_EVENT))
-        {         
+        {
          if (dialogWindow.getEnvironment().getAgendaChanged() ||
              dialogWindow.getEnvironment().getFocusChanged())
            {
@@ -387,7 +451,15 @@ public class CLIPSIDE extends JFrame
    /************************/
    public void internalFrameClosing(
      InternalFrameEvent e)
-     {
+     {      
+      JInternalFrame theFrame = e.getInternalFrame();
+
+      if (theFrame instanceof TextFrame)
+        { 
+         TextFrame theTextFrame = (TextFrame) theFrame;
+         
+         theTextFrame.closeTextFrame(preferences);
+        }
      }
 
    /***********************/
