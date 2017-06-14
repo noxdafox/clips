@@ -801,8 +801,8 @@ public class Environment
       PrimitiveValue theValue;
       
       theValue = directGetSlot(theInstance.getEnvironment(),
-                           theInstance.getEnvironment().getEnvironmentAddress(),
-                           theInstance.getInstanceAddress(),slotName);
+                               theInstance.getEnvironment().getEnvironmentAddress(),
+                               theInstance.getInstanceAddress(),slotName);
                            
       if (theValue == null)
         { throw new CLIPSException("Slot " + slotName + " is invalid"); }
@@ -1341,6 +1341,17 @@ public class Environment
                              theInstance.getInstanceAddress());
      }
 
+   /***********************/
+   /* findInstanceByName: */
+   /***********************/   
+   private native InstanceAddressValue findInstanceByName(long env,String instanceName);
+
+   public InstanceAddressValue findInstanceByName(
+     String instanceName)
+     {
+      return findInstanceByName(theEnvironment,instanceName);
+     }
+  
    /**************************/
    /* incrementAddressCount: */
    /**************************/
@@ -1391,7 +1402,143 @@ public class Environment
 
       destroyEnvironment(theEnvironment);
      }
+
+   /************/
+   /* findFact */
+   /************/ 
+   public FactAddressValue findFact(
+     String deftemplate) throws CLIPSException
+     {
+      return findFact("?f",deftemplate,"TRUE");
+     }
      
+   /************/
+   /* findFact */
+   /************/ 
+   public FactAddressValue findFact(
+     String variable,
+     String deftemplate,
+     String condition) throws CLIPSException
+     {
+      String query = "(find-fact " + 
+                        "((" + variable + " " + deftemplate + ")) " + condition + ")";
+                        
+      PrimitiveValue pv = eval(query);
+      
+      if (! pv.isMultifield())
+        { return null; }
+      
+      MultifieldValue mv = (MultifieldValue) pv;
+     
+      if (mv.size() == 0)
+        { return null; }
+        
+      return (FactAddressValue) mv.get(0);
+     }
+     
+   /****************/
+   /* findAllFacts */
+   /****************/ 
+   public List<FactAddressValue> findAllFacts(
+     String deftemplate) throws CLIPSException
+     {
+      return findAllFacts("?f",deftemplate,"TRUE");
+     }
+     
+   /****************/
+   /* findAllFacts */
+   /****************/ 
+   public List<FactAddressValue> findAllFacts(
+     String variable,
+     String deftemplate,
+     String condition) throws CLIPSException
+     {
+      String query = "(find-all-facts " + 
+                        "((" + variable + " " + deftemplate + ")) " + condition + ")";
+                        
+      PrimitiveValue pv = eval(query);
+      
+      if (! pv.isMultifield())
+        { return null; }
+      
+      MultifieldValue mv = (MultifieldValue) pv;
+      
+      List<FactAddressValue> rv = new ArrayList<FactAddressValue>(mv.size());
+      
+      for (PrimitiveValue theValue : mv)
+        { rv.add((FactAddressValue) theValue); }
+
+      return rv;
+     }
+     
+   /****************/
+   /* findInstance */
+   /****************/ 
+   public InstanceAddressValue findInstance(
+     String defclass) throws CLIPSException
+     {
+      return findInstance("?i",defclass,"TRUE");
+     }
+     
+   /****************/
+   /* findInstance */
+   /****************/ 
+   public InstanceAddressValue findInstance(
+     String variable,
+     String defclass,
+     String condition) throws CLIPSException
+     {
+      String query = "(find-instance " + 
+                        "((" + variable + " " + defclass + ")) " + condition + ")";
+                        
+      PrimitiveValue pv = eval(query);
+      
+      if (! pv.isMultifield())
+        { return null; }
+      
+      MultifieldValue mv = (MultifieldValue) pv;
+     
+      if (mv.size() == 0)
+        { return null; }
+        
+      return ((InstanceNameValue) mv.get(0)).getInstance(this);
+     }
+     
+   /********************/
+   /* findAllInstances */
+   /********************/ 
+   public List<InstanceAddressValue> findAllInstances(
+     String defclass) throws CLIPSException
+     {
+      return findAllInstances("?i",defclass,"TRUE");
+     }
+     
+   /********************/
+   /* findAllInstances */
+   /********************/ 
+   public List<InstanceAddressValue> findAllInstances(
+     String variable,
+     String defclass,
+     String condition) throws CLIPSException
+     {
+      String query = "(find-all-instances " + 
+                        "((" + variable + " " + defclass + ")) " + condition + ")";
+                        
+      PrimitiveValue pv = eval(query);
+      
+      if (! pv.isMultifield())
+        { return null; }
+      
+      MultifieldValue mv = (MultifieldValue) pv;
+
+      List<InstanceAddressValue> rv = new ArrayList<InstanceAddressValue>(mv.size());
+      
+      for (PrimitiveValue theValue : mv)
+        { rv.add(((InstanceNameValue) theValue).getInstance(this)); }
+
+      return rv;
+     }
+
    /*********/
    /* main: */
    /*********/

@@ -193,9 +193,7 @@ class AutoDemo implements ActionListener
       /* Get the current UI state. */
       /*===========================*/
       
-      String evalStr = "(find-fact ((?f UI-state)) TRUE)";
-      
-      FactAddressValue fv = (FactAddressValue) ((MultifieldValue) clips.eval(evalStr)).get(0);
+      FactAddressValue fv = clips.findFact("UI-state");
 
       /*========================================*/
       /* Determine the Next/Prev button states. */

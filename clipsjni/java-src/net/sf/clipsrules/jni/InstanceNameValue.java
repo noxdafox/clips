@@ -26,6 +26,15 @@ public class InstanceNameValue extends LexemeValue
      {
       return getValue();
      }
+     
+   /***************/
+   /* getInstance */
+   /***************/
+   public InstanceAddressValue getInstance(
+     Environment theEnv)
+     {            
+      return theEnv.findInstanceByName(lexemeValue());
+     }
    
    /*************/
    /* toString: */

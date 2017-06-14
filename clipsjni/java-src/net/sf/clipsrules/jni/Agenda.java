@@ -64,9 +64,9 @@ public class Agenda implements Iterable<Activation>
    public Activation get(
      int index)
      {
-      List activations = (List) getActivations();
+      final List<Activation> activations = getActivations();
       
-      return (Activation) activations.get(index);
+      return activations.get(index);
      }
      
    /*********/
@@ -74,7 +74,7 @@ public class Agenda implements Iterable<Activation>
    /*********/
    public int size()
      {
-      final List activations = (List) getActivations();
+      final List<Activation> activations = getActivations();
       
       return activations.size();
      }

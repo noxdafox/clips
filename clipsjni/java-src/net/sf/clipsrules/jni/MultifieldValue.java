@@ -77,9 +77,9 @@ public class MultifieldValue extends PrimitiveValue implements Iterable<Primitiv
    public PrimitiveValue get(
      int index)
      {
-      List theList = (List) getValue();
+      List<PrimitiveValue> theList = getValue();
       
-      return (PrimitiveValue) theList.get(index);
+      return theList.get(index);
      }
      
    /*********/
@@ -87,7 +87,7 @@ public class MultifieldValue extends PrimitiveValue implements Iterable<Primitiv
    /*********/
    public int size()
      {
-      final List theList = (List) getValue();
+      final List<PrimitiveValue> theList = getValue();
       
       return theList.size();
      }
@@ -98,13 +98,10 @@ public class MultifieldValue extends PrimitiveValue implements Iterable<Primitiv
    @Override
    public void retain()
      {
-      final List theList = (List) getValue();
+      final List<PrimitiveValue> theList = getValue();
       
-      for (Iterator itr = theList.iterator(); itr.hasNext(); ) 
-        {
-         PrimitiveValue pv = (PrimitiveValue) itr.next();
-         pv.retain();
-        }            
+      for (PrimitiveValue theValue : theList)
+        { theValue.retain(); }
      }
 
    /************/
@@ -113,13 +110,10 @@ public class MultifieldValue extends PrimitiveValue implements Iterable<Primitiv
    @Override
    public void release()
      {
-      final List theList = (List) getValue();
+      final List<PrimitiveValue> theList = getValue();
       
-      for (Iterator itr = theList.iterator(); itr.hasNext(); ) 
-        {
-         PrimitiveValue pv = (PrimitiveValue) itr.next();
-         pv.release();
-        }            
+      for (PrimitiveValue theValue : theList)
+        { theValue.release(); }
      }
      
    /*************/
@@ -128,22 +122,22 @@ public class MultifieldValue extends PrimitiveValue implements Iterable<Primitiv
    @Override
    public String toString()
      {  
-      final List theList = (List) getValue();
+      final List<PrimitiveValue> theList = getValue();
       boolean first = true;
       
       String theString = "(";
       
-      for (Iterator itr = theList.iterator(); itr.hasNext(); ) 
+      for (PrimitiveValue theValue : theList)
         {
          if (! first)
-          { theString = theString + " " + itr.next(); }
+          { theString = theString + " " + theValue; }
          else
           { 
-           theString = theString + itr.next(); 
+           theString = theString + theValue; 
            first = false;
           }
         }      
-        
+                
       theString = theString + ")";
       
       return theString;
@@ -156,7 +150,7 @@ public class MultifieldValue extends PrimitiveValue implements Iterable<Primitiv
      {
       return getValue().iterator();
      }
-     
+
    @Override
    public boolean isMultifield()
      { return true; }

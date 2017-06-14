@@ -595,6 +595,14 @@ JNIEXPORT void JNICALL Java_net_sf_clipsrules_jni_Environment_decrementInstanceC
 
 /*
  * Class:     net_sf_clipsrules_jni_Environment
+ * Method:    findInstanceByName
+ * Signature: (JLjava/lang/String;)Lnet/sf/clipsrules/jni/InstanceAddressValue;
+ */
+JNIEXPORT jobject JNICALL Java_net_sf_clipsrules_jni_Environment_findInstanceByName
+  (JNIEnv *, jobject, jlong, jstring);
+
+/*
+ * Class:     net_sf_clipsrules_jni_Environment
  * Method:    incrementAddressCount
  * Signature: (Lnet/sf/clipsrules/jni/Environment;JJ)V
  */

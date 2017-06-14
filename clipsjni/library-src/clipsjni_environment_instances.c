@@ -379,7 +379,44 @@ JNIEXPORT jobject JNICALL Java_net_sf_clipsrules_jni_Environment_directGetSlot(
    
    return rv;
   }
-  
+    
+/********************************************************************************/
+/* Java_net_sf_clipsrules_jni_Environment_findInstanceByName: Native function   */
+/*   for the CLIPSJNI findInstanceBySymbol method.                              */
+/*                                                                              */
+/*                                                                              */
+/* Class:     net_sf_clipsrules_jni_Environment                                 */
+/* Method:    findInstanceByName                                                */
+/* Signature: (JLjava/lang/String;)Lnet/sf/clipsrules/jni/InstanceAddressValue; */
+/********************************************************************************/
+JNIEXPORT jobject JNICALL Java_net_sf_clipsrules_jni_Environment_findInstanceByName(
+  JNIEnv *env, 
+  jobject javaEnv, 
+  jlong clipsEnv, 
+  jstring instanceName)
+  {
+   Environment *theCLIPSEnv = JLongToPointer(clipsEnv);
+   CLIPSValue theDO;
+   Instance *theInstance;
+   jobject rv;
+   
+   const char *cInstanceName = (*env)->GetStringUTFChars(env,instanceName,NULL);
+   
+   theInstance = FindInstance(theCLIPSEnv,NULL,cInstanceName,true);
+   
+   (*env)->ReleaseStringUTFChars(env,instanceName,cInstanceName);
+   
+   if (theInstance == NULL) 
+     { rv = NULL; }
+   else
+     {
+      theDO.instanceValue = theInstance;
+      rv = ConvertDataObject(env,javaEnv,theCLIPSEnv,&theDO); 
+     }
+
+   return rv;
+  }
+
 /******************************************************************/
 /* Java_net_sf_clipsrules_jni_Environment_getDefclassText: Native */ 
 /*   function for the CLIPSJNI getDefclassText method.            */

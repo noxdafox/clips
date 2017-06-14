@@ -64,9 +64,9 @@ public class FocusStack implements Iterable<Focus>
    public Focus get(
      int index)
      {
-      List theStack = (List) getStack();
+      List<Focus> theStack = getStack();
       
-      return (Focus) theStack.get(index);
+      return theStack.get(index);
      }
      
    /*********/
@@ -74,7 +74,7 @@ public class FocusStack implements Iterable<Focus>
    /*********/
    public int size()
      {
-      final List theStack = (List) getStack();
+      final List<Focus> theStack = getStack();
       
       return theStack.size();
      }
@@ -85,22 +85,22 @@ public class FocusStack implements Iterable<Focus>
    @Override
    public String toString()
      {  
-      final List theStack = (List) getStack();
+      final List<Focus> theStack = getStack();
       boolean first = true;
       
       String theString = "(";
       
-      for (Iterator itr = theStack.iterator(); itr.hasNext(); ) 
+      for (Focus theFocus : theStack)
         {
          if (! first)
-          { theString = theString + " " + itr.next(); }
+           { theString = theString + " " + theFocus; }
          else
-          { 
-           theString = theString + itr.next(); 
-           first = false;
-          }
-        }      
-        
+           { 
+            theString = theString + theFocus; 
+            first = false;
+           }
+        }
+                
       theString = theString + ")";
       
       return theString;
