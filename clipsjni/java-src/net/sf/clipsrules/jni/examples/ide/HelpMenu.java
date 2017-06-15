@@ -9,6 +9,19 @@ import java.net.URI;
 import java.net.URL;
 import java.awt.Desktop;
 
+import javax.swing.Box;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+
+import java.awt.Font;
+import java.awt.Dimension;
+import javax.swing.BoxLayout;
+
+import javax.swing.ImageIcon;
+import javax.imageio.ImageIO;
+import java.io.InputStream;
+
 public class HelpMenu extends JMenu 
                    implements ActionListener
   {  
@@ -18,6 +31,7 @@ public class HelpMenu extends JMenu
    private static final String clipsExpertSystemGroupAction = "CLIPSExpertSystemGroup";
    private static final String sourceForgeForumsAction = "SourceForgeForums";
    private static final String stackOverflowQAAction = "StackOverflowQ&A";
+   private static final String aboutCLIPSIDEAction = "AboutCLIPSIDE";
 
    private JMenuItem jmiCLIPSHomePage = null;
    private JMenuItem jmiOnlineDocumentation = null;   
@@ -25,15 +39,82 @@ public class HelpMenu extends JMenu
    private JMenuItem jmiCLIPSExpertSystemGroup = null;
    private JMenuItem jmiSourceForgeForums = null;
    private JMenuItem jmiStackOverflowQA = null;
+   private JMenuItem jmiAboutCLIPSIDE = null;
+   
+   private JFrame parentFrame;
+
+   class AboutCLIPSIDEDialog extends JDialog 
+     {
+      public AboutCLIPSIDEDialog(JFrame parent) 
+        {
+         super(parent,"About CLIPS IDE",true);
+
+         final String imageName = "/net/sf/clipsrules/jni/examples/ide/resources/CLIPS.png";
+         
+         setLayout(new BoxLayout(getContentPane(),BoxLayout.Y_AXIS));
+
+         add(Box.createRigidArea(new Dimension(0,10)));
+
+         try
+           {
+            InputStream imageInput = getClass().getResourceAsStream(imageName);
+            JLabel label = new JLabel(new ImageIcon(ImageIO.read(imageInput)));
+            label.setAlignmentX(0.5f);
+            add(label);
+           }
+         catch (Exception e)
+           { e.printStackTrace(); }
+
+         JLabel name = new JLabel("CLIPS IDE");
+         name.setAlignmentX(0.5f);
+         Font font = name.getFont();
+         font = new Font(font.getFontName(),Font.BOLD,18);
+         name.setFont(font);
+         add(name);
+ 
+         name = new JLabel("Version 6.4");
+         name.setAlignmentX(0.5f);
+         font = new Font(font.getFontName(),Font.PLAIN,12);
+         name.setFont(font);
+         add(name);
+         
+         add(Box.createRigidArea(new Dimension(0,20)));
+
+         name = new JLabel("Design and Development");
+         name.setAlignmentX(0.5f);
+         font = new Font(font.getFontName(),Font.BOLD,14);
+         name.setFont(font);
+         add(name);
+         
+         name = new JLabel("Gary Riley");
+         name.setAlignmentX(0.5f);
+         font = new Font(font.getFontName(),Font.PLAIN,14);
+         name.setFont(font);
+         add(name);
+                  
+         add(Box.createRigidArea(new Dimension(0,20)));
+
+         name = new JLabel("Public Domain Release, June 2017");
+         name.setAlignmentX(0.5f);
+         font = new Font(font.getFontName(),Font.PLAIN,12);
+         name.setFont(font);
+         add(name);
+
+         setModalityType(ModalityType.APPLICATION_MODAL);
+         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+         setSize(300,300);
+         setResizable(false);
+        }
+     }
 
    /************/
    /* HelpMenu */
    /************/
-   HelpMenu()
+   HelpMenu(JFrame theFrame)
      {  
       super("Help");
-        
-      //addMenuListener(this);
+      
+      parentFrame = theFrame;
       
       jmiCLIPSHomePage = new JMenuItem("CLIPS Home Page");
       jmiCLIPSHomePage.setActionCommand(clipsHomePageAction);
@@ -64,9 +145,14 @@ public class HelpMenu extends JMenu
       jmiStackOverflowQA.setActionCommand(stackOverflowQAAction);
       jmiStackOverflowQA.addActionListener(this);
       add(jmiStackOverflowQA);
+      
+      addSeparator();
+
+      jmiAboutCLIPSIDE = new JMenuItem("About CLIPS IDE");
+      jmiAboutCLIPSIDE.setActionCommand(aboutCLIPSIDEAction);
+      jmiAboutCLIPSIDE.addActionListener(this);
+      add(jmiAboutCLIPSIDE);
      }  
-
-
 
    /*################*/
    /* Action Methods */
@@ -90,6 +176,8 @@ public class HelpMenu extends JMenu
         { openSourceForgeForums(); }
       else if (ae.getActionCommand().equals(stackOverflowQAAction))  
         { openStackOverflowQA(); }
+      else if (ae.getActionCommand().equals(aboutCLIPSIDEAction))  
+        { aboutCLIPSIDE(); }
      }
      
    /*********************/
@@ -175,6 +263,16 @@ public class HelpMenu extends JMenu
             { e.printStackTrace(); }
          }
       }
+
+   /*****************/
+   /* aboutCLIPSIDE */
+   /*****************/  
+   public void aboutCLIPSIDE()
+     {      
+      JDialog f = new AboutCLIPSIDEDialog(parentFrame);
+      f.setLocationRelativeTo(parentFrame);
+      f.setVisible(true);
+     }
 
    /*########################*/
    /* ActionListener Methods */

@@ -86,6 +86,8 @@ IDE_CLASS = net.sf.clipsrules.jni.examples.ide.CLIPSIDE
 IDE_SRC = java-src/$(IDE_CP)
 IDE_BIN = bin/ide
 IDE_DST = $(IDE_BIN)/$(IDE_CP)
+IDE_RSRC_SRC = $(IDE_SRC)/resources
+IDE_RSRC_DST = $(IDE_BIN)/$(IDE_CP)/resources
 IDE_FILES = \
 	$(IDE_SRC)/CLIPSIDE.java \
 	$(IDE_SRC)/ActivationTableModel.java \
@@ -159,8 +161,10 @@ router :
 	jar -uf RouterDemo.jar -C $(JNI_BIN) net
 
 ide :
+	mkdir -p $(IDE_RSRC_DST)
 	mkdir -p $(IDE_DST)
 	javac -d $(IDE_BIN) -cp CLIPSJNI.jar $(IDE_FILES)
+	cp $(IDE_RSRC_SRC)/*.png $(IDE_RSRC_DST)
 	jar -cfe CLIPSIDE.jar $(IDE_CLASS) $(IDE_BIN)/$(IDE_CP)/CLIPSIDE.class -C $(IDE_BIN) net 
 	jar -uf CLIPSIDE.jar -C $(JNI_BIN) net
 
@@ -189,5 +193,6 @@ clean :
 	rm -fr $(ROUTER_BIN)/net
 	rm -f RouterDemo.jar
 	rm -f $(IDE_DST)/*.class
+	rm -f $(IDE_RSRC_DST)/*.*
 	rm -fr $(IDE_BIN)/net
 	rm -f CLIPSIDE.jar

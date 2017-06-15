@@ -717,7 +717,7 @@ public class CLIPSIDE extends JFrame
       /* Help menu */
       /*===========*/
 
-      jmb.add(new HelpMenu());
+      jmb.add(new HelpMenu(this));
 
       /*===================*/
       /* Add the menu bar. */
