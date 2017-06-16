@@ -162,7 +162,6 @@ router :
 
 ide :
 	mkdir -p $(IDE_RSRC_DST)
-	mkdir -p $(IDE_DST)
 	javac -d $(IDE_BIN) -cp CLIPSJNI.jar $(IDE_FILES)
 	cp $(IDE_RSRC_SRC)/*.png $(IDE_RSRC_DST)
 	jar -cfe CLIPSIDE.jar $(IDE_CLASS) $(IDE_BIN)/$(IDE_CP)/CLIPSIDE.class -C $(IDE_BIN) net 

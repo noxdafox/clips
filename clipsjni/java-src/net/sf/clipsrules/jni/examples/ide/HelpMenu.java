@@ -53,7 +53,7 @@ public class HelpMenu extends JMenu
          
          setLayout(new BoxLayout(getContentPane(),BoxLayout.Y_AXIS));
 
-         add(Box.createRigidArea(new Dimension(0,10)));
+         add(Box.createRigidArea(new Dimension(0,8)));
 
          try
            {
@@ -78,7 +78,7 @@ public class HelpMenu extends JMenu
          name.setFont(font);
          add(name);
          
-         add(Box.createRigidArea(new Dimension(0,20)));
+         add(Box.createRigidArea(new Dimension(0,18)));
 
          name = new JLabel("Design and Development");
          name.setAlignmentX(0.5f);
@@ -92,7 +92,7 @@ public class HelpMenu extends JMenu
          name.setFont(font);
          add(name);
                   
-         add(Box.createRigidArea(new Dimension(0,20)));
+         add(Box.createRigidArea(new Dimension(0,18)));
 
          name = new JLabel("Public Domain Release, June 2017");
          name.setAlignmentX(0.5f);

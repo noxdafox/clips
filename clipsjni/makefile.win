@@ -86,6 +86,8 @@ IDE_CLASS = net.sf.clipsrules.jni.examples.ide.CLIPSIDE
 IDE_SRC = java-src\$(IDE_CP)
 IDE_BIN = bin\ide
 IDE_DST = $(IDE_BIN)\$(IDE_CP)
+IDE_RSRC_SRC = $(IDE_SRC)\resources
+IDE_RSRC_DST = $(IDE_BIN)\$(IDE_CP)\resources
 IDE_FILES = \
 	$(IDE_SRC)\CLIPSIDE.java \
 	$(IDE_SRC)\ActivationTableModel.java \
@@ -159,8 +161,9 @@ router :
 	jar -uf RouterDemo.jar -C $(JNI_BIN) net
 
 ide :
-	if not exist $(IDE_DST) mkdir $(IDE_DST)
+	if not exist $(IDE_RSRC_DST) mkdir $(IDE_RSRC_DST)
 	javac -d $(IDE_BIN) -cp CLIPSJNI.jar $(IDE_FILES)
+	copy $(IDE_RSRC_SRC)\*.png $(IDE_RSRC_DST)
 	jar -cfe CLIPSIDE.jar $(IDE_CLASS) $(IDE_BIN)\$(IDE_CP)\CLIPSIDE.class -C $(IDE_BIN) net 
 	jar -uf CLIPSIDE.jar -C $(JNI_BIN) net
 	
@@ -189,5 +192,6 @@ clean :
 	if exist $(ROUTER_BIN)\net rmdir /Q /S $(ROUTER_BIN)\net
 	if exist RouterDemo.jar erase RouterDemo.jar
 	if exist $(IDE_DST) erase /Q $(IDE_DST)\*.class
+	if exist $(IDE_RSRC_DST) erase /Q $(IDE_RSRC_DST)\*.*
 	if exist $(IDE_BIN)\net rmdir /Q /S $(IDE_BIN)\net
 	if exist CLIPSIDE.jar erase CLIPSIDE.jar
