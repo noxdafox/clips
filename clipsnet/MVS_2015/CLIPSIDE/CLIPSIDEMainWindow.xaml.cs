@@ -6,6 +6,7 @@ using Microsoft.Win32;
 
 using System.Windows.Threading;
 using System.ComponentModel;
+using System.Collections.Generic;
 
 using CLIPSNET;
 
