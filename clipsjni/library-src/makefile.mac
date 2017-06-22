@@ -1,4 +1,4 @@
-JAVA_HOME = /Library/Java/JavaVirtualMachines/jdk1.8.0_112.jdk/Contents/Home
+JAVA_HOME = /Library/Java/JavaVirtualMachines/jdk1.8.0_131.jdk/Contents/Home
 JAVA_INCLUDE = $(JAVA_HOME)/include
 JAVA_INCLUDE_OS = $(JAVA_INCLUDE)/darwin
 

@@ -1,4 +1,4 @@
-JAVA_HOME = c:\Program Files\Java\jdk1.8.0_31
+JAVA_HOME = c:\Program Files\Java\jdk1.8.0_131
 JAVA_INCLUDE = $(JAVA_HOME)\include
 JAVA_LIB = $(JAVA_HOME)\lib
 
