@@ -46,6 +46,7 @@
 /***************************************************************************/
 
 #include "clips.h"
+#include "regfun.h"
 
 void UserFunctions(void);
 void EnvUserFunctions(void *);
@@ -64,7 +65,7 @@ void UserFunctions()
    // Use of UserFunctions is deprecated.
    // Use EnvUserFunctions instead.
   }
-  
+
 /***********************************************************/
 /* EnvUserFunctions: Informs the expert system environment */
 /*   of any user defined functions. In the default case,   */
@@ -80,5 +81,26 @@ void EnvUserFunctions(
 #if MAC_XCD
 #pragma unused(environment)
 #endif
-  }
 
+    /**************************************************/
+    /* Define Regular Expression Functions into CLIPS */
+    /**************************************************/
+
+    EnvDefineFunction2(environment, "str-regexmatch", 'i',
+                       PTIEF StringRegexMatch, "StringRegexMatch", "22j");
+    EnvDefineFunction2(environment, "str-regeximatch", 'i',
+                       PTIEF StringRegexCaseMatch,
+                       "StringRegexCaseMatch", "22j");
+    EnvDefineFunction2(environment, "str-regexsearch", 'm',
+                       PTIEF StringRegexSearch, "StringRegexSearch", "22j");
+    EnvDefineFunction2(environment, "str-regexisearch", 'm',
+                       PTIEF StringRegexCaseSearch,
+                       "StringRegexCaseSearch", "22j");
+
+    /****************************************/
+    /* Additional cleanup actions in CLIPS  */
+    /****************************************/
+
+    EnvAddClearFunction(environment, "str-regexclear", StringRegexClear, 0);
+
+  }
