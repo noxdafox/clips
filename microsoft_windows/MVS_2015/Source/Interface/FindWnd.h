@@ -1,1 +1,0 @@
-HMENU findWindowMenu(HMENU hMenu);
