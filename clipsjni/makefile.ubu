@@ -1,4 +1,4 @@
-# ubuntu 14.04 LTS with Java 1.8.0_45
+# ubuntu 14.04 LTS with Java 1.8.0_131
 
 JNI_CP = net/sf/clipsrules/jni
 JNI_CLASS = net.sf.clipsrules.jni.Environment
