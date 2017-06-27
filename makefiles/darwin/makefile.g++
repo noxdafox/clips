@@ -27,14 +27,15 @@ OBJS = agenda.o analysis.o argacces.o bload.o bmathfun.o bsave.o \
  	ruledlt.o rulelhs.o rulepsr.o scanner.o sortfun.o strngfun.o \
  	strngrtr.o symblbin.o symblcmp.o symbol.o sysdep.o textpro.o \
  	tmpltbin.o tmpltbsc.o tmpltcmp.o tmpltdef.o tmpltfun.o tmpltlhs.o \
- 	tmpltpsr.o tmpltrhs.o tmpltutl.o userdata.o userfunctions.o utility.o watch.o
+ 	tmpltpsr.o tmpltrhs.o tmpltutl.o userdata.o userfunctions.o utility.o watch.o \
+        regfun.o
 
 .c.o :
 	g++ -c -x c++ -DLINUX=1 -DALLOW_ENVIRONMENT_GLOBALS=1 -Wall -O3 -fno-strict-aliasing -Wundef -Wpointer-arith \
-	    -Wshadow -Wcast-qual -Winline -Wredundant-decls -Waggregate-return -Wno-implicit $< 
+	    -Wshadow -Wcast-qual -Winline -Wredundant-decls -Waggregate-return -Wno-implicit $<
 
 clips : $(OBJS)
-	g++ -o clips $(OBJS) -lstdc++   
+	g++ -o clips $(OBJS) -lstdc++ -lpcre2-8
 
 # Dependencies generated using "gcc -MM *.c"
 
@@ -1264,7 +1265,7 @@ userfunctions.o: userfunctions.c clips.h setup.h envrnmnt.h symbol.h \
   tmpltbsc.h tmpltfun.h factcom.h factfun.h globldef.h globlbsc.h \
   globlcom.h dffnxfun.h genrccom.h genrcfun.h object.h classcom.h \
   classexm.h classinf.h classini.h classpsr.h defins.h inscom.h insfun.h \
-  insfile.h msgcom.h msgpass.h objrtmch.h
+  insfile.h msgcom.h msgpass.h objrtmch.h regfun.h
 
 utility.o: utility.c setup.h envrnmnt.h symbol.h multifld.h evaluatn.h \
   constant.h expressn.h exprnops.h exprnpsr.h extnfunc.h userdata.h \

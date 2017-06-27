@@ -34,7 +34,7 @@ OBJS = agenda.o analysis.o argacces.o bload.o bmathfun.o bsave.o \
  	strngrtr.o symblbin.o symblcmp.o symbol.o sysdep.o textpro.o \
  	tmpltbin.o tmpltbsc.o tmpltcmp.o tmpltdef.o tmpltfun.o tmpltlhs.o \
  	tmpltpsr.o tmpltrhs.o tmpltutl.o userdata.o userfunctions.o \
- 	utility.o watch.o
+ 	utility.o watch.o regfun.o
 
 .c.o :
 	gcc -c -O3 -fPIC -DLINUX -DALLOW_ENVIRONMENT_GLOBALS=0 \
@@ -44,7 +44,7 @@ OBJS = agenda.o analysis.o argacces.o bload.o bmathfun.o bsave.o \
 	    -Wstrict-prototypes -Waggregate-return -Wno-implicit $<
 
 libCLIPSJNI.so : $(OBJS) CLIPSJNI_Environment.c
-	gcc -o libCLIPSJNI.so -fPIC -shared -Wall -I$(JAVA_INCLUDE) -I$(JAVA_INCLUDE_OS) -lm $(OBJS) CLIPSJNI_Environment.c
+	gcc -o libCLIPSJNI.so -fPIC -shared -Wall -I$(JAVA_INCLUDE) -I$(JAVA_INCLUDE_OS) -lm $(OBJS) CLIPSJNI_Environment.c -lpcre2-8
 
 agenda.o: agenda.c setup.h envrnmnt.h symbol.h usrsetup.h argacces.h \
   expressn.h exprnops.h exprnpsr.h extnfunc.h userdata.h scanner.h \
@@ -751,7 +751,7 @@ lgcldpnd.o: lgcldpnd.c setup.h envrnmnt.h symbol.h usrsetup.h memalloc.h \
   match.h network.h ruledef.h constrnt.h cstrccom.h agenda.h pattern.h \
   reorder.h retract.h reteutil.h argacces.h factmngr.h facthsh.h \
   multifld.h tmpltdef.h factbld.h insfun.h object.h
-  
+
 main.o: main.c setup.h envrnmnt.h symbol.h usrsetup.h clips.h argacces.h \
   expressn.h exprnops.h exprnpsr.h extnfunc.h userdata.h scanner.h \
   pprint.h evaluatn.h constant.h moduldef.h conscomp.h constrct.h \
@@ -1238,7 +1238,7 @@ userfunctions.o: userfunctions.c clips.h setup.h envrnmnt.h symbol.h \
   tmpltfun.h factcom.h factfun.h globldef.h globlbsc.h globlcom.h \
   dffnxfun.h genrccom.h genrcfun.h object.h classcom.h classexm.h \
   classinf.h classini.h defins.h inscom.h insfun.h insfile.h msgcom.h \
-  msgpass.h objrtmch.h
+  msgpass.h objrtmch.h regfun.h
 
 utility.o: utility.c setup.h envrnmnt.h symbol.h usrsetup.h evaluatn.h \
   constant.h expressn.h exprnops.h exprnpsr.h extnfunc.h userdata.h \
