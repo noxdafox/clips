@@ -82,25 +82,35 @@ void EnvUserFunctions(
 #pragma unused(environment)
 #endif
 
+    /*****************************************/
+    /* Allocate per-environment regex cache  */
+    /*****************************************/
+
+#if REGEXP_CACHE_SIZE
+    if (!AllocateEnvironmentData(environment, REGEX_DATA_INDEX,
+                                 sizeof(regex_data_t), RegexCacheClear)) {
+        printf("Error allocating environment data for REGEX_DATA_INDEX\n");
+        exit(EXIT_FAILURE);
+    }
+
+    REGEX_DATA(environment)->cache = NULL;
+#endif
+
     /**************************************************/
     /* Define Regular Expression Functions into CLIPS */
     /**************************************************/
 
-    EnvDefineFunction2(environment, "str-regexmatch", 'i',
-                       PTIEF StringRegexMatch, "StringRegexMatch", "22j");
-    EnvDefineFunction2(environment, "str-regeximatch", 'i',
-                       PTIEF StringRegexCaseMatch,
-                       "StringRegexCaseMatch", "22j");
-    EnvDefineFunction2(environment, "str-regexsearch", 'm',
-                       PTIEF StringRegexSearch, "StringRegexSearch", "22j");
-    EnvDefineFunction2(environment, "str-regexisearch", 'm',
-                       PTIEF StringRegexCaseSearch,
-                       "StringRegexCaseSearch", "22j");
+    EnvDefineFunction2(environment, "regex-match", 'm',
+                       PTIEF RegexMatch, "RegexMatch", "22j");
+    EnvDefineFunction2(environment, "regex-imatch", 'm',
+                       PTIEF RegexCaseMatch, "RegexCaseMatch", "22j");
 
     /****************************************/
     /* Additional cleanup actions in CLIPS  */
     /****************************************/
 
-    EnvAddClearFunction(environment, "str-regexclear", StringRegexClear, 0);
+#if REGEXP_CACHE_SIZE
+    EnvAddClearFunction(environment, "regex-clear", RegexCacheClear, 0);
+#endif
 
   }
