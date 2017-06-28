@@ -1,0 +1,12 @@
+(unwatch all)
+(clear)
+(set-strategy depth)
+(open "Results//rgxfun.rsl" rgxfun "w")
+(dribble-on "Actual//rgxfun.out")
+(batch "rgxfun.bat")
+(dribble-off)
+(load "compline.clp")
+(printout rgxfun "rgxfun.bat differences are as follows:" crlf)
+(compare-files "Expected//rgxfun.out" "Actual//rgxfun.out" rgxfun)
+; close result file
+(close rgxfun)
