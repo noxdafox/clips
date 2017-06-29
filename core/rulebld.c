@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.31  03/17/16            */
+   /*             CLIPS Version 6.31  06/28/17            */
    /*                                                     */
    /*                  RULE BUILD MODULE                  */
    /*******************************************************/
@@ -31,6 +31,9 @@
 /*            Added support for hashed memories.             */
 /*                                                           */
 /*      6.31: Fix for nand crash                             */
+/*                                                           */
+/*            DR#882 Logical retraction not working if       */
+/*            logical CE starts with test CE.                */
 /*                                                           */
 /*************************************************************/
 
@@ -69,7 +72,6 @@
                                                    struct expr *,struct expr *);
    static struct joinNode        *CreateNewJoin(void *,struct expr *,struct expr *,struct joinNode *,void *,
                                                 int,int,int,struct expr *,struct expr *);
-   static void                    AttachTestCEsToPatternCEs(void *,struct lhsParseNode *);
 
 /****************************************************************/
 /* ConstructJoins: Integrates a set of pattern and join tests   */
@@ -99,15 +101,6 @@ globle struct joinNode *ConstructJoins(
    int joinFromTheRight;
    struct joinLink *theLinks;
    intBool useLinks;
-
-   /*===================================================*/
-   /* Remove any test CEs from the LHS and attach their */
-   /* expression to the closest preceeding non-negated  */
-   /* join at the same not/and depth.                   */
-   /*===================================================*/
-
-   if (startDepth == 1)
-     { AttachTestCEsToPatternCEs(theEnv,theLHS); }
 
    if (theLHS == NULL)
      {
@@ -354,7 +347,7 @@ globle struct joinNode *ConstructJoins(
 /*   test CEs to the closest preceeding pattern CE that is not  */
 /*   negated and is at the same not/and depth.                  */
 /****************************************************************/
-static void AttachTestCEsToPatternCEs(
+globle void AttachTestCEsToPatternCEs(
   void *theEnv,
   struct lhsParseNode *theLHS)
   {

@@ -829,5 +829,22 @@ CLIPS>
                     (LVAR three ?three)
                     (test (eq ?Surname_3 ?three))))))
 =>)
+CLIPS> (clear) ; DR0882
+CLIPS> 
+(defrule foo
+   (logical (test (> 4 3))
+            (a))
+   =>
+   (assert (b)))
+CLIPS> (watch facts)
+CLIPS> (assert (a))
+==> f-1     (a)
+<Fact-1>
+CLIPS> (run)
+==> f-2     (b)
+CLIPS> (retract 1)
+<== f-1     (a)
+<== f-2     (b)
+CLIPS> (unwatch facts) 
 CLIPS> (clear)
 CLIPS> (dribble-off)

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  01/25/15            */
+   /*             CLIPS Version 6.31  06/28/17            */
    /*                                                     */
    /*                 RULE PARSING MODULE                 */
    /*******************************************************/
@@ -35,6 +35,9 @@
 /*            Changed find construct functionality so that   */
 /*            imported modules are search when locating a    */
 /*            named construct.                               */
+/*                                                           */
+/*      6.31: DR#882 Logical retraction not working if       */
+/*            logical CE starts with test CE.                */
 /*                                                           */
 /*************************************************************/
 
@@ -359,18 +362,6 @@ static struct defrule *ProcessRuleLHS(
         { DumpRuleAnalysis(theEnv,tempNode); }
 #endif
 
-      /*========================================*/
-      /* Check to see that logical CEs are used */
-      /* appropriately in the LHS of the rule.  */
-      /*========================================*/
-
-      if ((logicalJoin = LogicalAnalysis(theEnv,tempNode)) < 0)
-        {
-         *error = TRUE;
-         ReturnDefrule(theEnv,topDisjunct);
-         return(NULL);
-        }
-
       /*======================================================*/
       /* Check to see if there are any RHS constraint errors. */
       /*======================================================*/
@@ -390,6 +381,27 @@ static struct defrule *ProcessRuleLHS(
       newActions = CopyExpression(theEnv,actions);
       if (ReplaceProcVars(theEnv,"RHS of defrule",newActions,NULL,NULL,
                           ReplaceRHSVariable,(void *) tempNode))
+        {
+         *error = TRUE;
+         ReturnDefrule(theEnv,topDisjunct);
+         ReturnExpression(theEnv,newActions);
+         return(NULL);
+        }
+
+      /*===================================================*/
+      /* Remove any test CEs from the LHS and attach their */
+      /* expression to the closest preceeding non-negated  */
+      /* join at the same not/and depth.                   */
+      /*===================================================*/
+
+      AttachTestCEsToPatternCEs(theEnv,tempNode);
+      
+      /*========================================*/
+      /* Check to see that logical CEs are used */
+      /* appropriately in the LHS of the rule.  */
+      /*========================================*/
+
+      if ((logicalJoin = LogicalAnalysis(theEnv,tempNode)) < 0)
         {
          *error = TRUE;
          ReturnDefrule(theEnv,topDisjunct);
@@ -765,7 +777,9 @@ static int LogicalAnalysis(
       /* or is embedded within a not/and CE.   */
       /*=======================================*/
 
-      if ((patternList->type != PATTERN_CE) || (patternList->endNandDepth != 1))
+      if (((patternList->type != PATTERN_CE) &&
+           (patternList->type != TEST_CE)) ||
+          (patternList->endNandDepth != 1))
         { continue; }
 
       /*=====================================================*/

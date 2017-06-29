@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*             CLIPS Version 6.31  06/28/17            */
    /*                                                     */
    /*               RULE BUILD HEADER FILE                */
    /*******************************************************/
@@ -30,6 +30,9 @@
 /*                                                           */
 /*            Added support for hashed memories.             */
 /*                                                           */
+/*      6.31: DR#882 Logical retraction not working if       */
+/*            logical CE starts with test CE.                */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_rulebld
@@ -54,6 +57,7 @@
 #endif
 
    LOCALE struct joinNode               *ConstructJoins(void *,int,struct lhsParseNode *,int,struct joinNode *,int,int);
+   LOCALE void                           AttachTestCEsToPatternCEs(void *,struct lhsParseNode *);
 
 #endif /* _H_rulebld */
 
