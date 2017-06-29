@@ -441,4 +441,16 @@
                     (LVAR three ?three)
                     (test (eq ?Surname_3 ?three))))))
 =>)
+(clear) ; DR0882
+
+(defrule foo
+   (logical (test (> 4 3))
+            (a))
+   =>
+   (assert (b)))
+(watch facts)
+(assert (a))
+(run)
+(retract 1)
+(unwatch facts) 
 (clear)
