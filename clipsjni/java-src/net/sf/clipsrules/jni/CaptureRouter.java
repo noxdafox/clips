@@ -1,6 +1,6 @@
 package net.sf.clipsrules.jni;
 
-public class CaptureRouter extends NamedRouter
+public class CaptureRouter extends BaseRouter
   {   
    private String captureString = "";
    private boolean forwardOutput = false;

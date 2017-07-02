@@ -448,10 +448,9 @@ public class RouterTextArea extends JTextArea
    /* exit: */
    /*********/
    @Override
-   public boolean exit(
-     int exitCode)
+   public void exit(
+     boolean failure)
      {      
-      return true;
      }
      
    /*#####################*/

@@ -6,6 +6,7 @@ JNI_DST = $(JNI_BIN)\$(JNI_CP)
 JNI_FILES = \
 	$(JNI_SRC)\Activation.java \
 	$(JNI_SRC)\Agenda.java \
+	$(JNI_SRC)\BaseRouter.java \
 	$(JNI_SRC)\CaptureRouter.java \
 	$(JNI_SRC)\CLIPSException.java \
 	$(JNI_SRC)\Focus.java \
@@ -28,7 +29,6 @@ JNI_FILES = \
 	$(JNI_SRC)\LexemeValue.java \
 	$(JNI_SRC)\Module.java \
 	$(JNI_SRC)\MultifieldValue.java \
-	$(JNI_SRC)\NamedRouter.java \
 	$(JNI_SRC)\NumberValue.java \
 	$(JNI_SRC)\PeriodicCallback.java \
 	$(JNI_SRC)\PrimitiveValue.java \

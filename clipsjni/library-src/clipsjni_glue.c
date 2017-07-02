@@ -169,9 +169,27 @@ void ExitJNIRouter(
 #if MAC_XCD
 #pragma unused(num)
 #endif
-#if MAC_XCD
-#pragma unused(theEnv)
-#endif
+   
+   jobject context;
+   JNIEnv *env;
+   jmethodID mid;
+   jclass cls;
+
+   env = (JNIEnv *) GetEnvironmentContext(theEnv);
+
+   context = vcontext;
+
+   cls = (*env)->GetObjectClass(env,context);
+
+   mid = (*env)->GetMethodID(env,cls,"exit","(Z)V");
+
+   (*env)->DeleteLocalRef(env,cls);
+
+   if (mid == NULL)
+     { return; }
+
+   (*env)->CallBooleanMethod(env,context,mid);
+
    /* TBD deallocate global context reference */
   }
 
