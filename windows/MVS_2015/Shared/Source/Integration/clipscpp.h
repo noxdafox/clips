@@ -72,6 +72,8 @@ class CLIPSCPPEnv
       bool RemoveUserFunction(char *);
       bool AddRouter(char *,int,CLIPSCPPRouter *);
       bool DeleteRouter(char *);
+      bool ActivateRouter(char *);
+      bool DeactivateRouter(char *);
       bool AddPeriodicFunction(char *,int,CLIPSCPPPeriodicFunction *);
       bool RemovePeriodicFunction(char *);
       bool EnablePeriodicFunctions(bool);

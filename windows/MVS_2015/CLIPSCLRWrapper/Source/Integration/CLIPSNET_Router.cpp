@@ -62,7 +62,7 @@ namespace CLIPSNET
 
    int CLIPSCPPRouterBridge::Ungetc(
      CLIPSCPPEnv *theCPPEnv,
-	  int theChar,
+	 int theChar,
      const char *logicalName)
      {
       String ^ cliLogicalName = CharStarToString(logicalName);
@@ -75,7 +75,16 @@ namespace CLIPSNET
    /*######################*/
 
    Router::Router() 
-     { m_RouterBridge = new CLIPSCPPRouterBridge(this); }
+     { 
+      m_RouterBridge = new CLIPSCPPRouterBridge(this); 
+     }
+
+   Router::Router(
+     String ^ theRouterName)
+     {
+      m_RouterBridge = new CLIPSCPPRouterBridge(this);
+      routerName = theRouterName;
+     }
 
    Router::~Router()
      { this->!Router(); }
@@ -90,11 +99,106 @@ namespace CLIPSNET
      { return -1; }
 
    int Router::Ungetc(String ^ logicalName,int theChar)
-     { return 0; }
+     { return -1; }
 
    CLIPSCPPRouterBridge *Router::RouterBridge()
      { return m_RouterBridge; }
 
    Router::!Router()
      { delete m_RouterBridge; }
+
+   /*##########################*/
+   /* BaseRouter class methods */
+   /*##########################*/
+   
+   BaseRouter::BaseRouter(
+     CLIPSNET::Environment ^ theEnv,
+     array<String ^> ^ theQueryNames) : BaseRouter(theEnv, theQueryNames, 0)
+     {
+     }
+
+   BaseRouter::BaseRouter(
+     CLIPSNET::Environment ^ theEnv,
+     array<String ^> ^ theQueryNames,
+     int thePriority) : BaseRouter(theEnv, theQueryNames, thePriority, 
+                                   gcnew String("BaseRouter" + BaseRouterNameIndex++))
+     {
+     }
+
+   BaseRouter::BaseRouter(
+     CLIPSNET::Environment ^ theEnv,
+     array<String ^> ^ theQueryNames,
+     int thePriority,
+     String ^ theRouterName) : Router(theRouterName)
+     {
+      clips = theEnv;
+      queryNames = theQueryNames;
+      priority = thePriority;
+      clips->AddRouter(theRouterName,priority,this);
+     }
+
+   BaseRouter::~BaseRouter()
+     {
+      this->!BaseRouter();
+     }
+
+   BaseRouter::!BaseRouter()
+     {
+     }
+
+   bool BaseRouter::Query(String ^ logicalName)
+     {
+      for each (String ^ name in queryNames)
+        {
+         if (name->Equals(logicalName))
+           { return true; }
+        }
+
+      return false;
+     }
+
+   /*#############################*/
+   /* CaptureRouter class methods */
+   /*#############################*/
+   CaptureRouter::CaptureRouter(
+     CLIPSNET::Environment ^ theEnv,
+     array<String ^> ^ theCaptureNames) : BaseRouter(theEnv,theCaptureNames,30)
+     {
+      captureString = gcnew String("");
+     }
+
+   CaptureRouter::CaptureRouter(
+     CLIPSNET::Environment ^ theEnv,
+     array<String ^> ^ theCaptureNames,
+     bool shouldForwardOutput) : BaseRouter(theEnv, theCaptureNames, 30)
+     {
+      captureString = gcnew String("");
+      forwardOutput = shouldForwardOutput;
+     }
+
+   CaptureRouter::~CaptureRouter()
+     {
+      this->!CaptureRouter();
+     }
+
+   CaptureRouter::!CaptureRouter()
+     {
+     }
+
+   void CaptureRouter::Clear()
+     {
+      captureString = gcnew String("");
+     }
+
+   void CaptureRouter::Print(
+     String ^ logicalName,
+     String ^ printString)
+     {
+      //captureString = captureString->Concat(printString);
+      captureString = captureString + printString;
+      if (forwardOutput)
+        {
+         clips->CallNextPrintRouter(this,logicalName,printString);
+        }
+     }
   };

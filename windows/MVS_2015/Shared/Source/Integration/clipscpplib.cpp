@@ -270,9 +270,12 @@ DataObject CLIPSCPPEnv::Eval(
 
    if (rc == 0)
      {
+     /*
       std::string excStr = "Eval: Invalid expression ";
       excStr.append(evalString);
       throw std::logic_error(excStr); 
+      */
+      return NULL;
      }
      
    return ConvertDataObject(&rv);
@@ -838,7 +841,33 @@ bool CLIPSCPPEnv::DeleteRouter(
    return __DeleteRouter(theEnv,routerName);
 #endif
   }
-    
+
+/******************/
+/* ActivateRouter */
+/******************/
+bool CLIPSCPPEnv::ActivateRouter(
+    char *routerName)
+  {
+#ifndef CLIPS_DLL_WRAPPER
+    return ::ActivateRouter(theEnv, routerName);
+#else
+    return __ActivateRouter(theEnv, routerName);
+#endif
+  }
+
+/********************/
+/* DeactivateRouter */
+/********************/
+bool CLIPSCPPEnv::DeactivateRouter(
+  char *routerName)
+  {
+#ifndef CLIPS_DLL_WRAPPER
+    return ::DeactivateRouter(theEnv, routerName);
+#else
+    return __DeactivateRouter(theEnv, routerName);
+#endif
+  }
+
 /***********************/
 /* AddPeriodicFunction */
 /***********************/

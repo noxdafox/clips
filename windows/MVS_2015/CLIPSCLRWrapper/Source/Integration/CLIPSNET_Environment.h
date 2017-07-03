@@ -16,6 +16,7 @@ using namespace CLIPS;
 
 namespace CLIPSNET
   {
+   ref class Router;
    public delegate void PeriodicCallbackDelegate();
 
    /*######################################*/
@@ -61,6 +62,8 @@ namespace CLIPSNET
         PrimitiveValue ^ Eval(String ^);
         void AddRouter(String ^,int ,Router ^);
         void DeleteRouter(String ^);
+        bool ActivateRouter(Router ^);
+        bool DeactivateRouter(Router ^);
         void AddPeriodicCallback(String ^,int ,PeriodicCallback ^);
         void RemovePeriodicCallback(String ^);
         bool EnablePeriodicFunctions(bool);
@@ -100,6 +103,7 @@ namespace CLIPSNET
         bool GetWatchItem(String ^);
         void SetWatchItem(String ^,bool);
         virtual String^ ToString() override;
+        void CallNextPrintRouter(Router ^,String ^,String ^);
 
       protected:
         !Environment();

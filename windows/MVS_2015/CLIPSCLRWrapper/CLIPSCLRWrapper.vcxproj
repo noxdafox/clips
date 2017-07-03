@@ -330,6 +330,7 @@
     <ClCompile Include="Source\Integration\CLIPSNET_Activation.cpp" />
     <ClCompile Include="Source\Integration\CLIPSNET_Agenda.cpp" />
     <ClCompile Include="Source\Integration\CLIPSNET_Environment.cpp" />
+    <ClCompile Include="Source\Integration\CLIPSNET_Exceptions.cpp" />
     <ClCompile Include="Source\Integration\CLIPSNET_FactInstance.cpp" />
     <ClCompile Include="Source\Integration\CLIPSNET_Focus.cpp" />
     <ClCompile Include="Source\Integration\CLIPSNET_FocusStack.cpp" />
@@ -518,6 +519,7 @@
     <ClInclude Include="Source\Integration\CLIPSNET_Activation.h" />
     <ClInclude Include="Source\Integration\CLIPSNET_Agenda.h" />
     <ClInclude Include="Source\Integration\CLIPSNET_Environment.h" />
+    <ClInclude Include="Source\Integration\CLIPSNET_Exceptions.h" />
     <ClInclude Include="Source\Integration\CLIPSNET_FactInstance.h" />
     <ClInclude Include="Source\Integration\CLIPSNET_Focus.h" />
     <ClInclude Include="Source\Integration\CLIPSNET_FocusStack.h" />

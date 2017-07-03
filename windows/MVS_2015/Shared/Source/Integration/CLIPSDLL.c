@@ -103,6 +103,20 @@ bool __declspec(dllexport) __DeleteRouter(
    return DeleteRouter(theEnv,name);
   }
 
+bool __declspec(dllexport) __ActivateRouter(
+  Environment *theEnv,
+  const char *name)
+  {
+   return ActivateRouter(theEnv, name);
+  }
+
+bool __declspec(dllexport) __DeactivateRouter(
+  Environment *theEnv,
+  const char *name)
+  {
+   return DeactivateRouter(theEnv, name);
+  }
+
 char __declspec(dllexport) * __GetCommandString(
   Environment *theEnv)
   {

@@ -1,5 +1,6 @@
 
 #include "CLIPSNET_Environment.h"
+#include "CLIPSNET_Exceptions.h"
 #include "CLIPSNET_Router.h"
 
 using namespace System;
@@ -84,14 +85,18 @@ namespace CLIPSNET
    /* Run */
    /*******/
    long long Environment::Run()
-     { return m_Env->Run(-1LL); }
+     { 
+      return m_Env->Run(-1LL); 
+     }
 
    /*******/
    /* Run */
    /*******/
    long long Environment::Run(
      long long runLimit)
-     { return m_Env->Run(runLimit); }
+     { 
+      return m_Env->Run(runLimit); 
+     }
 
    /*********/
    /* Reset */
@@ -172,13 +177,23 @@ namespace CLIPSNET
      {
       PrimitiveValue ^ rv;
       array<Byte>^ ebEvalString = Encoding::UTF8->GetBytes(evalString);
+
+      CaptureRouter ^ commandCapture = 
+         gcnew CaptureRouter(this,gcnew array<String ^> (1) { Router::ERROR });
+
       if (ebEvalString->Length)
         {
          pin_ptr<Byte> pbEvalString = &ebEvalString[0];
          rv = DataObjectToPrimitiveValue(m_Env->Eval((char *) pbEvalString));
         }
       else
-        {  rv = DataObjectToPrimitiveValue(m_Env->Eval("")); }
+        { rv = DataObjectToPrimitiveValue(m_Env->Eval("")); }
+
+      String ^ error = commandCapture->Output;
+      this->DeleteRouter(commandCapture->Name);
+
+      if (! String::IsNullOrEmpty(error))
+        { throw gcnew CLIPSException(error); }
 
       return rv;
      }
@@ -914,6 +929,53 @@ namespace CLIPSNET
 
       PrintString(logicalName,printString);
       PrintString(logicalName,crlf);
+     }
+
+   /************************/
+   /* CallNextPrintRouter: */
+   /************************/
+   void Environment::CallNextPrintRouter(
+     Router ^ theRouter,
+     String ^ logName,
+     String ^ printString)
+     {
+      DeactivateRouter(theRouter);
+      PrintString(logName,printString);
+      ActivateRouter(theRouter);
+     }
+
+   /*******************/
+   /* ActivateRouter: */
+   /*******************/
+   bool Environment::ActivateRouter(
+     Router ^ theRouter)
+     {
+      array<Byte>^ ebRouterName = Encoding::UTF8->GetBytes(theRouter->Name);
+
+      if (ebRouterName->Length)
+        {
+         pin_ptr<Byte> pbRouterName = &ebRouterName[0];
+         return m_Env->ActivateRouter((char *) pbRouterName);
+        }
+  
+      return false;
+     }
+
+   /*******************/
+   /* DeactivateRouter: */
+   /*******************/
+   bool Environment::DeactivateRouter(
+     Router ^ theRouter)
+     {
+      array<Byte>^ ebRouterName = Encoding::UTF8->GetBytes(theRouter->Name);
+
+      if (ebRouterName->Length)
+        {
+         pin_ptr<Byte> pbRouterName = &ebRouterName[0];
+         return m_Env->DeactivateRouter((char *)pbRouterName);
+        }
+
+      return false;
      }
   };
 
