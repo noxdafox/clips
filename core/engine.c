@@ -193,6 +193,7 @@ long long Run(
    struct trackedMemory *theTM;
    int danglingConstructs;
    GCBlock gcb;
+   bool error = false;
 
    /*=====================================================*/
    /* Make sure the run command is not already executing. */
@@ -380,6 +381,7 @@ long long Run(
       EndProfile(theEnv,&profileFrame);
 #endif
 
+      error = GetEvaluationError(theEnv);
       EngineData(theEnv)->ExecutingRule->executing = false;
       SetEvaluationError(theEnv,false);
       EvaluationData(theEnv)->CurrentEvaluationDepth--;
@@ -420,10 +422,22 @@ long long Run(
 #endif
 
         {
-         PrintErrorID(theEnv,"PRCCODE",4,false);
-         PrintString(theEnv,WERROR,"Execution halted during the actions of defrule ");
-         PrintString(theEnv,WERROR,ruleFiring);
-         PrintString(theEnv,WERROR,".\n");
+         const char *logName;
+
+         if (error)
+           {
+            PrintErrorID(theEnv,"PRCCODE",4,false);
+            logName = WERROR;
+           }
+         else
+           {
+            PrintWarningID(theEnv,"PRCCODE",4,false);
+            logName = WWARNING;
+           }
+
+         PrintString(theEnv,logName,"Execution halted during the actions of defrule ");
+         PrintString(theEnv,logName,ruleFiring);
+         PrintString(theEnv,logName,".\n");
         }
 
       /*===================================================*/

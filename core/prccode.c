@@ -692,7 +692,7 @@ void PushProcParameters(
   unsigned int numberOfParameters,
   const char *pname,
   const char *bodytype,
-  void (*UnboundErrFunc)(Environment *))
+  void (*UnboundErrFunc)(Environment *,const char *))
   {
    PROC_PARAM_STACK *ptmp;
 
@@ -889,7 +889,7 @@ void EvaluateProcActions(
   Expression *actions,
   unsigned short lvarcnt,
   UDFValue *returnValue,
-  void (*crtproc)(Environment *))
+  void (*crtproc)(Environment *,const char *))
   {
    UDFValue *oldLocalVarArray;
    unsigned short i;
@@ -925,10 +925,22 @@ void EvaluateProcActions(
      SetCurrentModule(theEnv,oldModule);
    if ((crtproc != NULL) ? EvaluationData(theEnv)->HaltExecution : false)
      {
-      PrintErrorID(theEnv,"PRCCODE",4,false);
-      PrintString(theEnv,WERROR,"Execution halted during the actions of ");
-      (*crtproc)(theEnv);
+      const char *logName;
+
+      if (GetEvaluationError(theEnv))
+        {
+         PrintErrorID(theEnv,"PRCCODE",4,false);
+         logName = WERROR;
+        }
+      else
+        {
+         PrintWarningID(theEnv,"PRCCODE",4,false);
+         logName = WWARNING;
+        }
+      PrintString(theEnv,logName,"Execution halted during the actions of ");
+      (*crtproc)(theEnv,logName);
      }
+
    if ((ProceduralPrimitiveData(theEnv)->WildcardValue != NULL) ? (returnValue->value == ProceduralPrimitiveData(theEnv)->WildcardValue->value) : false)
      {
       DecrementMultifieldReferenceCount(theEnv,ProceduralPrimitiveData(theEnv)->WildcardValue->multifieldValue);
@@ -1202,7 +1214,7 @@ static bool GetProcBind(
       if (ProceduralPrimitiveData(theEnv)->ProcUnboundErrFunc != NULL)
         {
          PrintString(theEnv,WERROR," unbound in ");
-         (*ProceduralPrimitiveData(theEnv)->ProcUnboundErrFunc)(theEnv);
+         (*ProceduralPrimitiveData(theEnv)->ProcUnboundErrFunc)(theEnv,WERROR);
         }
       else
         PrintString(theEnv,WERROR," unbound.\n");

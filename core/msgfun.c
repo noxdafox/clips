@@ -94,10 +94,11 @@
   NOTES        : None
  ********************************************************/
 void UnboundHandlerErr(
-  Environment *theEnv)
+  Environment *theEnv,
+  const char *logName)
   {
-   PrintString(theEnv,WERROR,"message-handler ");
-   PrintHandler(theEnv,WERROR,MessageHandlerData(theEnv)->CurrentCore->hnd,true);
+   PrintString(theEnv,logName,"message-handler ");
+   PrintHandler(theEnv,logName,MessageHandlerData(theEnv)->CurrentCore->hnd,true);
   }
 
 /*****************************************************************

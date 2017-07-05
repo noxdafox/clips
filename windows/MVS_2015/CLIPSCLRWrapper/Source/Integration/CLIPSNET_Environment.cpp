@@ -81,28 +81,38 @@ namespace CLIPSNET
    void Environment::PrintPrompt()
      { return m_Env->PrintPrompt(); }
 
-   /*******/
-   /* Run */
-   /*******/
-   long long Environment::Run()
-     { 
-      return m_Env->Run(-1LL); 
+   /****************/
+   /* CaptureStart */
+   /****************/
+   CaptureRouter ^ Environment::CaptureStart()
+     {
+      return gcnew CaptureRouter(this,gcnew array<String ^> (1) { Router::ERROR });
      }
 
-   /*******/
-   /* Run */
-   /*******/
-   long long Environment::Run(
-     long long runLimit)
-     { 
-      return m_Env->Run(runLimit); 
-     }
+   /**************/
+   /* CaptureEnd */
+   /**************/
+   void Environment::CaptureEnd(
+     CaptureRouter ^ commandCapture)
+     {
+      String ^ error = commandCapture->Output;
+      this->DeleteRouter(commandCapture->Name);
 
+      if (! String::IsNullOrEmpty(error))
+        { throw gcnew CLIPSException(error); }
+     }
+     
    /*********/
-   /* Reset */
+   /* Clear */
    /*********/
-   void Environment::Reset()
-     { return m_Env->Reset(); }
+   void Environment::Clear()
+     { 
+      CaptureRouter ^ commandCapture = CaptureStart();
+
+      m_Env->Clear();
+
+      CaptureEnd(commandCapture);
+     }
 
    /********/
    /* Load */
@@ -160,6 +170,9 @@ namespace CLIPSNET
      String ^ buildString)
      {
       array<Byte>^ ebBuildString = Encoding::UTF8->GetBytes(buildString);
+      
+      CaptureRouter ^ commandCapture = CaptureStart();
+
       if (ebBuildString->Length)
         {
          pin_ptr<Byte> pbBuildString = &ebBuildString[0];
@@ -167,8 +180,231 @@ namespace CLIPSNET
         }
       else
         { return m_Env->Build(""); }
+
+      CaptureEnd(commandCapture);
+     }
+
+   /*********/
+   /* Reset */
+   /*********/
+   void Environment::Reset()
+     {
+      CaptureRouter ^ commandCapture = CaptureStart();
+
+      m_Env->Reset(); 
+      
+      CaptureEnd(commandCapture);
+     }
+
+   /*******/
+   /* Run */
+   /*******/
+   long long Environment::Run()
+     { 
+      long long rv;
+
+      CaptureRouter ^ commandCapture = CaptureStart();
+
+      rv = m_Env->Run(-1LL); 
+
+      CaptureEnd(commandCapture);
+
+      return rv;
+     }
+
+   /*******/
+   /* Run */
+   /*******/
+   long long Environment::Run(
+     long long runLimit)
+     { 
+      long long rv;
+
+      CaptureRouter ^ commandCapture = CaptureStart();
+
+      rv = m_Env->Run(runLimit); 
+
+      CaptureEnd(commandCapture);
+
+      return rv;
+     }
+
+   /****************/
+   /* AssertString */
+   /****************/
+   FactAddressValue ^ Environment::AssertString(
+     String ^ factString)
+     {
+      CLIPS::FactAddressValue *frv;
+      array<Byte>^ ebFactString = Encoding::UTF8->GetBytes(factString);
+      
+      CaptureRouter ^ commandCapture = CaptureStart();
+
+      if (ebFactString->Length)
+        {
+         pin_ptr<Byte> pbFactString = &ebFactString[0];
+         frv = m_Env->AssertString((char *) pbFactString);
+        }
+      else
+        { frv = m_Env->AssertString(""); }
+
+      CaptureEnd(commandCapture);
+
+      if (frv == NULL) return (nullptr);
+      
+      return gcnew FactAddressValue(frv);
+     }
+
+   /****************/
+   /* MakeInstance */
+   /****************/
+   InstanceAddressValue ^ Environment::MakeInstance(
+     String ^ instanceString)
+     {
+      CLIPS::InstanceAddressValue *irv;
+      array<Byte>^ ebInstanceString = Encoding::UTF8->GetBytes(instanceString);
+      
+      CaptureRouter ^ commandCapture = CaptureStart();
+
+      if (ebInstanceString->Length)
+        {
+         pin_ptr<Byte> pbInstanceString = &ebInstanceString[0];
+         irv = m_Env->MakeInstance((char *) pbInstanceString);
+        }
+      else
+        { irv = m_Env->MakeInstance(""); }
+
+      CaptureEnd(commandCapture);
+
+      if (irv == NULL) return (nullptr);
+      
+      return gcnew InstanceAddressValue(irv);
+     }
+
+   /************/
+   /* FindFact */
+   /************/
+   FactAddressValue ^ Environment::FindFact(
+     String ^ deftemplate)
+     {
+      return FindFact("?f",deftemplate,"TRUE");
+     }
+
+   FactAddressValue ^ Environment::FindFact(
+     String ^ variable,
+     String ^ deftemplate,
+     String ^ condition)
+     {      
+      String ^ query = "(find-fact " + 
+                         "((" + variable + " " + deftemplate + ")) " + condition + ")";
+
+      PrimitiveValue ^ pv = Eval(query);
+
+      if (! pv->IsMultifield())
+        { return nullptr; }
+
+      MultifieldValue ^ mv = (MultifieldValue ^) pv;
+
+      if (mv->Count == 0)
+        { return nullptr; }
+
+      return (FactAddressValue ^) mv[0];
+     }
+
+   /****************/
+   /* FindAllFacts */
+   /****************/
+   List<FactAddressValue ^> ^ Environment::FindAllFacts(
+     String ^ deftemplate)
+     {
+      return FindAllFacts("?f",deftemplate,"TRUE");
+     }
+
+   List<FactAddressValue ^> ^ Environment::FindAllFacts(
+     String ^ variable,
+     String ^ deftemplate,
+     String ^ condition)
+     {
+      String ^ query = "(find-all-facts " + 
+                         "((" + variable + " " + deftemplate + ")) " + condition + ")";
+
+      PrimitiveValue ^ pv = Eval(query);
+
+      if (! pv->IsMultifield())
+        { return nullptr; }
+
+      MultifieldValue ^ mv = (MultifieldValue ^) pv;
+     
+      List<FactAddressValue ^> ^ rv = gcnew List<FactAddressValue ^>(mv->Count);
+      
+      for each (FactAddressValue ^ theValue in mv)
+        { rv->Add(theValue); }
+
+      return rv;
      }
      
+   /****************/
+   /* FindInstance */
+   /****************/
+   InstanceAddressValue ^ Environment::FindInstance(
+     String ^ defclass)
+     {
+      return FindInstance("?i",defclass,"TRUE");
+     }
+
+   InstanceAddressValue ^ Environment::FindInstance(
+     String ^ variable,
+     String ^ defclass,
+     String ^ condition)
+     {      
+      String ^ query = "(find-instance " + 
+                         "((" + variable + " " + defclass + ")) " + condition + ")";
+
+      PrimitiveValue ^ pv = Eval(query);
+
+      if (! pv->IsMultifield())
+        { return nullptr; }
+
+      MultifieldValue ^ mv = (MultifieldValue ^) pv;
+
+      if (mv->Count == 0)
+        { return nullptr; }
+
+      return ((InstanceNameValue ^) mv[0])->GetInstance(this);
+     }
+
+   /********************/
+   /* FindAllInstances */
+   /********************/
+   List<InstanceAddressValue ^> ^ Environment::FindAllInstances(
+     String ^ defclass)
+     {
+      return FindAllInstances("?i",defclass,"TRUE");
+     }
+
+   List<InstanceAddressValue ^> ^ Environment::FindAllInstances(
+     String ^ variable,
+     String ^ defclass,
+     String ^ condition)
+     {
+      String ^ query = "(find-all-instances " + 
+                         "((" + variable + " " + defclass + ")) " + condition + ")";
+
+      PrimitiveValue ^ pv = Eval(query);
+
+      if (! pv->IsMultifield())
+        { return nullptr; }
+
+      MultifieldValue ^ mv = (MultifieldValue ^) pv;
+     
+      List<InstanceAddressValue ^> ^ rv = gcnew List<InstanceAddressValue ^>(mv->Count);
+      
+      for each (InstanceNameValue ^ theValue in mv)
+        { rv->Add(theValue->GetInstance(this)); }
+
+      return rv;
+     }
+
    /********/
    /* Eval */
    /********/
@@ -178,8 +414,7 @@ namespace CLIPSNET
       PrimitiveValue ^ rv;
       array<Byte>^ ebEvalString = Encoding::UTF8->GetBytes(evalString);
 
-      CaptureRouter ^ commandCapture = 
-         gcnew CaptureRouter(this,gcnew array<String ^> (1) { Router::ERROR });
+      CaptureRouter ^ commandCapture = CaptureStart();
 
       if (ebEvalString->Length)
         {
@@ -189,36 +424,11 @@ namespace CLIPSNET
       else
         { rv = DataObjectToPrimitiveValue(m_Env->Eval("")); }
 
-      String ^ error = commandCapture->Output;
-      this->DeleteRouter(commandCapture->Name);
-
-      if (! String::IsNullOrEmpty(error))
-        { throw gcnew CLIPSException(error); }
+      CaptureEnd(commandCapture);
 
       return rv;
      }
-     
-   /****************/
-   /* AssertString */
-   /****************/
-   FactAddressValue ^ Environment::AssertString(
-     String ^ factString)
-     {
-      CLIPS::FactAddressValue *frv;
-      array<Byte>^ ebFactString = Encoding::UTF8->GetBytes(factString);
-      if (ebFactString->Length)
-        {
-         pin_ptr<Byte> pbFactString = &ebFactString[0];
-         frv = m_Env->AssertString((char *) pbFactString);
-        }
-      else
-        { frv = m_Env->AssertString(""); }
-
-      if (frv == NULL) return (nullptr);
-      
-      return gcnew FactAddressValue(frv);
-     }
-     
+ 
    /*********/
    /* Watch */
    /*********/
@@ -810,8 +1020,8 @@ namespace CLIPSNET
       size_t i;
       std::vector<CLIPSCPPActivation *> *v;
       std::string *theCPPRuleName, *theCPPBasis;
-	   const char *theCRuleName, *theCBasis;
-	   List<Activation ^> ^ theList;
+      const char *theCRuleName, *theCBasis;
+      List<Activation ^> ^ theList;
 
       if (ebModuleNameString->Length == 0) return nullptr;
       pbModuleNameString = &ebModuleNameString[0];
@@ -826,9 +1036,9 @@ namespace CLIPSNET
         {
          theCPPActivation = v->at(i);
          theCPPRuleName = theCPPActivation->GetRuleName();
-		   theCRuleName = theCPPRuleName->c_str();
+		 theCRuleName = theCPPRuleName->c_str();
          theCPPBasis = theCPPActivation->GetBasis();
-		   theCBasis = theCPPBasis->c_str();
+		 theCBasis = theCPPBasis->c_str();
          theList->Add(gcnew Activation(gcnew String(theCRuleName),theCPPActivation->GetSalience(),gcnew String(theCBasis)));
         }
 
@@ -961,9 +1171,9 @@ namespace CLIPSNET
       return false;
      }
 
-   /*******************/
+   /*********************/
    /* DeactivateRouter: */
-   /*******************/
+   /*********************/
    bool Environment::DeactivateRouter(
      Router ^ theRouter)
      {
@@ -972,13 +1182,33 @@ namespace CLIPSNET
       if (ebRouterName->Length)
         {
          pin_ptr<Byte> pbRouterName = &ebRouterName[0];
-         return m_Env->DeactivateRouter((char *)pbRouterName);
+         return m_Env->DeactivateRouter((char *) pbRouterName);
         }
 
       return false;
      }
+
+   /***********************/
+   /* FindInstanceByName: */
+   /***********************/
+   InstanceAddressValue ^ Environment::FindInstanceByName(
+     String ^ theInstanceName)
+     {
+      array<Byte>^ ebInstanceName = Encoding::UTF8->GetBytes(theInstanceName);
+      
+      if (ebInstanceName->Length)
+        {
+         pin_ptr<Byte> pbInstanceName = &ebInstanceName[0];
+
+         CLIPS::InstanceAddressValue *ins = m_Env->FindInstanceByName((char *) pbInstanceName);
+
+         InstanceAddressValue ^ rv =  gcnew InstanceAddressValue(ins);
+
+         delete ins;
+         
+         return rv;
+        }
+
+      return nullptr;
+     }
   };
-
-
-
-  	  

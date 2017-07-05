@@ -277,13 +277,14 @@ void GenericDispatch(
   NOTES        : None
  *******************************************************/
 void UnboundMethodErr(
-  Environment *theEnv)
+  Environment *theEnv,
+  const char *logName)
   {
-   PrintString(theEnv,WERROR,"generic function ");
-   PrintString(theEnv,WERROR,DefgenericName(DefgenericData(theEnv)->CurrentGeneric));
-   PrintString(theEnv,WERROR," method #");
-   PrintUnsignedInteger(theEnv,WERROR,DefgenericData(theEnv)->CurrentMethod->index);
-   PrintString(theEnv,WERROR,".\n");
+   PrintString(theEnv,logName,"generic function ");
+   PrintString(theEnv,logName,DefgenericName(DefgenericData(theEnv)->CurrentGeneric));
+   PrintString(theEnv,logName," method #");
+   PrintUnsignedInteger(theEnv,logName,DefgenericData(theEnv)->CurrentMethod->index);
+   PrintString(theEnv,logName,".\n");
   }
 
 /***********************************************************************

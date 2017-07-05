@@ -17,6 +17,7 @@ using namespace CLIPS;
 namespace CLIPSNET
   {
    ref class Router;
+   ref class CaptureRouter;
    public delegate void PeriodicCallbackDelegate();
 
    /*######################################*/
@@ -44,10 +45,30 @@ namespace CLIPSNET
         event PeriodicCallbackDelegate ^ PeriodicCallbackEvent;
 
         void CommandLoop();
+        
+        void Clear();
+        int Load(String ^);
+        void LoadFromString(String ^);
+        bool LoadFromResource(String ^,String ^);
+        bool Build(String ^);
+
+        void Reset();
         long long Run();
         long long Run(long long);
-        void Reset();
-        bool Build(String ^);
+        
+        FactAddressValue ^ AssertString(String ^);
+        InstanceAddressValue ^ MakeInstance(String ^);
+
+        FactAddressValue ^ FindFact(String ^);
+        FactAddressValue ^ FindFact(String ^,String ^,String ^);
+        List<FactAddressValue ^> ^ FindAllFacts(String ^);
+        List<FactAddressValue ^> ^ FindAllFacts(String ^,String ^,String ^);
+
+        InstanceAddressValue ^ FindInstance(String ^);
+        InstanceAddressValue ^ FindInstance(String ^,String ^,String ^);
+        List<InstanceAddressValue ^> ^ FindAllInstances(String ^);
+        List<InstanceAddressValue ^> ^ FindAllInstances(String ^,String ^,String ^);
+        
         bool GetHaltExecution();
         void SetHaltExecution(bool);
         void SetHaltCommandLoopBatch(bool);
@@ -55,10 +76,7 @@ namespace CLIPSNET
         void SetHaltRules(bool);
         bool GetEvaluationError();
         void SetEvaluationError(bool);
-        int Load(String ^);
         bool ChangeDirectory(String ^);
-        void LoadFromString(String ^);
-        bool LoadFromResource(String ^,String ^);
         PrimitiveValue ^ Eval(String ^);
         void AddRouter(String ^,int ,Router ^);
         void DeleteRouter(String ^);
@@ -70,7 +88,6 @@ namespace CLIPSNET
         void AddUserFunction(String ^,UserFunction ^);
         void AddUserFunction(String ^,String ^,unsigned short,unsigned short,String ^,UserFunction ^);
         void RemoveUserFunction(String ^);
-        FactAddressValue ^ AssertString(String ^);
         size_t InputBufferCount();
         String ^ GetInputBuffer();
         void SetInputBuffer(String ^);
@@ -104,6 +121,9 @@ namespace CLIPSNET
         void SetWatchItem(String ^,bool);
         virtual String^ ToString() override;
         void CallNextPrintRouter(Router ^,String ^,String ^);
+        CaptureRouter ^ CaptureStart();
+        void CaptureEnd(CaptureRouter ^);
+        InstanceAddressValue ^ FindInstanceByName(String ^);
 
       protected:
         !Environment();

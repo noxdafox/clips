@@ -50,7 +50,7 @@ namespace AutoFormsExample
           /* Determine the Next/Prev button states. */
           /*========================================*/
 
-          if (fv.GetFactSlot("state").ToString().Equals("conclusion"))
+          if (fv.GetSlotValue("state").ToString().Equals("conclusion"))
             {
              interviewState = InterviewState.CONCLUSION;
              nextButton.Tag = "Restart";
@@ -58,7 +58,7 @@ namespace AutoFormsExample
              prevButton.Visible = true;
              choicesPanel.Visible = false;
             }
-          else if (fv.GetFactSlot("state").ToString().Equals("greeting"))
+          else if (fv.GetSlotValue("state").ToString().Equals("greeting"))
             {
              interviewState = InterviewState.GREETING;
              nextButton.Tag = "Next";
@@ -81,10 +81,10 @@ namespace AutoFormsExample
           
           choicesPanel.Controls.Clear();
 
-          MultifieldValue damf = (MultifieldValue) fv.GetFactSlot("display-answers");
-          MultifieldValue vamf = (MultifieldValue) fv.GetFactSlot("valid-answers");
+          MultifieldValue damf = (MultifieldValue) fv.GetSlotValue("display-answers");
+          MultifieldValue vamf = (MultifieldValue) fv.GetSlotValue("valid-answers");
 
-          String selected = fv.GetFactSlot("response").ToString();
+          String selected = fv.GetSlotValue("response").ToString();
           RadioButton firstButton = null;
 
           for (int i = 0; i < damf.Count; i++)
@@ -122,13 +122,13 @@ namespace AutoFormsExample
          /* Set the label to the display text. */
          /*====================================*/
 
-         relationAsserted = ((LexemeValue) fv.GetFactSlot("relation-asserted")).GetLexemeValue();
+         relationAsserted = ((LexemeValue) fv.GetSlotValue("relation-asserted")).GetLexemeValue();
 
          /*====================================*/
          /* Set the label to the display text. */
          /*====================================*/
 
-         String messageString = ((StringValue) fv.GetFactSlot("display")).GetStringValue();
+         String messageString = ((StringValue) fv.GetSlotValue("display")).GetStringValue();
          int preferredWidth = ComputeLabelWidth(messageString);
 
          messageLabel.Text = messageString;

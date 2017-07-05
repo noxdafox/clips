@@ -205,9 +205,9 @@ namespace WineFormsExample
 
          foreach (FactAddressValue fv in clips.Eval(evalStr) as MultifieldValue)
            {
-            int certainty = (int) ((NumberValue) fv.GetFactSlot("certainty")).GetIntegerValue();
+            int certainty = (int) ((NumberValue) fv.GetSlotValue("certainty")).GetIntegerValue();
 
-            String wineName = ((LexemeValue) fv.GetFactSlot("value")).GetLexemeValue();
+            String wineName = ((LexemeValue) fv.GetSlotValue("value")).GetLexemeValue();
 
             wineList.Add(new WineRecommendation() { WineName = wineName, Certainty = certainty });
            }

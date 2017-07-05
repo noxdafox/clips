@@ -1,5 +1,6 @@
 
 #include "CLIPSNET_Values.h"
+#include "CLIPSNET_Environment.h"
 
 #include "basetsd.h"
 
@@ -430,6 +431,12 @@ namespace CLIPSNET
    String ^ InstanceNameValue::GetInstanceNameValue()
      { return this->GetLexemeValue(); }
 
+   CLIPSNET::InstanceAddressValue ^ InstanceNameValue::GetInstance(
+     CLIPSNET::Environment ^ theEnv)
+     {
+      return theEnv->FindInstanceByName(this->GetLexemeValue());
+     }
+
    String ^ InstanceNameValue::ToString()
      { return gcnew String("[" + LexemeValue::ToString() + "]"); }
      
@@ -641,7 +648,7 @@ namespace CLIPSNET
       return 0;
      }
 
-   PrimitiveValue ^ FactAddressValue::GetFactSlot(
+   PrimitiveValue ^ FactAddressValue::GetSlotValue(
      String ^ slotName)
      {
       array<Byte>^ ebSlotName = Encoding::UTF8->GetBytes(slotName);
@@ -697,7 +704,7 @@ namespace CLIPSNET
    String ^ InstanceAddressValue::GetInstanceName()
      { return gcnew String(m_instanceAddressValue->GetInstanceName()); }
 
-   PrimitiveValue ^ InstanceAddressValue::DirectGetSlot(
+   PrimitiveValue ^ InstanceAddressValue::GetSlotValue(
      String ^ slotName)
      {
       array<Byte>^ ebSlotName = Encoding::UTF8->GetBytes(slotName);

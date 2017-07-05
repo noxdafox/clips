@@ -77,7 +77,7 @@
    =========================================
    ***************************************** */
 
-   static void                    UnboundDeffunctionErr(Environment *);
+   static void                    UnboundDeffunctionErr(Environment *,const char *);
 
 #if DEBUGGING_FUNCTIONS
    static void                    WatchDeffunction(Environment *,const char *);
@@ -194,11 +194,12 @@ void CallDeffunction(
   NOTES        : None
  *******************************************************/
 static void UnboundDeffunctionErr(
-  Environment *theEnv)
+  Environment *theEnv,
+  const char *logName)
   {
-   PrintString(theEnv,WERROR,"deffunction ");
-   PrintString(theEnv,WERROR,DeffunctionName(DeffunctionData(theEnv)->ExecutingDeffunction));
-   PrintString(theEnv,WERROR,".\n");
+   PrintString(theEnv,logName,"deffunction ");
+   PrintString(theEnv,logName,DeffunctionName(DeffunctionData(theEnv)->ExecutingDeffunction));
+   PrintString(theEnv,logName,".\n");
   }
 
 #if DEBUGGING_FUNCTIONS

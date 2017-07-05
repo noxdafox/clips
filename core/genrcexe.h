@@ -53,7 +53,7 @@
 #include "genrcfun.h"
 
    void                           GenericDispatch(Environment *,Defgeneric *,Defmethod *,Defmethod *,Expression *,UDFValue *);
-   void                           UnboundMethodErr(Environment *);
+   void                           UnboundMethodErr(Environment *,const char *);
    bool                           IsMethodApplicable(Environment *,Defmethod *);
 
    bool                           NextMethodP(Environment *);

@@ -7,6 +7,9 @@ using namespace CLIPS;
 
 namespace CLIPSNET
   {
+   ref class Environment;
+   ref class InstanceAddressValue;
+
    public enum class CLIPSNETType 
      { FLOAT, 
        INTEGER, 
@@ -139,8 +142,8 @@ namespace CLIPSNET
 		~SymbolValue();
 
       public:
-	     String ^ GetSymbolValue();
-		  virtual String^ ToString() override;
+        String ^ GetSymbolValue();
+        virtual String^ ToString() override;
         virtual CLIPSNETType CLIPSType() override;
 	 };
 
@@ -156,8 +159,9 @@ namespace CLIPSNET
 		~InstanceNameValue();
 
       public:
-	     String ^ GetInstanceNameValue();
-		  virtual String^ ToString() override;
+        String ^ GetInstanceNameValue();
+        CLIPSNET::InstanceAddressValue ^ GetInstance(CLIPSNET::Environment ^);
+   	    virtual String^ ToString() override;
         virtual CLIPSNETType CLIPSType() override;
 	 };
 
@@ -198,10 +202,10 @@ namespace CLIPSNET
 		~IntegerValue();
 
       public:
-		 virtual String^ ToString() override;
-       virtual int GetHashCode() override;
-       virtual bool Equals(Object ^ obj) override; 
-       virtual CLIPSNETType CLIPSType() override;
+        virtual String^ ToString() override;
+        virtual int GetHashCode() override;
+        virtual bool Equals(Object ^ obj) override; 
+        virtual CLIPSNETType CLIPSType() override;
 	 };
 
    /*###############################*/
@@ -217,7 +221,7 @@ namespace CLIPSNET
        ~FloatValue();
 
       public:
-	     virtual String^ ToString() override;
+        virtual String ^ ToString() override;
         virtual int GetHashCode() override;
         virtual bool Equals(Object ^ obj) override; 
         virtual CLIPSNETType CLIPSType() override;
@@ -235,7 +239,7 @@ namespace CLIPSNET
       public:
         MultifieldValue();
         MultifieldValue(List<PrimitiveValue ^> ^theList);
-	     ~MultifieldValue();
+	    ~MultifieldValue();
         property int Count
 	       {
 	        int get() { return listValue->Count; };
@@ -273,7 +277,7 @@ namespace CLIPSNET
         FactAddressValue(CLIPS::FactAddressValue *);
         ~FactAddressValue();
         long long GetFactIndex();
-        PrimitiveValue ^ GetFactSlot(String ^);
+        PrimitiveValue ^ GetSlotValue(String ^);
 
         CLIPS::FactAddressValue *GetFactAddressValue();
         virtual String^ ToString() override;
@@ -299,7 +303,7 @@ namespace CLIPSNET
 	     InstanceAddressValue(CLIPS::InstanceAddressValue *);
         ~InstanceAddressValue();
         String ^ GetInstanceName();
-        PrimitiveValue ^ DirectGetSlot(String ^);
+        PrimitiveValue ^ GetSlotValue(String ^);
 
         CLIPS::InstanceAddressValue *GetInstanceAddressValue();
         virtual String^ ToString() override;

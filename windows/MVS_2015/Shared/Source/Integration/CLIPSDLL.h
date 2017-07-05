@@ -16,7 +16,20 @@
 #define DECLSPEC __declspec(dllimport)
 #endif
 
+
+void DECLSPEC __Clear(Environment *);
 int DECLSPEC __Load(Environment *,const char *);
+bool DECLSPEC __OpenStringSource(Environment *,const char *,const char *,size_t);
+bool DECLSPEC __CloseStringSource(Environment *,const char *);
+void DECLSPEC __LoadConstructsFromLogicalName(Environment *,const char *);
+bool DECLSPEC __Build(Environment *,const char *);
+
+void DECLSPEC __Reset(Environment *);
+long long DECLSPEC __Run(Environment *,long long);
+
+Fact DECLSPEC * __AssertString(Environment *,const char *);
+Instance DECLSPEC * __MakeInstance(Environment *,const char *);
+
 int DECLSPEC __genchdir(const char *);
 
 bool DECLSPEC __DestroyEnvironment(Environment *);
@@ -25,9 +38,6 @@ bool DECLSPEC __ActivateRouter(Environment *, const char *);
 bool DECLSPEC __DeactivateRouter(Environment *, const char *);
 bool DECLSPEC __CommandCompleteAndNotEmpty(Environment *);
 void DECLSPEC __AppendDribble(Environment *,const char *);
-bool DECLSPEC __OpenStringSource(Environment *,const char *,const char *,size_t);
-bool DECLSPEC __CloseStringSource(Environment *,const char *);
-bool DECLSPEC __Build(Environment *,const char *);
 bool DECLSPEC __Eval(Environment *,const char *,CLIPSValue *);
 bool DECLSPEC __GetFactSlot(Fact *,const char *,CLIPSValue *);
 bool DECLSPEC __WatchString(Environment *,const char *);
@@ -47,9 +57,6 @@ bool DECLSPEC __AddRouter(Environment *,const char *,int,
 
 void DECLSPEC __SetCommandString(Environment *,const char *);
 void DECLSPEC __CommandLoop(Environment *);
-void DECLSPEC __Clear(Environment *);
-void DECLSPEC __Reset(Environment *);
-void DECLSPEC __LoadConstructsFromLogicalName(Environment *,const char *);
 void DECLSPEC __IncrementFactReferenceCount(Fact *);
 void DECLSPEC __DecrementFactReferenceCount(Fact *);
 void DECLSPEC __IncrementInstanceReferenceCount(Instance *);
@@ -80,12 +87,10 @@ char DECLSPEC * __GetCommandString(Environment *theEnv);
 void DECLSPEC * __GetEnvironmentContext(Environment *theEnv);
 void DECLSPEC * __GetEnvironmentRouterContext(Environment *);
 
-Fact DECLSPEC * __AssertString(Environment *,const char *);
 
 size_t DECLSPEC __InputBufferCount(Environment *);
 
 long long DECLSPEC __FactIndex(Fact *);
-long long DECLSPEC __Run(Environment *,long long);
 
 const char DECLSPEC * __InstanceName(Instance *);
   

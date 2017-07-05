@@ -44,22 +44,13 @@ bool __declspec(dllexport) __DestroyEnvironment(
    return DestroyEnvironment(theEnv);
   }
 
-void __declspec(dllexport) __CommandLoop(
-  Environment *theEnv)
-  {
-   CommandLoop(theEnv);
-  }
-
+/***********/
+/* __Clear */
+/***********/
 void __declspec(dllexport) __Clear(
   Environment *theEnv)
   {
    Clear(theEnv);
-  }
-
-void __declspec(dllexport) __Reset(
-  Environment *theEnv)
-  {
-   Reset(theEnv);
   }
 
 int __declspec(dllexport) __Load(
@@ -69,11 +60,82 @@ int __declspec(dllexport) __Load(
    return Load(theEnv,theFile);
   }
 
+bool __declspec(dllexport) __OpenStringSource(
+  Environment *theEnv,
+  const char *logicalName,
+  const char *stringData,
+  size_t size)
+  {
+   return OpenStringSource(theEnv,logicalName,stringData,size);
+  }
+
+bool __declspec(dllexport) __CloseStringSource(
+  Environment *theEnv,
+  const char *logicalName)
+  {
+   return CloseStringSource(theEnv,logicalName);
+  }
+
 void __declspec(dllexport) __LoadConstructsFromLogicalName(
   Environment *theEnv,
   const char *logicalName)
   {
    LoadConstructsFromLogicalName(theEnv,logicalName);
+  }
+
+/***********/
+/* __Build */
+/***********/
+bool __declspec(dllexport) __Build(
+  Environment *theEnv,
+  const char *buildString)
+  {
+   return Build(theEnv,buildString);
+  }
+
+/***********/
+/* __Reset */
+/***********/
+void __declspec(dllexport) __Reset(
+  Environment *theEnv)
+  {
+   Reset(theEnv);
+  }
+  
+/*********/
+/* __Run */
+/*********/
+long long __declspec(dllexport) __Run(
+  Environment *theEnv,
+  long long runLimit)
+  {
+   return Run(theEnv,runLimit);
+  }
+  
+/******************/ 
+/* __AssertString */
+/******************/  
+Fact __declspec(dllexport) * __AssertString(
+  Environment *theEnv,
+  const char *factString)
+  {
+   return AssertString(theEnv,factString);
+  }
+
+/******************/
+/* __MakeInstance */
+/******************/
+Instance __declspec(dllexport) * __MakeInstance(
+  Environment *theEnv,
+  const char *instanceString)
+  {
+   return MakeInstance(theEnv,instanceString);
+  }
+
+void __declspec(dllexport) __CommandLoop(
+  Environment *theEnv)
+  {
+   CommandLoop(theEnv);
   }
 
 void __declspec(dllexport) __SetCommandString(
@@ -123,22 +185,6 @@ char __declspec(dllexport) * __GetCommandString(
    return GetCommandString(theEnv);
   }
 
-bool __declspec(dllexport) __OpenStringSource(
-  Environment *theEnv,
-  const char *logicalName,
-  const char *stringData,
-  size_t size)
-  {
-   return OpenStringSource(theEnv,logicalName,stringData,size);
-  }
-
-bool __declspec(dllexport) __CloseStringSource(
-  Environment *theEnv,
-  const char *logicalName)
-  {
-   return CloseStringSource(theEnv,logicalName);
-  }
-
 void __declspec(dllexport) __PrintPrompt(
   Environment *theEnv)
   {
@@ -184,20 +230,6 @@ void __declspec(dllexport) __CommandLoopOnceThenBatch(
   Environment *theEnv)
   {
    CommandLoopOnceThenBatch(theEnv);
-  }
-
-long long __declspec(dllexport) __Run(
-  Environment *theEnv,
-  long long runLimit)
-  {
-   return Run(theEnv,runLimit);
-  }
-  
-bool __declspec(dllexport) __Build(
-  Environment *theEnv,
-  const char *buildString)
-  {
-   return Build(theEnv,buildString);
   }
   
 bool __declspec(dllexport) __Eval(
@@ -245,13 +277,6 @@ bool __declspec(dllexport) __GetFactSlot(
   {
    return GetFactSlot(theFact,slotName,returnValue);  
   }  
-
-Fact __declspec(dllexport) * __AssertString(
-  Environment *theEnv,
-  const char *factString)
-  {
-   return AssertString(theEnv,factString);
-  }
 
 const char __declspec(dllexport) * __InstanceName(
   Instance *theInstance)

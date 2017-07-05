@@ -86,6 +86,146 @@ CLIPSCPPEnv::~CLIPSCPPEnv()
 #endif
   }
 
+/*********/
+/* Clear */
+/*********/
+void CLIPSCPPEnv::Clear()
+  {
+#ifndef CLIPS_DLL_WRAPPER
+   ::Clear(theEnv);
+#else
+   __Clear(theEnv);
+#endif
+  }
+
+/********/
+/* Load */
+/********/
+int CLIPSCPPEnv::Load(
+  char *theFile)
+  {
+#ifndef CLIPS_DLL_WRAPPER
+   return ::Load(theEnv,theFile);
+#else
+   return __Load(theEnv,theFile);
+#endif
+  }
+
+/******************/
+/* LoadFromString */
+/******************/
+void CLIPSCPPEnv::LoadFromString(
+  char *loadString)
+  {
+#ifndef CLIPS_DLL_WRAPPER
+   OpenStringSource(theEnv,"clipsnetloadfromstring",loadString,0); 
+   LoadConstructsFromLogicalName(theEnv,"clipsnetloadfromstring");
+   CloseStringSource(theEnv,"clipsnetloadfromstring");
+#else
+   __OpenStringSource(theEnv,"clipsnetloadfromstring",loadString,0); 
+   __LoadConstructsFromLogicalName(theEnv,"clipsnetloadfromstring");
+   __CloseStringSource(theEnv,"clipsnetloadfromstring");
+#endif
+  }
+  
+/*********/
+/* Build */
+/*********/
+bool CLIPSCPPEnv::Build(
+  char *buildString)
+  {   
+#ifndef CLIPS_DLL_WRAPPER
+   if (::Build(theEnv,buildString))
+     { return true; }
+   else
+     { return false; }
+#else
+   if (__Build(theEnv,buildString))
+     { return true; }
+   else
+     { return false; }
+#endif
+  }
+
+/*********/
+/* Reset */
+/*********/
+void CLIPSCPPEnv::Reset()
+  {
+#ifndef CLIPS_DLL_WRAPPER
+   ::Reset(theEnv);
+#else
+   __Reset(theEnv);
+#endif
+  }
+
+/*******/
+/* Run */
+/*******/
+long long CLIPSCPPEnv::Run(
+  long long runLimit)
+  {
+#ifndef CLIPS_DLL_WRAPPER
+   return ::Run(theEnv,runLimit);
+#else
+   return __Run(theEnv,runLimit);
+#endif
+  }
+  
+/****************/
+/* AssertString */
+/****************/
+FactAddressValue *CLIPSCPPEnv::AssertString(
+  char *factString)
+  {
+   Fact *rv;
+   
+#ifndef CLIPS_DLL_WRAPPER
+   rv = ::AssertString(theEnv,factString);
+#else
+   rv = __AssertString(theEnv,factString);
+#endif
+     
+   if (rv == NULL) return NULL;
+   return new FactAddressValue(rv);
+  }
+  
+/****************/
+/* MakeInstance */
+/****************/
+InstanceAddressValue *CLIPSCPPEnv::MakeInstance(
+  char *instanceString)
+  {
+   Instance *rv;
+   
+#ifndef CLIPS_DLL_WRAPPER
+   rv = ::MakeInstance(theEnv,instanceString);
+#else
+   rv = __MakeInstance(theEnv,instanceString);
+#endif
+     
+   if (rv == NULL) return NULL;
+   return new InstanceAddressValue(rv);
+  }
+  
+/**********************/
+/* FindInstanceByName */
+/**********************/
+InstanceAddressValue *CLIPSCPPEnv::FindInstanceByName(
+  char *instanceName)
+  {
+   Instance *rv;
+   
+#ifndef CLIPS_DLL_WRAPPER
+   rv = ::FindInstance(theEnv,NULL,instanceName,true);
+#else
+   rv = FindInstance(theEnv,NULL,instanceName,true);
+#endif
+     
+   if (rv == NULL) return NULL;
+   return new InstanceAddressValue(rv);
+  }
+
 /***************/
 /* CommandLoop */
 /***************/
@@ -166,93 +306,7 @@ void CLIPSCPPEnv::PrintLn(
    PrintString(STDOUT,printString);
    PrintString(STDOUT,"\n");
   }
- 
-/*********/
-/* Clear */
-/*********/
-void CLIPSCPPEnv::Clear()
-  {
-#ifndef CLIPS_DLL_WRAPPER
-   ::Clear(theEnv);
-#else
-   __Clear(theEnv);
-#endif
-  }
 
-/********/
-/* Load */
-/********/
-int CLIPSCPPEnv::Load(
-  char *theFile)
-  {
-#ifndef CLIPS_DLL_WRAPPER
-   return ::Load(theEnv,theFile);
-#else
-   return __Load(theEnv,theFile);
-#endif
-  }
-
-/******************/
-/* LoadFromString */
-/******************/
-void CLIPSCPPEnv::LoadFromString(
-  char *loadString)
-  {
-#ifndef CLIPS_DLL_WRAPPER
-   OpenStringSource(theEnv,"clipsnetloadfromstring",loadString,0); 
-   LoadConstructsFromLogicalName(theEnv,"clipsnetloadfromstring");
-   CloseStringSource(theEnv,"clipsnetloadfromstring");
-#else
-   __OpenStringSource(theEnv,"clipsnetloadfromstring",loadString,0); 
-   __LoadConstructsFromLogicalName(theEnv,"clipsnetloadfromstring");
-   __CloseStringSource(theEnv,"clipsnetloadfromstring");
-#endif
-  }
-
-/*********/
-/* Reset */
-/*********/
-void CLIPSCPPEnv::Reset()
-  {
-#ifndef CLIPS_DLL_WRAPPER
-   ::Reset(theEnv);
-#else
-   __Reset(theEnv);
-#endif
-  }
-
-/*******/
-/* Run */
-/*******/
-long long CLIPSCPPEnv::Run(
-  long long runLimit)
-  {
-#ifndef CLIPS_DLL_WRAPPER
-   return ::Run(theEnv,runLimit);
-#else
-   return __Run(theEnv,runLimit);
-#endif
-  }
-
-/*********/
-/* Build */
-/*********/
-bool CLIPSCPPEnv::Build(
-  char *buildString)
-  {   
-#ifndef CLIPS_DLL_WRAPPER
-   if (::Build(theEnv,buildString))
-     { return true; }
-   else
-     { return false; }
-#else
-   if (__Build(theEnv,buildString))
-     { return true; }
-   else
-     { return false; }
-#endif
-  }
-  
 /********/
 /* Eval */
 /********/
@@ -384,24 +438,6 @@ int CLIPSCPPEnv::ChangeDirectory(
 #endif
 
    return rc;
-  }
-
-/****************/
-/* AssertString */
-/****************/
-FactAddressValue *CLIPSCPPEnv::AssertString(
-  char *factString)
-  {
-   Fact *rv;
-   
-#ifndef CLIPS_DLL_WRAPPER
-   rv = ::AssertString(theEnv,factString);
-#else
-   rv = __AssertString(theEnv,factString);
-#endif
-     
-   if (rv == NULL) return NULL;
-   return new FactAddressValue(rv);
   }
   
 /***********************/

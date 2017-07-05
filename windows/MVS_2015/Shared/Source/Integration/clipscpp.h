@@ -36,6 +36,7 @@ class CLIPSCPPUserFunction;
 
 class DataObject; // TBD Change to PrimitiveValue
 class FactAddressValue;
+class InstanceAddressValue;
 
 class CLIPSCPPEnv
   {
@@ -45,9 +46,20 @@ class CLIPSCPPEnv
    public:
       CLIPSCPPEnv();
       ~CLIPSCPPEnv();
+      
+      void Clear();
+      int Load(char *);
+      void LoadFromString(char *);
+      bool Build(char *);
+      
+      void Reset();
+      long long Run(long long runLimit = -1);
+      
+      FactAddressValue *AssertString(char *);
+      InstanceAddressValue *MakeInstance(char *);
+
       void CommandLoop();
       void CommandLoopOnceThenBatch();
-      void Clear();
       int GetHaltExecution();
       void SetHaltExecution(bool);
       void SetHaltCommandLoopBatch(bool);
@@ -56,17 +68,11 @@ class CLIPSCPPEnv
       int GetHaltRules();
       void SetHaltRules(bool);
       int ChangeDirectory(char *);
-      int Load(char *);
-      void LoadFromString(char *);
-      void Reset();
-      long long Run(long long runLimit = -1);
       bool Watch(char *);
       bool Unwatch(char *);
       bool GetWatchItem(char *);
       void SetWatchItem(char *,bool);
       DataObject Eval(char *);
-      bool Build(char *);
-      FactAddressValue *AssertString(char *);
       bool AddUserFunction(char *,CLIPSCPPUserFunction *);
       bool AddUserFunction(char *,char *,unsigned short,unsigned short,char *,CLIPSCPPUserFunction *);
       bool RemoveUserFunction(char *);
@@ -102,6 +108,7 @@ class CLIPSCPPEnv
       void SetFactListChanged(bool);
       bool GetInstancesChanged();
       void SetInstancesChanged(bool);
+      InstanceAddressValue * FindInstanceByName(char *);
   };
 
 class CLIPSCPPUserFunction
