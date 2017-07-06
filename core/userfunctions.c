@@ -94,6 +94,12 @@ void EnvUserFunctions(
     }
 
     REGEX_DATA(environment)->cache = NULL;
+
+    /****************************************/
+    /* Additional cleanup actions in CLIPS  */
+    /****************************************/
+
+    EnvAddClearFunction(environment, "regex-clear", RegexCacheClear, 0);
 #endif
 
     /**************************************************/
@@ -104,13 +110,4 @@ void EnvUserFunctions(
                        PTIEF RegexMatch, "RegexMatch", "22j");
     EnvDefineFunction2(environment, "regex-imatch", 'm',
                        PTIEF RegexCaseMatch, "RegexCaseMatch", "22j");
-
-    /****************************************/
-    /* Additional cleanup actions in CLIPS  */
-    /****************************************/
-
-#if REGEXP_CACHE_SIZE
-    EnvAddClearFunction(environment, "regex-clear", RegexCacheClear, 0);
-#endif
-
   }

@@ -25,6 +25,7 @@
 #define REGEX_DATA_INDEX USER_ENVIRONMENT_DATA + 0
 
 
+#if REGEXP_CACHE_SIZE
 struct regex_data
 {
     void *cache;
@@ -32,13 +33,11 @@ struct regex_data
 typedef struct regex_data regex_data_t;
 
 
-#define REGEX_DATA(environment)                                        \
+#define REGEX_DATA(environment)                                         \
     ((regex_data_t *) GetEnvironmentData(environment, REGEX_DATA_INDEX))
 
+extern void RegexCacheClear(void *);
+#endif
 
 extern void RegexMatch(void *, DATA_OBJECT_PTR);
 extern void RegexCaseMatch(void *, DATA_OBJECT_PTR);
-
-#if REGEXP_CACHE_SIZE
-extern void RegexCacheClear(void *);
-#endif

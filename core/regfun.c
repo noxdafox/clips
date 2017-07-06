@@ -30,15 +30,6 @@
 #include "regfun.h"
 
 
-struct regex_cache
-{
-    char *key;
-    void *value;
-    UT_hash_handle hh;
-};
-typedef struct regex_cache regex_cache_t;
-
-
 #define MATCH_OFFSET(matches, index)            \
     (matches[2 * index])
 #define MATCH_LIMIT(matches, index)             \
@@ -47,19 +38,27 @@ typedef struct regex_cache regex_cache_t;
     (matches[2 * index + 1] - matches[2 * index])
 
 
+#if REGEXP_CACHE_SIZE
+struct regex_cache
+{
+    char *key;
+    void *value;
+    UT_hash_handle hh;
+};
+typedef struct regex_cache regex_cache_t;
+
+static void *cache_get(regex_cache_t **, const char *);
+static void *cache_put(regex_cache_t **, const char *, void *);
+static void *cache_remove(regex_cache_t **);
+static void cache_flush(regex_cache_t **, void (*)(void *));
+#endif /* REGEXP_CACHE_SIZE */
+
 static pcre2_code *regex_compile(void *, const char *, int);
 static void regex_match(void *, DATA_OBJECT *, const char *, const char *, int);
 static pcre2_code *regex_init(const char *, int);
 static void *match_multifield(void *, const char *, pcre2_match_data *, int);
 static void regex_free(pcre2_code *);
 static int arguments(void *, char *, DATA_OBJECT *, DATA_OBJECT *);
-
-#if REGEXP_CACHE_SIZE
-static void *cache_get(regex_cache_t **, const char *);
-static void *cache_put(regex_cache_t **, const char *, void *);
-static void *cache_remove(regex_cache_t **);
-static void cache_flush(regex_cache_t **, void (*)(void *));
-#endif
 
 
 /*****************************************************/
@@ -90,11 +89,11 @@ void RegexCaseMatch(void *environment, DATA_OBJECT_PTR returnValue)
 }
 
 
-#if REGEXP_CACHE_SIZE
 /****************************************************/
 /* RegexCacheClear: H/L access routine              */
 /*   for Clear function callback.                   */
 /****************************************************/
+#if REGEXP_CACHE_SIZE
 void RegexCacheClear(void *environment)
 {
     regex_cache_t **cache = (regex_cache_t **) &REGEX_DATA(environment)->cache;
@@ -181,11 +180,9 @@ pcre2_code *regex_compile(void *environment, const char *pattern, int caseless)
     }
 
     return regex;
-#else
-    /* Regex cache disabled */
-
+#else /* Cache disabled */
     return regex_init(pattern, flags);
-#endif
+#endif /* REGEXP_CACHE_SIZE */
 }
 
 
@@ -303,17 +300,25 @@ static void *cache_put(regex_cache_t **cache, const char *key, void *value)
 {
     regex_cache_t *entry = NULL;
 
-    entry = (regex_cache_t *) malloc(sizeof(regex_cache_t));
-
-    if (entry != NULL) {
-        entry->key = strdup(key);
-        entry->value = value;
-
-        HASH_ADD_KEYPTR(hh, *cache, entry->key, strlen(key), entry);
-
-        if (HASH_COUNT(*cache) >= REGEXP_CACHE_SIZE)
-            return cache_remove(cache);
+    entry = malloc(sizeof(regex_cache_t));
+    if (entry == NULL) {
+        puts("Unable to allocate memory for regular expression");
+        return NULL;
     }
+
+    entry->key = malloc(strlen(key) + 1);
+    if (entry->key == NULL) {
+        puts("Unable to allocate memory for regular expression");
+        return NULL;
+    }
+
+    strcpy(entry->key, key);
+    entry->value = value;
+
+    HASH_ADD_KEYPTR(hh, *cache, entry->key, strlen(key), entry);
+
+    if (HASH_COUNT(*cache) >= REGEXP_CACHE_SIZE)
+        return cache_remove(cache);
 
     return NULL;
 }
@@ -359,5 +364,4 @@ static void cache_flush(regex_cache_t **cache, void (*cleanup_function)(void *))
         free(entry);
     }
 }
-
-#endif
+#endif /* REGEXP_CACHE_SIZE */
