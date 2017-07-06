@@ -38,12 +38,12 @@ jobject ConvertDataObject(
    switch(theDO->header->type)
      {
       case MULTIFIELD_TYPE:
-        mfLength = theDO->multifieldValue->length;
+        mfLength = (jint) theDO->multifieldValue->length;
 
         result = (*env)->NewObject(env,
                                    CLIPSJNIData(clipsEnv)->arrayListClass,
                                    CLIPSJNIData(clipsEnv)->arrayListInitMethod,
-                                   (jint) mfLength);
+                                   mfLength);
                                    
         if (result == NULL)
           { return result; }

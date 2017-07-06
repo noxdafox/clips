@@ -446,7 +446,7 @@ namespace CLIPSNET
      }
      
    /***********/
-   /* UnWatch */
+   /* Unwatch */
    /***********/
    bool Environment::Unwatch(
      String ^ item)
@@ -461,114 +461,6 @@ namespace CLIPSNET
         { return false; }
      }
       
-   /****************/
-   /* GetWatchItem */
-   /****************/
-   bool Environment::GetWatchItem(
-     String ^ item)
-     {
-      array<Byte>^ ebItem = Encoding::UTF8->GetBytes(item);
-      if (ebItem->Length)
-        {
-         pin_ptr<Byte> pbItem = &ebItem[0];
-         return m_Env->GetWatchItem((char *) pbItem);
-        }
-      else
-        { return false; }
-     }
-    
-   /****************/
-   /* SetWatchItem */
-   /****************/
-   void Environment::SetWatchItem(
-     String ^ item,
-     bool newValue)
-     {
-      array<Byte>^ ebItem = Encoding::UTF8->GetBytes(item);
-      if (ebItem->Length)
-        {
-         pin_ptr<Byte> pbItem = &ebItem[0];
-         m_Env->SetWatchItem((char *) pbItem,newValue);
-        }
-     }
-
-   /*************/
-   /* AddRouter */
-   /*************/
-   void Environment::AddRouter(
-	  String ^ routerName,
-	  int priority,
-	  Router ^ theRouter)
-     { 
-      array<Byte>^ ebRouterName = Encoding::UTF8->GetBytes(routerName);
-      if (ebRouterName->Length)
-        {
-         pin_ptr<Byte> pbRouterName = &ebRouterName[0];
-         m_Env->AddRouter((char *) pbRouterName,priority,(CLIPS::CLIPSCPPRouter *) theRouter->RouterBridge());
-        }
-      else
-        { m_Env->AddRouter("",priority,(CLIPS::CLIPSCPPRouter *) theRouter->RouterBridge()); }
-     }
-
-   /****************/
-   /* DeleteRouter */
-   /****************/
-   void Environment::DeleteRouter(
-	  String ^ routerName)
-     { 
-      array<Byte>^ ebRouterName = Encoding::UTF8->GetBytes(routerName);
-      if (ebRouterName->Length)
-        {
-         pin_ptr<Byte> pbRouterName = &ebRouterName[0];
-         m_Env->DeleteRouter((char *) pbRouterName);
-        }
-      else
-        { m_Env->DeleteRouter(""); }
-     }
-  
-   /***********************/
-   /* AddPeriodicCallback */
-   /***********************/
-   void Environment::AddPeriodicCallback(
-	  String ^ callbackName,
-	  int priority,
-	  PeriodicCallback ^ theCallback)
-     { 
-      array<Byte>^ ebCallbackName = Encoding::UTF8->GetBytes(callbackName);
-      if (ebCallbackName->Length)
-        {
-         pin_ptr<Byte> pbCallbackName = &ebCallbackName[0];
-         m_Env->AddPeriodicFunction((char *) pbCallbackName,priority,(CLIPS::CLIPSCPPPeriodicFunction *) theCallback->PeriodicCallbackBridge());
-        }
-      else
-        { m_Env->AddPeriodicFunction("",priority,(CLIPS::CLIPSCPPPeriodicFunction *) theCallback->PeriodicCallbackBridge()); }
-     }
-
-   /**************************/
-   /* RemovePeriodicCallback */
-   /**************************/
-   void Environment::RemovePeriodicCallback(
-	  String ^ callbackName)
-     { 
-      array<Byte>^ ebCallbackName = Encoding::UTF8->GetBytes(callbackName);
-      if (ebCallbackName->Length)
-        {
-         pin_ptr<Byte> pbCallbackName = &ebCallbackName[0];
-         m_Env->DeleteRouter((char *) pbCallbackName);
-        }
-      else
-        { m_Env->RemovePeriodicFunction(""); }
-     }
-
-   /***************************/
-   /* EnablePeriodicFunctions */
-   /***************************/
-   bool Environment::EnablePeriodicFunctions(
-     bool value)
-     {
-      return m_Env->EnablePeriodicFunctions(value);
-     }
-
    /*******************/
    /* AddUserFunction */
    /*******************/
@@ -639,6 +531,190 @@ namespace CLIPSNET
          pin_ptr<Byte> pbFunctionName = &ebFunctionName[0];
          m_Env->RemoveUserFunction((char *) pbFunctionName);
         }
+     }
+     
+   /*************/
+   /* AddRouter */
+   /*************/
+   void Environment::AddRouter(
+	  String ^ routerName,
+	  int priority,
+	  Router ^ theRouter)
+     { 
+      array<Byte>^ ebRouterName = Encoding::UTF8->GetBytes(routerName);
+      if (ebRouterName->Length)
+        {
+         pin_ptr<Byte> pbRouterName = &ebRouterName[0];
+         m_Env->AddRouter((char *) pbRouterName,priority,(CLIPS::CLIPSCPPRouter *) theRouter->RouterBridge());
+        }
+      else
+        { m_Env->AddRouter("",priority,(CLIPS::CLIPSCPPRouter *) theRouter->RouterBridge()); }
+     }
+
+   /****************/
+   /* DeleteRouter */
+   /****************/
+   void Environment::DeleteRouter(
+	  String ^ routerName)
+     { 
+      array<Byte>^ ebRouterName = Encoding::UTF8->GetBytes(routerName);
+      if (ebRouterName->Length)
+        {
+         pin_ptr<Byte> pbRouterName = &ebRouterName[0];
+         m_Env->DeleteRouter((char *) pbRouterName);
+        }
+      else
+        { m_Env->DeleteRouter(""); }
+     }
+
+   /*******************/
+   /* ActivateRouter: */
+   /*******************/
+   bool Environment::ActivateRouter(
+     Router ^ theRouter)
+     {
+      array<Byte>^ ebRouterName = Encoding::UTF8->GetBytes(theRouter->Name);
+
+      if (ebRouterName->Length)
+        {
+         pin_ptr<Byte> pbRouterName = &ebRouterName[0];
+         return m_Env->ActivateRouter((char *) pbRouterName);
+        }
+  
+      return false;
+     }
+
+   /*********************/
+   /* DeactivateRouter: */
+   /*********************/
+   bool Environment::DeactivateRouter(
+     Router ^ theRouter)
+     {
+      array<Byte>^ ebRouterName = Encoding::UTF8->GetBytes(theRouter->Name);
+
+      if (ebRouterName->Length)
+        {
+         pin_ptr<Byte> pbRouterName = &ebRouterName[0];
+         return m_Env->DeactivateRouter((char *) pbRouterName);
+        }
+
+      return false;
+     }
+
+   /************/
+   /* Printout */
+   /************/
+   void Environment::Printout(
+     String ^ logicalName,
+     String ^ printString)
+     {
+      array<Byte>^ ebLogicalName = Encoding::UTF8->GetBytes(logicalName);
+      array<Byte>^ ebPrintString = Encoding::UTF8->GetBytes(printString);
+
+      if ((ebPrintString->Length != 0) && (ebLogicalName->Length != 0))
+        {
+         pin_ptr<Byte> pbLogicalName = &ebLogicalName[0];
+         pin_ptr<Byte> pbPrintString = &ebPrintString[0];
+
+         m_Env->Printout((char *) pbLogicalName,(char *) pbPrintString);
+        }
+     }
+
+   /*********/
+   /* Print */
+   /*********/
+   void Environment::Print(
+     String ^ printString)
+     {
+      String ^ logicalName = Router::STANDARD_OUTPUT;
+      Printout(logicalName,printString);
+     }
+
+   /***********/
+   /* PrintLn */
+   /***********/
+   void Environment::PrintLn(
+     String ^ printString)
+     {
+      String ^ logicalName = Router::STANDARD_OUTPUT;
+      String ^ crlf = "\n";
+
+      Printout(logicalName,printString);
+      Printout(logicalName,crlf);
+     }
+
+   /****************/
+   /* GetWatchItem */
+   /****************/
+   bool Environment::GetWatchItem(
+     String ^ item)
+     {
+      array<Byte>^ ebItem = Encoding::UTF8->GetBytes(item);
+      if (ebItem->Length)
+        {
+         pin_ptr<Byte> pbItem = &ebItem[0];
+         return m_Env->GetWatchItem((char *) pbItem);
+        }
+      else
+        { return false; }
+     }
+    
+   /****************/
+   /* SetWatchItem */
+   /****************/
+   void Environment::SetWatchItem(
+     String ^ item,
+     bool newValue)
+     {
+      array<Byte>^ ebItem = Encoding::UTF8->GetBytes(item);
+      if (ebItem->Length)
+        {
+         pin_ptr<Byte> pbItem = &ebItem[0];
+         m_Env->SetWatchItem((char *) pbItem,newValue);
+        }
+     }
+
+   /***********************/
+   /* AddPeriodicCallback */
+   /***********************/
+   void Environment::AddPeriodicCallback(
+	  String ^ callbackName,
+	  int priority,
+	  PeriodicCallback ^ theCallback)
+     { 
+      array<Byte>^ ebCallbackName = Encoding::UTF8->GetBytes(callbackName);
+      if (ebCallbackName->Length)
+        {
+         pin_ptr<Byte> pbCallbackName = &ebCallbackName[0];
+         m_Env->AddPeriodicFunction((char *) pbCallbackName,priority,(CLIPS::CLIPSCPPPeriodicFunction *) theCallback->PeriodicCallbackBridge());
+        }
+      else
+        { m_Env->AddPeriodicFunction("",priority,(CLIPS::CLIPSCPPPeriodicFunction *) theCallback->PeriodicCallbackBridge()); }
+     }
+
+   /**************************/
+   /* RemovePeriodicCallback */
+   /**************************/
+   void Environment::RemovePeriodicCallback(
+	  String ^ callbackName)
+     { 
+      array<Byte>^ ebCallbackName = Encoding::UTF8->GetBytes(callbackName);
+      if (ebCallbackName->Length)
+        {
+         pin_ptr<Byte> pbCallbackName = &ebCallbackName[0];
+         m_Env->DeleteRouter((char *) pbCallbackName);
+        }
+      else
+        { m_Env->RemovePeriodicFunction(""); }
+     }
+
+   /***************************/
+   /* EnablePeriodicFunctions */
+   /***************************/
+   bool Environment::EnablePeriodicFunctions(
+     bool value)
+     {
+      return m_Env->EnablePeriodicFunctions(value);
      }
 
    /********************/
@@ -1099,48 +1175,6 @@ namespace CLIPSNET
       m_Env->SetFactListChanged(newValue);
      }
 
-   /***************/
-   /* PrintString */
-   /***************/
-   void Environment::PrintString(
-     String ^ logicalName,
-     String ^ printString)
-     {
-      array<Byte>^ ebLogicalName = Encoding::UTF8->GetBytes(logicalName);
-      array<Byte>^ ebPrintString = Encoding::UTF8->GetBytes(printString);
-
-      if ((ebPrintString->Length != 0) && (ebLogicalName->Length != 0))
-        {
-         pin_ptr<Byte> pbLogicalName = &ebLogicalName[0];
-         pin_ptr<Byte> pbPrintString = &ebPrintString[0];
-
-         m_Env->PrintString((char *) pbLogicalName,(char *) pbPrintString);
-        }
-     }
-
-   /*********/
-   /* Print */
-   /*********/
-   void Environment::Print(
-     String ^ printString)
-     {
-      String ^ logicalName = Router::STANDARD_OUTPUT;
-      PrintString(logicalName,printString);
-     }
-
-   /***********/
-   /* PrintLn */
-   /***********/
-   void Environment::PrintLn(
-     String ^ printString)
-     {
-      String ^ logicalName = Router::STANDARD_OUTPUT;
-      String ^ crlf = "\n";
-
-      PrintString(logicalName,printString);
-      PrintString(logicalName,crlf);
-     }
-
    /************************/
    /* CallNextPrintRouter: */
    /************************/
@@ -1150,42 +1184,8 @@ namespace CLIPSNET
      String ^ printString)
      {
       DeactivateRouter(theRouter);
-      PrintString(logName,printString);
+      Printout(logName,printString);
       ActivateRouter(theRouter);
-     }
-
-   /*******************/
-   /* ActivateRouter: */
-   /*******************/
-   bool Environment::ActivateRouter(
-     Router ^ theRouter)
-     {
-      array<Byte>^ ebRouterName = Encoding::UTF8->GetBytes(theRouter->Name);
-
-      if (ebRouterName->Length)
-        {
-         pin_ptr<Byte> pbRouterName = &ebRouterName[0];
-         return m_Env->ActivateRouter((char *) pbRouterName);
-        }
-  
-      return false;
-     }
-
-   /*********************/
-   /* DeactivateRouter: */
-   /*********************/
-   bool Environment::DeactivateRouter(
-     Router ^ theRouter)
-     {
-      array<Byte>^ ebRouterName = Encoding::UTF8->GetBytes(theRouter->Name);
-
-      if (ebRouterName->Length)
-        {
-         pin_ptr<Byte> pbRouterName = &ebRouterName[0];
-         return m_Env->DeactivateRouter((char *) pbRouterName);
-        }
-
-      return false;
      }
 
    /***********************/

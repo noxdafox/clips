@@ -651,8 +651,8 @@ JNIEXPORT jboolean JNICALL Java_net_sf_clipsrules_jni_Environment_addUserFunctio
 
    nobj = (*env)->NewGlobalRef(env,context);
  
-   rv = AddUDF(JLongToPointer(clipsEnv),cFunctionName,"*",(unsigned short) minArgs, 
-               (unsigned short) maxArgs,cRestrictions,JNIUserFunction,"JNIUserFunction",nobj);
+   rv = AddUDF(JLongToPointer(clipsEnv),cFunctionName,"*",(unsigned short) minArgs,(unsigned short) maxArgs,
+                  cRestrictions,JNIUserFunction,"JNIUserFunction",nobj);
 
    (*env)->ReleaseStringUTFChars(env,functionName,cFunctionName);
 

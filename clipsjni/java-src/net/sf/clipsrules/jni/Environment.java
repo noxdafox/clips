@@ -1100,10 +1100,10 @@ public class Environment
    /****************/
    private native void printRouter(long env,String logName,String printString);
 
-   /****************/
-   /* printRouter: */
-   /****************/
-   public void printRouter(
+   /*************/
+   /* printout: */
+   /*************/
+   public void printout(
      String logName,
      String printString)
      {
@@ -1165,7 +1165,7 @@ public class Environment
      String printString)
      {
       deactivateRouter(theRouter);
-      printRouter(logName,printString);
+      printout(logName,printString);
       activateRouter(theRouter);
      }
 

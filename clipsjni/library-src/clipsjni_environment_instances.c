@@ -96,7 +96,7 @@ JNIEXPORT jobject JNICALL Java_net_sf_clipsrules_jni_Environment_getInstanceList
   {
    Instance *instancePtr;
    int instanceCount = 0;
-   int i;
+   size_t i;
    jobject arrayList, slotValueList, javaSlotValueObject, theJavaInstance, instanceName, instanceClass;
    jobject theJavaSlotName, theJavaSlotValue;
    CLIPSValue slotNames;

@@ -756,3 +756,12 @@ void __declspec(dllexport) * __GetUDFContext(
   {
    return GetUDFContext(theEnv,functionName);
   }
+  
+Instance __declspec(dllexport) * __FindInstance(
+  Environment *theEnv,
+  Defmodule *theDefmodule,
+  const char *instanceName,
+  bool searchImports)
+  {
+   return FindInstance(theEnv,NULL,instanceName,true);
+  }

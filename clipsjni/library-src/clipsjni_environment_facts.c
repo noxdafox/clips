@@ -95,7 +95,7 @@ JNIEXPORT jobject JNICALL Java_net_sf_clipsrules_jni_Environment_getFactList(
   {
    struct fact *factPtr;
    int factCount = 0;
-   int i;
+   size_t i;
    jobject arrayList, slotValueList, javaSlotValueObject, theJavaFact, factName, factRelation;
    jobject theJavaSlotName, theJavaSlotValue;
    CLIPSValue slotNames;

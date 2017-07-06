@@ -57,6 +57,23 @@ class CLIPSCPPEnv
       
       FactAddressValue *AssertString(char *);
       InstanceAddressValue *MakeInstance(char *);
+      
+      DataObject Eval(char *);
+      
+      bool Watch(char *);
+      bool Unwatch(char *);
+
+      bool AddUserFunction(char *,CLIPSCPPUserFunction *);
+      bool AddUserFunction(char *,char *,unsigned short,unsigned short,char *,CLIPSCPPUserFunction *);
+      bool RemoveUserFunction(char *);
+      
+      bool AddRouter(char *,int,CLIPSCPPRouter *);
+      bool DeleteRouter(char *);
+      bool ActivateRouter(char *);
+      bool DeactivateRouter(char *);
+      void Printout(const char *,const char *);
+      void Print(const char *);
+      void PrintLn(const char *);
 
       void CommandLoop();
       void CommandLoopOnceThenBatch();
@@ -68,18 +85,8 @@ class CLIPSCPPEnv
       int GetHaltRules();
       void SetHaltRules(bool);
       int ChangeDirectory(char *);
-      bool Watch(char *);
-      bool Unwatch(char *);
       bool GetWatchItem(char *);
       void SetWatchItem(char *,bool);
-      DataObject Eval(char *);
-      bool AddUserFunction(char *,CLIPSCPPUserFunction *);
-      bool AddUserFunction(char *,char *,unsigned short,unsigned short,char *,CLIPSCPPUserFunction *);
-      bool RemoveUserFunction(char *);
-      bool AddRouter(char *,int,CLIPSCPPRouter *);
-      bool DeleteRouter(char *);
-      bool ActivateRouter(char *);
-      bool DeactivateRouter(char *);
       bool AddPeriodicFunction(char *,int,CLIPSCPPPeriodicFunction *);
       bool RemovePeriodicFunction(char *);
       bool EnablePeriodicFunctions(bool);
@@ -90,9 +97,6 @@ class CLIPSCPPEnv
       void AppendToDribble(const char *);
       void PrintBanner();
       void PrintPrompt();
-      void PrintString(const char *,const char *);
-      void Print(const char *);
-      void PrintLn(const char *);
       void CLIPSCPPEnv::GetFactScopes(std::unordered_map<unsigned long long,std::vector<bool>>&);
 	  std::vector<CLIPSCPPFactInstance> *GetFactList();
       void CLIPSCPPEnv::GetInstanceScopes(std::unordered_map<unsigned long long,std::vector<bool>>&);

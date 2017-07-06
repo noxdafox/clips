@@ -219,11 +219,65 @@ InstanceAddressValue *CLIPSCPPEnv::FindInstanceByName(
 #ifndef CLIPS_DLL_WRAPPER
    rv = ::FindInstance(theEnv,NULL,instanceName,true);
 #else
-   rv = FindInstance(theEnv,NULL,instanceName,true);
+   rv = __FindInstance(theEnv,NULL,instanceName,true);
 #endif
      
    if (rv == NULL) return NULL;
    return new InstanceAddressValue(rv);
+  }
+  
+/********/
+/* Eval */
+/********/
+DataObject CLIPSCPPEnv::Eval(
+  char *evalString)
+  {
+   int rc;
+   CLIPSValue rv;
+   
+#ifndef CLIPS_DLL_WRAPPER
+   rc = ::Eval(theEnv,evalString,&rv);
+#else
+   rc = __Eval(theEnv,evalString,&rv);
+#endif
+
+   if (rc == 0)
+     {
+     /*
+      std::string excStr = "Eval: Invalid expression ";
+      excStr.append(evalString);
+      throw std::logic_error(excStr); 
+      */
+      return NULL;
+     }
+     
+   return ConvertDataObject(&rv);
+  }
+  
+/*********/
+/* Watch */
+/*********/
+bool CLIPSCPPEnv::Watch(
+  char *item)
+  {
+#ifndef CLIPS_DLL_WRAPPER
+   return ::WatchString(theEnv,item);
+#else
+   return __WatchString(theEnv,item);
+#endif
+  }
+
+/***********/
+/* Unwatch */
+/***********/
+bool CLIPSCPPEnv::Unwatch(
+  char *item)
+  {
+#ifndef CLIPS_DLL_WRAPPER
+   return ::UnwatchString(theEnv,item);
+#else
+   return __UnwatchString(theEnv,item);
+#endif
   }
 
 /***************/
@@ -274,10 +328,10 @@ void CLIPSCPPEnv::PrintPrompt()
 #endif
   }
   
-/***************/
-/* PrintString */
-/***************/
-void CLIPSCPPEnv::PrintString(
+/************/
+/* Printout */
+/************/
+void CLIPSCPPEnv::Printout(
   const char *logicalName,
   const char *printString)
   {
@@ -294,7 +348,7 @@ void CLIPSCPPEnv::PrintString(
 void CLIPSCPPEnv::Print(
   const char *printString)
   {
-   PrintString(STDOUT,printString);
+   Printout(STDOUT,printString);
   }
 
 /***********/
@@ -303,36 +357,8 @@ void CLIPSCPPEnv::Print(
 void CLIPSCPPEnv::PrintLn(
   const char *printString)
   {
-   PrintString(STDOUT,printString);
-   PrintString(STDOUT,"\n");
-  }
-
-/********/
-/* Eval */
-/********/
-DataObject CLIPSCPPEnv::Eval(
-  char *evalString)
-  {
-   int rc;
-   CLIPSValue rv;
-   
-#ifndef CLIPS_DLL_WRAPPER
-   rc = ::Eval(theEnv,evalString,&rv);
-#else
-   rc = __Eval(theEnv,evalString,&rv);
-#endif
-
-   if (rc == 0)
-     {
-     /*
-      std::string excStr = "Eval: Invalid expression ";
-      excStr.append(evalString);
-      throw std::logic_error(excStr); 
-      */
-      return NULL;
-     }
-     
-   return ConvertDataObject(&rv);
+   Printout(STDOUT,printString);
+   Printout(STDOUT,"\n");
   }
 
 /********************/
@@ -687,32 +713,6 @@ static Value *ConvertSingleFieldValue(
      }
 
    return new VoidValue();
-  }
-  
-/*********/
-/* Watch */
-/*********/
-bool CLIPSCPPEnv::Watch(
-  char *item)
-  {
-#ifndef CLIPS_DLL_WRAPPER
-   return ::WatchString(theEnv,item);
-#else
-   return __WatchString(theEnv,item);
-#endif
-  }
-
-/***********/
-/* Unwatch */
-/***********/
-bool CLIPSCPPEnv::Unwatch(
-  char *item)
-  {
-#ifndef CLIPS_DLL_WRAPPER
-   return ::UnwatchString(theEnv,item);
-#else
-   return __UnwatchString(theEnv,item);
-#endif
   }
   
 /****************/

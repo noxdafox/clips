@@ -33,17 +33,17 @@ jobject ConvertDataObject(
    jobject result = NULL, tresult;
    jint mfLength;
    Multifield *theList;
-   long i;
+   size_t i;
    
    switch(theDO->header->type)
      {
       case MULTIFIELD_TYPE:
-        mfLength = theDO->multifieldValue->length;
+        mfLength = (jint) theDO->multifieldValue->length;
 
         result = (*env)->NewObject(env,
                                    CLIPSJNIData(clipsEnv)->arrayListClass,
                                    CLIPSJNIData(clipsEnv)->arrayListInitMethod,
-                                   (jint) mfLength);
+                                   mfLength);
                                    
         if (result == NULL)
           { return result; }

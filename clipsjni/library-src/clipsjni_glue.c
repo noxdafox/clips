@@ -449,7 +449,7 @@ void NewJavaAddress(
       newArgs = (UDFValue *) genalloc(theEnv,sizeof(UDFValue) * (numberOfArguments - 2));
       for (i = 0; i < (size_t) numberOfArguments - 2; i++)
         {
-         UDFNthArgument(context,i+3,ANY_TYPE_BITS,&newArgs[i]);
+         UDFNthArgument(context,(unsigned int) (i+3),ANY_TYPE_BITS,&newArgs[i]);
          if (GetEvaluationError(theEnv))
            {   
             (*env)->DeleteLocalRef(env,theClass);

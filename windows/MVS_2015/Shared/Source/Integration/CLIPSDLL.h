@@ -147,4 +147,6 @@ void DECLSPEC __NormalizeMultifield(Environment *,UDFValue *);
 
 void DECLSPEC * __GetUDFContext(Environment *,const char *);
 
+Instance DECLSPEC * __FindInstance(Environment *,Defmodule *,const char *,bool);
+
 #endif

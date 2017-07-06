@@ -69,6 +69,23 @@ namespace CLIPSNET
         List<InstanceAddressValue ^> ^ FindAllInstances(String ^);
         List<InstanceAddressValue ^> ^ FindAllInstances(String ^,String ^,String ^);
         
+        PrimitiveValue ^ Eval(String ^);
+        
+        bool Watch(String ^);
+        bool Unwatch(String ^);
+        
+        void AddUserFunction(String ^,UserFunction ^);
+        void AddUserFunction(String ^,String ^,unsigned short,unsigned short,String ^,UserFunction ^);
+        void RemoveUserFunction(String ^);
+        
+        void AddRouter(String ^,int ,Router ^);
+        void DeleteRouter(String ^);
+        bool ActivateRouter(Router ^);
+        bool DeactivateRouter(Router ^);
+        void Printout(String ^,String ^);
+        void Print(String ^);
+        void PrintLn(String ^);
+
         bool GetHaltExecution();
         void SetHaltExecution(bool);
         void SetHaltCommandLoopBatch(bool);
@@ -77,17 +94,9 @@ namespace CLIPSNET
         bool GetEvaluationError();
         void SetEvaluationError(bool);
         bool ChangeDirectory(String ^);
-        PrimitiveValue ^ Eval(String ^);
-        void AddRouter(String ^,int ,Router ^);
-        void DeleteRouter(String ^);
-        bool ActivateRouter(Router ^);
-        bool DeactivateRouter(Router ^);
         void AddPeriodicCallback(String ^,int ,PeriodicCallback ^);
         void RemovePeriodicCallback(String ^);
         bool EnablePeriodicFunctions(bool);
-        void AddUserFunction(String ^,UserFunction ^);
-        void AddUserFunction(String ^,String ^,unsigned short,unsigned short,String ^,UserFunction ^);
-        void RemoveUserFunction(String ^);
         size_t InputBufferCount();
         String ^ GetInputBuffer();
         void SetInputBuffer(String ^);
@@ -96,9 +105,6 @@ namespace CLIPSNET
         void CommandLoopOnceThenBatch();
         void PrintBanner();
         void PrintPrompt();
-        void PrintString(String ^,String ^);
-        void Print(String ^);
-        void PrintLn(String ^);
         Dictionary<unsigned long long,BitArray ^> ^ GetFactScopes();
         List<FactInstance ^> ^ GetFactList();
         Dictionary<unsigned long long,BitArray ^> ^ GetInstanceScopes();
@@ -115,8 +121,6 @@ namespace CLIPSNET
         void SetFactListChanged(bool);
         bool GetInstancesChanged();
         void SetInstancesChanged(bool);
-        bool Watch(String ^);
-        bool Unwatch(String ^);
         bool GetWatchItem(String ^);
         void SetWatchItem(String ^,bool);
         virtual String^ ToString() override;
