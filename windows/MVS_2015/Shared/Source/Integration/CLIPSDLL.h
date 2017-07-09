@@ -149,4 +149,9 @@ void DECLSPEC * __GetUDFContext(Environment *,const char *);
 
 Instance DECLSPEC * __FindInstance(Environment *,Defmodule *,const char *,bool);
 
+ParserErrorFunction DECLSPEC * __SetParserErrorCallback(Environment *,ParserErrorFunction *,void *);
+
+void DECLSPEC __SetParsingFileName(Environment *,const char *);
+char DECLSPEC * __GetParsingFileName(Environment *);
+
 #endif

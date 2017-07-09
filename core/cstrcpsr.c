@@ -656,14 +656,16 @@ void FlushParsingMessages(
      {
       (*ConstructData(theEnv)->ParserErrorCallback)(theEnv,GetErrorFileName(theEnv),
                                                            NULL,ConstructData(theEnv)->ErrorString,
-                                                           ConstructData(theEnv)->ErrLineNumber);
+                                                           ConstructData(theEnv)->ErrLineNumber,
+                                                           ConstructData(theEnv)->ParserErrorContext);
      }
 
    if (ConstructData(theEnv)->WarningString != NULL)
      {
       (*ConstructData(theEnv)->ParserErrorCallback)(theEnv,GetWarningFileName(theEnv),
                                                            ConstructData(theEnv)->WarningString,NULL,
-                                                           ConstructData(theEnv)->WrnLineNumber);
+                                                           ConstructData(theEnv)->WrnLineNumber,
+                                                           ConstructData(theEnv)->ParserErrorContext);
      }
 
    /*===================================*/

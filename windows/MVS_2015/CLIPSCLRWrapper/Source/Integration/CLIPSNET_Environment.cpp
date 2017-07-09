@@ -11,6 +11,8 @@ using namespace CLIPS;
 
 namespace CLIPSNET
   {	 
+  /* TBD Use delegates rather than create instance */
+  /*
    DelegatePeriodicCallback::DelegatePeriodicCallback() 
      {
      
@@ -20,13 +22,91 @@ namespace CLIPSNET
      {
       CallbackEvents();
      }
+    */ 
+    /*
+   DelegateParserErrorCallback::DelegateParserErrorCallback() 
+     {
+     
+     }
+     
+   void DelegateParserErrorCallback::Callback(
+     String ^ fileName,
+     String ^ warningString,
+     String ^ errorString,
+     long lineNumber)
+     {
+      CallbackEvents();
+     }
+     */
+
+   /***************************/
+   /* LoadParserErrorCallback */
+   /***************************/
+   LoadParserErrorCallback::LoadParserErrorCallback(
+     Environment ^ theEnv) 
+     {
+      env = theEnv;
+     }
+
+   void LoadParserErrorCallback::Callback(
+     String ^ fileName,
+     String ^ warningString,
+     String ^ errorString,
+     long lineNumber)
+     {
+      if (errorString == nullptr) 
+        { return; }
+      
+      env->AddError(fileName,lineNumber,errorString);
+     }
+   
+   /*************/
+   /* AddError: */
+   /*************/
+   void Environment::AddError(
+     String ^ fileName,
+     long lineNumber,
+     String ^ message)
+     {
+      errorList->Add(gcnew CLIPSLineError(fileName,lineNumber,message));
+     }
+     
+   /******************/
+   /* CheckForErrors */
+   /******************/
+   void Environment::CheckForErrors(
+     String ^ function)
+     {
+      if (errorList->Count == 0)
+        { return; }
+        
+      String ^ exceptionString;
+         
+      if (errorList->Count == 1)
+        { exceptionString = "\n" + function + " encountered 1 error:\n"; }
+      else
+        { exceptionString = "\n" + function + " encountered " + errorList->Count + " errors:\n"; }
+           
+      for each (CLIPSLineError ^ theError in errorList)
+        {
+         exceptionString = exceptionString + "\n" + 
+                                                  theError->FileName + " (Line " +
+                                                  theError->LineNumber + ") : " +
+                                                  theError->Message;
+        }
+           
+      CLIPSLoadException ^ e = gcnew CLIPSLoadException(exceptionString,errorList);
+      errorList->Clear();
+      throw e;
+     }
 
    /***************/
    /* Environment */
    /***************/
    Environment::Environment() : m_Env( new CLIPSCPPEnv ) 
      {
-     
+      this->AddParserErrorCallback(gcnew LoadParserErrorCallback(this));
+      errorList = gcnew List<CLIPSLineError ^>();
      }
    
    /****************/
@@ -93,12 +173,13 @@ namespace CLIPSNET
    /* CaptureEnd */
    /**************/
    void Environment::CaptureEnd(
-     CaptureRouter ^ commandCapture)
+     CaptureRouter ^ commandCapture,
+     bool throwError)
      {
       String ^ error = commandCapture->Output;
       this->DeleteRouter(commandCapture->Name);
 
-      if (! String::IsNullOrEmpty(error))
+      if (throwError && (! String::IsNullOrEmpty(error)))
         { throw gcnew CLIPSException(error); }
      }
      
@@ -111,7 +192,7 @@ namespace CLIPSNET
 
       m_Env->Clear();
 
-      CaptureEnd(commandCapture);
+      CaptureEnd(commandCapture,true);
      }
 
    /********/
@@ -121,6 +202,9 @@ namespace CLIPSNET
      String ^ fileName)
      {
       array<Byte>^ ebFileName = Encoding::UTF8->GetBytes(fileName);
+      
+      CaptureRouter ^ commandCapture = CaptureStart();
+
       if (ebFileName->Length)
         {
          pin_ptr<Byte> pbFileName = &ebFileName[0];
@@ -128,15 +212,20 @@ namespace CLIPSNET
         }
       else
         { return m_Env->Load(""); }
+
+      CaptureEnd(commandCapture,false);
+
+      CheckForErrors("Load");
      }
-     
-   /******************/
-   /* LoadFromString */
-   /******************/
-   void Environment::LoadFromString(
+
+   /****************/
+   /* StringLoader */
+   /****************/
+   void Environment::StringLoader(
      String ^ loadString)
      {
       array<Byte>^ ebLoadString = Encoding::UTF8->GetBytes(loadString);
+
       if (ebLoadString->Length)
         {
          pin_ptr<Byte> pbLoadString = &ebLoadString[0];
@@ -144,6 +233,27 @@ namespace CLIPSNET
         }
       else 
         { m_Env->LoadFromString(""); }
+     }
+          
+   /******************/
+   /* LoadFromString */
+   /******************/
+   void Environment::LoadFromString(
+     String ^ loadString)
+     {
+      char *oldName = m_Env->GetParsingFileName();
+
+      m_Env->SetParsingFileName("<String>");
+
+      CaptureRouter ^ commandCapture = CaptureStart();
+
+      this->StringLoader(loadString);
+
+      CaptureEnd(commandCapture,false);
+
+      m_Env->SetParsingFileName(oldName);
+
+      CheckForErrors("LoadFromString");
      }
 
    /********************/
@@ -158,8 +268,27 @@ namespace CLIPSNET
       if (stream == nullptr) return false;
       StreamReader ^ reader = gcnew StreamReader(stream);
       String ^ resourceContent = reader->ReadToEnd();
+      
+      char *oldName = m_Env->GetParsingFileName();
 
-      this->LoadFromString(resourceContent);
+      array<Byte>^ ebResourceName = Encoding::UTF8->GetBytes(resourceName);
+
+      if (ebResourceName->Length)
+        {
+         pin_ptr<Byte> pbResourceName = &ebResourceName[0];
+         m_Env->SetParsingFileName((char *) pbResourceName);
+        }
+
+      CaptureRouter ^ commandCapture = CaptureStart();
+
+      this->StringLoader(resourceContent);
+      
+      CaptureEnd(commandCapture,false);
+
+      m_Env->SetParsingFileName(oldName);
+
+      CheckForErrors("LoadFromResource");
+
       return true;
      }
      
@@ -181,7 +310,7 @@ namespace CLIPSNET
       else
         { return m_Env->Build(""); }
 
-      CaptureEnd(commandCapture);
+      CaptureEnd(commandCapture,true);
      }
 
    /*********/
@@ -193,7 +322,7 @@ namespace CLIPSNET
 
       m_Env->Reset(); 
       
-      CaptureEnd(commandCapture);
+      CaptureEnd(commandCapture,true);
      }
 
    /*******/
@@ -207,7 +336,7 @@ namespace CLIPSNET
 
       rv = m_Env->Run(-1LL); 
 
-      CaptureEnd(commandCapture);
+      CaptureEnd(commandCapture,true);
 
       return rv;
      }
@@ -224,7 +353,7 @@ namespace CLIPSNET
 
       rv = m_Env->Run(runLimit); 
 
-      CaptureEnd(commandCapture);
+      CaptureEnd(commandCapture,true);
 
       return rv;
      }
@@ -248,7 +377,7 @@ namespace CLIPSNET
       else
         { frv = m_Env->AssertString(""); }
 
-      CaptureEnd(commandCapture);
+      CaptureEnd(commandCapture,true);
 
       if (frv == NULL) return (nullptr);
       
@@ -274,7 +403,7 @@ namespace CLIPSNET
       else
         { irv = m_Env->MakeInstance(""); }
 
-      CaptureEnd(commandCapture);
+      CaptureEnd(commandCapture,true);
 
       if (irv == NULL) return (nullptr);
       
@@ -424,7 +553,7 @@ namespace CLIPSNET
       else
         { rv = DataObjectToPrimitiveValue(m_Env->Eval("")); }
 
-      CaptureEnd(commandCapture);
+      CaptureEnd(commandCapture,true);
 
       return rv;
      }
@@ -715,6 +844,15 @@ namespace CLIPSNET
      bool value)
      {
       return m_Env->EnablePeriodicFunctions(value);
+     }
+     
+   /**************************/
+   /* AddParserErrorCallback */
+   /**************************/
+   void Environment::AddParserErrorCallback(
+	  ParserErrorCallback ^ theCallback)
+     {
+      m_Env->SetParserErrorCallback((CLIPS::CLIPSCPPParserErrorFunction *) theCallback->ParserErrorCallbackBridge());
      }
 
    /********************/

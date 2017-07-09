@@ -2,11 +2,13 @@
 
 #include "clipscpp.h"
 #include "CLIPSNET_Agenda.h"
+#include "CLIPSNET_Exceptions.h"
 #include "CLIPSNET_FactInstance.h"
 #include "CLIPSNET_FocusStack.h"
 #include "CLIPSNET_Module.h"
 #include "CLIPSNET_Values.h"
 #include "CLIPSNET_Router.h"
+#include "CLIPSNET_ParserErrorCallback.h"
 #include "CLIPSNET_PeriodicCallback.h"
 #include "CLIPSNET_UserFunction.h"
 
@@ -18,11 +20,15 @@ namespace CLIPSNET
   {
    ref class Router;
    ref class CaptureRouter;
-   public delegate void PeriodicCallbackDelegate();
+   ref class Environment;
+
+   //public delegate void PeriodicCallbackDelegate();
+   //public delegate void ParserErrorCallbackDelegate();
 
    /*######################################*/
    /* DelegatePeriodicCallback declaration */
    /*######################################*/
+   /*
    ref class DelegatePeriodicCallback : PeriodicCallback
      {
       public:
@@ -30,6 +36,30 @@ namespace CLIPSNET
         void Callback (void) override;
 
       event PeriodicCallbackDelegate ^ CallbackEvents;
+     };
+     */
+   /*#########################################*/
+   /* DelegateParserErrorCallback declaration */
+   /*#########################################*/
+   /*
+   ref class DelegateParserErrorCallback : ParserErrorCallback
+     {
+      public:
+        DelegateParserErrorCallback();
+        void Callback (String ^,String ^,String ^,long) override;
+
+      event ParserErrorCallbackDelegate ^ CallbackEvents;
+     };
+     */
+  
+   public ref class LoadParserErrorCallback : ParserErrorCallback
+     {
+      public:
+        LoadParserErrorCallback(Environment ^);
+        void LoadParserErrorCallback::Callback(String ^,String ^,String ^,long) override;
+
+      private:
+        Environment ^ env;
      };
 
    /*###################*/
@@ -42,7 +72,8 @@ namespace CLIPSNET
         Environment();
         ~Environment();
 
-        event PeriodicCallbackDelegate ^ PeriodicCallbackEvent;
+        //event PeriodicCallbackDelegate ^ PeriodicCallbackEvent;
+        //event ParserErrorCallbackDelegate ^ ParserErrorCallbackEvent;
 
         void CommandLoop();
         
@@ -86,6 +117,10 @@ namespace CLIPSNET
         void Print(String ^);
         void PrintLn(String ^);
 
+        void AddParserErrorCallback(ParserErrorCallback ^);
+        
+        void AddPeriodicCallback(String ^,int ,PeriodicCallback ^);
+
         bool GetHaltExecution();
         void SetHaltExecution(bool);
         void SetHaltCommandLoopBatch(bool);
@@ -94,7 +129,6 @@ namespace CLIPSNET
         bool GetEvaluationError();
         void SetEvaluationError(bool);
         bool ChangeDirectory(String ^);
-        void AddPeriodicCallback(String ^,int ,PeriodicCallback ^);
         void RemovePeriodicCallback(String ^);
         bool EnablePeriodicFunctions(bool);
         size_t InputBufferCount();
@@ -126,13 +160,17 @@ namespace CLIPSNET
         virtual String^ ToString() override;
         void CallNextPrintRouter(Router ^,String ^,String ^);
         CaptureRouter ^ CaptureStart();
-        void CaptureEnd(CaptureRouter ^);
+        void CaptureEnd(CaptureRouter ^,bool);
         InstanceAddressValue ^ FindInstanceByName(String ^);
+        void AddError(String ^,long,String ^);
 
       protected:
         !Environment();
+        void CheckForErrors(String ^);
+        void StringLoader(String ^);
 
       private:
         CLIPSCPPEnv *m_Env;
+        List<CLIPSLineError ^> ^ errorList;
      };
   };

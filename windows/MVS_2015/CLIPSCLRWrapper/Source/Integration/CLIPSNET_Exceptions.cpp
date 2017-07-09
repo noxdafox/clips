@@ -31,6 +31,59 @@ namespace CLIPSNET
    CLIPSException::!CLIPSException()
      { 
      }
+   
+   /******************/
+   /* CLIPSLineError */
+   /******************/   
+   CLIPSLineError::CLIPSLineError(
+     String ^ theFileName,
+     long theLineNumber, 
+     String ^ theMessage)
+     { 
+      fileName = theFileName;
+      lineNumber = theLineNumber;
+      message = theMessage;
+     }
+
+   /*******************/
+   /* ~CLIPSLineError */
+   /*******************/
+   CLIPSLineError::~CLIPSLineError()
+     {
+      this->!CLIPSLineError(); 
+     }
+     
+   /*******************/
+   /* !CLIPSLineError */
+   /*******************/
+   CLIPSLineError::!CLIPSLineError()
+     { 
+     }
+
+   /**********************/
+   /* CLIPSLoadException */
+   /**********************/   
+   CLIPSLoadException::CLIPSLoadException(
+     String ^theMessage,
+     List<CLIPSLineError ^> ^ theErrorList) : CLIPSException(theMessage)
+     {
+      errorList = theErrorList;
+     }
+
+   /***********************/
+   /* ~CLIPSLoadException */
+   /***********************/
+   CLIPSLoadException::~CLIPSLoadException()
+     {
+      this->!CLIPSLoadException(); 
+     }
+     
+   /***********************/
+   /* !CLIPSLoadException */
+   /***********************/
+   CLIPSLoadException::!CLIPSLoadException()
+     { 
+     }
   };
 
 

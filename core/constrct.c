@@ -172,13 +172,15 @@ static void DeallocateConstructData(
 /***********************************************/
 ParserErrorFunction *SetParserErrorCallback(
    Environment *theEnv,
-   ParserErrorFunction *functionPtr)
+   ParserErrorFunction *functionPtr,
+   void *context)
   {
    ParserErrorFunction *tmpPtr;
 
    tmpPtr = ConstructData(theEnv)->ParserErrorCallback;
    ConstructData(theEnv)->ParserErrorCallback = functionPtr;
-   return(tmpPtr);
+   ConstructData(theEnv)->ParserErrorContext = context;
+   return tmpPtr;
   }
 
 /*************************************************/

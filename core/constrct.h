@@ -85,7 +85,7 @@ typedef struct construct Construct;
 typedef void SaveCallFunction(Environment *,Defmodule *,const char *,void *);
 typedef struct saveCallFunctionItem SaveCallFunctionItem;
 
-typedef void ParserErrorFunction(Environment *,const char *,const char *,const char *,long);
+typedef void ParserErrorFunction(Environment *,const char *,const char *,const char *,long,void *);
 typedef bool BeforeResetFunction(Environment *);
 
 #define CHS (ConstructHeader *)
@@ -146,6 +146,7 @@ struct constructData
    size_t MaxWrnChars;
    size_t CurWrnPos;
    ParserErrorFunction *ParserErrorCallback;
+   void *ParserErrorContext;
 #endif
    Construct *ListOfConstructs;
    struct voidCallFunctionItem *ListOfResetFunctions;
@@ -198,7 +199,7 @@ struct constructData
    Construct                     *FindConstruct(Environment *,const char *);
    void                           DeinstallConstructHeader(Environment *,ConstructHeader *);
    void                           DestroyConstructHeader(Environment *,ConstructHeader *);
-   ParserErrorFunction           *SetParserErrorCallback(Environment *,ParserErrorFunction *);
+   ParserErrorFunction           *SetParserErrorCallback(Environment *,ParserErrorFunction *,void *);
    
    bool                           AddSaveFunction(Environment *,const char *,SaveCallFunction *,int,void *);
    bool                           RemoveSaveFunction(Environment *,const char *);

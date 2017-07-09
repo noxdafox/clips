@@ -765,3 +765,24 @@ Instance __declspec(dllexport) * __FindInstance(
   {
    return FindInstance(theEnv,NULL,instanceName,true);
   }
+
+ParserErrorFunction __declspec(dllexport) * __SetParserErrorCallback(
+   Environment *theEnv,
+   ParserErrorFunction *functionPtr,
+   void *context)
+   {
+    return SetParserErrorCallback(theEnv,functionPtr,context);
+   }
+
+char __declspec(dllexport) * __GetParsingFileName(
+   Environment *theEnv)
+   {
+    return GetParsingFileName(theEnv);
+   }
+
+void __declspec(dllexport) __SetParsingFileName(
+   Environment *theEnv,
+   const char *fileName)
+   {
+    SetParsingFileName(theEnv,fileName);
+   }

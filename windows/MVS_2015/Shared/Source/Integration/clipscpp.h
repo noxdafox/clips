@@ -25,6 +25,7 @@ enum CLIPSCPPType
 
 class CLIPSCPPRouter;
 class CLIPSCPPPeriodicFunction;
+class CLIPSCPPParserErrorFunction;
 class CLIPSCPPFocus;
 class CLIPSCPPModule;
 class CLIPSCPPFocusStack;
@@ -74,6 +75,8 @@ class CLIPSCPPEnv
       void Printout(const char *,const char *);
       void Print(const char *);
       void PrintLn(const char *);
+      
+      void SetParserErrorCallback(CLIPSCPPParserErrorFunction *);
 
       void CommandLoop();
       void CommandLoopOnceThenBatch();
@@ -113,6 +116,8 @@ class CLIPSCPPEnv
       bool GetInstancesChanged();
       void SetInstancesChanged(bool);
       InstanceAddressValue * FindInstanceByName(char *);
+      char *GetParsingFileName();
+      void SetParsingFileName(const char *);
   };
 
 class CLIPSCPPUserFunction
@@ -254,7 +259,13 @@ class CLIPSCPPPeriodicFunction
    public:
       virtual void Callback(CLIPSCPPEnv *);
   };
-    
+
+class CLIPSCPPParserErrorFunction
+  {
+   public:
+      virtual void Callback(CLIPSCPPEnv *,const char *,const char *,const char *,long);
+  };
+      
 class Value
   {
    public:

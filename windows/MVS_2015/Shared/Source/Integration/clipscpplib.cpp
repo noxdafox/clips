@@ -53,7 +53,7 @@ static void ConvertToCLIPSValue(Environment *,DataObject,CLIPSValue *);
 static void ConvertSingleFieldToCLIPSValue(Environment *,Value *,CLIPSValue *);
 static void CLIPSCPPPeriodicCallback(Environment *,void *);
 static void CLIPSCPPUserFunctionCallback(Environment *,UDFContext *,UDFValue *);
-
+static void CLIPSCPPParserErrorCallback(Environment *,const char *,const char *,const char *,long,void *);
 
 /*#####################*/
 /* CLIPSCPPEnv Methods */
@@ -1010,6 +1010,44 @@ void CLIPSCPPEnv::AppendToDribble(
    __AppendDribble(theEnv,command);
 #endif
   }
+  
+/***************************/
+/* SetParserErrorCallback: */
+/***************************/
+void CLIPSCPPEnv::SetParserErrorCallback(
+  CLIPSCPPParserErrorFunction *callback)
+  {
+#ifndef CLIPS_DLL_WRAPPER
+   ::SetParserErrorCallback(theEnv,CLIPSCPPParserErrorCallback,callback);
+#else
+   __SetParserErrorCallback(theEnv,CLIPSCPPParserErrorCallback,callback);
+#endif
+  }
+
+/***********************/
+/* GetParsingFileName: */
+/***********************/
+char *CLIPSCPPEnv::GetParsingFileName()
+  {
+#ifndef CLIPS_DLL_WRAPPER
+   return ::GetParsingFileName(theEnv);
+#else
+   return __GetParsingFileName(theEnv);
+#endif
+  }
+  
+/***********************/
+/* SetParsingFileName: */
+/***********************/
+void CLIPSCPPEnv::SetParsingFileName(
+  const char *fileName)
+  {
+#ifndef CLIPS_DLL_WRAPPER
+   ::SetParsingFileName(theEnv,fileName);
+#else
+   __SetParsingFileName(theEnv,fileName);
+#endif
+  }
 
 /*##################################*/
 /* CLIPSCPPPeriodicFunction Methods */
@@ -1021,6 +1059,23 @@ void CLIPSCPPEnv::AppendToDribble(
 void CLIPSCPPPeriodicFunction::Callback(
   CLIPSCPPEnv *theCPPEnv)
   { 
+  }
+  
+/*#####################################*/
+/* CLIPSCPPParserErrorFunction Methods */
+/*#####################################*/
+
+/************/
+/* Callback */
+/************/
+void CLIPSCPPParserErrorFunction::Callback(
+  CLIPSCPPEnv *theCPPEnv,
+  const char *fileName,
+  const char *warningString,
+  const char *errorString,
+  long lineNumber)
+  { 
+   // TBD This is what got called.
   }
 
 /*########################*/
@@ -2063,6 +2118,29 @@ static void CLIPSCPPPeriodicCallback(
    
    thePF->Callback(theCPPEnv);
   }
+  
+/*######################################*/
+/* Static ParserErrorCallback Functions */
+/*######################################*/
+
+static void CLIPSCPPParserErrorCallback(
+  Environment *theEnv,
+  const char *fileName,
+  const char *warningString,
+  const char *errorString,
+  long lineNumber,
+  void *context) 
+  {
+#ifndef CLIPS_DLL_WRAPPER
+   CLIPSCPPParserErrorFunction *thePEF = (CLIPSCPPParserErrorFunction *) context;
+   CLIPSCPPEnv *theCPPEnv = (CLIPSCPPEnv *) GetEnvironmentContext(theEnv);
+#else
+   CLIPSCPPParserErrorFunction *thePEF = (CLIPSCPPParserErrorFunction *) context;
+   CLIPSCPPEnv *theCPPEnv = (CLIPSCPPEnv *) __GetEnvironmentContext(theEnv);
+#endif
+   
+   thePEF->Callback(theCPPEnv,fileName,warningString,errorString,lineNumber);
+  }
 
 /*#########################*/
 /* Static Router Functions */
@@ -2126,9 +2204,9 @@ static int CLIPSCPPGetc(
    return(theRouter->Getc(theCPPEnv,logicalName));
   }
   
-/*****************/
+/******************/
 /* CLIPSCPPUngetc */
-/*****************/
+/******************/
 static int CLIPSCPPUngetc(
   Environment *theEnv,
   const char *logicalName,

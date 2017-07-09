@@ -11,7 +11,7 @@ void       PrintJNIRouter(Environment *,const char *,const char *,void *);
 int        GetcJNIRouter(Environment *,const char *,void *);
 int        UngetcJNIRouter(Environment *,const char *,int, void *);
 void       JNIPeriodicCallback(Environment *,void *);
-void       JNIParserErrorCallback(Environment *,const char *,const char *,const char *,long);
+void       JNIParserErrorCallback(Environment *,const char *,const char *,const char *,long,void *);
 void       PrintJavaAddress(Environment *,const char *,void *);
 void       NewJavaAddress(UDFContext *,UDFValue *);
 bool       CallJavaMethod(UDFContext *,UDFValue *,UDFValue *);

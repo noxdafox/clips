@@ -96,7 +96,8 @@ void JNIParserErrorCallback(
   const char *fileName,
   const char *warningString,
   const char *errorString,
-  long lineNumber)
+  long lineNumber,
+  void *context)
   {
    JNIEnv *env;
    jmethodID mid;
@@ -1235,7 +1236,7 @@ jlong CreateCLIPSJNIEnvironment(
    /* Set up the parser error callback. */
    /*===================================*/
    
-   SetParserErrorCallback(theEnv,JNIParserErrorCallback);
+   SetParserErrorCallback(theEnv,JNIParserErrorCallback,NULL);
    
    /*=========================*/
    /* Return the environment. */
