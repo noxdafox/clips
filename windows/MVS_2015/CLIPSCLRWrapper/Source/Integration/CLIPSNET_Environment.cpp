@@ -545,13 +545,19 @@ namespace CLIPSNET
 
       CaptureRouter ^ commandCapture = CaptureStart();
 
-      if (ebEvalString->Length)
+      try
         {
-         pin_ptr<Byte> pbEvalString = &ebEvalString[0];
-         rv = DataObjectToPrimitiveValue(m_Env->Eval((char *) pbEvalString));
+         if (ebEvalString->Length)
+           {
+            pin_ptr<Byte> pbEvalString = &ebEvalString[0];
+            rv = DataObjectToPrimitiveValue(m_Env->Eval((char *) pbEvalString));
+           }
+         else
+           { rv = DataObjectToPrimitiveValue(m_Env->Eval("")); }
         }
-      else
-        { rv = DataObjectToPrimitiveValue(m_Env->Eval("")); }
+      catch (Exception ^)
+        {
+        }
 
       CaptureEnd(commandCapture,true);
 

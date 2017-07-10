@@ -74,8 +74,6 @@ namespace CLIPSNET
 
         //event PeriodicCallbackDelegate ^ PeriodicCallbackEvent;
         //event ParserErrorCallbackDelegate ^ ParserErrorCallbackEvent;
-
-        void CommandLoop();
         
         void Clear();
         int Load(String ^);
@@ -116,6 +114,8 @@ namespace CLIPSNET
         void Printout(String ^,String ^);
         void Print(String ^);
         void PrintLn(String ^);
+        
+        void CommandLoop();
 
         void AddParserErrorCallback(ParserErrorCallback ^);
         

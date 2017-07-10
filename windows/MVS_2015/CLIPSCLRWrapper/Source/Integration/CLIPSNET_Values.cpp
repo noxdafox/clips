@@ -654,7 +654,14 @@ namespace CLIPSNET
       array<Byte>^ ebSlotName = Encoding::UTF8->GetBytes(slotName);
       pin_ptr<Byte> pbSlotName = &ebSlotName[0];
 
-      return DataObjectToPrimitiveValue(m_factAddressValue->GetFactSlot((char *) pbSlotName));
+      try
+        {
+         return DataObjectToPrimitiveValue(m_factAddressValue->GetFactSlot((char *) pbSlotName));
+        }
+      catch (Exception ^)
+        {
+         throw gcnew CLIPSException("Slot " + slotName + " is invalid");
+        }
      }
 
    String ^ FactAddressValue::ToString()
@@ -709,8 +716,15 @@ namespace CLIPSNET
      {
       array<Byte>^ ebSlotName = Encoding::UTF8->GetBytes(slotName);
       pin_ptr<Byte> pbSlotName = &ebSlotName[0];
-
-      return DataObjectToPrimitiveValue(m_instanceAddressValue->DirectGetSlot((char *) pbSlotName));
+      
+      try
+        {
+         return DataObjectToPrimitiveValue(m_instanceAddressValue->DirectGetSlot((char *) pbSlotName));
+        }
+      catch (CLIPSException ^)
+        {
+         throw gcnew CLIPSException("Slot " + slotName + " is invalid");
+        }
      }
 
   String ^ InstanceAddressValue::ToString()

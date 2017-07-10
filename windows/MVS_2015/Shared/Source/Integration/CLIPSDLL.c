@@ -284,12 +284,12 @@ const char __declspec(dllexport) * __InstanceName(
    return InstanceName(theInstance);  
   } 
   
-void __declspec(dllexport) __DirectGetSlot(
+bool __declspec(dllexport) __DirectGetSlot(
   Instance *theInstance,
   const char *slotName,
   CLIPSValue *returnValue)
   {
-   DirectGetSlot(theInstance,slotName,returnValue);  
+   return DirectGetSlot(theInstance,slotName,returnValue);  
   }  
   
 bool __declspec(dllexport) __WatchString(

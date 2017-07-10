@@ -31,7 +31,7 @@ namespace CLIPSNET
      {
       protected:
         PrimitiveValue();
-	     ~PrimitiveValue();
+        ~PrimitiveValue();
 
       public:
         virtual String^ ToString() override;
@@ -49,7 +49,7 @@ namespace CLIPSNET
         bool PrimitiveValue::IsFactAddress();
         bool PrimitiveValue::IsInstanceAddress();
         bool PrimitiveValue::IsMultifield();
-      };
+     };
 
    /*################################*/
    /* PVEnumerator Class declaration */
@@ -85,8 +85,8 @@ namespace CLIPSNET
      {
       public:
         VoidValue();
-	     ~VoidValue();
-     	  virtual String^ ToString() override;
+        ~VoidValue();
+        virtual String ^ ToString() override;
         virtual bool Equals(Object ^ obj) override; 
         virtual CLIPSNETType CLIPSType() override;
      };
@@ -97,21 +97,20 @@ namespace CLIPSNET
 
    public ref class LexemeValue abstract : PrimitiveValue
      {
-	  private:
-	    String ^ value;
+      private:
+        String ^ value;
 
       protected:
-	    LexemeValue();
-	    LexemeValue(String ^ theString);
-		~LexemeValue();
+        LexemeValue();
+        LexemeValue(String ^ theString);
+        ~LexemeValue();
 
       public:
         String ^ GetLexemeValue();
         virtual String^ ToString() override;
         virtual int GetHashCode() override;
         virtual bool Equals(Object ^ obj) override; 
-	 };
-
+    };
 
    /*###############################*/
    /* StringValue Class declaration */
@@ -119,16 +118,16 @@ namespace CLIPSNET
 
    public ref class StringValue : LexemeValue
      {
-	  public:
-	    StringValue();
-	    StringValue(String ^ theString);
-		~StringValue();
+      public:
+        StringValue();
+        StringValue(String ^ theString);
+        ~StringValue();
 
       public:
-	     String ^ GetStringValue();
+        String ^ GetStringValue();
         virtual String^ ToString() override;
         virtual CLIPSNETType CLIPSType() override;
-	 };
+     };
 
    /*###############################*/
    /* SymbolValue Class declaration */
@@ -136,16 +135,16 @@ namespace CLIPSNET
 
    public ref class SymbolValue : LexemeValue
      {
-	  public:
-	    SymbolValue();
-	    SymbolValue(String ^ theString);
-		~SymbolValue();
+      public:
+        SymbolValue();
+        SymbolValue(String ^ theString);
+        ~SymbolValue();
 
       public:
         String ^ GetSymbolValue();
         virtual String^ ToString() override;
         virtual CLIPSNETType CLIPSType() override;
-	 };
+     };
 
    /*#####################################*/
    /* InstanceNameValue Class declaration */
@@ -153,17 +152,17 @@ namespace CLIPSNET
 
    public ref class InstanceNameValue : LexemeValue
      {
-	  public:
-	    InstanceNameValue();
-	    InstanceNameValue(String ^ theString);
-		~InstanceNameValue();
+      public:
+        InstanceNameValue();
+        InstanceNameValue(String ^ theString);
+        ~InstanceNameValue();
 
       public:
         String ^ GetInstanceNameValue();
         CLIPSNET::InstanceAddressValue ^ GetInstance(CLIPSNET::Environment ^);
-   	    virtual String^ ToString() override;
+        virtual String^ ToString() override;
         virtual CLIPSNETType CLIPSType() override;
-	 };
+     };
 
    /*###############################*/
    /* NumberValue Class declaration */
@@ -179,7 +178,7 @@ namespace CLIPSNET
         NumberValue();
         NumberValue(double theDouble);
         NumberValue(long long theLong);
-	     ~NumberValue();
+        ~NumberValue();
         
         double GetFloatValue(); 
         long long GetIntegerValue(); 
@@ -187,7 +186,7 @@ namespace CLIPSNET
           { return val->lValue; }
         static operator double ( NumberValue ^ val ) 
           { return val->dValue; }
-	 };
+     };
 
    /*################################*/
    /* IntegerValue Class declaration */
@@ -195,18 +194,18 @@ namespace CLIPSNET
 
    public ref class IntegerValue : NumberValue
      {
-	  public:
-	    IntegerValue();
-	    IntegerValue(long long theLong);
-	    IntegerValue(double theDouble);
-		~IntegerValue();
+      public:
+        IntegerValue();
+        IntegerValue(long long theLong);
+        IntegerValue(double theDouble);
+        ~IntegerValue();
 
       public:
         virtual String^ ToString() override;
         virtual int GetHashCode() override;
         virtual bool Equals(Object ^ obj) override; 
         virtual CLIPSNETType CLIPSType() override;
-	 };
+     };
 
    /*###############################*/
    /* FloatValue Class declaration */
@@ -214,18 +213,18 @@ namespace CLIPSNET
 
    public ref class FloatValue : NumberValue
      {
-	  public:
-	    FloatValue();
-	    FloatValue(long long theLong);
-	    FloatValue(double theDouble);
-       ~FloatValue();
+      public:
+        FloatValue();
+        FloatValue(long long theLong);
+        FloatValue(double theDouble);
+        ~FloatValue();
 
       public:
         virtual String ^ ToString() override;
         virtual int GetHashCode() override;
         virtual bool Equals(Object ^ obj) override; 
         virtual CLIPSNETType CLIPSType() override;
-	  };
+     };
 
    /*###################################*/
    /* MultifieldValue Class declaration */
@@ -239,26 +238,27 @@ namespace CLIPSNET
       public:
         MultifieldValue();
         MultifieldValue(List<PrimitiveValue ^> ^theList);
-	    ~MultifieldValue();
+        ~MultifieldValue();
+        
         property int Count
-	       {
-	        int get() { return listValue->Count; };
-	       }
+          {
+           int get() { return listValue->Count; };
+          }
 
         property PrimitiveValue ^ default[int] 
           {
            PrimitiveValue ^ get(int index) 
-	          { return listValue[index]; }
+             { return listValue[index]; }
           }
 
         List<PrimitiveValue ^> ^ GetMultifieldValue();
  
-	    virtual String^ ToString() override;
+        virtual String ^ ToString() override;
         virtual int GetHashCode() override;
         virtual bool Equals(Object ^ obj) override; 
         virtual System::Collections::IEnumerator ^ GetEnumerator();
         virtual CLIPSNETType CLIPSType() override;
-	  };
+     };
 
    /*####################################*/
    /* FactAddressValue Class declaration */
@@ -284,7 +284,7 @@ namespace CLIPSNET
         virtual int GetHashCode() override;
         virtual bool Equals(Object ^ obj) override; 
         virtual CLIPSNETType CLIPSType() override;
-	  };
+     };
 
    /*########################################*/
    /* InstanceAddressValue Class declaration */
@@ -296,11 +296,11 @@ namespace CLIPSNET
         CLIPS::InstanceAddressValue *m_instanceAddressValue;
 
       protected:
-		  !InstanceAddressValue();
+        !InstanceAddressValue();
 
       public:
-	     InstanceAddressValue();
-	     InstanceAddressValue(CLIPS::InstanceAddressValue *);
+        InstanceAddressValue();
+        InstanceAddressValue(CLIPS::InstanceAddressValue *);
         ~InstanceAddressValue();
         String ^ GetInstanceName();
         PrimitiveValue ^ GetSlotValue(String ^);
@@ -310,7 +310,7 @@ namespace CLIPSNET
         virtual int GetHashCode() override;
         virtual bool Equals(Object ^ obj) override; 
         virtual CLIPSNETType CLIPSType() override;
-	  };
+     };
 
    /*###########*/
    /* Functions */

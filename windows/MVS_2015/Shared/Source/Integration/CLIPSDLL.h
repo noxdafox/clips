@@ -61,7 +61,7 @@ void DECLSPEC __IncrementFactReferenceCount(Fact *);
 void DECLSPEC __DecrementFactReferenceCount(Fact *);
 void DECLSPEC __IncrementInstanceReferenceCount(Instance *);
 void DECLSPEC __DecrementInstanceReferenceCount(Instance *);
-void DECLSPEC __DirectGetSlot(Instance *,const char *,CLIPSValue *);  
+bool DECLSPEC __DirectGetSlot(Instance *,const char *,CLIPSValue *);  
 void DECLSPEC __SetHaltExecution(Environment *,bool);
 void DECLSPEC __SetHaltCommandLoopBatch(Environment *,bool);
 void DECLSPEC __SetHaltRules(Environment *,bool);

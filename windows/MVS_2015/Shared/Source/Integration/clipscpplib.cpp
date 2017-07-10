@@ -243,12 +243,9 @@ DataObject CLIPSCPPEnv::Eval(
 
    if (rc == 0)
      {
-     /*
       std::string excStr = "Eval: Invalid expression ";
       excStr.append(evalString);
       throw std::logic_error(excStr); 
-      */
-      return NULL;
      }
      
    return ConvertDataObject(&rv);
@@ -1831,7 +1828,7 @@ FactAddressValue *FactAddressValue::clone() const
 DataObject FactAddressValue::GetFactSlot(char *slotName) const
   {  
    CLIPSValue theCV;
-   int rv;
+   bool rv;
    
 #ifndef CLIPS_DLL_WRAPPER
    rv = ::GetFactSlot(theFactAddress,slotName,&theCV);
@@ -1841,8 +1838,9 @@ DataObject FactAddressValue::GetFactSlot(char *slotName) const
    
    if (! rv)
       {
-       std::string excStr = "GetFactSlot: Invalid slot name ";
+       std::string excStr = "Slot ";
        excStr.append(slotName);
+       excStr.append(" is invalid");
        
        throw std::logic_error(excStr); 
       }
@@ -1948,12 +1946,22 @@ const char *InstanceAddressValue::GetInstanceName() const
 DataObject InstanceAddressValue::DirectGetSlot(char *slotName) const
   {  
    CLIPSValue theCV;
+   bool rv;
    
 #ifndef CLIPS_DLL_WRAPPER
-   ::DirectGetSlot(theInstanceAddress,slotName,&theCV);
+   rv = ::DirectGetSlot(theInstanceAddress,slotName,&theCV);
 #else
-   __DirectGetSlot(theInstanceAddress,slotName,&theCV);
+   rv = __DirectGetSlot(theInstanceAddress,slotName,&theCV);
 #endif
+
+   if (! rv)
+      {
+       std::string excStr = "Slot ";
+       excStr.append(slotName);
+       excStr.append(" is invalid");
+       
+       throw std::logic_error(excStr); 
+      }
    
    return ConvertDataObject(&theCV);
   }
