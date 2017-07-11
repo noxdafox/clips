@@ -28,9 +28,7 @@ public class Environment
    public static final String MESSAGE_HANDLERS = "message-handlers";
    public static final String NONE = "none";
    public static final String ALL = "all";
-   
-   public static final int UNBOUNDED = -1;
-      
+         
    private List<Router> routerList = new ArrayList<Router>(); 
    private List<CLIPSLineError> errorList = new ArrayList<CLIPSLineError>();
 
@@ -202,7 +200,7 @@ public class Environment
      String functionName,
      UserFunction callback)
      {
-      return addUserFunction(theEnvironment,functionName,"*",0,UNBOUNDED,null,callback);
+      return addUserFunction(theEnvironment,functionName,"*",0,UserFunction.UNBOUNDED,null,callback);
      } 
 
    /*******************/
