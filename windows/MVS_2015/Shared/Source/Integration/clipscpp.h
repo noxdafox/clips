@@ -88,6 +88,7 @@ class CLIPSCPPEnv
       int GetHaltRules();
       void SetHaltRules(bool);
       int ChangeDirectory(char *);
+      bool ValidWatchItem(char *);
       bool GetWatchItem(char *);
       void SetWatchItem(char *,bool);
       bool AddPeriodicFunction(char *,int,CLIPSCPPPeriodicFunction *);

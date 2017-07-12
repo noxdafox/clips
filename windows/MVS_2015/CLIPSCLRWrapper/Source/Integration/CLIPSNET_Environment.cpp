@@ -198,9 +198,15 @@ namespace CLIPSNET
    /********/
    /* Load */
    /********/
-   int Environment::Load(
+   void Environment::Load(
      String ^ fileName)
      {
+      if (fileName == nullptr)
+        { throw gcnew System::ArgumentNullException("fileName"); }
+
+      if (fileName->Length == 0)
+        { throw gcnew System::ArgumentException("String cannot have zero length.","fileName"); }
+
       array<Byte>^ ebFileName = Encoding::UTF8->GetBytes(fileName);
       
       CaptureRouter ^ commandCapture = CaptureStart();
@@ -208,10 +214,13 @@ namespace CLIPSNET
       if (ebFileName->Length)
         {
          pin_ptr<Byte> pbFileName = &ebFileName[0];
-         return m_Env->Load((char *) pbFileName);
+         if (m_Env->Load((char *) pbFileName) == 0)
+           {
+            throw gcnew System::IO::FileNotFoundException(
+                             "Could not load file '" + fileName + "'.",
+                             fileName);
+           }
         }
-      else
-        { return m_Env->Load(""); }
 
       CaptureEnd(commandCapture,false);
 
@@ -231,8 +240,6 @@ namespace CLIPSNET
          pin_ptr<Byte> pbLoadString = &ebLoadString[0];
          m_Env->LoadFromString((char *) pbLoadString);
         }
-      else 
-        { m_Env->LoadFromString(""); }
      }
           
    /******************/
@@ -241,6 +248,9 @@ namespace CLIPSNET
    void Environment::LoadFromString(
      String ^ loadString)
      {
+      if (loadString == nullptr)
+        { throw gcnew System::ArgumentNullException("loadString"); }
+
       char *oldName = m_Env->GetParsingFileName();
 
       m_Env->SetParsingFileName("<String>");
@@ -259,13 +269,19 @@ namespace CLIPSNET
    /********************/
    /* LoadFromResource */
    /********************/
-   bool Environment::LoadFromResource(
+   void Environment::LoadFromResource(
      String ^ assemblyName,
      String ^ resourceName)
      {
       Assembly ^ assembly = System::Reflection::Assembly::Load(assemblyName);
       Stream ^ stream = assembly->GetManifestResourceStream(resourceName);
-      if (stream == nullptr) return false;
+      if (stream == nullptr)
+        {
+         throw gcnew System::IO::FileNotFoundException(
+                          "Could not load file '" + resourceName + "'.",
+                          resourceName);
+        }
+
       StreamReader ^ reader = gcnew StreamReader(stream);
       String ^ resourceContent = reader->ReadToEnd();
       
@@ -288,16 +304,17 @@ namespace CLIPSNET
       m_Env->SetParsingFileName(oldName);
 
       CheckForErrors("LoadFromResource");
-
-      return true;
      }
      
    /*********/
    /* Build */
    /*********/
-   bool Environment::Build(
+   void Environment::Build(
      String ^ buildString)
      {
+      if (buildString == nullptr)
+        { throw gcnew System::ArgumentNullException("buildString"); }
+
       array<Byte>^ ebBuildString = Encoding::UTF8->GetBytes(buildString);
       
       CaptureRouter ^ commandCapture = CaptureStart();
@@ -305,10 +322,8 @@ namespace CLIPSNET
       if (ebBuildString->Length)
         {
          pin_ptr<Byte> pbBuildString = &ebBuildString[0];
-         return m_Env->Build((char *) pbBuildString);
+         m_Env->Build((char *) pbBuildString);
         }
-      else
-        { return m_Env->Build(""); }
 
       CaptureEnd(commandCapture,true);
      }
@@ -364,6 +379,9 @@ namespace CLIPSNET
    FactAddressValue ^ Environment::AssertString(
      String ^ factString)
      {
+      if (factString == nullptr)
+        { throw gcnew System::ArgumentNullException("factString"); }
+
       CLIPS::FactAddressValue *frv;
       array<Byte>^ ebFactString = Encoding::UTF8->GetBytes(factString);
       
@@ -390,6 +408,9 @@ namespace CLIPSNET
    InstanceAddressValue ^ Environment::MakeInstance(
      String ^ instanceString)
      {
+      if (instanceString == nullptr)
+        { throw gcnew System::ArgumentNullException("instanceString"); }
+
       CLIPS::InstanceAddressValue *irv;
       array<Byte>^ ebInstanceString = Encoding::UTF8->GetBytes(instanceString);
       
@@ -424,6 +445,15 @@ namespace CLIPSNET
      String ^ deftemplate,
      String ^ condition)
      {      
+      if (variable == nullptr)
+        { throw gcnew System::ArgumentNullException("variable"); }
+        
+      if (deftemplate == nullptr)
+        { throw gcnew System::ArgumentNullException("deftemplate"); }
+
+      if (condition == nullptr)
+        { throw gcnew System::ArgumentNullException("condition"); }
+      
       String ^ query = "(find-fact " + 
                          "((" + variable + " " + deftemplate + ")) " + condition + ")";
 
@@ -453,7 +483,16 @@ namespace CLIPSNET
      String ^ variable,
      String ^ deftemplate,
      String ^ condition)
-     {
+     { 
+      if (variable == nullptr)
+        { throw gcnew System::ArgumentNullException("variable"); }
+        
+      if (deftemplate == nullptr)
+        { throw gcnew System::ArgumentNullException("deftemplate"); }
+
+      if (condition == nullptr)
+        { throw gcnew System::ArgumentNullException("condition"); }
+
       String ^ query = "(find-all-facts " + 
                          "((" + variable + " " + deftemplate + ")) " + condition + ")";
 
@@ -485,7 +524,16 @@ namespace CLIPSNET
      String ^ variable,
      String ^ defclass,
      String ^ condition)
-     {      
+     {       
+      if (variable == nullptr)
+        { throw gcnew System::ArgumentNullException("variable"); }
+        
+      if (defclass == nullptr)
+        { throw gcnew System::ArgumentNullException("defclass"); }
+
+      if (condition == nullptr)
+        { throw gcnew System::ArgumentNullException("condition"); }
+
       String ^ query = "(find-instance " + 
                          "((" + variable + " " + defclass + ")) " + condition + ")";
 
@@ -515,7 +563,16 @@ namespace CLIPSNET
      String ^ variable,
      String ^ defclass,
      String ^ condition)
-     {
+     {    
+      if (variable == nullptr)
+        { throw gcnew System::ArgumentNullException("variable"); }
+        
+      if (defclass == nullptr)
+        { throw gcnew System::ArgumentNullException("defclass"); }
+
+      if (condition == nullptr)
+        { throw gcnew System::ArgumentNullException("condition"); }
+
       String ^ query = "(find-all-instances " + 
                          "((" + variable + " " + defclass + ")) " + condition + ")";
 
@@ -539,7 +596,10 @@ namespace CLIPSNET
    /********/
    PrimitiveValue ^ Environment::Eval(
      String ^ evalString)
-     {
+     {    
+      if (evalString == nullptr)
+        { throw gcnew System::ArgumentNullException("evalString"); }
+        
       PrimitiveValue ^ rv;
       array<Byte>^ ebEvalString = Encoding::UTF8->GetBytes(evalString);
 
@@ -567,35 +627,102 @@ namespace CLIPSNET
    /*********/
    /* Watch */
    /*********/
-   bool Environment::Watch(
+   void Environment::Watch(
      String ^ item)
      {
+      if (item == nullptr)
+        { throw gcnew System::ArgumentNullException("item"); }
+
       array<Byte>^ ebItem = Encoding::UTF8->GetBytes(item);
       if (ebItem->Length)
         {
          pin_ptr<Byte> pbItem = &ebItem[0];
-         return m_Env->Watch((char *) pbItem);
+         if (! m_Env->Watch((char *) pbItem))
+           { 
+            throw gcnew System::ArgumentException(
+               "Watch item '"+ item + "' is invalid.",
+               "item");
+           }
         }
-      else
-        { return false; }
      }
      
    /***********/
    /* Unwatch */
    /***********/
-   bool Environment::Unwatch(
+   void Environment::Unwatch(
      String ^ item)
      {
+      if (item == nullptr)
+        { throw gcnew System::ArgumentNullException("item"); }
+
       array<Byte>^ ebItem = Encoding::UTF8->GetBytes(item);
       if (ebItem->Length)
         {
          pin_ptr<Byte> pbItem = &ebItem[0];
-         return m_Env->Unwatch((char *) pbItem);
+         if (! m_Env->Unwatch((char *) pbItem))
+           {
+            throw gcnew System::ArgumentException(
+               "Watch item '"+ item + "' is invalid.",
+               "item");
+           }
         }
-      else
-        { return false; }
      }
       
+   /****************/
+   /* GetWatchItem */
+   /****************/
+   bool Environment::GetWatchItem(
+     String ^ item)
+     {
+      if (item == nullptr)
+        { throw gcnew System::ArgumentNullException("item"); }
+
+      array<Byte>^ ebItem = Encoding::UTF8->GetBytes(item);
+      if (ebItem->Length)
+        {
+         pin_ptr<Byte> pbItem = &ebItem[0];
+         
+         if (! m_Env->ValidWatchItem((char *) pbItem))
+           {
+            throw gcnew System::ArgumentException(
+               "Watch item '"+ item + "' is invalid.",
+               "item");
+           }
+
+         return m_Env->GetWatchItem((char *) pbItem);
+        }
+      else
+        { throw gcnew System::ArgumentException("String cannot have zero length.","item"); }
+     }
+    
+   /****************/
+   /* SetWatchItem */
+   /****************/
+   void Environment::SetWatchItem(
+     String ^ item,
+     bool newValue)
+     {
+      if (item == nullptr)
+        { throw gcnew System::ArgumentNullException("item"); }
+
+      array<Byte>^ ebItem = Encoding::UTF8->GetBytes(item);
+      if (ebItem->Length)
+        {
+         pin_ptr<Byte> pbItem = &ebItem[0];
+
+         if (! m_Env->ValidWatchItem((char *) pbItem))
+           {
+            throw gcnew System::ArgumentException(
+               "Watch item '"+ item + "' is invalid.",
+               "item");
+           }
+
+         m_Env->SetWatchItem((char *) pbItem,newValue);
+        }
+      else
+        { throw gcnew System::ArgumentException("String cannot have zero length.","item"); }
+     }
+
    /*******************/
    /* AddUserFunction */
    /*******************/
@@ -614,12 +741,18 @@ namespace CLIPSNET
       String ^ returnTypes,
       unsigned short minArgs,
       unsigned short maxArgs,
-      String ^ restrictions,
-	  UserFunction ^ theFunction)
+      String ^ argTypes,
+	  UserFunction ^ callback)
      { 
+      if (functionName == nullptr)
+        { throw gcnew System::ArgumentNullException("functionName"); }
+
+      if (callback == nullptr)
+        { throw gcnew System::ArgumentNullException("callback"); }
+
       char *cFunctionName = NULL;
       char *cReturnTypes = NULL;
-      char *cRestrictions = NULL;
+      char *cArgTypes = NULL;
       array<Byte>^ ebFunctionName = Encoding::UTF8->GetBytes(functionName);
 
       if (maxArgs == UserFunction::UNBOUNDED)
@@ -641,17 +774,18 @@ namespace CLIPSNET
           }   
        }
 
-     if (restrictions != nullptr)
+     if (argTypes != nullptr)
        {
-        array<Byte>^ ebRestrictions = Encoding::UTF8->GetBytes(restrictions);
-        if (ebRestrictions->Length)
+        array<Byte>^ ebArgTypes = Encoding::UTF8->GetBytes(argTypes);
+        if (ebArgTypes->Length)
           {
-           pin_ptr<Byte> pbRestrictions = &ebRestrictions[0];
-           cRestrictions = (char *) pbRestrictions;
+           pin_ptr<Byte> pbArgTypes = &ebArgTypes[0];
+           cArgTypes = (char *) pbArgTypes;
           }   
        }
         
-      m_Env->AddUserFunction(cFunctionName,cReturnTypes,minArgs,maxArgs,cRestrictions,(CLIPS::CLIPSCPPUserFunction *) theFunction->UserFunctionBridge());
+      m_Env->AddUserFunction(cFunctionName,cReturnTypes,minArgs,maxArgs,cArgTypes,
+                             (CLIPS::CLIPSCPPUserFunction *) callback->UserFunctionBridge());
      }
 
    /**********************/
@@ -660,6 +794,9 @@ namespace CLIPSNET
    void Environment::RemoveUserFunction(
 	  String ^ functionName)
      { 
+      if (functionName == nullptr)
+        { throw gcnew System::ArgumentNullException("functionName"); }
+
       array<Byte>^ ebFunctionName = Encoding::UTF8->GetBytes(functionName);
       if (ebFunctionName->Length)
         {
@@ -676,6 +813,12 @@ namespace CLIPSNET
 	  int priority,
 	  Router ^ theRouter)
      { 
+      if (routerName == nullptr)
+        { throw gcnew System::ArgumentNullException("routerName"); }
+
+      if (theRouter == nullptr)
+        { throw gcnew System::ArgumentNullException("theRouter"); }
+
       array<Byte>^ ebRouterName = Encoding::UTF8->GetBytes(routerName);
       if (ebRouterName->Length)
         {
@@ -692,6 +835,9 @@ namespace CLIPSNET
    void Environment::DeleteRouter(
 	  String ^ routerName)
      { 
+      if (routerName == nullptr)
+        { throw gcnew System::ArgumentNullException("routerName"); }
+
       array<Byte>^ ebRouterName = Encoding::UTF8->GetBytes(routerName);
       if (ebRouterName->Length)
         {
@@ -708,6 +854,9 @@ namespace CLIPSNET
    bool Environment::ActivateRouter(
      Router ^ theRouter)
      {
+      if (theRouter == nullptr)
+        { throw gcnew System::ArgumentNullException("theRouter"); }
+
       array<Byte>^ ebRouterName = Encoding::UTF8->GetBytes(theRouter->Name);
 
       if (ebRouterName->Length)
@@ -725,6 +874,9 @@ namespace CLIPSNET
    bool Environment::DeactivateRouter(
      Router ^ theRouter)
      {
+      if (theRouter == nullptr)
+        { throw gcnew System::ArgumentNullException("theRouter"); }
+
       array<Byte>^ ebRouterName = Encoding::UTF8->GetBytes(theRouter->Name);
 
       if (ebRouterName->Length)
@@ -743,6 +895,12 @@ namespace CLIPSNET
      String ^ logicalName,
      String ^ printString)
      {
+      if (logicalName == nullptr)
+        { throw gcnew System::ArgumentNullException("logicalName"); }
+        
+      if (printString == nullptr)
+        { throw gcnew System::ArgumentNullException("printString"); }
+
       array<Byte>^ ebLogicalName = Encoding::UTF8->GetBytes(logicalName);
       array<Byte>^ ebPrintString = Encoding::UTF8->GetBytes(printString);
 
@@ -761,6 +919,9 @@ namespace CLIPSNET
    void Environment::Print(
      String ^ printString)
      {
+      if (printString == nullptr)
+        { throw gcnew System::ArgumentNullException("printString"); }
+
       String ^ logicalName = Router::STANDARD_OUTPUT;
       Printout(logicalName,printString);
      }
@@ -771,42 +932,14 @@ namespace CLIPSNET
    void Environment::PrintLn(
      String ^ printString)
      {
+      if (printString == nullptr)
+        { throw gcnew System::ArgumentNullException("printString"); }
+
       String ^ logicalName = Router::STANDARD_OUTPUT;
       String ^ crlf = "\n";
 
       Printout(logicalName,printString);
       Printout(logicalName,crlf);
-     }
-
-   /****************/
-   /* GetWatchItem */
-   /****************/
-   bool Environment::GetWatchItem(
-     String ^ item)
-     {
-      array<Byte>^ ebItem = Encoding::UTF8->GetBytes(item);
-      if (ebItem->Length)
-        {
-         pin_ptr<Byte> pbItem = &ebItem[0];
-         return m_Env->GetWatchItem((char *) pbItem);
-        }
-      else
-        { return false; }
-     }
-    
-   /****************/
-   /* SetWatchItem */
-   /****************/
-   void Environment::SetWatchItem(
-     String ^ item,
-     bool newValue)
-     {
-      array<Byte>^ ebItem = Encoding::UTF8->GetBytes(item);
-      if (ebItem->Length)
-        {
-         pin_ptr<Byte> pbItem = &ebItem[0];
-         m_Env->SetWatchItem((char *) pbItem,newValue);
-        }
      }
 
    /***********************/

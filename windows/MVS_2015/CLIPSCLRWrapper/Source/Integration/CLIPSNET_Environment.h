@@ -76,10 +76,10 @@ namespace CLIPSNET
         //event ParserErrorCallbackDelegate ^ ParserErrorCallbackEvent;
         
         void Clear();
-        int Load(String ^);
+        void Load(String ^);
         void LoadFromString(String ^);
-        bool LoadFromResource(String ^,String ^);
-        bool Build(String ^);
+        void LoadFromResource(String ^,String ^);
+        void Build(String ^);
 
         void Reset();
         long long Run();
@@ -100,8 +100,10 @@ namespace CLIPSNET
         
         PrimitiveValue ^ Eval(String ^);
         
-        bool Watch(String ^);
-        bool Unwatch(String ^);
+        void Watch(String ^);
+        void Unwatch(String ^);
+        bool GetWatchItem(String ^);
+        void SetWatchItem(String ^,bool);
         
         void AddUserFunction(String ^,UserFunction ^);
         void AddUserFunction(String ^,String ^,unsigned short,unsigned short,String ^,UserFunction ^);
@@ -155,14 +157,29 @@ namespace CLIPSNET
         void SetFactListChanged(bool);
         bool GetInstancesChanged();
         void SetInstancesChanged(bool);
-        bool GetWatchItem(String ^);
-        void SetWatchItem(String ^,bool);
         virtual String^ ToString() override;
         void CallNextPrintRouter(Router ^,String ^,String ^);
         CaptureRouter ^ CaptureStart();
         void CaptureEnd(CaptureRouter ^,bool);
         InstanceAddressValue ^ FindInstanceByName(String ^);
         void AddError(String ^,long,String ^);
+
+        static const String ^ FACTS = gcnew String("facts");
+        static const String ^ RULES = gcnew String("rules");
+        static const String ^ DEFFUNCTIONS = gcnew String("deffunctions");
+        static const String ^ COMPILATIONS = gcnew String("compilations");
+        static const String ^ INSTANCES = gcnew String("instances");
+        static const String ^ SLOTS = gcnew String("slots");
+        static const String ^ ACTIVATIONS = gcnew String("activations");
+        static const String ^ STATISTICS = gcnew String("statistics");
+        static const String ^ FOCUS = gcnew String("focus");
+        static const String ^ GENERIC_FUNCTIONS = gcnew String("generic-functions");
+        static const String ^ METHODS = gcnew String("methods");
+        static const String ^ GLOBALS = gcnew String("globals");
+        static const String ^ MESSAGES = gcnew String("messages");
+        static const String ^ MESSAGE_HANDLERS = gcnew String("message-handlers");
+        static const String ^ NONE = gcnew String("none");
+        static const String ^ ALL = gcnew String("all");
 
       protected:
         !Environment();

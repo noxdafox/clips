@@ -712,6 +712,24 @@ static Value *ConvertSingleFieldValue(
    return new VoidValue();
   }
   
+/******************/
+/* ValidWatchItem */
+/******************/
+bool CLIPSCPPEnv::ValidWatchItem(
+  char *item)
+  {
+   int rv;
+
+#ifndef CLIPS_DLL_WRAPPER
+   rv = ::GetWatchItem(theEnv,item);
+#else
+   rv = __GetWatchItem(theEnv,item);
+#endif
+
+   if (rv == -1) return false;
+   else return true;
+  }
+
 /****************/
 /* GetWatchItem */
 /****************/
