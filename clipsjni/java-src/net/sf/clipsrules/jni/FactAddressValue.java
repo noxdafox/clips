@@ -45,7 +45,7 @@ public class FactAddressValue extends PrimitiveValue
    /* getSlotValue: */
    /*****************/     
    public PrimitiveValue getSlotValue(
-     String slotName) throws CLIPSException
+     String slotName)
      { return Environment.getFactSlot(this,slotName); }
 
    /*****************/

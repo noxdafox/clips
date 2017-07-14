@@ -1087,7 +1087,12 @@ bool GetFactSlot(
 
    if (theDeftemplate->implied)
      {
-      if (slotName != NULL) return false;
+      if (slotName != NULL)
+        {
+         if (strcmp(slotName,"implied") != 0)
+           { return false; }
+        }
+        
       theValue->value = theFact->theProposition.contents[0].value;
       return true;
      }
@@ -1097,6 +1102,7 @@ bool GetFactSlot(
    /* corresponds to a valid slot name. */
    /*===================================*/
 
+   if (slotName == NULL) return false;
    if (FindSlot(theDeftemplate,CreateSymbol(theEnv,slotName),&whichSlot) == NULL)
      { return false; }
 

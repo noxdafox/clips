@@ -45,7 +45,7 @@ public class InstanceAddressValue extends PrimitiveValue
    /* getSlotValue: */
    /*****************/     
    public PrimitiveValue getSlotValue(
-     String slotName) throws CLIPSException
+     String slotName)
      { return Environment.directGetSlot(this,slotName); }
 
    /********************/

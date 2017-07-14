@@ -72,13 +72,41 @@ JNIEXPORT jboolean JNICALL Java_net_sf_clipsrules_jni_Environment_deleteRouter(
    return rv;
   }
 
+/************************************************************/
+/* Java_net_sf_clipsrules_jni_Environment_printRouterExists */
+/* Class:     net_sf_clipsrules_jni_Environment             */
+/* Method:    printRouterExists                             */
+/* Signature: (JLjava/lang/String;)Z                        */
+/************************************************************/
+JNIEXPORT jboolean JNICALL Java_net_sf_clipsrules_jni_Environment_printRouterExists(
+  JNIEnv *env,
+  jobject obj,
+  jlong clipsEnv,
+  jstring logName)
+  {
+   const char *cLogName;
+   Environment *theCLIPSEnv = JLongToPointer(clipsEnv);
+   void *oldContext = SetEnvironmentContext(theCLIPSEnv,(void *) env);
+   bool rv;
+  
+   cLogName = (*env)->GetStringUTFChars(env,logName,NULL);
+   
+   rv = PrintRouterExists(theCLIPSEnv,cLogName);
+   
+   (*env)->ReleaseStringUTFChars(env,logName,cLogName);
+   
+   SetEnvironmentContext(JLongToPointer(clipsEnv),oldContext);
+   
+   return rv;
+  }
+  
 /*******************************************************/
-/* Java_net_sf_clipsrules_jni_Environment_printRouter  */
+/* Java_net_sf_clipsrules_jni_Environment_printString  */
 /* Class:     net_sf_clipsrules_jni_Environment        */
-/* Method:    printRouter                              */
+/* Method:    printString                              */
 /* Signature: (JLjava/lang/String;Ljava/lang/String;)V */
 /*******************************************************/
-JNIEXPORT void JNICALL Java_net_sf_clipsrules_jni_Environment_printRouter(
+JNIEXPORT void JNICALL Java_net_sf_clipsrules_jni_Environment_printString(
   JNIEnv *env, 
   jobject obj, 
   jlong clipsEnv, 

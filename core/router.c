@@ -119,6 +119,29 @@ static void DeallocateRouterData(
      }
   }
 
+/*********************/
+/* PrintRouterExists */
+/*********************/
+bool PrintRouterExists(
+  Environment *theEnv,
+  const char *logicalName)
+  {
+   struct router *currentPtr;
+   
+   if (((char *) RouterData(theEnv)->FastSaveFilePtr) == logicalName)
+     { return true; }
+     
+   currentPtr = RouterData(theEnv)->ListOfRouters;
+   while (currentPtr != NULL)
+     {
+      if ((currentPtr->printCallback != NULL) ? QueryRouter(theEnv,logicalName,currentPtr) : false)
+        { return true; }
+      currentPtr = currentPtr->next;
+     }
+     
+   return false;
+  }
+
 /****************************************/
 /* PrintString: Generic print function. */
 /****************************************/

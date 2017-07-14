@@ -279,13 +279,17 @@ JNIEXPORT jobject JNICALL Java_net_sf_clipsrules_jni_Environment_getFactSlot(
    bool found;
    
    Environment *theCLIPSEnv = JLongToPointer(clipsEnv);
-   const char *cSlotName = (*env)->GetStringUTFChars(env,slotName,NULL);
+   const char *cSlotName = NULL;
+   
+   if (slotName != NULL)
+     { cSlotName = (*env)->GetStringUTFChars(env,slotName,NULL); }
 
    void *oldContext = SetEnvironmentContext(theCLIPSEnv,(void *) env);
    
    found = GetFactSlot(JLongToPointer(clipsFact),(char *) cSlotName,&theDO);
 
-   (*env)->ReleaseStringUTFChars(env,slotName,cSlotName);
+   if (slotName != NULL)
+     { (*env)->ReleaseStringUTFChars(env,slotName,cSlotName); }
    
    if (found)
      { rv = ConvertDataObject(env,javaEnv,theCLIPSEnv,&theDO); }

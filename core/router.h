@@ -137,5 +137,6 @@ struct routerData
    void                           PrintNRouter(Environment *,const char *,const char *,unsigned long);
    size_t                         InputBufferCount(Environment *);
    Router                        *FindRouter(Environment *,const char *);
+   bool                           PrintRouterExists(Environment *,const char *);
 
 #endif /* _H_router */
