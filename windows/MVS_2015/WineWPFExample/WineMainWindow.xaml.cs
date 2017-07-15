@@ -74,70 +74,70 @@ namespace WineWPFExample
         }
  
       private void ColorComboBox_Loaded(object sender, RoutedEventArgs e)
-	     {
+	    {
          preferredColorChoices = GenerateChoices(preferredColorNames);
 
          var colorComboBox = sender as ComboBox;
 
          colorComboBox.ItemsSource = preferredColorChoices;
 
-	      colorComboBox.SelectedIndex = 0;
-	     }
+	     colorComboBox.SelectedIndex = 0;
+	    }
 
       private void BodyComboBox_Loaded(object sender, RoutedEventArgs e)
-	     {
+	    {
          preferredBodyChoices = GenerateChoices(preferredBodyNames);
 
          var bodyComboBox = sender as ComboBox;
 
          bodyComboBox.ItemsSource = preferredBodyChoices;
 
-	      bodyComboBox.SelectedIndex = 0;
-	     }
+	     bodyComboBox.SelectedIndex = 0;
+	    }
 
       private void SweetnessComboBox_Loaded(object sender, RoutedEventArgs e)
-	     {
+	    {
          preferredSweetnessChoices = GenerateChoices(preferredSweetnessNames);
 
          var sweetnessComboBox = sender as ComboBox;
 
          sweetnessComboBox.ItemsSource = preferredSweetnessChoices;
 
-	      sweetnessComboBox.SelectedIndex = 0;
-	     }
+	     sweetnessComboBox.SelectedIndex = 0;
+	    }
 
       private void MainCourseComboBox_Loaded(object sender, RoutedEventArgs e)
-	     {
+	    {
          mainCourseChoices = GenerateChoices(mainCourseNames);
 
          var mainCourseComboBox = sender as ComboBox;
 
          mainCourseComboBox.ItemsSource = mainCourseChoices;
 
-	      mainCourseComboBox.SelectedIndex = 0;
-	     }
+	     mainCourseComboBox.SelectedIndex = 0;
+	    }
 
       private void SauceComboBox_Loaded(object sender, RoutedEventArgs e)
-	     {
+	    {
          sauceChoices = GenerateChoices(sauceNames);
 
          var sauceComboBox = sender as ComboBox;
 
          sauceComboBox.ItemsSource = sauceChoices;
 
-	      sauceComboBox.SelectedIndex = 0;
-	     }
+	     sauceComboBox.SelectedIndex = 0;
+	    }
 
       private void FlavorComboBox_Loaded(object sender, RoutedEventArgs e)
-	     {
+	    {
          flavorChoices = GenerateChoices(flavorNames);
 
          var flavorComboBox = sender as ComboBox;
 
          flavorComboBox.ItemsSource = flavorChoices;
 
-	      flavorComboBox.SelectedIndex = 0;
-	     }
+         flavorComboBox.SelectedIndex = 0;
+	    }
 
       private void OnChange(object sender, SelectionChangedEventArgs e)
         {

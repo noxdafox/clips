@@ -153,5 +153,6 @@ ParserErrorFunction DECLSPEC * __SetParserErrorCallback(Environment *,ParserErro
 
 void DECLSPEC __SetParsingFileName(Environment *,const char *);
 char DECLSPEC * __GetParsingFileName(Environment *);
+bool DECLSPEC __PrintRouterExists(Environment *,const char *);
 
 #endif

@@ -24,13 +24,12 @@ namespace RouterFormsExample
          
          static int RouterTextBoxNameIndex = 0;
          private RouterTextBox m_RouterTextBox;
-         public String routerName;
 
          public TextBoxRouter(
-           RouterTextBox theTextBox)
+           RouterTextBox theTextBox,
+           int thePriority) : base("RouterTextBox" + RouterTextBoxNameIndex++,thePriority)
            {
             m_RouterTextBox = theTextBox;
-            routerName = "RouterTextBox" + RouterTextBoxNameIndex++;
            }
 
          public override bool Query(String logicalName)
@@ -125,7 +124,7 @@ namespace RouterFormsExample
 
       public RouterTextBox() : base()
         {
-         m_TextBoxRouter = new TextBoxRouter(this);
+         m_TextBoxRouter = new TextBoxRouter(this,10);
          m_ThreadBridge = new RouterThreadBridge();
          this.AcceptsReturn = true;
          this.ReadOnly = true;
@@ -136,11 +135,10 @@ namespace RouterFormsExample
       /* AttachRouter */
       /****************/
       public void AttachRouter(
-        CLIPSNET.Environment theEnv,
-        int priority)
+        CLIPSNET.Environment theEnv)
         {
          attachedEnv = theEnv;
-         theEnv.AddRouter(m_TextBoxRouter.routerName,priority,m_TextBoxRouter);
+         theEnv.AddRouter(m_TextBoxRouter);
         }
         
       /****************/

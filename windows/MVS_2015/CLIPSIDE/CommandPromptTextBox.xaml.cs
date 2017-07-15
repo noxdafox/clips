@@ -51,7 +51,7 @@ namespace CLIPSIDE
       /************************/
       /* CommandPromptTextBox */
       /************************/
-      public CommandPromptTextBox() : this (new CLIPSNET.Environment())
+      public CommandPromptTextBox() : this (new CLIPSNET.Environment(),10)
         {
         }
         
@@ -59,11 +59,12 @@ namespace CLIPSIDE
       /* CommandPromptTextBox */
       /************************/
       public CommandPromptTextBox(
-        CLIPSNET.Environment theEnv)
+        CLIPSNET.Environment theEnv,
+        int thePriority) : base(thePriority)
         {
          clips = theEnv;
          InitializeComponent();
-         AttachRouter(clips,10);
+         AttachRouter(clips);
          clips.PrintBanner();
          clips.PrintPrompt();
 

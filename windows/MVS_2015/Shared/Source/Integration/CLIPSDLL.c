@@ -786,3 +786,10 @@ void __declspec(dllexport) __SetParsingFileName(
    {
     SetParsingFileName(theEnv,fileName);
    }
+
+bool __declspec(dllexport) __PrintRouterExists(
+   Environment *theEnv,
+   const char *logicalName)
+   {
+    return PrintRouterExists(theEnv,logicalName);
+   }

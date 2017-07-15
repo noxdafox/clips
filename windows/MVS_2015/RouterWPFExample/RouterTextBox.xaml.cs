@@ -50,17 +50,16 @@ namespace RouterWPFExample
 
          static int RouterTextBoxNameIndex = 0;
          private RouterTextBox m_RouterTextBox;
-         public String routerName;
            
          /*****************/
          /* TextBoxRouter */
          /*****************/
 
          public TextBoxRouter(
-           RouterTextBox theTextBox)
+           RouterTextBox theTextBox,
+           int thePriority) : base("RouterTextBox" + RouterTextBoxNameIndex++,thePriority)
            {
             m_RouterTextBox = theTextBox;
-            routerName = "RouterTextBox" + RouterTextBoxNameIndex++;
            }
            
          /*********/
@@ -191,7 +190,7 @@ namespace RouterWPFExample
 
       public RouterTextBox() : base()
         {
-         m_TextBoxRouter = new TextBoxRouter(this);
+         m_TextBoxRouter = new TextBoxRouter(this,10);
          m_ThreadBridge = new RouterThreadBridge();
          this.AcceptsReturn = true;
          this.IsReadOnly = false;
@@ -205,11 +204,10 @@ namespace RouterWPFExample
       /* AttachRouter */
       /****************/
       public void AttachRouter(
-        CLIPSNET.Environment theEnv,
-        int priority)
+        CLIPSNET.Environment theEnv)
         {
          attachedEnv = theEnv;
-         attachedEnv.AddRouter(m_TextBoxRouter.routerName,priority,m_TextBoxRouter);
+         attachedEnv.AddRouter(m_TextBoxRouter);
         }
         
       /****************/
@@ -219,7 +217,7 @@ namespace RouterWPFExample
         {
          if (attachedEnv != null)
            {
-            attachedEnv.DeleteRouter(m_TextBoxRouter.routerName);
+            attachedEnv.DeleteRouter(m_TextBoxRouter);
            }
         }
  

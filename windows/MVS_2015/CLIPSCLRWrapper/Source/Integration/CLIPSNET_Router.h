@@ -21,6 +21,8 @@ namespace CLIPSNET
       public:
         Router();
         Router(String ^);
+        Router(int);
+        Router(String ^,int);
         ~Router();
         virtual bool Query(String ^ logicalName);
         virtual void Print(String ^ logicalName, String ^ printString);
@@ -32,6 +34,12 @@ namespace CLIPSNET
           {
            String ^ get() { return routerName; };
           }
+        
+        property int Priority
+	       {
+            int get() { return priority; };
+            void set(int value) { priority = value; }
+	       }
 
         static String ^STANDARD_OUTPUT = gcnew String(CLIPSCPPRouter::STANDARD_OUTPUT);
         static String ^STANDARD_INPUT = gcnew String(CLIPSCPPRouter::STANDARD_INPUT);
@@ -42,6 +50,8 @@ namespace CLIPSNET
         !Router();
 
       private:
+        static int RouterNameIndex = 0;
+        int priority;
         CLIPSCPPRouterBridge *m_RouterBridge;
         String ^ routerName;
   };

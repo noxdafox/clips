@@ -37,11 +37,11 @@ namespace RouterFormsExample
 
       private void OnLoad(object sender, EventArgs e)
         {
-         this.autoTextBox.AttachRouter(autoEnv,10);
+         this.autoTextBox.AttachRouter(autoEnv);
          autoEnv.LoadFromResource("RouterFormsExample", "RouterFormsExample.auto.clp");
          autoEnv.LoadFromResource("RouterFormsExample", "RouterFormsExample.auto_en.clp");
 
-         this.animalTextBox.AttachRouter(animalEnv, 10);
+         this.animalTextBox.AttachRouter(animalEnv);
          animalEnv.LoadFromResource("RouterFormsExample", "RouterFormsExample.bcengine.clp");
          animalEnv.LoadFromResource("RouterFormsExample", "RouterFormsExample.animal.clp");
          animalEnv.LoadFromResource("RouterFormsExample", "RouterFormsExample.animal_en.clp");

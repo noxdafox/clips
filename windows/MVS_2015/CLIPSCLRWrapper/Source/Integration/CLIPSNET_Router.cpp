@@ -74,16 +74,27 @@ namespace CLIPSNET
    /* Router class methods */
    /*######################*/
 
-   Router::Router() 
+   Router::Router() : Router(gcnew String("Router" + RouterNameIndex++),0)
      { 
-      m_RouterBridge = new CLIPSCPPRouterBridge(this); 
      }
 
    Router::Router(
-     String ^ theRouterName)
+     String ^ theRouterName) : Router(theRouterName,0)
+     {
+     }
+     
+   Router::Router(
+     int thePriority) : Router(gcnew String("Router" + RouterNameIndex++),thePriority)
+     { 
+     }
+
+   Router::Router(
+     String ^ theRouterName,
+     int thePriority)
      {
       m_RouterBridge = new CLIPSCPPRouterBridge(this);
       routerName = theRouterName;
+      priority = thePriority;
      }
 
    Router::~Router()
@@ -134,7 +145,7 @@ namespace CLIPSNET
       clips = theEnv;
       queryNames = theQueryNames;
       priority = thePriority;
-      clips->AddRouter(theRouterName,priority,this);
+      clips->AddRouter(this);
      }
 
    BaseRouter::~BaseRouter()

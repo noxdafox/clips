@@ -119,6 +119,7 @@ class CLIPSCPPEnv
       InstanceAddressValue * FindInstanceByName(char *);
       char *GetParsingFileName();
       void SetParsingFileName(const char *);
+      bool PrintRouterExists(const char *);
   };
 
 class CLIPSCPPUserFunction

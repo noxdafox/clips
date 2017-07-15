@@ -109,10 +109,10 @@ namespace CLIPSNET
         void AddUserFunction(String ^,String ^,unsigned short,unsigned short,String ^,UserFunction ^);
         void RemoveUserFunction(String ^);
         
-        void AddRouter(String ^,int ,Router ^);
-        void DeleteRouter(String ^);
-        bool ActivateRouter(Router ^);
-        bool DeactivateRouter(Router ^);
+        void AddRouter(Router ^);
+        void DeleteRouter(Router ^);
+        void ActivateRouter(Router ^);
+        void DeactivateRouter(Router ^);
         void Printout(String ^,String ^);
         void Print(String ^);
         void PrintLn(String ^);

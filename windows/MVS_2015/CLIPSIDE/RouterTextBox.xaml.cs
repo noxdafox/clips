@@ -50,17 +50,16 @@ namespace CLIPSIDE
 
          static int RouterTextBoxNameIndex = 0;
          private RouterTextBox m_RouterTextBox;
-         public String routerName;
            
          /*****************/
          /* TextBoxRouter */
          /*****************/
 
          public TextBoxRouter(
-           RouterTextBox theTextBox)
+           RouterTextBox theTextBox,
+           int thePriority) : base("RouterTextBox" + RouterTextBoxNameIndex++,thePriority)
            {
             m_RouterTextBox = theTextBox;
-            routerName = "RouterTextBox" + RouterTextBoxNameIndex++;
            }
            
          /*********/
@@ -196,9 +195,10 @@ namespace CLIPSIDE
       /* RouterTextBox */
       /*****************/
 
-      public RouterTextBox() : base()
+      public RouterTextBox(
+        int thePriority) : base() 
         {
-         m_TextBoxRouter = new TextBoxRouter(this);
+         m_TextBoxRouter = new TextBoxRouter(this,thePriority);
          m_ThreadBridge = new RouterThreadBridge();
          this.AcceptsReturn = true;
          this.IsReadOnly = false;
@@ -213,11 +213,10 @@ namespace CLIPSIDE
       /* AttachRouter */
       /****************/
       public void AttachRouter(
-        CLIPSNET.Environment theEnv,
-        int priority)
+        CLIPSNET.Environment theEnv)
         {
          attachedEnv = theEnv;
-         attachedEnv.AddRouter(m_TextBoxRouter.routerName,priority,m_TextBoxRouter);
+         attachedEnv.AddRouter(m_TextBoxRouter);
         }
         
       /****************/
@@ -227,7 +226,7 @@ namespace CLIPSIDE
         {
          if (attachedEnv != null)
            {
-            attachedEnv.DeleteRouter(m_TextBoxRouter.routerName);
+            attachedEnv.DeleteRouter(m_TextBoxRouter);
            }
         }
  

@@ -1063,6 +1063,19 @@ void CLIPSCPPEnv::SetParsingFileName(
    __SetParsingFileName(theEnv,fileName);
 #endif
   }
+  
+/**********************/
+/* PrintRouterExists: */
+/**********************/
+bool CLIPSCPPEnv::PrintRouterExists(
+  const char *logicalName)
+  {
+#ifndef CLIPS_DLL_WRAPPER
+   return ::PrintRouterExists(theEnv,logicalName);
+#else
+   return __PrintRouterExists(theEnv,logicalName);
+#endif
+  }
 
 /*##################################*/
 /* CLIPSCPPPeriodicFunction Methods */

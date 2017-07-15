@@ -177,7 +177,7 @@ namespace CLIPSNET
      bool throwError)
      {
       String ^ error = commandCapture->Output;
-      this->DeleteRouter(commandCapture->Name);
+      this->DeleteRouter(commandCapture);
 
       if (throwError && (! String::IsNullOrEmpty(error)))
         { throw gcnew CLIPSException(error); }
@@ -314,7 +314,7 @@ namespace CLIPSNET
      {
       if (buildString == nullptr)
         { throw gcnew System::ArgumentNullException("buildString"); }
-
+      
       array<Byte>^ ebBuildString = Encoding::UTF8->GetBytes(buildString);
       
       CaptureRouter ^ commandCapture = CaptureStart();
@@ -382,7 +382,10 @@ namespace CLIPSNET
       if (factString == nullptr)
         { throw gcnew System::ArgumentNullException("factString"); }
 
-      CLIPS::FactAddressValue *frv;
+      if (factString->Length == 0)
+        { throw gcnew System::ArgumentException("String cannot have zero length.","factString"); }
+
+      CLIPS::FactAddressValue *frv = NULL;
       array<Byte>^ ebFactString = Encoding::UTF8->GetBytes(factString);
       
       CaptureRouter ^ commandCapture = CaptureStart();
@@ -392,12 +395,10 @@ namespace CLIPSNET
          pin_ptr<Byte> pbFactString = &ebFactString[0];
          frv = m_Env->AssertString((char *) pbFactString);
         }
-      else
-        { frv = m_Env->AssertString(""); }
 
       CaptureEnd(commandCapture,true);
 
-      if (frv == NULL) return (nullptr);
+      if (frv == NULL) return nullptr;
       
       return gcnew FactAddressValue(frv);
      }
@@ -410,8 +411,11 @@ namespace CLIPSNET
      {
       if (instanceString == nullptr)
         { throw gcnew System::ArgumentNullException("instanceString"); }
+              
+      if (instanceString->Length == 0)
+        { throw gcnew System::ArgumentException("String cannot have zero length.","instanceString"); }
 
-      CLIPS::InstanceAddressValue *irv;
+      CLIPS::InstanceAddressValue *irv = NULL;
       array<Byte>^ ebInstanceString = Encoding::UTF8->GetBytes(instanceString);
       
       CaptureRouter ^ commandCapture = CaptureStart();
@@ -421,12 +425,10 @@ namespace CLIPSNET
          pin_ptr<Byte> pbInstanceString = &ebInstanceString[0];
          irv = m_Env->MakeInstance((char *) pbInstanceString);
         }
-      else
-        { irv = m_Env->MakeInstance(""); }
 
       CaptureEnd(commandCapture,true);
 
-      if (irv == NULL) return (nullptr);
+      if (irv == NULL) return nullptr;
       
       return gcnew InstanceAddressValue(irv);
      }
@@ -613,7 +615,7 @@ namespace CLIPSNET
             rv = DataObjectToPrimitiveValue(m_Env->Eval((char *) pbEvalString));
            }
          else
-           { rv = DataObjectToPrimitiveValue(m_Env->Eval("")); }
+           { rv = gcnew VoidValue(); }
         }
       catch (Exception ^)
         {
@@ -628,20 +630,20 @@ namespace CLIPSNET
    /* Watch */
    /*********/
    void Environment::Watch(
-     String ^ item)
+     String ^ watchItem)
      {
-      if (item == nullptr)
-        { throw gcnew System::ArgumentNullException("item"); }
+      if (watchItem == nullptr)
+        { throw gcnew System::ArgumentNullException("watchItem"); }
 
-      array<Byte>^ ebItem = Encoding::UTF8->GetBytes(item);
+      array<Byte>^ ebItem = Encoding::UTF8->GetBytes(watchItem);
       if (ebItem->Length)
         {
          pin_ptr<Byte> pbItem = &ebItem[0];
          if (! m_Env->Watch((char *) pbItem))
            { 
             throw gcnew System::ArgumentException(
-               "Watch item '"+ item + "' is invalid.",
-               "item");
+               "Watch item '"+ watchItem + "' is invalid.",
+               "watchItem");
            }
         }
      }
@@ -650,20 +652,20 @@ namespace CLIPSNET
    /* Unwatch */
    /***********/
    void Environment::Unwatch(
-     String ^ item)
+     String ^ watchItem)
      {
-      if (item == nullptr)
-        { throw gcnew System::ArgumentNullException("item"); }
+      if (watchItem == nullptr)
+        { throw gcnew System::ArgumentNullException("watchItem"); }
 
-      array<Byte>^ ebItem = Encoding::UTF8->GetBytes(item);
+      array<Byte>^ ebItem = Encoding::UTF8->GetBytes(watchItem);
       if (ebItem->Length)
         {
          pin_ptr<Byte> pbItem = &ebItem[0];
          if (! m_Env->Unwatch((char *) pbItem))
            {
             throw gcnew System::ArgumentException(
-               "Watch item '"+ item + "' is invalid.",
-               "item");
+               "Watch item '"+ watchItem + "' is invalid.",
+               "watchItem");
            }
         }
      }
@@ -672,12 +674,15 @@ namespace CLIPSNET
    /* GetWatchItem */
    /****************/
    bool Environment::GetWatchItem(
-     String ^ item)
+     String ^ watchItem)
      {
-      if (item == nullptr)
-        { throw gcnew System::ArgumentNullException("item"); }
+      if (watchItem == nullptr)
+        { throw gcnew System::ArgumentNullException("watchItem"); }
 
-      array<Byte>^ ebItem = Encoding::UTF8->GetBytes(item);
+      if (watchItem->Length == 0)
+        { throw gcnew System::ArgumentException("String cannot have zero length.","watchItem"); }
+
+      array<Byte>^ ebItem = Encoding::UTF8->GetBytes(watchItem);
       if (ebItem->Length)
         {
          pin_ptr<Byte> pbItem = &ebItem[0];
@@ -685,27 +690,30 @@ namespace CLIPSNET
          if (! m_Env->ValidWatchItem((char *) pbItem))
            {
             throw gcnew System::ArgumentException(
-               "Watch item '"+ item + "' is invalid.",
-               "item");
+               "Watch item '"+ watchItem + "' is invalid.",
+               "watchItem");
            }
 
          return m_Env->GetWatchItem((char *) pbItem);
         }
-      else
-        { throw gcnew System::ArgumentException("String cannot have zero length.","item"); }
+
+      return false;
      }
     
    /****************/
    /* SetWatchItem */
    /****************/
    void Environment::SetWatchItem(
-     String ^ item,
+     String ^ watchItem,
      bool newValue)
      {
-      if (item == nullptr)
-        { throw gcnew System::ArgumentNullException("item"); }
+      if (watchItem == nullptr)
+        { throw gcnew System::ArgumentNullException("watchItem"); }
 
-      array<Byte>^ ebItem = Encoding::UTF8->GetBytes(item);
+      if (watchItem->Length == 0)
+        { throw gcnew System::ArgumentException("String cannot have zero length.","watchItem"); }
+
+      array<Byte>^ ebItem = Encoding::UTF8->GetBytes(watchItem);
       if (ebItem->Length)
         {
          pin_ptr<Byte> pbItem = &ebItem[0];
@@ -713,14 +721,12 @@ namespace CLIPSNET
          if (! m_Env->ValidWatchItem((char *) pbItem))
            {
             throw gcnew System::ArgumentException(
-               "Watch item '"+ item + "' is invalid.",
-               "item");
+               "Watch item '"+ watchItem + "' is invalid.",
+               "watchItem");
            }
 
          m_Env->SetWatchItem((char *) pbItem,newValue);
         }
-      else
-        { throw gcnew System::ArgumentException("String cannot have zero length.","item"); }
      }
 
    /*******************/
@@ -744,8 +750,13 @@ namespace CLIPSNET
       String ^ argTypes,
 	  UserFunction ^ callback)
      { 
+      bool rv;
+
       if (functionName == nullptr)
         { throw gcnew System::ArgumentNullException("functionName"); }
+      
+      if (functionName->Length == 0)
+        { throw gcnew System::ArgumentException("String cannot have zero length.","functionName"); }
 
       if (callback == nullptr)
         { throw gcnew System::ArgumentNullException("callback"); }
@@ -784,18 +795,29 @@ namespace CLIPSNET
           }   
        }
         
-      m_Env->AddUserFunction(cFunctionName,cReturnTypes,minArgs,maxArgs,cArgTypes,
-                             (CLIPS::CLIPSCPPUserFunction *) callback->UserFunctionBridge());
+      rv = m_Env->AddUserFunction(cFunctionName,cReturnTypes,minArgs,maxArgs,cArgTypes,
+                                  (CLIPS::CLIPSCPPUserFunction *) callback->UserFunctionBridge());
+
+      if (! rv)
+        { 
+         throw gcnew System::ArgumentException(
+           "Function '" + functionName + "' already exists.","functionName"); 
+        }
      }
 
    /**********************/
    /* RemoveUserFunction */
    /**********************/
    void Environment::RemoveUserFunction(
-	  String ^ functionName)
+	 String ^ functionName)
      { 
+      bool rv = false;
+
       if (functionName == nullptr)
         { throw gcnew System::ArgumentNullException("functionName"); }
+              
+      if (functionName->Length == 0)
+        { throw gcnew System::ArgumentException("String cannot have zero length.","functionName"); }
 
       array<Byte>^ ebFunctionName = Encoding::UTF8->GetBytes(functionName);
       if (ebFunctionName->Length)
@@ -803,57 +825,73 @@ namespace CLIPSNET
          pin_ptr<Byte> pbFunctionName = &ebFunctionName[0];
          m_Env->RemoveUserFunction((char *) pbFunctionName);
         }
+
+      if (! rv)
+        { 
+         throw gcnew System::ArgumentException(
+           "Function '" + functionName + "' does not exist.","functionName"); 
+        }
      }
      
    /*************/
    /* AddRouter */
    /*************/
    void Environment::AddRouter(
-	  String ^ routerName,
-	  int priority,
-	  Router ^ theRouter)
+	 Router ^ theRouter)
      { 
-      if (routerName == nullptr)
-        { throw gcnew System::ArgumentNullException("routerName"); }
+      bool rv = false;
 
       if (theRouter == nullptr)
         { throw gcnew System::ArgumentNullException("theRouter"); }
 
-      array<Byte>^ ebRouterName = Encoding::UTF8->GetBytes(routerName);
+      array<Byte>^ ebRouterName = Encoding::UTF8->GetBytes(theRouter->Name);
       if (ebRouterName->Length)
         {
          pin_ptr<Byte> pbRouterName = &ebRouterName[0];
-         m_Env->AddRouter((char *) pbRouterName,priority,(CLIPS::CLIPSCPPRouter *) theRouter->RouterBridge());
+         rv = m_Env->AddRouter((char *) pbRouterName,theRouter->Priority,(CLIPS::CLIPSCPPRouter *) theRouter->RouterBridge());
         }
-      else
-        { m_Env->AddRouter("",priority,(CLIPS::CLIPSCPPRouter *) theRouter->RouterBridge()); }
+
+      if (! rv)
+        { 
+         throw gcnew System::ArgumentException(
+           "Router named '" + theRouter->Name + "' already exists."); 
+        }
+
      }
 
    /****************/
    /* DeleteRouter */
    /****************/
    void Environment::DeleteRouter(
-	  String ^ routerName)
+	 Router ^ theRouter)
      { 
-      if (routerName == nullptr)
-        { throw gcnew System::ArgumentNullException("routerName"); }
+      bool rv = false;
 
-      array<Byte>^ ebRouterName = Encoding::UTF8->GetBytes(routerName);
+      if (theRouter == nullptr)
+        { throw gcnew System::ArgumentNullException("theRouter"); }
+
+      array<Byte>^ ebRouterName = Encoding::UTF8->GetBytes(theRouter->Name);
       if (ebRouterName->Length)
         {
          pin_ptr<Byte> pbRouterName = &ebRouterName[0];
-         m_Env->DeleteRouter((char *) pbRouterName);
+         rv = m_Env->DeleteRouter((char *) pbRouterName);
         }
-      else
-        { m_Env->DeleteRouter(""); }
+
+      if (! rv)
+        { 
+         throw gcnew System::ArgumentException(
+           "Router named '" + theRouter->Name + "' does not exist."); 
+        }
      }
 
    /*******************/
    /* ActivateRouter: */
    /*******************/
-   bool Environment::ActivateRouter(
+   void Environment::ActivateRouter(
      Router ^ theRouter)
      {
+      bool rv = false;
+
       if (theRouter == nullptr)
         { throw gcnew System::ArgumentNullException("theRouter"); }
 
@@ -862,18 +900,24 @@ namespace CLIPSNET
       if (ebRouterName->Length)
         {
          pin_ptr<Byte> pbRouterName = &ebRouterName[0];
-         return m_Env->ActivateRouter((char *) pbRouterName);
+         rv = m_Env->ActivateRouter((char *) pbRouterName);
         }
   
-      return false;
+      if (! rv)
+        { 
+         throw gcnew System::ArgumentException(
+           "Router named '" + theRouter->Name + "' does not exist."); 
+        }
      }
 
    /*********************/
    /* DeactivateRouter: */
    /*********************/
-   bool Environment::DeactivateRouter(
+   void Environment::DeactivateRouter(
      Router ^ theRouter)
      {
+      bool rv = false;
+
       if (theRouter == nullptr)
         { throw gcnew System::ArgumentNullException("theRouter"); }
 
@@ -882,10 +926,14 @@ namespace CLIPSNET
       if (ebRouterName->Length)
         {
          pin_ptr<Byte> pbRouterName = &ebRouterName[0];
-         return m_Env->DeactivateRouter((char *) pbRouterName);
+         rv= m_Env->DeactivateRouter((char *) pbRouterName);
         }
 
-      return false;
+      if (! rv)
+        { 
+         throw gcnew System::ArgumentException(
+           "Router named '" + theRouter->Name + "' does not exist."); 
+        }
      }
 
    /************/
@@ -897,6 +945,9 @@ namespace CLIPSNET
      {
       if (logicalName == nullptr)
         { throw gcnew System::ArgumentNullException("logicalName"); }
+
+      if (logicalName->Length == 0)
+        { throw gcnew System::ArgumentException("String cannot have zero length.","logicalName"); }
         
       if (printString == nullptr)
         { throw gcnew System::ArgumentNullException("printString"); }
@@ -908,6 +959,12 @@ namespace CLIPSNET
         {
          pin_ptr<Byte> pbLogicalName = &ebLogicalName[0];
          pin_ptr<Byte> pbPrintString = &ebPrintString[0];
+
+         if (m_Env->PrintRouterExists((char *) pbLogicalName))
+           {
+            throw gcnew System::ArgumentException(
+              "No print router for logicalName '" + logicalName +"' exists.");
+           }
 
          m_Env->Printout((char *) pbLogicalName,(char *) pbPrintString);
         }

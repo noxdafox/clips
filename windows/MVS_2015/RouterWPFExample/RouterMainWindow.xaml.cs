@@ -84,11 +84,11 @@ namespace RouterWPFExample
 
       private void OnLoad(object sender, RoutedEventArgs e)
         {
-         autoTextBox.AttachRouter(autoEnv,10);
+         autoTextBox.AttachRouter(autoEnv);
          autoEnv.LoadFromResource("RouterWPFExample", "RouterWPFExample.auto.clp");
          autoEnv.LoadFromResource("RouterWPFExample", "RouterWPFExample.auto_en.clp");
 
-         this.animalTextBox.AttachRouter(animalEnv, 10);
+         animalTextBox.AttachRouter(animalEnv);
          animalEnv.LoadFromResource("RouterWPFExample", "RouterWPFExample.bcengine.clp");
          animalEnv.LoadFromResource("RouterWPFExample", "RouterWPFExample.animal.clp");
          animalEnv.LoadFromResource("RouterWPFExample", "RouterWPFExample.animal_en.clp");
