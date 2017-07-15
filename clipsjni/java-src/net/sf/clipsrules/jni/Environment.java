@@ -30,7 +30,7 @@ public class Environment
    public static final String NONE = "none";
    public static final String ALL = "all";
          
-   private List<Router> routerList = new ArrayList<Router>(); 
+   private HashMap<String,Router> routerMap = new HashMap<String,Router>();
    private List<CLIPSLineError> errorList = new ArrayList<CLIPSLineError>();
 
    static { System.loadLibrary("CLIPSJNI"); }
@@ -662,13 +662,13 @@ public class Environment
       if (theRouter == null)
         { throw new NullPointerException("theRouter"); }
         
-      if (routerList.contains(theRouter))
-        { throw new IllegalArgumentException("Router has already been added."); }
+      if (routerMap.containsKey(theRouter.getName()))
+        { throw new IllegalArgumentException("Router named '" + theRouter.getName() +"' already exists."); }
          
       boolean rv = addRouter(theEnvironment,theRouter.getName(),theRouter.getPriority(),theRouter);
       
       if (rv)
-        { routerList.add(theRouter); }
+        { routerMap.put(theRouter.getName(),theRouter); }
       else
         { throw new IllegalArgumentException("Router named '" + theRouter.getName() +"' already exists."); }
      }
@@ -686,12 +686,9 @@ public class Environment
      {
       if (theRouter == null)
         { throw new NullPointerException("theRouter"); }
-        
-      if (! routerList.contains(theRouter))
-        { throw new IllegalArgumentException("Router has not been added."); }
-        
+                
       if (deleteRouter(theEnvironment,theRouter.getName()))
-        { routerList.remove(theRouter); }
+        { routerMap.remove(theRouter); }
       else
         { throw new IllegalArgumentException("Router named '" + theRouter.getName() +"' does not exist."); }
      }
@@ -709,14 +706,9 @@ public class Environment
      {
       if (theRouter == null)
         { throw new NullPointerException("theRouter"); }
-        
-      if (! routerList.contains(theRouter))
-        { throw new IllegalArgumentException("Router has not been added."); }
-        
-      if (activateRouter(theEnvironment,theRouter.getName()))
-        { routerList.remove(theRouter); }
-      else
-        { throw new IllegalArgumentException("Router named '" + theRouter.getName() +"' does not exist."); }
+                
+      if (! activateRouter(theEnvironment,theRouter.getName()))
+        { throw new IllegalArgumentException("Router named '" + theRouter.getName() + "' does not exist."); }
      }
 
    /*********************/
@@ -733,13 +725,8 @@ public class Environment
       if (theRouter == null)
         { throw new NullPointerException("theRouter"); }
         
-      if (! routerList.contains(theRouter))
-        { throw new IllegalArgumentException("Router has not been added."); }
-
-      if (deactivateRouter(theEnvironment,theRouter.getName()))
-        { routerList.remove(theRouter); }
-      else
-        { throw new IllegalArgumentException("Router named '" + theRouter.getName() +"' does not exist."); }
+      if (! deactivateRouter(theEnvironment,theRouter.getName()))
+        { throw new IllegalArgumentException("Router named '" + theRouter.getName() + "' does not exist."); }
      }
 
    /****************/
@@ -1633,8 +1620,8 @@ public class Environment
    /************/
    public void destroy()
      {
-      for (Router router : routerList)
-        { deleteRouter(router); }
+      for (String key : routerMap.keySet())
+        { deleteRouter(routerMap.get(key)); }
 
       destroyEnvironment(theEnvironment);
      }
