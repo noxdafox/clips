@@ -313,7 +313,7 @@ void PrintFactWithIdentifier(
    char printSpace[20];
 
    gensprintf(printSpace,"f-%-5lld ",factPtr->factIndex);
-   PrintString(theEnv,logicalName,printSpace);
+   WriteString(theEnv,logicalName,printSpace);
    PrintFact(theEnv,logicalName,factPtr,false,false,changeMap);
   }
 
@@ -328,7 +328,7 @@ void PrintFactIdentifier(
    char printSpace[20];
 
    gensprintf(printSpace,"f-%lld",factPtr->factIndex);
-   PrintString(theEnv,logicalName,printSpace);
+   WriteString(theEnv,logicalName,printSpace);
   }
 
 /********************************************/
@@ -340,17 +340,17 @@ void PrintFactIdentifierInLongForm(
   const char *logicalName,
   Fact *factPtr)
   {
-   if (PrintUtilityData(theEnv)->AddressesToStrings) PrintString(theEnv,logicalName,"\"");
+   if (PrintUtilityData(theEnv)->AddressesToStrings) WriteString(theEnv,logicalName,"\"");
    if (factPtr != &FactData(theEnv)->DummyFact)
      {
-      PrintString(theEnv,logicalName,"<Fact-");
-      PrintInteger(theEnv,logicalName,factPtr->factIndex);
-      PrintString(theEnv,logicalName,">");
+      WriteString(theEnv,logicalName,"<Fact-");
+      WriteInteger(theEnv,logicalName,factPtr->factIndex);
+      WriteString(theEnv,logicalName,">");
      }
    else
-     { PrintString(theEnv,logicalName,"<Dummy Fact>"); }
+     { WriteString(theEnv,logicalName,"<Dummy Fact>"); }
 
-   if (PrintUtilityData(theEnv)->AddressesToStrings) PrintString(theEnv,logicalName,"\"");
+   if (PrintUtilityData(theEnv)->AddressesToStrings) WriteString(theEnv,logicalName,"\"");
   }
 
 /*******************************************/
@@ -463,19 +463,19 @@ void PrintFact(
    /* has an implied deftemplate). */
    /*==============================*/
 
-   PrintString(theEnv,logicalName,"(");
+   WriteString(theEnv,logicalName,"(");
 
-   PrintString(theEnv,logicalName,factPtr->whichDeftemplate->header.name->contents);
+   WriteString(theEnv,logicalName,factPtr->whichDeftemplate->header.name->contents);
 
    theMultifield = factPtr->theProposition.contents[0].multifieldValue;
    if (theMultifield->length != 0)
      {
-      PrintString(theEnv,logicalName," ");
+      WriteString(theEnv,logicalName," ");
       PrintMultifieldDriver(theEnv,logicalName,theMultifield,0,
                             theMultifield->length,false);
      }
 
-   PrintString(theEnv,logicalName,")");
+   WriteString(theEnv,logicalName,")");
   }
 
 /*********************************************/
@@ -509,7 +509,7 @@ bool RetractDriver(
    if (EngineData(theEnv)->JoinOperationInProgress)
      {
       PrintErrorID(theEnv,"FACTMNGR",1,true);
-      PrintString(theEnv,WERROR,"Facts may not be retracted during pattern-matching\n");
+      WriteString(theEnv,STDERR,"Facts may not be retracted during pattern-matching\n");
       return false;
      }
 
@@ -552,9 +552,9 @@ bool RetractDriver(
        (! ConstructData(theEnv)->ClearReadyInProgress) &&
        (! ConstructData(theEnv)->ClearInProgress))
      {
-      PrintString(theEnv,STDOUT,"<== ");
+      WriteString(theEnv,STDOUT,"<== ");
       PrintFactWithIdentifier(theEnv,STDOUT,theFact,changeMap);
-      PrintString(theEnv,STDOUT,"\n");
+      WriteString(theEnv,STDOUT,"\n");
      }
 #endif
 
@@ -776,7 +776,7 @@ Fact *AssertDriver(
      {
       ReturnFact(theEnv,theFact);
       PrintErrorID(theEnv,"FACTMNGR",2,true);
-      PrintString(theEnv,WERROR,"Facts may not be asserted during pattern-matching\n");
+      WriteString(theEnv,STDERR,"Facts may not be asserted during pattern-matching\n");
       return NULL;
      }
 
@@ -926,9 +926,9 @@ Fact *AssertDriver(
        (! ConstructData(theEnv)->ClearReadyInProgress) &&
        (! ConstructData(theEnv)->ClearInProgress))
      {
-      PrintString(theEnv,STDOUT,"==> ");
+      WriteString(theEnv,STDOUT,"==> ");
       PrintFactWithIdentifier(theEnv,STDOUT,theFact,changeMap);
-      PrintString(theEnv,STDOUT,"\n");
+      WriteString(theEnv,STDOUT,"\n");
      }
 #endif
 

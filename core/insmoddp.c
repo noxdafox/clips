@@ -777,7 +777,7 @@ static void ModifyMsgHandlerSupport(
    if (InstanceData(theEnv)->ObjectModDupMsgValid == false)
      {
       PrintErrorID(theEnv,"INSMODDP",1,false);
-      PrintString(theEnv,WERROR,"Direct/message-modify message valid only in modify-instance.\n");
+      WriteString(theEnv,STDERR,"Direct/message-modify message valid only in modify-instance.\n");
       SetEvaluationError(theEnv,true);
       return;
      }
@@ -879,7 +879,7 @@ static void DuplicateMsgHandlerSupport(
    if (InstanceData(theEnv)->ObjectModDupMsgValid == false)
      {
       PrintErrorID(theEnv,"INSMODDP",2,false);
-      PrintString(theEnv,WERROR,"Direct/message-duplicate message valid only in duplicate-instance.\n");
+      WriteString(theEnv,STDERR,"Direct/message-duplicate message valid only in duplicate-instance.\n");
       SetEvaluationError(theEnv,true);
       return;
      }
@@ -902,7 +902,7 @@ static void DuplicateMsgHandlerSupport(
    if (newName == srcins->name)
      {
       PrintErrorID(theEnv,"INSMODDP",3,false);
-      PrintString(theEnv,WERROR,"Instance copy must have a different name in duplicate-instance.\n");
+      WriteString(theEnv,STDERR,"Instance copy must have a different name in duplicate-instance.\n");
       SetEvaluationError(theEnv,true);
       return;
      }

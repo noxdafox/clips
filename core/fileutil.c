@@ -50,24 +50,25 @@
 /***************************************/
 
 #if DEBUGGING_FUNCTIONS
-   static bool                    FindDribble(Environment *,const char *,void *);
-   static int                     GetcDribble(Environment *,const char *,void *);
-   static int                     UngetcDribble(Environment *,const char *,int,void *);
-   static void                    ExitDribble(Environment *,int,void *);
-   static void                    PrintDribble(Environment *,const char *,const char *,void *);
+   static bool                    QueryDribbleCallback(Environment *,const char *,void *);
+   static int                     ReadDribbleCallback(Environment *,const char *,void *);
+   static int                     UnreadDribbleCallback(Environment *,const char *,int,void *);
+   static void                    ExitDribbleCallback(Environment *,int,void *);
+   static void                    WriteDribbleCallback(Environment *,const char *,const char *,void *);
    static void                    PutcDribbleBuffer(Environment *,int);
 #endif
-   static bool                    FindBatch(Environment *,const char *,void *);
-   static int                     GetcBatch(Environment *,const char *,void *);
-   static int                     UngetcBatch(Environment *,const char *,int,void *);
-   static void                    ExitBatch(Environment *,int,void *);
+   static bool                    QueryBatchCallback(Environment *,const char *,void *);
+   static int                     ReadBatchCallback(Environment *,const char *,void *);
+   static int                     UnreadBatchCallback(Environment *,const char *,int,void *);
+   static void                    ExitBatchCallback(Environment *,int,void *);
    static void                    AddBatch(Environment *,bool,FILE *,const char *,int,const char *,const char *);
 
 #if DEBUGGING_FUNCTIONS
-/*****************************************************/
-/* FindDribble: Find routine for the dribble router. */
-/*****************************************************/
-static bool FindDribble(
+/****************************************/
+/* QueryDribbleCallback: Query callback */
+/*   for the dribble router.            */
+/****************************************/
+static bool QueryDribbleCallback(
   Environment *theEnv,
   const char *logicalName,
   void *context)
@@ -78,8 +79,8 @@ static bool FindDribble(
 
    if ( (strcmp(logicalName,STDOUT) == 0) ||
         (strcmp(logicalName,STDIN) == 0) ||
-        (strcmp(logicalName,WERROR) == 0) ||
-        (strcmp(logicalName,WWARNING) == 0) )
+        (strcmp(logicalName,STDERR) == 0) ||
+        (strcmp(logicalName,STDWRN) == 0) )
      { return true; }
 
     return false;
@@ -100,10 +101,11 @@ void AppendDribble(
      { PutcDribbleBuffer(theEnv,str[i]); }
   }
 
-/*******************************************************/
-/* PrintDribble: Print routine for the dribble router. */
-/*******************************************************/
-static void PrintDribble(
+/****************************************/
+/* WriteDribbleCallback: Write callback */
+/*    for the dribble router.           */
+/****************************************/
+static void WriteDribbleCallback(
   Environment *theEnv,
   const char *logicalName,
   const char *str,
@@ -123,14 +125,15 @@ static void PrintDribble(
    /*===========================================================*/
 
    DeactivateRouter(theEnv,"dribble");
-   PrintString(theEnv,logicalName,str);
+   WriteString(theEnv,logicalName,str);
    ActivateRouter(theEnv,"dribble");
   }
 
-/*****************************************************/
-/* GetcDribble: Getc routine for the dribble router. */
-/*****************************************************/
-static int GetcDribble(
+/**************************************/
+/* ReadDribbleCallback: Read callback */
+/*    for the dribble router.         */
+/**************************************/
+static int ReadDribbleCallback(
   Environment *theEnv,
   const char *logicalName,
   void *context)
@@ -143,7 +146,7 @@ static int GetcDribble(
    /*===========================================*/
 
    DeactivateRouter(theEnv,"dribble");
-   rv = GetcRouter(theEnv,logicalName);
+   rv = ReadRouter(theEnv,logicalName);
    ActivateRouter(theEnv,"dribble");
 
    /*==========================================*/
@@ -217,10 +220,11 @@ static void PutcDribbleBuffer(
      }
   }
 
-/*********************************************************/
-/* UngetcDribble: Ungetc routine for the dribble router. */
-/*********************************************************/
-static int UngetcDribble(
+/******************************************/
+/* UnreadDribbleCallback: Unread callback */
+/*    for the dribble router.             */
+/******************************************/
+static int UnreadDribbleCallback(
   Environment *theEnv,
   const char *logicalName,
   int ch,
@@ -241,7 +245,7 @@ static int UngetcDribble(
    /*=============================================*/
 
    DeactivateRouter(theEnv,"dribble");
-   rv = UngetcRouter(theEnv,logicalName,ch);
+   rv = UnreadRouter(theEnv,logicalName,ch);
    ActivateRouter(theEnv,"dribble");
 
    /*==========================================*/
@@ -251,10 +255,11 @@ static int UngetcDribble(
    return(rv);
   }
 
-/*****************************************************/
-/* ExitDribble: Exit routine for the dribble router. */
-/*****************************************************/
-static void ExitDribble(
+/**************************************/
+/* ExitDribbleCallback: Exit callback */
+/*    for the dribble router.         */
+/**************************************/
+static void ExitDribbleCallback(
   Environment *theEnv,
   int num,
   void *context)
@@ -300,10 +305,10 @@ bool DribbleOn(
    /* Create the dribble router. */
    /*============================*/
 
-   AddRouter(theEnv,"dribble", 40,
-             FindDribble, PrintDribble,
-             GetcDribble, UngetcDribble,
-             ExitDribble,NULL);
+   AddRouter(theEnv,"dribble",40,
+             QueryDribbleCallback,WriteDribbleCallback,
+             ReadDribbleCallback,UnreadDribbleCallback,
+             ExitDribbleCallback,NULL);
 
    FileCommandData(theEnv)->DribbleCurrentPosition = 0;
 
@@ -398,10 +403,11 @@ bool DribbleOff(
   
 #endif /* DEBUGGING_FUNCTIONS */
 
-/*************************************************/
-/* FindBatch: Find routine for the batch router. */
-/*************************************************/
-static bool FindBatch(
+/**************************************/
+/* QueryBatchCallback: Query callback */
+/*    for the batch router.           */
+/**************************************/
+static bool QueryBatchCallback(
   Environment *theEnv,
   const char *logicalName,
   void *context)
@@ -416,10 +422,11 @@ static bool FindBatch(
    return false;
   }
 
-/*************************************************/
-/* GetcBatch: Getc routine for the batch router. */
-/*************************************************/
-static int GetcBatch(
+/************************************/
+/* ReadBatchCallback: Read callback */
+/*    for the batch router.         */
+/************************************/
+static int ReadBatchCallback(
   Environment *theEnv,
   const char *logicalName,
   void *context)
@@ -448,11 +455,11 @@ int LLGetcBatch(
       if (FileCommandData(theEnv)->BatchType == FILE_BATCH)
         { rv = getc(FileCommandData(theEnv)->BatchFileSource); }
       else
-        { rv = GetcRouter(theEnv,FileCommandData(theEnv)->BatchLogicalSource); }
+        { rv = ReadRouter(theEnv,FileCommandData(theEnv)->BatchLogicalSource); }
 
       if (rv == EOF)
         {
-         if (FileCommandData(theEnv)->BatchCurrentPosition > 0) PrintString(theEnv,STDOUT,(char *) FileCommandData(theEnv)->BatchBuffer);
+         if (FileCommandData(theEnv)->BatchCurrentPosition > 0) WriteString(theEnv,STDOUT,(char *) FileCommandData(theEnv)->BatchBuffer);
          flag = RemoveBatch(theEnv);
         }
      }
@@ -465,13 +472,13 @@ int LLGetcBatch(
 
    if (rv == EOF)
      {
-      if (FileCommandData(theEnv)->BatchCurrentPosition > 0) PrintString(theEnv,STDOUT,(char *) FileCommandData(theEnv)->BatchBuffer);
+      if (FileCommandData(theEnv)->BatchCurrentPosition > 0) WriteString(theEnv,STDOUT,(char *) FileCommandData(theEnv)->BatchBuffer);
       DeleteRouter(theEnv,"batch");
       RemoveBatch(theEnv);
       if (returnOnEOF == true)
         { return (EOF); }
       else
-        { return GetcRouter(theEnv,logicalName); }
+        { return ReadRouter(theEnv,logicalName); }
      }
 
    /*========================================*/
@@ -488,7 +495,7 @@ int LLGetcBatch(
 
    if ((char) rv == '\n')
      {
-      PrintString(theEnv,STDOUT,(char *) FileCommandData(theEnv)->BatchBuffer);
+      WriteString(theEnv,STDOUT,(char *) FileCommandData(theEnv)->BatchBuffer);
       FileCommandData(theEnv)->BatchCurrentPosition = 0;
       if ((FileCommandData(theEnv)->BatchBuffer != NULL) && (FileCommandData(theEnv)->BatchMaximumPosition > BUFFER_SIZE))
         {
@@ -512,10 +519,11 @@ int LLGetcBatch(
    return(rv);
   }
 
-/*****************************************************/
-/* UngetcBatch: Ungetc routine for the batch router. */
-/*****************************************************/
-static int UngetcBatch(
+/****************************************/
+/* UnreadBatchCallback: Unread callback */
+/*    for the batch router.             */
+/****************************************/
+static int UnreadBatchCallback(
   Environment *theEnv,
   const char *logicalName,
   int ch,
@@ -530,13 +538,14 @@ static int UngetcBatch(
    if (FileCommandData(theEnv)->BatchType == FILE_BATCH)
      { return(ungetc(ch,FileCommandData(theEnv)->BatchFileSource)); }
 
-   return UngetcRouter(theEnv,FileCommandData(theEnv)->BatchLogicalSource,ch);
+   return UnreadRouter(theEnv,FileCommandData(theEnv)->BatchLogicalSource,ch);
   }
 
-/*************************************************/
-/* ExitBatch: Exit routine for the batch router. */
-/*************************************************/
-static void ExitBatch(
+/************************************/
+/* ExitBatchCallback: Exit callback */
+/*    for the batch router.         */
+/************************************/
+static void ExitBatchCallback(
   Environment *theEnv,
   int num,
   void *context)
@@ -585,8 +594,9 @@ bool OpenBatch(
 
    if (FileCommandData(theEnv)->TopOfBatchList == NULL)
      {
-      AddRouter(theEnv,"batch",20,FindBatch,NULL,
-                GetcBatch,UngetcBatch,ExitBatch,NULL);
+      AddRouter(theEnv,"batch",20,QueryBatchCallback,NULL,
+                ReadBatchCallback,UnreadBatchCallback,
+                ExitBatchCallback,NULL);
      }
 
    /*===============================================================*/
@@ -649,9 +659,9 @@ bool OpenStringBatch(
    if (FileCommandData(theEnv)->TopOfBatchList == NULL)
      {
       AddRouter(theEnv,"batch", 20,
-                FindBatch, NULL,
-                GetcBatch, UngetcBatch,
-                ExitBatch,NULL);
+                QueryBatchCallback,NULL,
+                ReadBatchCallback,UnreadBatchCallback,
+                ExitBatchCallback,NULL);
      }
 
    AddBatch(theEnv,placeAtEnd,NULL,stringName,STRING_BATCH,theString,NULL);
@@ -838,7 +848,7 @@ void CloseAllBatchSources(
 
    if (FileCommandData(theEnv)->BatchBuffer != NULL)
      {
-      if (FileCommandData(theEnv)->BatchCurrentPosition > 0) PrintString(theEnv,STDOUT,(char *) FileCommandData(theEnv)->BatchBuffer);
+      if (FileCommandData(theEnv)->BatchCurrentPosition > 0) WriteString(theEnv,STDOUT,(char *) FileCommandData(theEnv)->BatchBuffer);
       rm(theEnv,FileCommandData(theEnv)->BatchBuffer,FileCommandData(theEnv)->BatchMaximumPosition);
       FileCommandData(theEnv)->BatchBuffer = NULL;
       FileCommandData(theEnv)->BatchCurrentPosition = 0;
@@ -977,7 +987,7 @@ bool BatchStar(
   const char *fileName)
   {
    PrintErrorID(theEnv,"FILECOM",1,false);
-   PrintString(theEnv,WERROR,"Function batch* does not work in run time modules.\n");
+   WriteString(theEnv,STDERR,"Function batch* does not work in run time modules.\n");
    return false;
   }
 

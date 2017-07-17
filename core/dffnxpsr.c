@@ -325,7 +325,7 @@ static bool ValidDeffunctionName(
    if (FindConstruct(theEnv,theDeffunctionName) != NULL)
      {
       PrintErrorID(theEnv,"DFFNXPSR",1,false);
-      PrintString(theEnv,WERROR,"Deffunctions are not allowed to replace constructs.\n");
+      WriteString(theEnv,STDERR,"Deffunctions are not allowed to replace constructs.\n");
       return false;
      }
 
@@ -338,7 +338,7 @@ static bool ValidDeffunctionName(
    if (FindFunction(theEnv,theDeffunctionName) != NULL)
      {
       PrintErrorID(theEnv,"DFFNXPSR",2,false);
-      PrintString(theEnv,WERROR,"Deffunctions are not allowed to replace external functions.\n");
+      WriteString(theEnv,STDERR,"Deffunctions are not allowed to replace external functions.\n");
       return false;
      }
 
@@ -358,17 +358,17 @@ static bool ValidDeffunctionName(
       if (theModule != GetCurrentModule(theEnv))
         {
          PrintErrorID(theEnv,"DFFNXPSR",5,false);
-         PrintString(theEnv,WERROR,"Defgeneric ");
-         PrintString(theEnv,WERROR,DefgenericName(theDefgeneric));
-         PrintString(theEnv,WERROR," imported from module ");
-         PrintString(theEnv,WERROR,DefmoduleName(theModule));
-         PrintString(theEnv,WERROR," conflicts with this deffunction.\n");
+         WriteString(theEnv,STDERR,"Defgeneric ");
+         WriteString(theEnv,STDERR,DefgenericName(theDefgeneric));
+         WriteString(theEnv,STDERR," imported from module ");
+         WriteString(theEnv,STDERR,DefmoduleName(theModule));
+         WriteString(theEnv,STDERR," conflicts with this deffunction.\n");
          return false;
         }
       else
         {
          PrintErrorID(theEnv,"DFFNXPSR",3,false);
-         PrintString(theEnv,WERROR,"Deffunctions are not allowed to replace generic functions.\n");
+         WriteString(theEnv,STDERR,"Deffunctions are not allowed to replace generic functions.\n");
         }
       return false;
      }
@@ -385,9 +385,9 @@ static bool ValidDeffunctionName(
       if (theDeffunction->executing)
         {
          PrintErrorID(theEnv,"DFNXPSR",4,false);
-         PrintString(theEnv,WERROR,"Deffunction ");
-         PrintString(theEnv,WERROR,DeffunctionName(theDeffunction));
-         PrintString(theEnv,WERROR," may not be redefined while it is executing.\n");
+         WriteString(theEnv,STDERR,"Deffunction ");
+         WriteString(theEnv,STDERR,DeffunctionName(theDeffunction));
+         WriteString(theEnv,STDERR," may not be redefined while it is executing.\n");
          return false;
         }
      }

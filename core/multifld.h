@@ -88,7 +88,7 @@ struct multifieldBuilder
    void                           AddToMultifieldList(Environment *,Multifield *);
    void                           FlushMultifields(Environment *);
    void                           DuplicateMultifield(Environment *,UDFValue *,UDFValue *);
-   void                           PrintMultifield(Environment *,const char *,Multifield *);
+   void                           WriteMultifield(Environment *,const char *,Multifield *);
    void                           PrintMultifieldDriver(Environment *,const char *,Multifield *,size_t,size_t,bool);
    bool                           MultifieldDOsEqual(UDFValue *,UDFValue *);
    void                           StoreInMultifield(Environment *,UDFValue *,Expression *,bool);

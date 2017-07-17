@@ -293,14 +293,14 @@ Expression *ParseProcParameters(
         if (check->value == tkn->value)
          {
           PrintErrorID(theEnv,"PRCCODE",7,false);
-          PrintString(theEnv,WERROR,"Duplicate parameter names not allowed.\n");
+          WriteString(theEnv,STDERR,"Duplicate parameter names not allowed.\n");
           ReturnExpression(theEnv,parameterList);
           return NULL;
          }
       if (*wildcard != NULL)
         {
          PrintErrorID(theEnv,"PRCCODE",8,false);
-         PrintString(theEnv,WERROR,"No parameters allowed after wildcard parameter.\n");
+         WriteString(theEnv,STDERR,"No parameters allowed after wildcard parameter.\n");
          ReturnExpression(theEnv,parameterList);
          return NULL;
         }
@@ -542,11 +542,11 @@ int ReplaceProcVars(
                if (errorCode == 0)
                  {
                   PrintErrorID(theEnv,"PRCCODE",3,true);
-                  PrintString(theEnv,WERROR,"Undefined variable ");
-                  PrintString(theEnv,WERROR,bindName->contents);
-                  PrintString(theEnv,WERROR," referenced in ");
-                  PrintString(theEnv,WERROR,bodytype);
-                  PrintString(theEnv,WERROR,".\n");
+                  WriteString(theEnv,STDERR,"Undefined variable ");
+                  WriteString(theEnv,STDERR,bindName->contents);
+                  WriteString(theEnv,STDERR," referenced in ");
+                  WriteString(theEnv,STDERR,bodytype);
+                  WriteString(theEnv,STDERR,".\n");
                  }
                return 1;
               }
@@ -677,7 +677,7 @@ Expression *GenProcWildcardReference(
                     procedure when unbound variables are detected
                     at runtime (The function should take no
                     arguments and have no return value.  The
-                    function should print its synopsis to WERROR
+                    function should print its synopsis to STDERR
                     and include the final carriage-return.)
   RETURNS      : Nothing useful
   SIDE EFFECTS : Any side-effects of the evaluation of the
@@ -930,14 +930,14 @@ void EvaluateProcActions(
       if (GetEvaluationError(theEnv))
         {
          PrintErrorID(theEnv,"PRCCODE",4,false);
-         logName = WERROR;
+         logName = STDERR;
         }
       else
         {
          PrintWarningID(theEnv,"PRCCODE",4,false);
-         logName = WWARNING;
+         logName = STDWRN;
         }
-      PrintString(theEnv,logName,"Execution halted during the actions of ");
+      WriteString(theEnv,logName,"Execution halted during the actions of ");
       (*crtproc)(theEnv,logName);
      }
 
@@ -977,14 +977,14 @@ void PrintProcParamArray(
   {
    unsigned int i;
 
-   PrintString(theEnv,logName," (");
+   WriteString(theEnv,logName," (");
    for (i = 0 ; i < ProceduralPrimitiveData(theEnv)->ProcParamArraySize ; i++)
      {
-      PrintUDFValue(theEnv,logName,&ProceduralPrimitiveData(theEnv)->ProcParamArray[i]);
+      WriteUDFValue(theEnv,logName,&ProceduralPrimitiveData(theEnv)->ProcParamArray[i]);
       if (i != ProceduralPrimitiveData(theEnv)->ProcParamArraySize-1)
-        PrintString(theEnv,logName," ");
+        WriteString(theEnv,logName," ");
      }
-   PrintString(theEnv,logName,")\n");
+   WriteString(theEnv,logName,")\n");
   }
 
 /****************************************************************
@@ -1118,18 +1118,18 @@ static void EvaluateProcParameters(
          if (temp.header->type == VOID_TYPE)
            {
             PrintErrorID(theEnv,"PRCCODE",2,false);
-            PrintString(theEnv,WERROR,"Functions without a return value are illegal as ");
-            PrintString(theEnv,WERROR,bodytype);
-            PrintString(theEnv,WERROR," arguments.\n");
+            WriteString(theEnv,STDERR,"Functions without a return value are illegal as ");
+            WriteString(theEnv,STDERR,bodytype);
+            WriteString(theEnv,STDERR," arguments.\n");
             SetEvaluationError(theEnv,true);
            }
          PrintErrorID(theEnv,"PRCCODE",6,false);
-         PrintString(theEnv,WERROR,"This error occurred while evaluating arguments ");
-         PrintString(theEnv,WERROR,"for the ");
-         PrintString(theEnv,WERROR,bodytype);
-         PrintString(theEnv,WERROR," ");
-         PrintString(theEnv,WERROR,pname);
-         PrintString(theEnv,WERROR,".\n");
+         WriteString(theEnv,STDERR,"This error occurred while evaluating arguments ");
+         WriteString(theEnv,STDERR,"for the ");
+         WriteString(theEnv,STDERR,bodytype);
+         WriteString(theEnv,STDERR," ");
+         WriteString(theEnv,STDERR,pname);
+         WriteString(theEnv,STDERR,".\n");
          rm(theEnv,rva,(sizeof(UDFValue) * numberOfParameters));
          return;
         }
@@ -1209,15 +1209,15 @@ static bool GetProcBind(
      {
       PrintErrorID(theEnv,"PRCCODE",5,false);
       SetEvaluationError(theEnv,true);
-      PrintString(theEnv,WERROR,"Variable ");
-      PrintString(theEnv,WERROR,GetFirstArgument()->lexemeValue->contents);
+      WriteString(theEnv,STDERR,"Variable ");
+      WriteString(theEnv,STDERR,GetFirstArgument()->lexemeValue->contents);
       if (ProceduralPrimitiveData(theEnv)->ProcUnboundErrFunc != NULL)
         {
-         PrintString(theEnv,WERROR," unbound in ");
-         (*ProceduralPrimitiveData(theEnv)->ProcUnboundErrFunc)(theEnv,WERROR);
+         WriteString(theEnv,STDERR," unbound in ");
+         (*ProceduralPrimitiveData(theEnv)->ProcUnboundErrFunc)(theEnv,STDERR);
         }
       else
-        PrintString(theEnv,WERROR," unbound.\n");
+        WriteString(theEnv,STDERR," unbound.\n");
       returnValue->value = FalseSymbol(theEnv);
       return true;
      }
@@ -1467,8 +1467,8 @@ static bool EvaluateBadCall(
 #pragma unused(value)
 #endif
    PrintErrorID(theEnv,"PRCCODE",1,false);
-   PrintString(theEnv,WERROR,"Attempted to call a deffunction/generic function ");
-   PrintString(theEnv,WERROR,"which does not exist.\n");
+   WriteString(theEnv,STDERR,"Attempted to call a deffunction/generic function ");
+   WriteString(theEnv,STDERR,"which does not exist.\n");
    SetEvaluationError(theEnv,true);
    returnValue->value = FalseSymbol(theEnv);
    return false;

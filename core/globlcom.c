@@ -227,8 +227,8 @@ void ShowDefglobals(
 
       if (allModules)
         {
-         PrintString(theEnv,logicalName,DefmoduleName(theModule));
-         PrintString(theEnv,logicalName,":\n");
+         WriteString(theEnv,logicalName,DefmoduleName(theModule));
+         WriteString(theEnv,logicalName,":\n");
         }
 
       /*=====================================*/
@@ -244,9 +244,9 @@ void ShowDefglobals(
         {
          if (EvaluationData(theEnv)->HaltExecution == true) return;
 
-         if (allModules) PrintString(theEnv,logicalName,"   ");
+         if (allModules) WriteString(theEnv,logicalName,"   ");
          PrintDefglobalValueForm(theEnv,logicalName,(Defglobal *) constructPtr);
-         PrintString(theEnv,logicalName,"\n");
+         WriteString(theEnv,logicalName,"\n");
         }
 
       /*===================================*/
@@ -268,10 +268,10 @@ static void PrintDefglobalValueForm(
   const char *logicalName,
   Defglobal *theGlobal)
   {
-   PrintString(theEnv,logicalName,"?*");
-   PrintString(theEnv,logicalName,theGlobal->header.name->contents);
-   PrintString(theEnv,logicalName,"* = ");
-   PrintCLIPSValue(theEnv,logicalName,&theGlobal->current);
+   WriteString(theEnv,logicalName,"?*");
+   WriteString(theEnv,logicalName,theGlobal->header.name->contents);
+   WriteString(theEnv,logicalName,"* = ");
+   WriteCLIPSValue(theEnv,logicalName,&theGlobal->current);
   }
 
 #endif /* DEBUGGING_FUNCTIONS */

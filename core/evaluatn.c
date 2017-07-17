@@ -225,9 +225,9 @@ bool EvaluateExpression(
         if (GetBoundVariable(theEnv,returnValue,problem->lexemeValue) == false)
           {
            PrintErrorID(theEnv,"EVALUATN",1,false);
-           PrintString(theEnv,WERROR,"Variable ");
-           PrintString(theEnv,WERROR,problem->lexemeValue->contents);
-           PrintString(theEnv,WERROR," is unbound\n");
+           WriteString(theEnv,STDERR,"Variable ");
+           WriteString(theEnv,STDERR,problem->lexemeValue->contents);
+           WriteString(theEnv,STDERR," is unbound\n");
            returnValue->value = FalseSymbol(theEnv);
            SetEvaluationError(theEnv,true);
           }
@@ -380,10 +380,10 @@ void ReturnValues(
   }
 
 /**************************************************/
-/* PrintCLIPSValue: Prints a CLIPSValue structure */
+/* WriteCLIPSValue: Prints a CLIPSValue structure */
 /*   to the specified logical name.               */
 /**************************************************/
-void PrintCLIPSValue(
+void WriteCLIPSValue(
   Environment *theEnv,
   const char *fileid,
   CLIPSValue *argPtr)
@@ -410,9 +410,9 @@ void PrintCLIPSValue(
         break;
 
       default:
-        PrintString(theEnv,fileid,"<UnknownPrintType");
-        PrintInteger(theEnv,fileid,argPtr->header->type);
-        PrintString(theEnv,fileid,">");
+        WriteString(theEnv,fileid,"<UnknownPrintType");
+        WriteInteger(theEnv,fileid,argPtr->header->type);
+        WriteString(theEnv,fileid,">");
         SetHaltExecution(theEnv,true);
         SetEvaluationError(theEnv,true);
         break;
@@ -420,10 +420,10 @@ void PrintCLIPSValue(
   }
 
 /**********************************************/
-/* PrintUDFValue: Prints a UDFValue structure */
+/* WriteUDFValue: Prints a UDFValue structure */
 /*   to the specified logical name.           */
 /**********************************************/
-void PrintUDFValue(
+void WriteUDFValue(
   Environment *theEnv,
   const char *fileid,
   UDFValue *argPtr)
@@ -450,9 +450,9 @@ void PrintUDFValue(
         break;
 
       default:
-        PrintString(theEnv,fileid,"<UnknownPrintType");
-        PrintInteger(theEnv,fileid,argPtr->header->type);
-        PrintString(theEnv,fileid,">");
+        WriteString(theEnv,fileid,"<UnknownPrintType");
+        WriteInteger(theEnv,fileid,argPtr->header->type);
+        WriteString(theEnv,fileid,">");
         SetHaltExecution(theEnv,true);
         SetEvaluationError(theEnv,true);
         break;
@@ -1035,11 +1035,11 @@ static void PrintCAddress(
   {
    char buffer[20];
 
-   PrintString(theEnv,logicalName,"<Pointer-C-");
+   WriteString(theEnv,logicalName,"<Pointer-C-");
 
    gensprintf(buffer,"%p",((CLIPSExternalAddress *) theValue)->contents);
-   PrintString(theEnv,logicalName,buffer);
-   PrintString(theEnv,logicalName,">");
+   WriteString(theEnv,logicalName,buffer);
+   WriteString(theEnv,logicalName,">");
   }
 
 /****************/
@@ -1057,7 +1057,7 @@ static void NewCAddress(
    if (numberOfArguments != 1)
      {
       PrintErrorID(theEnv,"NEW",1,false);
-      PrintString(theEnv,WERROR,"Function new expected no additional arguments for the C external language type.\n");
+      WriteString(theEnv,STDERR,"Function new expected no additional arguments for the C external language type.\n");
       SetEvaluationError(theEnv,true);
       return;
      }
@@ -1073,7 +1073,7 @@ static bool DiscardCAddress(
   Environment *theEnv,
   void *theValue)
   {
-   PrintString(theEnv,STDOUT,"Discarding C Address\n");
+   WriteString(theEnv,STDOUT,"Discarding C Address\n");
 
    return true;
   }

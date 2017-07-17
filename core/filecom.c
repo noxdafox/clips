@@ -281,7 +281,7 @@ void LoadCommand(
    if (rv == -1) returnValue->lexemeValue = FalseSymbol(theEnv);
    else returnValue->lexemeValue = TrueSymbol(theEnv);
 #else
-   PrintString(theEnv,STDOUT,"Load is not available in this environment\n");
+   WriteString(theEnv,STDOUT,"Load is not available in this environment\n");
    returnValue->lexemeValue = FalseSymbol(theEnv);
 #endif
   }
@@ -314,7 +314,7 @@ void LoadStarCommand(
    if (rv == -1) returnValue->lexemeValue = FalseSymbol(theEnv);
    else returnValue->lexemeValue = TrueSymbol(theEnv);
 #else
-   PrintString(theEnv,STDOUT,"Load* is not available in this environment\n");
+   WriteString(theEnv,STDOUT,"Load* is not available in this environment\n");
    returnValue->lexemeValue = FalseSymbol(theEnv);
 #endif
   }
@@ -346,7 +346,7 @@ void SaveCommand(
 
    returnValue->lexemeValue = TrueSymbol(theEnv);
 #else
-   PrintString(theEnv,STDOUT,"Save is not available in this environment\n");
+   WriteString(theEnv,STDOUT,"Save is not available in this environment\n");
    returnValue->lexemeValue = FalseSymbol(theEnv);
 #endif
   }

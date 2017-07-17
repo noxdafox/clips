@@ -364,7 +364,7 @@ void RandomFunction(
    if ((argCount != 0) && (argCount != 2))
      {
       PrintErrorID(theEnv,"MISCFUN",2,false);
-      PrintString(theEnv,WERROR,"Function random expected either 0 or 2 arguments\n");
+      WriteString(theEnv,STDERR,"Function random expected either 0 or 2 arguments\n");
      }
 
    /*========================================*/
@@ -386,7 +386,7 @@ void RandomFunction(
       if (end < begin)
         {
          PrintErrorID(theEnv,"MISCFUN",3,false);
-         PrintString(theEnv,WERROR,"Function random expected argument #1 to be less than argument #2\n");
+         WriteString(theEnv,STDERR,"Function random expected argument #1 to be less than argument #2\n");
          returnValue->integerValue = CreateInteger(theEnv,rv);
          return;
         }
@@ -609,8 +609,8 @@ void AproposCommand(
 
    while ((hashPtr = GetNextSymbolMatch(theEnv,argument,theLength,hashPtr,true,NULL)) != NULL)
      {
-      PrintString(theEnv,STDOUT,hashPtr->contents);
-      PrintString(theEnv,STDOUT,"\n");
+      WriteString(theEnv,STDOUT,hashPtr->contents);
+      WriteString(theEnv,STDOUT,"\n");
      }
   }
 
@@ -634,216 +634,216 @@ void OptionsCommand(
    /* flags for this executable.      */
    /*=================================*/
 
-   PrintString(theEnv,STDOUT,"Machine type: ");
+   WriteString(theEnv,STDOUT,"Machine type: ");
 
 #if GENERIC
-   PrintString(theEnv,STDOUT,"Generic ");
+   WriteString(theEnv,STDOUT,"Generic ");
 #endif
 #if UNIX_V
-   PrintString(theEnv,STDOUT,"UNIX System V or 4.2BSD ");
+   WriteString(theEnv,STDOUT,"UNIX System V or 4.2BSD ");
 #endif
 #if DARWIN
-   PrintString(theEnv,STDOUT,"Darwin ");
+   WriteString(theEnv,STDOUT,"Darwin ");
 #endif
 #if LINUX
-   PrintString(theEnv,STDOUT,"Linux ");
+   WriteString(theEnv,STDOUT,"Linux ");
 #endif
 #if UNIX_7
-   PrintString(theEnv,STDOUT,"UNIX System III Version 7 or Sun Unix ");
+   WriteString(theEnv,STDOUT,"UNIX System III Version 7 or Sun Unix ");
 #endif
 #if MAC_XCD
-   PrintString(theEnv,STDOUT,"Apple Macintosh with Xcode");
+   WriteString(theEnv,STDOUT,"Apple Macintosh with Xcode");
 #endif
 #if WIN_MVC
-   PrintString(theEnv,STDOUT,"Microsoft Windows with Microsoft Visual C++");
+   WriteString(theEnv,STDOUT,"Microsoft Windows with Microsoft Visual C++");
 #endif
 #if WIN_GCC
-   PrintString(theEnv,STDOUT,"Microsoft Windows with DJGPP");
+   WriteString(theEnv,STDOUT,"Microsoft Windows with DJGPP");
 #endif
-PrintString(theEnv,STDOUT,"\n");
+WriteString(theEnv,STDOUT,"\n");
 
-PrintString(theEnv,STDOUT,"Defrule construct is ");
+WriteString(theEnv,STDOUT,"Defrule construct is ");
 #if DEFRULE_CONSTRUCT
-  PrintString(theEnv,STDOUT,"ON\n");
+  WriteString(theEnv,STDOUT,"ON\n");
 #else
-  PrintString(theEnv,STDOUT,"OFF\n");
+  WriteString(theEnv,STDOUT,"OFF\n");
 #endif
 
-PrintString(theEnv,STDOUT,"Defmodule construct is ");
+WriteString(theEnv,STDOUT,"Defmodule construct is ");
 #if DEFMODULE_CONSTRUCT
-  PrintString(theEnv,STDOUT,"ON\n");
+  WriteString(theEnv,STDOUT,"ON\n");
 #else
-  PrintString(theEnv,STDOUT,"OFF\n");
+  WriteString(theEnv,STDOUT,"OFF\n");
 #endif
 
-PrintString(theEnv,STDOUT,"Deftemplate construct is ");
+WriteString(theEnv,STDOUT,"Deftemplate construct is ");
 #if DEFTEMPLATE_CONSTRUCT
-  PrintString(theEnv,STDOUT,"ON\n");
+  WriteString(theEnv,STDOUT,"ON\n");
 #else
-  PrintString(theEnv,STDOUT,"OFF\n");
+  WriteString(theEnv,STDOUT,"OFF\n");
 #endif
 
-PrintString(theEnv,STDOUT,"  Fact-set queries are ");
+WriteString(theEnv,STDOUT,"  Fact-set queries are ");
 #if FACT_SET_QUERIES
-  PrintString(theEnv,STDOUT,"ON\n");
+  WriteString(theEnv,STDOUT,"ON\n");
 #else
-  PrintString(theEnv,STDOUT,"OFF\n");
+  WriteString(theEnv,STDOUT,"OFF\n");
 #endif
 
 #if DEFTEMPLATE_CONSTRUCT
 
-PrintString(theEnv,STDOUT,"  Deffacts construct is ");
+WriteString(theEnv,STDOUT,"  Deffacts construct is ");
 #if DEFFACTS_CONSTRUCT
-  PrintString(theEnv,STDOUT,"ON\n");
+  WriteString(theEnv,STDOUT,"ON\n");
 #else
-  PrintString(theEnv,STDOUT,"OFF\n");
+  WriteString(theEnv,STDOUT,"OFF\n");
 #endif
 
 #endif
 
-PrintString(theEnv,STDOUT,"Defglobal construct is ");
+WriteString(theEnv,STDOUT,"Defglobal construct is ");
 #if DEFGLOBAL_CONSTRUCT
-  PrintString(theEnv,STDOUT,"ON\n");
+  WriteString(theEnv,STDOUT,"ON\n");
 #else
-  PrintString(theEnv,STDOUT,"OFF\n");
+  WriteString(theEnv,STDOUT,"OFF\n");
 #endif
 
-PrintString(theEnv,STDOUT,"Deffunction construct is ");
+WriteString(theEnv,STDOUT,"Deffunction construct is ");
 #if DEFFUNCTION_CONSTRUCT
-  PrintString(theEnv,STDOUT,"ON\n");
+  WriteString(theEnv,STDOUT,"ON\n");
 #else
-  PrintString(theEnv,STDOUT,"OFF\n");
+  WriteString(theEnv,STDOUT,"OFF\n");
 #endif
 
-PrintString(theEnv,STDOUT,"Defgeneric/Defmethod constructs are ");
+WriteString(theEnv,STDOUT,"Defgeneric/Defmethod constructs are ");
 #if DEFGENERIC_CONSTRUCT
-  PrintString(theEnv,STDOUT,"ON\n");
+  WriteString(theEnv,STDOUT,"ON\n");
 #else
-  PrintString(theEnv,STDOUT,"OFF\n");
+  WriteString(theEnv,STDOUT,"OFF\n");
 #endif
 
-PrintString(theEnv,STDOUT,"Object System is ");
+WriteString(theEnv,STDOUT,"Object System is ");
 #if OBJECT_SYSTEM
-  PrintString(theEnv,STDOUT,"ON\n");
+  WriteString(theEnv,STDOUT,"ON\n");
 #else
-  PrintString(theEnv,STDOUT,"OFF\n");
+  WriteString(theEnv,STDOUT,"OFF\n");
 #endif
 
 #if OBJECT_SYSTEM
 
-PrintString(theEnv,STDOUT,"  Definstances construct is ");
+WriteString(theEnv,STDOUT,"  Definstances construct is ");
 #if DEFINSTANCES_CONSTRUCT
-  PrintString(theEnv,STDOUT,"ON\n");
+  WriteString(theEnv,STDOUT,"ON\n");
 #else
-  PrintString(theEnv,STDOUT,"OFF\n");
+  WriteString(theEnv,STDOUT,"OFF\n");
 #endif
 
-PrintString(theEnv,STDOUT,"  Instance-set queries are ");
+WriteString(theEnv,STDOUT,"  Instance-set queries are ");
 #if INSTANCE_SET_QUERIES
-  PrintString(theEnv,STDOUT,"ON\n");
+  WriteString(theEnv,STDOUT,"ON\n");
 #else
-  PrintString(theEnv,STDOUT,"OFF\n");
+  WriteString(theEnv,STDOUT,"OFF\n");
 #endif
 
-PrintString(theEnv,STDOUT,"  Binary loading of instances is ");
+WriteString(theEnv,STDOUT,"  Binary loading of instances is ");
 #if BLOAD_INSTANCES
-  PrintString(theEnv,STDOUT,"ON\n");
+  WriteString(theEnv,STDOUT,"ON\n");
 #else
-  PrintString(theEnv,STDOUT,"OFF\n");
+  WriteString(theEnv,STDOUT,"OFF\n");
 #endif
 
-PrintString(theEnv,STDOUT,"  Binary saving of instances is ");
+WriteString(theEnv,STDOUT,"  Binary saving of instances is ");
 #if BSAVE_INSTANCES
-  PrintString(theEnv,STDOUT,"ON\n");
+  WriteString(theEnv,STDOUT,"ON\n");
 #else
-  PrintString(theEnv,STDOUT,"OFF\n");
+  WriteString(theEnv,STDOUT,"OFF\n");
 #endif
 
 #endif
 
-PrintString(theEnv,STDOUT,"Extended math function package is ");
+WriteString(theEnv,STDOUT,"Extended math function package is ");
 #if EXTENDED_MATH_FUNCTIONS
-  PrintString(theEnv,STDOUT,"ON\n");
+  WriteString(theEnv,STDOUT,"ON\n");
 #else
-  PrintString(theEnv,STDOUT,"OFF\n");
+  WriteString(theEnv,STDOUT,"OFF\n");
 #endif
 
-PrintString(theEnv,STDOUT,"Text processing function package is ");
+WriteString(theEnv,STDOUT,"Text processing function package is ");
 #if TEXTPRO_FUNCTIONS
-  PrintString(theEnv,STDOUT,"ON\n");
+  WriteString(theEnv,STDOUT,"ON\n");
 #else
-  PrintString(theEnv,STDOUT,"OFF\n");
+  WriteString(theEnv,STDOUT,"OFF\n");
 #endif
 
-PrintString(theEnv,STDOUT,"Bload capability is ");
+WriteString(theEnv,STDOUT,"Bload capability is ");
 #if BLOAD_ONLY
-  PrintString(theEnv,STDOUT,"BLOAD ONLY");
+  WriteString(theEnv,STDOUT,"BLOAD ONLY");
 #endif
 #if BLOAD
-  PrintString(theEnv,STDOUT,"BLOAD");
+  WriteString(theEnv,STDOUT,"BLOAD");
 #endif
 #if BLOAD_AND_BSAVE
-  PrintString(theEnv,STDOUT,"BLOAD AND BSAVE");
+  WriteString(theEnv,STDOUT,"BLOAD AND BSAVE");
 #endif
 #if (! BLOAD_ONLY) && (! BLOAD) && (! BLOAD_AND_BSAVE)
-  PrintString(theEnv,STDOUT,"OFF ");
+  WriteString(theEnv,STDOUT,"OFF ");
 #endif
-PrintString(theEnv,STDOUT,"\n");
+WriteString(theEnv,STDOUT,"\n");
 
-PrintString(theEnv,STDOUT,"Construct compiler is ");
+WriteString(theEnv,STDOUT,"Construct compiler is ");
 #if CONSTRUCT_COMPILER
-  PrintString(theEnv,STDOUT,"ON\n");
+  WriteString(theEnv,STDOUT,"ON\n");
 #else
-  PrintString(theEnv,STDOUT,"OFF\n");
+  WriteString(theEnv,STDOUT,"OFF\n");
 #endif
 
-PrintString(theEnv,STDOUT,"I/O function package is ");
+WriteString(theEnv,STDOUT,"I/O function package is ");
 #if IO_FUNCTIONS
-  PrintString(theEnv,STDOUT,"ON\n");
+  WriteString(theEnv,STDOUT,"ON\n");
 #else
-  PrintString(theEnv,STDOUT,"OFF\n");
+  WriteString(theEnv,STDOUT,"OFF\n");
 #endif
 
-PrintString(theEnv,STDOUT,"String function package is ");
+WriteString(theEnv,STDOUT,"String function package is ");
 #if STRING_FUNCTIONS
-  PrintString(theEnv,STDOUT,"ON\n");
+  WriteString(theEnv,STDOUT,"ON\n");
 #else
-  PrintString(theEnv,STDOUT,"OFF\n");
+  WriteString(theEnv,STDOUT,"OFF\n");
 #endif
 
-PrintString(theEnv,STDOUT,"Multifield function package is ");
+WriteString(theEnv,STDOUT,"Multifield function package is ");
 #if MULTIFIELD_FUNCTIONS
-  PrintString(theEnv,STDOUT,"ON\n");
+  WriteString(theEnv,STDOUT,"ON\n");
 #else
-  PrintString(theEnv,STDOUT,"OFF\n");
+  WriteString(theEnv,STDOUT,"OFF\n");
 #endif
 
-PrintString(theEnv,STDOUT,"Debugging function package is ");
+WriteString(theEnv,STDOUT,"Debugging function package is ");
 #if DEBUGGING_FUNCTIONS
-  PrintString(theEnv,STDOUT,"ON\n");
+  WriteString(theEnv,STDOUT,"ON\n");
 #else
-  PrintString(theEnv,STDOUT,"OFF\n");
+  WriteString(theEnv,STDOUT,"OFF\n");
 #endif
 
-PrintString(theEnv,STDOUT,"Window Interface flag is ");
+WriteString(theEnv,STDOUT,"Window Interface flag is ");
 #if WINDOW_INTERFACE
-   PrintString(theEnv,STDOUT,"ON\n");
+   WriteString(theEnv,STDOUT,"ON\n");
 #else
-   PrintString(theEnv,STDOUT,"OFF\n");
+   WriteString(theEnv,STDOUT,"OFF\n");
 #endif
 
-PrintString(theEnv,STDOUT,"Developer flag is ");
+WriteString(theEnv,STDOUT,"Developer flag is ");
 #if DEVELOPER
-   PrintString(theEnv,STDOUT,"ON\n");
+   WriteString(theEnv,STDOUT,"ON\n");
 #else
-   PrintString(theEnv,STDOUT,"OFF\n");
+   WriteString(theEnv,STDOUT,"OFF\n");
 #endif
 
-PrintString(theEnv,STDOUT,"Run time module is ");
+WriteString(theEnv,STDOUT,"Run time module is ");
 #if RUN_TIME
-  PrintString(theEnv,STDOUT,"ON\n");
+  WriteString(theEnv,STDOUT,"ON\n");
 #else
-  PrintString(theEnv,STDOUT,"OFF\n");
+  WriteString(theEnv,STDOUT,"OFF\n");
 #endif
   }
 
@@ -968,7 +968,7 @@ void DummyExpandFuncMultifield(
    returnValue->lexemeValue = FalseSymbol(theEnv);
    SetEvaluationError(theEnv,true);
    PrintErrorID(theEnv,"MISCFUN",1,false);
-   PrintString(theEnv,WERROR,"expand$ must be used in the argument list of a function call.\n");
+   WriteString(theEnv,STDERR,"expand$ must be used in the argument list of a function call.\n");
   }
 
 /***********************************************************************
@@ -1327,9 +1327,9 @@ void FuncallFunction(
       if (CheckDeffunctionCall(theEnv,(Deffunction *) theReference.value,CountArguments(theReference.argList)) == false)
         {
          PrintErrorID(theEnv,"MISCFUN",4,false);
-         PrintString(theEnv,WERROR,"Function funcall called with the wrong number of arguments for deffunction ");
-         PrintString(theEnv,WERROR,DeffunctionName((Deffunction *) theReference.value));
-         PrintString(theEnv,WERROR,"\n");
+         WriteString(theEnv,STDERR,"Function funcall called with the wrong number of arguments for deffunction ");
+         WriteString(theEnv,STDERR,DeffunctionName((Deffunction *) theReference.value));
+         WriteString(theEnv,STDERR,"\n");
          ExpressionDeinstall(theEnv,&theReference);
          ReturnExpression(theEnv,theReference.argList);
          return;

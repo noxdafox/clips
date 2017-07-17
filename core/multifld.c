@@ -492,9 +492,9 @@ void EphemerateMultifield(
   }
 
 /*********************************************/
-/* PrintMultifield: Prints out a multifield. */
+/* WriteMultifield: Prints out a multifield. */
 /*********************************************/
-void PrintMultifield(
+void WriteMultifield(
   Environment *theEnv,
   const char *fileid,
   Multifield *segment)
@@ -519,18 +519,18 @@ void PrintMultifieldDriver(
    theMultifield = segment->contents;
    
    if (printParens)
-     { PrintString(theEnv,fileid,"("); }
+     { WriteString(theEnv,fileid,"("); }
 
    for (i = 0; i < range; i++)
      {
       PrintAtom(theEnv,fileid,theMultifield[begin+i].header->type,theMultifield[begin+i].value);
      
       if ((i + 1) < range)
-        { PrintString(theEnv,fileid," "); }
+        { WriteString(theEnv,fileid," "); }
      }
 
    if (printParens)
-     { PrintString(theEnv,fileid,")"); }
+     { WriteString(theEnv,fileid,")"); }
   }
 
 /****************************************************/

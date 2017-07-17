@@ -245,11 +245,11 @@ void ClassExistError(
   const char *cname)
   {
    PrintErrorID(theEnv,"CLASSFUN",1,false);
-   PrintString(theEnv,WERROR,"Unable to find class ");
-   PrintString(theEnv,WERROR,cname);
-   PrintString(theEnv,WERROR," in function ");
-   PrintString(theEnv,WERROR,func);
-   PrintString(theEnv,WERROR,".\n");
+   WriteString(theEnv,STDERR,"Unable to find class ");
+   WriteString(theEnv,STDERR,cname);
+   WriteString(theEnv,STDERR," in function ");
+   WriteString(theEnv,STDERR,func);
+   WriteString(theEnv,STDERR,".\n");
    SetEvaluationError(theEnv,true);
   }
 
@@ -295,13 +295,13 @@ void PrintClassName(
    if ((theDefclass->header.whichModule->theModule != GetCurrentModule(theEnv)) &&
        (theDefclass->system == 0))
      {
-      PrintString(theEnv,logicalName,
+      WriteString(theEnv,logicalName,
                 DefmoduleName(theDefclass->header.whichModule->theModule));
-      PrintString(theEnv,logicalName,"::");
+      WriteString(theEnv,logicalName,"::");
      }
-   PrintString(theEnv,logicalName,theDefclass->header.name->contents);
+   WriteString(theEnv,logicalName,theDefclass->header.name->contents);
    if (linefeedFlag)
-     PrintString(theEnv,logicalName,"\n");
+     WriteString(theEnv,logicalName,"\n");
   }
 
 #if DEBUGGING_FUNCTIONS || ((! BLOAD_ONLY) && (! RUN_TIME))
@@ -325,13 +325,13 @@ void PrintPackedClassLinks(
   {
    unsigned long i;
 
-   PrintString(theEnv,logicalName,title);
+   WriteString(theEnv,logicalName,title);
    for (i = 0 ; i < plinks->classCount ; i++)
      {
-      PrintString(theEnv,logicalName," ");
+      WriteString(theEnv,logicalName," ");
       PrintClassName(theEnv,logicalName,plinks->classArray[i],false);
      }
-   PrintString(theEnv,logicalName,"\n");
+   WriteString(theEnv,logicalName,"\n");
   }
 
 #endif
@@ -1195,9 +1195,9 @@ int GetTraversalID(
    if (DefclassData(theEnv)->CTID >= MAX_TRAVERSALS)
      {
       PrintErrorID(theEnv,"CLASSFUN",2,false);
-      PrintString(theEnv,WERROR,"Maximum number of simultaneous class hierarchy\n  traversals exceeded ");
-      PrintInteger(theEnv,WERROR,MAX_TRAVERSALS);
-      PrintString(theEnv,WERROR,".\n");
+      WriteString(theEnv,STDERR,"Maximum number of simultaneous class hierarchy\n  traversals exceeded ");
+      WriteInteger(theEnv,STDERR,MAX_TRAVERSALS);
+      WriteString(theEnv,STDERR,".\n");
       SetEvaluationError(theEnv,true);
       return(-1);
      }

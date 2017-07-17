@@ -90,7 +90,7 @@ void InitializeMemory(
    if (MemoryData(theEnv)->MemoryTable == NULL)
      {
       PrintErrorID(theEnv,"MEMORY",1,true);
-      PrintString(theEnv,WERROR,"Out of memory.\n");
+      WriteString(theEnv,STDERR,"Out of memory.\n");
       ExitRouter(theEnv,EXIT_FAILURE);
      }
    else
@@ -151,7 +151,7 @@ bool DefaultOutOfMemoryFunction(
 #endif
 
    PrintErrorID(theEnv,"MEMORY",1,true);
-   PrintString(theEnv,WERROR,"Out of memory.\n");
+   WriteString(theEnv,STDERR,"Out of memory.\n");
    ExitRouter(theEnv,EXIT_FAILURE);
    return true;
   }

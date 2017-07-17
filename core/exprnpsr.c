@@ -148,7 +148,7 @@ struct expr *Function1Parse(
    if (theToken.tknType != SYMBOL_TOKEN)
      {
       PrintErrorID(theEnv,"EXPRNPSR",1,true);
-      PrintString(theEnv,WERROR,"A function name must be a symbol\n");
+      WriteString(theEnv,STDERR,"A function name must be a symbol\n");
       return NULL;
      }
 
@@ -252,9 +252,9 @@ struct expr *Function2Parse(
    else
      {
       PrintErrorID(theEnv,"EXPRNPSR",3,true);
-      PrintString(theEnv,WERROR,"Missing function declaration for ");
-      PrintString(theEnv,WERROR,name);
-      PrintString(theEnv,WERROR,".\n");
+      WriteString(theEnv,STDERR,"Missing function declaration for ");
+      WriteString(theEnv,STDERR,name);
+      WriteString(theEnv,STDERR,".\n");
       return NULL;
      }
 
@@ -379,9 +379,9 @@ bool ReplaceSequenceExpansionOps(
              (fcallexp->functionValue->sequenceuseok == false))
            {
             PrintErrorID(theEnv,"EXPRNPSR",4,false);
-            PrintString(theEnv,WERROR,"$ Sequence operator not a valid argument for ");
-            PrintString(theEnv,WERROR,fcallexp->functionValue->callFunctionName->contents);
-            PrintString(theEnv,WERROR,".\n");
+            WriteString(theEnv,STDERR,"$ Sequence operator not a valid argument for ");
+            WriteString(theEnv,STDERR,fcallexp->functionValue->callFunctionName->contents);
+            WriteString(theEnv,STDERR,".\n");
             return true;
            }
          if (fcallexp->value != expcall)
@@ -574,7 +574,7 @@ bool CheckExpressionAgainstRestrictions(
       if (CheckArgumentAgainstRestriction(theEnv,argPtr,argRestriction2))
         {
          ExpectedTypeError0(theEnv,functionName,j);
-         PrintTypesString(theEnv,WERROR,argRestriction2,true);
+         PrintTypesString(theEnv,STDERR,argRestriction2,true);
          return true;
         }
 
@@ -680,7 +680,7 @@ struct expr *ArgumentParse(
    if (theToken.tknType != LEFT_PARENTHESIS_TOKEN)
      {
       PrintErrorID(theEnv,"EXPRNPSR",2,true);
-      PrintString(theEnv,WERROR,"Expected a constant, variable, or expression.\n");
+      WriteString(theEnv,STDERR,"Expected a constant, variable, or expression.\n");
       *errorFlag = true;
       return NULL;
      }
@@ -729,7 +729,7 @@ struct expr *ParseAtomOrExpression(
    else
      {
       PrintErrorID(theEnv,"EXPRNPSR",2,true);
-      PrintString(theEnv,WERROR,"Expected a constant, variable, or expression.\n");
+      WriteString(theEnv,STDERR,"Expected a constant, variable, or expression.\n");
       return NULL;
      }
 
@@ -959,9 +959,9 @@ void PopulateRestriction(
           default:
             buffer[0] = theChar;
             buffer[1] = 0;
-            PrintString(theEnv,WERROR,"Invalid argument type character ");
-            PrintString(theEnv,WERROR,buffer);
-            PrintString(theEnv,WERROR,"\n");
+            WriteString(theEnv,STDERR,"Invalid argument type character ");
+            WriteString(theEnv,STDERR,buffer);
+            WriteString(theEnv,STDERR,"\n");
             valuesRead++;
             break;
          }
@@ -1003,7 +1003,7 @@ Expression *ParseConstantArguments(
    if (OpenStringSource(theEnv,router,argstr,0) == 0)
      {
       PrintErrorID(theEnv,"EXPRNPSR",6,false);
-      PrintString(theEnv,WERROR,"Cannot read arguments for external call.\n");
+      WriteString(theEnv,STDERR,"Cannot read arguments for external call.\n");
       *error = true;
       return NULL;
      }
@@ -1020,7 +1020,7 @@ Expression *ParseConstantArguments(
           (tkn.tknType != INSTANCE_NAME_TOKEN))
         {
          PrintErrorID(theEnv,"EXPRNPSR",7,false);
-         PrintString(theEnv,WERROR,"Only constant arguments allowed for external function call.\n");
+         WriteString(theEnv,STDERR,"Only constant arguments allowed for external function call.\n");
          ReturnExpression(theEnv,top);
          *error = true;
          CloseStringSource(theEnv,router);

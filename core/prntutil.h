@@ -81,8 +81,8 @@ struct printUtilityData
 #define PrintUtilityData(theEnv) ((struct printUtilityData *) GetEnvironmentData(theEnv,PRINT_UTILITY_DATA))
 
    void                           InitializePrintUtilityData(Environment *);
-   void                           PrintFloat(Environment *,const char *,double);
-   void                           PrintInteger(Environment *,const char *,long long);
+   void                           WriteFloat(Environment *,const char *,double);
+   void                           WriteInteger(Environment *,const char *,long long);
    void                           PrintUnsignedInteger(Environment *,const char *,unsigned long long);
    void                           PrintAtom(Environment *,const char *,unsigned short,void *);
    void                           PrintTally(Environment *,const char *,unsigned long long,const char *,const char *);

@@ -552,13 +552,13 @@ void ConstraintViolationErrorMessage(
       if (violationType == FUNCTION_RETURN_TYPE_VIOLATION)
         {
          PrintErrorID(theEnv,"CSTRNCHK",1,true);
-         PrintString(theEnv,WERROR,"The function return value ");
+         WriteString(theEnv,STDERR,"The function return value ");
         }
       else if (theWhat != NULL)
         {
          PrintErrorID(theEnv,"CSTRNCHK",1,true);
-         PrintString(theEnv,WERROR,theWhat);
-         PrintString(theEnv,WERROR," ");
+         WriteString(theEnv,STDERR,theWhat);
+         WriteString(theEnv,STDERR," ");
         }
 
       /*=======================================*/
@@ -568,10 +568,10 @@ void ConstraintViolationErrorMessage(
 
       if (thePlace != NULL)
         {
-         PrintString(theEnv,WERROR,"found in ");
-         if (command) PrintString(theEnv,WERROR,"the ");
-         PrintString(theEnv,WERROR,thePlace);
-         if (command) PrintString(theEnv,WERROR," command");
+         WriteString(theEnv,STDERR,"found in ");
+         if (command) WriteString(theEnv,STDERR,"the ");
+         WriteString(theEnv,STDERR,thePlace);
+         if (command) WriteString(theEnv,STDERR," command");
         }
 
       /*================================================*/
@@ -581,8 +581,8 @@ void ConstraintViolationErrorMessage(
 
       if (thePattern > 0)
         {
-         PrintString(theEnv,WERROR,"found in CE #");
-         PrintInteger(theEnv,WERROR,thePattern);
+         WriteString(theEnv,STDERR,"found in CE #");
+         WriteInteger(theEnv,STDERR,thePattern);
         }
      }
 
@@ -592,18 +592,18 @@ void ConstraintViolationErrorMessage(
 
    if ((violationType == TYPE_VIOLATION) ||
        (violationType == FUNCTION_RETURN_TYPE_VIOLATION))
-     { PrintString(theEnv,WERROR,"\ndoes not match the allowed types"); }
+     { WriteString(theEnv,STDERR,"\ndoes not match the allowed types"); }
    else if (violationType == RANGE_VIOLATION)
      {
-      PrintString(theEnv,WERROR,"\ndoes not fall in the allowed range ");
-      PrintRange(theEnv,WERROR,theConstraint);
+      WriteString(theEnv,STDERR,"\ndoes not fall in the allowed range ");
+      PrintRange(theEnv,STDERR,theConstraint);
      }
    else if (violationType == ALLOWED_VALUES_VIOLATION)
-     { PrintString(theEnv,WERROR,"\ndoes not match the allowed values"); }
+     { WriteString(theEnv,STDERR,"\ndoes not match the allowed values"); }
    else if (violationType == CARDINALITY_VIOLATION)
-     { PrintString(theEnv,WERROR,"\ndoes not satisfy the cardinality restrictions"); }
+     { WriteString(theEnv,STDERR,"\ndoes not satisfy the cardinality restrictions"); }
    else if (violationType == ALLOWED_CLASSES_VIOLATION)
-     { PrintString(theEnv,WERROR,"\ndoes not match the allowed classes"); }
+     { WriteString(theEnv,STDERR,"\ndoes not match the allowed classes"); }
 
    /*==============================================*/
    /* Print either the slot name or field position */
@@ -612,16 +612,16 @@ void ConstraintViolationErrorMessage(
 
    if (theSlot != NULL)
      {
-      PrintString(theEnv,WERROR," for slot ");
-      PrintString(theEnv,WERROR,theSlot->contents);
+      WriteString(theEnv,STDERR," for slot ");
+      WriteString(theEnv,STDERR,theSlot->contents);
      }
    else if (theField > 0)
      {
-      PrintString(theEnv,WERROR," for field #");
-      PrintInteger(theEnv,WERROR,theField);
+      WriteString(theEnv,STDERR," for field #");
+      WriteInteger(theEnv,STDERR,theField);
      }
 
-   PrintString(theEnv,WERROR,".\n");
+   WriteString(theEnv,STDERR,".\n");
   }
 
 /********************************************************************/
@@ -634,11 +634,11 @@ static void PrintRange(
   CONSTRAINT_RECORD *theConstraint)
   {
    if (theConstraint->minValue->value == SymbolData(theEnv)->NegativeInfinity)
-     { PrintString(theEnv,logicalName,SymbolData(theEnv)->NegativeInfinity->contents); }
+     { WriteString(theEnv,logicalName,SymbolData(theEnv)->NegativeInfinity->contents); }
    else PrintExpression(theEnv,logicalName,theConstraint->minValue);
-   PrintString(theEnv,logicalName," to ");
+   WriteString(theEnv,logicalName," to ");
    if (theConstraint->maxValue->value == SymbolData(theEnv)->PositiveInfinity)
-     { PrintString(theEnv,logicalName,SymbolData(theEnv)->PositiveInfinity->contents); }
+     { WriteString(theEnv,logicalName,SymbolData(theEnv)->PositiveInfinity->contents); }
    else PrintExpression(theEnv,logicalName,theConstraint->maxValue);
   }
 

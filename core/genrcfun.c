@@ -381,9 +381,9 @@ void MethodAlterError(
   Defgeneric *gfunc)
   {
    PrintErrorID(theEnv,"GENRCFUN",1,false);
-   PrintString(theEnv,WERROR,"Defgeneric ");
-   PrintString(theEnv,WERROR,DefgenericName(gfunc));
-   PrintString(theEnv,WERROR," cannot be modified while one of its methods is executing.\n");
+   WriteString(theEnv,STDERR,"Defgeneric ");
+   WriteString(theEnv,STDERR,DefgenericName(gfunc));
+   WriteString(theEnv,STDERR," cannot be modified while one of its methods is executing.\n");
   }
 
 /***************************************************
@@ -658,9 +658,9 @@ void PreviewGeneric(
    if (gfunc == NULL)
      {
       PrintErrorID(theEnv,"GENRCFUN",3,false);
-      PrintString(theEnv,WERROR,"Unable to find generic function ");
-      PrintString(theEnv,WERROR,theArg.lexemeValue->contents);
-      PrintString(theEnv,WERROR," in function preview-generic.\n");
+      WriteString(theEnv,STDERR,"Unable to find generic function ");
+      WriteString(theEnv,STDERR,theArg.lexemeValue->contents);
+      WriteString(theEnv,STDERR," in function preview-generic.\n");
       return;
      }
    oldce = ExecutingConstruct(theEnv);
@@ -714,11 +714,11 @@ Defgeneric *CheckGenericExists(
    if (gfunc == NULL)
      {
       PrintErrorID(theEnv,"GENRCFUN",3,false);
-      PrintString(theEnv,WERROR,"Unable to find generic function ");
-      PrintString(theEnv,WERROR,gname);
-      PrintString(theEnv,WERROR," in function ");
-      PrintString(theEnv,WERROR,fname);
-      PrintString(theEnv,WERROR,".\n");
+      WriteString(theEnv,STDERR,"Unable to find generic function ");
+      WriteString(theEnv,STDERR,gname);
+      WriteString(theEnv,STDERR," in function ");
+      WriteString(theEnv,STDERR,fname);
+      WriteString(theEnv,STDERR,".\n");
       SetEvaluationError(theEnv,true);
      }
    return(gfunc);
@@ -748,13 +748,13 @@ unsigned short CheckMethodExists(
    if (fi == METHOD_NOT_FOUND)
      {
       PrintErrorID(theEnv,"GENRCFUN",2,false);
-      PrintString(theEnv,WERROR,"Unable to find method ");
-      PrintString(theEnv,WERROR,DefgenericName(gfunc));
-      PrintString(theEnv,WERROR," #");
-      PrintUnsignedInteger(theEnv,WERROR,mi);
-      PrintString(theEnv,WERROR," in function ");
-      PrintString(theEnv,WERROR,fname);
-      PrintString(theEnv,WERROR,".\n");
+      WriteString(theEnv,STDERR,"Unable to find method ");
+      WriteString(theEnv,STDERR,DefgenericName(gfunc));
+      WriteString(theEnv,STDERR," #");
+      PrintUnsignedInteger(theEnv,STDERR,mi);
+      WriteString(theEnv,STDERR," in function ");
+      WriteString(theEnv,STDERR,fname);
+      WriteString(theEnv,STDERR,".\n");
       SetEvaluationError(theEnv,true);
      }
    return fi;
@@ -797,7 +797,7 @@ const char *TypeName(
       case ADDRESS_TYPE_CODE   : return(ADDRESS_TYPE_NAME);
       case INSTANCE_TYPE_CODE  : return(INSTANCE_TYPE_NAME);
       default                  : PrintErrorID(theEnv,"INSCOM",1,false);
-                                 PrintString(theEnv,WERROR,"Undefined type in function type.\n");
+                                 WriteString(theEnv,STDERR,"Undefined type in function type.\n");
                                  SetEvaluationError(theEnv,true);
                                  return("<UNKNOWN-TYPE>");
      }
@@ -823,10 +823,10 @@ void PrintGenericName(
   {
    if (gfunc->header.whichModule->theModule != GetCurrentModule(theEnv))
      {
-      PrintString(theEnv,logName,DefgenericModule(gfunc));
-      PrintString(theEnv,logName,"::");
+      WriteString(theEnv,logName,DefgenericModule(gfunc));
+      WriteString(theEnv,logName,"::");
      }
-   PrintString(theEnv,logName,gfunc->header.name->contents);
+   WriteString(theEnv,logName,gfunc->header.name->contents);
   }
 
 /* =========================================
@@ -863,19 +863,19 @@ static void DisplayGenericCore(
       if (IsMethodApplicable(theEnv,&gfunc->methods[i]))
         {
          rtn = true;
-         PrintString(theEnv,STDOUT,DefgenericName(gfunc));
-         PrintString(theEnv,STDOUT," #");
+         WriteString(theEnv,STDOUT,DefgenericName(gfunc));
+         WriteString(theEnv,STDOUT," #");
          PrintMethod(theEnv,&gfunc->methods[i],theSB);
-         PrintString(theEnv,STDOUT,theSB->contents);
-         PrintString(theEnv,STDOUT,"\n");
+         WriteString(theEnv,STDOUT,theSB->contents);
+         WriteString(theEnv,STDOUT,"\n");
         }
       gfunc->methods[i].busy--;
      }
    if (rtn == false)
      {
-      PrintString(theEnv,STDOUT,"No applicable methods for ");
-      PrintString(theEnv,STDOUT,DefgenericName(gfunc));
-      PrintString(theEnv,STDOUT,".\n");
+      WriteString(theEnv,STDOUT,"No applicable methods for ");
+      WriteString(theEnv,STDOUT,DefgenericName(gfunc));
+      WriteString(theEnv,STDOUT,".\n");
      }
      
    SBDispose(theSB);

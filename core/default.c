@@ -395,7 +395,7 @@ struct expr *ParseDefault(
       if (*error)
         {
          PrintErrorID(theEnv,"DEFAULT",1,true);
-         PrintString(theEnv,WERROR,"The default value for a single field slot must be a single field value\n");
+         WriteString(theEnv,STDERR,"The default value for a single field slot must be a single field value\n");
          ReturnExpression(theEnv,defaultList);
          return NULL;
         }
@@ -423,7 +423,7 @@ struct expr *ParseDefault(
           (*error == false))
         {
          PrintErrorID(theEnv,"DEFAULT",1,true);
-         PrintString(theEnv,WERROR,"The default value for a single field slot must be a single field value\n");
+         WriteString(theEnv,STDERR,"The default value for a single field slot must be a single field value\n");
          *error = true;
         }
 

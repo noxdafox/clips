@@ -157,7 +157,7 @@
    
    str = (char *) [theCommand UTF8String];
    
-   PrintString(environment,STDOUT,str);
+   WriteString(environment,STDOUT,str);
    AppendCommandString(environment,str);
   }
 

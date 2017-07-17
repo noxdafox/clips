@@ -336,7 +336,7 @@ bool ParseDefclass(
    if (abstract && reactive)
      {
       PrintErrorID(theEnv,"CLASSPSR",1,false);
-      PrintString(theEnv,WERROR,"An abstract class cannot be reactive.\n");
+      WriteString(theEnv,STDERR,"An abstract class cannot be reactive.\n");
       DeletePackedClassLinks(theEnv,sclasses,true);
       DeletePackedClassLinks(theEnv,preclist,true);
       DeleteSlots(theEnv,slots);
@@ -422,7 +422,7 @@ static bool ValidClassName(
       if ((*theDefclass)->system)
         {
          PrintErrorID(theEnv,"CLASSPSR",2,false);
-         PrintString(theEnv,WERROR,"Cannot redefine a predefined system class.\n");
+         WriteString(theEnv,STDERR,"Cannot redefine a predefined system class.\n");
          return false;
         }
 
@@ -435,9 +435,9 @@ static bool ValidClassName(
           (! ConstructData(theEnv)->CheckSyntaxMode))
         {
          PrintErrorID(theEnv,"CLASSPSR",3,false);
-         PrintString(theEnv,WERROR,DefclassName(*theDefclass));
-         PrintString(theEnv,WERROR," class cannot be redefined while\n");
-         PrintString(theEnv,WERROR,"    outstanding references to it still exist.\n");
+         WriteString(theEnv,STDERR,DefclassName(*theDefclass));
+         WriteString(theEnv,STDERR," class cannot be redefined while\n");
+         WriteString(theEnv,STDERR,"    outstanding references to it still exist.\n");
          return false;
         }
      }
@@ -474,9 +474,9 @@ static bool ParseSimpleQualifier(
    if (*alreadyTestedFlag)
      {
       PrintErrorID(theEnv,"CLASSPSR",4,false);
-      PrintString(theEnv,WERROR,"Class ");
-      PrintString(theEnv,WERROR,classQualifier);
-      PrintString(theEnv,WERROR," already declared.\n");
+      WriteString(theEnv,STDERR,"Class ");
+      WriteString(theEnv,STDERR,classQualifier);
+      WriteString(theEnv,STDERR," already declared.\n");
       return false;
      }
    SavePPBuffer(theEnv," ");

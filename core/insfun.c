@@ -643,11 +643,11 @@ bool DirectPutSlotValue(
       else
         {
          PrintErrorID(theEnv,"INSMNGR",14,false);
-         PrintString(theEnv,WERROR,"Override required for slot ");
-         PrintString(theEnv,WERROR,sp->desc->slotName->name->contents);
-         PrintString(theEnv,WERROR," in instance ");
-         PrintString(theEnv,WERROR,ins->name->contents);
-         PrintString(theEnv,WERROR,".\n");
+         WriteString(theEnv,STDERR,"Override required for slot ");
+         WriteString(theEnv,STDERR,sp->desc->slotName->name->contents);
+         WriteString(theEnv,STDERR," in instance ");
+         WriteString(theEnv,STDERR,ins->name->contents);
+         WriteString(theEnv,STDERR,".\n");
          SetEvaluationError(theEnv,true);
          return false;
         }
@@ -657,8 +657,8 @@ bool DirectPutSlotValue(
        (ins->cls->reactive || sp->desc->shared))
      {
       PrintErrorID(theEnv,"INSFUN",5,false);
-      PrintString(theEnv,WERROR,"Cannot modify reactive instance slots while\n");
-      PrintString(theEnv,WERROR,"  pattern-matching is in process.\n");
+      WriteString(theEnv,STDERR,"Cannot modify reactive instance slots while\n");
+      WriteString(theEnv,STDERR,"  pattern-matching is in process.\n");
       SetEvaluationError(theEnv,true);
       return false;
      }
@@ -743,19 +743,19 @@ bool DirectPutSlotValue(
        (! ConstructData(theEnv)->ClearInProgress))
      {
       if (sp->desc->shared)
-        PrintString(theEnv,STDOUT,"::= shared slot ");
+        WriteString(theEnv,STDOUT,"::= shared slot ");
       else
-        PrintString(theEnv,STDOUT,"::= local slot ");
-      PrintString(theEnv,STDOUT,sp->desc->slotName->name->contents);
-      PrintString(theEnv,STDOUT," in instance ");
-      PrintString(theEnv,STDOUT,ins->name->contents);
-      PrintString(theEnv,STDOUT," <- ");
+        WriteString(theEnv,STDOUT,"::= local slot ");
+      WriteString(theEnv,STDOUT,sp->desc->slotName->name->contents);
+      WriteString(theEnv,STDOUT," in instance ");
+      WriteString(theEnv,STDOUT,ins->name->contents);
+      WriteString(theEnv,STDOUT," <- ");
       if (sp->type != MULTIFIELD_TYPE)
         PrintAtom(theEnv,STDOUT,sp->type,sp->value);
       else
         PrintMultifieldDriver(theEnv,STDOUT,sp->multifieldValue,0,
                               sp->multifieldValue->length,true);
-      PrintString(theEnv,STDOUT,"\n");
+      WriteString(theEnv,STDOUT,"\n");
      }
 #endif
    InstanceData(theEnv)->ChangesToInstances = true;
@@ -779,11 +779,11 @@ bool DirectPutSlotValue(
          else
            {
             PrintErrorID(theEnv,"INSFUN",6,false);
-            PrintString(theEnv,WERROR,"Unable to pattern-match on shared slot ");
-            PrintString(theEnv,WERROR,sp->desc->slotName->name->contents);
-            PrintString(theEnv,WERROR," in class ");
-            PrintString(theEnv,WERROR,DefclassName(sp->desc->cls));
-            PrintString(theEnv,WERROR,".\n");
+            WriteString(theEnv,STDERR,"Unable to pattern-match on shared slot ");
+            WriteString(theEnv,STDERR,sp->desc->slotName->name->contents);
+            WriteString(theEnv,STDERR," in class ");
+            WriteString(theEnv,STDERR,DefclassName(sp->desc->cls));
+            WriteString(theEnv,STDERR,".\n");
            }
         }
       else
@@ -828,19 +828,19 @@ bool ValidSlotValue(
                               (val->range != 1))
      {
       PrintErrorID(theEnv,"INSFUN",7,false);
-      PrintUDFValue(theEnv,WERROR,val);
-      PrintString(theEnv,WERROR," illegal for single-field ");
-      PrintSlot(theEnv,WERROR,sd,ins,theCommand);
-      PrintString(theEnv,WERROR,".\n");
+      WriteUDFValue(theEnv,STDERR,val);
+      WriteString(theEnv,STDERR," illegal for single-field ");
+      PrintSlot(theEnv,STDERR,sd,ins,theCommand);
+      WriteString(theEnv,STDERR,".\n");
       SetEvaluationError(theEnv,true);
       return false;
      }
    if (val->header->type == VOID_TYPE)
      {
       PrintErrorID(theEnv,"INSFUN",8,false);
-      PrintString(theEnv,WERROR,"Void function illegal value for ");
-      PrintSlot(theEnv,WERROR,sd,ins,theCommand);
-      PrintString(theEnv,WERROR,".\n");
+      WriteString(theEnv,STDERR,"Void function illegal value for ");
+      PrintSlot(theEnv,STDERR,sd,ins,theCommand);
+      WriteString(theEnv,STDERR,".\n");
       SetEvaluationError(theEnv,true);
       return false;
      }
@@ -851,12 +851,12 @@ bool ValidSlotValue(
         {
          PrintErrorID(theEnv,"CSTRNCHK",1,false);
          if ((val->header->type == MULTIFIELD_TYPE) && (sd->multiple == 0))
-           PrintAtom(theEnv,WERROR,val->multifieldValue->contents[val->begin].header->type,
+           PrintAtom(theEnv,STDERR,val->multifieldValue->contents[val->begin].header->type,
                                    val->multifieldValue->contents[val->begin].value);
          else
-           PrintUDFValue(theEnv,WERROR,val);
-         PrintString(theEnv,WERROR," for ");
-         PrintSlot(theEnv,WERROR,sd,ins,theCommand);
+           WriteUDFValue(theEnv,STDERR,val);
+         WriteString(theEnv,STDERR," for ");
+         PrintSlot(theEnv,STDERR,sd,ins,theCommand);
          ConstraintViolationErrorMessage(theEnv,NULL,NULL,0,0,NULL,0,
                                          violationCode,sd->constraint,false);
          SetEvaluationError(theEnv,true);
@@ -916,9 +916,9 @@ Instance *CheckInstance(
    else
      {
       PrintErrorID(theEnv,"INSFUN",1,false);
-      PrintString(theEnv,WERROR,"Expected a valid instance in function ");
-      PrintString(theEnv,WERROR,UDFContextFunctionName(context));
-      PrintString(theEnv,WERROR,".\n");
+      WriteString(theEnv,STDERR,"Expected a valid instance in function ");
+      WriteString(theEnv,STDERR,UDFContextFunctionName(context));
+      WriteString(theEnv,STDERR,".\n");
       SetEvaluationError(theEnv,true);
       return NULL;
      }
@@ -942,11 +942,11 @@ void NoInstanceError(
   const char *func)
   {
    PrintErrorID(theEnv,"INSFUN",2,false);
-   PrintString(theEnv,WERROR,"No such instance ");
-   PrintString(theEnv,WERROR,iname);
-   PrintString(theEnv,WERROR," in function ");
-   PrintString(theEnv,WERROR,func);
-   PrintString(theEnv,WERROR,".\n");
+   WriteString(theEnv,STDERR,"No such instance ");
+   WriteString(theEnv,STDERR,iname);
+   WriteString(theEnv,STDERR," in function ");
+   WriteString(theEnv,STDERR,func);
+   WriteString(theEnv,STDERR,".\n");
    SetEvaluationError(theEnv,true);
   }
 
@@ -966,14 +966,14 @@ void StaleInstanceAddress(
   int whichArg)
   {
    PrintErrorID(theEnv,"INSFUN",4,false);
-   PrintString(theEnv,WERROR,"Invalid instance-address in function ");
-   PrintString(theEnv,WERROR,func);
+   WriteString(theEnv,STDERR,"Invalid instance-address in function ");
+   WriteString(theEnv,STDERR,func);
    if (whichArg > 0)
      {
-      PrintString(theEnv,WERROR,", argument #");
-      PrintInteger(theEnv,WERROR,whichArg);
+      WriteString(theEnv,STDERR,", argument #");
+      WriteInteger(theEnv,STDERR,whichArg);
      }
-   PrintString(theEnv,WERROR,".\n");
+   WriteString(theEnv,STDERR,".\n");
   }
 
 /**********************************************************************
@@ -1027,22 +1027,22 @@ void PrintSlot(
   Instance *ins,
   const char *theCommand)
   {
-   PrintString(theEnv,logName,"slot ");
-   PrintString(theEnv,logName,sd->slotName->name->contents);
+   WriteString(theEnv,logName,"slot ");
+   WriteString(theEnv,logName,sd->slotName->name->contents);
    if (ins != NULL)
      {
-      PrintString(theEnv,logName," of instance [");
-      PrintString(theEnv,logName,ins->name->contents);
-      PrintString(theEnv,logName,"]");
+      WriteString(theEnv,logName," of instance [");
+      WriteString(theEnv,logName,ins->name->contents);
+      WriteString(theEnv,logName,"]");
      }
    else if (sd->cls != NULL)
      {
-      PrintString(theEnv,logName," of class ");
-      PrintString(theEnv,logName,DefclassName(sd->cls));
+      WriteString(theEnv,logName," of class ");
+      WriteString(theEnv,logName,DefclassName(sd->cls));
      }
-   PrintString(theEnv,logName," found in ");
+   WriteString(theEnv,logName," found in ");
    if (theCommand != NULL)
-     PrintString(theEnv,logName,theCommand);
+     WriteString(theEnv,logName,theCommand);
    else
      PrintHandler(theEnv,logName,MessageHandlerData(theEnv)->CurrentCore->hnd,false);
   }
@@ -1064,9 +1064,9 @@ void PrintInstanceNameAndClass(
   Instance *theInstance,
   bool linefeedFlag)
   {
-   PrintString(theEnv,logicalName,"[");
-   PrintString(theEnv,logicalName,InstanceName(theInstance));
-   PrintString(theEnv,logicalName,"] of ");
+   WriteString(theEnv,logicalName,"[");
+   WriteString(theEnv,logicalName,InstanceName(theInstance));
+   WriteString(theEnv,logicalName,"] of ");
    PrintClassName(theEnv,logicalName,theInstance->cls,linefeedFlag);
   }
 
@@ -1088,15 +1088,15 @@ void PrintInstanceName(
   {
    if (theInstance->garbage)
      {
-      PrintString(theEnv,logName,"<stale instance [");
-      PrintString(theEnv,logName,theInstance->name->contents);
-      PrintString(theEnv,logName,"]>");
+      WriteString(theEnv,logName,"<stale instance [");
+      WriteString(theEnv,logName,theInstance->name->contents);
+      WriteString(theEnv,logName,"]>");
      }
    else
      {
-      PrintString(theEnv,logName,"[");
-      PrintString(theEnv,logName,GetFullInstanceName(theEnv,theInstance)->contents);
-      PrintString(theEnv,logName,"]");
+      WriteString(theEnv,logName,"[");
+      WriteString(theEnv,logName,GetFullInstanceName(theEnv,theInstance)->contents);
+      WriteString(theEnv,logName,"]");
      }
   }
 
@@ -1118,34 +1118,34 @@ void PrintInstanceLongForm(
    if (PrintUtilityData(theEnv)->InstanceAddressesToNames)
      {
       if (theInstance == &InstanceData(theEnv)->DummyInstance)
-        PrintString(theEnv,logName,"\"<Dummy Instance>\"");
+        WriteString(theEnv,logName,"\"<Dummy Instance>\"");
       else
         {
-         PrintString(theEnv,logName,"[");
-         PrintString(theEnv,logName,GetFullInstanceName(theEnv,theInstance)->contents);
-         PrintString(theEnv,logName,"]");
+         WriteString(theEnv,logName,"[");
+         WriteString(theEnv,logName,GetFullInstanceName(theEnv,theInstance)->contents);
+         WriteString(theEnv,logName,"]");
         }
      }
    else
      {
       if (PrintUtilityData(theEnv)->AddressesToStrings)
-        PrintString(theEnv,logName,"\"");
+        WriteString(theEnv,logName,"\"");
       if (theInstance == &InstanceData(theEnv)->DummyInstance)
-        PrintString(theEnv,logName,"<Dummy Instance>");
+        WriteString(theEnv,logName,"<Dummy Instance>");
       else if (theInstance->garbage)
         {
-         PrintString(theEnv,logName,"<Stale Instance-");
-         PrintString(theEnv,logName,theInstance->name->contents);
-         PrintString(theEnv,logName,">");
+         WriteString(theEnv,logName,"<Stale Instance-");
+         WriteString(theEnv,logName,theInstance->name->contents);
+         WriteString(theEnv,logName,">");
         }
       else
         {
-         PrintString(theEnv,logName,"<Instance-");
-         PrintString(theEnv,logName,GetFullInstanceName(theEnv,theInstance)->contents);
-         PrintString(theEnv,logName,">");
+         WriteString(theEnv,logName,"<Instance-");
+         WriteString(theEnv,logName,GetFullInstanceName(theEnv,theInstance)->contents);
+         WriteString(theEnv,logName,">");
         }
       if (PrintUtilityData(theEnv)->AddressesToStrings)
-        PrintString(theEnv,logName,"\"");
+        WriteString(theEnv,logName,"\"");
      }
   }
 

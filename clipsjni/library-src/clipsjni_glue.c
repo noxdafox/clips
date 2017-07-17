@@ -49,7 +49,7 @@ void JNIUserFunction(
    
    if ((*env)->ExceptionCheck(env)) 
      { 
-      PrintString(theEnv,WERROR,"Exception occurred during evaluation of JNI User Function.\n");
+      WriteString(theEnv,STDERR,"Exception occurred during evaluation of JNI User Function.\n");
       (*env)->ExceptionDescribe(env); 
       (*env)->ExceptionClear(env); 
       SetEvaluationError(theEnv,true);
@@ -122,10 +122,10 @@ void JNIParserErrorCallback(
    (*env)->DeleteLocalRef(env,str2);
   }
 
-/*************************************************/
-/* FindJNIRouter: Query routine for JNI routers. */
-/*************************************************/
-bool QueryJNIRouter(
+/*****************************************************/
+/* QueryJNICallback: Query callback for JNI routers. */
+/*****************************************************/
+bool QueryJNICallback(
   Environment *theEnv,
   const char *logicalName,
   void *vcontext)
@@ -159,10 +159,10 @@ bool QueryJNIRouter(
    return(rv);
   }
 
-/*************************************************/
-/* ExitJNIRouter:  Exit routine for JNI routers. */
-/*************************************************/
-void ExitJNIRouter(
+/***************************************************/
+/* ExitJNICallback: Exit callback for JNI routers. */
+/***************************************************/
+void ExitJNICallback(
   Environment *theEnv,
   int num,
   void *vcontext)
@@ -194,10 +194,10 @@ void ExitJNIRouter(
    /* TBD deallocate global context reference */
   }
 
-/**************************************************/
-/* PrintJNIRouter: Print routine for JNI routers. */
-/**************************************************/
-void PrintJNIRouter(
+/*****************************************************/
+/* WriteJNICallback: Write callback for JNI routers. */
+/*****************************************************/
+void WriteJNICallback(
   Environment *theEnv,
   const char *logicalName,
   const char *str,
@@ -215,7 +215,7 @@ void PrintJNIRouter(
 
    cls = (*env)->GetObjectClass(env,context);
 
-   mid = (*env)->GetMethodID(env,cls,"print","(Ljava/lang/String;Ljava/lang/String;)V");
+   mid = (*env)->GetMethodID(env,cls,"write","(Ljava/lang/String;Ljava/lang/String;)V");
 
    (*env)->DeleteLocalRef(env,cls);
 
@@ -231,10 +231,10 @@ void PrintJNIRouter(
    (*env)->DeleteLocalRef(env,str2);
   }
 
-/************************************************/
-/* GetcJNIRouter: Getc routine for JNI routers. */
-/************************************************/
-int GetcJNIRouter(
+/***************************************************/
+/* ReadJNICallback: Read callback for JNI routers. */
+/***************************************************/
+int ReadJNICallback(
   Environment *theEnv,
   const char *logicalName,
   void *vcontext)
@@ -252,7 +252,7 @@ int GetcJNIRouter(
 
    cls = (*env)->GetObjectClass(env,context);
 
-   mid = (*env)->GetMethodID(env,cls,"getchar","(Ljava/lang/String;)I");
+   mid = (*env)->GetMethodID(env,cls,"read","(Ljava/lang/String;)I");
 
    (*env)->DeleteLocalRef(env,cls);
 
@@ -268,10 +268,10 @@ int GetcJNIRouter(
    return((int) theChar);
   }
 
-/****************************************************/
-/* UngetcJNIRouter: Ungetc routine for JNI routers. */
-/****************************************************/
-int UngetcJNIRouter(
+/*******************************************************/
+/* UnreadJNICallback: Unread callback for JNI routers. */
+/*******************************************************/
+int UnreadJNICallback(
   Environment *theEnv,
   const char *logicalName,
   int ch,
@@ -290,7 +290,7 @@ int UngetcJNIRouter(
 
    cls = (*env)->GetObjectClass(env,context);
 
-   mid = (*env)->GetMethodID(env,cls,"ungetchar","(Ljava/lang/String;I)I");
+   mid = (*env)->GetMethodID(env,cls,"unread","(Ljava/lang/String;I)I");
 
    (*env)->DeleteLocalRef(env,cls);
 
@@ -321,7 +321,7 @@ void PrintJavaAddress(
    JNIEnv *env;
    char buffer[20];
 
-   PrintString(theEnv,logicalName,"<Pointer-");
+   WriteString(theEnv,logicalName,"<Pointer-");
         
    theObject = (jobject) ((CLIPSExternalAddress *) theValue)->contents;
    
@@ -335,17 +335,17 @@ void PrintJavaAddress(
 
       cStr = (char *) (*env)->GetStringUTFChars(env,str,NULL);
       
-      PrintString(theEnv,logicalName,cStr);
-      PrintString(theEnv,logicalName,"-");
+      WriteString(theEnv,logicalName,cStr);
+      WriteString(theEnv,logicalName,"-");
    
       (*env)->ReleaseStringUTFChars(env,str,cStr);
      }
    else
-     { PrintString(theEnv,logicalName,"java-"); }
+     { WriteString(theEnv,logicalName,"java-"); }
    
    gensprintf(buffer,"%p",(void *) theObject);
-   PrintString(theEnv,logicalName,buffer);
-   PrintString(theEnv,logicalName,">");
+   WriteString(theEnv,logicalName,buffer);
+   WriteString(theEnv,logicalName,">");
   }
 
 /********************/

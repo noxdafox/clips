@@ -207,29 +207,29 @@ void RerouteStdin(
       else if (theSwitch == NO_SWITCH)
         {
          PrintErrorID(theEnv,"SYSDEP",2,false);
-         PrintString(theEnv,WERROR,"Invalid option\n");
+         WriteString(theEnv,STDERR,"Invalid option\n");
         }
 
       if (i > (argc-1))
         {
          PrintErrorID(theEnv,"SYSDEP",1,false);
-         PrintString(theEnv,WERROR,"No file found for ");
+         WriteString(theEnv,STDERR,"No file found for ");
 
          switch(theSwitch)
            {
             case BATCH_SWITCH:
-               PrintString(theEnv,WERROR,"-f");
+               WriteString(theEnv,STDERR,"-f");
                break;
 
             case BATCH_STAR_SWITCH:
-               PrintString(theEnv,WERROR,"-f2");
+               WriteString(theEnv,STDERR,"-f2");
                break;
 
             case LOAD_SWITCH:
-               PrintString(theEnv,WERROR,"-l");
+               WriteString(theEnv,STDERR,"-l");
            }
 
-         PrintString(theEnv,WERROR," option\n");
+         WriteString(theEnv,STDERR," option\n");
          return;
         }
 
@@ -636,7 +636,7 @@ void CommandLoop(
   {
    int inchar;
 
-   PrintString(theEnv,STDOUT,CommandLineData(theEnv)->BannerString);
+   WriteString(theEnv,STDOUT,CommandLineData(theEnv)->BannerString);
    SetHaltExecution(theEnv,false);
    SetEvaluationError(theEnv,false);
 
@@ -679,7 +679,7 @@ void CommandLoop(
 #if ! WINDOW_INTERFACE
          fflush(stdin);
 #endif
-         PrintString(theEnv,STDOUT,"\n");
+         WriteString(theEnv,STDOUT,"\n");
          PrintPrompt(theEnv);
         }
 
@@ -774,7 +774,7 @@ void CommandLoopBatchDriver(
 #if ! WINDOW_INTERFACE
          fflush(stdin);
 #endif
-         PrintString(theEnv,STDOUT,"\n");
+         WriteString(theEnv,STDOUT,"\n");
          PrintPrompt(theEnv);
         }
 
@@ -846,7 +846,7 @@ bool CommandCompleteAndNotEmpty(
 void PrintPrompt(
    Environment *theEnv)
    {
-    PrintString(theEnv,STDOUT,COMMAND_PROMPT);
+    WriteString(theEnv,STDOUT,COMMAND_PROMPT);
 
     if (CommandLineData(theEnv)->AfterPromptCallback != NULL)
       { (*CommandLineData(theEnv)->AfterPromptCallback)(theEnv); }
@@ -858,7 +858,7 @@ void PrintPrompt(
 void PrintBanner(
    Environment *theEnv)
    {
-    PrintString(theEnv,STDOUT,CommandLineData(theEnv)->BannerString);
+    WriteString(theEnv,STDOUT,CommandLineData(theEnv)->BannerString);
    }
 
 /************************************************/
@@ -922,7 +922,7 @@ bool RouteCommand(
       if (printResult)
         {
          PrintAtom(theEnv,STDOUT,TokenTypeToType(theToken.tknType),theToken.value);
-         PrintString(theEnv,STDOUT,"\n");
+         WriteString(theEnv,STDOUT,"\n");
         }
       return true;
      }
@@ -941,8 +941,8 @@ bool RouteCommand(
       rtn_struct(theEnv,expr,top);
       if (printResult)
         {
-         PrintUDFValue(theEnv,STDOUT,&returnValue);
-         PrintString(theEnv,STDOUT,"\n");
+         WriteUDFValue(theEnv,STDOUT,&returnValue);
+         WriteString(theEnv,STDOUT,"\n");
         }
       return true;
      }
@@ -956,7 +956,7 @@ bool RouteCommand(
    if (theToken.tknType != LEFT_PARENTHESIS_TOKEN)
      {
       PrintErrorID(theEnv,"COMMLINE",1,false);
-      PrintString(theEnv,WERROR,"Expected a '(', constant, or variable\n");
+      WriteString(theEnv,STDERR,"Expected a '(', constant, or variable\n");
       CloseStringSource(theEnv,"command");
       return false;
      }
@@ -969,7 +969,7 @@ bool RouteCommand(
    if (theToken.tknType != SYMBOL_TOKEN)
      {
       PrintErrorID(theEnv,"COMMLINE",2,false);
-      PrintString(theEnv,WERROR,"Expected a command.\n");
+      WriteString(theEnv,STDERR,"Expected a command.\n");
       CloseStringSource(theEnv,"command");
       return false;
      }
@@ -990,9 +990,9 @@ bool RouteCommand(
        CloseStringSource(theEnv,"command");
        if (errorFlag == 1)
          {
-          PrintString(theEnv,WERROR,"\nERROR:\n");
-          PrintString(theEnv,WERROR,GetPPBuffer(theEnv));
-          PrintString(theEnv,WERROR,"\n");
+          WriteString(theEnv,STDERR,"\nERROR:\n");
+          WriteString(theEnv,STDERR,GetPPBuffer(theEnv));
+          WriteString(theEnv,STDERR,"\n");
          }
        DestroyPPBuffer(theEnv);
        
@@ -1054,8 +1054,8 @@ bool RouteCommand(
 
    if ((returnValue.header->type != VOID_TYPE) && printResult)
      {
-      PrintUDFValue(theEnv,STDOUT,&returnValue);
-      PrintString(theEnv,STDOUT,"\n");
+      WriteUDFValue(theEnv,STDOUT,&returnValue);
+      WriteString(theEnv,STDOUT,"\n");
      }
 
    return true;
@@ -1063,7 +1063,7 @@ bool RouteCommand(
 
 /*****************************************************************/
 /* DefaultGetNextEvent: Default event-handling function. Handles */
-/*   only keyboard events by first calling GetcRouter to get a   */
+/*   only keyboard events by first calling ReadRouter to get a   */
 /*   character and then calling ExpandCommandString to add the   */
 /*   character to the CommandString.                             */
 /*****************************************************************/
@@ -1072,7 +1072,7 @@ static void DefaultGetNextEvent(
   {
    int inchar;
 
-   inchar = GetcRouter(theEnv,STDIN);
+   inchar = ReadRouter(theEnv,STDIN);
 
    if (inchar == EOF) inchar = '\n';
 

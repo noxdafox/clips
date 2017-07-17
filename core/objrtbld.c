@@ -332,7 +332,7 @@ static struct lhsParseNode *ObjectLHSParse(
    if (EmptyClassBitMap(clsset))
      {
       PrintErrorID(theEnv,"OBJRTBLD",1,false);
-      PrintString(theEnv,WERROR,"No objects of existing classes can satisfy pattern.\n");
+      WriteString(theEnv,STDERR,"No objects of existing classes can satisfy pattern.\n");
       DeleteIntermediateClassBitMap(theEnv,clsset);
       return NULL;
      }
@@ -403,16 +403,16 @@ static struct lhsParseNode *ObjectLHSParse(
       if (EmptyClassBitMap(tmpset))
         {
          PrintErrorID(theEnv,"OBJRTBLD",2,false);
-         PrintString(theEnv,WERROR,"No objects of existing classes can satisfy ");
-         PrintString(theEnv,WERROR,tmpNode->slot->contents);
-         PrintString(theEnv,WERROR," restriction in object pattern.\n");
+         WriteString(theEnv,STDERR,"No objects of existing classes can satisfy ");
+         WriteString(theEnv,STDERR,tmpNode->slot->contents);
+         WriteString(theEnv,STDERR," restriction in object pattern.\n");
          ReturnLHSParseNodes(theEnv,tmpNode);
          goto ObjectLHSParseERROR;
         }
       if (EmptyClassBitMap(clsset))
         {
          PrintErrorID(theEnv,"OBJRTBLD",1,false);
-         PrintString(theEnv,WERROR,"No objects of existing classes can satisfy pattern.\n");
+         WriteString(theEnv,STDERR,"No objects of existing classes can satisfy pattern.\n");
          ReturnLHSParseNodes(theEnv,tmpNode);
          goto ObjectLHSParseERROR;
         }
@@ -432,7 +432,7 @@ static struct lhsParseNode *ObjectLHSParse(
       if (EmptyClassBitMap(clsset))
         {
          PrintErrorID(theEnv,"OBJRTBLD",1,false);
-         PrintString(theEnv,WERROR,"No objects of existing classes can satisfy pattern.\n");
+         WriteString(theEnv,STDERR,"No objects of existing classes can satisfy pattern.\n");
          goto ObjectLHSParseERROR;
         }
       firstNode = GetLHSParseNode(theEnv);
@@ -622,9 +622,9 @@ static bool ReorderAndAnalyzeObjectPattern(
         {
          PrintErrorID(theEnv,"OBJRTBLD",3,true);
          DeleteIntermediateClassBitMap(theEnv,tmpset);
-         PrintString(theEnv,WERROR,"No objects of existing classes can satisfy pattern #");
-         PrintInteger(theEnv,WERROR,topNode->pattern);
-         PrintString(theEnv,WERROR,".\n");
+         WriteString(theEnv,STDERR,"No objects of existing classes can satisfy pattern #");
+         WriteInteger(theEnv,STDERR,topNode->pattern);
+         WriteString(theEnv,STDERR,".\n");
          return true;
         }
       clsset = PackClassBitMap(theEnv,tmpset);
@@ -1304,9 +1304,9 @@ static bool CheckDuplicateSlots(
       if (nodeList->slot == slotName)
         {
          PrintErrorID(theEnv,"OBJRTBLD",4,true);
-         PrintString(theEnv,WERROR,"Multiple restrictions on attribute ");
-         PrintString(theEnv,WERROR,slotName->contents);
-         PrintString(theEnv,WERROR," not allowed.\n");
+         WriteString(theEnv,STDERR,"Multiple restrictions on attribute ");
+         WriteString(theEnv,STDERR,slotName->contents);
+         WriteString(theEnv,STDERR," not allowed.\n");
          return true;
         }
       nodeList = nodeList->right;
@@ -1741,7 +1741,7 @@ static bool ProcessClassRestriction(
          if (chk->value == NULL)
            {
             PrintErrorID(theEnv,"OBJRTBLD",5,false);
-            PrintString(theEnv,WERROR,"Undefined class in object pattern.\n");
+            WriteString(theEnv,STDERR,"Undefined class in object pattern.\n");
             DeleteIntermediateClassBitMap(theEnv,tmpset1);
             DeleteIntermediateClassBitMap(theEnv,tmpset2);
             return false;
@@ -1764,8 +1764,8 @@ static bool ProcessClassRestriction(
    if (EmptyClassBitMap(tmpset1))
      {
       PrintErrorID(theEnv,"OBJRTBLD",2,false);
-      PrintString(theEnv,WERROR,"No objects of existing classes can satisfy ");
-      PrintString(theEnv,WERROR,"is-a restriction in object pattern.\n");
+      WriteString(theEnv,STDERR,"No objects of existing classes can satisfy ");
+      WriteString(theEnv,STDERR,"is-a restriction in object pattern.\n");
       DeleteIntermediateClassBitMap(theEnv,tmpset1);
       DeleteIntermediateClassBitMap(theEnv,tmpset2);
       return false;

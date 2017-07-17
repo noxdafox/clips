@@ -134,7 +134,7 @@ bool PrintRouterExists(
    currentPtr = RouterData(theEnv)->ListOfRouters;
    while (currentPtr != NULL)
      {
-      if ((currentPtr->printCallback != NULL) ? QueryRouter(theEnv,logicalName,currentPtr) : false)
+      if ((currentPtr->writeCallback != NULL) ? QueryRouter(theEnv,logicalName,currentPtr) : false)
         { return true; }
       currentPtr = currentPtr->next;
      }
@@ -143,9 +143,9 @@ bool PrintRouterExists(
   }
 
 /****************************************/
-/* PrintString: Generic print function. */
+/* WriteString: Generic print function. */
 /****************************************/
-void PrintString(
+void WriteString(
   Environment *theEnv,
   const char *logicalName,
   const char *str)
@@ -173,9 +173,9 @@ void PrintString(
    currentPtr = RouterData(theEnv)->ListOfRouters;
    while (currentPtr != NULL)
      {
-      if ((currentPtr->printCallback != NULL) ? QueryRouter(theEnv,logicalName,currentPtr) : false)
+      if ((currentPtr->writeCallback != NULL) ? QueryRouter(theEnv,logicalName,currentPtr) : false)
         {
-         (*currentPtr->printCallback)(theEnv,logicalName,str,currentPtr->context);
+         (*currentPtr->writeCallback)(theEnv,logicalName,str,currentPtr->context);
          return;
         }
       currentPtr = currentPtr->next;
@@ -185,14 +185,14 @@ void PrintString(
    /* The logical name was not recognized by any routers. */
    /*=====================================================*/
 
-   if (strcmp(WERROR,logicalName) != 0)
+   if (strcmp(STDERR,logicalName) != 0)
      { UnrecognizedRouterMessage(theEnv,logicalName); }
   }
 
 /***********************************************/
-/* GetcRouter: Generic get character function. */
+/* ReadRouter: Generic get character function. */
 /***********************************************/
-int GetcRouter(
+int ReadRouter(
   Environment *theEnv,
   const char *logicalName)
   {
@@ -253,9 +253,9 @@ int GetcRouter(
    currentPtr = RouterData(theEnv)->ListOfRouters;
    while (currentPtr != NULL)
      {
-      if ((currentPtr->getcCallback != NULL) ? QueryRouter(theEnv,logicalName,currentPtr) : false)
+      if ((currentPtr->readCallback != NULL) ? QueryRouter(theEnv,logicalName,currentPtr) : false)
         {
-         inchar = (*currentPtr->getcCallback)(theEnv,logicalName,currentPtr->context);
+         inchar = (*currentPtr->readCallback)(theEnv,logicalName,currentPtr->context);
 
          if ((inchar == '\r') || (inchar == '\n'))
            {
@@ -278,9 +278,9 @@ int GetcRouter(
   }
 
 /***************************************************/
-/* UngetcRouter: Generic unget character function. */
+/* UnreadRouter: Generic unget character function. */
 /***************************************************/
-int UngetcRouter(
+int UnreadRouter(
   Environment *theEnv,
   const char *logicalName,
   int ch)
@@ -332,7 +332,7 @@ int UngetcRouter(
    currentPtr = RouterData(theEnv)->ListOfRouters;
    while (currentPtr != NULL)
      {
-      if ((currentPtr->ungetcCallback != NULL) ? QueryRouter(theEnv,logicalName,currentPtr) : false)
+      if ((currentPtr->unreadCallback != NULL) ? QueryRouter(theEnv,logicalName,currentPtr) : false)
         {
          if ((ch == '\r') || (ch == '\n'))
            {
@@ -341,7 +341,7 @@ int UngetcRouter(
               { DecrementLineCount(theEnv); }
            }
 
-         return (*currentPtr->ungetcCallback)(theEnv,logicalName,ch,currentPtr->context);
+         return (*currentPtr->unreadCallback)(theEnv,logicalName,ch,currentPtr->context);
         }
 
       currentPtr = currentPtr->next;
@@ -402,9 +402,9 @@ bool AddRouter(
   const char *routerName,
   int priority,
   RouterQueryFunction *queryFunction,
-  RouterPrintFunction *printFunction,
-  RouterGetcFunction *getcFunction,
-  RouterUngetcFunction *ungetcFunction,
+  RouterWriteFunction *writeFunction,
+  RouterReadFunction *readFunction,
+  RouterUnreadFunction *unreadFunction,
   RouterExitFunction *exitFunction,
   void *context)
   {
@@ -433,10 +433,10 @@ bool AddRouter(
    newPtr->context = context;
    newPtr->priority = priority;
    newPtr->queryCallback = queryFunction;
-   newPtr->printCallback = printFunction;
+   newPtr->writeCallback = writeFunction;
    newPtr->exitCallback = exitFunction;
-   newPtr->getcCallback = getcFunction;
-   newPtr->ungetcCallback = ungetcFunction;
+   newPtr->readCallback = readFunction;
+   newPtr->unreadCallback = unreadFunction;
    newPtr->next = NULL;
 
    if (RouterData(theEnv)->ListOfRouters == NULL)
@@ -668,9 +668,9 @@ void UnrecognizedRouterMessage(
   const char *logicalName)
   {
    PrintErrorID(theEnv,"ROUTER",1,false);
-   PrintString(theEnv,WERROR,"Logical name ");
-   PrintString(theEnv,WERROR,logicalName);
-   PrintString(theEnv,WERROR," was not recognized by any routers\n");
+   WriteString(theEnv,STDERR,"Logical name ");
+   WriteString(theEnv,STDERR,logicalName);
+   WriteString(theEnv,STDERR," was not recognized by any routers\n");
   }
 
 /*****************************************/
@@ -687,7 +687,7 @@ void PrintNRouter(
    tempStr = (char *) genalloc(theEnv,length+1);
    genstrncpy(tempStr,str,length);
    tempStr[length] = 0;
-   PrintString(theEnv,logicalName,tempStr);
+   WriteString(theEnv,logicalName,tempStr);
    genfree(theEnv,tempStr,length+1);
   }
 

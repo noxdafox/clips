@@ -645,7 +645,7 @@ bool Clear(
        (ClearReady(theEnv) == false))
      {
       PrintErrorID(theEnv,"CONSTRCT",1,false);
-      PrintString(theEnv,WERROR,"Some constructs are still in use. Clear cannot continue.\n");
+      WriteString(theEnv,STDERR,"Some constructs are still in use. Clear cannot continue.\n");
       ConstructData(theEnv)->ClearReadyInProgress = false;
       return false;
      }

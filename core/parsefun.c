@@ -88,8 +88,8 @@ struct parseFunctionData
 /***************************************/
 
 #if (! RUN_TIME) && (! BLOAD_ONLY)
-   static bool                    FindErrorCapture(Environment *,const char *,void *);
-   static void                    PrintErrorCapture(Environment *,const char *,const char *,void *);
+   static bool                    QueryErrorCaptureCallback(Environment *,const char *,void *);
+   static void                    WriteErrorCaptureCallback(Environment *,const char *,const char *,void *);
    static void                    DeactivateErrorCapture(Environment *);
    static void                    SetErrorCaptureValues(Environment *,UDFValue *);
 #endif
@@ -197,7 +197,7 @@ bool CheckSyntax(
    /*==============================================*/
 
    AddRouter(theEnv,"cs-error-capture",40,
-             FindErrorCapture, PrintErrorCapture,
+             QueryErrorCaptureCallback,WriteErrorCaptureCallback,
              NULL,NULL,NULL,NULL);
 
    /*================================*/
@@ -218,9 +218,9 @@ bool CheckSyntax(
 
       if (rv)
         {
-         PrintString(theEnv,WERROR,"\nERROR:\n");
-         PrintString(theEnv,WERROR,GetPPBuffer(theEnv));
-         PrintString(theEnv,WERROR,"\n");
+         WriteString(theEnv,STDERR,"\nERROR:\n");
+         WriteString(theEnv,STDERR,GetPPBuffer(theEnv));
+         WriteString(theEnv,STDERR,"\n");
         }
 
       DestroyPPBuffer(theEnv);
@@ -308,9 +308,9 @@ static void DeactivateErrorCapture(
 /*******************************************************************/
 /* SetErrorCaptureValues: Stores the error/warnings captured when  */
 /*   parsing an expression or construct into a multifield value.   */
-/*   The first field contains the output sent to the WERROR        */
+/*   The first field contains the output sent to the STDERR        */
 /*   logical name and the second field contains the output sent    */
-/*   to the WWARNING logical name. The symbol FALSE is stored in   */
+/*   to the STDWRN logical name. The symbol FALSE is stored in   */
 /*   either position if no output was sent to those logical names. */
 /*******************************************************************/
 static void SetErrorCaptureValues(
@@ -336,11 +336,11 @@ static void SetErrorCaptureValues(
    returnValue->value = theMultifield;
   }
 
-/**********************************/
-/* FindErrorCapture: Find routine */
-/*   for the check-syntax router. */
-/**********************************/
-static bool FindErrorCapture(
+/*********************************************/
+/* QueryErrorCaptureCallback: Query callback */
+/*   for the check-syntax router.            */
+/*********************************************/
+static bool QueryErrorCaptureCallback(
   Environment *theEnv,
   const char *logicalName,
   void *context)
@@ -349,30 +349,30 @@ static bool FindErrorCapture(
 #pragma unused(theEnv,context)
 #endif
 
-   if ((strcmp(logicalName,WERROR) == 0) ||
-       (strcmp(logicalName,WWARNING) == 0))
+   if ((strcmp(logicalName,STDERR) == 0) ||
+       (strcmp(logicalName,STDWRN) == 0))
      { return true; }
 
    return false;
   }
 
-/************************************/
-/* PrintErrorCapture: Print routine */
-/*   for the check-syntax router.   */
-/************************************/
-static void PrintErrorCapture(
+/*********************************************/
+/* WriteErrorCaptureCallback: Write callback */
+/*   for the check-syntax router.            */
+/*********************************************/
+static void WriteErrorCaptureCallback(
   Environment *theEnv,
   const char *logicalName,
   const char *str,
   void *context)
   {
-   if (strcmp(logicalName,WERROR) == 0)
+   if (strcmp(logicalName,STDERR) == 0)
      {
       ParseFunctionData(theEnv)->ErrorString = AppendToString(theEnv,str,ParseFunctionData(theEnv)->ErrorString,
                                    &ParseFunctionData(theEnv)->ErrorCurrentPosition,
                                    &ParseFunctionData(theEnv)->ErrorMaximumPosition);
      }
-   else if (strcmp(logicalName,WWARNING) == 0)
+   else if (strcmp(logicalName,STDWRN) == 0)
      {
       ParseFunctionData(theEnv)->WarningString = AppendToString(theEnv,str,ParseFunctionData(theEnv)->WarningString,
                                      &ParseFunctionData(theEnv)->WarningCurrentPosition,
@@ -391,7 +391,7 @@ void CheckSyntaxFunction(
   UDFValue *returnValue)
   {
    PrintErrorID(theEnv,"PARSEFUN",1,false);
-   PrintString(theEnv,WERROR,"Function check-syntax does not work in run time modules.\n");
+   WriteString(theEnv,STDERR,"Function check-syntax does not work in run time modules.\n");
    returnValue->value = TrueSymbol(theEnv);
   }
 
@@ -405,7 +405,7 @@ bool CheckSyntax(
   UDFValue *returnValue)
   {
    PrintErrorID(theEnv,"PARSEFUN",1,false);
-   PrintString(theEnv,WERROR,"Function check-syntax does not work in run time modules.\n");
+   WriteString(theEnv,STDERR,"Function check-syntax does not work in run time modules.\n");
    returnValue->value = TrueSymbol(theEnv);
    return true;
   }

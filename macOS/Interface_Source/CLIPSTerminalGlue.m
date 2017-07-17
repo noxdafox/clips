@@ -28,11 +28,11 @@ void ClearEnvironmentWindowCommand(
    [theObject clearScrollbackFunction];
   }
   
-/**********************************************************/
-/* QueryInterfaceRouter: Router function which recognizes */
-/*   I/O directed to the display window.                  */
-/**********************************************************/
-bool QueryInterfaceRouter(
+/************************************************************/
+/* QueryInterfaceCallback: Router function which recognizes */
+/*   I/O directed to the display window.                    */
+/************************************************************/
+bool QueryInterfaceCallback(
   Environment *theEnv,
   const char *logicalName,
   void *context)
@@ -43,18 +43,18 @@ bool QueryInterfaceRouter(
    
    if ( (strcmp(logicalName,STDOUT) == 0) ||
         (strcmp(logicalName,STDIN) == 0) ||
-        (strcmp(logicalName,WERROR) == 0) ||
-        (strcmp(logicalName,WWARNING) == 0) )
-     { return(true); }
+        (strcmp(logicalName,STDERR) == 0) ||
+        (strcmp(logicalName,STDWRN) == 0) )
+     { return true; }
 
-    return(false);
+    return false;
   }
 
-/*****************************************/
-/* PrintInterfaceRouter: Router function */
-/*   which prints to the display window. */
-/*****************************************/
-void PrintInterfaceRouter(
+/*******************************************/
+/* WriteInterfaceCallback: Router function */
+/*   which prints to the display window.   */
+/*******************************************/
+void WriteInterfaceCallback(
   Environment *theEnv,
   const char *logicalName,
   const char *str,
@@ -70,12 +70,12 @@ void PrintInterfaceRouter(
      { fprintf(fptr,"%s",str); } // TBD Is this necessary?
   }
 
-/*******************************************/
-/* GetcInterfaceRouter: Router function to */
-/*   get input from the display window and */
-/*   process other events.                 */
-/*******************************************/
-int GetcInterfaceRouter(
+/******************************************/
+/* ReadInterfaceCallback: Router function */
+/*   to get input from the display window */
+/*   and process other events.            */
+/******************************************/
+int ReadInterfaceCallback(
   Environment *theEnv,
   const char *logicalName,
   void *context)
@@ -88,12 +88,12 @@ int GetcInterfaceRouter(
    return(theChar);
   }
   
-/*************************************************/
-/* ExitInterfaceRouter: Routine to check an exit */
-/*   from the dialog window to make sure that    */
-/*   the application doesn't exit.               */
-/*************************************************/
-void ExitInterfaceRouter(
+/**********************************************/
+/* ExitInterfaceCallback: Routine to check an */
+/*   exit from the dialog window to make sure */
+/*   that the application doesn't exit.       */
+/**********************************************/
+void ExitInterfaceCallback(
   Environment *theEnv,
   int num,
   void *context)

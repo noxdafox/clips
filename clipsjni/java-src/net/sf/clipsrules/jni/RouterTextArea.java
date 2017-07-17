@@ -395,10 +395,10 @@ public class RouterTextArea extends JTextArea
      }
      
    /**********/
-   /* print: */
+   /* write: */
    /**********/
    @Override
-   public void print(
+   public void write(
      String logName,
      String printString)
      {
@@ -423,21 +423,21 @@ public class RouterTextArea extends JTextArea
         }
      }
 
-   /************/
-   /* getchar: */
-   /************/
+   /*********/
+   /* read: */
+   /*********/
    @Override
-   public int getchar(
+   public int read(
      String routerName)
      {
       return requestChar();
      }
 
-   /**************/
-   /* ungetchar: */
-   /**************/
+   /***********/
+   /* unread: */
+   /***********/
    @Override
-   public int ungetchar(
+   public int unread(
      String routerName,
      int theChar)
      {

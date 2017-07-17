@@ -424,7 +424,7 @@ void ShowFactHashTableCommand(
       if (count != 0)
         {
          gensprintf(buffer,"%4lu: %4d\n",i,count);
-         PrintString(theEnv,STDOUT,buffer);
+         WriteString(theEnv,STDOUT,buffer);
         }
      }
   }

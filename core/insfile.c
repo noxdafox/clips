@@ -995,29 +995,29 @@ static void SaveSingleInstanceText(
    InstanceSlot *sp;
    const char *logicalName = (const char *) fastSaveFile;
 
-   PrintString(theEnv,logicalName,"([");
-   PrintString(theEnv,logicalName,theInstance->name->contents);
-   PrintString(theEnv,logicalName,"] of ");
-   PrintString(theEnv,logicalName,theInstance->cls->header.name->contents);
+   WriteString(theEnv,logicalName,"([");
+   WriteString(theEnv,logicalName,theInstance->name->contents);
+   WriteString(theEnv,logicalName,"] of ");
+   WriteString(theEnv,logicalName,theInstance->cls->header.name->contents);
    for (i = 0 ; i < theInstance->cls->instanceSlotCount ; i++)
      {
       sp = theInstance->slotAddresses[i];
-      PrintString(theEnv,logicalName,"\n   (");
-      PrintString(theEnv,logicalName,sp->desc->slotName->name->contents);
+      WriteString(theEnv,logicalName,"\n   (");
+      WriteString(theEnv,logicalName,sp->desc->slotName->name->contents);
       if (sp->type != MULTIFIELD_TYPE)
         {
-         PrintString(theEnv,logicalName," ");
+         WriteString(theEnv,logicalName," ");
          PrintAtom(theEnv,logicalName,sp->type,sp->value);
         }
       else if (sp->multifieldValue->length != 0)
         {
-         PrintString(theEnv,logicalName," ");
+         WriteString(theEnv,logicalName," ");
          PrintMultifieldDriver(theEnv,logicalName,sp->multifieldValue,0,
                                sp->multifieldValue->length,false);
         }
-      PrintString(theEnv,logicalName,")");
+      WriteString(theEnv,logicalName,")");
      }
-   PrintString(theEnv,logicalName,")\n\n");
+   WriteString(theEnv,logicalName,")\n\n");
   }
 
 #if BSAVE_INSTANCES
@@ -1372,11 +1372,11 @@ static void ProcessFileErrorMessage(
   const char *fileName)
   {
    PrintErrorID(theEnv,"INSFILE",1,false);
-   PrintString(theEnv,WERROR,"Function ");
-   PrintString(theEnv,WERROR,functionName);
-   PrintString(theEnv,WERROR," could not completely process file ");
-   PrintString(theEnv,WERROR,fileName);
-   PrintString(theEnv,WERROR,".\n");
+   WriteString(theEnv,STDERR,"Function ");
+   WriteString(theEnv,STDERR,functionName);
+   WriteString(theEnv,STDERR," could not completely process file ");
+   WriteString(theEnv,STDERR,fileName);
+   WriteString(theEnv,STDERR,".\n");
   }
 
 #if BLOAD_INSTANCES
@@ -1402,16 +1402,16 @@ static bool VerifyBinaryHeader(
    if (strcmp(buf,InstanceFileData(theEnv)->InstanceBinaryPrefixID) != 0)
      {
       PrintErrorID(theEnv,"INSFILE",2,false);
-      PrintString(theEnv,WERROR,theFile);
-      PrintString(theEnv,WERROR," file is not a binary instances file.\n");
+      WriteString(theEnv,STDERR,theFile);
+      WriteString(theEnv,STDERR," file is not a binary instances file.\n");
       return false;
      }
    GenReadBinary(theEnv,buf,(strlen(InstanceFileData(theEnv)->InstanceBinaryVersionID) + 1));
    if (strcmp(buf,InstanceFileData(theEnv)->InstanceBinaryVersionID) != 0)
      {
       PrintErrorID(theEnv,"INSFILE",3,false);
-      PrintString(theEnv,WERROR,theFile);
-      PrintString(theEnv,WERROR," file is not a compatible binary instances file.\n");
+      WriteString(theEnv,STDERR,theFile);
+      WriteString(theEnv,STDERR," file is not a compatible binary instances file.\n");
       return false;
      }
    return true;
@@ -1562,10 +1562,10 @@ static void BinaryLoadInstanceError(
   Defclass *theDefclass)
   {
    PrintErrorID(theEnv,"INSFILE",4,false);
-   PrintString(theEnv,WERROR,"Function bload-instances unable to load instance [");
-   PrintString(theEnv,WERROR,instanceName->contents);
-   PrintString(theEnv,WERROR,"] of class ");
-   PrintClassName(theEnv,WERROR,theDefclass,true);
+   WriteString(theEnv,STDERR,"Function bload-instances unable to load instance [");
+   WriteString(theEnv,STDERR,instanceName->contents);
+   WriteString(theEnv,STDERR,"] of class ");
+   PrintClassName(theEnv,STDERR,theDefclass,true);
   }
 
 /***************************************************

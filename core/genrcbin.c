@@ -829,8 +829,8 @@ static void UpdateType(
    if ((* (long *) buf) > INSTANCE_TYPE_CODE)
      {
       PrintWarningID(theEnv,"GENRCBIN",1,false);
-      PrintString(theEnv,WWARNING,"COOL not installed!  User-defined class\n");
-      PrintString(theEnv,WWARNING,"  in method restriction substituted with OBJECT.\n");
+      WriteString(theEnv,STDWRN,"COOL not installed!  User-defined class\n");
+      WriteString(theEnv,STDWRN,"  in method restriction substituted with OBJECT.\n");
       DefgenericBinaryData(theEnv)->TypeArray[obji] = CreateInteger(theEnv,OBJECT_TYPE_CODE);
      }
    else

@@ -183,7 +183,7 @@ void MakeInstanceCommand(
    else
      {
       PrintErrorID(theEnv,"INSMNGR",1,false);
-      PrintString(theEnv,WERROR,"Expected a valid name for new instance.\n");
+      WriteString(theEnv,STDERR,"Expected a valid name for new instance.\n");
       SetEvaluationError(theEnv,true);
       return;
      }
@@ -196,7 +196,7 @@ void MakeInstanceCommand(
       if (temp.header->type != SYMBOL_TYPE)
         {
          PrintErrorID(theEnv,"INSMNGR",2,false);
-         PrintString(theEnv,WERROR,"Expected a valid class name for new instance.\n");
+         WriteString(theEnv,STDERR,"Expected a valid class name for new instance.\n");
          SetEvaluationError(theEnv,true);
          return;
         }
@@ -288,8 +288,8 @@ Instance *BuildInstance(
    if (EngineData(theEnv)->JoinOperationInProgress && cls->reactive)
      {
       PrintErrorID(theEnv,"INSMNGR",10,false);
-      PrintString(theEnv,WERROR,"Cannot create instances of reactive classes while\n");
-      PrintString(theEnv,WERROR,"  pattern-matching is in process.\n");
+      WriteString(theEnv,STDERR,"Cannot create instances of reactive classes while\n");
+      WriteString(theEnv,STDERR,"  pattern-matching is in process.\n");
       SetEvaluationError(theEnv,true);
       return NULL;
      }
@@ -297,9 +297,9 @@ Instance *BuildInstance(
    if (cls->abstract)
      {
       PrintErrorID(theEnv,"INSMNGR",3,false);
-      PrintString(theEnv,WERROR,"Cannot create instances of abstract class ");
-      PrintString(theEnv,WERROR,DefclassName(cls));
-      PrintString(theEnv,WERROR,".\n");
+      WriteString(theEnv,STDERR,"Cannot create instances of abstract class ");
+      WriteString(theEnv,STDERR,DefclassName(cls));
+      WriteString(theEnv,STDERR,".\n");
       SetEvaluationError(theEnv,true);
       return NULL;
      }
@@ -311,7 +311,7 @@ Instance *BuildInstance(
           (moduleName != cls->header.whichModule->theModule->header.name))
         {
          PrintErrorID(theEnv,"INSMNGR",11,true);
-         PrintString(theEnv,WERROR,"Invalid module specifier in new instance name.\n");
+         WriteString(theEnv,STDERR,"Invalid module specifier in new instance name.\n");
          SetEvaluationError(theEnv,true);
          return NULL;
         }
@@ -324,11 +324,11 @@ Instance *BuildInstance(
       if (ins->cls != cls)
         {
          PrintErrorID(theEnv,"INSMNGR",16,false);
-         PrintString(theEnv,WERROR,"The instance name ");
-         PrintString(theEnv,WERROR,iname->contents);
-         PrintString(theEnv,WERROR," is in use by an instance of class ");
-         PrintString(theEnv,WERROR,ins->cls->header.name->contents);
-         PrintString(theEnv,WERROR,".\n");
+         WriteString(theEnv,STDERR,"The instance name ");
+         WriteString(theEnv,STDERR,iname->contents);
+         WriteString(theEnv,STDERR," is in use by an instance of class ");
+         WriteString(theEnv,STDERR,ins->cls->header.name->contents);
+         WriteString(theEnv,STDERR,".\n");
          SetEvaluationError(theEnv,true);
          return NULL;
         }
@@ -336,9 +336,9 @@ Instance *BuildInstance(
       if (ins->installed == 0)
         {
          PrintErrorID(theEnv,"INSMNGR",4,false);
-         PrintString(theEnv,WERROR,"The instance ");
-         PrintString(theEnv,WERROR,iname->contents);
-         PrintString(theEnv,WERROR," has a slot-value which depends on the instance definition.\n");
+         WriteString(theEnv,STDERR,"The instance ");
+         WriteString(theEnv,STDERR,iname->contents);
+         WriteString(theEnv,STDERR," has a slot-value which depends on the instance definition.\n");
          SetEvaluationError(theEnv,true);
          return NULL;
         }
@@ -356,9 +356,9 @@ Instance *BuildInstance(
       if (ins->garbage == 0)
         {
          PrintErrorID(theEnv,"INSMNGR",5,false);
-         PrintString(theEnv,WERROR,"Unable to delete old instance ");
-         PrintString(theEnv,WERROR,iname->contents);
-         PrintString(theEnv,WERROR,".\n");
+         WriteString(theEnv,STDERR,"Unable to delete old instance ");
+         WriteString(theEnv,STDERR,iname->contents);
+         WriteString(theEnv,STDERR,".\n");
          SetEvaluationError(theEnv,true);
          return NULL;
         }
@@ -511,8 +511,8 @@ bool QuashInstance(
    if (EngineData(theEnv)->JoinOperationInProgress && ins->cls->reactive)
      {
       PrintErrorID(theEnv,"INSMNGR",12,false);
-      PrintString(theEnv,WERROR,"Cannot delete instances of reactive classes while\n");
-      PrintString(theEnv,WERROR,"  pattern-matching is in process.\n");
+      WriteString(theEnv,STDERR,"Cannot delete instances of reactive classes while\n");
+      WriteString(theEnv,STDERR,"  pattern-matching is in process.\n");
       SetEvaluationError(theEnv,true);
       return false;
      }
@@ -522,9 +522,9 @@ bool QuashInstance(
    if (ins->installed == 0)
      {
       PrintErrorID(theEnv,"INSMNGR",6,false);
-      PrintString(theEnv,WERROR,"Cannot delete instance ");
-      PrintString(theEnv,WERROR,ins->name->contents);
-      PrintString(theEnv,WERROR," during initialization.\n");
+      WriteString(theEnv,STDERR,"Cannot delete instance ");
+      WriteString(theEnv,STDERR,ins->name->contents);
+      WriteString(theEnv,STDERR," during initialization.\n");
       SetEvaluationError(theEnv,true);
       return false;
      }
@@ -919,9 +919,9 @@ static bool CoreInitializeInstance(
    if (ins->installed == 0)
      {
       PrintErrorID(theEnv,"INSMNGR",7,false);
-      PrintString(theEnv,WERROR,"Instance ");
-      PrintString(theEnv,WERROR,ins->name->contents);
-      PrintString(theEnv,WERROR," is already being initialized.\n");
+      WriteString(theEnv,STDERR,"Instance ");
+      WriteString(theEnv,STDERR,ins->name->contents);
+      WriteString(theEnv,STDERR," is already being initialized.\n");
       SetEvaluationError(theEnv,true);
       return false;
      }
@@ -961,9 +961,9 @@ static bool CoreInitializeInstance(
    if (EvaluationData(theEnv)->EvaluationError)
      {
       PrintErrorID(theEnv,"INSMNGR",8,false);
-      PrintString(theEnv,WERROR,"An error occurred during the initialization of instance ");
-      PrintString(theEnv,WERROR,ins->name->contents);
-      PrintString(theEnv,WERROR,".\n");
+      WriteString(theEnv,STDERR,"An error occurred during the initialization of instance ");
+      WriteString(theEnv,STDERR,ins->name->contents);
+      WriteString(theEnv,STDERR,".\n");
       return false;
      }
 
@@ -990,9 +990,9 @@ static bool CoreInitializeInstanceCV(
    if (ins->installed == 0)
      {
       PrintErrorID(theEnv,"INSMNGR",7,false);
-      PrintString(theEnv,WERROR,"Instance ");
-      PrintString(theEnv,WERROR,ins->name->contents);
-      PrintString(theEnv,WERROR," is already being initialized.\n");
+      WriteString(theEnv,STDERR,"Instance ");
+      WriteString(theEnv,STDERR,ins->name->contents);
+      WriteString(theEnv,STDERR," is already being initialized.\n");
       SetEvaluationError(theEnv,true);
       return false;
      }
@@ -1034,9 +1034,9 @@ static bool CoreInitializeInstanceCV(
    if (EvaluationData(theEnv)->EvaluationError)
      {
       PrintErrorID(theEnv,"INSMNGR",8,false);
-      PrintString(theEnv,WERROR,"An error occurred during the initialization of instance ");
-      PrintString(theEnv,WERROR,ins->name->contents);
-      PrintString(theEnv,WERROR,".\n");
+      WriteString(theEnv,STDERR,"An error occurred during the initialization of instance ");
+      WriteString(theEnv,STDERR,ins->name->contents);
+      WriteString(theEnv,STDERR,".\n");
       return false;
      }
      
@@ -1071,7 +1071,7 @@ static bool InsertSlotOverrides(
           (temp.header->type != SYMBOL_TYPE))
         {
          PrintErrorID(theEnv,"INSMNGR",9,false);
-         PrintString(theEnv,WERROR,"Expected a valid slot name for slot-override.\n");
+         WriteString(theEnv,STDERR,"Expected a valid slot name for slot-override.\n");
          SetEvaluationError(theEnv,true);
          return false;
         }
@@ -1079,11 +1079,11 @@ static bool InsertSlotOverrides(
       if (slot == NULL)
         {
          PrintErrorID(theEnv,"INSMNGR",13,false);
-         PrintString(theEnv,WERROR,"Slot ");
-         PrintString(theEnv,WERROR,temp.lexemeValue->contents);
-         PrintString(theEnv,WERROR," does not exist in instance ");
-         PrintString(theEnv,WERROR,ins->name->contents);
-         PrintString(theEnv,WERROR,".\n");
+         WriteString(theEnv,STDERR,"Slot ");
+         WriteString(theEnv,STDERR,temp.lexemeValue->contents);
+         WriteString(theEnv,STDERR," does not exist in instance ");
+         WriteString(theEnv,STDERR,ins->name->contents);
+         WriteString(theEnv,STDERR,".\n");
          SetEvaluationError(theEnv,true);
          return false;
         }
@@ -1177,7 +1177,7 @@ static void EvaluateClassDefaults(
      {
       PrintErrorID(theEnv,"INSMNGR",15,false);
       SetEvaluationError(theEnv,true);
-      PrintString(theEnv,WERROR,"init-slots not valid in this context.\n");
+      WriteString(theEnv,STDERR,"init-slots not valid in this context.\n");
       return;
      }
    for (i = 0 ; i < ins->cls->instanceSlotCount ; i++)
@@ -1204,18 +1204,18 @@ static void EvaluateClassDefaults(
          else if (slot->valueRequired)
            {
             PrintErrorID(theEnv,"INSMNGR",14,false);
-            PrintString(theEnv,WERROR,"Override required for slot ");
-            PrintString(theEnv,WERROR,slot->desc->slotName->name->contents);
-            PrintString(theEnv,WERROR," in instance ");
-            PrintString(theEnv,WERROR,ins->name->contents);
-            PrintString(theEnv,WERROR,".\n");
+            WriteString(theEnv,STDERR,"Override required for slot ");
+            WriteString(theEnv,STDERR,slot->desc->slotName->name->contents);
+            WriteString(theEnv,STDERR," in instance ");
+            WriteString(theEnv,STDERR,ins->name->contents);
+            WriteString(theEnv,STDERR,".\n");
             SetEvaluationError(theEnv,true);
            }
          slot->valueRequired = false;
          if (ins->garbage == 1)
            {
-            PrintString(theEnv,WERROR,ins->name->contents);
-            PrintString(theEnv,WERROR," instance deleted by slot-override evaluation.\n");
+            WriteString(theEnv,STDERR,ins->name->contents);
+            WriteString(theEnv,STDERR," instance deleted by slot-override evaluation.\n");
             SetEvaluationError(theEnv,true);
            }
          if (EvaluationData(theEnv)->EvaluationError)
@@ -1248,8 +1248,8 @@ static void PrintInstanceWatch(
        ConstructData(theEnv)->ClearInProgress)
      { return; }
 
-   PrintString(theEnv,STDOUT,traceString);
-   PrintString(theEnv,STDOUT," instance ");
+   WriteString(theEnv,STDOUT,traceString);
+   WriteString(theEnv,STDOUT," instance ");
    PrintInstanceNameAndClass(theEnv,STDOUT,theInstance,true);
   }
 

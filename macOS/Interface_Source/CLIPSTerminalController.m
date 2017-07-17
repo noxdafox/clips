@@ -206,8 +206,10 @@
    
    SetEnvironmentContext(theEnvironment,(__bridge void *)(self)); // TBD Remove?
    
-   AddRouter(theEnvironment,"CLIPSTerminalController",10,QueryInterfaceRouter,PrintInterfaceRouter,
-             GetcInterfaceRouter,NULL,ExitInterfaceRouter,(__bridge void *)(self));
+   AddRouter(theEnvironment,"CLIPSTerminalController",10,
+             QueryInterfaceCallback,WriteInterfaceCallback,
+             ReadInterfaceCallback,NULL,ExitInterfaceCallback,
+             (__bridge void *)(self));
         
    SetBeforeOpenFunction(theEnvironment,MacBeforeOpenFunction);
    SetAfterOpenFunction(theEnvironment,MacAfterOpenFunction);

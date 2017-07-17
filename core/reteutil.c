@@ -119,9 +119,9 @@ void PrintPartialMatch(
          (*matchingItem->theInfo->base.shortPrintFunction)(theEnv,logicalName,matchingItem);
         }
       else
-        { PrintString(theEnv,logicalName,"*"); }
+        { WriteString(theEnv,logicalName,"*"); }
       i++;
-      if (i < list->bcount) PrintString(theEnv,logicalName,",");
+      if (i < list->bcount) WriteString(theEnv,logicalName,",");
      }
   }
 
@@ -922,13 +922,13 @@ static void TraceErrorToRuleDriver(
      {
       joinPtr->marked = 1;
       name = DefruleName(joinPtr->ruleToActivate);
-      PrintString(theEnv,WERROR,indentSpaces);
+      WriteString(theEnv,STDERR,indentSpaces);
 
-      PrintString(theEnv,WERROR,"Of pattern #");
-      PrintInteger(theEnv,WERROR,priorRightJoinPatterns+priorPatternCount);
-      PrintString(theEnv,WERROR," in rule ");
-      PrintString(theEnv,WERROR,name);
-      PrintString(theEnv,WERROR,"\n");
+      WriteString(theEnv,STDERR,"Of pattern #");
+      WriteInteger(theEnv,STDERR,priorRightJoinPatterns+priorPatternCount);
+      WriteString(theEnv,STDERR," in rule ");
+      WriteString(theEnv,STDERR,name);
+      WriteString(theEnv,STDERR,"\n");
      }
    else
      {
@@ -1577,7 +1577,7 @@ unsigned long PrintBetaMemory(
          if (output == VERBOSE)
            {
             if (indentFirst)
-              { PrintString(theEnv,logName,indentString); }
+              { WriteString(theEnv,logName,indentString); }
             else
               { indentFirst = true; }
            }
@@ -1589,7 +1589,7 @@ unsigned long PrintBetaMemory(
          if (output == VERBOSE)
            {
             PrintPartialMatch(theEnv,logName,listOfMatches);
-            PrintString(theEnv,logName,"\n");
+            WriteString(theEnv,logName,"\n");
            }
 
          count++;

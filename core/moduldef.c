@@ -798,7 +798,7 @@ void IllegalModuleSpecifierMessage(
   Environment *theEnv)
   {
    PrintErrorID(theEnv,"MODULDEF",1,true);
-   PrintString(theEnv,WERROR,"Illegal use of the module specifier.\n");
+   WriteString(theEnv,STDERR,"Illegal use of the module specifier.\n");
   }
 
 /*********************************************/

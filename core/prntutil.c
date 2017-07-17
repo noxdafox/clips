@@ -98,9 +98,9 @@ void InitializePrintUtilityData(
   }
 
 /************************************************************/
-/* PrintFloat: Controls printout of floating point numbers. */
+/* WriteFloat: Controls printout of floating point numbers. */
 /************************************************************/
-void PrintFloat(
+void WriteFloat(
   Environment *theEnv,
   const char *fileid,
   double number)
@@ -108,13 +108,13 @@ void PrintFloat(
    const char *theString;
 
    theString = FloatToString(theEnv,number);
-   PrintString(theEnv,fileid,theString);
+   WriteString(theEnv,fileid,theString);
   }
 
 /************************************************/
-/* PrintInteger: Controls printout of integers. */
+/* WriteInteger: Controls printout of integers. */
 /************************************************/
-void PrintInteger(
+void WriteInteger(
   Environment *theEnv,
   const char *logicalName,
   long long number)
@@ -122,7 +122,7 @@ void PrintInteger(
    char printBuffer[32];
 
    gensprintf(printBuffer,"%lld",number);
-   PrintString(theEnv,logicalName,printBuffer);
+   WriteString(theEnv,logicalName,printBuffer);
   }
 
 /*******************************************/
@@ -137,7 +137,7 @@ void PrintUnsignedInteger(
    char printBuffer[32];
 
    gensprintf(printBuffer,"%llu",number);
-   PrintString(theEnv,logicalName,printBuffer);
+   WriteString(theEnv,logicalName,printBuffer);
   }
 
 /**************************************/
@@ -155,53 +155,53 @@ void PrintAtom(
    switch (type)
      {
       case FLOAT_TYPE:
-        PrintFloat(theEnv,logicalName,((CLIPSFloat *) value)->contents);
+        WriteFloat(theEnv,logicalName,((CLIPSFloat *) value)->contents);
         break;
       case INTEGER_TYPE:
-        PrintInteger(theEnv,logicalName,((CLIPSInteger *) value)->contents);
+        WriteInteger(theEnv,logicalName,((CLIPSInteger *) value)->contents);
         break;
       case SYMBOL_TYPE:
-        PrintString(theEnv,logicalName,((CLIPSLexeme *) value)->contents);
+        WriteString(theEnv,logicalName,((CLIPSLexeme *) value)->contents);
         break;
       case STRING_TYPE:
         if (PrintUtilityData(theEnv)->PreserveEscapedCharacters)
-          { PrintString(theEnv,logicalName,StringPrintForm(theEnv,((CLIPSLexeme *) value)->contents)); }
+          { WriteString(theEnv,logicalName,StringPrintForm(theEnv,((CLIPSLexeme *) value)->contents)); }
         else
           {
-           PrintString(theEnv,logicalName,"\"");
-           PrintString(theEnv,logicalName,((CLIPSLexeme *) value)->contents);
-           PrintString(theEnv,logicalName,"\"");
+           WriteString(theEnv,logicalName,"\"");
+           WriteString(theEnv,logicalName,((CLIPSLexeme *) value)->contents);
+           WriteString(theEnv,logicalName,"\"");
           }
         break;
 
       case EXTERNAL_ADDRESS_TYPE:
         theAddress = (CLIPSExternalAddress *) value;
 
-        if (PrintUtilityData(theEnv)->AddressesToStrings) PrintString(theEnv,logicalName,"\"");
+        if (PrintUtilityData(theEnv)->AddressesToStrings) WriteString(theEnv,logicalName,"\"");
 
         if ((EvaluationData(theEnv)->ExternalAddressTypes[theAddress->type] != NULL) &&
             (EvaluationData(theEnv)->ExternalAddressTypes[theAddress->type]->longPrintFunction != NULL))
           { (*EvaluationData(theEnv)->ExternalAddressTypes[theAddress->type]->longPrintFunction)(theEnv,logicalName,value); }
         else
           {
-           PrintString(theEnv,logicalName,"<Pointer-");
+           WriteString(theEnv,logicalName,"<Pointer-");
 
            gensprintf(buffer,"%d-",theAddress->type);
-           PrintString(theEnv,logicalName,buffer);
+           WriteString(theEnv,logicalName,buffer);
 
            gensprintf(buffer,"%p",((CLIPSExternalAddress *) value)->contents);
-           PrintString(theEnv,logicalName,buffer);
-           PrintString(theEnv,logicalName,">");
+           WriteString(theEnv,logicalName,buffer);
+           WriteString(theEnv,logicalName,">");
           }
 
-        if (PrintUtilityData(theEnv)->AddressesToStrings) PrintString(theEnv,logicalName,"\"");
+        if (PrintUtilityData(theEnv)->AddressesToStrings) WriteString(theEnv,logicalName,"\"");
         break;
 
 #if OBJECT_SYSTEM
       case INSTANCE_NAME_TYPE:
-        PrintString(theEnv,logicalName,"[");
-        PrintString(theEnv,logicalName,((CLIPSLexeme *) value)->contents);
-        PrintString(theEnv,logicalName,"]");
+        WriteString(theEnv,logicalName,"[");
+        WriteString(theEnv,logicalName,((CLIPSLexeme *) value)->contents);
+        WriteString(theEnv,logicalName,"]");
         break;
 #endif
 
@@ -212,7 +212,7 @@ void PrintAtom(
         if (EvaluationData(theEnv)->PrimitivesArray[type] == NULL) break;
         if (EvaluationData(theEnv)->PrimitivesArray[type]->longPrintFunction == NULL)
           {
-           PrintString(theEnv,logicalName,"<unknown atom type>");
+           WriteString(theEnv,logicalName,"<unknown atom type>");
            break;
           }
         (*EvaluationData(theEnv)->PrimitivesArray[type]->longPrintFunction)(theEnv,logicalName,value);
@@ -234,14 +234,14 @@ void PrintTally(
   {
    if (count == 0) return;
 
-   PrintString(theEnv,logicalName,"For a total of ");
+   WriteString(theEnv,logicalName,"For a total of ");
    PrintUnsignedInteger(theEnv,logicalName,count);
-   PrintString(theEnv,logicalName," ");
+   WriteString(theEnv,logicalName," ");
 
-   if (count == 1) PrintString(theEnv,logicalName,singular);
-   else PrintString(theEnv,logicalName,plural);
+   if (count == 1) WriteString(theEnv,logicalName,singular);
+   else WriteString(theEnv,logicalName,plural);
 
-   PrintString(theEnv,logicalName,".\n");
+   WriteString(theEnv,logicalName,".\n");
   }
 
 /********************************************/
@@ -259,11 +259,11 @@ void PrintErrorID(
    SetErrorFileName(theEnv,GetParsingFileName(theEnv));
    ConstructData(theEnv)->ErrLineNumber = GetLineCount(theEnv);
 #endif
-   if (printCR) PrintString(theEnv,WERROR,"\n");
-   PrintString(theEnv,WERROR,"[");
-   PrintString(theEnv,WERROR,module);
-   PrintInteger(theEnv,WERROR,errorID);
-   PrintString(theEnv,WERROR,"] ");
+   if (printCR) WriteString(theEnv,STDERR,"\n");
+   WriteString(theEnv,STDERR,"[");
+   WriteString(theEnv,STDERR,module);
+   WriteInteger(theEnv,STDERR,errorID);
+   WriteString(theEnv,STDERR,"] ");
 
    /*==================================================*/
    /* Print the file name and line number if available */
@@ -279,10 +279,10 @@ void PrintErrorID(
       fileName = GetParsingFileName(theEnv);
       if (fileName != NULL)
         {
-         PrintString(theEnv,WERROR,fileName);
-         PrintString(theEnv,WERROR,", Line ");
-         PrintInteger(theEnv,WERROR,GetLineCount(theEnv));
-         PrintString(theEnv,WERROR,": ");
+         WriteString(theEnv,STDERR,fileName);
+         WriteString(theEnv,STDERR,", Line ");
+         WriteInteger(theEnv,STDERR,GetLineCount(theEnv));
+         WriteString(theEnv,STDERR,": ");
         }
      }
 #endif
@@ -303,11 +303,11 @@ void PrintWarningID(
    SetWarningFileName(theEnv,GetParsingFileName(theEnv));
    ConstructData(theEnv)->WrnLineNumber = GetLineCount(theEnv);
 #endif
-   if (printCR) PrintString(theEnv,WWARNING,"\n");
-   PrintString(theEnv,WWARNING,"[");
-   PrintString(theEnv,WWARNING,module);
-   PrintInteger(theEnv,WWARNING,warningID);
-   PrintString(theEnv,WWARNING,"] ");
+   if (printCR) WriteString(theEnv,STDWRN,"\n");
+   WriteString(theEnv,STDWRN,"[");
+   WriteString(theEnv,STDWRN,module);
+   WriteInteger(theEnv,STDWRN,warningID);
+   WriteString(theEnv,STDWRN,"] ");
 
    /*==================================================*/
    /* Print the file name and line number if available */
@@ -323,15 +323,15 @@ void PrintWarningID(
       fileName = GetParsingFileName(theEnv);
       if (fileName != NULL)
         {
-         PrintString(theEnv,WERROR,fileName);
-         PrintString(theEnv,WERROR,", Line ");
-         PrintInteger(theEnv,WERROR,GetLineCount(theEnv));
-         PrintString(theEnv,WERROR,", ");
+         WriteString(theEnv,STDERR,fileName);
+         WriteString(theEnv,STDERR,", Line ");
+         WriteInteger(theEnv,STDERR,GetLineCount(theEnv));
+         WriteString(theEnv,STDERR,", ");
         }
      }
 #endif
 
-   PrintString(theEnv,WWARNING,"WARNING: ");
+   WriteString(theEnv,STDWRN,"WARNING: ");
   }
 
 /***************************************************/
@@ -344,11 +344,11 @@ void CantFindItemErrorMessage(
   const char *itemName)
   {
    PrintErrorID(theEnv,"PRNTUTIL",1,false);
-   PrintString(theEnv,WERROR,"Unable to find ");
-   PrintString(theEnv,WERROR,itemType);
-   PrintString(theEnv,WERROR," ");
-   PrintString(theEnv,WERROR,itemName);
-   PrintString(theEnv,WERROR,".\n");
+   WriteString(theEnv,STDERR,"Unable to find ");
+   WriteString(theEnv,STDERR,itemType);
+   WriteString(theEnv,STDERR," ");
+   WriteString(theEnv,STDERR,itemName);
+   WriteString(theEnv,STDERR,".\n");
   }
 
 /*****************************************************/
@@ -362,13 +362,13 @@ void CantFindItemInFunctionErrorMessage(
   const char *func)
   {
    PrintErrorID(theEnv,"PRNTUTIL",1,false);
-   PrintString(theEnv,WERROR,"Unable to find ");
-   PrintString(theEnv,WERROR,itemType);
-   PrintString(theEnv,WERROR," ");
-   PrintString(theEnv,WERROR,itemName);
-   PrintString(theEnv,WERROR," in function ");
-   PrintString(theEnv,WERROR,func);
-   PrintString(theEnv,WERROR,".\n");
+   WriteString(theEnv,STDERR,"Unable to find ");
+   WriteString(theEnv,STDERR,itemType);
+   WriteString(theEnv,STDERR," ");
+   WriteString(theEnv,STDERR,itemName);
+   WriteString(theEnv,STDERR," in function ");
+   WriteString(theEnv,STDERR,func);
+   WriteString(theEnv,STDERR,".\n");
   }
 
 /*****************************************************/
@@ -381,11 +381,11 @@ void CantDeleteItemErrorMessage(
   const char *itemName)
   {
    PrintErrorID(theEnv,"PRNTUTIL",4,false);
-   PrintString(theEnv,WERROR,"Unable to delete ");
-   PrintString(theEnv,WERROR,itemType);
-   PrintString(theEnv,WERROR," ");
-   PrintString(theEnv,WERROR,itemName);
-   PrintString(theEnv,WERROR,".\n");
+   WriteString(theEnv,STDERR,"Unable to delete ");
+   WriteString(theEnv,STDERR,itemType);
+   WriteString(theEnv,STDERR," ");
+   WriteString(theEnv,STDERR,itemName);
+   WriteString(theEnv,STDERR,".\n");
   }
 
 /****************************************************/
@@ -398,10 +398,10 @@ void AlreadyParsedErrorMessage(
   const char *itemName)
   {
    PrintErrorID(theEnv,"PRNTUTIL",5,true);
-   PrintString(theEnv,WERROR,"The ");
-   if (itemType != NULL) PrintString(theEnv,WERROR,itemType);
-   if (itemName != NULL) PrintString(theEnv,WERROR,itemName);
-   PrintString(theEnv,WERROR," has already been parsed.\n");
+   WriteString(theEnv,STDERR,"The ");
+   if (itemType != NULL) WriteString(theEnv,STDERR,itemType);
+   if (itemName != NULL) WriteString(theEnv,STDERR,itemName);
+   WriteString(theEnv,STDERR," has already been parsed.\n");
   }
 
 /*********************************************************/
@@ -412,14 +412,14 @@ void SyntaxErrorMessage(
   const char *location)
   {
    PrintErrorID(theEnv,"PRNTUTIL",2,true);
-   PrintString(theEnv,WERROR,"Syntax Error");
+   WriteString(theEnv,STDERR,"Syntax Error");
    if (location != NULL)
      {
-      PrintString(theEnv,WERROR,":  Check appropriate syntax for ");
-      PrintString(theEnv,WERROR,location);
+      WriteString(theEnv,STDERR,":  Check appropriate syntax for ");
+      WriteString(theEnv,STDERR,location);
      }
 
-   PrintString(theEnv,WERROR,".\n");
+   WriteString(theEnv,STDERR,".\n");
    SetEvaluationError(theEnv,true);
   }
 
@@ -433,9 +433,9 @@ void LocalVariableErrorMessage(
   const char *byWhat)
   {
    PrintErrorID(theEnv,"PRNTUTIL",6,true);
-   PrintString(theEnv,WERROR,"Local variables can not be accessed by ");
-   PrintString(theEnv,WERROR,byWhat);
-   PrintString(theEnv,WERROR,".\n");
+   WriteString(theEnv,STDERR,"Local variables can not be accessed by ");
+   WriteString(theEnv,STDERR,byWhat);
+   WriteString(theEnv,STDERR,".\n");
   }
 
 /******************************************/
@@ -449,19 +449,19 @@ void SystemError(
   {
    PrintErrorID(theEnv,"PRNTUTIL",3,true);
 
-   PrintString(theEnv,WERROR,"\n*** ");
-   PrintString(theEnv,WERROR,APPLICATION_NAME);
-   PrintString(theEnv,WERROR," SYSTEM ERROR ***\n");
+   WriteString(theEnv,STDERR,"\n*** ");
+   WriteString(theEnv,STDERR,APPLICATION_NAME);
+   WriteString(theEnv,STDERR," SYSTEM ERROR ***\n");
 
-   PrintString(theEnv,WERROR,"ID = ");
-   PrintString(theEnv,WERROR,module);
-   PrintInteger(theEnv,WERROR,errorID);
-   PrintString(theEnv,WERROR,"\n");
+   WriteString(theEnv,STDERR,"ID = ");
+   WriteString(theEnv,STDERR,module);
+   WriteInteger(theEnv,STDERR,errorID);
+   WriteString(theEnv,STDERR,"\n");
 
-   PrintString(theEnv,WERROR,APPLICATION_NAME);
-   PrintString(theEnv,WERROR," data structures are in an inconsistent or corrupted state.\n");
-   PrintString(theEnv,WERROR,"This error may have occurred from errors in user defined code.\n");
-   PrintString(theEnv,WERROR,"**************************\n");
+   WriteString(theEnv,STDERR,APPLICATION_NAME);
+   WriteString(theEnv,STDERR," data structures are in an inconsistent or corrupted state.\n");
+   WriteString(theEnv,STDERR,"This error may have occurred from errors in user defined code.\n");
+   WriteString(theEnv,STDERR,"**************************\n");
   }
 
 /*******************************************************/
@@ -473,9 +473,9 @@ void DivideByZeroErrorMessage(
   const char *functionName)
   {
    PrintErrorID(theEnv,"PRNTUTIL",7,false);
-   PrintString(theEnv,WERROR,"Attempt to divide by zero in ");
-   PrintString(theEnv,WERROR,functionName);
-   PrintString(theEnv,WERROR," function.\n");
+   WriteString(theEnv,STDERR,"Attempt to divide by zero in ");
+   WriteString(theEnv,STDERR,functionName);
+   WriteString(theEnv,STDERR," function.\n");
   }
 
 /*******************************************************/
@@ -633,15 +633,15 @@ void SalienceInformationError(
   const char *constructName)
   {
    PrintErrorID(theEnv,"PRNTUTIL",8,true);
-   PrintString(theEnv,WERROR,"This error occurred while evaluating the salience");
+   WriteString(theEnv,STDERR,"This error occurred while evaluating the salience");
    if (constructName != NULL)
      {
-      PrintString(theEnv,WERROR," for ");
-      PrintString(theEnv,WERROR,constructType);
-      PrintString(theEnv,WERROR," ");
-      PrintString(theEnv,WERROR,constructName);
+      WriteString(theEnv,STDERR," for ");
+      WriteString(theEnv,STDERR,constructType);
+      WriteString(theEnv,STDERR," ");
+      WriteString(theEnv,STDERR,constructName);
      }
-   PrintString(theEnv,WERROR,".\n");
+   WriteString(theEnv,STDERR,".\n");
   }
 
 /**********************************************************/
@@ -655,11 +655,11 @@ void SalienceRangeError(
   int max)
   {
    PrintErrorID(theEnv,"PRNTUTIL",9,true);
-   PrintString(theEnv,WERROR,"Salience value out of range ");
-   PrintInteger(theEnv,WERROR,min);
-   PrintString(theEnv,WERROR," to ");
-   PrintInteger(theEnv,WERROR,max);
-   PrintString(theEnv,WERROR,".\n");
+   WriteString(theEnv,STDERR,"Salience value out of range ");
+   WriteInteger(theEnv,STDERR,min);
+   WriteString(theEnv,STDERR," to ");
+   WriteInteger(theEnv,STDERR,max);
+   WriteString(theEnv,STDERR,".\n");
   }
 
 /***************************************************************/
@@ -670,7 +670,7 @@ void SalienceNonIntegerError(
   Environment *theEnv)
   {
    PrintErrorID(theEnv,"PRNTUTIL",10,true);
-   PrintString(theEnv,WERROR,"Salience value must be an integer value.\n");
+   WriteString(theEnv,STDERR,"Salience value must be an integer value.\n");
   }
 
 /***************************************************/
@@ -685,10 +685,10 @@ void SlotExistError(
   const char *func)
   {
    PrintErrorID(theEnv,"INSFUN",3,false);
-   PrintString(theEnv,WERROR,"No such slot ");
-   PrintString(theEnv,WERROR,sname);
-   PrintString(theEnv,WERROR," in function ");
-   PrintString(theEnv,WERROR,func);
-   PrintString(theEnv,WERROR,".\n");
+   WriteString(theEnv,STDERR,"No such slot ");
+   WriteString(theEnv,STDERR,sname);
+   WriteString(theEnv,STDERR," in function ");
+   WriteString(theEnv,STDERR,func);
+   WriteString(theEnv,STDERR,".\n");
    SetEvaluationError(theEnv,true);
   }

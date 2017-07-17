@@ -63,32 +63,32 @@ void PrintFactJNCompVars1(
    struct factCompVarsJN1Call *hack;
 
    hack = (struct factCompVarsJN1Call *) ((CLIPSBitMap *) theValue)->contents;
-   PrintString(theEnv,logicalName,"(fact-jn-cmp-vars1 ");
-   if (hack->pass) PrintString(theEnv,logicalName,"= ");
-   else PrintString(theEnv,logicalName,"<> ");
+   WriteString(theEnv,logicalName,"(fact-jn-cmp-vars1 ");
+   if (hack->pass) WriteString(theEnv,logicalName,"= ");
+   else WriteString(theEnv,logicalName,"<> ");
 
-   PrintString(theEnv,logicalName,"p");
+   WriteString(theEnv,logicalName,"p");
    PrintUnsignedInteger(theEnv,logicalName,hack->pattern1 + 1);
 
    if (hack->p1lhs)
-     { PrintString(theEnv,logicalName," L"); }
+     { WriteString(theEnv,logicalName," L"); }
    else if (hack->p1rhs)
-     { PrintString(theEnv,logicalName," R"); }
+     { WriteString(theEnv,logicalName," R"); }
 
-   PrintString(theEnv,logicalName," s");
+   WriteString(theEnv,logicalName," s");
    PrintUnsignedInteger(theEnv,logicalName,hack->slot1);
 
-   PrintString(theEnv,logicalName," p");
+   WriteString(theEnv,logicalName," p");
    PrintUnsignedInteger(theEnv,logicalName,hack->pattern2 + 1);
 
    if (hack->p2lhs)
-     { PrintString(theEnv,logicalName," L"); }
+     { WriteString(theEnv,logicalName," L"); }
    else if (hack->p2rhs)
-     { PrintString(theEnv,logicalName," R"); }
+     { WriteString(theEnv,logicalName," R"); }
 
-   PrintString(theEnv,logicalName," s");
+   WriteString(theEnv,logicalName," s");
    PrintUnsignedInteger(theEnv,logicalName,hack->slot2);
-   PrintString(theEnv,logicalName,")");
+   WriteString(theEnv,logicalName,")");
 #else
 #if MAC_XCD
 #pragma unused(theEnv)
@@ -111,44 +111,44 @@ void PrintFactJNCompVars2(
    struct factCompVarsJN2Call *hack;
 
    hack = (struct factCompVarsJN2Call *) ((CLIPSBitMap *) theValue)->contents;
-   PrintString(theEnv,logicalName,"(fact-jn-cmp-vars2 ");
-   if (hack->pass) PrintString(theEnv,logicalName,"= ");
-   else PrintString(theEnv,logicalName,"<> ");
+   WriteString(theEnv,logicalName,"(fact-jn-cmp-vars2 ");
+   if (hack->pass) WriteString(theEnv,logicalName,"= ");
+   else WriteString(theEnv,logicalName,"<> ");
 
-   PrintString(theEnv,logicalName,"p");
+   WriteString(theEnv,logicalName,"p");
    PrintUnsignedInteger(theEnv,logicalName,hack->pattern1 + 1);
 
    if (hack->p1lhs)
-     { PrintString(theEnv,logicalName," L"); }
+     { WriteString(theEnv,logicalName," L"); }
    else if (hack->p1rhs)
-     { PrintString(theEnv,logicalName," R"); }
+     { WriteString(theEnv,logicalName," R"); }
 
-   PrintString(theEnv,logicalName," s");
+   WriteString(theEnv,logicalName," s");
    PrintUnsignedInteger(theEnv,logicalName,hack->slot1);
 
-   if (hack->fromBeginning1) PrintString(theEnv,logicalName, " b");
-   else PrintString(theEnv,logicalName," e");
+   if (hack->fromBeginning1) WriteString(theEnv,logicalName, " b");
+   else WriteString(theEnv,logicalName," e");
 
-   PrintString(theEnv,logicalName," f");
+   WriteString(theEnv,logicalName," f");
    PrintUnsignedInteger(theEnv,logicalName,hack->offset1);
 
-   PrintString(theEnv,logicalName," p");
+   WriteString(theEnv,logicalName," p");
    PrintUnsignedInteger(theEnv,logicalName,hack->pattern2 + 1);
 
    if (hack->p2lhs)
-     { PrintString(theEnv,logicalName," L"); }
+     { WriteString(theEnv,logicalName," L"); }
    else if (hack->p2rhs)
-     { PrintString(theEnv,logicalName," R"); }
+     { WriteString(theEnv,logicalName," R"); }
 
-   PrintString(theEnv,logicalName," s");
+   WriteString(theEnv,logicalName," s");
    PrintUnsignedInteger(theEnv,logicalName,hack->slot2);
 
-   if (hack->fromBeginning2) PrintString(theEnv,logicalName," b");
-   else PrintString(theEnv,logicalName," e");
+   if (hack->fromBeginning2) WriteString(theEnv,logicalName," b");
+   else WriteString(theEnv,logicalName," e");
 
-   PrintString(theEnv,logicalName," f");
+   WriteString(theEnv,logicalName," f");
    PrintUnsignedInteger(theEnv,logicalName,hack->offset2);
-   PrintString(theEnv,logicalName,")");
+   WriteString(theEnv,logicalName,")");
 #else
 #if MAC_XCD
 #pragma unused(theEnv)
@@ -171,13 +171,13 @@ void PrintFactPNCompVars1(
    struct factCompVarsPN1Call *hack;
 
    hack = (struct factCompVarsPN1Call *) ((CLIPSBitMap *) theValue)->contents;
-   PrintString(theEnv,logicalName,"(fact-pn-cmp-vars ");
-   if (hack->pass) PrintString(theEnv,logicalName,"p ");
-   else PrintString(theEnv,logicalName,"n ");
+   WriteString(theEnv,logicalName,"(fact-pn-cmp-vars ");
+   if (hack->pass) WriteString(theEnv,logicalName,"p ");
+   else WriteString(theEnv,logicalName,"n ");
    PrintUnsignedInteger(theEnv,logicalName,hack->field1);
-   PrintString(theEnv,logicalName," ");
+   WriteString(theEnv,logicalName," ");
    PrintUnsignedInteger(theEnv,logicalName,hack->field2);
-   PrintString(theEnv,logicalName,")");
+   WriteString(theEnv,logicalName,")");
 #else
 #if MAC_XCD
 #pragma unused(theEnv)
@@ -201,13 +201,13 @@ void PrintFactSlotLength(
 
    hack = (struct factCheckLengthPNCall *) ((CLIPSBitMap *) theValue)->contents;
 
-   PrintString(theEnv,logicalName,"(slot-length ");
+   WriteString(theEnv,logicalName,"(slot-length ");
    PrintUnsignedInteger(theEnv,logicalName,hack->whichSlot);
-   PrintString(theEnv,logicalName," ");
-   if (hack->exactly) PrintString(theEnv,logicalName,"= ");
-   else PrintString(theEnv,logicalName,">= ");
+   WriteString(theEnv,logicalName," ");
+   if (hack->exactly) WriteString(theEnv,logicalName,"= ");
+   else WriteString(theEnv,logicalName,">= ");
    PrintUnsignedInteger(theEnv,logicalName,hack->minLength);
-   PrintString(theEnv,logicalName,")");
+   WriteString(theEnv,logicalName,")");
 #else
 #if MAC_XCD
 #pragma unused(theEnv)
@@ -230,24 +230,24 @@ void PrintFactJNGetVar1(
    struct factGetVarJN1Call *hack;
 
    hack = (struct factGetVarJN1Call *) ((CLIPSBitMap *) theValue)->contents;
-   PrintString(theEnv,logicalName,"(fact-jn-getvar-1 ");
-   if (hack->factAddress) PrintString(theEnv,logicalName,"t ");
-   else PrintString(theEnv,logicalName,"f ");
-   if (hack->allFields) PrintString(theEnv,logicalName,"t ");
-   else PrintString(theEnv,logicalName,"f ");
+   WriteString(theEnv,logicalName,"(fact-jn-getvar-1 ");
+   if (hack->factAddress) WriteString(theEnv,logicalName,"t ");
+   else WriteString(theEnv,logicalName,"f ");
+   if (hack->allFields) WriteString(theEnv,logicalName,"t ");
+   else WriteString(theEnv,logicalName,"f ");
 
-   PrintString(theEnv,logicalName,"p");
+   WriteString(theEnv,logicalName,"p");
    PrintUnsignedInteger(theEnv,logicalName,hack->whichPattern + 1);
-   PrintString(theEnv,logicalName," ");
+   WriteString(theEnv,logicalName," ");
    PrintUnsignedInteger(theEnv,logicalName,hack->whichField);
-   PrintString(theEnv,logicalName," s");
+   WriteString(theEnv,logicalName," s");
    PrintUnsignedInteger(theEnv,logicalName,hack->whichSlot);
 
    if (hack->lhs)
-     { PrintString(theEnv,logicalName," L"); }
+     { WriteString(theEnv,logicalName," L"); }
    else if (hack->rhs)
-     { PrintString(theEnv,logicalName," R"); }
-   PrintString(theEnv,logicalName,")");
+     { WriteString(theEnv,logicalName," R"); }
+   WriteString(theEnv,logicalName,")");
 #else
 #if MAC_XCD
 #pragma unused(theEnv)
@@ -270,17 +270,17 @@ void PrintFactJNGetVar2(
    struct factGetVarJN2Call *hack;
 
    hack = (struct factGetVarJN2Call *) ((CLIPSBitMap *) theValue)->contents;
-   PrintString(theEnv,logicalName,"(fact-jn-getvar-2");
+   WriteString(theEnv,logicalName,"(fact-jn-getvar-2");
 
-   PrintString(theEnv,logicalName," p");
+   WriteString(theEnv,logicalName," p");
    PrintUnsignedInteger(theEnv,logicalName,hack->whichPattern + 1);
-   PrintString(theEnv,logicalName," s");
+   WriteString(theEnv,logicalName," s");
    PrintUnsignedInteger(theEnv,logicalName,hack->whichSlot);
    if (hack->lhs)
-     { PrintString(theEnv,logicalName," L"); }
+     { WriteString(theEnv,logicalName," L"); }
    else if (hack->rhs)
-     { PrintString(theEnv,logicalName," R"); }
-   PrintString(theEnv,logicalName,")");
+     { WriteString(theEnv,logicalName," R"); }
+   WriteString(theEnv,logicalName,")");
 #else
 #if MAC_XCD
 #pragma unused(theEnv)
@@ -303,27 +303,27 @@ void PrintFactJNGetVar3(
    struct factGetVarJN3Call *hack;
 
    hack = (struct factGetVarJN3Call *) ((CLIPSBitMap *) theValue)->contents;
-   PrintString(theEnv,logicalName,"(fact-jn-getvar-3 ");
-   if (hack->fromBeginning) PrintString(theEnv,logicalName,"t ");
-   else PrintString(theEnv,logicalName,"f ");
-   if (hack->fromEnd) PrintString(theEnv,logicalName,"t ");
-   else PrintString(theEnv,logicalName,"f ");
+   WriteString(theEnv,logicalName,"(fact-jn-getvar-3 ");
+   if (hack->fromBeginning) WriteString(theEnv,logicalName,"t ");
+   else WriteString(theEnv,logicalName,"f ");
+   if (hack->fromEnd) WriteString(theEnv,logicalName,"t ");
+   else WriteString(theEnv,logicalName,"f ");
 
    PrintUnsignedInteger(theEnv,logicalName,hack->beginOffset);
-   PrintString(theEnv,logicalName," ");
+   WriteString(theEnv,logicalName," ");
    PrintUnsignedInteger(theEnv,logicalName,hack->endOffset);
-   PrintString(theEnv,logicalName," ");
+   WriteString(theEnv,logicalName," ");
    PrintUnsignedInteger(theEnv,logicalName,hack->whichSlot);
 
-   PrintString(theEnv,logicalName," p");
+   WriteString(theEnv,logicalName," p");
    PrintUnsignedInteger(theEnv,logicalName,hack->whichPattern + 1);
 
    if (hack->lhs)
-     { PrintString(theEnv,logicalName," L"); }
+     { WriteString(theEnv,logicalName," L"); }
    else if (hack->rhs)
-     { PrintString(theEnv,logicalName," R"); }
+     { WriteString(theEnv,logicalName," R"); }
 
-   PrintString(theEnv,logicalName,")");
+   WriteString(theEnv,logicalName,")");
 #else
 #if MAC_XCD
 #pragma unused(theEnv)
@@ -346,16 +346,16 @@ void PrintFactPNGetVar1(
    struct factGetVarPN1Call *hack;
 
    hack = (struct factGetVarPN1Call *) ((CLIPSBitMap *) theValue)->contents;
-   PrintString(theEnv,logicalName,"(fact-pn-getvar-1 ");
-   if (hack->factAddress) PrintString(theEnv,logicalName,"t ");
-   else PrintString(theEnv,logicalName,"f ");
-   if (hack->allFields) PrintString(theEnv,logicalName,"t F");
-   else PrintString(theEnv,logicalName,"f F");
+   WriteString(theEnv,logicalName,"(fact-pn-getvar-1 ");
+   if (hack->factAddress) WriteString(theEnv,logicalName,"t ");
+   else WriteString(theEnv,logicalName,"f ");
+   if (hack->allFields) WriteString(theEnv,logicalName,"t F");
+   else WriteString(theEnv,logicalName,"f F");
 
    PrintUnsignedInteger(theEnv,logicalName,hack->whichField);
-   PrintString(theEnv,logicalName," S");
+   WriteString(theEnv,logicalName," S");
    PrintUnsignedInteger(theEnv,logicalName,hack->whichSlot);
-   PrintString(theEnv,logicalName,")");
+   WriteString(theEnv,logicalName,")");
 #else
 #if MAC_XCD
 #pragma unused(theEnv)
@@ -378,9 +378,9 @@ void PrintFactPNGetVar2(
    struct factGetVarPN2Call *hack;
 
    hack = (struct factGetVarPN2Call *) ((CLIPSBitMap *) theValue)->contents;
-   PrintString(theEnv,logicalName,"(fact-pn-getvar-2 S");
+   WriteString(theEnv,logicalName,"(fact-pn-getvar-2 S");
    PrintUnsignedInteger(theEnv,logicalName,hack->whichSlot);
-   PrintString(theEnv,logicalName,")");
+   WriteString(theEnv,logicalName,")");
 #else
 #if MAC_XCD
 #pragma unused(theEnv)
@@ -403,19 +403,19 @@ void PrintFactPNGetVar3(
    struct factGetVarPN3Call *hack;
 
    hack = (struct factGetVarPN3Call *) ((CLIPSBitMap *) theValue)->contents;
-   PrintString(theEnv,logicalName,"(fact-pn-getvar-3 ");
+   WriteString(theEnv,logicalName,"(fact-pn-getvar-3 ");
 
-   if (hack->fromBeginning) PrintString(theEnv,logicalName,"t ");
-   else PrintString(theEnv,logicalName,"f ");
-   if (hack->fromEnd) PrintString(theEnv,logicalName,"t B");
-   else PrintString(theEnv,logicalName,"f B");
+   if (hack->fromBeginning) WriteString(theEnv,logicalName,"t ");
+   else WriteString(theEnv,logicalName,"f ");
+   if (hack->fromEnd) WriteString(theEnv,logicalName,"t B");
+   else WriteString(theEnv,logicalName,"f B");
 
    PrintUnsignedInteger(theEnv,logicalName,hack->beginOffset);
-   PrintString(theEnv,logicalName," E");
+   WriteString(theEnv,logicalName," E");
    PrintUnsignedInteger(theEnv,logicalName,hack->endOffset);
-   PrintString(theEnv,logicalName," S");
+   WriteString(theEnv,logicalName," S");
    PrintUnsignedInteger(theEnv,logicalName,hack->whichSlot);
-   PrintString(theEnv,logicalName,")");
+   WriteString(theEnv,logicalName,")");
 #else
 #if MAC_XCD
 #pragma unused(theEnv)
@@ -439,15 +439,15 @@ void PrintFactPNConstant1(
 
    hack = (struct factConstantPN1Call *) ((CLIPSBitMap *) theValue)->contents;
 
-   PrintString(theEnv,logicalName,"(fact-pn-constant1 ");
+   WriteString(theEnv,logicalName,"(fact-pn-constant1 ");
 
    PrintUnsignedInteger(theEnv,logicalName,hack->whichSlot);
 
-   if (hack->testForEquality) PrintString(theEnv,logicalName," = ");
-   else PrintString(theEnv,logicalName," != ");
+   if (hack->testForEquality) WriteString(theEnv,logicalName," = ");
+   else WriteString(theEnv,logicalName," != ");
 
    PrintAtom(theEnv,logicalName,GetFirstArgument()->type,GetFirstArgument()->value);
-   PrintString(theEnv,logicalName,")");
+   WriteString(theEnv,logicalName,")");
 #else
 #if MAC_XCD
 #pragma unused(theEnv)
@@ -471,19 +471,19 @@ void PrintFactPNConstant2(
 
    hack = (struct factConstantPN2Call *) ((CLIPSBitMap *) theValue)->contents;
 
-   PrintString(theEnv,logicalName,"(fact-pn-constant2 ");
+   WriteString(theEnv,logicalName,"(fact-pn-constant2 ");
 
    PrintUnsignedInteger(theEnv,logicalName,hack->whichSlot);
 
-   PrintString(theEnv,logicalName," ");
+   WriteString(theEnv,logicalName," ");
 
    PrintUnsignedInteger(theEnv,logicalName,hack->offset);
 
-   if (hack->testForEquality) PrintString(theEnv,logicalName," = ");
-   else PrintString(theEnv,logicalName," != ");
+   if (hack->testForEquality) WriteString(theEnv,logicalName," = ");
+   else WriteString(theEnv,logicalName," != ");
 
    PrintAtom(theEnv,logicalName,GetFirstArgument()->type,GetFirstArgument()->value);
-   PrintString(theEnv,logicalName,")");
+   WriteString(theEnv,logicalName,")");
 #else
 #if MAC_XCD
 #pragma unused(theEnv)

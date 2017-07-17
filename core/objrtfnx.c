@@ -391,26 +391,26 @@ static void PrintObjectGetVarJN1(
 
    if (hack->objectAddress)
      {
-      PrintString(theEnv,logicalName,"(obj-ptr ");
+      WriteString(theEnv,logicalName,"(obj-ptr ");
       PrintUnsignedInteger(theEnv,logicalName,hack->whichPattern);
      }
    else if (hack->allFields)
      {
-      PrintString(theEnv,logicalName,"(obj-slot-contents ");
+      WriteString(theEnv,logicalName,"(obj-slot-contents ");
       PrintUnsignedInteger(theEnv,logicalName,hack->whichPattern);
-      PrintString(theEnv,logicalName," ");
-      PrintString(theEnv,logicalName,FindIDSlotName(theEnv,hack->whichSlot)->contents);
+      WriteString(theEnv,logicalName," ");
+      WriteString(theEnv,logicalName,FindIDSlotName(theEnv,hack->whichSlot)->contents);
      }
    else
      {
-      PrintString(theEnv,logicalName,"(obj-slot-var ");
+      WriteString(theEnv,logicalName,"(obj-slot-var ");
       PrintUnsignedInteger(theEnv,logicalName,hack->whichPattern);
-      PrintString(theEnv,logicalName," ");
-      PrintString(theEnv,logicalName,FindIDSlotName(theEnv,hack->whichSlot)->contents);
-      PrintString(theEnv,logicalName," ");
+      WriteString(theEnv,logicalName," ");
+      WriteString(theEnv,logicalName,FindIDSlotName(theEnv,hack->whichSlot)->contents);
+      WriteString(theEnv,logicalName," ");
       PrintUnsignedInteger(theEnv,logicalName,hack->whichField);
      }
-   PrintString(theEnv,logicalName,")");
+   WriteString(theEnv,logicalName,")");
 #else
 #if MAC_XCD
 #pragma unused(theEnv)
@@ -444,21 +444,21 @@ static void PrintObjectGetVarJN2(
    struct ObjectMatchVar2 *hack;
 
    hack = (struct ObjectMatchVar2 *) ((CLIPSBitMap *) theValue)->contents;
-   PrintString(theEnv,logicalName,"(obj-slot-quick-var ");
+   WriteString(theEnv,logicalName,"(obj-slot-quick-var ");
    PrintUnsignedInteger(theEnv,logicalName,hack->whichPattern);
-   PrintString(theEnv,logicalName," ");
-   PrintString(theEnv,logicalName,FindIDSlotName(theEnv,hack->whichSlot)->contents);
+   WriteString(theEnv,logicalName," ");
+   WriteString(theEnv,logicalName,FindIDSlotName(theEnv,hack->whichSlot)->contents);
    if (hack->fromBeginning)
      {
-      PrintString(theEnv,logicalName," B");
+      WriteString(theEnv,logicalName," B");
       PrintUnsignedInteger(theEnv,logicalName,hack->beginningOffset + 1);
      }
    if (hack->fromEnd)
      {
-      PrintString(theEnv,logicalName," E");
+      WriteString(theEnv,logicalName," E");
       PrintUnsignedInteger(theEnv,logicalName,hack->endOffset + 1);
      }
-   PrintString(theEnv,logicalName,")");
+   WriteString(theEnv,logicalName,")");
 #else
 #if MAC_XCD
 #pragma unused(theEnv)
@@ -494,20 +494,20 @@ static void PrintObjectGetVarPN1(
    hack = (struct ObjectMatchVar1 *) ((CLIPSBitMap *) theValue)->contents;
 
    if (hack->objectAddress)
-     PrintString(theEnv,logicalName,"(ptn-obj-ptr ");
+     WriteString(theEnv,logicalName,"(ptn-obj-ptr ");
    else if (hack->allFields)
      {
-      PrintString(theEnv,logicalName,"(ptn-obj-slot-contents ");
-      PrintString(theEnv,logicalName,FindIDSlotName(theEnv,hack->whichSlot)->contents);
+      WriteString(theEnv,logicalName,"(ptn-obj-slot-contents ");
+      WriteString(theEnv,logicalName,FindIDSlotName(theEnv,hack->whichSlot)->contents);
      }
    else
      {
-      PrintString(theEnv,logicalName,"(ptn-obj-slot-var ");
-      PrintString(theEnv,logicalName,FindIDSlotName(theEnv,hack->whichSlot)->contents);
-      PrintString(theEnv,logicalName," ");
+      WriteString(theEnv,logicalName,"(ptn-obj-slot-var ");
+      WriteString(theEnv,logicalName,FindIDSlotName(theEnv,hack->whichSlot)->contents);
+      WriteString(theEnv,logicalName," ");
       PrintUnsignedInteger(theEnv,logicalName,hack->whichField);
      }
-   PrintString(theEnv,logicalName,")");
+   WriteString(theEnv,logicalName,")");
 #else
 #if MAC_XCD
 #pragma unused(theEnv)
@@ -538,19 +538,19 @@ static void PrintObjectGetVarPN2(
    struct ObjectMatchVar2 *hack;
 
    hack = (struct ObjectMatchVar2 *) ((CLIPSBitMap *) theValue)->contents;
-   PrintString(theEnv,logicalName,"(ptn-obj-slot-quick-var ");
-   PrintString(theEnv,logicalName,FindIDSlotName(theEnv,hack->whichSlot)->contents);
+   WriteString(theEnv,logicalName,"(ptn-obj-slot-quick-var ");
+   WriteString(theEnv,logicalName,FindIDSlotName(theEnv,hack->whichSlot)->contents);
    if (hack->fromBeginning)
      {
-      PrintString(theEnv,logicalName," B");
+      WriteString(theEnv,logicalName," B");
       PrintUnsignedInteger(theEnv,logicalName,(hack->beginningOffset + 1));
      }
    if (hack->fromEnd)
      {
-      PrintString(theEnv,logicalName," E");
+      WriteString(theEnv,logicalName," E");
       PrintUnsignedInteger(theEnv,logicalName,(hack->endOffset + 1));
      }
-   PrintString(theEnv,logicalName,")");
+   WriteString(theEnv,logicalName,")");
 #else
 #if MAC_XCD
 #pragma unused(theEnv)
@@ -582,18 +582,18 @@ static void PrintObjectCmpConstant(
 
    hack = (struct ObjectCmpPNConstant *) ((CLIPSBitMap *) theValue)->contents;
 
-   PrintString(theEnv,logicalName,"(obj-const ");
-   PrintString(theEnv,logicalName,hack->pass ? "p " : "n ");
+   WriteString(theEnv,logicalName,"(obj-const ");
+   WriteString(theEnv,logicalName,hack->pass ? "p " : "n ");
    if (hack->general)
      PrintExpression(theEnv,logicalName,GetFirstArgument());
    else
      {
-      PrintString(theEnv,logicalName,hack->fromBeginning ? "B" : "E");
+      WriteString(theEnv,logicalName,hack->fromBeginning ? "B" : "E");
       PrintUnsignedInteger(theEnv,logicalName,hack->offset);
-      PrintString(theEnv,logicalName," ");
+      WriteString(theEnv,logicalName," ");
       PrintExpression(theEnv,logicalName,GetFirstArgument());
      }
-   PrintString(theEnv,logicalName,")");
+   WriteString(theEnv,logicalName,")");
 #else
 #if MAC_XCD
 #pragma unused(theEnv)
@@ -613,13 +613,13 @@ static void PrintSlotLengthTest(
 
    hack = (struct ObjectMatchLength *) ((CLIPSBitMap *) theValue)->contents;
 
-   PrintString(theEnv,logicalName,"(obj-slot-len ");
+   WriteString(theEnv,logicalName,"(obj-slot-len ");
    if (hack->exactly)
-     PrintString(theEnv,logicalName,"= ");
+     WriteString(theEnv,logicalName,"= ");
    else
-     PrintString(theEnv,logicalName,">= ");
+     WriteString(theEnv,logicalName,">= ");
    PrintUnsignedInteger(theEnv,logicalName,hack->minLength);
-   PrintString(theEnv,logicalName,")");
+   WriteString(theEnv,logicalName,")");
 #else
 #if MAC_XCD
 #pragma unused(theEnv)
@@ -656,12 +656,12 @@ static void PrintPNSimpleCompareFunction1(
 
    hack = (struct ObjectCmpPNSingleSlotVars1 *) ((CLIPSBitMap *) theValue)->contents;
 
-   PrintString(theEnv,logicalName,"(pslot-cmp1 ");
-   PrintString(theEnv,logicalName,hack->pass ? "p " : "n ");
-   PrintString(theEnv,logicalName,FindIDSlotName(theEnv,hack->firstSlot)->contents);
-   PrintString(theEnv,logicalName," ");
-   PrintString(theEnv,logicalName,FindIDSlotName(theEnv,hack->secondSlot)->contents);
-   PrintString(theEnv,logicalName,")");
+   WriteString(theEnv,logicalName,"(pslot-cmp1 ");
+   WriteString(theEnv,logicalName,hack->pass ? "p " : "n ");
+   WriteString(theEnv,logicalName,FindIDSlotName(theEnv,hack->firstSlot)->contents);
+   WriteString(theEnv,logicalName," ");
+   WriteString(theEnv,logicalName,FindIDSlotName(theEnv,hack->secondSlot)->contents);
+   WriteString(theEnv,logicalName,")");
 #else
 #if MAC_XCD
 #pragma unused(theEnv)
@@ -703,14 +703,14 @@ static void PrintPNSimpleCompareFunction2(
 
    hack = (struct ObjectCmpPNSingleSlotVars2 *) ((CLIPSBitMap *) theValue)->contents;
 
-   PrintString(theEnv,logicalName,"(pslot-cmp2 ");
-   PrintString(theEnv,logicalName,hack->pass ? "p " : "n ");
-   PrintString(theEnv,logicalName,FindIDSlotName(theEnv,hack->firstSlot)->contents);
-   PrintString(theEnv,logicalName,hack->fromBeginning ? " B" : " E");
+   WriteString(theEnv,logicalName,"(pslot-cmp2 ");
+   WriteString(theEnv,logicalName,hack->pass ? "p " : "n ");
+   WriteString(theEnv,logicalName,FindIDSlotName(theEnv,hack->firstSlot)->contents);
+   WriteString(theEnv,logicalName,hack->fromBeginning ? " B" : " E");
    PrintUnsignedInteger(theEnv,logicalName,hack->offset);
-   PrintString(theEnv,logicalName," ");
-   PrintString(theEnv,logicalName,FindIDSlotName(theEnv,hack->secondSlot)->contents);
-   PrintString(theEnv,logicalName,")");
+   WriteString(theEnv,logicalName," ");
+   WriteString(theEnv,logicalName,FindIDSlotName(theEnv,hack->secondSlot)->contents);
+   WriteString(theEnv,logicalName,")");
 #else
 #if MAC_XCD
 #pragma unused(theEnv)
@@ -752,16 +752,16 @@ static void PrintPNSimpleCompareFunction3(
 
    hack = (struct ObjectCmpPNSingleSlotVars3 *) ((CLIPSBitMap *) theValue)->contents;
 
-   PrintString(theEnv,logicalName,"(pslot-cmp3 ");
-   PrintString(theEnv,logicalName,hack->pass ? "p " : "n ");
-   PrintString(theEnv,logicalName,FindIDSlotName(theEnv,hack->firstSlot)->contents);
-   PrintString(theEnv,logicalName,hack->firstFromBeginning ? " B" : " E");
+   WriteString(theEnv,logicalName,"(pslot-cmp3 ");
+   WriteString(theEnv,logicalName,hack->pass ? "p " : "n ");
+   WriteString(theEnv,logicalName,FindIDSlotName(theEnv,hack->firstSlot)->contents);
+   WriteString(theEnv,logicalName,hack->firstFromBeginning ? " B" : " E");
    PrintUnsignedInteger(theEnv,logicalName,hack->firstOffset);
-   PrintString(theEnv,logicalName," ");
-   PrintString(theEnv,logicalName,FindIDSlotName(theEnv,hack->secondSlot)->contents);
-   PrintString(theEnv,logicalName,hack->secondFromBeginning ? " B" : " E");
+   WriteString(theEnv,logicalName," ");
+   WriteString(theEnv,logicalName,FindIDSlotName(theEnv,hack->secondSlot)->contents);
+   WriteString(theEnv,logicalName,hack->secondFromBeginning ? " B" : " E");
    PrintUnsignedInteger(theEnv,logicalName,hack->secondOffset);
-   PrintString(theEnv,logicalName,")");
+   WriteString(theEnv,logicalName,")");
 #else
 #if MAC_XCD
 #pragma unused(theEnv)
@@ -803,16 +803,16 @@ static void PrintJNSimpleCompareFunction1(
 
    hack = (struct ObjectCmpJoinSingleSlotVars1 *) ((CLIPSBitMap *) theValue)->contents;
 
-   PrintString(theEnv,logicalName,"(jslot-cmp1 ");
-   PrintString(theEnv,logicalName,hack->pass ? "p " : "n ");
+   WriteString(theEnv,logicalName,"(jslot-cmp1 ");
+   WriteString(theEnv,logicalName,hack->pass ? "p " : "n ");
    PrintUnsignedInteger(theEnv,logicalName,hack->firstPattern);
-   PrintString(theEnv,logicalName," ");
-   PrintString(theEnv,logicalName,FindIDSlotName(theEnv,hack->firstSlot)->contents);
-   PrintString(theEnv,logicalName," ");
+   WriteString(theEnv,logicalName," ");
+   WriteString(theEnv,logicalName,FindIDSlotName(theEnv,hack->firstSlot)->contents);
+   WriteString(theEnv,logicalName," ");
    PrintUnsignedInteger(theEnv,logicalName,hack->secondPattern);
-   PrintString(theEnv,logicalName," ");
-   PrintString(theEnv,logicalName,FindIDSlotName(theEnv,hack->secondSlot)->contents);
-   PrintString(theEnv,logicalName,")");
+   WriteString(theEnv,logicalName," ");
+   WriteString(theEnv,logicalName,FindIDSlotName(theEnv,hack->secondSlot)->contents);
+   WriteString(theEnv,logicalName,")");
 #else
 #if MAC_XCD
 #pragma unused(theEnv)
@@ -858,18 +858,18 @@ static void PrintJNSimpleCompareFunction2(
 
    hack = (struct ObjectCmpJoinSingleSlotVars2 *) ((CLIPSBitMap *) theValue)->contents;
 
-   PrintString(theEnv,logicalName,"(jslot-cmp2 ");
-   PrintString(theEnv,logicalName,hack->pass ? "p " : "n ");
+   WriteString(theEnv,logicalName,"(jslot-cmp2 ");
+   WriteString(theEnv,logicalName,hack->pass ? "p " : "n ");
    PrintUnsignedInteger(theEnv,logicalName,hack->firstPattern);
-   PrintString(theEnv,logicalName," ");
-   PrintString(theEnv,logicalName,FindIDSlotName(theEnv,hack->firstSlot)->contents);
-   PrintString(theEnv,logicalName,hack->fromBeginning ? " B" : " E");
+   WriteString(theEnv,logicalName," ");
+   WriteString(theEnv,logicalName,FindIDSlotName(theEnv,hack->firstSlot)->contents);
+   WriteString(theEnv,logicalName,hack->fromBeginning ? " B" : " E");
    PrintUnsignedInteger(theEnv,logicalName,hack->offset);
-   PrintString(theEnv,logicalName," ");
+   WriteString(theEnv,logicalName," ");
    PrintUnsignedInteger(theEnv,logicalName,hack->secondPattern);
-   PrintString(theEnv,logicalName," ");
-   PrintString(theEnv,logicalName,FindIDSlotName(theEnv,hack->secondSlot)->contents);
-   PrintString(theEnv,logicalName,")");
+   WriteString(theEnv,logicalName," ");
+   WriteString(theEnv,logicalName,FindIDSlotName(theEnv,hack->secondSlot)->contents);
+   WriteString(theEnv,logicalName,")");
 #else
 #if MAC_XCD
 #pragma unused(theEnv)
@@ -915,20 +915,20 @@ static void PrintJNSimpleCompareFunction3(
 
    hack = (struct ObjectCmpJoinSingleSlotVars3 *) ((CLIPSBitMap *) theValue)->contents;
 
-   PrintString(theEnv,logicalName,"(jslot-cmp3 ");
-   PrintString(theEnv,logicalName,hack->pass ? "p " : "n ");
+   WriteString(theEnv,logicalName,"(jslot-cmp3 ");
+   WriteString(theEnv,logicalName,hack->pass ? "p " : "n ");
    PrintUnsignedInteger(theEnv,logicalName,hack->firstPattern);
-   PrintString(theEnv,logicalName," ");
-   PrintString(theEnv,logicalName,FindIDSlotName(theEnv,hack->firstSlot)->contents);
-   PrintString(theEnv,logicalName,hack->firstFromBeginning ? " B" : " E");
+   WriteString(theEnv,logicalName," ");
+   WriteString(theEnv,logicalName,FindIDSlotName(theEnv,hack->firstSlot)->contents);
+   WriteString(theEnv,logicalName,hack->firstFromBeginning ? " B" : " E");
    PrintUnsignedInteger(theEnv,logicalName,hack->firstOffset);
-   PrintString(theEnv,logicalName," ");
+   WriteString(theEnv,logicalName," ");
    PrintUnsignedInteger(theEnv,logicalName,hack->secondPattern);
-   PrintString(theEnv,logicalName," ");
-   PrintString(theEnv,logicalName,FindIDSlotName(theEnv,hack->secondSlot)->contents);
-   PrintString(theEnv,logicalName,hack->secondFromBeginning ? " B" : " E");
+   WriteString(theEnv,logicalName," ");
+   WriteString(theEnv,logicalName,FindIDSlotName(theEnv,hack->secondSlot)->contents);
+   WriteString(theEnv,logicalName,hack->secondFromBeginning ? " B" : " E");
    PrintUnsignedInteger(theEnv,logicalName,hack->secondOffset);
-   PrintString(theEnv,logicalName,")");
+   WriteString(theEnv,logicalName,")");
 #else
 #if MAC_XCD
 #pragma unused(theEnv)

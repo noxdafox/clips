@@ -79,30 +79,30 @@ public class BaseRouter implements Router
      }
 
    /**********/
-   /* print: */
+   /* write: */
    /**********/
    @Override
-   public void print(
+   public void write(
      String logName,
      String printString)
      {
      }
      
-   /************/
-   /* getchar: */
-   /************/
+   /*********/
+   /* read: */
+   /*********/
    @Override
-   public int getchar(
+   public int read(
      String routerName)
      {
       return -1;
      }
 
-   /**************/
-   /* ungetchar: */
-   /**************/
+   /***********/
+   /* unread: */
+   /***********/
    @Override
-   public int ungetchar(
+   public int unread(
      String routerName,
      int theChar)
      {

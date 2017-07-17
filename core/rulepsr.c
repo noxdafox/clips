@@ -819,7 +819,7 @@ static int LogicalAnalysis(
       if (! firstLogical)
         {
          PrintErrorID(theEnv,"RULEPSR",1,true);
-         PrintString(theEnv,WERROR,"Logical CEs must be placed first in a rule\n");
+         WriteString(theEnv,STDERR,"Logical CEs must be placed first in a rule\n");
          return -1;
         }
 
@@ -832,7 +832,7 @@ static int LogicalAnalysis(
       if (gap)
         {
          PrintErrorID(theEnv,"RULEPSR",2,true);
-         PrintString(theEnv,WERROR,"Gaps may not exist between logical CEs\n");
+         WriteString(theEnv,STDERR,"Gaps may not exist between logical CEs\n");
          return -1;
         }
 
@@ -995,7 +995,7 @@ void DumpRuleAnalysis(
    struct lhsParseNode *traceNode;
    char buffer[20];
 
-   PrintString(theEnv,STDOUT,"\n");
+   WriteString(theEnv,STDOUT,"\n");
    for (traceNode = tempNode; traceNode != NULL; traceNode = traceNode->bottom)
      {
       if (traceNode->userCE)
@@ -1003,58 +1003,58 @@ void DumpRuleAnalysis(
       else
         { gensprintf(buffer,"SCE %2d (%2d %2d): ",traceNode->whichCE,traceNode->beginNandDepth,traceNode->endNandDepth); }
 
-      PrintString(theEnv,STDOUT,buffer);
+      WriteString(theEnv,STDOUT,buffer);
 
       PrintExpression(theEnv,STDOUT,traceNode->networkTest);
-      PrintString(theEnv,STDOUT,"\n");
+      WriteString(theEnv,STDOUT,"\n");
 
       if (traceNode->externalNetworkTest != NULL)
         {
-         PrintString(theEnv,STDOUT,"      ENT: ");
+         WriteString(theEnv,STDOUT,"      ENT: ");
          PrintExpression(theEnv,STDOUT,traceNode->externalNetworkTest);
-         PrintString(theEnv,STDOUT,"\n");
+         WriteString(theEnv,STDOUT,"\n");
         }
 
       if (traceNode->secondaryNetworkTest != NULL)
         {
-         PrintString(theEnv,STDOUT,"      SNT: ");
+         WriteString(theEnv,STDOUT,"      SNT: ");
          PrintExpression(theEnv,STDOUT,traceNode->secondaryNetworkTest);
-         PrintString(theEnv,STDOUT,"\n");
+         WriteString(theEnv,STDOUT,"\n");
         }
 
       if (traceNode->externalRightHash != NULL)
         {
-         PrintString(theEnv,STDOUT,"      ERH: ");
+         WriteString(theEnv,STDOUT,"      ERH: ");
          PrintExpression(theEnv,STDOUT,traceNode->externalRightHash);
-         PrintString(theEnv,STDOUT,"\n");
+         WriteString(theEnv,STDOUT,"\n");
         }
 
       if (traceNode->externalLeftHash != NULL)
         {
-         PrintString(theEnv,STDOUT,"      ELH: ");
+         WriteString(theEnv,STDOUT,"      ELH: ");
          PrintExpression(theEnv,STDOUT,traceNode->externalLeftHash);
-         PrintString(theEnv,STDOUT,"\n");
+         WriteString(theEnv,STDOUT,"\n");
         }
 
       if (traceNode->leftHash != NULL)
         {
-         PrintString(theEnv,STDOUT,"       LH: ");
+         WriteString(theEnv,STDOUT,"       LH: ");
          PrintExpression(theEnv,STDOUT,traceNode->leftHash);
-         PrintString(theEnv,STDOUT,"\n");
+         WriteString(theEnv,STDOUT,"\n");
         }
 
       if (traceNode->rightHash != NULL)
         {
-         PrintString(theEnv,STDOUT,"       RH: ");
+         WriteString(theEnv,STDOUT,"       RH: ");
          PrintExpression(theEnv,STDOUT,traceNode->rightHash);
-         PrintString(theEnv,STDOUT,"\n");
+         WriteString(theEnv,STDOUT,"\n");
         }
 
       if (traceNode->betaHash != NULL)
         {
-         PrintString(theEnv,STDOUT,"       BH: ");
+         WriteString(theEnv,STDOUT,"       BH: ");
          PrintExpression(theEnv,STDOUT,traceNode->betaHash);
-         PrintString(theEnv,STDOUT,"\n");
+         WriteString(theEnv,STDOUT,"\n");
         }
      }
   }

@@ -130,8 +130,8 @@ struct evaluationData
    void                           SetHaltExecution(Environment *,bool);
    bool                           GetHaltExecution(Environment *);
    void                           ReturnValues(Environment *,UDFValue *,bool);
-   void                           PrintUDFValue(Environment *,const char *,UDFValue *);
-   void                           PrintCLIPSValue(Environment *,const char *,CLIPSValue *);
+   void                           WriteUDFValue(Environment *,const char *,UDFValue *);
+   void                           WriteCLIPSValue(Environment *,const char *,CLIPSValue *);
    void                           SetMultifieldErrorValue(Environment *,UDFValue *);
    void                           IncrementUDFValueReferenceCount(Environment *,UDFValue *);
    void                           DecrementUDFValueReferenceCount(Environment *,UDFValue *);

@@ -2,16 +2,16 @@ package net.sf.clipsrules.jni;
 
 public interface Router
   {
-   public static final String STANDARD_OUTPUT = "stdout";
-   public static final String STANDARD_INPUT = "stdin";
-   public static final String WARNING = "wwarning";
-   public static final String ERROR = "werror";
+   public static final String STDOUT = "stdout";
+   public static final String STDIN = "stdin";
+   public static final String STDWRN = "stdwrn";
+   public static final String STDERR = "stderr";
 
    public int getPriority();
    public String getName();
    public boolean query(String logicalName);
-   public void print(String logicalName,String printString);
-   public int getchar(String logicalName);
-   public int ungetchar(String logicalName,int theChar);
+   public void write(String logicalName,String writeString);
+   public int read(String logicalName);
+   public int unread(String logicalName,int theChar);
    public void exit(boolean failure);
   }

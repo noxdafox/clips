@@ -30,8 +30,8 @@ JNIEXPORT jboolean JNICALL Java_net_sf_clipsrules_jni_Environment_addRouter(
    nobj = (*env)->NewGlobalRef(env,context);
    
    rv = AddRouter(JLongToPointer(clipsEnv),(char *) cRouterName,(int) priority,
-                  QueryJNIRouter,PrintJNIRouter,GetcJNIRouter,
-                  UngetcJNIRouter,ExitJNIRouter,(void *) nobj);
+                  QueryJNICallback,WriteJNICallback,ReadJNICallback,
+                  UnreadJNICallback,ExitJNICallback,(void *) nobj);
    
    (*env)->ReleaseStringUTFChars(env,routerName,cRouterName);
 
@@ -121,7 +121,7 @@ JNIEXPORT void JNICALL Java_net_sf_clipsrules_jni_Environment_printString(
    cLogName = (*env)->GetStringUTFChars(env,logName,NULL);
    cPrintString = (*env)->GetStringUTFChars(env,printString,NULL);
 
-   PrintString(theCLIPSEnv,cLogName,cPrintString);
+   WriteString(theCLIPSEnv,cLogName,cPrintString);
 
    (*env)->ReleaseStringUTFChars(env,logName,cLogName);
    (*env)->ReleaseStringUTFChars(env,printString,cPrintString);

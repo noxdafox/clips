@@ -132,7 +132,7 @@ public class TextMenu extends JMenu
       ide.selectDialogWindow();
       
       clips.flushInputBuffer();
-      clips.printout(Router.STANDARD_OUTPUT,"Loading Selection...\n");
+      clips.printout(Router.STDOUT,"Loading Selection...\n");
 
       clips.loadFromStringWithOutput(loadString);
 
@@ -183,7 +183,7 @@ public class TextMenu extends JMenu
       ide.selectDialogWindow();
 
       clips.flushInputBuffer();
-      clips.printout(Router.STANDARD_OUTPUT,"Loading Buffer...\n");
+      clips.printout(Router.STDOUT,"Loading Buffer...\n");
       clips.loadFromStringWithOutput(loadString);
       clips.printPrompt();
      }

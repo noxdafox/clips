@@ -189,9 +189,9 @@ void AddActivation(
        (! ConstructData(theEnv)->ClearReadyInProgress) &&
        (! ConstructData(theEnv)->ClearInProgress))
      {
-      PrintString(theEnv,STDOUT,"==> Activation ");
+      WriteString(theEnv,STDOUT,"==> Activation ");
       PrintActivation(theEnv,STDOUT,newActivation);
-      PrintString(theEnv,STDOUT,"\n");
+      WriteString(theEnv,STDOUT,"\n");
      }
 #endif
 
@@ -602,9 +602,9 @@ static void PrintActivation(
    char printSpace[20];
 
    gensprintf(printSpace,"%-6d ",theActivation->salience);
-   PrintString(theEnv,logicalName,printSpace);
-   PrintString(theEnv,logicalName,theActivation->theRule->header.name->contents);
-   PrintString(theEnv,logicalName,": ");
+   WriteString(theEnv,logicalName,printSpace);
+   WriteString(theEnv,logicalName,theActivation->theRule->header.name->contents);
+   WriteString(theEnv,logicalName,": ");
    PrintPartialMatch(theEnv,logicalName,theActivation->basis);
   }
 
@@ -678,9 +678,9 @@ void RemoveActivation(
           (! ConstructData(theEnv)->ClearReadyInProgress) &&
           (! ConstructData(theEnv)->ClearInProgress))
         {
-         PrintString(theEnv,STDOUT,"<== Activation ");
+         WriteString(theEnv,STDOUT,"<== Activation ");
          PrintActivation(theEnv,STDOUT,theActivation);
-         PrintString(theEnv,STDOUT,"\n");
+         WriteString(theEnv,STDOUT,"\n");
         }
 #endif
 

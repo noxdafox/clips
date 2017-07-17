@@ -279,7 +279,7 @@ struct joinNode *ConstructJoins(
         {
 #if DEBUGGING_FUNCTIONS
          if ((GetWatchItem(theEnv,"compilations") == 1) && GetPrintWhileLoading(theEnv))
-           { PrintString(theEnv,STDOUT,"=j"); }
+           { WriteString(theEnv,STDOUT,"=j"); }
 #endif
          lastJoin = oldJoin;
         }
@@ -339,7 +339,7 @@ struct joinNode *ConstructJoins(
    if ((startDepth == 1) &&
        (GetWatchItem(theEnv,"compilations") == 1) &&
        GetPrintWhileLoading(theEnv))
-     { PrintString(theEnv,STDOUT,"\n"); }
+     { WriteString(theEnv,STDOUT,"\n"); }
 #endif
 
    /*=============================*/
@@ -1086,7 +1086,7 @@ static struct joinNode *CreateNewJoin(
 
 #if DEBUGGING_FUNCTIONS
    if ((GetWatchItem(theEnv,"compilations") == 1) && GetPrintWhileLoading(theEnv))
-     { PrintString(theEnv,STDOUT,"+j"); }
+     { WriteString(theEnv,STDOUT,"+j"); }
 #endif
 
    /*======================*/

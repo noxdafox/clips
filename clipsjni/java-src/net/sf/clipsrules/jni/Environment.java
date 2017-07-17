@@ -97,7 +97,7 @@ public class Environment
       if (fileName == null)
         { throw new NullPointerException("fileName"); }
         
-      CaptureRouter loadCapture = new CaptureRouter(this,new String [] { Router.ERROR } );
+      CaptureRouter loadCapture = new CaptureRouter(this,new String [] { Router.STDERR } );
       load(theEnvironment,fileName);
       this.deleteRouter(loadCapture);
       
@@ -119,7 +119,7 @@ public class Environment
         
       String oldName = getParsingFileName();
       setParsingFileName("<String>");
-      CaptureRouter loadCapture = new CaptureRouter(this,new String [] { Router.ERROR } );
+      CaptureRouter loadCapture = new CaptureRouter(this,new String [] { Router.STDERR } );
       loadFromString(theEnvironment,loadString);
       this.deleteRouter(loadCapture);
       setParsingFileName(oldName);
@@ -163,7 +163,7 @@ public class Environment
       if (input == null) return;
       String oldName = getParsingFileName();
       setParsingFileName(resourceFile);
-      CaptureRouter loadCapture = new CaptureRouter(this,new String [] { Router.ERROR } );
+      CaptureRouter loadCapture = new CaptureRouter(this,new String [] { Router.STDERR } );
       loadFromString(theEnvironment,convertStreamToString(input));
       this.deleteRouter(loadCapture);
       setParsingFileName(oldName);
@@ -183,7 +183,7 @@ public class Environment
       if (buildString == null)
         { throw new NullPointerException("buildString"); }
         
-      CaptureRouter buildCapture = new CaptureRouter(this,new String [] { Router.ERROR } );
+      CaptureRouter buildCapture = new CaptureRouter(this,new String [] { Router.STDERR } );
 
       boolean rv = build(theEnvironment,buildString);
       
@@ -259,7 +259,7 @@ public class Environment
         { throw new NullPointerException("factString"); }
         
       FactAddressValue fav;
-      CaptureRouter assertCapture = new CaptureRouter(this,new String [] { Router.ERROR } );
+      CaptureRouter assertCapture = new CaptureRouter(this,new String [] { Router.STDERR } );
 
       fav = assertString(theEnvironment,factString);
       
@@ -286,7 +286,7 @@ public class Environment
         { throw new NullPointerException("instanceString"); }
         
       InstanceAddressValue iav;
-      CaptureRouter miCapture = new CaptureRouter(this,new String [] { Router.ERROR } );
+      CaptureRouter miCapture = new CaptureRouter(this,new String [] { Router.STDERR } );
 
       iav = makeInstance(theEnvironment,instanceString);
       
@@ -485,7 +485,7 @@ public class Environment
         { throw new NullPointerException("evalString"); }
         
       PrimitiveValue pv;
-      CaptureRouter evalCapture = new CaptureRouter(this,new String [] { Router.ERROR } );
+      CaptureRouter evalCapture = new CaptureRouter(this,new String [] { Router.STDERR } );
 
       pv = eval(theEnvironment,evalString);
       String error = evalCapture.getOutput();
@@ -767,7 +767,7 @@ public class Environment
       if (printString == null)
         { throw new NullPointerException("printString"); }
         
-      printString(theEnvironment,Router.STANDARD_OUTPUT,printString);
+      printString(theEnvironment,Router.STDOUT,printString);
      }
 
    /************/
@@ -779,7 +779,7 @@ public class Environment
       if (printString == null)
         { throw new NullPointerException("printString"); }
         
-      printString(theEnvironment,Router.STANDARD_OUTPUT,printString + "\n");
+      printString(theEnvironment,Router.STDOUT,printString + "\n");
      }
 
    /****************/
@@ -1659,7 +1659,7 @@ public class Environment
    /***********************/
    private void voidCommandWrapper(Callable<Void> callable) throws CLIPSException
      {
-      CaptureRouter commandCapture = new CaptureRouter(this,new String [] { Router.ERROR } );
+      CaptureRouter commandCapture = new CaptureRouter(this,new String [] { Router.STDERR } );
       
       try
         { callable.call(); }
@@ -1681,7 +1681,7 @@ public class Environment
    /***********************/
    private long longCommandWrapper(Callable<Long> callable) throws CLIPSException
      {
-      CaptureRouter commandCapture = new CaptureRouter(this,new String [] { Router.ERROR } );
+      CaptureRouter commandCapture = new CaptureRouter(this,new String [] { Router.STDERR } );
       Long rv;
       
       try

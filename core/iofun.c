@@ -288,26 +288,26 @@ static void PrintDriver(
            if (strcmp(theArg.lexemeValue->contents,"crlf") == 0)
              {
               if (IOFunctionData(theEnv)->useFullCRLF)
-                { PrintString(theEnv,logicalName,"\r\n"); }
+                { WriteString(theEnv,logicalName,"\r\n"); }
               else
-                { PrintString(theEnv,logicalName,"\n"); }
+                { WriteString(theEnv,logicalName,"\n"); }
              }
            else if (strcmp(theArg.lexemeValue->contents,"tab") == 0)
-             { PrintString(theEnv,logicalName,"\t"); }
+             { WriteString(theEnv,logicalName,"\t"); }
            else if (strcmp(theArg.lexemeValue->contents,"vtab") == 0)
-             { PrintString(theEnv,logicalName,"\v"); }
+             { WriteString(theEnv,logicalName,"\v"); }
            else if (strcmp(theArg.lexemeValue->contents,"ff") == 0)
-             { PrintString(theEnv,logicalName,"\f"); }
+             { WriteString(theEnv,logicalName,"\f"); }
            else
-             { PrintString(theEnv,logicalName,theArg.lexemeValue->contents); }
+             { WriteString(theEnv,logicalName,theArg.lexemeValue->contents); }
            break;
 
          case STRING_TYPE:
-           PrintString(theEnv,logicalName,theArg.lexemeValue->contents);
+           WriteString(theEnv,logicalName,theArg.lexemeValue->contents);
            break;
 
          default:
-           PrintUDFValue(theEnv,logicalName,&theArg);
+           WriteUDFValue(theEnv,logicalName,&theArg);
            break;
         }
      }
@@ -315,9 +315,9 @@ static void PrintDriver(
    if (endCRLF)
      {
       if (IOFunctionData(theEnv)->useFullCRLF)
-        { PrintString(theEnv,logicalName,"\r\n"); }
+        { WriteString(theEnv,logicalName,"\r\n"); }
       else
-        { PrintString(theEnv,logicalName,"\n"); }
+        { WriteString(theEnv,logicalName,"\n"); }
      }
   }
 
@@ -447,14 +447,14 @@ static void ReadTokenFromStdin(
       /* a space is entered after a symbol has been typed).     */
       /*========================================================*/
 
-      inchar = GetcRouter(theEnv,STDIN);
+      inchar = ReadRouter(theEnv,STDIN);
 
       while ((inchar != '\n') && (inchar != '\r') && (inchar != EOF) &&
              (! GetHaltExecution(theEnv)))
         {
          inputString = ExpandStringWithChar(theEnv,inchar,inputString,&RouterData(theEnv)->CommandBufferInputCount,
                                             &inputStringSize,inputStringSize + 80);
-         inchar = GetcRouter(theEnv,STDIN);
+         inchar = ReadRouter(theEnv,STDIN);
         }
 
       /*====================================================*/
@@ -551,9 +551,9 @@ void OpenFunction(
       SetHaltExecution(theEnv,true);
       SetEvaluationError(theEnv,true);
       PrintErrorID(theEnv,"IOFUN",2,false);
-      PrintString(theEnv,WERROR,"Logical name ");
-      PrintString(theEnv,WERROR,logicalName);
-      PrintString(theEnv,WERROR," already in use.\n");
+      WriteString(theEnv,STDERR,"Logical name ");
+      WriteString(theEnv,STDERR,logicalName);
+      WriteString(theEnv,STDERR," already in use.\n");
       returnValue->lexemeValue = FalseSymbol(theEnv);
       return;
      }
@@ -678,7 +678,7 @@ void GetCharFunction(
       return;
      }
 
-   returnValue->integerValue = CreateInteger(theEnv,GetcRouter(theEnv,logicalName));
+   returnValue->integerValue = CreateInteger(theEnv,ReadRouter(theEnv,logicalName));
   }
 
 /***************************************/
@@ -929,7 +929,7 @@ void FormatFunction(
    if (fstr != NULL)
      {
       hptr = CreateString(theEnv,fstr);
-      if (strcmp(logicalName,"nil") != 0) PrintString(theEnv,logicalName,fstr);
+      if (strcmp(logicalName,"nil") != 0) WriteString(theEnv,logicalName,fstr);
       rm(theEnv,fstr,fmaxm);
      }
    else
@@ -968,9 +968,9 @@ static const char *ControlStringCheck(
          if (formatFlag == '-')
            {
             PrintErrorID(theEnv,"IOFUN",3,false);
-            PrintString(theEnv,WERROR,"Invalid format flag \"");
-            PrintString(theEnv,WERROR,print_buff);
-            PrintString(theEnv,WERROR,"\" specified in format function.\n");
+            WriteString(theEnv,STDERR,"Invalid format flag \"");
+            WriteString(theEnv,STDERR,print_buff);
+            WriteString(theEnv,STDERR,"\" specified in format function.\n");
             SetEvaluationError(theEnv,true);
             return (NULL);
            }
@@ -1203,8 +1203,8 @@ static const char *PrintFormatFlag(
         break;
 
       default:
-         PrintString(theEnv,WERROR," Error in format, the conversion character");
-         PrintString(theEnv,WERROR," for formatted output is not valid\n");
+         WriteString(theEnv,STDERR," Error in format, the conversion character");
+         WriteString(theEnv,STDERR," for formatted output is not valid\n");
          return NULL;
      }
 
@@ -1292,7 +1292,7 @@ static char *FillBuffer(
    /* Read until end of line or eof. */
    /*================================*/
 
-   c = GetcRouter(theEnv,logicalName);
+   c = ReadRouter(theEnv,logicalName);
 
    if (c == EOF)
      { return NULL; }
@@ -1305,7 +1305,7 @@ static char *FillBuffer(
           (! GetHaltExecution(theEnv)))
      {
       buf = ExpandStringWithChar(theEnv,c,buf,currentPosition,maximumSize,*maximumSize+80);
-      c = GetcRouter(theEnv,logicalName);
+      c = ReadRouter(theEnv,logicalName);
      }
 
    /*==================*/
@@ -1467,7 +1467,7 @@ static void ReadNumber(
    RouterData(theEnv)->CommandBufferInputCount = 0;
    RouterData(theEnv)->AwaitingInput = true;
    inputStringSize = 0;
-   inchar = GetcRouter(theEnv,logicalName);
+   inchar = ReadRouter(theEnv,logicalName);
 
    /*====================================*/
    /* Skip whitespace before any number. */
@@ -1475,7 +1475,7 @@ static void ReadNumber(
 
    while (isspace(inchar) && (inchar != EOF) &&
           (! GetHaltExecution(theEnv)))
-     { inchar = GetcRouter(theEnv,logicalName); }
+     { inchar = ReadRouter(theEnv,logicalName); }
 
    /*=============================================================*/
    /* Continue reading characters until whitespace is found again */
@@ -1489,7 +1489,7 @@ static void ReadNumber(
      {
       inputString = ExpandStringWithChar(theEnv,inchar,inputString,&RouterData(theEnv)->CommandBufferInputCount,
                                          &inputStringSize,inputStringSize + 80);
-      inchar = GetcRouter(theEnv,logicalName);
+      inchar = ReadRouter(theEnv,logicalName);
      }
 
    /*===========================================*/

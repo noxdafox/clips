@@ -421,7 +421,7 @@ static struct expr *LoopForCountParse(
          ClearParsedBindNames(theEnv);
          SetParsedBindNames(theEnv,oldBindList);
          PrintErrorID(theEnv,"PRCDRPSR",1,true);
-         PrintString(theEnv,WERROR,"Cannot rebind loop variable in function loop-for-count.\n");
+         WriteString(theEnv,STDERR,"Cannot rebind loop variable in function loop-for-count.\n");
          ReturnExpression(theEnv,parse);
          return NULL;
         }
@@ -739,7 +739,7 @@ static struct expr *ReturnParse(
    if (ExpressionData(theEnv)->ReturnContext == false)
      {
       PrintErrorID(theEnv,"PRCDRPSR",2,true);
-      PrintString(theEnv,WERROR,"The return function is not valid in this context.\n");
+      WriteString(theEnv,STDERR,"The return function is not valid in this context.\n");
       ReturnExpression(theEnv,top);
       return NULL;
      }
@@ -789,7 +789,7 @@ static struct expr *BreakParse(
    if (ExpressionData(theEnv)->svContexts->brk == false)
      {
       PrintErrorID(theEnv,"PRCDRPSR",2,true);
-      PrintString(theEnv,WERROR,"The break function not valid in this context.\n");
+      WriteString(theEnv,STDERR,"The break function not valid in this context.\n");
       ReturnExpression(theEnv,top);
       return NULL;
      }
@@ -858,7 +858,7 @@ static struct expr *SwitchParse(
                 IdenticalExpression(chk->argList,theExp->nextArg->argList))
               {
                PrintErrorID(theEnv,"PRCDRPSR",3,true);
-               PrintString(theEnv,WERROR,"Duplicate case found in switch function.\n");
+               WriteString(theEnv,STDERR,"Duplicate case found in switch function.\n");
                goto SwitchParseError;
               }
            }

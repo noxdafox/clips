@@ -44,10 +44,10 @@ public class CaptureRouter extends BaseRouter
      }
     
    /**********/
-   /* print: */
+   /* write: */
    /**********/
    @Override
-   public void print(
+   public void write(
      String logName,
      String printString)
      {

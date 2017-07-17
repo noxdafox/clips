@@ -190,16 +190,16 @@ void CallDeffunction(
                    variable errors
   INPUTS       : None
   RETURNS      : Nothing useful
-  SIDE EFFECTS : Error synopsis printed to WERROR
+  SIDE EFFECTS : Error synopsis printed to STDERR
   NOTES        : None
  *******************************************************/
 static void UnboundDeffunctionErr(
   Environment *theEnv,
   const char *logName)
   {
-   PrintString(theEnv,logName,"deffunction ");
-   PrintString(theEnv,logName,DeffunctionName(DeffunctionData(theEnv)->ExecutingDeffunction));
-   PrintString(theEnv,logName,".\n");
+   WriteString(theEnv,logName,"deffunction ");
+   WriteString(theEnv,logName,DeffunctionName(DeffunctionData(theEnv)->ExecutingDeffunction));
+   WriteString(theEnv,logName,".\n");
   }
 
 #if DEBUGGING_FUNCTIONS
@@ -224,16 +224,16 @@ static void WatchDeffunction(
        ConstructData(theEnv)->ClearInProgress)
      { return; }
 
-   PrintString(theEnv,STDOUT,"DFN ");
-   PrintString(theEnv,STDOUT,tstring);
+   WriteString(theEnv,STDOUT,"DFN ");
+   WriteString(theEnv,STDOUT,tstring);
    if (DeffunctionData(theEnv)->ExecutingDeffunction->header.whichModule->theModule != GetCurrentModule(theEnv))
      {
-      PrintString(theEnv,STDOUT,DeffunctionModule(DeffunctionData(theEnv)->ExecutingDeffunction));;
-      PrintString(theEnv,STDOUT,"::");
+      WriteString(theEnv,STDOUT,DeffunctionModule(DeffunctionData(theEnv)->ExecutingDeffunction));;
+      WriteString(theEnv,STDOUT,"::");
      }
-   PrintString(theEnv,STDOUT,DeffunctionData(theEnv)->ExecutingDeffunction->header.name->contents);
-   PrintString(theEnv,STDOUT," ED:");
-   PrintInteger(theEnv,STDOUT,EvaluationData(theEnv)->CurrentEvaluationDepth);
+   WriteString(theEnv,STDOUT,DeffunctionData(theEnv)->ExecutingDeffunction->header.name->contents);
+   WriteString(theEnv,STDOUT," ED:");
+   WriteInteger(theEnv,STDOUT,EvaluationData(theEnv)->CurrentEvaluationDepth);
    PrintProcParamArray(theEnv,STDOUT);
   }
 
