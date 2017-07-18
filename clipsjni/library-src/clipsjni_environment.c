@@ -739,4 +739,25 @@ JNIEXPORT jboolean JNICALL Java_net_sf_clipsrules_jni_Environment_removeUserFunc
 
    return rv;
   }
+  
+/***********************************************************/
+/* Java_net_sf_clipsrules_jni_Environment_setErrorCallback */
+/* Class:     net_sf_clipsrules_jni_Environment            */
+/* Method:    setErrorCallback                             */
+/* Signature: (JZ)Z                                        */
+/***********************************************************/
+JNIEXPORT void JNICALL Java_net_sf_clipsrules_jni_Environment_setErrorCallback(
+  JNIEnv *env, 
+  jobject obj, 
+  jlong clipsEnv,
+  jboolean value)
+  {
+   Environment *theCLIPSEnv = (Environment *) JLongToPointer(clipsEnv);
+   
+   if (value)
+     { SetParserErrorCallback(theCLIPSEnv,JNIParserErrorCallback,NULL); }
+    else
+     { SetParserErrorCallback(theCLIPSEnv,NULL,NULL); }
+  }
+   
 

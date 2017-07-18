@@ -63,6 +63,47 @@ public class Environment
    /***************************/
    private native long createEnvironment();
 
+   /****************/
+   /* captureStart */
+   /****************/
+   public CaptureRouter captureStart()
+     {
+      setErrorCallback(true);
+      
+      errorList.clear();
+
+      return new CaptureRouter(this,new String [] { Router.STDERR } );
+     }
+
+   /**************/
+   /* captureEnd */
+   /**************/
+   public void captureEnd(
+     CaptureRouter commandCapture) throws CLIPSException
+     {
+      String error = commandCapture.getOutput();
+      
+      setErrorCallback(false);
+      
+      this.deleteRouter(commandCapture);
+            
+      if (! error.isEmpty())
+        { throw new CLIPSException(error); }
+     }
+
+   /**************************/
+   /* captureEndWithoutCheck */
+   /**************************/
+   public void captureEndWithoutCheck(
+     CaptureRouter commandCapture)
+     {
+      String error = commandCapture.getOutput();
+      
+      setErrorCallback(false);
+      
+      this.deleteRouter(commandCapture);
+     }
+     
    /****************************************/
    /* clear: Clears the CLIPS environment. */
    /****************************************/
@@ -97,9 +138,9 @@ public class Environment
       if (fileName == null)
         { throw new NullPointerException("fileName"); }
         
-      CaptureRouter loadCapture = new CaptureRouter(this,new String [] { Router.STDERR } );
+      CaptureRouter loadCapture = captureStart();
       load(theEnvironment,fileName);
-      this.deleteRouter(loadCapture);
+      captureEndWithoutCheck(loadCapture);
       
       checkForErrors("Load");
      }
@@ -119,9 +160,9 @@ public class Environment
         
       String oldName = getParsingFileName();
       setParsingFileName("<String>");
-      CaptureRouter loadCapture = new CaptureRouter(this,new String [] { Router.STDERR } );
+      CaptureRouter loadCapture = captureStart();
       loadFromString(theEnvironment,loadString);
-      this.deleteRouter(loadCapture);
+      captureEndWithoutCheck(loadCapture);
       setParsingFileName(oldName);
       checkForErrors("LoadFromString");
      }
@@ -163,9 +204,9 @@ public class Environment
       if (input == null) return;
       String oldName = getParsingFileName();
       setParsingFileName(resourceFile);
-      CaptureRouter loadCapture = new CaptureRouter(this,new String [] { Router.STDERR } );
+      CaptureRouter loadCapture = captureStart();
       loadFromString(theEnvironment,convertStreamToString(input));
-      this.deleteRouter(loadCapture);
+      captureEndWithoutCheck(loadCapture);
       setParsingFileName(oldName);
       checkForErrors("LoadFromResource");
      }
@@ -183,16 +224,11 @@ public class Environment
       if (buildString == null)
         { throw new NullPointerException("buildString"); }
         
-      CaptureRouter buildCapture = new CaptureRouter(this,new String [] { Router.STDERR } );
+      CaptureRouter buildCapture = captureStart();
 
-      boolean rv = build(theEnvironment,buildString);
+      build(theEnvironment,buildString);
       
-      String error = buildCapture.getOutput();
-      
-      this.deleteRouter(buildCapture);
-      
-      if ((! rv) || (! error.isEmpty()))
-        { throw new CLIPSException(error); }
+      captureEnd(buildCapture);
      }
 
    /****************************************/
@@ -258,16 +294,11 @@ public class Environment
       if (factString == null)
         { throw new NullPointerException("factString"); }
         
-      FactAddressValue fav;
-      CaptureRouter assertCapture = new CaptureRouter(this,new String [] { Router.STDERR } );
+      CaptureRouter assertCapture = captureStart();
 
-      fav = assertString(theEnvironment,factString);
+      FactAddressValue fav = assertString(theEnvironment,factString);
       
-      String error = assertCapture.getOutput();
-      this.deleteRouter(assertCapture);
-      
-      if ((fav == null) || (! error.isEmpty()))
-        { throw new CLIPSException(error); }
+      captureEnd(assertCapture);
 
       return fav;
      }
@@ -285,16 +316,11 @@ public class Environment
       if (instanceString == null)
         { throw new NullPointerException("instanceString"); }
         
-      InstanceAddressValue iav;
-      CaptureRouter miCapture = new CaptureRouter(this,new String [] { Router.STDERR } );
+      CaptureRouter miCapture = captureStart();
 
-      iav = makeInstance(theEnvironment,instanceString);
+      InstanceAddressValue iav = makeInstance(theEnvironment,instanceString);
       
-      String error = miCapture.getOutput();
-      this.deleteRouter(miCapture);
-      
-      if ((iav == null) || (! error.isEmpty()))
-        { throw new CLIPSException(error); }
+      captureEnd(miCapture);
 
       return iav;
      }
@@ -484,17 +510,11 @@ public class Environment
       if (evalString == null)
         { throw new NullPointerException("evalString"); }
         
-      PrimitiveValue pv;
-      CaptureRouter evalCapture = new CaptureRouter(this,new String [] { Router.STDERR } );
+      CaptureRouter evalCapture = captureStart();
 
-      pv = eval(theEnvironment,evalString);
-      String error = evalCapture.getOutput();
-      this.deleteRouter(evalCapture);
+      PrimitiveValue pv = eval(theEnvironment,evalString);
       
-      if (! error.isEmpty())
-        { 
-         throw new CLIPSException(error);
-        }
+      captureEnd(evalCapture);
       
       return pv;
      }
@@ -1615,6 +1635,20 @@ public class Environment
       return new ExternalAddressValue(externalAddress,this);
      }
 
+   /*********************/
+   /* setErrorCallback: */
+   /*********************/
+   private native void setErrorCallback(long env,boolean value);
+
+   /*********************/
+   /* setErrorCallback: */
+   /*********************/
+   public void setErrorCallback(
+     boolean value)
+     {
+      setErrorCallback(theEnvironment,value);
+     }
+     
    /************/
    /* destroy: */
    /************/
@@ -1659,21 +1693,17 @@ public class Environment
    /***********************/
    private void voidCommandWrapper(Callable<Void> callable) throws CLIPSException
      {
-      CaptureRouter commandCapture = new CaptureRouter(this,new String [] { Router.STDERR } );
+      CaptureRouter commandCapture = captureStart();
       
       try
         { callable.call(); }
-      catch(Exception e)
+      catch (Exception e)
         {
-         this.deleteRouter(commandCapture);
+         captureEndWithoutCheck(commandCapture);
          throw new CLIPSException(e.getMessage(),e.getCause()); 
         }
       
-      String error = commandCapture.getOutput();
-      this.deleteRouter(commandCapture);
-      
-      if (! error.isEmpty())
-        { throw new CLIPSException(error); }
+      captureEnd(commandCapture);
      }
      
    /***********************/
@@ -1681,22 +1711,18 @@ public class Environment
    /***********************/
    private long longCommandWrapper(Callable<Long> callable) throws CLIPSException
      {
-      CaptureRouter commandCapture = new CaptureRouter(this,new String [] { Router.STDERR } );
+      CaptureRouter commandCapture = captureStart();
       Long rv;
       
       try
         { rv = callable.call(); }
-      catch(Exception e)
+      catch (Exception e)
         {
-         this.deleteRouter(commandCapture);
+         captureEndWithoutCheck(commandCapture);
          throw new CLIPSException(e.getMessage(),e.getCause()); 
         }
       
-      String error = commandCapture.getOutput();
-      this.deleteRouter(commandCapture);
-      
-      if (! error.isEmpty())
-        { throw new CLIPSException(error); }
+      captureEnd(commandCapture);
         
       return rv;
      }

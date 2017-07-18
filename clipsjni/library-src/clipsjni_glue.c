@@ -1232,12 +1232,6 @@ jlong CreateCLIPSJNIEnvironment(
    
    CLIPSJNIData(theEnv)->javaExternalAddressID = InstallExternalAddressType(theEnv,&javaPointer);
    
-   /*===================================*/
-   /* Set up the parser error callback. */
-   /*===================================*/
-   
-   SetParserErrorCallback(theEnv,JNIParserErrorCallback,NULL);
-   
    /*=========================*/
    /* Return the environment. */
    /*=========================*/

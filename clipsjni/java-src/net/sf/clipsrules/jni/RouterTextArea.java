@@ -291,14 +291,10 @@ public class RouterTextArea extends JTextArea
    public boolean query(
      String logName)
      {      
-      if (logName.equals("stdout") ||
-          logName.equals("stdin") ||
-          logName.equals("wwarning") ||
-          logName.equals("werror") ||
-          logName.equals("wtrace") ||
-          logName.equals("wdialog") ||
-          logName.equals("wclips") ||
-          logName.equals("wdisplay"))
+      if (logName.equals(STDOUT) ||
+          logName.equals(STDIN) ||
+          logName.equals(STDWRN) ||
+          logName.equals(STDERR))
       
         { return true; }
 

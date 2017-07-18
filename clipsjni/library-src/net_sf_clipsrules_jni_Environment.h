@@ -625,6 +625,14 @@ JNIEXPORT void JNICALL Java_net_sf_clipsrules_jni_Environment_decrementAddressCo
 
 /*
  * Class:     net_sf_clipsrules_jni_Environment
+ * Method:    setErrorCallback
+ * Signature: (JZ)V
+ */
+JNIEXPORT void JNICALL Java_net_sf_clipsrules_jni_Environment_setErrorCallback
+  (JNIEnv *, jobject, jlong, jboolean);
+
+/*
+ * Class:     net_sf_clipsrules_jni_Environment
  * Method:    getCLIPSVersion
  * Signature: ()Ljava/lang/String;
  */
