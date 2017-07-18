@@ -133,19 +133,15 @@ class CLIPSCPPRouter
   {
    public:
       virtual bool Query(CLIPSCPPEnv *,const char *);
-      virtual void Print(CLIPSCPPEnv *,const char *,const char *);
-      virtual int Getc(CLIPSCPPEnv *,const char *);
-      virtual int Ungetc(CLIPSCPPEnv *,int,const char *);
+      virtual void Write(CLIPSCPPEnv *,const char *,const char *);
+      virtual int Read(CLIPSCPPEnv *,const char *);
+      virtual int Unread(CLIPSCPPEnv *,int,const char *);
       virtual void Exit(CLIPSCPPEnv *,int);
 
-      const static char *STANDARD_OUTPUT;
-      const static char *STANDARD_INPUT;
-      const static char *WARNING;
-      const static char *ERROR;
-      const static char *TRACE;
-      const static char *DIALOG;
-      const static char *PROMPT;
-      const static char *DISPLAY;
+      const static char *STDOUT;
+      const static char *STDIN;
+      const static char *STDWRN;
+      const static char *STDERR;
   };
 
 class CLIPSCPPFocus

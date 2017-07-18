@@ -40,7 +40,7 @@ namespace CLIPSNET
       return m_Router->Query(cliLogicalName);
      }
 
-   void CLIPSCPPRouterBridge::Print(
+   void CLIPSCPPRouterBridge::Write(
      CLIPSCPPEnv *theCPPEnv,
      const char *logicalName,
      const char *printString)
@@ -48,26 +48,26 @@ namespace CLIPSNET
       String ^ cliLogicalName = CharStarToString(logicalName);
       String ^ cliPrintString = CharStarToString(printString);
 
-      m_Router->Print(cliLogicalName,cliPrintString);
+      m_Router->Write(cliLogicalName,cliPrintString);
      }
 
-   int CLIPSCPPRouterBridge::Getc(
+   int CLIPSCPPRouterBridge::Read(
      CLIPSCPPEnv *theCPPEnv,
      const char *logicalName)
      {
       String ^ cliLogicalName = CharStarToString(logicalName);
 
-      return m_Router->Getc(cliLogicalName);
+      return m_Router->Read(cliLogicalName);
      }
 
-   int CLIPSCPPRouterBridge::Ungetc(
+   int CLIPSCPPRouterBridge::Unread(
      CLIPSCPPEnv *theCPPEnv,
 	 int theChar,
      const char *logicalName)
      {
       String ^ cliLogicalName = CharStarToString(logicalName);
 
-      return m_Router->Ungetc(cliLogicalName,theChar);
+      return m_Router->Unread(cliLogicalName,theChar);
      }
 
    /*######################*/
@@ -103,13 +103,13 @@ namespace CLIPSNET
    bool Router::Query(String ^ logicalName)
      { return false; }
 
-   void Router::Print(String ^ logicalName,String ^printString)
+   void Router::Write(String ^ logicalName,String ^printString)
      { }
 
-   int Router::Getc(String ^ logicalName)
+   int Router::Read(String ^ logicalName)
      { return -1; }
 
-   int Router::Ungetc(String ^ logicalName,int theChar)
+   int Router::Unread(String ^ logicalName,int theChar)
      { return -1; }
 
    CLIPSCPPRouterBridge *Router::RouterBridge()
@@ -201,11 +201,10 @@ namespace CLIPSNET
       captureString = gcnew String("");
      }
 
-   void CaptureRouter::Print(
+   void CaptureRouter::Write(
      String ^ logicalName,
      String ^ printString)
      {
-      //captureString = captureString->Concat(printString);
       captureString = captureString + printString;
       if (forwardOutput)
         {

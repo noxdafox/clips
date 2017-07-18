@@ -197,27 +197,27 @@ void __declspec(dllexport) __PrintBanner(
    PrintBanner(theEnv);
   }
 
-void __declspec(dllexport) __PrintString(
+void __declspec(dllexport) __WriteString(
   Environment *theEnv,
   const char *logicalName,
   const char *printString)
   {
-   PrintString(theEnv,logicalName,printString);
+   WriteString(theEnv,logicalName,printString);
   }
 
 void __declspec(dllexport) __Print(
   Environment *theEnv,
   const char *printString)
   {
-   PrintString(theEnv,STDOUT,printString);
+   WriteString(theEnv,STDOUT,printString);
   }
 
 void __declspec(dllexport) __PrintLn(
   Environment *theEnv,
   const char *printString)
   {
-   PrintString(theEnv,STDOUT,printString);
-   PrintString(theEnv,STDOUT,"\n");
+   WriteString(theEnv,STDOUT,printString);
+   WriteString(theEnv,STDOUT,"\n");
   }
 
 int __declspec(dllexport) __genchdir(
@@ -329,13 +329,13 @@ bool __declspec(dllexport) __AddRouter(
   const char *routerName,
   int priority,
   RouterQueryFunction *queryFunction,
-  RouterPrintFunction *printFunction,
-  RouterGetcFunction *getcFunction,
-  RouterUngetcFunction *ungetcFunction,
+  RouterWriteFunction *writeFunction,
+  RouterReadFunction *readFunction,
+  RouterUnreadFunction *unreadFunction,
   RouterExitFunction *exitFunction,
   void *context)
   {
-   return AddRouter(theEnv,routerName,priority,queryFunction,printFunction,getcFunction,ungetcFunction,exitFunction,context);
+   return AddRouter(theEnv,routerName,priority,queryFunction,writeFunction,readFunction,unreadFunction,exitFunction,context);
   }
  
  size_t __declspec(dllexport) __InputBufferCount(

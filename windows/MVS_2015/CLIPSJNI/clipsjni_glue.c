@@ -49,7 +49,7 @@ void JNIUserFunction(
    
    if ((*env)->ExceptionCheck(env)) 
      { 
-      PrintString(theEnv,WERROR,"Exception occurred during evaluation of JNI User Function.\n");
+      WriteString(theEnv,STDERR,"Exception occurred during evaluation of JNI User Function.\n");
       (*env)->ExceptionDescribe(env); 
       (*env)->ExceptionClear(env); 
       SetEvaluationError(theEnv,true);
@@ -321,7 +321,7 @@ void PrintJavaAddress(
    JNIEnv *env;
    char buffer[20];
 
-   PrintString(theEnv,logicalName,"<Pointer-");
+   WriteString(theEnv,logicalName,"<Pointer-");
         
    theObject = (jobject) ((CLIPSExternalAddress *) theValue)->contents;
    
@@ -335,17 +335,17 @@ void PrintJavaAddress(
 
       cStr = (char *) (*env)->GetStringUTFChars(env,str,NULL);
       
-      PrintString(theEnv,logicalName,cStr);
-      PrintString(theEnv,logicalName,"-");
+      WriteString(theEnv,logicalName,cStr);
+      WriteString(theEnv,logicalName,"-");
    
       (*env)->ReleaseStringUTFChars(env,str,cStr);
      }
    else
-     { PrintString(theEnv,logicalName,"java-"); }
+     { WriteString(theEnv,logicalName,"java-"); }
    
    gensprintf(buffer,"%p",(void *) theObject);
-   PrintString(theEnv,logicalName,buffer);
-   PrintString(theEnv,logicalName,">");
+   WriteString(theEnv,logicalName,buffer);
+   WriteString(theEnv,logicalName,">");
   }
 
 /********************/

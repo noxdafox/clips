@@ -34,8 +34,8 @@ namespace RouterFormsExample
 
          public override bool Query(String logicalName)
             {
-             if (logicalName.Equals(CLIPSNET.Router.STANDARD_OUTPUT) ||
-                 logicalName.Equals(CLIPSNET.Router.STANDARD_INPUT))
+             if (logicalName.Equals(CLIPSNET.Router.STDOUT) ||
+                 logicalName.Equals(CLIPSNET.Router.STDIN))
                return true;
              else
                return false;
@@ -65,12 +65,12 @@ namespace RouterFormsExample
 			     { m_RouterTextBox.AppendText(text); }
            }
 
-         public override void Print(String logicalName, String printString)
+         public override void Write(String logicalName, String printString)
            {
             this.AddText(printString);
            }
 
-         public override int Getc(String logicalName)
+         public override int Read(String logicalName)
            {
             RouterThreadBridge theBridge = this.m_RouterTextBox.m_ThreadBridge;
 
@@ -108,7 +108,7 @@ namespace RouterFormsExample
               }
            }
 
-         public override int Ungetc(String logicalName,int theChar)
+         public override int Unread(String logicalName,int theChar)
            {
             lock (this.m_RouterTextBox.m_ThreadBridge)
               {

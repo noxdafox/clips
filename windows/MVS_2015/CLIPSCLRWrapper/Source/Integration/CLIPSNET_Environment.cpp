@@ -105,7 +105,7 @@ namespace CLIPSNET
    /***************/
    Environment::Environment() : m_Env( new CLIPSCPPEnv ) 
      {
-      this->AddParserErrorCallback(gcnew LoadParserErrorCallback(this));
+      errorCallback = gcnew LoadParserErrorCallback(this);
       errorList = gcnew List<CLIPSLineError ^>();
      }
    
@@ -166,7 +166,9 @@ namespace CLIPSNET
    /****************/
    CaptureRouter ^ Environment::CaptureStart()
      {
-      return gcnew CaptureRouter(this,gcnew array<String ^> (1) { Router::ERROR });
+      this->SetParserErrorCallback(errorCallback);
+      errorList->Clear();
+      return gcnew CaptureRouter(this,gcnew array<String ^> (1) { Router::STDERR });
      }
 
    /**************/
@@ -177,6 +179,9 @@ namespace CLIPSNET
      bool throwError)
      {
       String ^ error = commandCapture->Output;
+
+      this->SetParserErrorCallback(nullptr);
+
       this->DeleteRouter(commandCapture);
 
       if (throwError && (! String::IsNullOrEmpty(error)))
@@ -216,6 +221,7 @@ namespace CLIPSNET
          pin_ptr<Byte> pbFileName = &ebFileName[0];
          if (m_Env->Load((char *) pbFileName) == 0)
            {
+            CaptureEnd(commandCapture,false);
             throw gcnew System::IO::FileNotFoundException(
                              "Could not load file '" + fileName + "'.",
                              fileName);
@@ -979,7 +985,7 @@ namespace CLIPSNET
       if (printString == nullptr)
         { throw gcnew System::ArgumentNullException("printString"); }
 
-      String ^ logicalName = Router::STANDARD_OUTPUT;
+      String ^ logicalName = Router::STDOUT;
       Printout(logicalName,printString);
      }
 
@@ -992,7 +998,7 @@ namespace CLIPSNET
       if (printString == nullptr)
         { throw gcnew System::ArgumentNullException("printString"); }
 
-      String ^ logicalName = Router::STANDARD_OUTPUT;
+      String ^ logicalName = Router::STDOUT;
       String ^ crlf = "\n";
 
       Printout(logicalName,printString);
@@ -1043,12 +1049,15 @@ namespace CLIPSNET
      }
      
    /**************************/
-   /* AddParserErrorCallback */
+   /* SetParserErrorCallback */
    /**************************/
-   void Environment::AddParserErrorCallback(
+   void Environment::SetParserErrorCallback(
 	  ParserErrorCallback ^ theCallback)
      {
-      m_Env->SetParserErrorCallback((CLIPS::CLIPSCPPParserErrorFunction *) theCallback->ParserErrorCallbackBridge());
+      if (theCallback == nullptr)
+        { m_Env->SetParserErrorCallback(NULL); }
+      else
+        { m_Env->SetParserErrorCallback((CLIPS::CLIPSCPPParserErrorFunction *) theCallback->ParserErrorCallbackBridge()); }
      }
 
    /********************/

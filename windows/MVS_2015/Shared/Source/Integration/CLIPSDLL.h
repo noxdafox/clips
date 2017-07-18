@@ -51,9 +51,9 @@ bool DECLSPEC __GetFactListChanged(Environment *);
 bool DECLSPEC __GetInstancesChanged(Environment *);
 bool DECLSPEC __GetEvaluationError(Environment *);
 bool DECLSPEC __AddRouter(Environment *,const char *,int,
-                          RouterQueryFunction *,RouterPrintFunction *,
-                          RouterGetcFunction *,RouterUngetcFunction *,
-								  RouterExitFunction *,void *);
+                          RouterQueryFunction *,RouterWriteFunction *,
+                          RouterReadFunction *,RouterUnreadFunction *,
+						  RouterExitFunction *,void *);
 
 void DECLSPEC __SetCommandString(Environment *,const char *);
 void DECLSPEC __CommandLoop(Environment *);
@@ -72,7 +72,7 @@ void DECLSPEC __SetInstancesChanged(Environment *,bool);
 void DECLSPEC __SetEvaluationError(Environment *,bool);
 bool DECLSPEC __EnablePeriodicFunctions(Environment *,bool);
 
-void DECLSPEC __PrintString(Environment *,const char *,const char *);
+void DECLSPEC __WriteString(Environment *,const char *,const char *);
 void DECLSPEC __Print(Environment *,const char *);
 void DECLSPEC __PrintLn(Environment *,const char *);
 

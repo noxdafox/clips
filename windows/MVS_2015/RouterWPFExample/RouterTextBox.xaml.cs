@@ -68,10 +68,10 @@ namespace RouterWPFExample
 
          public override bool Query(String logicalName)
             {
-             if (logicalName.Equals(CLIPSNET.Router.STANDARD_OUTPUT) ||
-                 logicalName.Equals(CLIPSNET.Router.STANDARD_INPUT) ||
-                 logicalName.Equals(CLIPSNET.Router.ERROR) ||
-                 logicalName.Equals(CLIPSNET.Router.WARNING))
+             if (logicalName.Equals(CLIPSNET.Router.STDOUT) ||
+                 logicalName.Equals(CLIPSNET.Router.STDIN) ||
+                 logicalName.Equals(CLIPSNET.Router.STDERR) ||
+                 logicalName.Equals(CLIPSNET.Router.STDWRN))
                return true;
              else
                return false;
@@ -109,20 +109,20 @@ namespace RouterWPFExample
            }    
                 
          /*********/
-         /* Print */
+         /* Write */
          /*********/
 
-         public override void Print(String logicalName, String printString)
+         public override void Write(String logicalName, String printString)
            {
             Application.Current.Dispatcher.Invoke(DispatcherPriority.Normal,
                                                   new Action(delegate { m_RouterTextBox.CreateTimer(printString); }));
            }
        
          /********/
-         /* Getc */
+         /* Read */
          /********/
          
-         public override int Getc(String logicalName)
+         public override int Read(String logicalName)
            {
             RouterThreadBridge theBridge = this.m_RouterTextBox.m_ThreadBridge;
 
@@ -162,10 +162,10 @@ namespace RouterWPFExample
            }
     
          /**********/
-         /* Ungetc */
+         /* Unread */
          /**********/
 
-         public override int Ungetc(String logicalName,int theChar)
+         public override int Unread(String logicalName,int theChar)
            {
             lock (this.m_RouterTextBox.m_ThreadBridge)
               {

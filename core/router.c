@@ -78,6 +78,15 @@
 
 #include "router.h"
 
+/**********************/
+/* STRING DEFINITIONS */
+/**********************/
+
+   const char                    *STDIN = "stdin";
+   const char                    *STDOUT = "stdout";
+   const char                    *STDERR = "stderr";
+   const char                    *STDWRN = "stdwrn";
+
 /***************************************/
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/

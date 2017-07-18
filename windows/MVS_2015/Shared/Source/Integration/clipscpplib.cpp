@@ -43,9 +43,9 @@ using std::string;
 /*##################*/
 
 static bool CLIPSCPPQuery(Environment *,const char *,void *);
-static void CLIPSCPPPrint(Environment *,const char *,const char *,void *);
-static int CLIPSCPPGetc(Environment *,const char *,void *);
-static int CLIPSCPPUngetc(Environment *,const char *,int,void *);
+static void CLIPSCPPWrite(Environment *,const char *,const char *,void *);
+static int CLIPSCPPRead(Environment *,const char *,void *);
+static int CLIPSCPPUnread(Environment *,const char *,int,void *);
 static void CLIPSCPPExit(Environment *,int,void *);
 static Value *ConvertSingleFieldValue(int,void *);
 static DataObject ConvertDataObject(CLIPSValue *);
@@ -333,9 +333,9 @@ void CLIPSCPPEnv::Printout(
   const char *printString)
   {
 #ifndef CLIPS_DLL_WRAPPER
-   ::PrintString(theEnv,logicalName,printString);
+   ::WriteString(theEnv,logicalName,printString);
 #else
-   __PrintString(theEnv,logicalName,printString);
+   __WriteString(theEnv,logicalName,printString);
 #endif
   }
 
@@ -345,7 +345,7 @@ void CLIPSCPPEnv::Printout(
 void CLIPSCPPEnv::Print(
   const char *printString)
   {
-   Printout(STDOUT,printString);
+   Printout(CLIPSCPPRouter::STDOUT,printString);
   }
 
 /***********/
@@ -354,8 +354,8 @@ void CLIPSCPPEnv::Print(
 void CLIPSCPPEnv::PrintLn(
   const char *printString)
   {
-   Printout(STDOUT,printString);
-   Printout(STDOUT,"\n");
+   Printout(CLIPSCPPRouter::STDOUT,printString);
+   Printout(CLIPSCPPRouter::STDOUT,"\n");
   }
 
 /********************/
@@ -871,11 +871,11 @@ bool CLIPSCPPEnv::AddRouter(
   {
 #ifndef CLIPS_DLL_WRAPPER
    return ::AddRouter(theEnv,routerName,priority,CLIPSCPPQuery,
-                                  CLIPSCPPPrint,CLIPSCPPGetc,CLIPSCPPUngetc,
+                                  CLIPSCPPWrite,CLIPSCPPRead,CLIPSCPPUnread,
                                   CLIPSCPPExit,router);
 #else
    return __AddRouter(theEnv,routerName,priority,CLIPSCPPQuery,
-                                    CLIPSCPPPrint,CLIPSCPPGetc,CLIPSCPPUngetc,
+                                    CLIPSCPPWrite,CLIPSCPPRead,CLIPSCPPUnread,
                                     CLIPSCPPExit,router);
 #endif
   }
@@ -1110,10 +1110,10 @@ void CLIPSCPPParserErrorFunction::Callback(
 /* CLIPSCPPRouter Methods */
 /*########################*/
 
-const char *CLIPSCPPRouter::STANDARD_OUTPUT = STDOUT;
-const char *CLIPSCPPRouter::STANDARD_INPUT = STDIN;
-const char *CLIPSCPPRouter::WARNING = WWARNING;
-const char *CLIPSCPPRouter::ERROR = WERROR;
+const char *CLIPSCPPRouter::STDOUT = "stdout";
+const char *CLIPSCPPRouter::STDIN = "stdin";
+const char *CLIPSCPPRouter::STDWRN = "stdwrn";
+const char *CLIPSCPPRouter::STDERR = "stderr";
 
 /*********/
 /* Query */
@@ -1126,9 +1126,9 @@ bool CLIPSCPPRouter::Query(
   }
   
 /*********/
-/* Print */
+/* Write */
 /*********/
-void CLIPSCPPRouter::Print(
+void CLIPSCPPRouter::Write(
   CLIPSCPPEnv *theCPPEnv,
   const char *logicalName,
   const char *printString)
@@ -1136,9 +1136,9 @@ void CLIPSCPPRouter::Print(
   }
   
 /********/
-/* Getc */
+/* Read */
 /********/
-int CLIPSCPPRouter::Getc(
+int CLIPSCPPRouter::Read(
   CLIPSCPPEnv *theCPPEnv,
   const char *logicalName)
   {
@@ -1146,9 +1146,9 @@ int CLIPSCPPRouter::Getc(
   }
   
 /**********/
-/* Ungetc */
+/* Unread */
 /**********/
-int CLIPSCPPRouter::Ungetc(
+int CLIPSCPPRouter::Unread(
   CLIPSCPPEnv *theCPPEnv,
   int character,
   const char *logicalName)
@@ -2205,9 +2205,9 @@ static bool CLIPSCPPQuery(
   }
 
 /*****************/
-/* CLIPSCPPPrint */
+/* CLIPSCPPWrite */
 /*****************/
-static void CLIPSCPPPrint(
+static void CLIPSCPPWrite(
   Environment *theEnv,
   const char *logicalName,
   const char *printString,
@@ -2221,13 +2221,13 @@ static void CLIPSCPPPrint(
    CLIPSCPPEnv *theCPPEnv = (CLIPSCPPEnv *) __GetEnvironmentContext(theEnv);
 #endif
    
-   theRouter->Print(theCPPEnv,logicalName,printString);
+   theRouter->Write(theCPPEnv,logicalName,printString);
   }
 
-/*****************/
-/* CLIPSCPPGetc */
-/*****************/
-static int CLIPSCPPGetc(
+/****************/
+/* CLIPSCPPRead */
+/****************/
+static int CLIPSCPPRead(
   Environment *theEnv,
   const char *logicalName,
   void *context)
@@ -2240,13 +2240,13 @@ static int CLIPSCPPGetc(
    CLIPSCPPEnv *theCPPEnv = (CLIPSCPPEnv *) __GetEnvironmentContext(theEnv);
 #endif
    
-   return(theRouter->Getc(theCPPEnv,logicalName));
+   return(theRouter->Read(theCPPEnv,logicalName));
   }
   
 /******************/
-/* CLIPSCPPUngetc */
+/* CLIPSCPPUnread */
 /******************/
-static int CLIPSCPPUngetc(
+static int CLIPSCPPUnread(
   Environment *theEnv,
   const char *logicalName,
   int character,
@@ -2260,7 +2260,7 @@ static int CLIPSCPPUngetc(
    CLIPSCPPEnv *theCPPEnv = (CLIPSCPPEnv *) __GetEnvironmentContext(theEnv);
 #endif
    
-   return theRouter->Ungetc(theCPPEnv,character,logicalName);
+   return theRouter->Unread(theCPPEnv,character,logicalName);
   }
   
 /*****************/

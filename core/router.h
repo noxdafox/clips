@@ -78,10 +78,10 @@ typedef void RouterExitFunction(Environment *,int,void *);
 typedef int RouterReadFunction(Environment *,const char *,void *);
 typedef int RouterUnreadFunction(Environment *,const char *,int,void *);
 
-#define STDWRN "stdwrn"
-#define STDERR "stderr"
-#define STDOUT "stdout"
-#define STDIN "stdin"
+extern const char *STDOUT;
+extern const char *STDIN;
+extern const char *STDERR;
+extern const char *STDWRN;
 
 #define ROUTER_DATA 46
 

@@ -93,7 +93,7 @@ JNIEXPORT void JNICALL Java_net_sf_clipsrules_jni_Environment_printRouter(
    cLogName = (*env)->GetStringUTFChars(env,logName,NULL);
    cPrintString = (*env)->GetStringUTFChars(env,printString,NULL);
 
-   PrintString(theCLIPSEnv,cLogName,cPrintString);
+   WriteString(theCLIPSEnv,cLogName,cPrintString);
 
    (*env)->ReleaseStringUTFChars(env,logName,cLogName);
    (*env)->ReleaseStringUTFChars(env,printString,cPrintString);

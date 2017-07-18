@@ -119,7 +119,7 @@ namespace CLIPSNET
         
         void CommandLoop();
 
-        void AddParserErrorCallback(ParserErrorCallback ^);
+        void SetParserErrorCallback(ParserErrorCallback ^);
         
         void AddPeriodicCallback(String ^,int ,PeriodicCallback ^);
 
@@ -188,6 +188,7 @@ namespace CLIPSNET
 
       private:
         CLIPSCPPEnv *m_Env;
+        LoadParserErrorCallback ^ errorCallback;
         List<CLIPSLineError ^> ^ errorList;
      };
   };

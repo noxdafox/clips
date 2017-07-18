@@ -25,9 +25,9 @@ namespace CLIPSNET
         Router(String ^,int);
         ~Router();
         virtual bool Query(String ^ logicalName);
-        virtual void Print(String ^ logicalName, String ^ printString);
-        virtual int Getc(String ^ logicalName);
-        virtual int Ungetc(String ^ logicalName,int theChar);
+        virtual void Write(String ^ logicalName, String ^ printString);
+        virtual int Read(String ^ logicalName);
+        virtual int Unread(String ^ logicalName,int theChar);
         CLIPSCPPRouterBridge * RouterBridge();
 
         property String ^ Name
@@ -41,10 +41,10 @@ namespace CLIPSNET
             void set(int value) { priority = value; }
 	       }
 
-        static String ^STANDARD_OUTPUT = gcnew String(CLIPSCPPRouter::STANDARD_OUTPUT);
-        static String ^STANDARD_INPUT = gcnew String(CLIPSCPPRouter::STANDARD_INPUT);
-        static String ^WARNING = gcnew String(CLIPSCPPRouter::WARNING);
-        static String ^ERROR = gcnew String(CLIPSCPPRouter::ERROR);
+        static String ^STDIN = gcnew String(CLIPSCPPRouter::STDIN);
+        static String ^STDOUT = gcnew String(CLIPSCPPRouter::STDOUT);
+        static String ^STDWRN = gcnew String(CLIPSCPPRouter::STDWRN);
+        static String ^STDERR = gcnew String(CLIPSCPPRouter::STDERR);
 
       protected:
         !Router();
@@ -95,7 +95,7 @@ namespace CLIPSNET
         CaptureRouter(CLIPSNET::Environment ^, array<String ^> ^,bool);
         ~CaptureRouter();
         void Clear();
-        virtual void Print(String ^ logicalName,String ^ printString) override;
+        virtual void Write(String ^ logicalName,String ^ printString) override;
 
         property String ^ Output
           {
@@ -122,9 +122,9 @@ namespace CLIPSNET
          ~CLIPSCPPRouterBridge();
 
 		 bool Query(CLIPSCPPEnv *,const char *);
-		 void Print(CLIPSCPPEnv *,const char *,const char *);
-		 int Getc(CLIPSCPPEnv *,const char *);
-		 int Ungetc(CLIPSCPPEnv *,int,const char *);
+		 void Write(CLIPSCPPEnv *,const char *,const char *);
+		 int Read(CLIPSCPPEnv *,const char *);
+		 int Unread(CLIPSCPPEnv *,int,const char *);
 
       private:
          msclr::gcroot<Router^> m_Router;
