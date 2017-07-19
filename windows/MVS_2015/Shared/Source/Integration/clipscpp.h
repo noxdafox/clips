@@ -430,6 +430,22 @@ class MultifieldValue : public Value
      std::vector<Value *> theMultifield;
   };
 
+class ExternalAddressValue : public Value
+  { 
+   public:
+     ExternalAddressValue(CLIPSExternalAddress *);
+     ExternalAddressValue(const ExternalAddressValue& v);
+     virtual ~ExternalAddressValue();
+     virtual ExternalAddressValue& operator= (const ExternalAddressValue& v);
+     virtual std::ostream& print(std::ostream& o) const;
+     virtual ExternalAddressValue *clone() const; 
+     CLIPSCPPType GetCLIPSType();
+     CLIPSExternalAddress *GetExternalAddressValue() const;
+  
+   private:
+     CLIPSExternalAddress *theExternalAddress;
+  };
+
 class DataObject
   {
    public:

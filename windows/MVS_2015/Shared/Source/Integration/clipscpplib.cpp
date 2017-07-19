@@ -2138,6 +2138,105 @@ MultifieldValue *MultifieldValue::clone() const
   { 
    return new MultifieldValue(*this); 
   }
+  
+/*##############################*/
+/* ExternalAddressValue Methods */
+/*##############################*/
+
+/************************/
+/* ExternalAddressValue */
+/************************/
+ExternalAddressValue::ExternalAddressValue(
+  CLIPSExternalAddress *theExternal) : theExternalAddress(theExternal)
+  {
+/* TBD
+#ifndef CLIPS_DLL_WRAPPER
+   IncrementExternalAddressCount(theExternal);
+#else
+   __IncrementExternalAddressCount(theExternal);
+#endif
+*/
+  }
+
+/************************/
+/* ExternalAddressValue */
+/************************/
+ExternalAddressValue::ExternalAddressValue( const ExternalAddressValue& v) : theExternalAddress(NULL)
+  { 
+   this->operator=(v); 
+  }
+
+/*************************/
+/* ~ExternalAddressValue */
+/*************************/
+ExternalAddressValue::~ExternalAddressValue()
+  {  
+/* TBD 
+#ifndef CLIPS_DLL_WRAPPER
+   ::DecrementExternalAddressReferenceCount(theExternalAddress);
+#else
+   __DecrementExternalAddressCount(theExternalAddress);
+#endif
+*/
+  }
+
+/**************************/
+/* ExternalAddressValue = */
+/**************************/
+ExternalAddressValue& ExternalAddressValue::operator = (
+  const ExternalAddressValue& v)
+  {
+   if (this == &v) return *this;
+
+   if (theExternalAddress != NULL)
+     { 
+/* TBD
+#ifndef CLIPS_DLL_WRAPPER
+      ::DecrementExternalAddressReferenceCount(theExternalAddress);
+#else
+      __DecrementExternalReferenceCount(theExternalAddress);
+#endif
+*/
+     }
+        
+   theExternalAddress = v.theExternalAddress;
+/* TBD
+#ifndef CLIPS_DLL_WRAPPER
+   IncrementExternalAddressCount(theExternalAddress);
+#else
+   __IncrementExternalAddressCount(theExternalAddress);
+#endif
+*/   
+   return *this;
+  }
+
+/****************/
+/* GetCLIPSType */
+/****************/
+CLIPSCPPType ExternalAddressValue::GetCLIPSType()
+  {
+   return CPP_EXTERNAL_ADDRESS_TYPE;
+  }
+
+/*********/
+/* print */
+/*********/
+std::ostream& ExternalAddressValue::print (std::ostream& o) const
+  {  
+   return o << "<ExternalAddress-" << this->GetExternalAddressValue()->contents << ">";
+  }
+    
+/*********/
+/* clone */
+/*********/
+ExternalAddressValue *ExternalAddressValue::clone() const
+  { return new ExternalAddressValue(*this); }
+
+/***************************/
+/* GetExternalAddressValue */
+/***************************/
+CLIPSExternalAddress *ExternalAddressValue::GetExternalAddressValue() const
+  { return this->theExternalAddress; }
 
 /*###################################*/
 /* Static PeriodicFunction Functions */

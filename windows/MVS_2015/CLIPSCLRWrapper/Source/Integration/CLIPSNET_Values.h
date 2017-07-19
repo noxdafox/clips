@@ -47,8 +47,10 @@ namespace CLIPSNET
         bool PrimitiveValue::IsFloat();
         bool PrimitiveValue::IsInteger();
         bool PrimitiveValue::IsFactAddress();
+        bool PrimitiveValue::IsInstance();
         bool PrimitiveValue::IsInstanceAddress();
         bool PrimitiveValue::IsMultifield();
+        bool PrimitiveValue::IsExternalAddress();
      };
 
    /*################################*/
@@ -106,10 +108,14 @@ namespace CLIPSNET
         ~LexemeValue();
 
       public:
-        String ^ GetLexemeValue();
         virtual String^ ToString() override;
         virtual int GetHashCode() override;
         virtual bool Equals(Object ^ obj) override; 
+
+        property String ^ Value
+          {
+           String ^ get() { return value; };
+          }
     };
 
    /*###############################*/
@@ -124,8 +130,7 @@ namespace CLIPSNET
         ~StringValue();
 
       public:
-        String ^ GetStringValue();
-        virtual String^ ToString() override;
+        virtual String ^ ToString() override;
         virtual CLIPSNETType CLIPSType() override;
      };
 
@@ -141,7 +146,6 @@ namespace CLIPSNET
         ~SymbolValue();
 
       public:
-        String ^ GetSymbolValue();
         virtual String^ ToString() override;
         virtual CLIPSNETType CLIPSType() override;
      };
@@ -158,7 +162,6 @@ namespace CLIPSNET
         ~InstanceNameValue();
 
       public:
-        String ^ GetInstanceNameValue();
         CLIPSNET::InstanceAddressValue ^ GetInstance(CLIPSNET::Environment ^);
         virtual String^ ToString() override;
         virtual CLIPSNETType CLIPSType() override;
@@ -180,11 +183,10 @@ namespace CLIPSNET
         NumberValue(long long theLong);
         ~NumberValue();
         
-        double GetFloatValue(); 
-        long long GetIntegerValue(); 
-        static operator long long ( NumberValue ^ val ) 
+        static operator long long (NumberValue ^ val) 
           { return val->lValue; }
-        static operator double ( NumberValue ^ val ) 
+ 
+        static operator double (NumberValue ^ val) 
           { return val->dValue; }
      };
 
@@ -205,6 +207,11 @@ namespace CLIPSNET
         virtual int GetHashCode() override;
         virtual bool Equals(Object ^ obj) override; 
         virtual CLIPSNETType CLIPSType() override;
+
+        property long long Value
+          {
+           long long get() { return (long long) this; };
+          }
      };
 
    /*###############################*/
@@ -224,6 +231,11 @@ namespace CLIPSNET
         virtual int GetHashCode() override;
         virtual bool Equals(Object ^ obj) override; 
         virtual CLIPSNETType CLIPSType() override;
+
+        property double Value
+          {
+           double get() { return (double) this; };
+          }
      };
 
    /*###################################*/
@@ -251,7 +263,10 @@ namespace CLIPSNET
              { return listValue[index]; }
           }
 
-        List<PrimitiveValue ^> ^ GetMultifieldValue();
+        property List<PrimitiveValue ^> ^ Value
+          {
+           List<PrimitiveValue ^> ^ get() { return listValue; };
+          }
  
         virtual String ^ ToString() override;
         virtual int GetHashCode() override;
@@ -273,17 +288,37 @@ namespace CLIPSNET
         !FactAddressValue();
 
       public:
-        FactAddressValue();
         FactAddressValue(CLIPS::FactAddressValue *);
         ~FactAddressValue();
-        long long GetFactIndex();
         PrimitiveValue ^ GetSlotValue(String ^);
 
-        CLIPS::FactAddressValue *GetFactAddressValue();
-        virtual String^ ToString() override;
+        virtual String ^ ToString() override;
         virtual int GetHashCode() override;
         virtual bool Equals(Object ^ obj) override; 
         virtual CLIPSNETType CLIPSType() override;
+
+        property PrimitiveValue ^ default[String ^] 
+          {
+           PrimitiveValue ^ get(String ^ slotName) 
+             { return GetSlotValue(slotName); }
+          }
+
+        property long long FactIndex
+          {
+           long long get() 
+             { 
+              if (m_factAddressValue != NULL)
+                { return m_factAddressValue->GetFactIndex(); }
+
+              return 0;
+             };
+          }
+
+        property CLIPS::FactAddressValue * Value
+          {
+           CLIPS::FactAddressValue * get() { return m_factAddressValue; };
+          }
+        // TBD retain release
      };
 
    /*########################################*/
@@ -299,17 +334,60 @@ namespace CLIPSNET
         !InstanceAddressValue();
 
       public:
-        InstanceAddressValue();
         InstanceAddressValue(CLIPS::InstanceAddressValue *);
         ~InstanceAddressValue();
-        String ^ GetInstanceName();
         PrimitiveValue ^ GetSlotValue(String ^);
 
-        CLIPS::InstanceAddressValue *GetInstanceAddressValue();
         virtual String^ ToString() override;
         virtual int GetHashCode() override;
         virtual bool Equals(Object ^ obj) override; 
         virtual CLIPSNETType CLIPSType() override;
+
+        property String ^ InstanceName
+          {
+           String ^ get()
+             { return gcnew String(m_instanceAddressValue->GetInstanceName()); }
+          }
+
+        property PrimitiveValue ^ default[String ^] 
+          {
+           PrimitiveValue ^ get(String ^ slotName) 
+             { return GetSlotValue(slotName); }
+          }
+
+        property CLIPS::InstanceAddressValue * Value
+          {
+           CLIPS::InstanceAddressValue * get() { return m_instanceAddressValue; };
+          }
+        // TBD retain release
+     };
+     
+   /*########################################*/
+   /* ExternalAddressValue Class declaration */
+   /*########################################*/
+
+   public ref class ExternalAddressValue : PrimitiveValue
+     {
+      private:
+        CLIPS::ExternalAddressValue *m_externalAddressValue;
+
+      protected:
+        !ExternalAddressValue();
+
+      public:
+        ExternalAddressValue(CLIPS::ExternalAddressValue *);
+        ~ExternalAddressValue();
+
+        virtual String^ ToString() override;
+        virtual int GetHashCode() override;
+        virtual bool Equals(Object ^ obj) override; 
+        virtual CLIPSNETType CLIPSType() override;
+
+        property CLIPS::ExternalAddressValue * Value
+          {
+           CLIPS::ExternalAddressValue * get() { return m_externalAddressValue; };
+          }
+        // TBD retain release
      };
 
    /*###########*/

@@ -131,20 +131,20 @@ namespace CLIPSNET
          case CLIPSNETType::FLOAT:
            {
             FloatValue ^ theFloat = (FloatValue ^) thePV;
-            return DataObject(new CLIPS::FloatValue(theFloat->GetFloatValue()));
+            return DataObject(new CLIPS::FloatValue(theFloat->Value));
            }
 
          case CLIPSNETType::INTEGER:
            {
             IntegerValue ^ theInteger = (IntegerValue ^) thePV;
-            return DataObject(new CLIPS::IntegerValue(theInteger->GetIntegerValue()));
+            return DataObject(new CLIPS::IntegerValue(theInteger->Value));
            }
  
          case CLIPSNETType::STRING:
            {
             StringValue ^ theString = (StringValue ^) thePV;
             const char *cString;
-            array<Byte>^ ebString = Encoding::UTF8->GetBytes(theString->GetLexemeValue());
+            array<Byte>^ ebString = Encoding::UTF8->GetBytes(theString->Value);
             if (ebString->Length)
               {
                pin_ptr<Byte> pbString = &ebString[0];
@@ -160,7 +160,7 @@ namespace CLIPSNET
            {
             SymbolValue ^ theSymbol = (SymbolValue ^) thePV;
             const char *cString;
-            array<Byte>^ ebString = Encoding::UTF8->GetBytes(theSymbol->GetLexemeValue());
+            array<Byte>^ ebString = Encoding::UTF8->GetBytes(theSymbol->Value);
             if (ebString->Length)
               {
                pin_ptr<Byte> pbString = &ebString[0];
@@ -176,7 +176,7 @@ namespace CLIPSNET
            {
             InstanceNameValue ^ theInstanceName = (InstanceNameValue ^) thePV;
             const char *cString;
-            array<Byte>^ ebString = Encoding::UTF8->GetBytes(theInstanceName->GetLexemeValue());
+            array<Byte>^ ebString = Encoding::UTF8->GetBytes(theInstanceName->Value);
             if (ebString->Length)
               {
                pin_ptr<Byte> pbString = &ebString[0];
@@ -191,7 +191,7 @@ namespace CLIPSNET
          case CLIPSNETType::FACT_ADDRESS:
            {
             FactAddressValue ^ theFactAddress = (FactAddressValue ^) thePV;
-            CLIPS::FactAddressValue *theCPPFactAddress = theFactAddress->GetFactAddressValue();
+            CLIPS::FactAddressValue *theCPPFactAddress = theFactAddress->Value;
 
             return DataObject(new CLIPS::FactAddressValue(theCPPFactAddress->GetFactAddressValue()));
            }
@@ -199,7 +199,7 @@ namespace CLIPSNET
          case CLIPSNETType::INSTANCE_ADDRESS:
            {
             InstanceAddressValue ^ theInstanceAddress = (InstanceAddressValue ^) thePV;
-            CLIPS::InstanceAddressValue *theCPPInstanceAddress = theInstanceAddress->GetInstanceAddressValue();
+            CLIPS::InstanceAddressValue *theCPPInstanceAddress = theInstanceAddress->Value;
             return DataObject(new CLIPS::InstanceAddressValue(theCPPInstanceAddress->GetInstanceAddressValue()));
            }
 
@@ -250,7 +250,7 @@ namespace CLIPSNET
       
       return (this == obj);
      }
-     
+
    CLIPSNETType PrimitiveValue::CLIPSType()
      { return CLIPSNETType::UNKNOWN; }
 
@@ -281,11 +281,17 @@ namespace CLIPSNET
    bool PrimitiveValue::IsFactAddress()
      { return (CLIPSType() == CLIPSNETType::FACT_ADDRESS); }
 
+   bool PrimitiveValue::IsInstance()
+     { return (IsInstanceAddress() || IsInstanceName()); }
+
    bool PrimitiveValue::IsInstanceAddress()
      { return (CLIPSType() == CLIPSNETType::INSTANCE_ADDRESS); }
 
    bool PrimitiveValue::IsMultifield()
      { return (CLIPSType() == CLIPSNETType::MULTIFIELD); }
+
+   bool PrimitiveValue::IsExternalAddress()
+     { return (CLIPSType() == CLIPSNETType::EXTERNAL_ADDRESS); }
 
    /*######################*/
    /* PVEnumerator Methods */
@@ -346,9 +352,6 @@ namespace CLIPSNET
    LexemeValue::~LexemeValue()
      { }
 
-   String ^ LexemeValue::GetLexemeValue()
-     { return this->value; }
-
    String ^ LexemeValue::ToString()
      {
 	  if (value != nullptr)
@@ -368,7 +371,7 @@ namespace CLIPSNET
           (GetType() != obj->GetType()))
         { return false; }
       
-      return value->Equals(((LexemeValue ^) obj)->GetLexemeValue());
+      return value->Equals(((LexemeValue ^) obj)->Value);
      }
 
    /*#####################*/
@@ -383,9 +386,6 @@ namespace CLIPSNET
 
    StringValue::~StringValue()
      { }
-
-   String ^ StringValue::GetStringValue()
-     { return this->GetLexemeValue(); }
 
    String ^ StringValue::ToString()
      { return gcnew String("\"" + LexemeValue::ToString() +"\""); }
@@ -406,9 +406,6 @@ namespace CLIPSNET
    SymbolValue::~SymbolValue()
      { }
 
-   String ^ SymbolValue::GetSymbolValue()
-     { return this->GetLexemeValue(); }
-
    String ^ SymbolValue::ToString()
      { return gcnew String(LexemeValue::ToString()); }
      
@@ -428,13 +425,10 @@ namespace CLIPSNET
    InstanceNameValue::~InstanceNameValue()
      { }
 
-   String ^ InstanceNameValue::GetInstanceNameValue()
-     { return this->GetLexemeValue(); }
-
    CLIPSNET::InstanceAddressValue ^ InstanceNameValue::GetInstance(
      CLIPSNET::Environment ^ theEnv)
      {
-      return theEnv->FindInstanceByName(this->GetLexemeValue());
+      return theEnv->FindInstanceByName(this->Value);
      }
 
    String ^ InstanceNameValue::ToString()
@@ -467,13 +461,13 @@ namespace CLIPSNET
 
    NumberValue::~NumberValue()
      { }
-
+     /*
    double NumberValue::GetFloatValue()
      { return this->dValue; }
 
    long long NumberValue::GetIntegerValue()
      { return this->lValue; }
-
+     */
    /*######################*/
    /* IntegerValue Methods */
    /*######################*/
@@ -491,10 +485,10 @@ namespace CLIPSNET
      { }
  
    String ^ IntegerValue::ToString()
-     { return this->GetIntegerValue().ToString(); }
+     { return this->Value.ToString(); }
 
    int IntegerValue::GetHashCode()
-     { return GetIntegerValue().GetHashCode(); }
+     { return this->Value.GetHashCode(); }
 
    bool IntegerValue::Equals(Object ^ obj) 
      {
@@ -502,7 +496,7 @@ namespace CLIPSNET
           (GetType() != obj->GetType()))
         { return false; }
       
-      return this->GetIntegerValue().Equals(((IntegerValue ^) obj)->GetIntegerValue());
+      return this->Value.Equals(((IntegerValue ^) obj)->Value);
      }
      
    CLIPSNETType IntegerValue::CLIPSType()
@@ -525,10 +519,10 @@ namespace CLIPSNET
      { }
  
    String ^ FloatValue::ToString()
-     { return this->GetFloatValue().ToString(); }
+     { return this->Value.ToString(); }
 
    int FloatValue::GetHashCode()
-     { return GetFloatValue().GetHashCode(); }
+     { return Value.GetHashCode(); }
 
    bool FloatValue::Equals(Object ^ obj) 
      {
@@ -536,7 +530,7 @@ namespace CLIPSNET
           (GetType() != obj->GetType()))
         { return false; }
       
-      return this->GetFloatValue().Equals(((FloatValue ^) obj)->GetFloatValue());
+      return this->Value.Equals(((FloatValue ^) obj)->Value);
      }
      
    CLIPSNETType FloatValue::CLIPSType()
@@ -576,9 +570,6 @@ namespace CLIPSNET
 	   return theString;
      }
 
-   List<PrimitiveValue ^> ^MultifieldValue::GetMultifieldValue()
-     { return this->listValue; }
-
    int MultifieldValue::GetHashCode()
      {
       int hash = 17;
@@ -596,8 +587,8 @@ namespace CLIPSNET
           (GetType() != obj->GetType()))
         { return false; }
 
-      List<PrimitiveValue ^> ^ list1 = this->GetMultifieldValue();
-      List<PrimitiveValue ^> ^ list2 = ((MultifieldValue ^) obj)->GetMultifieldValue();
+      List<PrimitiveValue ^> ^ list1 = this->Value;
+      List<PrimitiveValue ^> ^ list2 = ((MultifieldValue ^) obj)->Value;
 
       if (list1->Count != list2->Count) 
         { return false; }
@@ -625,9 +616,6 @@ namespace CLIPSNET
      CLIPS::FactAddressValue *theFactAddressValue) 
      { m_factAddressValue = theFactAddressValue->clone(); }
 
-   FactAddressValue::FactAddressValue() 
-     { m_factAddressValue = NULL; }
-
    FactAddressValue::~FactAddressValue()
      { this->!FactAddressValue();  }
 
@@ -635,17 +623,6 @@ namespace CLIPSNET
      {
 	   if (m_factAddressValue != NULL)
 	     { delete m_factAddressValue; }
-     }
- 
-   CLIPS::FactAddressValue *FactAddressValue::GetFactAddressValue()
-     { return this->m_factAddressValue; }
-
-   long long FactAddressValue::GetFactIndex()
-     {
-      if (m_factAddressValue != NULL)
-        { return m_factAddressValue->GetFactIndex(); }
-
-      return 0;
      }
 
    PrimitiveValue ^ FactAddressValue::GetSlotValue(
@@ -665,7 +642,7 @@ namespace CLIPSNET
      }
 
    String ^ FactAddressValue::ToString()
-     { return gcnew String("<Fact-" + this->GetFactIndex() + ">"); }
+     { return gcnew String("<Fact-" + this->FactIndex + ">"); }
 
    int FactAddressValue::GetHashCode()
      {
@@ -679,7 +656,7 @@ namespace CLIPSNET
           (GetType() != obj->GetType()))
         { return false; }
       
-      return (m_factAddressValue->GetFactAddressValue() == ((FactAddressValue ^) obj)->GetFactAddressValue()->GetFactAddressValue());
+      return (m_factAddressValue->GetFactAddressValue() == ((FactAddressValue ^) obj)->Value->GetFactAddressValue());
      }
      
    CLIPSNETType FactAddressValue::CLIPSType()
@@ -693,9 +670,6 @@ namespace CLIPSNET
      CLIPS::InstanceAddressValue *theInstanceAddressValue) 
      { m_instanceAddressValue = theInstanceAddressValue->clone(); }
 
-   InstanceAddressValue::InstanceAddressValue() 
-     { m_instanceAddressValue = NULL; }
-
    InstanceAddressValue::~InstanceAddressValue()
      { this->!InstanceAddressValue(); }
 
@@ -704,12 +678,6 @@ namespace CLIPSNET
       if (m_instanceAddressValue != NULL)
         { delete m_instanceAddressValue; }
      }
-
-   CLIPS::InstanceAddressValue *InstanceAddressValue::GetInstanceAddressValue()
-     { return this->m_instanceAddressValue; }
-
-   String ^ InstanceAddressValue::GetInstanceName()
-     { return gcnew String(m_instanceAddressValue->GetInstanceName()); }
 
    PrimitiveValue ^ InstanceAddressValue::GetSlotValue(
      String ^ slotName)
@@ -728,7 +696,7 @@ namespace CLIPSNET
      }
 
   String ^ InstanceAddressValue::ToString()
-     { return gcnew String("<Instance-" + this->GetInstanceName() + ">"); }
+     { return gcnew String("<Instance-" + this->InstanceName + ">"); }
 
    int InstanceAddressValue::GetHashCode()
      {
@@ -742,10 +710,53 @@ namespace CLIPSNET
           (GetType() != obj->GetType()))
         { return false; }
 
-      return (m_instanceAddressValue->GetInstanceAddressValue() == ((InstanceAddressValue ^) obj)->GetInstanceAddressValue()->GetInstanceAddressValue());
+      return (m_instanceAddressValue->GetInstanceAddressValue() == ((InstanceAddressValue ^) obj)->Value->GetInstanceAddressValue());
      }
-     
+
    CLIPSNETType InstanceAddressValue::CLIPSType()
      { return CLIPSNETType::INSTANCE_ADDRESS; }
 
+   /*##############################*/
+   /* ExternalAddressValue Methods */
+   /*##############################*/
+
+   ExternalAddressValue::ExternalAddressValue(
+     CLIPS::ExternalAddressValue *theExternalAddressValue) 
+     {
+      m_externalAddressValue = theExternalAddressValue->clone(); 
+     }
+
+  ExternalAddressValue::~ExternalAddressValue()
+     { this->!ExternalAddressValue(); }
+
+   ExternalAddressValue::!ExternalAddressValue()
+     {
+      if (m_externalAddressValue != NULL)
+        { delete m_externalAddressValue; }
+     }
+
+  String ^ ExternalAddressValue::ToString()
+     { 
+      void *contents = this->m_externalAddressValue->GetExternalAddressValue()->contents;
+
+      return gcnew String("<ExternalAddress-" + ((long long) contents).ToString() + ">");
+     }
+
+   int ExternalAddressValue::GetHashCode()
+     {
+      INT_PTR ptrValue = (INT_PTR) m_externalAddressValue;
+      return ptrValue.GetHashCode();
+     }
+
+   bool ExternalAddressValue::Equals(Object ^ obj) 
+     {
+      if ((obj == nullptr) || 
+          (GetType() != obj->GetType()))
+        { return false; }
+
+      return (m_externalAddressValue->GetExternalAddressValue() == ((ExternalAddressValue ^) obj)->Value->GetExternalAddressValue());
+     }
+
+   CLIPSNETType ExternalAddressValue::CLIPSType()
+     { return CLIPSNETType::EXTERNAL_ADDRESS; }
   };

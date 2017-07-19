@@ -50,7 +50,7 @@ namespace AutoFormsExample
           /* Determine the Next/Prev button states. */
           /*========================================*/
 
-          if (fv.GetSlotValue("state").ToString().Equals("conclusion"))
+          if (fv["state"].ToString().Equals("conclusion"))
             {
              interviewState = InterviewState.CONCLUSION;
              nextButton.Tag = "Restart";
@@ -58,7 +58,7 @@ namespace AutoFormsExample
              prevButton.Visible = true;
              choicesPanel.Visible = false;
             }
-          else if (fv.GetSlotValue("state").ToString().Equals("greeting"))
+          else if (fv["state"].ToString().Equals("greeting"))
             {
              interviewState = InterviewState.GREETING;
              nextButton.Tag = "Next";
@@ -81,10 +81,10 @@ namespace AutoFormsExample
           
           choicesPanel.Controls.Clear();
 
-          MultifieldValue damf = (MultifieldValue) fv.GetSlotValue("display-answers");
-          MultifieldValue vamf = (MultifieldValue) fv.GetSlotValue("valid-answers");
+          MultifieldValue damf = (MultifieldValue) fv["display-answers"];
+          MultifieldValue vamf = (MultifieldValue) fv["valid-answers"];
 
-          String selected = fv.GetSlotValue("response").ToString();
+          String selected = fv["response"].ToString();
           RadioButton firstButton = null;
 
           for (int i = 0; i < damf.Count; i++)
@@ -94,9 +94,9 @@ namespace AutoFormsExample
              RadioButton rButton;
              String buttonName, buttonText, buttonAnswer;
 
-             buttonName = da.GetLexemeValue();
+             buttonName = da.Value;
              buttonText = buttonName.Substring(0,1).ToUpperInvariant() + buttonName.Substring(1);
-             buttonAnswer = va.GetLexemeValue();
+             buttonAnswer = va.Value;
 
              rButton = new RadioButton();
              rButton.Text = buttonText;
@@ -122,13 +122,13 @@ namespace AutoFormsExample
          /* Set the label to the display text. */
          /*====================================*/
 
-         relationAsserted = ((LexemeValue) fv.GetSlotValue("relation-asserted")).GetLexemeValue();
+         relationAsserted = ((LexemeValue) fv["relation-asserted"]).Value;
 
          /*====================================*/
          /* Set the label to the display text. */
          /*====================================*/
 
-         String messageString = ((StringValue) fv.GetSlotValue("display")).GetStringValue();
+         String messageString = ((StringValue) fv["display"]).Value;
          int preferredWidth = ComputeLabelWidth(messageString);
 
          messageLabel.Text = messageString;
