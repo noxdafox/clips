@@ -62,14 +62,6 @@ public class MultifieldValue extends PrimitiveValue implements Iterable<Primitiv
 	   if (this.value == null) return (mv.value == null);
 	   return this.value.equals(mv.value);
       }
-	     
-   /********************/
-   /* multifieldValue: */
-   /********************/
-   public List<PrimitiveValue> multifieldValue()
-     {
-      return getValue();
-     }
 
    /********/
    /* get: */

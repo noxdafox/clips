@@ -244,9 +244,9 @@ class AnimalDemo implements ActionListener
          JRadioButton rButton;
          String buttonName, buttonText, buttonAnswer;
          
-         buttonName = da.lexemeValue();
+         buttonName = da.getValue();
          buttonText = buttonName.substring(0,1).toUpperCase() + buttonName.substring(1);
-         buttonAnswer = va.lexemeValue();
+         buttonAnswer = va.getValue();
          
          if (((lastAnswer != null) && buttonAnswer.equals(lastAnswer)) ||                  
              ((lastAnswer == null) && buttonAnswer.equals(selected)))
@@ -271,13 +271,13 @@ class AnimalDemo implements ActionListener
       /* Set the label to the display text. */
       /*====================================*/
 
-      relationAsserted = ((LexemeValue) fv.getSlotValue("relation-asserted")).lexemeValue();
+      relationAsserted = ((LexemeValue) fv.getSlotValue("relation-asserted")).getValue();
 
       /*====================================*/
       /* Set the label to the display text. */
       /*====================================*/
 
-      String theText = ((StringValue) fv.getSlotValue("display")).stringValue();
+      String theText = ((StringValue) fv.getSlotValue("display")).getValue();
             
       wrapLabelText(displayLabel,theText);
       

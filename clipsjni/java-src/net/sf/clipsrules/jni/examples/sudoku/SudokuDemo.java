@@ -471,7 +471,7 @@ class SudokuDemo implements ActionListener, FocusListener, KeyListener
             if (fv == null) continue;
             
             messageStr = messageStr + ((NumberValue) fv.getSlotValue("priority")).intValue() + ". " +
-                                      ((LexemeValue) fv.getSlotValue("reason")).lexemeValue() + "<br>";
+                                      ((LexemeValue) fv.getSlotValue("reason")).getValue() + "<br>";
            }
         
          JOptionPane.showMessageDialog(jfrm,messageStr,sudokuResources.getString("SolutionTechniques"),JOptionPane.PLAIN_MESSAGE);

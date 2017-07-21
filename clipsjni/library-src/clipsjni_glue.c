@@ -189,7 +189,7 @@ void ExitJNICallback(
    if (mid == NULL)
      { return; }
 
-   (*env)->CallBooleanMethod(env,context,mid);
+   (*env)->CallVoidMethod(env,context,mid,(num == EXIT_FAILURE));
 
    /* TBD deallocate global context reference */
   }

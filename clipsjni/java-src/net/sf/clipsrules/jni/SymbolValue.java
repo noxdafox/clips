@@ -19,14 +19,6 @@ public class SymbolValue extends LexemeValue
       super(value);
      }
 
-   /****************/
-   /* symbolValue: */
-   /****************/
-   public String symbolValue()
-     {
-      return getValue();
-     }
-
    @Override
    public CLIPSType getCLIPSType()
      { return CLIPSType.SYMBOL; }

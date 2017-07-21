@@ -55,14 +55,6 @@ public abstract class LexemeValue extends PrimitiveValue
 	   if (this.value == null) return (lv.value == null);
 	   return this.value.equals(lv.value);
       }
-	
-   /****************/
-   /* lexemeValue: */
-   /****************/
-   public String lexemeValue()
-     {
-      return getValue();
-     }
    
    @Override
    public boolean isLexeme()

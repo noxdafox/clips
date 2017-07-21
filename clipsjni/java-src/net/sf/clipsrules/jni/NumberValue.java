@@ -20,21 +20,13 @@ public abstract class NumberValue extends PrimitiveValue
      {
       return this.value;
      }
-
-   /****************/
-   /* NumberValue: */
-   /****************/
-   public Number numberValue()
-     {
-      return getValue();
-     } 
      
    /*************/
    /* intValue: */
    /*************/
    public int intValue()
      {
-      return numberValue().intValue();
+      return value.intValue();
      }
 
    /**************/
@@ -42,7 +34,7 @@ public abstract class NumberValue extends PrimitiveValue
    /**************/
    public long longValue()
      {
-      return numberValue().longValue();
+      return value.longValue();
      }
      
    /***************/
@@ -50,7 +42,7 @@ public abstract class NumberValue extends PrimitiveValue
    /***************/
    public float floatValue()
      {
-      return numberValue().floatValue();
+      return value.floatValue();
      }
 
    /****************/
@@ -58,7 +50,7 @@ public abstract class NumberValue extends PrimitiveValue
    /****************/
    public double doubleValue()
      {
-      return numberValue().doubleValue();
+      return value.doubleValue();
      }
      
    /*************/

@@ -494,7 +494,7 @@ class WineDemo implements ActionListener
          
          int certainty = ((NumberValue) fv.getSlotValue("certainty")).intValue(); 
          
-         String wineName = ((LexemeValue) fv.getSlotValue("value")).lexemeValue();
+         String wineName = ((LexemeValue) fv.getSlotValue("value")).getValue();
                   
          wineList.addRow(new Object[] { wineName, new Integer(certainty) });
         }
