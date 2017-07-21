@@ -343,7 +343,7 @@ namespace CLIPSNET
    /* LexemeValue Methods */
    /*#####################*/
 
-   LexemeValue::LexemeValue() : value ( nullptr)
+   LexemeValue::LexemeValue() : value ( gcnew String("") )
      { }
 
    LexemeValue::LexemeValue(String ^ theString) : value (theString)
@@ -378,7 +378,7 @@ namespace CLIPSNET
    /* StringValue Methods */
    /*#####################*/
 
-   StringValue::StringValue() : LexemeValue(gcnew String(""))
+   StringValue::StringValue() : LexemeValue()
      { }
 
    StringValue::StringValue(String ^ theString) : LexemeValue (theString)
@@ -397,7 +397,7 @@ namespace CLIPSNET
    /* SymbolValue Methods */
    /*#####################*/
 
-   SymbolValue::SymbolValue() : LexemeValue(gcnew String(""))
+   SymbolValue::SymbolValue() : LexemeValue()
      { }
 
    SymbolValue::SymbolValue(String ^ theString) : LexemeValue (theString)
@@ -416,7 +416,7 @@ namespace CLIPSNET
    /* InstanceNameValue Methods */
    /*###########################*/
 
-   InstanceNameValue::InstanceNameValue() : LexemeValue(gcnew String(""))
+   InstanceNameValue::InstanceNameValue() : LexemeValue()
      { }
 
    InstanceNameValue::InstanceNameValue(String ^ theString) : LexemeValue (theString)
@@ -461,13 +461,7 @@ namespace CLIPSNET
 
    NumberValue::~NumberValue()
      { }
-     /*
-   double NumberValue::GetFloatValue()
-     { return this->dValue; }
 
-   long long NumberValue::GetIntegerValue()
-     { return this->lValue; }
-     */
    /*######################*/
    /* IntegerValue Methods */
    /*######################*/
