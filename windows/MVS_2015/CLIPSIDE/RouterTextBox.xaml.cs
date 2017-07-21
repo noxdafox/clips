@@ -180,7 +180,17 @@ namespace CLIPSIDE
               }
             return 0;
            }
+
+         /********/
+         /* Exit */
+         /********/
+
+         public override void Exit(bool failure)
+           {
+           }
         }
+
+        
 
       /*@@@@@@@@@@@@@@@*/
       /* RouterTextBox */

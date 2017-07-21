@@ -28,6 +28,7 @@ namespace CLIPSNET
         virtual void Write(String ^ logicalName, String ^ printString);
         virtual int Read(String ^ logicalName);
         virtual int Unread(String ^ logicalName,int theChar);
+        virtual void Exit(bool);
         CLIPSCPPRouterBridge * RouterBridge();
 
         property String ^ Name
@@ -125,6 +126,7 @@ namespace CLIPSNET
 		 void Write(CLIPSCPPEnv *,const char *,const char *);
 		 int Read(CLIPSCPPEnv *,const char *);
 		 int Unread(CLIPSCPPEnv *,int,const char *);
+		 void Exit(CLIPSCPPEnv *,bool);
 
       private:
          msclr::gcroot<Router^> m_Router;

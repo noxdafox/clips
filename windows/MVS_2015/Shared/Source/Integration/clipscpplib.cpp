@@ -1161,7 +1161,7 @@ int CLIPSCPPRouter::Unread(
 /********/
 void CLIPSCPPRouter::Exit(
   CLIPSCPPEnv *theCPPEnv,
-  int exitCode)
+  bool failure)
   {
   }
 
@@ -2378,7 +2378,7 @@ static void CLIPSCPPExit(
    CLIPSCPPEnv *theCPPEnv = (CLIPSCPPEnv *) __GetEnvironmentContext(theEnv);
 #endif
    
-   theRouter->Exit(theCPPEnv,exitCode);
+   theRouter->Exit(theCPPEnv,(exitCode == EXIT_FAILURE));
   }
 
 /*########################*/

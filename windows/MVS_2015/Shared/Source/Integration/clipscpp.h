@@ -136,7 +136,7 @@ class CLIPSCPPRouter
       virtual void Write(CLIPSCPPEnv *,const char *,const char *);
       virtual int Read(CLIPSCPPEnv *,const char *);
       virtual int Unread(CLIPSCPPEnv *,int,const char *);
-      virtual void Exit(CLIPSCPPEnv *,int);
+      virtual void Exit(CLIPSCPPEnv *,bool);
 
       const static char *STDOUT;
       const static char *STDIN;

@@ -25,10 +25,10 @@ namespace CLIPSNET
    /*####################################*/
 
    CLIPSCPPRouterBridge::CLIPSCPPRouterBridge() {}
-   
+ 
    CLIPSCPPRouterBridge::CLIPSCPPRouterBridge(msclr::gcroot<Router^> the_Router) 
      { m_Router = the_Router; }
-   
+
    CLIPSCPPRouterBridge::~CLIPSCPPRouterBridge() {}
 
    bool CLIPSCPPRouterBridge::Query(
@@ -68,6 +68,13 @@ namespace CLIPSNET
       String ^ cliLogicalName = CharStarToString(logicalName);
 
       return m_Router->Unread(cliLogicalName,theChar);
+     }
+
+   void CLIPSCPPRouterBridge::Exit(
+     CLIPSCPPEnv *theCPPEnv,
+     bool failure)
+     {
+      m_Router->Exit(failure);
      }
 
    /*######################*/
@@ -111,6 +118,9 @@ namespace CLIPSNET
 
    int Router::Unread(String ^ logicalName,int theChar)
      { return -1; }
+
+   void Router::Exit(bool failure)
+     { }
 
    CLIPSCPPRouterBridge *Router::RouterBridge()
      { return m_RouterBridge; }
