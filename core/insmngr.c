@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/25/16             */
+   /*            CLIPS Version 6.40  07/27/17             */
    /*                                                     */
    /*          INSTANCE PRIMITIVE SUPPORT MODULE          */
    /*******************************************************/
@@ -38,6 +38,11 @@
 /*            Newly created instances can no longer use      */
 /*            a preexisting instance name of another class   */
 /*            [INSMNGR16].                                   */
+/*                                                           */
+/*      6.31: Marked deleted instances so that partial       */
+/*            matches will not be propagated when the match  */
+/*            is based on both the existence and             */
+/*            non-existence of an instance.                  */
 /*                                                           */
 /*      6.40: Added Env prefix to GetEvaluationError and     */
 /*            SetEvaluationError functions.                  */
@@ -537,7 +542,11 @@ bool QuashInstance(
    RemoveEntityDependencies(theEnv,(struct patternEntity *) ins);
 
    if (ins->cls->reactive)
-     ObjectNetworkAction(theEnv,OBJECT_RETRACT,ins,-1);
+     {
+      ins->garbage = 1;
+      ObjectNetworkAction(theEnv,OBJECT_RETRACT,ins,-1);
+      ins->garbage = 0;
+     }
 #endif
 
    if (ins->prvHash != NULL)
