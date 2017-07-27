@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*              CLIPS Version 6.30  02/05/15           */
+   /*              CLIPS Version 6.31  07/27/17           */
    /*                                                     */
    /*            INSTANCE PRIMITIVE SUPPORT MODULE        */
    /*******************************************************/
@@ -38,6 +38,11 @@
 /*            Newly created instances can no longer use      */
 /*            a preexisting instance name of another class   */
 /*            [INSMNGR16].                                   */
+/*                                                           */
+/*      6.31: Marked deleted instances so that partial       */
+/*            matches will not be propagated when the match  */
+/*            is based on both the existence and             */
+/*            non-existence of an instance.                  */
 /*                                                           */
 /*************************************************************/
 
@@ -545,7 +550,11 @@ globle intBool QuashInstance(
    RemoveEntityDependencies(theEnv,(struct patternEntity *) ins);
 
    if (ins->cls->reactive)
-     ObjectNetworkAction(theEnv,OBJECT_RETRACT,(INSTANCE_TYPE *) ins,-1);
+     {
+      ins->garbage = 1;
+      ObjectNetworkAction(theEnv,OBJECT_RETRACT,(INSTANCE_TYPE *) ins,-1);
+      ins->garbage = 0;
+     }
 #endif
 
    if (ins->prvHash != NULL)

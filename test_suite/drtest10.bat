@@ -449,4 +449,25 @@
 (run)
 (retract 1)
 (unwatch facts) 
+(clear) ; CLIPSESG Bug
+(watch activations)
+(defclass A (is-a USER))
+
+(defrule crash
+  (not (object (is-a A)))
+  (object (is-a A))
+  =>)
+(make-instance test1 of A)
+(unmake-instance [test1])
+(run)
+(clear)
+(deftemplate A)
+
+(defrule crash
+  (not (A))
+  (A)
+  =>)
+(assert (A))
+(retract 1)
+(unwatch activations)
 (clear)
