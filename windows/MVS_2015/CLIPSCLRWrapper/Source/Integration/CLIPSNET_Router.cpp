@@ -150,11 +150,10 @@ namespace CLIPSNET
      CLIPSNET::Environment ^ theEnv,
      array<String ^> ^ theQueryNames,
      int thePriority,
-     String ^ theRouterName) : Router(theRouterName)
+     String ^ theRouterName) : Router(theRouterName,thePriority)
      {
       clips = theEnv;
       queryNames = theQueryNames;
-      priority = thePriority;
       clips->AddRouter(this);
      }
 

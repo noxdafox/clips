@@ -70,18 +70,12 @@ namespace CLIPSNET
         ~BaseRouter();
         virtual bool Query(String ^ logicalName) override;
 
-        property int Priority
-          {
-           int get() { return priority; };
-          }
-
       protected:
         !BaseRouter();
         CLIPSNET::Environment ^ clips;
 
       private:
         static int BaseRouterNameIndex = 0;
-        int priority;
         array<String ^> ^ queryNames;
      };
 
