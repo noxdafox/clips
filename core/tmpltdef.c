@@ -71,6 +71,7 @@
 #include "modulpsr.h"
 #include "modulutl.h"
 #include "network.h"
+#include "pattern.h"
 #include "router.h"
 #include "tmpltbsc.h"
 #include "tmpltfun.h"
