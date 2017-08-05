@@ -261,7 +261,7 @@ public class Environment
    /* run: */
    /********/
    public long run(
-     long runLimit) throws CLIPSException
+     final long runLimit) throws CLIPSException
      {
       return longCommandWrapper(
          new Callable<Long>() 

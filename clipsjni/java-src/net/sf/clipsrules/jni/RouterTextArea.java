@@ -768,7 +768,7 @@ public class RouterTextArea extends JTextArea
    /* caretUpdate */
    /***************/  
    public void caretUpdate(
-     CaretEvent ce) 
+     final CaretEvent ce) 
      {
       if (EventQueue.isDispatchThread())
         { 

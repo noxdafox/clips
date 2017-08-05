@@ -1,6 +1,7 @@
 package net.sf.clipsrules.jni.examples.ide;
 
 import java.awt.event.ActionListener;
+import javax.swing.JButton;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
@@ -9,14 +10,17 @@ import java.net.URI;
 import java.net.URL;
 import java.awt.Desktop;
 
+import javax.swing.BorderFactory;
 import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 
+import java.awt.Component;
 import java.awt.Font;
 import java.awt.Dimension;
-import javax.swing.BoxLayout;
 
 import javax.swing.ImageIcon;
 import javax.imageio.ImageIO;
@@ -53,8 +57,8 @@ public class HelpMenu extends JMenu
          
          setLayout(new BoxLayout(getContentPane(),BoxLayout.Y_AXIS));
 
-         add(Box.createRigidArea(new Dimension(0,8)));
-
+         getRootPane().setBorder(BorderFactory.createEmptyBorder(10,40,18,40));
+         
          try
            {
             InputStream imageInput = getClass().getResourceAsStream(imageName);
@@ -94,15 +98,34 @@ public class HelpMenu extends JMenu
                   
          add(Box.createRigidArea(new Dimension(0,18)));
 
-         name = new JLabel("Public Domain Release, June 2017");
+         name = new JLabel("Public Domain Release, August 2017");
          name.setAlignmentX(0.5f);
          font = new Font(font.getFontName(),Font.PLAIN,12);
          name.setFont(font);
          add(name);
 
+         add(Box.createRigidArea(new Dimension(0,18)));
+         
+         JButton ok = new JButton("OK");
+         
+         ok.addActionListener(
+            new ActionListener()
+              {
+               public void actionPerformed(ActionEvent evt) 
+                 { 
+                  setVisible(false); 
+                  dispose();
+                 }
+              });
+              
+         ok.setAlignmentX(Component.CENTER_ALIGNMENT);
+         add(ok);
+
          setModalityType(ModalityType.APPLICATION_MODAL);
          setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-         setSize(300,300);
+         
+         pack();
+         
          setResizable(false);
         }
      }

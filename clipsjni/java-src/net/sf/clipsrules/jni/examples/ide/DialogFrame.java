@@ -240,7 +240,7 @@ public class DialogFrame extends JInternalFrame
    /*********************/
    /* updatePauseButton */
    /*********************/  
-   public void updatePauseButton(boolean value)
+   public void updatePauseButton(final boolean value)
      {
       if (EventQueue.isDispatchThread())
         { 

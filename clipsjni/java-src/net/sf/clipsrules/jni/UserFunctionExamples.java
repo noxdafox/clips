@@ -9,7 +9,7 @@ import java.util.Properties;
 public class UserFunctionExamples 
   {  
    public static void addUserFunctions(
-     Environment theEnv)
+     final Environment theEnv)
      {
       // (upcase "ßuzäöü")
       theEnv.removeUserFunction("upcase");

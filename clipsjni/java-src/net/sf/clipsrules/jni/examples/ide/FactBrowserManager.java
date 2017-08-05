@@ -94,7 +94,7 @@ public class FactBrowserManager implements ActionListener
    /* updateBrowser: */
    /******************/
    private void updateBrowser(
-     EntityBrowserFrame theBrowser)
+     final EntityBrowserFrame theBrowser)
      {
       if (EventQueue.isDispatchThread())
         { 

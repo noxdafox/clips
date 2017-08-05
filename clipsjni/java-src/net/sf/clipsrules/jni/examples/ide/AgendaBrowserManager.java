@@ -97,7 +97,7 @@ public class AgendaBrowserManager implements ActionListener
    /* updateBrowser: */
    /******************/
    private void updateBrowser(
-     AgendaBrowserFrame theBrowser)
+     final AgendaBrowserFrame theBrowser)
      {
       if (EventQueue.isDispatchThread())
         { 

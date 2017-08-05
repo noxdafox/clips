@@ -203,7 +203,7 @@ public class AgendaBrowserFrame extends JInternalFrame
    /* updateButtons */
    /*****************/
    public void updateButtons(
-     boolean isExecuting)
+     final boolean isExecuting)
      {
       if (EventQueue.isDispatchThread())
         { 
