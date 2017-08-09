@@ -313,6 +313,4 @@ public class AgendaBrowserFrame extends JInternalFrame
       catch (Exception e)
         { e.printStackTrace(); }
      }
-     
-
   }
