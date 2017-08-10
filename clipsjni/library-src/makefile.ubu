@@ -42,6 +42,7 @@ OBJS = agenda.o analysis.o argacces.o bload.o bmathfun.o bsave.o \
 .c.o :
 	gcc -c -O3 -fPIC -DLINUX \
 	    -I$(JAVA_INCLUDE) -I$(JAVA_INCLUDE_OS) \
+	    -fno-strict-aliasing -Wstrict-aliasing \
 	    -Wall -Wundef -Wpointer-arith -Wshadow \
 	    -Winline -Wmissing-declarations -Wredundant-decls \
 	    -Wmissing-prototypes -Wnested-externs \
