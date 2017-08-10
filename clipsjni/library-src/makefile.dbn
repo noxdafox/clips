@@ -1,8 +1,8 @@
-# Debian 8.7 with Java 1.7.0_131
+# Debian 9.1 with Java 1.8.0_141
 # Notes:
 #    -fPIC option needed for 64-bit systems
 
-JAVA_HOME = /usr/lib/jvm/java-7-openjdk-amd64
+JAVA_HOME = /usr/lib/jvm/java-8-openjdk-amd64
 JAVA_INCLUDE = $(JAVA_HOME)/include
 JAVA_INCLUDE_OS = $(JAVA_INCLUDE)/linux
 
