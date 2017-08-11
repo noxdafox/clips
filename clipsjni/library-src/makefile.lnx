@@ -1,8 +1,32 @@
-# ubuntu 14.04 LTS with Java 1.8.0_131
+# CLIPS 6.40
+# Linux CLIPSJNI library
+# Ubuntu 16.04 LTS with OpenJDK 1.8.0_131
+# Debian 9.1 with OpenJDK 1.8.0_141
+# Fedora 23 with OpenJDK 1.8.0_111
+# CentOS 7 with OpenJDK 1.8.0_141
+
 # Notes:
 #    -fPIC option needed for 64-bit systems
 
-JAVA_HOME = /usr/lib/jvm/java-8-oracle
+# set DISTRIBUTION to UBUNTU, DEBIAN, FEDORA, or CENTOS
+DISTRIBUTION = UBUNTU
+
+ifeq ($(DISTRIBUTION),UBUNTU)
+JAVA_HOME = /usr/lib/jvm/default-java
+endif 
+
+ifeq ($(DISTRIBUTION),DEBIAN)
+JAVA_HOME = /usr/lib/jvm/default-java
+endif 
+
+ifeq ($(DISTRIBUTION),FEDORA)
+JAVA_HOME = /usr/lib/jvm/java-openjdk
+endif 
+
+ifeq ($(DISTRIBUTION),CENTOS)
+JAVA_HOME = /usr/lib/jvm/java-openjdk
+endif
+
 JAVA_INCLUDE = $(JAVA_HOME)/include
 JAVA_INCLUDE_OS = $(JAVA_INCLUDE)/linux
 
@@ -40,7 +64,7 @@ OBJS = agenda.o analysis.o argacces.o bload.o bmathfun.o bsave.o \
  	clipsjni_utilities.o clipsjni_glue.o
 
 .c.o :
-	gcc -c -O3 -fPIC -DLINUX \
+	gcc -c -std=c99 -O3 -fPIC -DLINUX \
 	    -I$(JAVA_INCLUDE) -I$(JAVA_INCLUDE_OS) \
 	    -fno-strict-aliasing -Wstrict-aliasing \
 	    -Wall -Wundef -Wpointer-arith -Wshadow \
@@ -48,9 +72,16 @@ OBJS = agenda.o analysis.o argacces.o bload.o bmathfun.o bsave.o \
 	    -Wmissing-prototypes -Wnested-externs \
 	    -Wstrict-prototypes -Waggregate-return -Wno-implicit $<
 
+all: libCLIPSJNI.so
+
 libCLIPSJNI.so : $(OBJS) 
 	gcc -o libCLIPSJNI.so -fPIC -shared -Wall \
 		-lm $(OBJS) 
+
+clean : 
+	-rm -f libCLIPSJNI.so $(OBJS)
+	
+.PHONY : all clean
 		
 clipsjni_environment.o: clipsjni_environment.c \
   net_sf_clipsrules_jni_Environment.h \

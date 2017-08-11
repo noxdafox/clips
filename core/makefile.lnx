@@ -1,5 +1,9 @@
-# Linux
+# CLIPS 6.4
+# Linux Console and Library
 # Ubuntu 16.04 LTS
+# Debian 9.1
+# Fedora 23
+# CentOS 7
 
 # The GNU Make Manual
 # http://www.gnu.org/software/make/manual/make.html
@@ -19,7 +23,7 @@ WARNINGS = -Wall -Wundef -Wpointer-arith -Wshadow -Wstrict-aliasing \
 
 ifeq ($(COMPILE_AS),C)
 CC = gcc
-OTHER_FLAGS = 
+OTHER_FLAGS = -std=c99
 LIBRARIES = -lm
 WARNINGS += -Wmissing-declarations -Wnested-externs -Wstrict-prototypes \
             -Wno-implicit -Wmissing-prototypes 
@@ -27,10 +31,8 @@ WARNINGS += -Wmissing-declarations -Wnested-externs -Wstrict-prototypes \
 endif 
 ifeq ($(COMPILE_AS),C++)
 CC = g++
-OTHER_FLAGS = -x c++
+OTHER_FLAGS = -x c++ -std=c++11
 LIBRARIES = -lstdc++
-#WARNINGS += -Wmissing-declarations -Wnested-externs -Wstrict-prototypes \
-#            -Wno-implicit -Wmissing-prototypes 
 #WARNINGS += -Wcast-qual
 endif
 
