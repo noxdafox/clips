@@ -1,3 +1,7 @@
+# CLIPS 6.40
+# CLIPSJNI library
+# macOS 10.12.6 with Darwin 16.7.0 and Java 1.8.0_144
+
 JAVA_HOME = /Library/Java/JavaVirtualMachines/jdk1.8.0_144.jdk/Contents/Home
 JAVA_INCLUDE = $(JAVA_HOME)/include
 JAVA_INCLUDE_OS = $(JAVA_INCLUDE)/darwin
@@ -36,17 +40,25 @@ OBJS = agenda.o analysis.o argacces.o bload.o bmathfun.o bsave.o \
  	clipsjni_utilities.o clipsjni_glue.o
 
 .c.o :
-	gcc -c -DDARWIN -std=c99 -arch i386 -arch x86_64 -O2 \
+	gcc -c -std=c99 -O3 -arch i386 -arch x86_64 -DDARWIN \
 	    -I$(JAVA_INCLUDE) -I$(JAVA_INCLUDE_OS) \
+	    -fno-strict-aliasing -Wstrict-aliasing \
 	    -Wall -Wundef -Wpointer-arith -Wshadow \
 	    -Winline -Wmissing-declarations -Wredundant-decls \
 	    -Wmissing-prototypes -Wnested-externs \
 	    -Wstrict-prototypes -Waggregate-return -Wno-implicit $<
 
+all: libCLIPSJNI.jnilib
+
 libCLIPSJNI.jnilib : $(OBJS) 
-	gcc -arch i386 -arch x86_64 -dynamiclib -o libCLIPSJNI.jnilib -Wall \
+	gcc -o libCLIPSJNI.jnilib -arch i386 -arch x86_64 -dynamiclib \
 		-framework JavaVM -lm $(OBJS) 
 
+clean : 
+	-rm -f libCLIPSJNI.jnilib $(OBJS)
+	
+.PHONY : all clean
+		
 clipsjni_environment.o: clipsjni_environment.c \
   net_sf_clipsrules_jni_Environment.h \
   clipsjni_data.h clips.h setup.h envrnmnt.h entities.h usrsetup.h \

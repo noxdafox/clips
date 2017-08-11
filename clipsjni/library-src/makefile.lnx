@@ -38,15 +38,15 @@ OBJS = agenda.o analysis.o argacces.o bload.o bmathfun.o bsave.o \
  	cstrnutl.o default.o defins.o developr.o dffctbin.o dffctbsc.o \
  	dffctcmp.o dffctdef.o dffctpsr.o dffnxbin.o dffnxcmp.o dffnxexe.o \
  	dffnxfun.o dffnxpsr.o dfinsbin.o dfinscmp.o drive.o emathfun.o \
- 	engine.o envrnmnt.o envrnbld.o evaluatn.o expressn.o exprnbin.o exprnops.o \
- 	exprnpsr.o extnfunc.o factbin.o factbld.o factcmp.o factcom.o \
- 	factfun.o factgen.o facthsh.o factlhs.o factmch.o factmngr.o \
- 	factprt.o factqpsr.o factqury.o factrete.o factrhs.o filecom.o \
- 	filertr.o fileutil.o generate.o genrcbin.o genrccmp.o genrccom.o genrcexe.o \
- 	genrcfun.o genrcpsr.o globlbin.o globlbsc.o globlcmp.o globlcom.o \
- 	globldef.o globlpsr.o immthpsr.o incrrset.o inherpsr.o \
- 	inscom.o insfile.o insfun.o insmngr.o insmoddp.o insmult.o \
- 	inspsr.o insquery.o insqypsr.o iofun.o lgcldpnd.o \
+ 	engine.o envrnmnt.o envrnbld.o evaluatn.o expressn.o exprnbin.o \
+ 	exprnops.o exprnpsr.o extnfunc.o factbin.o factbld.o factcmp.o \
+ 	factcom.o factfun.o factgen.o facthsh.o factlhs.o factmch.o \
+ 	factmngr.o factprt.o factqpsr.o factqury.o factrete.o factrhs.o \
+ 	filecom.o filertr.o fileutil.o generate.o genrcbin.o genrccmp.o \
+ 	genrccom.o genrcexe.o genrcfun.o genrcpsr.o globlbin.o globlbsc.o \
+ 	globlcmp.o globlcom.o globldef.o globlpsr.o immthpsr.o incrrset.o \
+ 	inherpsr.o inscom.o insfile.o insfun.o insmngr.o insmoddp.o \
+ 	insmult.o inspsr.o insquery.o insqypsr.o iofun.o lgcldpnd.o \
  	memalloc.o miscfun.o modulbin.o modulbsc.o modulcmp.o moduldef.o \
  	modulpsr.o modulutl.o msgcom.o msgfun.o msgpass.o msgpsr.o \
  	multifld.o multifun.o objbin.o objcmp.o objrtbin.o objrtbld.o \
@@ -75,7 +75,7 @@ OBJS = agenda.o analysis.o argacces.o bload.o bmathfun.o bsave.o \
 all: libCLIPSJNI.so
 
 libCLIPSJNI.so : $(OBJS) 
-	gcc -o libCLIPSJNI.so -fPIC -shared -Wall \
+	gcc -o libCLIPSJNI.so -fPIC -shared \
 		-lm $(OBJS) 
 
 clean : 
