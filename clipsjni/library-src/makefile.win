@@ -10,15 +10,15 @@ OBJS = agenda.obj analysis.obj argacces.obj bload.obj bmathfun.obj bsave.obj \
  	cstrnutl.obj default.obj defins.obj developr.obj dffctbin.obj dffctbsc.obj \
  	dffctcmp.obj dffctdef.obj dffctpsr.obj dffnxbin.obj dffnxcmp.obj dffnxexe.obj \
  	dffnxfun.obj dffnxpsr.obj dfinsbin.obj dfinscmp.obj drive.obj emathfun.obj \
- 	engine.obj envrnmnt.obj envrnbld.obj evaluatn.obj expressn.obj exprnbin.obj exprnops.obj \
- 	exprnpsr.obj extnfunc.obj factbin.obj factbld.obj factcmp.obj factcom.obj \
- 	factfun.obj factgen.obj facthsh.obj factlhs.obj factmch.obj factmngr.obj \
- 	factprt.obj factqpsr.obj factqury.obj factrete.obj factrhs.obj filecom.obj \
- 	filertr.obj fileutil.obj generate.obj genrcbin.obj genrccmp.obj genrccom.obj genrcexe.obj \
- 	genrcfun.obj genrcpsr.obj globlbin.obj globlbsc.obj globlcmp.obj globlcom.obj \
- 	globldef.obj globlpsr.obj immthpsr.obj incrrset.obj inherpsr.obj \
- 	inscom.obj insfile.obj insfun.obj insmngr.obj insmoddp.obj insmult.obj \
- 	inspsr.obj insquery.obj insqypsr.obj iofun.obj lgcldpnd.obj \
+ 	engine.obj envrnmnt.obj envrnbld.obj evaluatn.obj expressn.obj exprnbin.obj \
+	exprnops.obj exprnpsr.obj extnfunc.obj factbin.obj factbld.obj factcmp.obj \
+	factcom.obj factfun.obj factgen.obj facthsh.obj factlhs.obj factmch.obj \
+	factmngr.obj factprt.obj factqpsr.obj factqury.obj factrete.obj factrhs.obj \
+	filecom.obj filertr.obj fileutil.obj generate.obj genrcbin.obj genrccmp.obj \
+	genrccom.obj genrcexe.obj genrcfun.obj genrcpsr.obj globlbin.obj globlbsc.obj \
+	globlcmp.obj globlcom.obj globldef.obj globlpsr.obj immthpsr.obj incrrset.obj \
+	inherpsr.obj inscom.obj insfile.obj insfun.obj insmngr.obj insmoddp.obj \
+	insmult.obj inspsr.obj insquery.obj insqypsr.obj iofun.obj lgcldpnd.obj \
  	memalloc.obj miscfun.obj modulbin.obj modulbsc.obj modulcmp.obj moduldef.obj \
  	modulpsr.obj modulutl.obj msgcom.obj msgfun.obj msgpass.obj msgpsr.obj \
  	multifld.obj multifun.obj objbin.obj objcmp.obj objrtbin.obj objrtbld.obj \
@@ -38,9 +38,16 @@ OBJS = agenda.obj analysis.obj argacces.obj bload.obj bmathfun.obj bsave.obj \
 .c.obj :
 	cl -c -DWIN_MVC /Ox /I"$(JAVA_INCLUDE)" /I"$(JAVA_INCLUDE)\win32" $<
 
+all: CLIPSJNI.dll
+
 CLIPSJNI.dll : $(OBJS)
 	link /libpath:"$(JAVA_LIB)" *.obj /dll /out:CLIPSJNI.dll
+	
+clean : 
+	erase /Q CLIPSJNI.dll $(OBJS)
 
+.VIRTUAL : all clean
+	
 clipsjni_environment.obj: clipsjni_environment.c \
   net_sf_clipsrules_jni_Environment.h \
   clipsjni_data.h clips.h setup.h envrnmnt.h entities.h usrsetup.h \
