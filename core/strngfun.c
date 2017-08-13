@@ -1,9 +1,9 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  10/18/16             */
+   /*            CLIPS Version 6.40  08/13/17             */
    /*                                                     */
-   /*               STRING_TYPE FUNCTIONS MODULE               */
+   /*            STRING_TYPE FUNCTIONS MODULE             */
    /*******************************************************/
 
 /*************************************************************/
@@ -69,6 +69,9 @@
 /*                                                           */
 /*            The eval function can now access any local     */
 /*            variables that have been defined.              */
+/*                                                           */
+/*            The str-index function now returns 1 if the    */
+/*            search string is "".                           */
 /*                                                           */
 /*************************************************************/
 
@@ -572,7 +575,7 @@ void StrIndexFunction(
   {
    UDFValue theArg1, theArg2;
    const char *strg1, *strg2, *strg3;
-   size_t i, j;
+   size_t i;
 
    returnValue->lexemeValue = FalseSymbol(theEnv);
 
@@ -596,24 +599,17 @@ void StrIndexFunction(
 
    if (strlen(strg1) == 0)
      {
-      returnValue->integerValue = CreateInteger(theEnv,(long long) UTF8Length(strg2) + 1LL);
+      returnValue->integerValue = CreateInteger(theEnv,1LL);
       return;
      }
 
-   strg3 = strg2;
-   for (i=1; *strg2; i++, strg2++)
+   strg3 = strstr(strg2,strg1);
+   
+   if (strg3 != NULL)
      {
-      for (j=0; *(strg1+j) && *(strg1+j) == *(strg2+j); j++)
-        { /* Do Nothing */ }
-
-      if (*(strg1+j) == '\0')
-        {
-         returnValue->integerValue = CreateInteger(theEnv,(long long) UTF8CharNum(strg3,i));
-         return;
-        }
+      i = (size_t) (strg3 - strg2) + 1;
+      returnValue->integerValue = CreateInteger(theEnv,(long long) UTF8CharNum(strg2,i));
      }
-
-   return;
   }
 
 /********************************************/

@@ -15,11 +15,11 @@ CLIPS> (sub-string 5 8 "여러분 안녕하세요")  ; UTF-8 Support
 CLIPS> (sub-string 3 5 "Olá Mundo")       ; UTF-8 Support
 "á M"
 CLIPS> (str-index "" "Привет мир")        ; UTF-8 Support
-11
+1
 CLIPS> (str-index "" "여러분 안녕하세요")     ; UTF-8 Support
-10
+1
 CLIPS> (str-index "" "Olá Mundo")         ; UTF-8 Support
-10
+1
 CLIPS> (str-index "ет" "Привет мир")      ; UTF-8 Support
 5
 CLIPS> (str-index "여러분" "여러분 안녕하세요")  ; UTF-8 Support
