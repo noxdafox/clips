@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  12/30/16             */
+   /*            CLIPS Version 6.40  08/15/17             */
    /*                                                     */
    /*                 FACT MANAGER MODULE                 */
    /*******************************************************/
@@ -60,6 +60,9 @@
 /*            Added code to keep track of pointers to        */
 /*            constructs that are contained externally to    */
 /*            to constructs, DanglingConstructs.             */
+/*                                                           */
+/*      6.31: Added NULL check for slotName in function      */
+/*            EnvGetFactSlot.                                */
 /*                                                           */
 /*      6.40: Added Env prefix to GetEvaluationError and     */
 /*            SetEvaluationError functions.                  */

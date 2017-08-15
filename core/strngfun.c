@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/13/17             */
+   /*            CLIPS Version 6.40  08/15/17             */
    /*                                                     */
    /*            STRING_TYPE FUNCTIONS MODULE             */
    /*******************************************************/
@@ -47,10 +47,10 @@
 /*            Fixed str-cat bug that could be invoked by     */
 /*            (funcall str-cat).                             */
 /*                                                           */
-/*      6.40: Prior error flags are cleared before Eval      */
+/*      6.31: Prior error flags are cleared before Eval      */
 /*            and Build are processed.                       */
 /*                                                           */
-/*            Added Env prefix to GetEvaluationError and     */
+/*      6.40: Added Env prefix to GetEvaluationError and     */
 /*            SetEvaluationError functions.                  */
 /*                                                           */
 /*            Added Env prefix to GetHaltExecution and       */
