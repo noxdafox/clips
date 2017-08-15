@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  02/04/15            */
+   /*             CLIPS Version 6.31  08/15/17            */
    /*                                                     */
    /*                 FACT MANAGER MODULE                 */
    /*******************************************************/
@@ -60,6 +60,9 @@
 /*            Added code to keep track of pointers to        */
 /*            constructs that are contained externally to    */
 /*            to constructs, DanglingConstructs.             */
+/*                                                           */
+/*      6.31: Added NULL check for slotName in function      */
+/*            EnvGetFactSlot.                                */
 /*                                                           */
 /*************************************************************/
 
@@ -985,6 +988,7 @@ globle intBool EnvGetFactSlot(
    /* corresponds to a valid slot name. */
    /*===================================*/
 
+   if (slotName == NULL) return FALSE;
    if (FindSlot(theDeftemplate,(SYMBOL_HN *) EnvAddSymbol(theEnv,slotName),&whichSlot) == NULL)
      { return(FALSE); }
 
