@@ -175,7 +175,7 @@ void IncrementCLIPSValueMultifieldReferenceCount(
    contents = theSegment->contents;
 
    for (i = 0 ; i < length ; i++)
-     { IncrementReferenceCount(theEnv,contents[i].header); }
+     { Retain(theEnv,contents[i].header); }
   }
 
 /************************************************/
@@ -195,7 +195,7 @@ void DecrementCLIPSValueMultifieldReferenceCount(
    contents = theSegment->contents;
 
    for (i = 0 ; i < length ; i++)
-     { DecrementReferenceCount(theEnv,contents[i].header); }
+     { Release(theEnv,contents[i].header); }
   }
 
 /*******************************************************/
@@ -1082,14 +1082,14 @@ void MBAppendUDFValue(
       for (j = theValue->begin; j < (theValue->begin +theValue->range); j++)
         {
          theMB->contents[theMB->length].value = theValue->multifieldValue->contents[j].value;
-         IncrementReferenceCount(theEnv,theMB->contents[theMB->length].header);
+         Retain(theEnv,theMB->contents[theMB->length].header);
          theMB->length++;
         }
      }
    else
      {
       theMB->contents[theMB->length].value = theValue->value;
-      IncrementReferenceCount(theEnv,theMB->contents[theMB->length].header);
+      Retain(theEnv,theMB->contents[theMB->length].header);
       theMB->length++;
      }
   }
@@ -1156,14 +1156,14 @@ void MBAppend(
       for (j = 0; j < theValue->multifieldValue->length; j++)
         {
          theMB->contents[theMB->length].value = theValue->multifieldValue->contents[j].value;
-         IncrementReferenceCount(theEnv,theMB->contents[theMB->length].header);
+         Retain(theEnv,theMB->contents[theMB->length].header);
          theMB->length++;
         }
      }
    else
      {
       theMB->contents[theMB->length].value = theValue->value;
-      IncrementReferenceCount(theEnv,theMB->contents[theMB->length].header);
+      Retain(theEnv,theMB->contents[theMB->length].header);
       theMB->length++;
      }
   }
@@ -1387,7 +1387,7 @@ Multifield *MBCreate(
    for (i = 0; i < theMB->length; i++)
      {
       rv->contents[i].value = theMB->contents[i].value;
-      DecrementReferenceCount(theMB->mbEnv,rv->contents[i].header);
+      Release(theMB->mbEnv,rv->contents[i].header);
      }
 
    theMB->length = 0;
@@ -1404,7 +1404,7 @@ void MBReset(
    size_t i;
    
    for (i = 0; i < theMB->length; i++)
-     { DecrementReferenceCount(theMB->mbEnv,theMB->contents[i].header); }
+     { Release(theMB->mbEnv,theMB->contents[i].header); }
      
    if (theMB->bufferReset != theMB->bufferMaximum)
      {
@@ -1432,7 +1432,7 @@ void MBDispose(
    size_t i;
    
    for (i = 0; i < theMB->length; i++)
-     { DecrementReferenceCount(theMB->mbEnv,theMB->contents[i].header); }
+     { Release(theMB->mbEnv,theMB->contents[i].header); }
    
    if (theMB->bufferMaximum != 0)
      { rm(theMB->mbEnv,theMB->contents,sizeof(CLIPSValue) * theMB->bufferMaximum); }

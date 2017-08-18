@@ -2306,7 +2306,7 @@ bool FBPutSlot(
         { return true; }
      }
    
-   DecrementReferenceCount(theEnv,oldValue.header);
+   Release(theEnv,oldValue.header);
    
    if (oldValue.header->type == MULTIFIELD_TYPE)
      { ReturnMultifield(theEnv,oldValue.multifieldValue); }
@@ -2316,7 +2316,7 @@ bool FBPutSlot(
    else
      { theFB->fbValueArray[whichSlot].value = slotValue->value; }
       
-   IncrementReferenceCount(theEnv,theFB->fbValueArray[whichSlot].header);
+   Retain(theEnv,theFB->fbValueArray[whichSlot].header);
    
    return true;
   }
@@ -2338,7 +2338,7 @@ Fact *FBAssert(
       if (theFB->fbValueArray[i].voidValue != VoidConstant(theEnv))
         {
          theFact->theProposition.contents[i].value = theFB->fbValueArray[i].value;
-         DecrementReferenceCount(theEnv,theFB->fbValueArray[i].header);
+         Release(theEnv,theFB->fbValueArray[i].header);
          theFB->fbValueArray[i].voidValue = VoidConstant(theEnv);
         }
      }
@@ -2380,7 +2380,7 @@ void FBAbort(
    
    for (i = 0; i < theFB->fbDeftemplate->numberOfSlots; i++)
      {
-      DecrementReferenceCount(theEnv,theFB->fbValueArray[i].header);
+      Release(theEnv,theFB->fbValueArray[i].header);
       
       if (theFB->fbValueArray[i].header->type == MULTIFIELD_TYPE)
         { ReturnMultifield(theEnv,theFB->fbValueArray[i].multifieldValue); }
@@ -2754,7 +2754,7 @@ bool FMPutSlot(
      {
       if (MultifieldsEqual(oldFactValue.multifieldValue,slotValue->multifieldValue))
         {
-         DecrementReferenceCount(theFM->fmEnv,oldValue.header);
+         Release(theFM->fmEnv,oldValue.header);
          if (oldValue.header->type == MULTIFIELD_TYPE)
            { ReturnMultifield(theFM->fmEnv,oldValue.multifieldValue); }
          theFM->fmValueArray[whichSlot].voidValue = theFM->fmEnv->VoidConstant;
@@ -2769,7 +2769,7 @@ bool FMPutSlot(
      {
       if (slotValue->value == oldFactValue.value)
         {
-         DecrementReferenceCount(theFM->fmEnv,oldValue.header);
+         Release(theFM->fmEnv,oldValue.header);
          theFM->fmValueArray[whichSlot].voidValue = theFM->fmEnv->VoidConstant;
          ClearBitMap(theFM->changeMap,whichSlot);
          return true;
@@ -2781,7 +2781,7 @@ bool FMPutSlot(
 
    SetBitMap(theFM->changeMap,whichSlot);
 
-   DecrementReferenceCount(theFM->fmEnv,oldValue.header);
+   Release(theFM->fmEnv,oldValue.header);
 
    if (oldValue.header->type == MULTIFIELD_TYPE)
      { ReturnMultifield(theFM->fmEnv,oldValue.multifieldValue); }
@@ -2791,7 +2791,7 @@ bool FMPutSlot(
    else
      { theFM->fmValueArray[whichSlot].value = slotValue->value; }
 
-   IncrementReferenceCount(theFM->fmEnv,theFM->fmValueArray[whichSlot].header);
+   Retain(theFM->fmEnv,theFM->fmValueArray[whichSlot].header);
 
    return true;
   }
@@ -2843,7 +2843,7 @@ void FMDispose(
      {
       for (i = 0; i < theFM->fmOldFact->whichDeftemplate->numberOfSlots; i++)
         {
-         DecrementReferenceCount(theEnv,theFM->fmValueArray[i].header);
+         Release(theEnv,theFM->fmValueArray[i].header);
 
          if (theFM->fmValueArray[i].header->type == MULTIFIELD_TYPE)
            { ReturnMultifield(theEnv,theFM->fmValueArray[i].multifieldValue); }
@@ -2888,7 +2888,7 @@ void FMAbort(
      {
       for (i = 0; i < theFM->fmOldFact->whichDeftemplate->numberOfSlots; i++)
         {
-         DecrementReferenceCount(theEnv,theFM->fmValueArray[i].header);
+         Release(theEnv,theFM->fmValueArray[i].header);
 
          if (theFM->fmValueArray[i].header->type == MULTIFIELD_TYPE)
            { ReturnMultifield(theEnv,theFM->fmValueArray[i].multifieldValue); }
@@ -2934,7 +2934,7 @@ bool FMSetFact(
      {
       for (i = 0; i < theFM->fmOldFact->whichDeftemplate->numberOfSlots; i++)
         {
-         DecrementReferenceCount(theEnv,theFM->fmValueArray[i].header);
+         Release(theEnv,theFM->fmValueArray[i].header);
 
          if (theFM->fmValueArray[i].header->type == MULTIFIELD_TYPE)
            { ReturnMultifield(theEnv,theFM->fmValueArray[i].multifieldValue); }

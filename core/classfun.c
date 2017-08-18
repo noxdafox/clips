@@ -941,7 +941,7 @@ void InstallClass(
             if (slot->dynamicDefault)
               ExpressionDeinstall(theEnv,(Expression *) slot->defaultValue);
             else
-              DecrementUDFValueReferenceCount(theEnv,(UDFValue *) slot->defaultValue);
+              UDFRelease(theEnv,(UDFValue *) slot->defaultValue);
            }
         }
       for (i = 0 ; i < cls->handlerCount ; i++)

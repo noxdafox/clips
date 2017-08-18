@@ -1560,7 +1560,7 @@ bool IBPutSlot(
         { return true; }
      }
    
-   DecrementReferenceCount(theEnv,oldValue.header);
+   Release(theEnv,oldValue.header);
    
    if (oldValue.header->type == MULTIFIELD_TYPE)
      { ReturnMultifield(theEnv,oldValue.multifieldValue); }
@@ -1570,7 +1570,7 @@ bool IBPutSlot(
    else
      { theIB->ibValueArray[whichSlot].value = slotValue->value; }
       
-   IncrementReferenceCount(theEnv,theIB->ibValueArray[whichSlot].header);
+   Retain(theEnv,theIB->ibValueArray[whichSlot].header);
    
    return true;
   }
@@ -1609,7 +1609,7 @@ Instance *IBMake(
      {
       if (theIB->ibValueArray[i].voidValue != VoidConstant(theEnv))
         {
-         DecrementReferenceCount(theEnv,theIB->ibValueArray[i].header);
+         Release(theEnv,theIB->ibValueArray[i].header);
 
          if (theIB->ibValueArray[i].header->type == MULTIFIELD_TYPE)
            { ReturnMultifield(theEnv,theIB->ibValueArray[i].multifieldValue); }
@@ -1648,7 +1648,7 @@ void IBAbort(
    
    for (i = 0; i < theIB->ibDefclass->slotCount; i++)
      {
-      DecrementReferenceCount(theEnv,theIB->ibValueArray[i].header);
+      Release(theEnv,theIB->ibValueArray[i].header);
       
       if (theIB->ibValueArray[i].header->type == MULTIFIELD_TYPE)
         { ReturnMultifield(theEnv,theIB->ibValueArray[i].multifieldValue); }
@@ -1993,7 +1993,7 @@ bool IMPutSlot(
      {
       if (MultifieldsEqual(oldInstanceValue.multifieldValue,slotValue->multifieldValue))
         {
-         DecrementReferenceCount(theIM->imEnv,oldValue.header);
+         Release(theIM->imEnv,oldValue.header);
          if (oldValue.header->type == MULTIFIELD_TYPE)
            { ReturnMultifield(theIM->imEnv,oldValue.multifieldValue); }
          theIM->imValueArray[whichSlot].voidValue = theIM->imEnv->VoidConstant;
@@ -2008,7 +2008,7 @@ bool IMPutSlot(
      {
       if (slotValue->value == oldInstanceValue.value)
         {
-         DecrementReferenceCount(theIM->imEnv,oldValue.header);
+         Release(theIM->imEnv,oldValue.header);
          theIM->imValueArray[whichSlot].voidValue = theIM->imEnv->VoidConstant;
          ClearBitMap(theIM->changeMap,whichSlot);
          return true;
@@ -2020,7 +2020,7 @@ bool IMPutSlot(
 
    SetBitMap(theIM->changeMap,whichSlot);
 
-   DecrementReferenceCount(theIM->imEnv,oldValue.header);
+   Release(theIM->imEnv,oldValue.header);
 
    if (oldValue.header->type == MULTIFIELD_TYPE)
      { ReturnMultifield(theIM->imEnv,oldValue.multifieldValue); }
@@ -2030,7 +2030,7 @@ bool IMPutSlot(
    else
      { theIM->imValueArray[whichSlot].value = slotValue->value; }
 
-   IncrementReferenceCount(theIM->imEnv,theIM->imValueArray[whichSlot].header);
+   Retain(theIM->imEnv,theIM->imValueArray[whichSlot].header);
 
    return true;
   }
@@ -2113,7 +2113,7 @@ void IMDispose(
    
    for (i = 0; i < theIM->imOldInstance->cls->slotCount; i++)
      {
-      DecrementReferenceCount(theEnv,theIM->imValueArray[i].header);
+      Release(theEnv,theIM->imValueArray[i].header);
 
       if (theIM->imValueArray[i].header->type == MULTIFIELD_TYPE)
         { ReturnMultifield(theEnv,theIM->imValueArray[i].multifieldValue); }
@@ -2149,7 +2149,7 @@ void IMAbort(
    
    for (i = 0; i < theIM->imOldInstance->cls->slotCount; i++)
      {
-      DecrementReferenceCount(theEnv,theIM->imValueArray[i].header);
+      Release(theEnv,theIM->imValueArray[i].header);
 
       if (theIM->imValueArray[i].header->type == MULTIFIELD_TYPE)
         { ReturnMultifield(theEnv,theIM->imValueArray[i].multifieldValue); }
@@ -2185,7 +2185,7 @@ bool IMSetInstance(
    
    for (i = 0; i < theIM->imOldInstance->cls->slotCount; i++)
      {
-      DecrementReferenceCount(theEnv,theIM->imValueArray[i].header);
+      Release(theEnv,theIM->imValueArray[i].header);
 
       if (theIM->imValueArray[i].header->type == MULTIFIELD_TYPE)
         { ReturnMultifield(theEnv,theIM->imValueArray[i].multifieldValue); }

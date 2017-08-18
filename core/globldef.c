@@ -341,7 +341,7 @@ static void ReturnDefglobal(
    /* Return the global's current value. */
    /*====================================*/
 
-   DecrementReferenceCount(theEnv,theDefglobal->current.header);
+   Release(theEnv,theDefglobal->current.header);
    if (theDefglobal->current.header->type == MULTIFIELD_TYPE)
      {
       if (theDefglobal->current.multifieldValue->busyCount == 0)
@@ -467,7 +467,7 @@ void QSetDefglobalValue(
    /* Remove the old value of the global variable. */
    /*==============================================*/
 
-   DecrementReferenceCount(theEnv,theGlobal->current.header);
+   Release(theEnv,theGlobal->current.header);
    if (theGlobal->current.header->type == MULTIFIELD_TYPE)
      {
       if (theGlobal->current.multifieldValue->busyCount == 0)
@@ -484,7 +484,7 @@ void QSetDefglobalValue(
      { theGlobal->current.value = vPtr->value; }
    else
      { theGlobal->current.value = CopyMultifield(theEnv,vPtr->multifieldValue); }
-   IncrementReferenceCount(theEnv,theGlobal->current.header);
+   Retain(theEnv,theGlobal->current.header);
 
    /*===========================================*/
    /* Set the variable indicating that a change */

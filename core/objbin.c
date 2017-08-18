@@ -1291,7 +1291,7 @@ static void UpdateSlot(
          sp->defaultValue = get_struct(theEnv,udfValue);
          EvaluateAndStoreInDataObject(theEnv,sp->multiple,ExpressionPointer(bsp->defaultValue),
                                       (UDFValue *) sp->defaultValue,true);
-         IncrementUDFValueReferenceCount(theEnv,(UDFValue *) sp->defaultValue);
+         UDFRetain(theEnv,(UDFValue *) sp->defaultValue);
         }
      }
    else
@@ -1408,7 +1408,7 @@ static void ClearBloadObjects(
          DecrementLexemeReferenceCount(theEnv,ObjectBinaryData(theEnv)->SlotArray[i].overrideMessage);
          if ((ObjectBinaryData(theEnv)->SlotArray[i].defaultValue != NULL) && (ObjectBinaryData(theEnv)->SlotArray[i].dynamicDefault == 0))
            {
-            DecrementUDFValueReferenceCount(theEnv,(UDFValue *) ObjectBinaryData(theEnv)->SlotArray[i].defaultValue);
+            UDFRelease(theEnv,(UDFValue *) ObjectBinaryData(theEnv)->SlotArray[i].defaultValue);
             rtn_struct(theEnv,udfValue,ObjectBinaryData(theEnv)->SlotArray[i].defaultValue);
            }
         }

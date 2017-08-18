@@ -461,7 +461,7 @@ void BindFunction(
         }
      }
    else
-     { DecrementUDFValueReferenceCount(theEnv,theBind); }
+     { UDFRelease(theEnv,theBind); }
 
    /*================================*/
    /* Set the value of the variable. */
@@ -472,7 +472,7 @@ void BindFunction(
       theBind->value = returnValue->value;
       theBind->begin = returnValue->begin;
       theBind->range = returnValue->range;
-      IncrementUDFValueReferenceCount(theEnv,returnValue);
+      UDFRetain(theEnv,returnValue);
      }
    else
      {

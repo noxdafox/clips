@@ -955,7 +955,7 @@ void EvaluateProcActions(
       RemoveTrackedMemory(theEnv,theTM);
       for (i = 0 ; i < lvarcnt ; i++)
         if (ProceduralPrimitiveData(theEnv)->LocalVarArray[i].supplementalInfo == TrueSymbol(theEnv))
-          DecrementUDFValueReferenceCount(theEnv,&ProceduralPrimitiveData(theEnv)->LocalVarArray[i]);
+          UDFRelease(theEnv,&ProceduralPrimitiveData(theEnv)->LocalVarArray[i]);
       rm(theEnv,ProceduralPrimitiveData(theEnv)->LocalVarArray,(sizeof(UDFValue) * lvarcnt));
      }
 
@@ -1256,7 +1256,7 @@ static bool PutProcBind(
    if (GetFirstArgument() == NULL)
      {
       if (dst->supplementalInfo == TrueSymbol(theEnv))
-        DecrementUDFValueReferenceCount(theEnv,dst);
+        UDFRelease(theEnv,dst);
       dst->supplementalInfo = FalseSymbol(theEnv);
       returnValue->value = FalseSymbol(theEnv);
      }
@@ -1267,12 +1267,12 @@ static bool PutProcBind(
       else
         EvaluateExpression(theEnv,GetFirstArgument(),returnValue);
       if (dst->supplementalInfo == TrueSymbol(theEnv))
-        DecrementUDFValueReferenceCount(theEnv,dst);
+        UDFRelease(theEnv,dst);
       dst->supplementalInfo = TrueSymbol(theEnv);
       dst->value = returnValue->value;
       dst->begin = returnValue->begin;
       dst->range = returnValue->range;
-      IncrementUDFValueReferenceCount(theEnv,dst);
+      UDFRetain(theEnv,dst);
      }
    return true;
   }

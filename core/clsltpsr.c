@@ -400,7 +400,7 @@ void DeleteSlots(
         }
       else if (stmp->desc->defaultValue != NULL)
         {
-         DecrementUDFValueReferenceCount(theEnv,(UDFValue *) stmp->desc->defaultValue);
+         UDFRelease(theEnv,(UDFValue *) stmp->desc->defaultValue);
          rtn_struct(theEnv,udfValue,stmp->desc->defaultValue);
         }
       rtn_struct(theEnv,slotDescriptor,stmp->desc);
@@ -720,7 +720,7 @@ static void BuildCompositeFacets(
               {
                sd->defaultValue = get_struct(theEnv,udfValue);
                GenCopyMemory(UDFValue,1,sd->defaultValue,compslot->defaultValue);
-               IncrementUDFValueReferenceCount(theEnv,(UDFValue *) sd->defaultValue);
+               UDFRetain(theEnv,(UDFValue *) sd->defaultValue);
               }
            }
         }
@@ -865,7 +865,7 @@ static bool EvaluateSlotDefaultValue(
             ReturnPackedExpression(theEnv,(Expression *) sd->defaultValue);
             sd->defaultValue = get_struct(theEnv,udfValue);
             GenCopyMemory(UDFValue,1,sd->defaultValue,&temp);
-            IncrementUDFValueReferenceCount(theEnv,(UDFValue *) sd->defaultValue);
+            UDFRetain(theEnv,(UDFValue *) sd->defaultValue);
            }
          else
            {
@@ -878,7 +878,7 @@ static bool EvaluateSlotDefaultValue(
          sd->defaultValue = get_struct(theEnv,udfValue);
          DeriveDefaultFromConstraints(theEnv,sd->constraint,
                                       (UDFValue *) sd->defaultValue,sd->multiple,true);
-         IncrementUDFValueReferenceCount(theEnv,(UDFValue *) sd->defaultValue);
+         UDFRetain(theEnv,(UDFValue *) sd->defaultValue);
         }
      }
    else

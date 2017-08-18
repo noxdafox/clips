@@ -371,7 +371,7 @@ void ReturnValues(
    while (garbagePtr != NULL)
      {
       nextPtr = garbagePtr->next;
-      DecrementUDFValueReferenceCount(theEnv,garbagePtr);
+      UDFRelease(theEnv,garbagePtr);
       if ((garbagePtr->supplementalInfo != NULL) && decrementSupplementalInfo)
         { DecrementLexemeReferenceCount(theEnv,(CLIPSLexeme *) garbagePtr->supplementalInfo); }
       rtn_struct(theEnv,udfValue,garbagePtr);
@@ -472,39 +472,67 @@ void SetMultifieldErrorValue(
    returnValue->range = 0;
   }
 
-/***************************************************************/
-/* IncrementUDFValueReferenceCount: Increments the appropriate */
-/*   count (in use) values for a UDFValue structure.           */
-/***************************************************************/
-void IncrementUDFValueReferenceCount(
+/***********************************************/
+/* UDFRetain: Increments the appropriate count */
+/*   (in use) values for a UDFValue structure. */
+/***********************************************/
+void UDFRetain(
   Environment *theEnv,
   UDFValue *vPtr)
   {
    if (vPtr->header->type == MULTIFIELD_TYPE)
      { IncrementCLIPSValueMultifieldReferenceCount(theEnv,vPtr->multifieldValue); }
    else
-     { IncrementReferenceCount(theEnv,vPtr->header); }
+     { Retain(theEnv,vPtr->header); }
   }
 
-/***************************************************************/
-/* IncrementUDFValueReferenceCount: Decrements the appropriate */
-/*   count (in use) values for a UDFValue structure.           */
-/***************************************************************/
-void DecrementUDFValueReferenceCount(
+/***********************************************/
+/* UDFRetain: Decrements the appropriate count */
+/*   (in use) values for a UDFValue structure. */
+/***********************************************/
+void UDFRelease(
   Environment *theEnv,
   UDFValue *vPtr)
   {
    if (vPtr->header->type == MULTIFIELD_TYPE)
      { DecrementCLIPSValueMultifieldReferenceCount(theEnv,vPtr->multifieldValue); }
    else
-     { DecrementReferenceCount(theEnv,vPtr->header); }
+     { Release(theEnv,vPtr->header); }
   }
 
-/*********************************************/
-/* IncrementReferenceCount: Increments the   */
-/*   reference count of an atomic data type. */
-/*********************************************/
-void IncrementReferenceCount(
+/*************************************************/
+/* CVRetain: Increments the appropriate count    */
+/*   (in use) values for a CLIPSValue structure. */
+/*************************************************/
+void CVRetain(
+  Environment *theEnv,
+  CLIPSValue *vPtr)
+  {
+   if (vPtr->header->type == MULTIFIELD_TYPE)
+     { IncrementCLIPSValueMultifieldReferenceCount(theEnv,vPtr->multifieldValue); }
+   else
+     { Retain(theEnv,vPtr->header); }
+  }
+
+/*************************************************/
+/* CVRelease: Decrements the appropriate count   */
+/*   (in use) values for a CLIPSValue structure. */
+/*************************************************/
+void CVRelease(
+  Environment *theEnv,
+  CLIPSValue *vPtr)
+  {
+   if (vPtr->header->type == MULTIFIELD_TYPE)
+     { DecrementCLIPSValueMultifieldReferenceCount(theEnv,vPtr->multifieldValue); }
+   else
+     { Release(theEnv,vPtr->header); }
+  }
+
+/******************************************/
+/* Retain: Increments the reference count */
+/*   of an atomic data type.              */
+/******************************************/
+void Retain(
   Environment *theEnv,
   TypeHeader *th)
   {
@@ -556,11 +584,11 @@ void IncrementReferenceCount(
      }
   }
 
-/*********************************************/
-/* DecrementReferenceCount: Decrements the   */
-/*   reference count of an atomic data type. */
-/*********************************************/
-void DecrementReferenceCount(
+/*************************************/
+/* Release: Decrements the reference */
+/*   count of an atomic data type.   */
+/*************************************/
+void Release(
   Environment *theEnv,
   TypeHeader *th)
   {

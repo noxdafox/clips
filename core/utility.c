@@ -231,14 +231,14 @@ void CleanCurrentGarbageFrame(
    if (! currentGarbageFrame->dirty) return;
 
    if (returnValue != NULL)
-     { IncrementUDFValueReferenceCount(theEnv,returnValue); }
+     { UDFRetain(theEnv,returnValue); }
 
    CallCleanupFunctions(theEnv);
    RemoveEphemeralAtoms(theEnv);
    FlushMultifields(theEnv);
 
    if (returnValue != NULL)
-     { DecrementUDFValueReferenceCount(theEnv,returnValue); }
+     { UDFRelease(theEnv,returnValue); }
 
    if ((currentGarbageFrame->ephemeralFloatList == NULL) &&
        (currentGarbageFrame->ephemeralIntegerList == NULL) &&
@@ -260,7 +260,7 @@ void RestorePriorGarbageFrame(
   {
    if (newGarbageFrame->dirty)
      {
-      if (returnValue != NULL) IncrementUDFValueReferenceCount(theEnv,returnValue);
+      if (returnValue != NULL) UDFRetain(theEnv,returnValue);
       CallCleanupFunctions(theEnv);
       RemoveEphemeralAtoms(theEnv);
       FlushMultifields(theEnv);
@@ -281,7 +281,7 @@ void RestorePriorGarbageFrame(
          oldGarbageFrame->dirty = true;
         }
 
-      if (returnValue != NULL) DecrementUDFValueReferenceCount(theEnv,returnValue);
+      if (returnValue != NULL) UDFRelease(theEnv,returnValue);
      }
 
    if (returnValue != NULL)

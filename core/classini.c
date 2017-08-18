@@ -371,7 +371,7 @@ void ObjectsRunTimeInitialize(
               if ((cls->slots[i].defaultValue != NULL) && (cls->slots[i].dynamicDefault == 0))
                 {
                  tmpexp = ((UDFValue *) cls->slots[i].defaultValue)->supplementalInfo;
-                 DecrementUDFValueReferenceCount(theEnv,(UDFValue *) cls->slots[i].defaultValue);
+                 UDFRelease(theEnv,(UDFValue *) cls->slots[i].defaultValue);
                  rtn_struct(theEnv,udfValue,cls->slots[i].defaultValue);
                  cls->slots[i].defaultValue = tmpexp;
                 }
@@ -425,7 +425,7 @@ void ObjectsRunTimeInitialize(
             cls->slots[i].defaultValue = get_struct(theEnv,udfValue);
             EvaluateAndStoreInDataObject(theEnv,cls->slots[i].multiple,(Expression *) tmpexp,
                                          (UDFValue *) cls->slots[i].defaultValue,true);
-            IncrementUDFValueReferenceCount(theEnv,(UDFValue *) cls->slots[i].defaultValue);
+            UDFRetain(theEnv,(UDFValue *) cls->slots[i].defaultValue);
             ((UDFValue *) cls->slots[i].defaultValue)->supplementalInfo = tmpexp;
            }
         }
