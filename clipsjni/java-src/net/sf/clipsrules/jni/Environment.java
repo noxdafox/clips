@@ -759,10 +759,10 @@ public class Environment
    /**********************/
    private native boolean printRouterExists(long env,String logName);
 
-   /*************/
-   /* printout: */
-   /*************/
-   public void printout(
+   /**********/
+   /* print: */
+   /**********/
+   public void print(
      String logicalName,
      String printString)
      {
@@ -788,6 +788,25 @@ public class Environment
         { throw new NullPointerException("printString"); }
         
       printString(theEnvironment,Router.STDOUT,printString);
+     }
+
+   /************/
+   /* println: */
+   /************/
+   public void println(
+     String logicalName,
+     String printString)
+     {
+      if (logicalName == null)
+        { throw new NullPointerException("logicalName"); }
+        
+      if (printString == null)
+        { throw new NullPointerException("printString"); }
+        
+      if (! printRouterExists(theEnvironment,logicalName))
+        { throw new IllegalArgumentException("No print router for logicalName '" + logicalName +"' exists."); }
+        
+      printString(theEnvironment,logicalName,printString + "\n");
      }
 
    /************/
@@ -1408,7 +1427,7 @@ public class Environment
      String printString)
      {
       deactivateRouter(theRouter);
-      printout(logName,printString);
+      print(logName,printString);
       activateRouter(theRouter);
      }
 

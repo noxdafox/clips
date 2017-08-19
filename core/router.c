@@ -151,6 +151,27 @@ bool PrintRouterExists(
    return false;
   }
 
+/**********************************/
+/* Write: Generic print function. */
+/**********************************/
+void Write(
+  Environment *theEnv,
+  const char *str)
+  {
+   WriteString(theEnv,STDOUT,str);
+  }
+
+/************************************/
+/* Writeln: Generic print function. */
+/************************************/
+void Writeln(
+  Environment *theEnv,
+  const char *str)
+  {
+   WriteString(theEnv,STDOUT,str);
+   WriteString(theEnv,STDOUT,"\n");
+  }
+
 /****************************************/
 /* WriteString: Generic print function. */
 /****************************************/
@@ -161,6 +182,8 @@ void WriteString(
   {
    struct router *currentPtr;
 
+   if (str == NULL) return;
+   
    /*===================================================*/
    /* If the "fast save" option is being used, then the */
    /* logical name is actually a pointer to a file and  */

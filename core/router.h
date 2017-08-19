@@ -117,6 +117,8 @@ struct routerData
 
    void                           InitializeDefaultRouters(Environment *);
    void                           WriteString(Environment *,const char *,const char *);
+   void                           Write(Environment *,const char *);
+   void                           Writeln(Environment *,const char *);
    int                            ReadRouter(Environment *,const char *);
    int                            UnreadRouter(Environment *,const char *,int);
    void                           ExitRouter(Environment *,int);
