@@ -325,10 +325,10 @@ void CLIPSCPPEnv::PrintPrompt()
 #endif
   }
   
-/************/
-/* Printout */
-/************/
-void CLIPSCPPEnv::Printout(
+/*********/
+/* Write */
+/*********/
+void CLIPSCPPEnv::Write(
   const char *logicalName,
   const char *printString)
   {
@@ -340,22 +340,37 @@ void CLIPSCPPEnv::Printout(
   }
 
 /*********/
-/* Print */
+/* Write */
 /*********/
-void CLIPSCPPEnv::Print(
+void CLIPSCPPEnv::Write(
   const char *printString)
   {
-   Printout(CLIPSCPPRouter::STDOUT,printString);
+   Write(CLIPSCPPRouter::STDOUT,printString);
   }
 
 /***********/
-/* PrintLn */
+/* Writeln */
 /***********/
-void CLIPSCPPEnv::PrintLn(
+void CLIPSCPPEnv::Writeln(
+  const char *logicalName,
   const char *printString)
   {
-   Printout(CLIPSCPPRouter::STDOUT,printString);
-   Printout(CLIPSCPPRouter::STDOUT,"\n");
+#ifndef CLIPS_DLL_WRAPPER
+   ::WriteString(theEnv,logicalName,printString);
+   ::WriteString(theEnv,logicalName,"\n");
+#else
+   __WriteString(theEnv,logicalName,printString);
+   __WriteString(theEnv,logicalName,"\n");
+#endif
+  }
+
+/***********/
+/* Writeln */
+/***********/
+void CLIPSCPPEnv::Writeln(
+  const char *printString)
+  {
+   Writeln(CLIPSCPPRouter::STDOUT,printString);
   }
 
 /********************/

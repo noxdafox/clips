@@ -942,10 +942,10 @@ namespace CLIPSNET
         }
      }
 
-   /************/
-   /* Printout */
-   /************/
-   void Environment::Printout(
+   /*********/
+   /* Write */
+   /*********/
+   void Environment::Write(
      String ^ logicalName,
      String ^ printString)
      {
@@ -972,37 +972,71 @@ namespace CLIPSNET
               "No print router for logicalName '" + logicalName +"' exists.");
            }
 
-         m_Env->Printout((char *) pbLogicalName,(char *) pbPrintString);
+         m_Env->Write((char *) pbLogicalName,(char *) pbPrintString);
         }
      }
 
    /*********/
-   /* Print */
+   /* Write */
    /*********/
-   void Environment::Print(
+   void Environment::Write(
      String ^ printString)
      {
       if (printString == nullptr)
         { throw gcnew System::ArgumentNullException("printString"); }
 
       String ^ logicalName = Router::STDOUT;
-      Printout(logicalName,printString);
+      Write(logicalName,printString);
      }
 
-   /***********/
-   /* PrintLn */
-   /***********/
-   void Environment::PrintLn(
+   /*************/
+   /* WriteLine */
+   /*************/
+   void Environment::WriteLine(
+     String ^ logicalName,
+     String ^ printString)
+     {
+      if (logicalName == nullptr)
+        { throw gcnew System::ArgumentNullException("logicalName"); }
+
+      if (logicalName->Length == 0)
+        { throw gcnew System::ArgumentException("String cannot have zero length.","logicalName"); }
+        
+      if (printString == nullptr)
+        { throw gcnew System::ArgumentNullException("printString"); }
+
+      printString += "\n";
+
+      array<Byte>^ ebLogicalName = Encoding::UTF8->GetBytes(logicalName);
+      array<Byte>^ ebPrintString = Encoding::UTF8->GetBytes(printString);
+
+      if ((ebPrintString->Length != 0) && (ebLogicalName->Length != 0))
+        {
+         pin_ptr<Byte> pbLogicalName = &ebLogicalName[0];
+         pin_ptr<Byte> pbPrintString = &ebPrintString[0];
+
+         if (m_Env->PrintRouterExists((char *) pbLogicalName))
+           {
+            throw gcnew System::ArgumentException(
+              "No print router for logicalName '" + logicalName +"' exists.");
+           }
+
+         m_Env->Write((char *) pbLogicalName,(char *) pbPrintString);
+        }
+     }
+
+   /*************/
+   /* WriteLine */
+   /*************/
+   void Environment::WriteLine(
      String ^ printString)
      {
       if (printString == nullptr)
         { throw gcnew System::ArgumentNullException("printString"); }
 
       String ^ logicalName = Router::STDOUT;
-      String ^ crlf = "\n";
 
-      Printout(logicalName,printString);
-      Printout(logicalName,crlf);
+      WriteLine(logicalName,printString);
      }
 
    /***********************/
@@ -1527,7 +1561,7 @@ namespace CLIPSNET
      String ^ printString)
      {
       DeactivateRouter(theRouter);
-      Printout(logName,printString);
+      Write(logName,printString);
       ActivateRouter(theRouter);
      }
 

@@ -565,7 +565,7 @@ namespace CLIPSIDE
         {
          this.dialog.Clear();
          this.GetEnvironment().PrintPrompt();
-         this.GetEnvironment().Print(this.GetEnvironment().GetInputBuffer());
+         this.GetEnvironment().Write(this.GetEnvironment().GetInputBuffer());
         }
 
       /****************************/

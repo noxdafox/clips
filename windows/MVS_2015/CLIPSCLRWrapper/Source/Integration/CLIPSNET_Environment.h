@@ -113,9 +113,10 @@ namespace CLIPSNET
         void DeleteRouter(Router ^);
         void ActivateRouter(Router ^);
         void DeactivateRouter(Router ^);
-        void Printout(String ^,String ^);
-        void Print(String ^);
-        void PrintLn(String ^);
+        void Write(String ^,String ^);
+        void Write(String ^);
+        void WriteLine(String ^,String ^);
+        void WriteLine(String ^);
         
         void CommandLoop();
 

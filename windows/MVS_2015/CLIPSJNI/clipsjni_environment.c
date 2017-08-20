@@ -243,6 +243,36 @@ JNIEXPORT void JNICALL Java_net_sf_clipsrules_jni_Environment_setParsingFileName
    SetEnvironmentContext(JLongToPointer(clipsEnv),oldContext);
   }
 
+/**********************************************************/
+/* Java_net_sf_clipsrules_jni_Environment_validWatchItem: */
+/*   Native function for the CLIPSJNI validWatchItem      */
+/*   method.                                              */
+/*                                                        */
+/* Class:     net_sf_clipsrules_jni_Environment           */
+/* Method:    validWatchItem                              */
+/* Signature: (JLjava/lang/String;)Z                      */
+/**********************************************************/
+JNIEXPORT jboolean JNICALL Java_net_sf_clipsrules_jni_Environment_validWatchItem(
+  JNIEnv *env, 
+  jobject obj, 
+  jlong clipsEnv, 
+  jstring watchItem)
+  {
+   int rv;
+   const char *cWatchItem = (*env)->GetStringUTFChars(env,watchItem,NULL);
+   
+   void *oldContext = SetEnvironmentContext(JLongToPointer(clipsEnv),(void *) env);
+
+   rv = GetWatchItem(JLongToPointer(clipsEnv),(char *) cWatchItem);
+   
+   (*env)->ReleaseStringUTFChars(env,watchItem,cWatchItem);
+   
+   SetEnvironmentContext(JLongToPointer(clipsEnv),oldContext);
+   
+   if (rv == -1) return false;
+   else return true;
+  }
+
 /***********************************************************/
 /* Java_net_sf_clipsrules_jni_Environment_getWatchItem:    */
 /*   Native function for the CLIPSJNI getWatchItem method. */
@@ -651,6 +681,12 @@ JNIEXPORT jboolean JNICALL Java_net_sf_clipsrules_jni_Environment_addUserFunctio
 
    nobj = (*env)->NewGlobalRef(env,context);
  
+   if (minArgs < 0)
+     { minArgs = 0; }
+     
+   if (maxArgs < 0)
+     { maxArgs = UNBOUNDED; }
+     
    rv = AddUDF(JLongToPointer(clipsEnv),cFunctionName,"*",(unsigned short) minArgs,(unsigned short) maxArgs,
                   cRestrictions,JNIUserFunction,"JNIUserFunction",nobj);
 
@@ -667,14 +703,14 @@ JNIEXPORT jboolean JNICALL Java_net_sf_clipsrules_jni_Environment_addUserFunctio
    return rv;
   }
 
-/**********************************************************************/
-/* Java_net_sf_clipsrules_jni_Environment_renmoveUserFunction: Native */
-/*   function for the CLIPSJNI removeUserFunction method.             */
-/*                                                                    */
-/* Class:     net_sf_clipsrules_jni_Environment                       */
-/* Method:    removeUserFunction                                      */
-/* Signature: (JLjava/lang/String;)Z                                  */
-/**********************************************************************/
+/*********************************************************************/
+/* Java_net_sf_clipsrules_jni_Environment_removeUserFunction: Native */
+/*   function for the CLIPSJNI removeUserFunction method.            */
+/*                                                                   */
+/* Class:     net_sf_clipsrules_jni_Environment                      */
+/* Method:    removeUserFunction                                     */
+/* Signature: (JLjava/lang/String;)Z                                 */
+/*********************************************************************/
 JNIEXPORT jboolean JNICALL Java_net_sf_clipsrules_jni_Environment_removeUserFunction(
   JNIEnv *env, 
   jobject obj, 
@@ -703,4 +739,25 @@ JNIEXPORT jboolean JNICALL Java_net_sf_clipsrules_jni_Environment_removeUserFunc
 
    return rv;
   }
+  
+/***********************************************************/
+/* Java_net_sf_clipsrules_jni_Environment_setErrorCallback */
+/* Class:     net_sf_clipsrules_jni_Environment            */
+/* Method:    setErrorCallback                             */
+/* Signature: (JZ)Z                                        */
+/***********************************************************/
+JNIEXPORT void JNICALL Java_net_sf_clipsrules_jni_Environment_setErrorCallback(
+  JNIEnv *env, 
+  jobject obj, 
+  jlong clipsEnv,
+  jboolean value)
+  {
+   Environment *theCLIPSEnv = (Environment *) JLongToPointer(clipsEnv);
+   
+   if (value)
+     { SetParserErrorCallback(theCLIPSEnv,JNIParserErrorCallback,NULL); }
+    else
+     { SetParserErrorCallback(theCLIPSEnv,NULL,NULL); }
+  }
+   
 

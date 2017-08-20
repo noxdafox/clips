@@ -72,9 +72,10 @@ class CLIPSCPPEnv
       bool DeleteRouter(char *);
       bool ActivateRouter(char *);
       bool DeactivateRouter(char *);
-      void Printout(const char *,const char *);
-      void Print(const char *);
-      void PrintLn(const char *);
+      void Write(const char *,const char *);
+      void Write(const char *);
+      void Writeln(const char *,const char *);
+      void Writeln(const char *);
       
       void SetParserErrorCallback(CLIPSCPPParserErrorFunction *);
 

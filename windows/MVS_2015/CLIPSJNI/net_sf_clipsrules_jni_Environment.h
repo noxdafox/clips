@@ -7,16 +7,6 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-#undef net_sf_clipsrules_jni_Environment_UNBOUNDED
-#define net_sf_clipsrules_jni_Environment_UNBOUNDED -1L
-/*
- * Class:     net_sf_clipsrules_jni_Environment
- * Method:    getCLIPSVersion
- * Signature: ()Ljava/lang/String;
- */
-JNIEXPORT jstring JNICALL Java_net_sf_clipsrules_jni_Environment_getCLIPSVersion
-  (JNIEnv *, jclass);
-
 /*
  * Class:     net_sf_clipsrules_jni_Environment
  * Method:    createEnvironment
@@ -35,34 +25,10 @@ JNIEXPORT void JNICALL Java_net_sf_clipsrules_jni_Environment_clear
 
 /*
  * Class:     net_sf_clipsrules_jni_Environment
- * Method:    reset
- * Signature: (J)V
+ * Method:    load
+ * Signature: (JLjava/lang/String;)V
  */
-JNIEXPORT void JNICALL Java_net_sf_clipsrules_jni_Environment_reset
-  (JNIEnv *, jobject, jlong);
-
-/*
- * Class:     net_sf_clipsrules_jni_Environment
- * Method:    removeUserFunction
- * Signature: (JLjava/lang/String;)Z
- */
-JNIEXPORT jboolean JNICALL Java_net_sf_clipsrules_jni_Environment_removeUserFunction
-  (JNIEnv *, jobject, jlong, jstring);
-
-/*
- * Class:     net_sf_clipsrules_jni_Environment
- * Method:    addUserFunction
- * Signature: (JLjava/lang/String;Ljava/lang/String;IILjava/lang/String;Lnet/sf/clipsrules/jni/UserFunction;)Z
- */
-JNIEXPORT jboolean JNICALL Java_net_sf_clipsrules_jni_Environment_addUserFunction
-  (JNIEnv *, jobject, jlong, jstring, jstring, jint, jint, jstring, jobject);
-
-/*
- * Class:     net_sf_clipsrules_jni_Environment
- * Method:    changeDirectory
- * Signature: (JLjava/lang/String;)I
- */
-JNIEXPORT jint JNICALL Java_net_sf_clipsrules_jni_Environment_changeDirectory
+JNIEXPORT void JNICALL Java_net_sf_clipsrules_jni_Environment_load
   (JNIEnv *, jobject, jlong, jstring);
 
 /*
@@ -83,10 +49,162 @@ JNIEXPORT void JNICALL Java_net_sf_clipsrules_jni_Environment_loadFromStringWith
 
 /*
  * Class:     net_sf_clipsrules_jni_Environment
- * Method:    load
- * Signature: (JLjava/lang/String;)V
+ * Method:    build
+ * Signature: (JLjava/lang/String;)Z
  */
-JNIEXPORT void JNICALL Java_net_sf_clipsrules_jni_Environment_load
+JNIEXPORT jboolean JNICALL Java_net_sf_clipsrules_jni_Environment_build
+  (JNIEnv *, jobject, jlong, jstring);
+
+/*
+ * Class:     net_sf_clipsrules_jni_Environment
+ * Method:    reset
+ * Signature: (J)V
+ */
+JNIEXPORT void JNICALL Java_net_sf_clipsrules_jni_Environment_reset
+  (JNIEnv *, jobject, jlong);
+
+/*
+ * Class:     net_sf_clipsrules_jni_Environment
+ * Method:    run
+ * Signature: (JJ)J
+ */
+JNIEXPORT jlong JNICALL Java_net_sf_clipsrules_jni_Environment_run
+  (JNIEnv *, jobject, jlong, jlong);
+
+/*
+ * Class:     net_sf_clipsrules_jni_Environment
+ * Method:    assertString
+ * Signature: (JLjava/lang/String;)Lnet/sf/clipsrules/jni/FactAddressValue;
+ */
+JNIEXPORT jobject JNICALL Java_net_sf_clipsrules_jni_Environment_assertString
+  (JNIEnv *, jobject, jlong, jstring);
+
+/*
+ * Class:     net_sf_clipsrules_jni_Environment
+ * Method:    makeInstance
+ * Signature: (JLjava/lang/String;)Lnet/sf/clipsrules/jni/InstanceAddressValue;
+ */
+JNIEXPORT jobject JNICALL Java_net_sf_clipsrules_jni_Environment_makeInstance
+  (JNIEnv *, jobject, jlong, jstring);
+
+/*
+ * Class:     net_sf_clipsrules_jni_Environment
+ * Method:    eval
+ * Signature: (JLjava/lang/String;)Lnet/sf/clipsrules/jni/PrimitiveValue;
+ */
+JNIEXPORT jobject JNICALL Java_net_sf_clipsrules_jni_Environment_eval
+  (JNIEnv *, jobject, jlong, jstring);
+
+/*
+ * Class:     net_sf_clipsrules_jni_Environment
+ * Method:    watch
+ * Signature: (JLjava/lang/String;)Z
+ */
+JNIEXPORT jboolean JNICALL Java_net_sf_clipsrules_jni_Environment_watch
+  (JNIEnv *, jobject, jlong, jstring);
+
+/*
+ * Class:     net_sf_clipsrules_jni_Environment
+ * Method:    unwatch
+ * Signature: (JLjava/lang/String;)Z
+ */
+JNIEXPORT jboolean JNICALL Java_net_sf_clipsrules_jni_Environment_unwatch
+  (JNIEnv *, jobject, jlong, jstring);
+
+/*
+ * Class:     net_sf_clipsrules_jni_Environment
+ * Method:    validWatchItem
+ * Signature: (JLjava/lang/String;)Z
+ */
+JNIEXPORT jboolean JNICALL Java_net_sf_clipsrules_jni_Environment_validWatchItem
+  (JNIEnv *, jobject, jlong, jstring);
+
+/*
+ * Class:     net_sf_clipsrules_jni_Environment
+ * Method:    getWatchItem
+ * Signature: (JLjava/lang/String;)Z
+ */
+JNIEXPORT jboolean JNICALL Java_net_sf_clipsrules_jni_Environment_getWatchItem
+  (JNIEnv *, jobject, jlong, jstring);
+
+/*
+ * Class:     net_sf_clipsrules_jni_Environment
+ * Method:    addUserFunction
+ * Signature: (JLjava/lang/String;Ljava/lang/String;IILjava/lang/String;Lnet/sf/clipsrules/jni/UserFunction;)Z
+ */
+JNIEXPORT jboolean JNICALL Java_net_sf_clipsrules_jni_Environment_addUserFunction
+  (JNIEnv *, jobject, jlong, jstring, jstring, jint, jint, jstring, jobject);
+
+/*
+ * Class:     net_sf_clipsrules_jni_Environment
+ * Method:    removeUserFunction
+ * Signature: (JLjava/lang/String;)Z
+ */
+JNIEXPORT jboolean JNICALL Java_net_sf_clipsrules_jni_Environment_removeUserFunction
+  (JNIEnv *, jobject, jlong, jstring);
+
+/*
+ * Class:     net_sf_clipsrules_jni_Environment
+ * Method:    addRouter
+ * Signature: (JLjava/lang/String;ILnet/sf/clipsrules/jni/Router;)Z
+ */
+JNIEXPORT jboolean JNICALL Java_net_sf_clipsrules_jni_Environment_addRouter
+  (JNIEnv *, jobject, jlong, jstring, jint, jobject);
+
+/*
+ * Class:     net_sf_clipsrules_jni_Environment
+ * Method:    deleteRouter
+ * Signature: (JLjava/lang/String;)Z
+ */
+JNIEXPORT jboolean JNICALL Java_net_sf_clipsrules_jni_Environment_deleteRouter
+  (JNIEnv *, jobject, jlong, jstring);
+
+/*
+ * Class:     net_sf_clipsrules_jni_Environment
+ * Method:    activateRouter
+ * Signature: (JLjava/lang/String;)Z
+ */
+JNIEXPORT jboolean JNICALL Java_net_sf_clipsrules_jni_Environment_activateRouter
+  (JNIEnv *, jobject, jlong, jstring);
+
+/*
+ * Class:     net_sf_clipsrules_jni_Environment
+ * Method:    deactivateRouter
+ * Signature: (JLjava/lang/String;)Z
+ */
+JNIEXPORT jboolean JNICALL Java_net_sf_clipsrules_jni_Environment_deactivateRouter
+  (JNIEnv *, jobject, jlong, jstring);
+
+/*
+ * Class:     net_sf_clipsrules_jni_Environment
+ * Method:    printString
+ * Signature: (JLjava/lang/String;Ljava/lang/String;)V
+ */
+JNIEXPORT void JNICALL Java_net_sf_clipsrules_jni_Environment_printString
+  (JNIEnv *, jobject, jlong, jstring, jstring);
+
+/*
+ * Class:     net_sf_clipsrules_jni_Environment
+ * Method:    printRouterExists
+ * Signature: (JLjava/lang/String;)Z
+ */
+JNIEXPORT jboolean JNICALL Java_net_sf_clipsrules_jni_Environment_printRouterExists
+  (JNIEnv *, jobject, jlong, jstring);
+
+/*
+ * Class:     net_sf_clipsrules_jni_Environment
+ * Method:    commandLoop
+ * Signature: (J)V
+ */
+JNIEXPORT void JNICALL Java_net_sf_clipsrules_jni_Environment_commandLoop
+  (JNIEnv *, jobject, jlong);
+
+/*
+ * Class:     net_sf_clipsrules_jni_Environment
+ * Method:    changeDirectory
+ * Signature: (JLjava/lang/String;)I
+ */
+JNIEXPORT jint JNICALL Java_net_sf_clipsrules_jni_Environment_changeDirectory
   (JNIEnv *, jobject, jlong, jstring);
 
 /*
@@ -115,30 +233,6 @@ JNIEXPORT jboolean JNICALL Java_net_sf_clipsrules_jni_Environment_loadFacts
 
 /*
  * Class:     net_sf_clipsrules_jni_Environment
- * Method:    getWatchItem
- * Signature: (JLjava/lang/String;)Z
- */
-JNIEXPORT jboolean JNICALL Java_net_sf_clipsrules_jni_Environment_getWatchItem
-  (JNIEnv *, jobject, jlong, jstring);
-
-/*
- * Class:     net_sf_clipsrules_jni_Environment
- * Method:    watch
- * Signature: (JLjava/lang/String;)Z
- */
-JNIEXPORT jboolean JNICALL Java_net_sf_clipsrules_jni_Environment_watch
-  (JNIEnv *, jobject, jlong, jstring);
-
-/*
- * Class:     net_sf_clipsrules_jni_Environment
- * Method:    unwatch
- * Signature: (JLjava/lang/String;)Z
- */
-JNIEXPORT jboolean JNICALL Java_net_sf_clipsrules_jni_Environment_unwatch
-  (JNIEnv *, jobject, jlong, jstring);
-
-/*
- * Class:     net_sf_clipsrules_jni_Environment
  * Method:    setHaltExecution
  * Signature: (JZ)V
  */
@@ -152,30 +246,6 @@ JNIEXPORT void JNICALL Java_net_sf_clipsrules_jni_Environment_setHaltExecution
  */
 JNIEXPORT void JNICALL Java_net_sf_clipsrules_jni_Environment_setHaltRules
   (JNIEnv *, jobject, jlong, jboolean);
-
-/*
- * Class:     net_sf_clipsrules_jni_Environment
- * Method:    run
- * Signature: (JJ)J
- */
-JNIEXPORT jlong JNICALL Java_net_sf_clipsrules_jni_Environment_run
-  (JNIEnv *, jobject, jlong, jlong);
-
-/*
- * Class:     net_sf_clipsrules_jni_Environment
- * Method:    eval
- * Signature: (JLjava/lang/String;)Lnet/sf/clipsrules/jni/PrimitiveValue;
- */
-JNIEXPORT jobject JNICALL Java_net_sf_clipsrules_jni_Environment_eval
-  (JNIEnv *, jobject, jlong, jstring);
-
-/*
- * Class:     net_sf_clipsrules_jni_Environment
- * Method:    build
- * Signature: (JLjava/lang/String;)Z
- */
-JNIEXPORT jboolean JNICALL Java_net_sf_clipsrules_jni_Environment_build
-  (JNIEnv *, jobject, jlong, jstring);
 
 /*
  * Class:     net_sf_clipsrules_jni_Environment
@@ -235,14 +305,6 @@ JNIEXPORT jobject JNICALL Java_net_sf_clipsrules_jni_Environment_getAgenda
 
 /*
  * Class:     net_sf_clipsrules_jni_Environment
- * Method:    assertString
- * Signature: (JLjava/lang/String;)Lnet/sf/clipsrules/jni/FactAddressValue;
- */
-JNIEXPORT jobject JNICALL Java_net_sf_clipsrules_jni_Environment_assertString
-  (JNIEnv *, jobject, jlong, jstring);
-
-/*
- * Class:     net_sf_clipsrules_jni_Environment
  * Method:    getDeftemplateText
  * Signature: (JJ)Ljava/lang/String;
  */
@@ -283,14 +345,6 @@ JNIEXPORT jobject JNICALL Java_net_sf_clipsrules_jni_Environment_getFactSlot
 
 /*
  * Class:     net_sf_clipsrules_jni_Environment
- * Method:    makeInstance
- * Signature: (JLjava/lang/String;)Lnet/sf/clipsrules/jni/InstanceAddressValue;
- */
-JNIEXPORT jobject JNICALL Java_net_sf_clipsrules_jni_Environment_makeInstance
-  (JNIEnv *, jobject, jlong, jstring);
-
-/*
- * Class:     net_sf_clipsrules_jni_Environment
  * Method:    getInstanceName
  * Signature: (Lnet/sf/clipsrules/jni/Environment;JJ)Ljava/lang/String;
  */
@@ -311,14 +365,6 @@ JNIEXPORT jobject JNICALL Java_net_sf_clipsrules_jni_Environment_directGetSlot
  * Signature: (J)V
  */
 JNIEXPORT void JNICALL Java_net_sf_clipsrules_jni_Environment_destroyEnvironment
-  (JNIEnv *, jobject, jlong);
-
-/*
- * Class:     net_sf_clipsrules_jni_Environment
- * Method:    commandLoop
- * Signature: (J)V
- */
-JNIEXPORT void JNICALL Java_net_sf_clipsrules_jni_Environment_commandLoop
   (JNIEnv *, jobject, jlong);
 
 /*
@@ -459,46 +505,6 @@ JNIEXPORT void JNICALL Java_net_sf_clipsrules_jni_Environment_printPrompt
 
 /*
  * Class:     net_sf_clipsrules_jni_Environment
- * Method:    addRouter
- * Signature: (JLjava/lang/String;ILnet/sf/clipsrules/jni/Router;)Z
- */
-JNIEXPORT jboolean JNICALL Java_net_sf_clipsrules_jni_Environment_addRouter
-  (JNIEnv *, jobject, jlong, jstring, jint, jobject);
-
-/*
- * Class:     net_sf_clipsrules_jni_Environment
- * Method:    deleteRouter
- * Signature: (JLjava/lang/String;)Z
- */
-JNIEXPORT jboolean JNICALL Java_net_sf_clipsrules_jni_Environment_deleteRouter
-  (JNIEnv *, jobject, jlong, jstring);
-
-/*
- * Class:     net_sf_clipsrules_jni_Environment
- * Method:    printRouter
- * Signature: (JLjava/lang/String;Ljava/lang/String;)V
- */
-JNIEXPORT void JNICALL Java_net_sf_clipsrules_jni_Environment_printRouter
-  (JNIEnv *, jobject, jlong, jstring, jstring);
-
-/*
- * Class:     net_sf_clipsrules_jni_Environment
- * Method:    activateRouter
- * Signature: (JLjava/lang/String;)Z
- */
-JNIEXPORT jboolean JNICALL Java_net_sf_clipsrules_jni_Environment_activateRouter
-  (JNIEnv *, jobject, jlong, jstring);
-
-/*
- * Class:     net_sf_clipsrules_jni_Environment
- * Method:    deactivateRouter
- * Signature: (JLjava/lang/String;)Z
- */
-JNIEXPORT jboolean JNICALL Java_net_sf_clipsrules_jni_Environment_deactivateRouter
-  (JNIEnv *, jobject, jlong, jstring);
-
-/*
- * Class:     net_sf_clipsrules_jni_Environment
  * Method:    getAgendaChanged
  * Signature: (J)Z
  */
@@ -616,6 +622,22 @@ JNIEXPORT void JNICALL Java_net_sf_clipsrules_jni_Environment_incrementAddressCo
  */
 JNIEXPORT void JNICALL Java_net_sf_clipsrules_jni_Environment_decrementAddressCount
   (JNIEnv *, jobject, jobject, jlong, jlong);
+
+/*
+ * Class:     net_sf_clipsrules_jni_Environment
+ * Method:    setErrorCallback
+ * Signature: (JZ)V
+ */
+JNIEXPORT void JNICALL Java_net_sf_clipsrules_jni_Environment_setErrorCallback
+  (JNIEnv *, jobject, jlong, jboolean);
+
+/*
+ * Class:     net_sf_clipsrules_jni_Environment
+ * Method:    getCLIPSVersion
+ * Signature: ()Ljava/lang/String;
+ */
+JNIEXPORT jstring JNICALL Java_net_sf_clipsrules_jni_Environment_getCLIPSVersion
+  (JNIEnv *, jclass);
 
 #ifdef __cplusplus
 }
