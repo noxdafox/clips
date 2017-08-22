@@ -178,7 +178,7 @@ void UnmarkConstructHeader(
   Environment *theEnv,
   ConstructHeader *theConstruct)
   {
-   DecrementLexemeReferenceCount(theEnv,theConstruct->name);
+   ReleaseLexeme(theEnv,theConstruct->name);
   }
 
 #endif /* BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE */

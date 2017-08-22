@@ -214,7 +214,7 @@ void InstallProcedurePrimitives(
       and zero-length multifield parameters
       ============================================= */
    ProceduralPrimitiveData(theEnv)->NoParamValue = CreateUnmanagedMultifield(theEnv,0L);
-   IncrementMultifieldReferenceCount(theEnv,ProceduralPrimitiveData(theEnv)->NoParamValue);
+   RetainMultifield(theEnv,ProceduralPrimitiveData(theEnv)->NoParamValue);
   }
 
 /**************************************************************/
@@ -758,7 +758,7 @@ void PopProcParameters(
 
    if (ProceduralPrimitiveData(theEnv)->WildcardValue != NULL)
      {
-      DecrementMultifieldReferenceCount(theEnv,ProceduralPrimitiveData(theEnv)->WildcardValue->multifieldValue);
+      ReleaseMultifield(theEnv,ProceduralPrimitiveData(theEnv)->WildcardValue->multifieldValue);
       if (ProceduralPrimitiveData(theEnv)->WildcardValue->value != ProceduralPrimitiveData(theEnv)->NoParamValue)
         AddToMultifieldList(theEnv,ProceduralPrimitiveData(theEnv)->WildcardValue->multifieldValue);
       rtn_struct(theEnv,udfValue,ProceduralPrimitiveData(theEnv)->WildcardValue);
@@ -943,7 +943,7 @@ void EvaluateProcActions(
 
    if ((ProceduralPrimitiveData(theEnv)->WildcardValue != NULL) ? (returnValue->value == ProceduralPrimitiveData(theEnv)->WildcardValue->value) : false)
      {
-      DecrementMultifieldReferenceCount(theEnv,ProceduralPrimitiveData(theEnv)->WildcardValue->multifieldValue);
+      ReleaseMultifield(theEnv,ProceduralPrimitiveData(theEnv)->WildcardValue->multifieldValue);
       if (ProceduralPrimitiveData(theEnv)->WildcardValue->value != ProceduralPrimitiveData(theEnv)->NoParamValue)
         AddToMultifieldList(theEnv,ProceduralPrimitiveData(theEnv)->WildcardValue->multifieldValue);
       rtn_struct(theEnv,udfValue,ProceduralPrimitiveData(theEnv)->WildcardValue);
@@ -955,7 +955,7 @@ void EvaluateProcActions(
       RemoveTrackedMemory(theEnv,theTM);
       for (i = 0 ; i < lvarcnt ; i++)
         if (ProceduralPrimitiveData(theEnv)->LocalVarArray[i].supplementalInfo == TrueSymbol(theEnv))
-          UDFRelease(theEnv,&ProceduralPrimitiveData(theEnv)->LocalVarArray[i]);
+          ReleaseUDFV(theEnv,&ProceduralPrimitiveData(theEnv)->LocalVarArray[i]);
       rm(theEnv,ProceduralPrimitiveData(theEnv)->LocalVarArray,(sizeof(UDFValue) * lvarcnt));
      }
 
@@ -1024,7 +1024,7 @@ void GrabProcWildargs(
      }
    else
      {
-      DecrementMultifieldReferenceCount(theEnv,ProceduralPrimitiveData(theEnv)->WildcardValue->multifieldValue);
+      ReleaseMultifield(theEnv,ProceduralPrimitiveData(theEnv)->WildcardValue->multifieldValue);
       if (ProceduralPrimitiveData(theEnv)->WildcardValue->value != ProceduralPrimitiveData(theEnv)->NoParamValue)
         AddToMultifieldList(theEnv,ProceduralPrimitiveData(theEnv)->WildcardValue->multifieldValue);
      }
@@ -1036,7 +1036,7 @@ void GrabProcWildargs(
       returnValue->range = 0;
       ProceduralPrimitiveData(theEnv)->WildcardValue->range = 0;
       returnValue->value = ProceduralPrimitiveData(theEnv)->WildcardValue->value = ProceduralPrimitiveData(theEnv)->NoParamValue;
-      IncrementMultifieldReferenceCount(theEnv,ProceduralPrimitiveData(theEnv)->WildcardValue->multifieldValue);
+      RetainMultifield(theEnv,ProceduralPrimitiveData(theEnv)->WildcardValue->multifieldValue);
       return;
      }
    for (i = theIndex-1 ; i < ProceduralPrimitiveData(theEnv)->ProcParamArraySize ; i++)
@@ -1063,7 +1063,7 @@ void GrabProcWildargs(
            }
         }
      }
-   IncrementMultifieldReferenceCount(theEnv,ProceduralPrimitiveData(theEnv)->WildcardValue->multifieldValue);
+   RetainMultifield(theEnv,ProceduralPrimitiveData(theEnv)->WildcardValue->multifieldValue);
   }
 
 /* =========================================
@@ -1256,7 +1256,7 @@ static bool PutProcBind(
    if (GetFirstArgument() == NULL)
      {
       if (dst->supplementalInfo == TrueSymbol(theEnv))
-        UDFRelease(theEnv,dst);
+        ReleaseUDFV(theEnv,dst);
       dst->supplementalInfo = FalseSymbol(theEnv);
       returnValue->value = FalseSymbol(theEnv);
      }
@@ -1267,12 +1267,12 @@ static bool PutProcBind(
       else
         EvaluateExpression(theEnv,GetFirstArgument(),returnValue);
       if (dst->supplementalInfo == TrueSymbol(theEnv))
-        UDFRelease(theEnv,dst);
+        ReleaseUDFV(theEnv,dst);
       dst->supplementalInfo = TrueSymbol(theEnv);
       dst->value = returnValue->value;
       dst->begin = returnValue->begin;
       dst->range = returnValue->range;
-      UDFRetain(theEnv,dst);
+      RetainUDFV(theEnv,dst);
      }
    return true;
   }

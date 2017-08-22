@@ -260,16 +260,16 @@ JNIEXPORT jstring JNICALL Java_net_sf_clipsrules_jni_Environment_getInstanceName
    return rv;
   }
 
-/*************************************************************************/
-/* Java_net_sf_clipsrules_jni_Environment_incrementInstanceCount: Native */
-/*   function for the CLIPSJNI incrementInstanceCount method.            */
-/*                                                                       */
-/*                                                                       */
-/* Class:     net_sf_clipsrules_jni_Environment                          */
-/* Method:    incrementInstanceCount                                     */
-/* Signature: (Lnet/sf/clipsrules/jni/Environment;JJ)V                   */
-/*************************************************************************/
-JNIEXPORT void JNICALL Java_net_sf_clipsrules_jni_Environment_incrementInstanceCount(
+/*****************************************************************/
+/* Java_net_sf_clipsrules_jni_Environment_retainInstance: Native */
+/*   function for the CLIPSJNI retainInstance method.            */
+/*                                                               */
+/*                                                               */
+/* Class:     net_sf_clipsrules_jni_Environment                  */
+/* Method:    retainInstance                                     */
+/* Signature: (Lnet/sf/clipsrules/jni/Environment;JJ)V           */
+/*****************************************************************/
+JNIEXPORT void JNICALL Java_net_sf_clipsrules_jni_Environment_retainInstance(
   JNIEnv *env, 
   jclass javaClass, 
   jobject javaEnv,
@@ -278,21 +278,21 @@ JNIEXPORT void JNICALL Java_net_sf_clipsrules_jni_Environment_incrementInstanceC
   {
    void *oldContext = SetEnvironmentContext(JLongToPointer(clipsEnv),(void *) env);
 
-   IncrementInstanceReferenceCount(JLongToPointer(clipsInstance));
+   RetainInstance(JLongToPointer(clipsInstance));
    
    SetEnvironmentContext(JLongToPointer(clipsEnv),oldContext);
   }
   
-/*************************************************************************/
-/* Java_net_sf_clipsrules_jni_Environment_decrementInstanceCount: Native */
-/*   function for the CLIPSJNI decrementInstanceCount method.            */
-/*                                                                       */
-/*                                                                       */
-/* Class:     net_sf_clipsrules_jni_Environment                          */
-/* Method:    decrementInstanceCount                                     */
-/* Signature: (Lnet/sf/clipsrules/jni/Environment;JJ)V                   */
-/*************************************************************************/
-JNIEXPORT void JNICALL Java_net_sf_clipsrules_jni_Environment_decrementInstanceCount(
+/******************************************************************/
+/* Java_net_sf_clipsrules_jni_Environment_releaseInstance: Native */
+/*   function for the CLIPSJNI releaseInstance method.            */
+/*                                                                */
+/*                                                                */
+/* Class:     net_sf_clipsrules_jni_Environment                   */
+/* Method:    releaseInstance                                     */
+/* Signature: (Lnet/sf/clipsrules/jni/Environment;JJ)V            */
+/******************************************************************/
+JNIEXPORT void JNICALL Java_net_sf_clipsrules_jni_Environment_releaseInstance(
   JNIEnv *env, 
   jclass javaClass, 
   jobject javaEnv,
@@ -301,7 +301,7 @@ JNIEXPORT void JNICALL Java_net_sf_clipsrules_jni_Environment_decrementInstanceC
   {
    void *oldContext = SetEnvironmentContext(JLongToPointer(clipsEnv),(void *) env);
 
-   DecrementInstanceReferenceCount(JLongToPointer(clipsInstance));
+   ReleaseInstance(JLongToPointer(clipsInstance));
    
    SetEnvironmentContext(JLongToPointer(clipsEnv),oldContext);
   }

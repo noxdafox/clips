@@ -69,7 +69,7 @@ public class InstanceAddressValue extends PrimitiveValue
    @Override
    public void retain()
      {
-      owner.incrementInstanceCount(this);
+      owner.retainInstance(this);
      }
 
    /************/
@@ -78,7 +78,7 @@ public class InstanceAddressValue extends PrimitiveValue
    @Override
    public void release()
      {
-      owner.decrementInstanceCount(this);
+      owner.releaseInstance(this);
      }
    
    @Override

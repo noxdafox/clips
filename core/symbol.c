@@ -929,24 +929,24 @@ size_t HashBitMap(
    return tally;
   }
 
-/*************************************************************/
-/* IncrementLexemeReferenceCount: Increments the count value */
-/*   for a SymbolTable entry. Adds the symbol to the         */
-/*   EphemeralSymbolList if the count becomes zero.          */
-/*************************************************************/
-void IncrementLexemeReferenceCount(
+/****************************************************/
+/* RetainLexeme: Increments the count value for a   */
+/*   SymbolTable entry. Adds the symbol to the      */
+/*   EphemeralSymbolList if the count becomes zero. */
+/****************************************************/
+void RetainLexeme(
   Environment *theEnv,
   CLIPSLexeme *theValue)
   {
    theValue->count++;
   }
 
-/*************************************************************/
-/* DecrementLexemeReferenceCount: Decrements the count value */
-/*   for a SymbolTable entry. Adds the symbol to the         */
-/*   EphemeralSymbolList if the count becomes zero.          */
-/*************************************************************/
-void DecrementLexemeReferenceCount(
+/****************************************************/
+/* ReleaseLexeme: Decrements the count value for a  */
+/*   SymbolTable entry. Adds the symbol to the      */
+/*   EphemeralSymbolList if the count becomes zero. */
+/****************************************************/
+void ReleaseLexeme(
   Environment *theEnv,
   CLIPSLexeme *theValue)
   {
@@ -976,24 +976,24 @@ void DecrementLexemeReferenceCount(
    return;
   }
 
-/************************************************************/
-/* IncrementFloatReferenceCount: Increments the count value */
-/*   for a FloatTable entry. Adds the float to the          */
-/*   EphemeralFloatList if the count becomes zero.          */
-/************************************************************/
-void IncrementFloatReferenceCount(
+/***************************************************/
+/* RetainFloat: Increments the count value for a   */
+/*   FloatTable entry. Adds the float to the       */
+/*   EphemeralFloatList if the count becomes zero. */
+/***************************************************/
+void RetainFloat(
   Environment *theEnv,
   CLIPSFloat *theValue)
   {
    theValue->count++;
   }
 
-/************************************************************/
-/* DecrementFloatReferenceCount: Decrements the count value */
-/*   for a FloatTable entry. Adds the float to the          */
-/*   EphemeralFloatList if the count becomes zero.          */
-/************************************************************/
-void DecrementFloatReferenceCount(
+/***************************************************/
+/* ReleaseFloat: Decrements the count value for a  */
+/*   FloatTable entry. Adds the float to the       */
+/*   EphemeralFloatList if the count becomes zero. */
+/***************************************************/
+void ReleaseFloat(
   Environment *theEnv,
   CLIPSFloat *theValue)
   {
@@ -1017,24 +1017,24 @@ void DecrementFloatReferenceCount(
    return;
   }
 
-/******************************************************************/
-/* IncrementIntegerReferenceCount: Increments the count value for */
-/*   an IntegerTable entry. Adds the integer to the               */
-/*   EphemeralIntegerList if the count becomes zero.              */
-/******************************************************************/
-void IncrementIntegerReferenceCount(
+/*****************************************************/
+/* RetainInteger: Increments the count value for an  */
+/*   IntegerTable entry. Adds the integer to the     */
+/*   EphemeralIntegerList if the count becomes zero. */
+/*****************************************************/
+void RetainInteger(
   Environment *theEnv,
   CLIPSInteger *theValue)
   {
    theValue->count++;
   }
 
-/******************************************************************/
-/* DecrementIntegerReferenceCount: Decrements the count value for */
-/*   an IntegerTable entry. Adds the integer to the               */
-/*   EphemeralIntegerList if the count becomes zero.              */
-/******************************************************************/
-void DecrementIntegerReferenceCount(
+/*****************************************************/
+/* ReleaseInteger: Decrements the count value for    */
+/*   an IntegerTable entry. Adds the integer to the  */
+/*   EphemeralIntegerList if the count becomes zero. */
+/*****************************************************/
+void ReleaseInteger(
   Environment *theEnv,
   CLIPSInteger *theValue)
   {
@@ -1105,24 +1105,24 @@ void DecrementBitMapReferenceCount(
    return;
   }
 
-/**********************************************************************/
-/* IncrementExternalAddressReferenceCount: Decrements the count value */
-/*   for an ExternAddressTable entry. Adds the bitmap to the          */
-/*   EphemeralExternalAddressList if the count becomes zero.          */
-/**********************************************************************/
-void IncrementExternalAddressReferenceCount(
+/*************************************************************/
+/* RetainExternalAddress: Decrements the count value for an  */
+/*   ExternAddressTable entry. Adds the bitmap to the        */
+/*   EphemeralExternalAddressList if the count becomes zero. */
+/*************************************************************/
+void RetainExternalAddress(
   Environment *theEnv,
   CLIPSExternalAddress *theValue)
   {
    theValue->count++;
   }
 
-/**********************************************************************/
-/* DecrementExternalAddressReferenceCount: Decrements the count value */
-/*   for an ExternAddressTable entry. Adds the bitmap to the          */
-/*   EphemeralExternalAddressList if the count becomes zero.          */
-/**********************************************************************/
-void DecrementExternalAddressReferenceCount(
+/*************************************************************/
+/* ReleaseExternalAddress: Decrements the count value for    */
+/*   an ExternAddressTable entry. Adds the bitmap to the     */
+/*   EphemeralExternalAddressList if the count becomes zero. */
+/*************************************************************/
+void ReleaseExternalAddress(
   Environment *theEnv,
   CLIPSExternalAddress *theValue)
   {

@@ -498,9 +498,9 @@ void QueryDoForAllFacts(
    FactQueryData(theEnv)->QueryCore->query = GetFirstArgument();
    FactQueryData(theEnv)->QueryCore->action = GetFirstArgument()->nextArg;
    FactQueryData(theEnv)->QueryCore->result = returnValue;
-   UDFRetain(theEnv,FactQueryData(theEnv)->QueryCore->result);
+   RetainUDFV(theEnv,FactQueryData(theEnv)->QueryCore->result);
    TestEntireChain(theEnv,qtemplates,0);
-   UDFRelease(theEnv,FactQueryData(theEnv)->QueryCore->result);
+   ReleaseUDFV(theEnv,FactQueryData(theEnv)->QueryCore->result);
 
    FactQueryData(theEnv)->AbortQuery = false;
    ProcedureFunctionData(theEnv)->BreakFlag = false;
@@ -1058,9 +1058,9 @@ static void TestEntireTemplate(
             if (FactQueryData(theEnv)->QueryCore->action != NULL)
               {
                theFact->patternHeader.busyCount++;
-               UDFRelease(theEnv,FactQueryData(theEnv)->QueryCore->result);
+               ReleaseUDFV(theEnv,FactQueryData(theEnv)->QueryCore->result);
                EvaluateExpression(theEnv,FactQueryData(theEnv)->QueryCore->action,FactQueryData(theEnv)->QueryCore->result);
-               UDFRetain(theEnv,FactQueryData(theEnv)->QueryCore->result);
+               RetainUDFV(theEnv,FactQueryData(theEnv)->QueryCore->result);
 
                theFact->patternHeader.busyCount--;
                if (ProcedureFunctionData(theEnv)->BreakFlag || ProcedureFunctionData(theEnv)->ReturnFlag)

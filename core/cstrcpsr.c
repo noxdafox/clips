@@ -367,7 +367,7 @@ int LoadConstructsFromLogicalName(
       YieldTime(theEnv);
 
       if (foundConstruct)
-         { DecrementLexemeReferenceCount(theEnv,theToken.lexemeValue); }
+         { ReleaseLexeme(theEnv,theToken.lexemeValue); }
      }
 
    /*========================================================*/

@@ -60,7 +60,7 @@ public class FactAddressValue extends PrimitiveValue
    @Override
    public void retain()
      {
-      owner.incrementFactCount(this);
+      owner.retainFact(this);
      }
 
    /************/
@@ -69,7 +69,7 @@ public class FactAddressValue extends PrimitiveValue
    @Override
    public void release()
      {
-      owner.decrementFactCount(this);
+      owner.releaseFact(this);
      }
      
    /*************/

@@ -501,7 +501,7 @@ void RemoveDeffunction(
   {
    if (theDeffunction == NULL)
      return;
-   DecrementLexemeReferenceCount(theEnv,GetDeffunctionNamePointer(theEnv,theDeffunction));
+   ReleaseLexeme(theEnv,GetDeffunctionNamePointer(theEnv,theDeffunction));
    ExpressionDeinstall(theEnv,theDeffunction->code);
    ReturnPackedExpression(theEnv,theDeffunction->code);
    SetDeffunctionPPForm(theEnv,theDeffunction,NULL);

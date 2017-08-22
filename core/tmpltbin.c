@@ -566,7 +566,7 @@ static void ClearBload(
    /*=======================================*/
 
    for (i = 0; i < DeftemplateBinaryData(theEnv)->NumberOfTemplateSlots; i++)
-     { DecrementLexemeReferenceCount(theEnv,DeftemplateBinaryData(theEnv)->SlotArray[i].slotName); }
+     { ReleaseLexeme(theEnv,DeftemplateBinaryData(theEnv)->SlotArray[i].slotName); }
 
    /*======================================================================*/
    /* Deallocate the space used for the deftemplateModule data structures. */

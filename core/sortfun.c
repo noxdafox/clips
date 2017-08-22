@@ -266,12 +266,12 @@ void SortFunction(
    SortFunctionData(theEnv)->SortComparisonFunction = functionReference;
 
    for (i = 0; i < argumentSize; i++)
-     { UDFRetain(theEnv,&theArguments2[i]); }
+     { RetainUDFV(theEnv,&theArguments2[i]); }
 
    MergeSort(theEnv,argumentSize,theArguments2,DefaultCompareSwapFunction);
 
    for (i = 0; i < argumentSize; i++)
-     { UDFRelease(theEnv,&theArguments2[i]); }
+     { ReleaseUDFV(theEnv,&theArguments2[i]); }
 
    SortFunctionData(theEnv)->SortComparisonFunction = SortFunctionData(theEnv)->SortComparisonFunction->nextArg;
    functionReference->nextArg = NULL;

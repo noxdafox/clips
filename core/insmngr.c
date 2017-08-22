@@ -357,7 +357,7 @@ Instance *BuildInstance(
            QuashInstance(theEnv,ins);
         }
       ins->busy--;
-      DecrementLexemeReferenceCount(theEnv,iname);
+      ReleaseLexeme(theEnv,iname);
       if (ins->garbage == 0)
         {
          PrintErrorID(theEnv,"INSMNGR",5,false);
@@ -597,7 +597,7 @@ bool QuashInstance(
 #endif
        )
      {
-      DecrementLexemeReferenceCount(theEnv,ins->name);
+      ReleaseLexeme(theEnv,ins->name);
       rtn_struct(theEnv,instance,ins);
      }
    else
@@ -893,7 +893,7 @@ static void BuildDefaultSlots(
               {
                adst[i]->type = MULTIFIELD_TYPE;
                adst[i]->value = CreateUnmanagedMultifield(theEnv,0L);
-               IncrementMultifieldReferenceCount(theEnv,adst[i]->multifieldValue);
+               RetainMultifield(theEnv,adst[i]->multifieldValue);
               }
             else
               {
@@ -1706,7 +1706,7 @@ InstanceModifier *CreateInstanceModifier(
    theIM->imEnv = theEnv;
    theIM->imOldInstance = oldInstance;
 
-   IncrementInstanceReferenceCount(oldInstance);
+   RetainInstance(oldInstance);
 
    theIM->imValueArray = (CLIPSValue *) gm2(theEnv,sizeof(CLIPSValue) * oldInstance->cls->slotCount);
 
@@ -2133,7 +2133,7 @@ void IMDispose(
    /* Return the InstanceModifier structure. */
    /*========================================*/
    
-   DecrementInstanceReferenceCount(theIM->imOldInstance);
+   ReleaseInstance(theIM->imOldInstance);
    
    rtn_struct(theEnv,instanceModifier,theIM);
   }
@@ -2211,9 +2211,9 @@ bool IMSetInstance(
    /* Update the fact being modified. */
    /*=================================*/
    
-   DecrementInstanceReferenceCount(theIM->imOldInstance);
+   ReleaseInstance(theIM->imOldInstance);
    theIM->imOldInstance = oldInstance;
-   IncrementInstanceReferenceCount(theIM->imOldInstance);
+   RetainInstance(theIM->imOldInstance);
    
    /*=========================================*/
    /* Initialize the value and change arrays. */

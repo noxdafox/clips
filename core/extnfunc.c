@@ -236,7 +236,7 @@ bool RemoveUDF(
      {
       if (fPtr->callFunctionName == findValue)
         {
-         DecrementLexemeReferenceCount(theEnv,fPtr->callFunctionName);
+         ReleaseLexeme(theEnv,fPtr->callFunctionName);
          RemoveHashFunction(theEnv,fPtr);
 
          if (lastPtr == NULL)
@@ -245,7 +245,7 @@ bool RemoveUDF(
            { lastPtr->next = fPtr->next; }
 
          if (fPtr->restrictions != NULL)
-           { DecrementLexemeReferenceCount(theEnv,fPtr->restrictions); }
+           { ReleaseLexeme(theEnv,fPtr->restrictions); }
          ClearUserDataList(theEnv,fPtr->usrData);
          rtn_struct(theEnv,functionDefinition,fPtr);
          return true;

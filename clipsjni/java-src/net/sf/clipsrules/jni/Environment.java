@@ -1539,68 +1539,68 @@ public class Environment
       setInstancesChanged(theEnvironment,value);
      }
 
-   /***********************/
-   /* incrementFactCount: */
-   /***********************/
-   private native void incrementFactCount(Environment javaEnv,long env,long fact);
+   /***************/
+   /* retainFact: */
+   /***************/
+   private native void retainFact(Environment javaEnv,long env,long fact);
 
-   /***********************/
-   /* decrementFactCount: */
-   /***********************/
-   private native void decrementFactCount(Environment javaEnv,long env,long fact);
+   /****************/
+   /* releaseFact: */
+   /****************/
+   private native void releaseFact(Environment javaEnv,long env,long fact);
 
-   /***********************/
-   /* incrementFactCount: */
-   /***********************/
-   public void incrementFactCount(
+   /***************/
+   /* retainFact: */
+   /***************/
+   public void retainFact(
      FactAddressValue theFact)
      {
-      incrementFactCount(theFact.getEnvironment(),
-                         theFact.getEnvironment().getEnvironmentAddress(),
-                         theFact.getFactAddress());
+      retainFact(theFact.getEnvironment(),
+                 theFact.getEnvironment().getEnvironmentAddress(),
+                 theFact.getFactAddress());
      }
 
-   /***********************/
-   /* decrementFactCount: */
-   /***********************/
-   public void decrementFactCount(
+   /****************/
+   /* releaseFact: */
+   /****************/
+   public void releaseFact(
      FactAddressValue theFact)
      {
-      decrementFactCount(theFact.getEnvironment(),
-                         theFact.getEnvironment().getEnvironmentAddress(),
-                         theFact.getFactAddress());
+      releaseFact(theFact.getEnvironment(),
+                  theFact.getEnvironment().getEnvironmentAddress(),
+                  theFact.getFactAddress());
      }
 
-   /***************************/
-   /* incrementInstanceCount: */
-   /***************************/
-   private native void incrementInstanceCount(Environment javaEnv,long env,long instance);
+   /*******************/
+   /* retainInstance: */
+   /*******************/
+   private native void retainInstance(Environment javaEnv,long env,long instance);
 
-   /***************************/
-   /* decrementInstanceCount: */
-   /***************************/
-   private native void decrementInstanceCount(Environment javaEnv,long env,long instance);
+   /********************/
+   /* releaseInstance: */
+   /********************/
+   private native void releaseInstance(Environment javaEnv,long env,long instance);
 
-   /***************************/
-   /* incrementInstanceCount: */
-   /***************************/
-   public void incrementInstanceCount(
+   /*******************/
+   /* retainInstance: */
+   /*******************/
+   public void retainInstance(
      InstanceAddressValue theInstance)
      {
-      incrementInstanceCount(theInstance.getEnvironment(),
-                             theInstance.getEnvironment().getEnvironmentAddress(),
-                             theInstance.getInstanceAddress());
+      retainInstance(theInstance.getEnvironment(),
+                     theInstance.getEnvironment().getEnvironmentAddress(),
+                     theInstance.getInstanceAddress());
      }
 
-   /***************************/
-   /* decrementInstanceCount: */
-   /***************************/
-   public void decrementInstanceCount(
+   /********************/
+   /* releaseInstance: */
+   /********************/
+   public void releaseInstance(
      InstanceAddressValue theInstance)
      {
-      decrementInstanceCount(theInstance.getEnvironment(),
-                             theInstance.getEnvironment().getEnvironmentAddress(),
-                             theInstance.getInstanceAddress());
+      releaseInstance(theInstance.getEnvironment(),
+                      theInstance.getEnvironment().getEnvironmentAddress(),
+                      theInstance.getInstanceAddress());
      }
 
    /***********************/

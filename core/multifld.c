@@ -116,10 +116,10 @@ void ReturnMultifield(
    rtn_var_struct(theEnv,multifield,sizeof(struct clipsValue) * (newSize - 1),theSegment);
   }
 
-/**************************************/
-/* IncrementMultifieldReferenceCount: */
-/**************************************/
-void IncrementMultifieldReferenceCount(
+/*********************/
+/* RetainMultifield: */
+/*********************/
+void RetainMultifield(
   Environment *theEnv,
   Multifield *theSegment)
   {
@@ -137,10 +137,10 @@ void IncrementMultifieldReferenceCount(
      { AtomInstall(theEnv,contents[i].header->type,contents[i].value); }
   }
 
-/**************************************/
-/* DecrementMultifieldReferenceCount: */
-/**************************************/
-void DecrementMultifieldReferenceCount(
+/**********************/
+/* ReleaseMultifield: */
+/**********************/
+void ReleaseMultifield(
   Environment *theEnv,
   Multifield *theSegment)
   {

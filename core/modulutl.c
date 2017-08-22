@@ -937,7 +937,7 @@ CLIPSLexeme *GetConstructNameAndComment(
          redefining = true;
          if (deleteFunction != NULL)
            {
-            IncrementLexemeReferenceCount(theEnv,name);
+            RetainLexeme(theEnv,name);
             if ((*deleteFunction)(theConstruct,theEnv) == false)
               {
                PrintErrorID(theEnv,"CSTRCPSR",4,true);
@@ -946,10 +946,10 @@ CLIPSLexeme *GetConstructNameAndComment(
                WriteString(theEnv,STDERR," ");
                WriteString(theEnv,STDERR,name->contents);
                WriteString(theEnv,STDERR," while it is in use.\n");
-               DecrementLexemeReferenceCount(theEnv,name);
+               ReleaseLexeme(theEnv,name);
                return NULL;
               }
-            DecrementLexemeReferenceCount(theEnv,name);
+            ReleaseLexeme(theEnv,name);
            }
         }
      }

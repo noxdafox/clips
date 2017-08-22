@@ -166,7 +166,7 @@ void DecrementInstanceCallback(
   }
 
 /***************************************************
-  NAME         : IncrementInstanceReferenceCount
+  NAME         : RetainInstance
   DESCRIPTION  : Increments instance busy count -
                    prevents it from being deleted
   INPUTS       : The address of the instance
@@ -174,7 +174,7 @@ void DecrementInstanceCallback(
   SIDE EFFECTS : Count set
   NOTES        : None
  ***************************************************/
-void IncrementInstanceReferenceCount(
+void RetainInstance(
   Instance *theInstance)
   {
    if (theInstance == NULL) return;
@@ -183,7 +183,7 @@ void IncrementInstanceReferenceCount(
   }
 
 /***************************************************
-  NAME         : DecrementInstanceReferenceCount
+  NAME         : ReleaseInstance
   DESCRIPTION  : Decrements instance busy count -
                    might allow it to be deleted
   INPUTS       : The address of the instance
@@ -191,7 +191,7 @@ void IncrementInstanceReferenceCount(
   SIDE EFFECTS : Count set
   NOTES        : None
  ***************************************************/
-void DecrementInstanceReferenceCount(
+void ReleaseInstance(
   Instance *theInstance)
   {
    if (theInstance == NULL) return;
@@ -249,7 +249,7 @@ void CleanupInstances(
       if (gtmp->ins->busy == 0)
 #endif
         {
-         DecrementLexemeReferenceCount(theEnv,gtmp->ins->name);
+         ReleaseLexeme(theEnv,gtmp->ins->name);
          rtn_struct(theEnv,instance,gtmp->ins);
          if (gprv == NULL)
            InstanceData(theEnv)->InstanceGarbageList = gtmp->nxt;
@@ -351,7 +351,7 @@ void RemoveInstanceData(
         {
          if (sp->desc->multiple)
            {
-            DecrementMultifieldReferenceCount(theEnv,sp->multifieldValue);
+            ReleaseMultifield(theEnv,sp->multifieldValue);
             AddToMultifieldList(theEnv,sp->multifieldValue);
            }
          else
@@ -677,7 +677,7 @@ bool DirectPutSlotValue(
          bsp->type = sp->type;
          bsp->value = sp->value;
          if (sp->desc->multiple)
-           IncrementMultifieldReferenceCount(theEnv,bsp->multifieldValue);
+           RetainMultifield(theEnv,bsp->multifieldValue);
          else
            AtomInstall(theEnv,bsp->type,bsp->value);
         }
@@ -707,7 +707,7 @@ bool DirectPutSlotValue(
      }
    else
      {
-      DecrementMultifieldReferenceCount(theEnv,sp->multifieldValue);
+      ReleaseMultifield(theEnv,sp->multifieldValue);
       AddToMultifieldList(theEnv,sp->multifieldValue);
       sp->type = MULTIFIELD_TYPE;
       if (val->header->type == MULTIFIELD_TYPE)
@@ -723,7 +723,7 @@ bool DirectPutSlotValue(
          sp->multifieldValue = CreateUnmanagedMultifield(theEnv,1L);
          sp->multifieldValue->contents[0].value = val->value;
         }
-      IncrementMultifieldReferenceCount(theEnv,sp->multifieldValue);
+      RetainMultifield(theEnv,sp->multifieldValue);
       setVal->value = sp->value;
       setVal->begin = 0;
       setVal->range = sp->multifieldValue->length;
@@ -1182,7 +1182,7 @@ void DecrementObjectBasisCount(
            if (theInstance->basisSlots[i].value != NULL)
              {
               if (theInstance->basisSlots[i].desc->multiple)
-                DecrementMultifieldReferenceCount(theEnv,theInstance->basisSlots[i].multifieldValue);
+                ReleaseMultifield(theEnv,theInstance->basisSlots[i].multifieldValue);
               else
                 AtomDeinstall(theEnv,theInstance->basisSlots[i].type,
                               theInstance->basisSlots[i].value);

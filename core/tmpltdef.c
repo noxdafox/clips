@@ -338,7 +338,7 @@ static void ReturnDeftemplate(
    slotPtr = theDeftemplate->slotList;
    while (slotPtr != NULL)
      {
-      DecrementLexemeReferenceCount(theEnv,slotPtr->slotName);
+      ReleaseLexeme(theEnv,slotPtr->slotName);
       RemoveHashedExpression(theEnv,slotPtr->defaultList);
       slotPtr->defaultList = NULL;
       RemoveHashedExpression(theEnv,slotPtr->facetList);

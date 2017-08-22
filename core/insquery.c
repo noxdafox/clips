@@ -485,9 +485,9 @@ void QueryDoForAllInstances(
    InstanceQueryData(theEnv)->QueryCore->query = GetFirstArgument();
    InstanceQueryData(theEnv)->QueryCore->action = GetFirstArgument()->nextArg;
    InstanceQueryData(theEnv)->QueryCore->result = returnValue;
-   UDFRetain(theEnv,InstanceQueryData(theEnv)->QueryCore->result);
+   RetainUDFV(theEnv,InstanceQueryData(theEnv)->QueryCore->result);
    TestEntireChain(theEnv,qclasses,0);
-   UDFRelease(theEnv,InstanceQueryData(theEnv)->QueryCore->result);
+   ReleaseUDFV(theEnv,InstanceQueryData(theEnv)->QueryCore->result);
 
    InstanceQueryData(theEnv)->AbortQuery = false;
    ProcedureFunctionData(theEnv)->BreakFlag = false;
@@ -1085,9 +1085,9 @@ static void TestEntireClass(
               {
                ins->busy++;
 
-               UDFRelease(theEnv,InstanceQueryData(theEnv)->QueryCore->result);
+               ReleaseUDFV(theEnv,InstanceQueryData(theEnv)->QueryCore->result);
                EvaluateExpression(theEnv,InstanceQueryData(theEnv)->QueryCore->action,InstanceQueryData(theEnv)->QueryCore->result);
-               UDFRetain(theEnv,InstanceQueryData(theEnv)->QueryCore->result);
+               RetainUDFV(theEnv,InstanceQueryData(theEnv)->QueryCore->result);
 
                ins->busy--;
                if (ProcedureFunctionData(theEnv)->BreakFlag || ProcedureFunctionData(theEnv)->ReturnFlag)

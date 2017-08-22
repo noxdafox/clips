@@ -371,9 +371,9 @@ void ReturnValues(
    while (garbagePtr != NULL)
      {
       nextPtr = garbagePtr->next;
-      UDFRelease(theEnv,garbagePtr);
+      ReleaseUDFV(theEnv,garbagePtr);
       if ((garbagePtr->supplementalInfo != NULL) && decrementSupplementalInfo)
-        { DecrementLexemeReferenceCount(theEnv,(CLIPSLexeme *) garbagePtr->supplementalInfo); }
+        { ReleaseLexeme(theEnv,(CLIPSLexeme *) garbagePtr->supplementalInfo); }
       rtn_struct(theEnv,udfValue,garbagePtr);
       garbagePtr = nextPtr;
      }
@@ -473,10 +473,10 @@ void SetMultifieldErrorValue(
   }
 
 /***********************************************/
-/* UDFRetain: Increments the appropriate count */
+/* RetainUDFV: Increments the appropriate count */
 /*   (in use) values for a UDFValue structure. */
 /***********************************************/
-void UDFRetain(
+void RetainUDFV(
   Environment *theEnv,
   UDFValue *vPtr)
   {
@@ -487,10 +487,10 @@ void UDFRetain(
   }
 
 /***********************************************/
-/* UDFRetain: Decrements the appropriate count */
+/* RetainUDFV: Decrements the appropriate count */
 /*   (in use) values for a UDFValue structure. */
 /***********************************************/
-void UDFRelease(
+void ReleaseUDFV(
   Environment *theEnv,
   UDFValue *vPtr)
   {
@@ -501,10 +501,10 @@ void UDFRelease(
   }
 
 /*************************************************/
-/* CVRetain: Increments the appropriate count    */
+/* RetainCV: Increments the appropriate count    */
 /*   (in use) values for a CLIPSValue structure. */
 /*************************************************/
-void CVRetain(
+void RetainCV(
   Environment *theEnv,
   CLIPSValue *vPtr)
   {
@@ -515,10 +515,10 @@ void CVRetain(
   }
 
 /*************************************************/
-/* CVRelease: Decrements the appropriate count   */
+/* ReleaseCV: Decrements the appropriate count   */
 /*   (in use) values for a CLIPSValue structure. */
 /*************************************************/
-void CVRelease(
+void ReleaseCV(
   Environment *theEnv,
   CLIPSValue *vPtr)
   {
@@ -559,18 +559,18 @@ void Retain(
         break;
 
       case MULTIFIELD_TYPE:
-        IncrementMultifieldReferenceCount(theEnv,(Multifield *) th);
+        RetainMultifield(theEnv,(Multifield *) th);
         break;
         
 #if OBJECT_SYSTEM
       case INSTANCE_ADDRESS_TYPE:
-        IncrementInstanceReferenceCount((Instance *) th);
+        RetainInstance((Instance *) th);
         break;
 #endif
 
 #if DEFTEMPLATE_CONSTRUCT
       case FACT_ADDRESS_TYPE:
-        IncrementFactReferenceCount((Fact *) th);
+        RetainFact((Fact *) th);
         break;
 #endif
      
@@ -599,34 +599,34 @@ void Release(
 #if OBJECT_SYSTEM
       case INSTANCE_NAME_TYPE:
 #endif
-        DecrementLexemeReferenceCount(theEnv,(CLIPSLexeme *) th);
+        ReleaseLexeme(theEnv,(CLIPSLexeme *) th);
         break;
 
       case FLOAT_TYPE:
-        DecrementFloatReferenceCount(theEnv,(CLIPSFloat *) th);
+        ReleaseFloat(theEnv,(CLIPSFloat *) th);
         break;
 
       case INTEGER_TYPE:
-        DecrementIntegerReferenceCount(theEnv,(CLIPSInteger *) th);
+        ReleaseInteger(theEnv,(CLIPSInteger *) th);
         break;
 
       case EXTERNAL_ADDRESS_TYPE:
-        DecrementExternalAddressReferenceCount(theEnv,(CLIPSExternalAddress *) th);
+        ReleaseExternalAddress(theEnv,(CLIPSExternalAddress *) th);
         break;
 
       case MULTIFIELD_TYPE:
-        DecrementMultifieldReferenceCount(theEnv,(Multifield *) th);
+        ReleaseMultifield(theEnv,(Multifield *) th);
         break;
         
 #if OBJECT_SYSTEM
       case INSTANCE_ADDRESS_TYPE:
-        DecrementInstanceReferenceCount((Instance *) th);
+        ReleaseInstance((Instance *) th);
         break;
 #endif
      
 #if DEFTEMPLATE_CONSTRUCT
       case FACT_ADDRESS_TYPE:
-        DecrementFactReferenceCount((Fact *) th);
+        ReleaseFact((Fact *) th);
         break;
 #endif
 
@@ -675,7 +675,7 @@ void AtomInstall(
         break;
 
       case MULTIFIELD_TYPE:
-        IncrementMultifieldReferenceCount(theEnv,(Multifield *) vPtr);
+        RetainMultifield(theEnv,(Multifield *) vPtr);
         break;
 
       case VOID_TYPE:
@@ -709,23 +709,23 @@ void AtomDeinstall(
 #if OBJECT_SYSTEM
       case INSTANCE_NAME_TYPE:
 #endif
-        DecrementLexemeReferenceCount(theEnv,(CLIPSLexeme *) vPtr);
+        ReleaseLexeme(theEnv,(CLIPSLexeme *) vPtr);
         break;
 
       case FLOAT_TYPE:
-        DecrementFloatReferenceCount(theEnv,(CLIPSFloat *) vPtr);
+        ReleaseFloat(theEnv,(CLIPSFloat *) vPtr);
         break;
 
       case INTEGER_TYPE:
-        DecrementIntegerReferenceCount(theEnv,(CLIPSInteger *) vPtr);
+        ReleaseInteger(theEnv,(CLIPSInteger *) vPtr);
         break;
 
       case EXTERNAL_ADDRESS_TYPE:
-        DecrementExternalAddressReferenceCount(theEnv,(CLIPSExternalAddress *) vPtr);
+        ReleaseExternalAddress(theEnv,(CLIPSExternalAddress *) vPtr);
         break;
 
       case MULTIFIELD_TYPE:
-        DecrementMultifieldReferenceCount(theEnv,(Multifield *) vPtr);
+        ReleaseMultifield(theEnv,(Multifield *) vPtr);
         break;
 
       case VOID_TYPE:

@@ -1355,7 +1355,7 @@ void SetLocaleFunction(
    /* Change the value of the locale to the one specified. */
    /*======================================================*/
 
-   DecrementLexemeReferenceCount(theEnv,IOFunctionData(theEnv)->locale);
+   ReleaseLexeme(theEnv,IOFunctionData(theEnv)->locale);
    IOFunctionData(theEnv)->locale = theArg.lexemeValue;
    IncrementLexemeCount(IOFunctionData(theEnv)->locale);
   }

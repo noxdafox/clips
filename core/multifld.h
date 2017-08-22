@@ -79,8 +79,8 @@ struct multifieldBuilder
 
    Multifield                    *CreateUnmanagedMultifield(Environment *,size_t);
    void                           ReturnMultifield(Environment *,Multifield *);
-   void                           IncrementMultifieldReferenceCount(Environment *,Multifield *);
-   void                           DecrementMultifieldReferenceCount(Environment *,Multifield *);
+   void                           RetainMultifield(Environment *,Multifield *);
+   void                           ReleaseMultifield(Environment *,Multifield *);
    void                           IncrementCLIPSValueMultifieldReferenceCount(Environment *,Multifield *);
    void                           DecrementCLIPSValueMultifieldReferenceCount(Environment *,Multifield *);
    Multifield                    *StringToMultifield(Environment *,const char *);

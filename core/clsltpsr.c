@@ -314,7 +314,7 @@ TEMP_SLOT_LINK *ParseSlot(
            goto ParseSlotError;
          if (rtnCode == 4)
            {
-            DecrementLexemeReferenceCount(theEnv,slot->overrideMessage);
+            ReleaseLexeme(theEnv,slot->overrideMessage);
             slot->overrideMessage = newOverrideMsg;
             IncrementLexemeCount(slot->overrideMessage);
            }
@@ -391,7 +391,7 @@ void DeleteSlots(
       stmp = slots;
       slots = slots->nxt;
       DeleteSlotName(theEnv,stmp->desc->slotName);
-      DecrementLexemeReferenceCount(theEnv,stmp->desc->overrideMessage);
+      ReleaseLexeme(theEnv,stmp->desc->overrideMessage);
       RemoveConstraint(theEnv,stmp->desc->constraint);
       if (stmp->desc->dynamicDefault == 1)
         {
@@ -400,7 +400,7 @@ void DeleteSlots(
         }
       else if (stmp->desc->defaultValue != NULL)
         {
-         UDFRelease(theEnv,(UDFValue *) stmp->desc->defaultValue);
+         ReleaseUDFV(theEnv,(UDFValue *) stmp->desc->defaultValue);
          rtn_struct(theEnv,udfValue,stmp->desc->defaultValue);
         }
       rtn_struct(theEnv,slotDescriptor,stmp->desc);
@@ -720,7 +720,7 @@ static void BuildCompositeFacets(
               {
                sd->defaultValue = get_struct(theEnv,udfValue);
                GenCopyMemory(UDFValue,1,sd->defaultValue,compslot->defaultValue);
-               UDFRetain(theEnv,(UDFValue *) sd->defaultValue);
+               RetainUDFV(theEnv,(UDFValue *) sd->defaultValue);
               }
            }
         }
@@ -747,7 +747,7 @@ static void BuildCompositeFacets(
       if ((! TestBitMap(specbits,OVERRIDE_MSG_BIT)) &&
           compslot->overrideMessageSpecified)
         {
-         DecrementLexemeReferenceCount(theEnv,sd->overrideMessage);
+         ReleaseLexeme(theEnv,sd->overrideMessage);
          sd->overrideMessage = compslot->overrideMessage;
          IncrementLexemeCount(sd->overrideMessage);
          sd->overrideMessageSpecified = true;
@@ -865,7 +865,7 @@ static bool EvaluateSlotDefaultValue(
             ReturnPackedExpression(theEnv,(Expression *) sd->defaultValue);
             sd->defaultValue = get_struct(theEnv,udfValue);
             GenCopyMemory(UDFValue,1,sd->defaultValue,&temp);
-            UDFRetain(theEnv,(UDFValue *) sd->defaultValue);
+            RetainUDFV(theEnv,(UDFValue *) sd->defaultValue);
            }
          else
            {
@@ -878,7 +878,7 @@ static bool EvaluateSlotDefaultValue(
          sd->defaultValue = get_struct(theEnv,udfValue);
          DeriveDefaultFromConstraints(theEnv,sd->constraint,
                                       (UDFValue *) sd->defaultValue,sd->multiple,true);
-         UDFRetain(theEnv,(UDFValue *) sd->defaultValue);
+         RetainUDFV(theEnv,(UDFValue *) sd->defaultValue);
         }
      }
    else

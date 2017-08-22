@@ -241,7 +241,7 @@ static void StrOrSymCatFunction(
          for (i = 0; i < numArgs; i++)
            {
             if (arrayOfStrings[i] != NULL)
-              { DecrementLexemeReferenceCount(theEnv,arrayOfStrings[i]); }
+              { ReleaseLexeme(theEnv,arrayOfStrings[i]); }
            }
 
          rm(theEnv,arrayOfStrings,sizeof(CLIPSLexeme *) * numArgs);
@@ -285,7 +285,7 @@ static void StrOrSymCatFunction(
    for (i = 0; i < numArgs; i++)
      {
       if (arrayOfStrings[i] != NULL)
-        { DecrementLexemeReferenceCount(theEnv,arrayOfStrings[i]); }
+        { ReleaseLexeme(theEnv,arrayOfStrings[i]); }
      }
 
    rm(theEnv,arrayOfStrings,sizeof(CLIPSLexeme *) * numArgs);

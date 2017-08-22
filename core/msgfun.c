@@ -498,7 +498,7 @@ void DeallocateMarkedHandlers(
       if (hnd->mark == 1)
         {
          count++;
-         DecrementLexemeReferenceCount(theEnv,hnd->header.name);
+         ReleaseLexeme(theEnv,hnd->header.name);
          ExpressionDeinstall(theEnv,hnd->actions);
          ReturnPackedExpression(theEnv,hnd->actions);
          ClearUserDataList(theEnv,hnd->header.usrData);

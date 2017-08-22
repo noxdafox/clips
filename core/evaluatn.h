@@ -138,10 +138,10 @@ struct evaluationData
    void                           AtomDeinstall(Environment *,unsigned short,void *);
    void                           Retain(Environment *,TypeHeader *);
    void                           Release(Environment *,TypeHeader *);
-   void                           CVRetain(Environment *,CLIPSValue *);
-   void                           CVRelease(Environment *,CLIPSValue *);
-   void                           UDFRetain(Environment *,UDFValue *);
-   void                           UDFRelease(Environment *,UDFValue *);
+   void                           RetainCV(Environment *,CLIPSValue *);
+   void                           ReleaseCV(Environment *,CLIPSValue *);
+   void                           RetainUDFV(Environment *,UDFValue *);
+   void                           ReleaseUDFV(Environment *,UDFValue *);
    struct expr                   *ConvertValueToExpression(Environment *,UDFValue *);
    unsigned long                  GetAtomicHashValue(unsigned short,void *,unsigned short);
    void                           InstallPrimitive(Environment *,struct entityRecord *,int);

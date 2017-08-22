@@ -367,7 +367,7 @@ void DecrementFactBasisCount(
    Multifield *theSegment;
    size_t i;
 
-   DecrementFactReferenceCount(factPtr);
+   ReleaseFact(factPtr);
 
    if (factPtr->basisSlots != NULL)
      {
@@ -398,7 +398,7 @@ void IncrementFactBasisCount(
    Multifield *theSegment;
    size_t i;
 
-   IncrementFactReferenceCount(factPtr);
+   RetainFact(factPtr);
 
    theSegment = &factPtr->theProposition;
 
@@ -1506,11 +1506,11 @@ void DecrementFactCallback(
    factPtr->patternHeader.busyCount--;
   }
 
-/***********************************************/
-/* IncrementFactReferenceCount: Increments the */
-/*   number of references to a specified fact. */
-/***********************************************/
-void IncrementFactReferenceCount(
+/****************************************/
+/* RetainFact: Increments the number of */
+/*   references to a specified fact.    */
+/****************************************/
+void RetainFact(
   Fact *factPtr)
   {
    if (factPtr == NULL) return;
@@ -1518,11 +1518,11 @@ void IncrementFactReferenceCount(
    factPtr->patternHeader.busyCount++;
   }
 
-/***********************************************/
-/* DecrementFactReferenceCount: Decrements the */
-/*   number of references to a specified fact. */
-/***********************************************/
-void DecrementFactReferenceCount(
+/*****************************************/
+/* ReleaseFact: Decrements the number of */
+/*   references to a specified fact.     */
+/*****************************************/
+void ReleaseFact(
   Fact *factPtr)
   {
    if (factPtr == NULL) return;
@@ -2452,7 +2452,7 @@ FactModifier *CreateFactModifier(
       return theFM;
      }
      
-   IncrementFactReferenceCount(oldFact);
+   RetainFact(oldFact);
 
    theFM->fmValueArray = (CLIPSValue *) gm2(theEnv,sizeof(CLIPSValue) * oldFact->whichDeftemplate->numberOfSlots);
 
@@ -2865,7 +2865,7 @@ void FMDispose(
    /*====================================*/
    
    if (theFM->fmOldFact != NULL)
-     { DecrementFactReferenceCount(theFM->fmOldFact); }
+     { ReleaseFact(theFM->fmOldFact); }
       
    rtn_struct(theEnv,factModifier,theFM);
 
@@ -2977,9 +2977,9 @@ bool FMSetFact(
    /* Update the fact being modified. */
    /*=================================*/
    
-   DecrementFactReferenceCount(theFM->fmOldFact);
+   ReleaseFact(theFM->fmOldFact);
    theFM->fmOldFact = oldFact;
-   IncrementFactReferenceCount(theFM->fmOldFact);
+   RetainFact(theFM->fmOldFact);
    
    /*=========================================*/
    /* Initialize the value and change arrays. */

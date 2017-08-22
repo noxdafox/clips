@@ -611,7 +611,7 @@ static void ReturnDefmodule(
    /*======================================================*/
 
    if (! environmentClear)
-     { DecrementLexemeReferenceCount(theEnv,theDefmodule->header.name); }
+     { ReleaseLexeme(theEnv,theDefmodule->header.name); }
 
    /*====================================*/
    /* Free the items in the import list. */
@@ -623,9 +623,9 @@ static void ReturnDefmodule(
       nextSpec = theSpec->next;
       if (! environmentClear)
         {
-         if (theSpec->moduleName != NULL) DecrementLexemeReferenceCount(theEnv,theSpec->moduleName);
-         if (theSpec->constructType != NULL) DecrementLexemeReferenceCount(theEnv,theSpec->constructType);
-         if (theSpec->constructName != NULL) DecrementLexemeReferenceCount(theEnv,theSpec->constructName);
+         if (theSpec->moduleName != NULL) ReleaseLexeme(theEnv,theSpec->moduleName);
+         if (theSpec->constructType != NULL) ReleaseLexeme(theEnv,theSpec->constructType);
+         if (theSpec->constructName != NULL) ReleaseLexeme(theEnv,theSpec->constructName);
         }
       rtn_struct(theEnv,portItem,theSpec);
       theSpec = nextSpec;
@@ -641,9 +641,9 @@ static void ReturnDefmodule(
       nextSpec = theSpec->next;
       if (! environmentClear)
         {
-         if (theSpec->moduleName != NULL) DecrementLexemeReferenceCount(theEnv,theSpec->moduleName);
-         if (theSpec->constructType != NULL) DecrementLexemeReferenceCount(theEnv,theSpec->constructType);
-         if (theSpec->constructName != NULL) DecrementLexemeReferenceCount(theEnv,theSpec->constructName);
+         if (theSpec->moduleName != NULL) ReleaseLexeme(theEnv,theSpec->moduleName);
+         if (theSpec->constructType != NULL) ReleaseLexeme(theEnv,theSpec->constructType);
+         if (theSpec->constructName != NULL) ReleaseLexeme(theEnv,theSpec->constructName);
         }
       rtn_struct(theEnv,portItem,theSpec);
       theSpec = nextSpec;

@@ -718,8 +718,8 @@ void DeleteSlotName(
      DefclassData(theEnv)->SlotNameTable[snp->hashTableIndex] = snp->nxt;
    else
      prv->nxt = snp->nxt;
-   DecrementLexemeReferenceCount(theEnv,snp->name);
-   DecrementLexemeReferenceCount(theEnv,snp->putHandlerName);
+   ReleaseLexeme(theEnv,snp->name);
+   ReleaseLexeme(theEnv,snp->putHandlerName);
    rtn_struct(theEnv,slotName,snp);
   }
 
@@ -925,7 +925,7 @@ void InstallClass(
      {
       cls->installed = 0;
 
-      DecrementLexemeReferenceCount(theEnv,cls->header.name);
+      ReleaseLexeme(theEnv,cls->header.name);
 
 #if DEFMODULE_CONSTRUCT
       DecrementBitMapReferenceCount(theEnv,cls->scopeMap);
@@ -935,19 +935,19 @@ void InstallClass(
       for (i = 0 ; i < cls->slotCount ; i++)
         {
          slot = &cls->slots[i];
-         DecrementLexemeReferenceCount(theEnv,slot->overrideMessage);
+         ReleaseLexeme(theEnv,slot->overrideMessage);
          if (slot->defaultValue != NULL)
            {
             if (slot->dynamicDefault)
               ExpressionDeinstall(theEnv,(Expression *) slot->defaultValue);
             else
-              UDFRelease(theEnv,(UDFValue *) slot->defaultValue);
+              ReleaseUDFV(theEnv,(UDFValue *) slot->defaultValue);
            }
         }
       for (i = 0 ; i < cls->handlerCount ; i++)
         {
          hnd = &cls->handlers[i];
-         DecrementLexemeReferenceCount(theEnv,hnd->header.name);
+         ReleaseLexeme(theEnv,hnd->header.name);
          if (hnd->actions != NULL)
            ExpressionDeinstall(theEnv,hnd->actions);
         }

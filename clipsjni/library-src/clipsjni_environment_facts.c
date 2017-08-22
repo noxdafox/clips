@@ -301,15 +301,15 @@ JNIEXPORT jobject JNICALL Java_net_sf_clipsrules_jni_Environment_getFactSlot(
    return rv;
   }
 
-/*********************************************************************/
-/* Java_net_sf_clipsrules_jni_Environment_incrementFactCount: Native */
-/*   function for the CLIPSJNI incrementFactCount method.            */
-/*                                                                   */
-/* Class:     net_sf_clipsrules_jni_Environment                      */
-/* Method:    incrementFactCount                                     */
-/* Signature: (Lnet/sf/clipsrules/jni/Environment;JJ)V               */
-/*********************************************************************/
-JNIEXPORT void JNICALL Java_net_sf_clipsrules_jni_Environment_incrementFactCount(
+/*************************************************************/
+/* Java_net_sf_clipsrules_jni_Environment_retainFact: Native */
+/*   function for the CLIPSJNI retainFact method.            */
+/*                                                           */
+/* Class:     net_sf_clipsrules_jni_Environment              */
+/* Method:    retainFact                                     */
+/* Signature: (Lnet/sf/clipsrules/jni/Environment;JJ)V       */
+/*************************************************************/
+JNIEXPORT void JNICALL Java_net_sf_clipsrules_jni_Environment_retainFact(
   JNIEnv *env, 
   jclass javaClass, 
   jobject javaEnv,
@@ -318,20 +318,20 @@ JNIEXPORT void JNICALL Java_net_sf_clipsrules_jni_Environment_incrementFactCount
   {
    void *oldContext = SetEnvironmentContext(JLongToPointer(clipsEnv),(void *) env);
 
-   IncrementFactReferenceCount(JLongToPointer(clipsFact));
+   RetainFact(JLongToPointer(clipsFact));
    
    SetEnvironmentContext(JLongToPointer(clipsEnv),oldContext);
   }
   
-/*********************************************************************/
-/* Java_net_sf_clipsrules_jni_Environment_decrementFactCount: Native */
-/*   function for the CLIPSJNI decrementFactCount method.            */
-/*                                                                   */
-/* Class:     net_sf_clipsrules_jni_Environment                      */
-/* Method:    decrementFactCount                                     */
-/* Signature: (Lnet/sf/clipsrules/jni/Environment;JJ)V               */
-/*********************************************************************/
-JNIEXPORT void JNICALL Java_net_sf_clipsrules_jni_Environment_decrementFactCount(
+/**************************************************************/
+/* Java_net_sf_clipsrules_jni_Environment_releaseFact: Native */
+/*   function for the CLIPSJNI releaseFact method.            */
+/*                                                            */
+/* Class:     net_sf_clipsrules_jni_Environment               */
+/* Method:    releaseFact                                     */
+/* Signature: (Lnet/sf/clipsrules/jni/Environment;JJ)V        */
+/**************************************************************/
+JNIEXPORT void JNICALL Java_net_sf_clipsrules_jni_Environment_releaseFact(
   JNIEnv *env, 
   jclass javaClass, 
   jobject javaEnv,
@@ -340,7 +340,7 @@ JNIEXPORT void JNICALL Java_net_sf_clipsrules_jni_Environment_decrementFactCount
   {
    void *oldContext = SetEnvironmentContext(JLongToPointer(clipsEnv),(void *) env);
 
-   DecrementFactReferenceCount(JLongToPointer(clipsFact));
+   ReleaseFact(JLongToPointer(clipsFact));
    
    SetEnvironmentContext(JLongToPointer(clipsEnv),oldContext);
   }
