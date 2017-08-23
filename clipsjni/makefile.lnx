@@ -4,6 +4,7 @@
 # Debian 9.1 with OpenJDK 1.8.0_141
 # Fedora 23 with OpenJDK 1.8.0_111
 # CentOS 7 with OpenJDK 1.8.0_141
+# Mint 18 with OpenJDK 1.8.0_131
 
 JNI_CP = net/sf/clipsrules/jni
 JNI_CLASS = net.sf.clipsrules.jni.Environment

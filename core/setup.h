@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  08/09/17            */
+   /*             CLIPS Version 6.40  08/23/17            */
    /*                                                     */
    /*                  SETUP HEADER FILE                  */
    /*******************************************************/
@@ -107,7 +107,7 @@
 
 #ifndef LINUX
 #define LINUX   0   /* Tested with Ubuntu 16.04, Debian 9.1, */
-#endif              /* Fedora 23, and CentOS 7.              */
+#endif              /* Fedora 26, Mint 18, and CentOS 7.     */
 
 #ifndef DARWIN
 #define DARWIN  0   /* Darwin Mac OS 10.12 with Console */

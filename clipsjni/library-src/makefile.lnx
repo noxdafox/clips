@@ -4,11 +4,12 @@
 # Debian 9.1 with OpenJDK 1.8.0_141
 # Fedora 23 with OpenJDK 1.8.0_111
 # CentOS 7 with OpenJDK 1.8.0_141
+# Mint 18 with OpenJDK 1.8.0_131
 
 # Notes:
 #    -fPIC option needed for 64-bit systems
 
-# set DISTRIBUTION to UBUNTU, DEBIAN, FEDORA, or CENTOS
+# set DISTRIBUTION to UBUNTU, DEBIAN, FEDORA, MINT, or CENTOS
 DISTRIBUTION = UBUNTU
 
 ifeq ($(DISTRIBUTION),UBUNTU)
@@ -22,6 +23,10 @@ endif
 ifeq ($(DISTRIBUTION),FEDORA)
 JAVA_HOME = /usr/lib/jvm/java-openjdk
 endif 
+
+ifeq ($(DISTRIBUTION),MINT)
+JAVA_HOME = /usr/lib/jvm/default-java
+endif
 
 ifeq ($(DISTRIBUTION),CENTOS)
 JAVA_HOME = /usr/lib/jvm/java-openjdk
