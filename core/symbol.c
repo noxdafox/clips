@@ -382,7 +382,7 @@ CLIPSLexeme *AddSymbol(
   const char *str,
   unsigned short theType)
   {
-   unsigned long tally;
+   size_t tally;
    size_t length;
    CLIPSLexeme *past = NULL, *peek;
    char *buffer;
@@ -459,7 +459,7 @@ CLIPSLexeme *FindSymbolHN(
   const char *str,
   unsigned short expectedType)
   {
-   unsigned long tally;
+   size_t tally;
    CLIPSLexeme *peek;
 
     tally = HashSymbol(str,SYMBOL_HASH_SIZE);
@@ -486,7 +486,7 @@ CLIPSFloat *CreateFloat(
   Environment *theEnv,
   double number)
   {
-   unsigned long tally;
+   size_t tally;
    CLIPSFloat *past = NULL, *peek;
 
     /*====================================*/
@@ -552,7 +552,7 @@ CLIPSInteger *CreateInteger(
   Environment *theEnv,
   long long number)
   {
-   unsigned long tally;
+   size_t tally;
    CLIPSInteger *past = NULL, *peek;
 
     /*==================================*/
@@ -615,7 +615,7 @@ CLIPSInteger *FindLongHN(
   Environment *theEnv,
   long long theLong)
   {
-   unsigned long tally;
+   size_t tally;
    CLIPSInteger *peek;
 
    tally = HashInteger(theLong,INTEGER_HASH_SIZE);
@@ -640,7 +640,7 @@ void *AddBitMap(
   unsigned short size)
   {
    char *theBitMap = (char *) vTheBitMap;
-   unsigned long tally;
+   size_t tally;
    unsigned short i;
    CLIPSBitMap *past = NULL, *peek;
    char *buffer;
@@ -695,7 +695,7 @@ void *AddBitMap(
     peek->count = 0;
     peek->permanent = false;
     peek->size = size;
-    peek->header.type = BITMAP;
+    peek->header.type = BITMAP_TYPE;
 
     /*================================================*/
     /* Add the bitmap to the list of ephemeral items. */
@@ -735,7 +735,7 @@ CLIPSExternalAddress *CreateExternalAddress(
   void *theExternalAddress,
   unsigned short theType)
   {
-   unsigned long tally;
+   size_t tally;
    CLIPSExternalAddress *past = NULL, *peek;
 
     /*====================================*/
@@ -797,15 +797,15 @@ CLIPSExternalAddress *CreateExternalAddress(
 /***************************************************/
 /* HashSymbol: Computes a hash value for a symbol. */
 /***************************************************/
-unsigned long HashSymbol(
+size_t HashSymbol(
   const char *word,
-  unsigned long range)
+  size_t range)
   {
    size_t i;
-   unsigned long tally = 0;
+   size_t tally = 0;
 
    for (i = 0; word[i]; i++)
-     { tally = tally * 127 + (unsigned long) word[i]; }
+     { tally = tally * 127 + (size_t) word[i]; }
 
    if (range == 0)
      { return tally; }
@@ -816,18 +816,18 @@ unsigned long HashSymbol(
 /*************************************************/
 /* HashFloat: Computes a hash value for a float. */
 /*************************************************/
-unsigned long HashFloat(
+size_t HashFloat(
   double number,
-  unsigned long range)
+  size_t range)
   {
-   unsigned long tally = 0;
+   size_t tally = 0;
    char *word;
    size_t i;
 
    word = (char *) &number;
 
    for (i = 0; i < sizeof(double); i++)
-     { tally = tally * 127 + (unsigned long) word[i]; }
+     { tally = tally * 127 + (size_t) word[i]; }
 
    if (range == 0)
      { return tally; }
@@ -838,35 +838,35 @@ unsigned long HashFloat(
 /******************************************************/
 /* HashInteger: Computes a hash value for an integer. */
 /******************************************************/
-unsigned long HashInteger(
+size_t HashInteger(
   long long number,
-  unsigned long range)
+  size_t range)
   {
-   unsigned long tally;
+   size_t tally;
 
 #if WIN_MVC
    if (number < 0)
      { number = - number; }
-   tally = (((unsigned) number) % range);
+   tally = (((size_t) number) % range);
 #else
-   tally = (((unsigned) llabs(number)) % range);
+   tally = (((size_t) llabs(number)) % range);
 #endif
 
    if (range == 0)
      { return tally; }
 
-   return(tally);
+   return tally;
   }
 
 /****************************************/
 /* HashExternalAddress: Computes a hash */
 /*   value for an external address.     */
 /****************************************/
-unsigned long HashExternalAddress(
+size_t HashExternalAddress(
   void *theExternalAddress,
-  unsigned long range)
+  size_t range)
   {
-   unsigned long tally;
+   size_t tally;
    union
      {
       void *vv;
@@ -886,13 +886,13 @@ unsigned long HashExternalAddress(
 /***************************************************/
 /* HashBitMap: Computes a hash value for a bitmap. */
 /***************************************************/
-unsigned long HashBitMap(
+size_t HashBitMap(
   const char *word,
-  unsigned long range,
+  size_t range,
   unsigned length)
   {
    unsigned k,j,i;
-   unsigned long tally;
+   size_t tally;
    unsigned longLength;
    unsigned long count = 0L,tmpLong;
    char *tmpPtr;
@@ -915,7 +915,7 @@ unsigned long HashBitMap(
    /* Add the remaining characters to the count. */
    /*============================================*/
 
-   for (; j < length; j++) count += (unsigned long) word[j];
+   for (; j < length; j++) count += (size_t) word[j];
 
    /*========================*/
    /* Return the hash value. */
@@ -926,27 +926,27 @@ unsigned long HashBitMap(
 
    tally = (count % range);
 
-   return(tally);
+   return tally;
   }
 
-/*************************************************************/
-/* IncrementLexemeReferenceCount: Increments the count value */
-/*   for a SymbolTable entry. Adds the symbol to the         */
-/*   EphemeralSymbolList if the count becomes zero.          */
-/*************************************************************/
-void IncrementLexemeReferenceCount(
+/****************************************************/
+/* RetainLexeme: Increments the count value for a   */
+/*   SymbolTable entry. Adds the symbol to the      */
+/*   EphemeralSymbolList if the count becomes zero. */
+/****************************************************/
+void RetainLexeme(
   Environment *theEnv,
   CLIPSLexeme *theValue)
   {
    theValue->count++;
   }
 
-/*************************************************************/
-/* DecrementLexemeReferenceCount: Decrements the count value */
-/*   for a SymbolTable entry. Adds the symbol to the         */
-/*   EphemeralSymbolList if the count becomes zero.          */
-/*************************************************************/
-void DecrementLexemeReferenceCount(
+/****************************************************/
+/* ReleaseLexeme: Decrements the count value for a  */
+/*   SymbolTable entry. Adds the symbol to the      */
+/*   EphemeralSymbolList if the count becomes zero. */
+/****************************************************/
+void ReleaseLexeme(
   Environment *theEnv,
   CLIPSLexeme *theValue)
   {
@@ -976,24 +976,24 @@ void DecrementLexemeReferenceCount(
    return;
   }
 
-/************************************************************/
-/* IncrementFloatReferenceCount: Increments the count value */
-/*   for a FloatTable entry. Adds the float to the          */
-/*   EphemeralFloatList if the count becomes zero.          */
-/************************************************************/
-void IncrementFloatReferenceCount(
+/***************************************************/
+/* RetainFloat: Increments the count value for a   */
+/*   FloatTable entry. Adds the float to the       */
+/*   EphemeralFloatList if the count becomes zero. */
+/***************************************************/
+void RetainFloat(
   Environment *theEnv,
   CLIPSFloat *theValue)
   {
    theValue->count++;
   }
 
-/************************************************************/
-/* DecrementFloatReferenceCount: Decrements the count value */
-/*   for a FloatTable entry. Adds the float to the          */
-/*   EphemeralFloatList if the count becomes zero.          */
-/************************************************************/
-void DecrementFloatReferenceCount(
+/***************************************************/
+/* ReleaseFloat: Decrements the count value for a  */
+/*   FloatTable entry. Adds the float to the       */
+/*   EphemeralFloatList if the count becomes zero. */
+/***************************************************/
+void ReleaseFloat(
   Environment *theEnv,
   CLIPSFloat *theValue)
   {
@@ -1017,24 +1017,24 @@ void DecrementFloatReferenceCount(
    return;
   }
 
-/******************************************************************/
-/* IncrementIntegerReferenceCount: Increments the count value for */
-/*   an IntegerTable entry. Adds the integer to the               */
-/*   EphemeralIntegerList if the count becomes zero.              */
-/******************************************************************/
-void IncrementIntegerReferenceCount(
+/*****************************************************/
+/* RetainInteger: Increments the count value for an  */
+/*   IntegerTable entry. Adds the integer to the     */
+/*   EphemeralIntegerList if the count becomes zero. */
+/*****************************************************/
+void RetainInteger(
   Environment *theEnv,
   CLIPSInteger *theValue)
   {
    theValue->count++;
   }
 
-/******************************************************************/
-/* DecrementIntegerReferenceCount: Decrements the count value for */
-/*   an IntegerTable entry. Adds the integer to the               */
-/*   EphemeralIntegerList if the count becomes zero.              */
-/******************************************************************/
-void DecrementIntegerReferenceCount(
+/*****************************************************/
+/* ReleaseInteger: Decrements the count value for    */
+/*   an IntegerTable entry. Adds the integer to the  */
+/*   EphemeralIntegerList if the count becomes zero. */
+/*****************************************************/
+void ReleaseInteger(
   Environment *theEnv,
   CLIPSInteger *theValue)
   {
@@ -1105,24 +1105,24 @@ void DecrementBitMapReferenceCount(
    return;
   }
 
-/**********************************************************************/
-/* IncrementExternalAddressReferenceCount: Decrements the count value */
-/*   for an ExternAddressTable entry. Adds the bitmap to the          */
-/*   EphemeralExternalAddressList if the count becomes zero.          */
-/**********************************************************************/
-void IncrementExternalAddressReferenceCount(
+/*************************************************************/
+/* RetainExternalAddress: Decrements the count value for an  */
+/*   ExternAddressTable entry. Adds the bitmap to the        */
+/*   EphemeralExternalAddressList if the count becomes zero. */
+/*************************************************************/
+void RetainExternalAddress(
   Environment *theEnv,
   CLIPSExternalAddress *theValue)
   {
    theValue->count++;
   }
 
-/**********************************************************************/
-/* DecrementExternalAddressReferenceCount: Decrements the count value */
-/*   for an ExternAddressTable entry. Adds the bitmap to the          */
-/*   EphemeralExternalAddressList if the count becomes zero.          */
-/**********************************************************************/
-void DecrementExternalAddressReferenceCount(
+/*************************************************************/
+/* ReleaseExternalAddress: Decrements the count value for    */
+/*   an ExternAddressTable entry. Adds the bitmap to the     */
+/*   EphemeralExternalAddressList if the count becomes zero. */
+/*************************************************************/
+void ReleaseExternalAddress(
   Environment *theEnv,
   CLIPSExternalAddress *theValue)
   {

@@ -631,7 +631,7 @@ int GetNthWatchValue(
         wPtr = wPtr->next, i++)
      { if (i == whichItem) return((int) *(wPtr->flag)); }
 
-   return -1;
+   return(-1);
   }
 
 /**************************************/
@@ -755,9 +755,9 @@ void ListWatchItemsCommand(
      {
       for (wPtr = WatchData(theEnv)->ListOfWatchItems; wPtr != NULL; wPtr = wPtr->next)
         {
-         PrintString(theEnv,STDOUT,wPtr->name);
-         if (*(wPtr->flag)) PrintString(theEnv,STDOUT," = on\n");
-         else PrintString(theEnv,STDOUT," = off\n");
+         WriteString(theEnv,STDOUT,wPtr->name);
+         if (*(wPtr->flag)) WriteString(theEnv,STDOUT," = on\n");
+         else WriteString(theEnv,STDOUT," = off\n");
         }
       return;
      }
@@ -791,9 +791,9 @@ void ListWatchItemsCommand(
    /* List the status of the watch item. */
    /*====================================*/
 
-   PrintString(theEnv,STDOUT,wPtr->name);
-   if (*(wPtr->flag)) PrintString(theEnv,STDOUT," = on\n");
-   else PrintString(theEnv,STDOUT," = off\n");
+   WriteString(theEnv,STDOUT,wPtr->name);
+   if (*(wPtr->flag)) WriteString(theEnv,STDOUT," = on\n");
+   else WriteString(theEnv,STDOUT," = off\n");
 
    /*============================================*/
    /* List the status of individual watch items. */

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  12/30/16             */
+   /*            CLIPS Version 6.50  08/26/17             */
    /*                                                     */
    /*             DEFTEMPLATE FUNCTIONS MODULE            */
    /*******************************************************/
@@ -84,6 +84,10 @@
 /*                                                           */
 /*            Assert returns duplicate fact. FALSE is now    */
 /*            returned only if an error occurs.              */
+/*                                                           */
+/*            For the modify command, specifying the fact    */
+/*            using a fact-index is no longer limited to     */
+/*            top-level commands.                            */
 /*                                                           */
 /*************************************************************/
 

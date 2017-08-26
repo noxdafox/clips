@@ -244,9 +244,9 @@ void ConstructsToCCommand(
       if (*(fileName+i) == '.')
         {
          PrintErrorID(theEnv,"CONSCOMP",1,false);
-         PrintString(theEnv,WERROR,"Invalid file name ");
-         PrintString(theEnv,WERROR,fileName);
-         PrintString(theEnv,WERROR," contains \'.\'\n");
+         WriteString(theEnv,STDERR,"Invalid file name ");
+         WriteString(theEnv,STDERR,fileName);
+         WriteString(theEnv,STDERR," contains \'.\'\n");
          return;
         }
       }
@@ -263,9 +263,9 @@ void ConstructsToCCommand(
    if ((nameLength + EXTRA_FILE_NAME) > FILENAME_MAX)
      {
       PrintErrorID(theEnv,"CONSCOMP",1,false);
-      PrintString(theEnv,WERROR,"Aborting because the base file name may cause the fopen maximum of ");
-      PrintInteger(theEnv,WERROR,FILENAME_MAX);
-      PrintString(theEnv,WERROR," to be violated when file names are generated.\n");
+      WriteString(theEnv,STDERR,"Aborting because the base file name may cause the fopen maximum of ");
+      WriteInteger(theEnv,STDERR,FILENAME_MAX);
+      WriteString(theEnv,STDERR," to be violated when file names are generated.\n");
       return;
      }
 

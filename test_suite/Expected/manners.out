@@ -57,4 +57,4 @@ FIRE   56 print_results: f-22,f-64,f-20,f-68
 FIRE   57 print_results: f-22,f-64,f-20,f-67
 FIRE   58 print_results: f-22,f-64,f-20,f-65
 FIRE   59 all_done: f-22
-[PRCCODE4] Execution halted during the actions of defrule all_done.
+[PRCCODE4] WARNING: Execution halted during the actions of defrule all_done.

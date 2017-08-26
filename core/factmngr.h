@@ -175,7 +175,7 @@ struct factsData
    Fact                          *AssertDriver(Environment *,Fact *,long long,Fact *,Fact *,char *);
    Fact                          *AssertString(Environment *,const char *);
    Fact                          *CreateFact(Environment *,Deftemplate *);
-   void                           DecrementFactReferenceCount(Fact *);
+   void                           ReleaseFact(Fact *);
    void                           DecrementFactCallback(Environment *,Fact *);
    long long                      FactIndex(Fact *);
    bool                           GetFactSlot(Fact *,const char *,CLIPSValue *);
@@ -196,7 +196,7 @@ struct factsData
    unsigned long                  GetNumberOfFacts(Environment *);
    void                           InitializeFacts(Environment *);
    Fact                          *FindIndexedFact(Environment *,long long);
-   void                           IncrementFactReferenceCount(Fact *);
+   void                           RetainFact(Fact *);
    void                           IncrementFactCallback(Environment *,Fact *);
    void                           PrintFactIdentifier(Environment *,const char *,Fact *);
    void                           DecrementFactBasisCount(Environment *,Fact *);

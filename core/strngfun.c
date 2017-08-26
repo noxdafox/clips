@@ -1,9 +1,9 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  10/18/16             */
+   /*            CLIPS Version 6.40  08/15/17             */
    /*                                                     */
-   /*               STRING_TYPE FUNCTIONS MODULE               */
+   /*            STRING_TYPE FUNCTIONS MODULE             */
    /*******************************************************/
 
 /*************************************************************/
@@ -47,10 +47,10 @@
 /*            Fixed str-cat bug that could be invoked by     */
 /*            (funcall str-cat).                             */
 /*                                                           */
-/*      6.40: Prior error flags are cleared before Eval      */
+/*      6.31: Prior error flags are cleared before Eval      */
 /*            and Build are processed.                       */
 /*                                                           */
-/*            Added Env prefix to GetEvaluationError and     */
+/*      6.40: Added Env prefix to GetEvaluationError and     */
 /*            SetEvaluationError functions.                  */
 /*                                                           */
 /*            Added Env prefix to GetHaltExecution and       */
@@ -69,6 +69,9 @@
 /*                                                           */
 /*            The eval function can now access any local     */
 /*            variables that have been defined.              */
+/*                                                           */
+/*            The str-index function now returns 1 if the    */
+/*            search string is "".                           */
 /*                                                           */
 /*************************************************************/
 
@@ -173,7 +176,8 @@ static void StrOrSymCatFunction(
    UDFValue theArg;
    unsigned int numArgs;
    unsigned int i;
-   unsigned int total, j;
+   size_t total;
+   size_t j;
    char *theString;
    CLIPSLexeme **arrayOfStrings;
    CLIPSLexeme *hashPtr;
@@ -237,7 +241,7 @@ static void StrOrSymCatFunction(
          for (i = 0; i < numArgs; i++)
            {
             if (arrayOfStrings[i] != NULL)
-              { DecrementLexemeReferenceCount(theEnv,arrayOfStrings[i]); }
+              { ReleaseLexeme(theEnv,arrayOfStrings[i]); }
            }
 
          rm(theEnv,arrayOfStrings,sizeof(CLIPSLexeme *) * numArgs);
@@ -281,7 +285,7 @@ static void StrOrSymCatFunction(
    for (i = 0; i < numArgs; i++)
      {
       if (arrayOfStrings[i] != NULL)
-        { DecrementLexemeReferenceCount(theEnv,arrayOfStrings[i]); }
+        { ReleaseLexeme(theEnv,arrayOfStrings[i]); }
      }
 
    rm(theEnv,arrayOfStrings,sizeof(CLIPSLexeme *) * numArgs);
@@ -571,7 +575,7 @@ void StrIndexFunction(
   {
    UDFValue theArg1, theArg2;
    const char *strg1, *strg2, *strg3;
-   size_t i, j;
+   size_t i;
 
    returnValue->lexemeValue = FalseSymbol(theEnv);
 
@@ -595,24 +599,17 @@ void StrIndexFunction(
 
    if (strlen(strg1) == 0)
      {
-      returnValue->integerValue = CreateInteger(theEnv,(long long) UTF8Length(strg2) + 1LL);
+      returnValue->integerValue = CreateInteger(theEnv,1LL);
       return;
      }
 
-   strg3 = strg2;
-   for (i=1; *strg2; i++, strg2++)
+   strg3 = strstr(strg2,strg1);
+   
+   if (strg3 != NULL)
      {
-      for (j=0; *(strg1+j) && *(strg1+j) == *(strg2+j); j++)
-        { /* Do Nothing */ }
-
-      if (*(strg1+j) == '\0')
-        {
-         returnValue->integerValue = CreateInteger(theEnv,(long long) UTF8CharNum(strg3,i));
-         return;
-        }
+      i = (size_t) (strg3 - strg2) + 1;
+      returnValue->integerValue = CreateInteger(theEnv,(long long) UTF8CharNum(strg2,i));
      }
-
-   return;
   }
 
 /********************************************/
@@ -807,7 +804,7 @@ bool Eval(
    if ((top->type == MF_GBL_VARIABLE) || (top->type == MF_VARIABLE))
      {
       PrintErrorID(theEnv,"MISCFUN",1,false);
-      PrintString(theEnv,WERROR,"expand$ must be used in the argument list of a function call.\n");
+      WriteString(theEnv,STDERR,"expand$ must be used in the argument list of a function call.\n");
       SetEvaluationError(theEnv,true);
       CloseStringSource(theEnv,logicalNameBuffer);
       GCBlockEnd(theEnv,&gcb);
@@ -997,9 +994,9 @@ bool Build(
 
    if (errorFlag == 1)
      {
-      PrintString(theEnv,WERROR,"\nERROR:\n");
-      PrintString(theEnv,WERROR,GetPPBuffer(theEnv));
-      PrintString(theEnv,WERROR,"\n");
+      WriteString(theEnv,STDERR,"\nERROR:\n");
+      WriteString(theEnv,STDERR,GetPPBuffer(theEnv));
+      WriteString(theEnv,STDERR,"\n");
      }
 
    DestroyPPBuffer(theEnv);
@@ -1030,7 +1027,7 @@ void BuildFunction(
   UDFValue *returnValue)
   {
    PrintErrorID(theEnv,"STRNGFUN",1,false);
-   PrintString(theEnv,WERROR,"Function build does not work in run time modules.\n");
+   WriteString(theEnv,STDERR,"Function build does not work in run time modules.\n");
    returnValue->lexemeValue = FalseSymbol(theEnv);
   }
 
@@ -1043,7 +1040,7 @@ bool Build(
   const char *theString)
   {
    PrintErrorID(theEnv,"STRNGFUN",1,false);
-   PrintString(theEnv,WERROR,"Function build does not work in run time modules.\n");
+   WriteString(theEnv,STDERR,"Function build does not work in run time modules.\n");
    return false;
   }
 #endif /* (! RUN_TIME) && (! BLOAD_ONLY) */

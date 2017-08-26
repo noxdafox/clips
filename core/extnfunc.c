@@ -236,7 +236,7 @@ bool RemoveUDF(
      {
       if (fPtr->callFunctionName == findValue)
         {
-         DecrementLexemeReferenceCount(theEnv,fPtr->callFunctionName);
+         ReleaseLexeme(theEnv,fPtr->callFunctionName);
          RemoveHashFunction(theEnv,fPtr);
 
          if (lastPtr == NULL)
@@ -245,7 +245,7 @@ bool RemoveUDF(
            { lastPtr->next = fPtr->next; }
 
          if (fPtr->restrictions != NULL)
-           { DecrementLexemeReferenceCount(theEnv,fPtr->restrictions); }
+           { ReleaseLexeme(theEnv,fPtr->restrictions); }
          ClearUserDataList(theEnv,fPtr->usrData);
          rtn_struct(theEnv,functionDefinition,fPtr);
          return true;
@@ -266,7 +266,7 @@ static bool RemoveHashFunction(
   struct functionDefinition *fdPtr)
   {
    struct FunctionHash *fhPtr, *lastPtr = NULL;
-   unsigned long hashValue;
+   size_t hashValue;
 
    hashValue = HashSymbol(fdPtr->callFunctionName->contents,SIZE_FUNCTION_HASH);
 
@@ -312,7 +312,7 @@ bool AddFunctionParser(
    fdPtr = FindFunction(theEnv,functionName);
    if (fdPtr == NULL)
      {
-      PrintString(theEnv,WERROR,"Function parsers can only be added for existing functions.\n");
+      WriteString(theEnv,STDERR,"Function parsers can only be added for existing functions.\n");
       return false;
      }
 
@@ -337,7 +337,7 @@ bool RemoveFunctionParser(
    fdPtr = FindFunction(theEnv,functionName);
    if (fdPtr == NULL)
      {
-      PrintString(theEnv,WERROR,"Function parsers can only be removed from existing functions.\n");
+      WriteString(theEnv,STDERR,"Function parsers can only be removed from existing functions.\n");
       return false;
      }
 
@@ -361,7 +361,7 @@ bool FuncSeqOvlFlags(
    fdPtr = FindFunction(theEnv,functionName);
    if (fdPtr == NULL)
      {
-      PrintString(theEnv,WERROR,"Only existing functions can be marked as using sequence expansion arguments/overloadable or not.\n");
+      WriteString(theEnv,STDERR,"Only existing functions can be marked as using sequence expansion arguments/overloadable or not.\n");
       return false;
      }
      
@@ -450,7 +450,7 @@ struct functionDefinition *FindFunction(
   const char *functionName)
   {
    struct FunctionHash *fhPtr;
-   unsigned long hashValue;
+   size_t hashValue;
    CLIPSLexeme *findValue;
 
    if (ExternalFunctionData(theEnv)->FunctionHashtable == NULL) return NULL;
@@ -478,7 +478,7 @@ void *GetUDFContext(
   const char *functionName)
   {
    struct FunctionHash *fhPtr;
-   unsigned long hashValue;
+   size_t hashValue;
    CLIPSLexeme *findValue;
 
    if (ExternalFunctionData(theEnv)->FunctionHashtable == NULL) return NULL;
@@ -522,7 +522,7 @@ static void AddHashFunction(
   struct functionDefinition *fdPtr)
   {
    struct FunctionHash *newhash, *temp;
-   unsigned long hashValue;
+   size_t hashValue;
 
    if (ExternalFunctionData(theEnv)->FunctionHashtable == NULL) InitializeFunctionHashTable(theEnv);
 
@@ -646,7 +646,7 @@ bool UDFNextArgument(
         returnValue->value = argPtr->value;
         if (expectedType & INTEGER_BIT) return true;
         ExpectedTypeError0(theEnv,UDFContextFunctionName(context),argumentPosition);
-        PrintTypesString(theEnv,WERROR,expectedType,true);
+        PrintTypesString(theEnv,STDERR,expectedType,true);
         SetHaltExecution(theEnv,true);
         SetEvaluationError(theEnv,true);
         AssignErrorValue(context);
@@ -657,7 +657,7 @@ bool UDFNextArgument(
         returnValue->value = argPtr->value;
         if (expectedType & FLOAT_BIT) return true;
         ExpectedTypeError0(theEnv,UDFContextFunctionName(context),argumentPosition);
-        PrintTypesString(theEnv,WERROR,expectedType,true);
+        PrintTypesString(theEnv,STDERR,expectedType,true);
         SetHaltExecution(theEnv,true);
         SetEvaluationError(theEnv,true);
         AssignErrorValue(context);
@@ -668,7 +668,7 @@ bool UDFNextArgument(
         returnValue->value = argPtr->value;
         if (expectedType & SYMBOL_BIT) return true;
         ExpectedTypeError0(theEnv,UDFContextFunctionName(context),argumentPosition);
-        PrintTypesString(theEnv,WERROR,expectedType,true);
+        PrintTypesString(theEnv,STDERR,expectedType,true);
         SetHaltExecution(theEnv,true);
         SetEvaluationError(theEnv,true);
         AssignErrorValue(context);
@@ -679,7 +679,7 @@ bool UDFNextArgument(
         returnValue->value = argPtr->value;
         if (expectedType & STRING_BIT) return true;
         ExpectedTypeError0(theEnv,UDFContextFunctionName(context),argumentPosition);
-        PrintTypesString(theEnv,WERROR,expectedType,true);
+        PrintTypesString(theEnv,STDERR,expectedType,true);
         SetHaltExecution(theEnv,true);
         SetEvaluationError(theEnv,true);
         AssignErrorValue(context);
@@ -690,7 +690,7 @@ bool UDFNextArgument(
         returnValue->value = argPtr->value;
         if (expectedType & INSTANCE_NAME_BIT) return true;
         ExpectedTypeError0(theEnv,UDFContextFunctionName(context),argumentPosition);
-        PrintTypesString(theEnv,WERROR,expectedType,true);
+        PrintTypesString(theEnv,STDERR,expectedType,true);
         SetHaltExecution(theEnv,true);
         SetEvaluationError(theEnv,true);
         AssignErrorValue(context);
@@ -824,7 +824,7 @@ bool UDFNextArgument(
      }
 
    ExpectedTypeError0(theEnv,UDFContextFunctionName(context),argumentPosition);
-   PrintTypesString(theEnv,WERROR,expectedType,true);
+   PrintTypesString(theEnv,STDERR,expectedType,true);
 
    SetHaltExecution(theEnv,true);
    SetEvaluationError(theEnv,true);
@@ -900,19 +900,19 @@ static void PrintType(
   {
    if (*typesPrinted == 0)
      {
-      PrintString(theEnv,logicalName,typeName);
+      WriteString(theEnv,logicalName,typeName);
       (*typesPrinted)++;
       return;
      }
 
    if (typeCount == 2)
-     { PrintString(theEnv,logicalName," or "); }
+     { WriteString(theEnv,logicalName," or "); }
    else if (((*typesPrinted) + 1) == typeCount)
-     { PrintString(theEnv,logicalName,", or "); }
+     { WriteString(theEnv,logicalName,", or "); }
    else
-     { PrintString(theEnv,logicalName,", "); }
+     { WriteString(theEnv,logicalName,", "); }
 
-   PrintString(theEnv,logicalName,typeName);
+   WriteString(theEnv,logicalName,typeName);
    (*typesPrinted)++;
   }
 
@@ -967,5 +967,5 @@ void PrintTypesString(
      { PrintType(theEnv,logicalName,typeCount,&typesPrinted,"multifield"); }
 
    if (printCRLF)
-     { PrintString(theEnv,logicalName,"\n"); }
+     { WriteString(theEnv,logicalName,"\n"); }
   }

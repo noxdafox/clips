@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/30/16            */
+   /*             CLIPS Version 6.40  06/28/17            */
    /*                                                     */
    /*               RULE BUILD HEADER FILE                */
    /*******************************************************/
@@ -30,6 +30,9 @@
 /*                                                           */
 /*            Added support for hashed memories.             */
 /*                                                           */
+/*      6.31: DR#882 Logical retraction not working if       */
+/*            logical CE starts with test CE.                */
+/*                                                           */
 /*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
@@ -51,6 +54,7 @@
 #include "reorder.h"
 
    struct joinNode               *ConstructJoins(Environment *,int,struct lhsParseNode *,int,struct joinNode *,bool,bool);
+   void                           AttachTestCEsToPatternCEs(Environment *,struct lhsParseNode *);
 
 #endif /* _H_rulebld */
 

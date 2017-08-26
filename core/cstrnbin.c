@@ -133,8 +133,8 @@ void WriteNeededConstraints(
      {
       numberOfUsedConstraints = 0;
       PrintWarningID(theEnv,"CSTRNBIN",1,false);
-      PrintString(theEnv,WWARNING,"Constraints are not saved with a binary image\n");
-      PrintString(theEnv,WWARNING,"  when dynamic constraint checking is disabled.\n");
+      WriteString(theEnv,STDWRN,"Constraints are not saved with a binary image\n");
+      WriteString(theEnv,STDWRN,"  when dynamic constraint checking is disabled.\n");
      }
 
    /*============================================*/

@@ -1291,7 +1291,7 @@ static void UpdateSlot(
          sp->defaultValue = get_struct(theEnv,udfValue);
          EvaluateAndStoreInDataObject(theEnv,sp->multiple,ExpressionPointer(bsp->defaultValue),
                                       (UDFValue *) sp->defaultValue,true);
-         IncrementUDFValueReferenceCount(theEnv,(UDFValue *) sp->defaultValue);
+         RetainUDFV(theEnv,(UDFValue *) sp->defaultValue);
         }
      }
    else
@@ -1405,18 +1405,18 @@ static void ClearBloadObjects(
         }
       for (i = 0 ; i < ObjectBinaryData(theEnv)->SlotCount ; i++)
         {
-         DecrementLexemeReferenceCount(theEnv,ObjectBinaryData(theEnv)->SlotArray[i].overrideMessage);
+         ReleaseLexeme(theEnv,ObjectBinaryData(theEnv)->SlotArray[i].overrideMessage);
          if ((ObjectBinaryData(theEnv)->SlotArray[i].defaultValue != NULL) && (ObjectBinaryData(theEnv)->SlotArray[i].dynamicDefault == 0))
            {
-            DecrementUDFValueReferenceCount(theEnv,(UDFValue *) ObjectBinaryData(theEnv)->SlotArray[i].defaultValue);
+            ReleaseUDFV(theEnv,(UDFValue *) ObjectBinaryData(theEnv)->SlotArray[i].defaultValue);
             rtn_struct(theEnv,udfValue,ObjectBinaryData(theEnv)->SlotArray[i].defaultValue);
            }
         }
       for (i = 0 ; i < ObjectBinaryData(theEnv)->SlotNameCount ; i++)
         {
          DefclassData(theEnv)->SlotNameTable[ObjectBinaryData(theEnv)->SlotNameArray[i].hashTableIndex] = NULL;
-         DecrementLexemeReferenceCount(theEnv,ObjectBinaryData(theEnv)->SlotNameArray[i].name);
-         DecrementLexemeReferenceCount(theEnv,ObjectBinaryData(theEnv)->SlotNameArray[i].putHandlerName);
+         ReleaseLexeme(theEnv,ObjectBinaryData(theEnv)->SlotNameArray[i].name);
+         ReleaseLexeme(theEnv,ObjectBinaryData(theEnv)->SlotNameArray[i].putHandlerName);
         }
 
       space = (sizeof(Defclass) * ObjectBinaryData(theEnv)->ClassCount);
@@ -1471,7 +1471,7 @@ static void ClearBloadObjects(
    if (ObjectBinaryData(theEnv)->HandlerCount != 0L)
      {
       for (i = 0L ; i < ObjectBinaryData(theEnv)->HandlerCount ; i++)
-        DecrementLexemeReferenceCount(theEnv,ObjectBinaryData(theEnv)->HandlerArray[i].header.name);
+        ReleaseLexeme(theEnv,ObjectBinaryData(theEnv)->HandlerArray[i].header.name);
 
       space = (sizeof(DefmessageHandler) * ObjectBinaryData(theEnv)->HandlerCount);
       if (space != 0L)

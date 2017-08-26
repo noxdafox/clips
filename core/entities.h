@@ -55,6 +55,10 @@ typedef void EntityBusyCountFunction(Environment *,void *);
 typedef struct patternEntityRecord PatternEntityRecord;
 typedef struct patternEntity PatternEntity;
 
+typedef bool BoolCallFunction(Environment *,void *);
+typedef void VoidCallFunction(Environment *,void *);
+typedef void VoidCallFunctionWithArg(Environment *,void *,void *);
+
 /**************/
 /* typeHeader */
 /**************/

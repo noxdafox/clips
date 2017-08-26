@@ -372,7 +372,7 @@ void CallNextHandler(
    if (NextHandlerAvailable(theEnv) == false)
      {
       PrintErrorID(theEnv,"MSGPASS",1,false);
-      PrintString(theEnv,WERROR,"Shadowed message-handlers not applicable in current context.\n");
+      WriteString(theEnv,STDERR,"Shadowed message-handlers not applicable in current context.\n");
       SetEvaluationError(theEnv,true);
       return;
      }
@@ -577,7 +577,7 @@ HANDLER_LINK *JoinHandlerLinks(
 
    bots[MPRIMARY]->nxt = tops[MAFTER];
 
-   return mlink;
+   return(mlink);
   }
 
 /***************************************************
@@ -602,12 +602,12 @@ void PrintHandlerSlotGetFunction(
    SlotDescriptor *sd;
 
    theReference = (HANDLER_SLOT_REFERENCE *) ((CLIPSBitMap *) theValue)->contents;
-   PrintString(theEnv,logicalName,"?self:[");
+   WriteString(theEnv,logicalName,"?self:[");
    theDefclass = DefclassData(theEnv)->ClassIDMap[theReference->classID];
-   PrintString(theEnv,logicalName,theDefclass->header.name->contents);
-   PrintString(theEnv,logicalName,"]");
+   WriteString(theEnv,logicalName,theDefclass->header.name->contents);
+   WriteString(theEnv,logicalName,"]");
    sd = theDefclass->instanceTemplate[theDefclass->slotNameMap[theReference->slotID] - 1];
-   PrintString(theEnv,logicalName,sd->slotName->name->contents);
+   WriteString(theEnv,logicalName,sd->slotName->name->contents);
 #else
 #if MAC_XCD
 #pragma unused(theEnv)
@@ -719,18 +719,18 @@ void PrintHandlerSlotPutFunction(
    SlotDescriptor *sd;
 
    theReference = (HANDLER_SLOT_REFERENCE *) ((CLIPSBitMap *) theValue)->contents;
-   PrintString(theEnv,logicalName,"(bind ?self:[");
+   WriteString(theEnv,logicalName,"(bind ?self:[");
    theDefclass = DefclassData(theEnv)->ClassIDMap[theReference->classID];
-   PrintString(theEnv,logicalName,theDefclass->header.name->contents);
-   PrintString(theEnv,logicalName,"]");
+   WriteString(theEnv,logicalName,theDefclass->header.name->contents);
+   WriteString(theEnv,logicalName,"]");
    sd = theDefclass->instanceTemplate[theDefclass->slotNameMap[theReference->slotID] - 1];
-   PrintString(theEnv,logicalName,sd->slotName->name->contents);
+   WriteString(theEnv,logicalName,sd->slotName->name->contents);
    if (GetFirstArgument() != NULL)
      {
-      PrintString(theEnv,logicalName," ");
+      WriteString(theEnv,logicalName," ");
       PrintExpression(theEnv,logicalName,GetFirstArgument());
      }
-   PrintString(theEnv,logicalName,")");
+   WriteString(theEnv,logicalName,")");
 #else
 #if MAC_XCD
 #pragma unused(theEnv)
@@ -1054,9 +1054,9 @@ static bool PerformMessage(
       if (ins == NULL)
         {
          PrintErrorID(theEnv,"MSGPASS",2,false);
-         PrintString(theEnv,WERROR,"No such instance ");
-         PrintString(theEnv,WERROR,ProceduralPrimitiveData(theEnv)->ProcParamArray->lexemeValue->contents);
-         PrintString(theEnv,WERROR," in function send.\n");
+         WriteString(theEnv,STDERR,"No such instance ");
+         WriteString(theEnv,STDERR,ProceduralPrimitiveData(theEnv)->ProcParamArray->lexemeValue->contents);
+         WriteString(theEnv,STDERR," in function send.\n");
          SetEvaluationError(theEnv,true);
         }
       else
@@ -1422,12 +1422,12 @@ static void EarlySlotBindError(
 
    sd = theDefclass->instanceTemplate[theDefclass->slotNameMap[slotID] - 1];
    PrintErrorID(theEnv,"MSGPASS",3,false);
-   PrintString(theEnv,WERROR,"Static reference to slot ");
-   PrintString(theEnv,WERROR,sd->slotName->name->contents);
-   PrintString(theEnv,WERROR," of class ");
-   PrintClassName(theEnv,WERROR,theDefclass,false);
-   PrintString(theEnv,WERROR," does not apply to ");
-   PrintInstanceNameAndClass(theEnv,WERROR,theInstance,true);
+   WriteString(theEnv,STDERR,"Static reference to slot ");
+   WriteString(theEnv,STDERR,sd->slotName->name->contents);
+   WriteString(theEnv,STDERR," of class ");
+   PrintClassName(theEnv,STDERR,theDefclass,false);
+   WriteString(theEnv,STDERR," does not apply to ");
+   PrintInstanceNameAndClass(theEnv,STDERR,theInstance,true);
   }
 
 #endif /* OBJECT_SYSTEM */

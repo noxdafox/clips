@@ -740,7 +740,7 @@ static void RemoveDefinstances(
   Environment *theEnv,
   Definstances *theDefinstances)
   {
-   DecrementLexemeReferenceCount(theEnv,theDefinstances->header.name);
+   ReleaseLexeme(theEnv,theDefinstances->header.name);
    ExpressionDeinstall(theEnv,theDefinstances->mkinstance);
    ReturnPackedExpression(theEnv,theDefinstances->mkinstance);
    SetDefinstancesPPForm(theEnv,theDefinstances,NULL);

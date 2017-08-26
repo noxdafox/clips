@@ -172,13 +172,15 @@ static void DeallocateConstructData(
 /***********************************************/
 ParserErrorFunction *SetParserErrorCallback(
    Environment *theEnv,
-   ParserErrorFunction *functionPtr)
+   ParserErrorFunction *functionPtr,
+   void *context)
   {
    ParserErrorFunction *tmpPtr;
 
    tmpPtr = ConstructData(theEnv)->ParserErrorCallback;
    ConstructData(theEnv)->ParserErrorCallback = functionPtr;
-   return(tmpPtr);
+   ConstructData(theEnv)->ParserErrorContext = context;
+   return tmpPtr;
   }
 
 /*************************************************/
@@ -643,7 +645,7 @@ bool Clear(
        (ClearReady(theEnv) == false))
      {
       PrintErrorID(theEnv,"CONSTRCT",1,false);
-      PrintString(theEnv,WERROR,"Some constructs are still in use. Clear cannot continue.\n");
+      WriteString(theEnv,STDERR,"Some constructs are still in use. Clear cannot continue.\n");
       ConstructData(theEnv)->ClearReadyInProgress = false;
       return false;
      }
@@ -820,7 +822,7 @@ void DeinstallConstructHeader(
   Environment *theEnv,
   ConstructHeader *theHeader)
   {
-   DecrementLexemeReferenceCount(theEnv,theHeader->name);
+   ReleaseLexeme(theEnv,theHeader->name);
    if (theHeader->ppForm != NULL)
      {
       rm(theEnv,(void *) theHeader->ppForm,

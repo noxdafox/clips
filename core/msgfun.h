@@ -69,12 +69,11 @@ typedef struct handlerSlotReference
 #define MPRIMARY       2
 #define MAFTER         3
 #define MERROR         4
-#define MALL_TYPES     5
 
 #define LOOKUP_HANDLER_INDEX   0
 #define LOOKUP_HANDLER_ADDRESS 1
 
-   void             UnboundHandlerErr(Environment *);
+   void             UnboundHandlerErr(Environment *,const char *);
    void             PrintNoHandlerError(Environment *,const char *);
    bool             CheckHandlerArgCount(Environment *);
    void             SlotAccessViolationError(Environment *,const char *,Instance *,Defclass *);
@@ -90,14 +89,14 @@ typedef struct handlerSlotReference
    DefmessageHandler
                    *NewHandler(void);
    bool             HandlersExecuting(Defclass *);
-   bool             DeleteHandler(Environment *,Defclass *,CLIPSLexeme *,unsigned short,bool);
+   bool             DeleteHandler(Environment *,Defclass *,CLIPSLexeme *,int,bool);
    void             DeallocateMarkedHandlers(Environment *,Defclass *);
 #endif
    unsigned short   HandlerType(Environment *,const char *,const char *);
    bool             CheckCurrentMessage(Environment *,const char *,bool);
    void             PrintHandler(Environment *,const char *,DefmessageHandler *,bool);
    DefmessageHandler
-                   *FindHandlerByAddress(Defclass *,CLIPSLexeme *,unsigned short);
+                   *FindHandlerByAddress(Defclass *,CLIPSLexeme *,unsigned);
    int              FindHandlerByIndex(Defclass *,CLIPSLexeme *,unsigned);
    int              FindHandlerNameGroup(Defclass *,CLIPSLexeme *);
    void             HandlerDeleteError(Environment *,const char *);

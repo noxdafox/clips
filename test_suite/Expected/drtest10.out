@@ -836,5 +836,50 @@ CLIPS>
                     (LVAR three ?three)
                     (test (eq ?Surname_3 ?three))))))
 =>)
+CLIPS> (clear) ; DR0882
+CLIPS> 
+(defrule foo
+   (logical (test (> 4 3))
+            (a))
+   =>
+   (assert (b)))
+CLIPS> (watch facts)
+CLIPS> (assert (a))
+==> f-1     (a)
+<Fact-1>
+CLIPS> (run)
+==> f-2     (b)
+CLIPS> (retract 1)
+<== f-1     (a)
+<== f-2     (b)
+CLIPS> (unwatch facts) 
+CLIPS> (clear) ; CLIPSESG Bug
+CLIPS> (watch activations)
+CLIPS> (defclass A (is-a USER))
+CLIPS> 
+(defrule crash
+  (not (object (is-a A)))
+  (object (is-a A))
+  =>)
+CLIPS> (make-instance test1 of A)
+==> Activation 0      crash: *,[test1]
+<== Activation 0      crash: *,[test1]
+[test1]
+CLIPS> (unmake-instance [test1])
+TRUE
+CLIPS> (run)
+CLIPS> (clear)
+CLIPS> (deftemplate A)
+CLIPS> 
+(defrule crash
+  (not (A))
+  (A)
+  =>)
+CLIPS> (assert (A))
+==> Activation 0      crash: *,f-1
+<== Activation 0      crash: *,f-1
+<Fact-1>
+CLIPS> (retract 1)
+CLIPS> (unwatch activations)
 CLIPS> (clear)
 CLIPS> (dribble-off)

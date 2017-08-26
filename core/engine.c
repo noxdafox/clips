@@ -193,6 +193,7 @@ long long Run(
    struct trackedMemory *theTM;
    int danglingConstructs;
    GCBlock gcb;
+   bool error = false;
 
    /*=====================================================*/
    /* Make sure the run command is not already executing. */
@@ -303,11 +304,11 @@ long long Run(
          char printSpace[60];
 
          gensprintf(printSpace,"FIRE %4lld ",rulesFired);
-         PrintString(theEnv,STDOUT,printSpace);
-         PrintString(theEnv,STDOUT,ruleFiring);
-         PrintString(theEnv,STDOUT,": ");
+         WriteString(theEnv,STDOUT,printSpace);
+         WriteString(theEnv,STDOUT,ruleFiring);
+         WriteString(theEnv,STDOUT,": ");
          PrintPartialMatch(theEnv,STDOUT,theBasis);
-         PrintString(theEnv,STDOUT,"\n");
+         WriteString(theEnv,STDOUT,"\n");
         }
 #endif
 
@@ -380,6 +381,7 @@ long long Run(
       EndProfile(theEnv,&profileFrame);
 #endif
 
+      error = GetEvaluationError(theEnv);
       EngineData(theEnv)->ExecutingRule->executing = false;
       SetEvaluationError(theEnv,false);
       EvaluationData(theEnv)->CurrentEvaluationDepth--;
@@ -420,10 +422,22 @@ long long Run(
 #endif
 
         {
-         PrintErrorID(theEnv,"PRCCODE",4,false);
-         PrintString(theEnv,WERROR,"Execution halted during the actions of defrule ");
-         PrintString(theEnv,WERROR,ruleFiring);
-         PrintString(theEnv,WERROR,".\n");
+         const char *logName;
+
+         if (error)
+           {
+            PrintErrorID(theEnv,"PRCCODE",4,false);
+            logName = STDERR;
+           }
+         else
+           {
+            PrintWarningID(theEnv,"PRCCODE",4,false);
+            logName = STDWRN;
+           }
+
+         WriteString(theEnv,logName,"Execution halted during the actions of defrule ");
+         WriteString(theEnv,logName,ruleFiring);
+         WriteString(theEnv,logName,".\n");
         }
 
       /*===================================================*/
@@ -518,9 +532,9 @@ long long Run(
          if (GetActivationRule(theEnv,theActivation)->afterBreakpoint)
            {
             EngineData(theEnv)->HaltRules = true;
-            PrintString(theEnv,STDOUT,"Breaking on rule ");
-            PrintString(theEnv,STDOUT,ActivationRuleName(theActivation));
-            PrintString(theEnv,STDOUT,".\n");
+            WriteString(theEnv,STDOUT,"Breaking on rule ");
+            WriteString(theEnv,STDOUT,ActivationRuleName(theActivation));
+            WriteString(theEnv,STDOUT,".\n");
            }
         }
      }
@@ -543,7 +557,7 @@ long long Run(
    /*======================================================*/
 
    if (runLimit == rulesFired)
-     { PrintString(theEnv,STDOUT,"rule firing limit reached\n"); }
+     { WriteString(theEnv,STDOUT,"rule firing limit reached\n"); }
 
    /*==============================*/
    /* Restore execution variables. */
@@ -566,83 +580,83 @@ long long Run(
       endTime = gentime();
 #endif
 
-      PrintInteger(theEnv,STDOUT,rulesFired);
-      PrintString(theEnv,STDOUT," rules fired");
+      WriteInteger(theEnv,STDOUT,rulesFired);
+      WriteString(theEnv,STDOUT," rules fired");
 
 #if (! GENERIC)
       if (startTime != endTime)
         {
-         PrintString(theEnv,STDOUT,"        Run time is ");
-         PrintFloat(theEnv,STDOUT,endTime - startTime);
-         PrintString(theEnv,STDOUT," seconds.\n");
-         PrintFloat(theEnv,STDOUT,(double) rulesFired / (endTime - startTime));
-         PrintString(theEnv,STDOUT," rules per second.\n");
+         WriteString(theEnv,STDOUT,"        Run time is ");
+         WriteFloat(theEnv,STDOUT,endTime - startTime);
+         WriteString(theEnv,STDOUT," seconds.\n");
+         WriteFloat(theEnv,STDOUT,(double) rulesFired / (endTime - startTime));
+         WriteString(theEnv,STDOUT," rules per second.\n");
         }
       else
-        { PrintString(theEnv,STDOUT,"\n"); }
+        { WriteString(theEnv,STDOUT,"\n"); }
 #else
-      PrintString(theEnv,STDOUT,"\n");
+      WriteString(theEnv,STDOUT,"\n");
 #endif
 
 #if DEFTEMPLATE_CONSTRUCT
       gensprintf(printSpace,"%ld mean number of facts (%ld maximum).\n",
                           (long) (((double) sumFacts / (rulesFired + 1)) + 0.5),
                           maxFacts);
-      PrintString(theEnv,STDOUT,printSpace);
+      WriteString(theEnv,STDOUT,printSpace);
 #endif
 
 #if OBJECT_SYSTEM
       gensprintf(printSpace,"%ld mean number of instances (%ld maximum).\n",
                           (long) (((double) sumInstances / (rulesFired + 1)) + 0.5),
                           maxInstances);
-      PrintString(theEnv,STDOUT,printSpace);
+      WriteString(theEnv,STDOUT,printSpace);
 #endif
 
       gensprintf(printSpace,"%ld mean number of activations (%ld maximum).\n",
                           (long) (((double) sumActivations / (rulesFired + 1)) + 0.5),
                           maxActivations);
-      PrintString(theEnv,STDOUT,printSpace);
+      WriteString(theEnv,STDOUT,printSpace);
 
 #if DEVELOPER
       gensprintf(printSpace,"%9ld left to right comparisons.\n",
                           EngineData(theEnv)->leftToRightComparisons);
-      PrintString(theEnv,STDOUT,printSpace);
+      WriteString(theEnv,STDOUT,printSpace);
 
       gensprintf(printSpace,"%9ld left to right succeeds.\n",
                           EngineData(theEnv)->leftToRightSucceeds);
-      PrintString(theEnv,STDOUT,printSpace);
+      WriteString(theEnv,STDOUT,printSpace);
 
       gensprintf(printSpace,"%9ld left to right loops.\n",
                           EngineData(theEnv)->leftToRightLoops);
-      PrintString(theEnv,STDOUT,printSpace);
+      WriteString(theEnv,STDOUT,printSpace);
 
       gensprintf(printSpace,"%9ld right to left comparisons.\n",
                           EngineData(theEnv)->rightToLeftComparisons);
-      PrintString(theEnv,STDOUT,printSpace);
+      WriteString(theEnv,STDOUT,printSpace);
 
       gensprintf(printSpace,"%9ld right to left succeeds.\n",
                           EngineData(theEnv)->rightToLeftSucceeds);
-      PrintString(theEnv,STDOUT,printSpace);
+      WriteString(theEnv,STDOUT,printSpace);
 
       gensprintf(printSpace,"%9ld right to left loops.\n",
                           EngineData(theEnv)->rightToLeftLoops);
-      PrintString(theEnv,STDOUT,printSpace);
+      WriteString(theEnv,STDOUT,printSpace);
 
       gensprintf(printSpace,"%9ld find next conflicting comparisons.\n",
                           EngineData(theEnv)->findNextConflictingComparisons);
-      PrintString(theEnv,STDOUT,printSpace);
+      WriteString(theEnv,STDOUT,printSpace);
 
       gensprintf(printSpace,"%9ld beta hash list skips.\n",
                           EngineData(theEnv)->betaHashListSkips);
-      PrintString(theEnv,STDOUT,printSpace);
+      WriteString(theEnv,STDOUT,printSpace);
 
       gensprintf(printSpace,"%9ld beta hash hash table skips.\n",
                           EngineData(theEnv)->betaHashHTSkips);
-      PrintString(theEnv,STDOUT,printSpace);
+      WriteString(theEnv,STDOUT,printSpace);
 
       gensprintf(printSpace,"%9ld unneeded marker compare.\n",
                           EngineData(theEnv)->unneededMarkerCompare);
-      PrintString(theEnv,STDOUT,printSpace);
+      WriteString(theEnv,STDOUT,printSpace);
 
 #endif
      }
@@ -784,16 +798,16 @@ static Defmodule *RemoveFocus(
        (! ConstructData(theEnv)->ClearReadyInProgress) &&
        (! ConstructData(theEnv)->ClearInProgress))
      {
-      PrintString(theEnv,STDOUT,"<== Focus ");
-      PrintString(theEnv,STDOUT,theModule->header.name->contents);
+      WriteString(theEnv,STDOUT,"<== Focus ");
+      WriteString(theEnv,STDOUT,theModule->header.name->contents);
 
       if ((EngineData(theEnv)->CurrentFocus != NULL) && currentFocusRemoved)
         {
-         PrintString(theEnv,STDOUT," to ");
-         PrintString(theEnv,STDOUT,EngineData(theEnv)->CurrentFocus->theModule->header.name->contents);
+         WriteString(theEnv,STDOUT," to ");
+         WriteString(theEnv,STDOUT,EngineData(theEnv)->CurrentFocus->theModule->header.name->contents);
         }
 
-      PrintString(theEnv,STDOUT,"\n");
+      WriteString(theEnv,STDOUT,"\n");
      }
 #endif
 
@@ -898,14 +912,14 @@ void Focus(
        (! ConstructData(theEnv)->ClearReadyInProgress) &&
        (! ConstructData(theEnv)->ClearInProgress))
      {
-      PrintString(theEnv,STDOUT,"==> Focus ");
-      PrintString(theEnv,STDOUT,theModule->header.name->contents);
+      WriteString(theEnv,STDOUT,"==> Focus ");
+      WriteString(theEnv,STDOUT,theModule->header.name->contents);
       if (EngineData(theEnv)->CurrentFocus != NULL)
         {
-         PrintString(theEnv,STDOUT," from ");
-         PrintString(theEnv,STDOUT,EngineData(theEnv)->CurrentFocus->theModule->header.name->contents);
+         WriteString(theEnv,STDOUT," from ");
+         WriteString(theEnv,STDOUT,EngineData(theEnv)->CurrentFocus->theModule->header.name->contents);
         }
-      PrintString(theEnv,STDOUT,"\n");
+      WriteString(theEnv,STDOUT,"\n");
      }
 #endif
 
@@ -1308,9 +1322,9 @@ void RemoveBreakCommand(
 
    if (RemoveBreak(defrulePtr) == false)
      {
-      PrintString(theEnv,WERROR,"Rule ");
-      PrintString(theEnv,WERROR,argument);
-      PrintString(theEnv,WERROR," does not have a breakpoint set.\n");
+      WriteString(theEnv,STDERR,"Rule ");
+      WriteString(theEnv,STDERR,argument);
+      WriteString(theEnv,STDERR," does not have a breakpoint set.\n");
      }
   }
 
@@ -1366,8 +1380,8 @@ void ListFocusStack(
         theFocus != NULL;
         theFocus = theFocus->next)
      {
-      PrintString(theEnv,logicalName,DefmoduleName(theFocus->theModule));
-      PrintString(theEnv,logicalName,"\n");
+      WriteString(theEnv,logicalName,DefmoduleName(theFocus->theModule));
+      WriteString(theEnv,logicalName,"\n");
      }
   }
 

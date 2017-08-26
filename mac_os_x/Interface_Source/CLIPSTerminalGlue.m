@@ -43,8 +43,8 @@ bool QueryInterfaceRouter(
    
    if ( (strcmp(logicalName,STDOUT) == 0) ||
         (strcmp(logicalName,STDIN) == 0) ||
-        (strcmp(logicalName,WERROR) == 0) ||
-        (strcmp(logicalName,WWARNING) == 0) )
+        (strcmp(logicalName,STDERR) == 0) ||
+        (strcmp(logicalName,STDWRN) == 0) )
      { return(true); }
 
     return(false);

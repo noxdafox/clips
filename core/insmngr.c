@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/25/16             */
+   /*            CLIPS Version 6.40  07/27/17             */
    /*                                                     */
    /*          INSTANCE PRIMITIVE SUPPORT MODULE          */
    /*******************************************************/
@@ -38,6 +38,11 @@
 /*            Newly created instances can no longer use      */
 /*            a preexisting instance name of another class   */
 /*            [INSMNGR16].                                   */
+/*                                                           */
+/*      6.31: Marked deleted instances so that partial       */
+/*            matches will not be propagated when the match  */
+/*            is based on both the existence and             */
+/*            non-existence of an instance.                  */
 /*                                                           */
 /*      6.40: Added Env prefix to GetEvaluationError and     */
 /*            SetEvaluationError functions.                  */
@@ -183,7 +188,7 @@ void MakeInstanceCommand(
    else
      {
       PrintErrorID(theEnv,"INSMNGR",1,false);
-      PrintString(theEnv,WERROR,"Expected a valid name for new instance.\n");
+      WriteString(theEnv,STDERR,"Expected a valid name for new instance.\n");
       SetEvaluationError(theEnv,true);
       return;
      }
@@ -196,7 +201,7 @@ void MakeInstanceCommand(
       if (temp.header->type != SYMBOL_TYPE)
         {
          PrintErrorID(theEnv,"INSMNGR",2,false);
-         PrintString(theEnv,WERROR,"Expected a valid class name for new instance.\n");
+         WriteString(theEnv,STDERR,"Expected a valid class name for new instance.\n");
          SetEvaluationError(theEnv,true);
          return;
         }
@@ -288,8 +293,8 @@ Instance *BuildInstance(
    if (EngineData(theEnv)->JoinOperationInProgress && cls->reactive)
      {
       PrintErrorID(theEnv,"INSMNGR",10,false);
-      PrintString(theEnv,WERROR,"Cannot create instances of reactive classes while\n");
-      PrintString(theEnv,WERROR,"  pattern-matching is in process.\n");
+      WriteString(theEnv,STDERR,"Cannot create instances of reactive classes while\n");
+      WriteString(theEnv,STDERR,"  pattern-matching is in process.\n");
       SetEvaluationError(theEnv,true);
       return NULL;
      }
@@ -297,9 +302,9 @@ Instance *BuildInstance(
    if (cls->abstract)
      {
       PrintErrorID(theEnv,"INSMNGR",3,false);
-      PrintString(theEnv,WERROR,"Cannot create instances of abstract class ");
-      PrintString(theEnv,WERROR,DefclassName(cls));
-      PrintString(theEnv,WERROR,".\n");
+      WriteString(theEnv,STDERR,"Cannot create instances of abstract class ");
+      WriteString(theEnv,STDERR,DefclassName(cls));
+      WriteString(theEnv,STDERR,".\n");
       SetEvaluationError(theEnv,true);
       return NULL;
      }
@@ -311,7 +316,7 @@ Instance *BuildInstance(
           (moduleName != cls->header.whichModule->theModule->header.name))
         {
          PrintErrorID(theEnv,"INSMNGR",11,true);
-         PrintString(theEnv,WERROR,"Invalid module specifier in new instance name.\n");
+         WriteString(theEnv,STDERR,"Invalid module specifier in new instance name.\n");
          SetEvaluationError(theEnv,true);
          return NULL;
         }
@@ -324,11 +329,11 @@ Instance *BuildInstance(
       if (ins->cls != cls)
         {
          PrintErrorID(theEnv,"INSMNGR",16,false);
-         PrintString(theEnv,WERROR,"The instance name ");
-         PrintString(theEnv,WERROR,iname->contents);
-         PrintString(theEnv,WERROR," is in use by an instance of class ");
-         PrintString(theEnv,WERROR,ins->cls->header.name->contents);
-         PrintString(theEnv,WERROR,".\n");
+         WriteString(theEnv,STDERR,"The instance name ");
+         WriteString(theEnv,STDERR,iname->contents);
+         WriteString(theEnv,STDERR," is in use by an instance of class ");
+         WriteString(theEnv,STDERR,ins->cls->header.name->contents);
+         WriteString(theEnv,STDERR,".\n");
          SetEvaluationError(theEnv,true);
          return NULL;
         }
@@ -336,9 +341,9 @@ Instance *BuildInstance(
       if (ins->installed == 0)
         {
          PrintErrorID(theEnv,"INSMNGR",4,false);
-         PrintString(theEnv,WERROR,"The instance ");
-         PrintString(theEnv,WERROR,iname->contents);
-         PrintString(theEnv,WERROR," has a slot-value which depends on the instance definition.\n");
+         WriteString(theEnv,STDERR,"The instance ");
+         WriteString(theEnv,STDERR,iname->contents);
+         WriteString(theEnv,STDERR," has a slot-value which depends on the instance definition.\n");
          SetEvaluationError(theEnv,true);
          return NULL;
         }
@@ -352,13 +357,13 @@ Instance *BuildInstance(
            QuashInstance(theEnv,ins);
         }
       ins->busy--;
-      DecrementLexemeReferenceCount(theEnv,iname);
+      ReleaseLexeme(theEnv,iname);
       if (ins->garbage == 0)
         {
          PrintErrorID(theEnv,"INSMNGR",5,false);
-         PrintString(theEnv,WERROR,"Unable to delete old instance ");
-         PrintString(theEnv,WERROR,iname->contents);
-         PrintString(theEnv,WERROR,".\n");
+         WriteString(theEnv,STDERR,"Unable to delete old instance ");
+         WriteString(theEnv,STDERR,iname->contents);
+         WriteString(theEnv,STDERR,".\n");
          SetEvaluationError(theEnv,true);
          return NULL;
         }
@@ -511,8 +516,8 @@ bool QuashInstance(
    if (EngineData(theEnv)->JoinOperationInProgress && ins->cls->reactive)
      {
       PrintErrorID(theEnv,"INSMNGR",12,false);
-      PrintString(theEnv,WERROR,"Cannot delete instances of reactive classes while\n");
-      PrintString(theEnv,WERROR,"  pattern-matching is in process.\n");
+      WriteString(theEnv,STDERR,"Cannot delete instances of reactive classes while\n");
+      WriteString(theEnv,STDERR,"  pattern-matching is in process.\n");
       SetEvaluationError(theEnv,true);
       return false;
      }
@@ -522,9 +527,9 @@ bool QuashInstance(
    if (ins->installed == 0)
      {
       PrintErrorID(theEnv,"INSMNGR",6,false);
-      PrintString(theEnv,WERROR,"Cannot delete instance ");
-      PrintString(theEnv,WERROR,ins->name->contents);
-      PrintString(theEnv,WERROR," during initialization.\n");
+      WriteString(theEnv,STDERR,"Cannot delete instance ");
+      WriteString(theEnv,STDERR,ins->name->contents);
+      WriteString(theEnv,STDERR," during initialization.\n");
       SetEvaluationError(theEnv,true);
       return false;
      }
@@ -537,7 +542,11 @@ bool QuashInstance(
    RemoveEntityDependencies(theEnv,(struct patternEntity *) ins);
 
    if (ins->cls->reactive)
-     ObjectNetworkAction(theEnv,OBJECT_RETRACT,ins,-1);
+     {
+      ins->garbage = 1;
+      ObjectNetworkAction(theEnv,OBJECT_RETRACT,ins,-1);
+      ins->garbage = 0;
+     }
 #endif
 
    if (ins->prvHash != NULL)
@@ -588,7 +597,7 @@ bool QuashInstance(
 #endif
        )
      {
-      DecrementLexemeReferenceCount(theEnv,ins->name);
+      ReleaseLexeme(theEnv,ins->name);
       rtn_struct(theEnv,instance,ins);
      }
    else
@@ -884,7 +893,7 @@ static void BuildDefaultSlots(
               {
                adst[i]->type = MULTIFIELD_TYPE;
                adst[i]->value = CreateUnmanagedMultifield(theEnv,0L);
-               IncrementMultifieldReferenceCount(theEnv,adst[i]->multifieldValue);
+               RetainMultifield(theEnv,adst[i]->multifieldValue);
               }
             else
               {
@@ -919,9 +928,9 @@ static bool CoreInitializeInstance(
    if (ins->installed == 0)
      {
       PrintErrorID(theEnv,"INSMNGR",7,false);
-      PrintString(theEnv,WERROR,"Instance ");
-      PrintString(theEnv,WERROR,ins->name->contents);
-      PrintString(theEnv,WERROR," is already being initialized.\n");
+      WriteString(theEnv,STDERR,"Instance ");
+      WriteString(theEnv,STDERR,ins->name->contents);
+      WriteString(theEnv,STDERR," is already being initialized.\n");
       SetEvaluationError(theEnv,true);
       return false;
      }
@@ -961,9 +970,9 @@ static bool CoreInitializeInstance(
    if (EvaluationData(theEnv)->EvaluationError)
      {
       PrintErrorID(theEnv,"INSMNGR",8,false);
-      PrintString(theEnv,WERROR,"An error occurred during the initialization of instance ");
-      PrintString(theEnv,WERROR,ins->name->contents);
-      PrintString(theEnv,WERROR,".\n");
+      WriteString(theEnv,STDERR,"An error occurred during the initialization of instance ");
+      WriteString(theEnv,STDERR,ins->name->contents);
+      WriteString(theEnv,STDERR,".\n");
       return false;
      }
 
@@ -990,9 +999,9 @@ static bool CoreInitializeInstanceCV(
    if (ins->installed == 0)
      {
       PrintErrorID(theEnv,"INSMNGR",7,false);
-      PrintString(theEnv,WERROR,"Instance ");
-      PrintString(theEnv,WERROR,ins->name->contents);
-      PrintString(theEnv,WERROR," is already being initialized.\n");
+      WriteString(theEnv,STDERR,"Instance ");
+      WriteString(theEnv,STDERR,ins->name->contents);
+      WriteString(theEnv,STDERR," is already being initialized.\n");
       SetEvaluationError(theEnv,true);
       return false;
      }
@@ -1034,9 +1043,9 @@ static bool CoreInitializeInstanceCV(
    if (EvaluationData(theEnv)->EvaluationError)
      {
       PrintErrorID(theEnv,"INSMNGR",8,false);
-      PrintString(theEnv,WERROR,"An error occurred during the initialization of instance ");
-      PrintString(theEnv,WERROR,ins->name->contents);
-      PrintString(theEnv,WERROR,".\n");
+      WriteString(theEnv,STDERR,"An error occurred during the initialization of instance ");
+      WriteString(theEnv,STDERR,ins->name->contents);
+      WriteString(theEnv,STDERR,".\n");
       return false;
      }
      
@@ -1071,7 +1080,7 @@ static bool InsertSlotOverrides(
           (temp.header->type != SYMBOL_TYPE))
         {
          PrintErrorID(theEnv,"INSMNGR",9,false);
-         PrintString(theEnv,WERROR,"Expected a valid slot name for slot-override.\n");
+         WriteString(theEnv,STDERR,"Expected a valid slot name for slot-override.\n");
          SetEvaluationError(theEnv,true);
          return false;
         }
@@ -1079,11 +1088,11 @@ static bool InsertSlotOverrides(
       if (slot == NULL)
         {
          PrintErrorID(theEnv,"INSMNGR",13,false);
-         PrintString(theEnv,WERROR,"Slot ");
-         PrintString(theEnv,WERROR,temp.lexemeValue->contents);
-         PrintString(theEnv,WERROR," does not exist in instance ");
-         PrintString(theEnv,WERROR,ins->name->contents);
-         PrintString(theEnv,WERROR,".\n");
+         WriteString(theEnv,STDERR,"Slot ");
+         WriteString(theEnv,STDERR,temp.lexemeValue->contents);
+         WriteString(theEnv,STDERR," does not exist in instance ");
+         WriteString(theEnv,STDERR,ins->name->contents);
+         WriteString(theEnv,STDERR,".\n");
          SetEvaluationError(theEnv,true);
          return false;
         }
@@ -1177,7 +1186,7 @@ static void EvaluateClassDefaults(
      {
       PrintErrorID(theEnv,"INSMNGR",15,false);
       SetEvaluationError(theEnv,true);
-      PrintString(theEnv,WERROR,"init-slots not valid in this context.\n");
+      WriteString(theEnv,STDERR,"init-slots not valid in this context.\n");
       return;
      }
    for (i = 0 ; i < ins->cls->instanceSlotCount ; i++)
@@ -1204,18 +1213,18 @@ static void EvaluateClassDefaults(
          else if (slot->valueRequired)
            {
             PrintErrorID(theEnv,"INSMNGR",14,false);
-            PrintString(theEnv,WERROR,"Override required for slot ");
-            PrintString(theEnv,WERROR,slot->desc->slotName->name->contents);
-            PrintString(theEnv,WERROR," in instance ");
-            PrintString(theEnv,WERROR,ins->name->contents);
-            PrintString(theEnv,WERROR,".\n");
+            WriteString(theEnv,STDERR,"Override required for slot ");
+            WriteString(theEnv,STDERR,slot->desc->slotName->name->contents);
+            WriteString(theEnv,STDERR," in instance ");
+            WriteString(theEnv,STDERR,ins->name->contents);
+            WriteString(theEnv,STDERR,".\n");
             SetEvaluationError(theEnv,true);
            }
          slot->valueRequired = false;
          if (ins->garbage == 1)
            {
-            PrintString(theEnv,WERROR,ins->name->contents);
-            PrintString(theEnv,WERROR," instance deleted by slot-override evaluation.\n");
+            WriteString(theEnv,STDERR,ins->name->contents);
+            WriteString(theEnv,STDERR," instance deleted by slot-override evaluation.\n");
             SetEvaluationError(theEnv,true);
            }
          if (EvaluationData(theEnv)->EvaluationError)
@@ -1248,8 +1257,8 @@ static void PrintInstanceWatch(
        ConstructData(theEnv)->ClearInProgress)
      { return; }
 
-   PrintString(theEnv,STDOUT,traceString);
-   PrintString(theEnv,STDOUT," instance ");
+   WriteString(theEnv,STDOUT,traceString);
+   WriteString(theEnv,STDOUT," instance ");
    PrintInstanceNameAndClass(theEnv,STDOUT,theInstance,true);
   }
 
@@ -1551,7 +1560,7 @@ bool IBPutSlot(
         { return true; }
      }
    
-   DecrementReferenceCount(theEnv,oldValue.header);
+   Release(theEnv,oldValue.header);
    
    if (oldValue.header->type == MULTIFIELD_TYPE)
      { ReturnMultifield(theEnv,oldValue.multifieldValue); }
@@ -1561,7 +1570,7 @@ bool IBPutSlot(
    else
      { theIB->ibValueArray[whichSlot].value = slotValue->value; }
       
-   IncrementReferenceCount(theEnv,theIB->ibValueArray[whichSlot].header);
+   Retain(theEnv,theIB->ibValueArray[whichSlot].header);
    
    return true;
   }
@@ -1600,7 +1609,7 @@ Instance *IBMake(
      {
       if (theIB->ibValueArray[i].voidValue != VoidConstant(theEnv))
         {
-         DecrementReferenceCount(theEnv,theIB->ibValueArray[i].header);
+         Release(theEnv,theIB->ibValueArray[i].header);
 
          if (theIB->ibValueArray[i].header->type == MULTIFIELD_TYPE)
            { ReturnMultifield(theEnv,theIB->ibValueArray[i].multifieldValue); }
@@ -1639,7 +1648,7 @@ void IBAbort(
    
    for (i = 0; i < theIB->ibDefclass->slotCount; i++)
      {
-      DecrementReferenceCount(theEnv,theIB->ibValueArray[i].header);
+      Release(theEnv,theIB->ibValueArray[i].header);
       
       if (theIB->ibValueArray[i].header->type == MULTIFIELD_TYPE)
         { ReturnMultifield(theEnv,theIB->ibValueArray[i].multifieldValue); }
@@ -1697,7 +1706,7 @@ InstanceModifier *CreateInstanceModifier(
    theIM->imEnv = theEnv;
    theIM->imOldInstance = oldInstance;
 
-   IncrementInstanceReferenceCount(oldInstance);
+   RetainInstance(oldInstance);
 
    theIM->imValueArray = (CLIPSValue *) gm2(theEnv,sizeof(CLIPSValue) * oldInstance->cls->slotCount);
 
@@ -1984,7 +1993,7 @@ bool IMPutSlot(
      {
       if (MultifieldsEqual(oldInstanceValue.multifieldValue,slotValue->multifieldValue))
         {
-         DecrementReferenceCount(theIM->imEnv,oldValue.header);
+         Release(theIM->imEnv,oldValue.header);
          if (oldValue.header->type == MULTIFIELD_TYPE)
            { ReturnMultifield(theIM->imEnv,oldValue.multifieldValue); }
          theIM->imValueArray[whichSlot].voidValue = theIM->imEnv->VoidConstant;
@@ -1999,7 +2008,7 @@ bool IMPutSlot(
      {
       if (slotValue->value == oldInstanceValue.value)
         {
-         DecrementReferenceCount(theIM->imEnv,oldValue.header);
+         Release(theIM->imEnv,oldValue.header);
          theIM->imValueArray[whichSlot].voidValue = theIM->imEnv->VoidConstant;
          ClearBitMap(theIM->changeMap,whichSlot);
          return true;
@@ -2011,7 +2020,7 @@ bool IMPutSlot(
 
    SetBitMap(theIM->changeMap,whichSlot);
 
-   DecrementReferenceCount(theIM->imEnv,oldValue.header);
+   Release(theIM->imEnv,oldValue.header);
 
    if (oldValue.header->type == MULTIFIELD_TYPE)
      { ReturnMultifield(theIM->imEnv,oldValue.multifieldValue); }
@@ -2021,7 +2030,7 @@ bool IMPutSlot(
    else
      { theIM->imValueArray[whichSlot].value = slotValue->value; }
 
-   IncrementReferenceCount(theIM->imEnv,theIM->imValueArray[whichSlot].header);
+   Retain(theIM->imEnv,theIM->imValueArray[whichSlot].header);
 
    return true;
   }
@@ -2104,7 +2113,7 @@ void IMDispose(
    
    for (i = 0; i < theIM->imOldInstance->cls->slotCount; i++)
      {
-      DecrementReferenceCount(theEnv,theIM->imValueArray[i].header);
+      Release(theEnv,theIM->imValueArray[i].header);
 
       if (theIM->imValueArray[i].header->type == MULTIFIELD_TYPE)
         { ReturnMultifield(theEnv,theIM->imValueArray[i].multifieldValue); }
@@ -2124,7 +2133,7 @@ void IMDispose(
    /* Return the InstanceModifier structure. */
    /*========================================*/
    
-   DecrementInstanceReferenceCount(theIM->imOldInstance);
+   ReleaseInstance(theIM->imOldInstance);
    
    rtn_struct(theEnv,instanceModifier,theIM);
   }
@@ -2140,7 +2149,7 @@ void IMAbort(
    
    for (i = 0; i < theIM->imOldInstance->cls->slotCount; i++)
      {
-      DecrementReferenceCount(theEnv,theIM->imValueArray[i].header);
+      Release(theEnv,theIM->imValueArray[i].header);
 
       if (theIM->imValueArray[i].header->type == MULTIFIELD_TYPE)
         { ReturnMultifield(theEnv,theIM->imValueArray[i].multifieldValue); }
@@ -2176,7 +2185,7 @@ bool IMSetInstance(
    
    for (i = 0; i < theIM->imOldInstance->cls->slotCount; i++)
      {
-      DecrementReferenceCount(theEnv,theIM->imValueArray[i].header);
+      Release(theEnv,theIM->imValueArray[i].header);
 
       if (theIM->imValueArray[i].header->type == MULTIFIELD_TYPE)
         { ReturnMultifield(theEnv,theIM->imValueArray[i].multifieldValue); }
@@ -2202,9 +2211,9 @@ bool IMSetInstance(
    /* Update the fact being modified. */
    /*=================================*/
    
-   DecrementInstanceReferenceCount(theIM->imOldInstance);
+   ReleaseInstance(theIM->imOldInstance);
    theIM->imOldInstance = oldInstance;
-   IncrementInstanceReferenceCount(theIM->imOldInstance);
+   RetainInstance(theIM->imOldInstance);
    
    /*=========================================*/
    /* Initialize the value and change arrays. */

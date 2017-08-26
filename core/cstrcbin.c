@@ -131,7 +131,7 @@ void UpdateConstructHeader(
   size_t itemSize,
   void *itemArray)
   {
-   unsigned long moduleOffset, itemOffset;
+   size_t moduleOffset, itemOffset;
 
    if (theBsaveConstruct->whichModule != ULONG_MAX)
      {
@@ -178,7 +178,7 @@ void UnmarkConstructHeader(
   Environment *theEnv,
   ConstructHeader *theConstruct)
   {
-   DecrementLexemeReferenceCount(theEnv,theConstruct->name);
+   ReleaseLexeme(theEnv,theConstruct->name);
   }
 
 #endif /* BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE */

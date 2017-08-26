@@ -71,6 +71,7 @@
 #include "modulpsr.h"
 #include "modulutl.h"
 #include "network.h"
+#include "pattern.h"
 #include "router.h"
 #include "tmpltbsc.h"
 #include "tmpltfun.h"
@@ -337,7 +338,7 @@ static void ReturnDeftemplate(
    slotPtr = theDeftemplate->slotList;
    while (slotPtr != NULL)
      {
-      DecrementLexemeReferenceCount(theEnv,slotPtr->slotName);
+      ReleaseLexeme(theEnv,slotPtr->slotName);
       RemoveHashedExpression(theEnv,slotPtr->defaultList);
       slotPtr->defaultList = NULL;
       RemoveHashedExpression(theEnv,slotPtr->facetList);

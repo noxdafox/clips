@@ -550,7 +550,7 @@ void PPInstanceCommand(
    if (ins->garbage == 1)
      return;
    PrintInstance(theEnv,STDOUT,ins,"\n");
-   PrintString(theEnv,STDOUT,"\n");
+   WriteString(theEnv,STDOUT,"\n");
   }
 
 /***************************************************************
@@ -602,8 +602,8 @@ void Instances(
             return;
            }
 
-         PrintString(theEnv,logicalName,DefmoduleName(theModule));
-         PrintString(theEnv,logicalName,":\n");
+         WriteString(theEnv,logicalName,DefmoduleName(theModule));
+         WriteString(theEnv,logicalName,":\n");
          SetCurrentModule(theEnv,theModule);
          count += ListInstancesInModule(theEnv,id,logicalName,className,inheritFlag,true);
          theModule = GetNextDefmodule(theEnv,theModule);
@@ -1102,9 +1102,9 @@ void ClassCommand(
                          return;
 
          default       : PrintErrorID(theEnv,"INSCOM",1,false);
-                         PrintString(theEnv,WERROR,"Undefined type in function ");
-                         PrintString(theEnv,WERROR,func);
-                         PrintString(theEnv,WERROR,".\n");
+                         WriteString(theEnv,STDERR,"Undefined type in function ");
+                         WriteString(theEnv,STDERR,func);
+                         WriteString(theEnv,STDERR,".\n");
                          SetEvaluationError(theEnv,true);
         }
      }
@@ -1624,7 +1624,7 @@ static unsigned long TabulateInstances(
       if (EvaluationData(theEnv)->HaltExecution)
         return count;
       if (allModulesFlag)
-        PrintString(theEnv,logicalName,"   ");
+        WriteString(theEnv,logicalName,"   ");
       PrintInstanceNameAndClass(theEnv,logicalName,ins,true);
       count++;
      }
@@ -1668,22 +1668,22 @@ static void PrintInstance(
    PrintInstanceNameAndClass(theEnv,logicalName,ins,false);
    for (i = 0 ; i < ins->cls->instanceSlotCount ; i++)
      {
-      PrintString(theEnv,logicalName,separator);
+      WriteString(theEnv,logicalName,separator);
       sp = ins->slotAddresses[i];
-      PrintString(theEnv,logicalName,"(");
-      PrintString(theEnv,logicalName,sp->desc->slotName->name->contents);
+      WriteString(theEnv,logicalName,"(");
+      WriteString(theEnv,logicalName,sp->desc->slotName->name->contents);
       if (sp->type != MULTIFIELD_TYPE)
         {
-         PrintString(theEnv,logicalName," ");
+         WriteString(theEnv,logicalName," ");
          PrintAtom(theEnv,logicalName,sp->type,sp->value);
         }
       else if (sp->multifieldValue->length != 0)
         {
-         PrintString(theEnv,logicalName," ");
+         WriteString(theEnv,logicalName," ");
          PrintMultifieldDriver(theEnv,logicalName,sp->multifieldValue,0,
                                sp->multifieldValue->length,false);
         }
-      PrintString(theEnv,logicalName,")");
+      WriteString(theEnv,logicalName,")");
      }
   }
 

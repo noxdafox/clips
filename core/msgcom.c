@@ -115,7 +115,7 @@
                                                                 void (*)(Environment *,const char *,Defclass *,unsigned),
                                                                 void (*)(Defclass *,unsigned,bool),
                                                                 Expression *);
-   static bool                    WatchClassHandlers(Environment *,Defclass *,const char *,unsigned short,const char *,bool,bool,
+   static bool                    WatchClassHandlers(Environment *,Defclass *,const char *,int,const char *,bool,bool,
                                                      void (*)(Environment *,const char *,Defclass *,unsigned),
                                                      void (*)(Defclass *,unsigned,bool));
    static void                    PrintHandlerWatchFlag(Environment *,const char *,Defclass *,unsigned);
@@ -451,7 +451,7 @@ void UndefmessageHandlerCommand(
   {
 #if RUN_TIME || BLOAD_ONLY
    PrintErrorID(theEnv,"MSGCOM",3,false);
-   PrintString(theEnv,WERROR,"Unable to delete message-handlers.\n");
+   WriteString(theEnv,STDERR,"Unable to delete message-handlers.\n");
 #else
    CLIPSLexeme *mname;
    const char *tname;
@@ -462,7 +462,7 @@ void UndefmessageHandlerCommand(
    if (Bloaded(theEnv))
      {
       PrintErrorID(theEnv,"MSGCOM",3,false);
-      PrintString(theEnv,WERROR,"Unable to delete message-handlers.\n");
+      WriteString(theEnv,STDERR,"Unable to delete message-handlers.\n");
       return;
      }
 #endif
@@ -518,7 +518,7 @@ bool UndefmessageHandler(
 
 #if RUN_TIME || BLOAD_ONLY
    PrintErrorID(theEnv,"MSGCOM",3,false);
-   PrintString(theEnv,WERROR,"Unable to delete message-handlers.\n");
+   WriteString(theEnv,STDERR,"Unable to delete message-handlers.\n");
    return false;
 #else
      
@@ -526,7 +526,7 @@ bool UndefmessageHandler(
    if (Bloaded(theEnv))
      {
       PrintErrorID(theEnv,"MSGCOM",3,false);
-      PrintString(theEnv,WERROR,"Unable to delete message-handlers.\n");
+      WriteString(theEnv,STDERR,"Unable to delete message-handlers.\n");
       return false;
      }
 #endif
@@ -536,7 +536,7 @@ bool UndefmessageHandler(
       if (mhi != 0)
         {
          PrintErrorID(theEnv,"MSGCOM",1,false);
-         PrintString(theEnv,WERROR,"Incomplete message-handler specification for deletion.\n");
+         WriteString(theEnv,STDERR,"Incomplete message-handler specification for deletion.\n");
          GCBlockEnd(theEnv,&gcb);
          return false;
         }
@@ -618,18 +618,18 @@ void PPDefmessageHandlerCommand(
        ((hnd = FindHandlerByAddress(cls,msym,mtype)) == NULL))
      {
       PrintErrorID(theEnv,"MSGCOM",2,false);
-      PrintString(theEnv,WERROR,"Unable to find message-handler ");
-      PrintString(theEnv,WERROR,msym->contents);
-      PrintString(theEnv,WERROR," ");
-      PrintString(theEnv,WERROR,tname);
-      PrintString(theEnv,WERROR," for class ");
-      PrintString(theEnv,WERROR,csym->contents);
-      PrintString(theEnv,WERROR," in function ppdefmessage-handler.\n");
+      WriteString(theEnv,STDERR,"Unable to find message-handler ");
+      WriteString(theEnv,STDERR,msym->contents);
+      WriteString(theEnv,STDERR," ");
+      WriteString(theEnv,STDERR,tname);
+      WriteString(theEnv,STDERR," for class ");
+      WriteString(theEnv,STDERR,csym->contents);
+      WriteString(theEnv,STDERR," in function ppdefmessage-handler.\n");
       SetEvaluationError(theEnv,true);
       return;
      }
    if (hnd->header.ppForm != NULL)
-     PrintString(theEnv,STDOUT,hnd->header.ppForm);
+     WriteString(theEnv,STDOUT,hnd->header.ppForm);
   }
 
 /*****************************************************************************
@@ -877,32 +877,30 @@ static bool WildDeleteHandler(
   CLIPSLexeme *msym,
   const char *tname)
   {
-   unsigned short mtype;
+   int mtype;
 
    if (msym == NULL)
      msym = CreateSymbol(theEnv,"*");
    if (tname != NULL)
      {
-      mtype = HandlerType(theEnv,"undefmessage-handler",tname);
+      mtype = (int) HandlerType(theEnv,"undefmessage-handler",tname);
       if (mtype == MERROR)
         return false;
      }
    else
-     mtype = MALL_TYPES;
+     mtype = -1;
    if (cls == NULL)
      {
       bool success = true;
 
-      for (cls = GetNextDefclass(theEnv,NULL);
-           cls != NULL;
+      for (cls = GetNextDefclass(theEnv,NULL) ;
+           cls != NULL ;
            cls = GetNextDefclass(theEnv,cls))
         if (DeleteHandler(theEnv,cls,msym,mtype,false) == false)
           success = false;
-         
-      return success;
+      return(success);
      }
-     
-   return DeleteHandler(theEnv,cls,msym,mtype,true);
+   return(DeleteHandler(theEnv,cls,msym,mtype,true));
   }
 
 #endif
@@ -994,7 +992,7 @@ static bool DefmessageHandlerWatchSupport(
    Defmodule *theModule;
    Defclass *theClass;
    const char *theHandlerStr;
-   unsigned short theType;
+   int theType;
    unsigned int argIndex = 2;
    UDFValue tmpData;
 
@@ -1012,13 +1010,13 @@ static bool DefmessageHandlerWatchSupport(
          SetCurrentModule(theEnv,theModule);
          if (traceFunc == NULL)
            {
-            PrintString(theEnv,logName,DefmoduleName(theModule));
-            PrintString(theEnv,logName,":\n");
+            WriteString(theEnv,logName,DefmoduleName(theModule));
+            WriteString(theEnv,logName,":\n");
            }
          theClass = GetNextDefclass(theEnv,NULL);
          while (theClass != NULL)
             {
-             if (WatchClassHandlers(theEnv,theClass,NULL,MALL_TYPES,logName,newState,
+             if (WatchClassHandlers(theEnv,theClass,NULL,-1,logName,newState,
                                     true,printFunc,traceFunc) == false)
                  return false;
              theClass = GetNextDefclass(theEnv,theClass);
@@ -1070,25 +1068,23 @@ static bool DefmessageHandlerWatchSupport(
                ExpectedTypeError1(theEnv,funcName,argIndex,"handler type");
                return false;
               }
-            if ((theType = HandlerType(theEnv,funcName,tmpData.lexemeValue->contents)) == MERROR)
+            if ((theType = (int) HandlerType(theEnv,funcName,tmpData.lexemeValue->contents)) == MERROR)
               return false;
            }
          else
-           theType = MALL_TYPES;
+           theType = -1;
         }
       else
         {
          theHandlerStr = NULL;
-         theType = MALL_TYPES;
+         theType = -1;
         }
-        
       if (WatchClassHandlers(theEnv,theClass,theHandlerStr,theType,logName,
                              newState,false,printFunc,traceFunc) == false)
         {
          ExpectedTypeError1(theEnv,funcName,argIndex,"handler");
          return false;
         }
-        
       argIndex++;
       argExprs = GetNextArgument(argExprs);
      }
@@ -1115,7 +1111,7 @@ static bool WatchClassHandlers(
   Environment *theEnv,
   Defclass *theClass,
   const char *theHandlerStr,
-  unsigned short theType,
+  int theType,
   const char *logName,
   bool newState,
   bool indentp,
@@ -1128,8 +1124,8 @@ static bool WatchClassHandlers(
    theHandler = GetNextDefmessageHandler(theClass,0);
    while (theHandler != 0)
      {
-      if ((theType == MALL_TYPES) ? true :
-          (theType == theClass->handlers[theHandler-1].type))
+      if ((theType == -1) ? true :
+          (theType == (int) theClass->handlers[theHandler-1].type))
         {
          if ((theHandlerStr == NULL) ? true :
              (strcmp(theHandlerStr,DefmessageHandlerName(theClass,theHandler)) == 0))
@@ -1139,7 +1135,7 @@ static bool WatchClassHandlers(
              else
                {
                 if (indentp)
-                  PrintString(theEnv,logName,"   ");
+                  WriteString(theEnv,logName,"   ");
                 (*printFunc)(theEnv,logName,theClass,theHandler);
                }
              found = true;
@@ -1147,7 +1143,7 @@ static bool WatchClassHandlers(
         }
       theHandler = GetNextDefmessageHandler(theClass,theHandler);
      }
-   if ((theHandlerStr != NULL) && (theType != MALL_TYPES) && (found == false))
+   if ((theHandlerStr != NULL) && (theType != -1) && (found == false))
      return false;
    return true;
   }
@@ -1168,16 +1164,16 @@ static void PrintHandlerWatchFlag(
   Defclass *theClass,
   unsigned theHandler)
   {
-   PrintString(theEnv,logName,DefclassName(theClass));
-   PrintString(theEnv,logName," ");
-   PrintString(theEnv,logName,DefmessageHandlerName(theClass,theHandler));
-   PrintString(theEnv,logName," ");
-   PrintString(theEnv,logName,DefmessageHandlerType(theClass,theHandler));
+   WriteString(theEnv,logName,DefclassName(theClass));
+   WriteString(theEnv,logName," ");
+   WriteString(theEnv,logName,DefmessageHandlerName(theClass,theHandler));
+   WriteString(theEnv,logName," ");
+   WriteString(theEnv,logName,DefmessageHandlerType(theClass,theHandler));
 
    if (DefmessageHandlerGetWatch(theClass,theHandler))
-     PrintString(theEnv,logName," = on\n");
+     WriteString(theEnv,logName," = on\n");
    else
-     PrintString(theEnv,logName," = off\n");
+     WriteString(theEnv,logName," = off\n");
   }
 
 #endif /* DEBUGGING_FUNCTIONS */

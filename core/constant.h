@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  03/29/17             */
+   /*            CLIPS Version 6.40  08/09/17             */
    /*                                                     */
    /*                CONSTANTS HEADER FILE                */
    /*******************************************************/
@@ -94,11 +94,11 @@ typedef enum
 #endif
 
 #ifndef CREATION_DATE_STRING
-#define CREATION_DATE_STRING "04/25/17"
+#define CREATION_DATE_STRING "08/25/17"
 #endif
 
 #ifndef BANNER_STRING
-#define BANNER_STRING "         CLIPS (Forge Alpha 04/25/17)\n"
+#define BANNER_STRING "         CLIPS (Forge Alpha 08/25/17)\n"
 #endif
 
 /*************************/
@@ -175,7 +175,7 @@ typedef enum
 
 #define VOID_TYPE                       9
 
-#define BITMAP                         11
+#define BITMAP_TYPE                    11
 
 #define FCALL                          30
 #define GCALL                          31
@@ -239,9 +239,3 @@ typedef enum
 #define CREATOR_CODE   'CLIS'
 
 #endif
-
-
-
-
-
-

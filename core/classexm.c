@@ -232,17 +232,17 @@ void DescribeClass(
    DisplaySeparator(theEnv,logicalName,buf,82,'=');
    DisplaySeparator(theEnv,logicalName,buf,82,'*');
    if (theDefclass->abstract)
-     PrintString(theEnv,logicalName,"Abstract: direct instances of this class cannot be created.\n\n");
+     WriteString(theEnv,logicalName,"Abstract: direct instances of this class cannot be created.\n\n");
    else
      {
-      PrintString(theEnv,logicalName,"Concrete: direct instances of this class can be created.\n");
+      WriteString(theEnv,logicalName,"Concrete: direct instances of this class can be created.\n");
 #if DEFRULE_CONSTRUCT
       if (theDefclass->reactive)
-        PrintString(theEnv,logicalName,"Reactive: direct instances of this class can match defrule patterns.\n\n");
+        WriteString(theEnv,logicalName,"Reactive: direct instances of this class can match defrule patterns.\n\n");
       else
-        PrintString(theEnv,logicalName,"Non-reactive: direct instances of this class cannot match defrule patterns.\n\n");
+        WriteString(theEnv,logicalName,"Non-reactive: direct instances of this class cannot match defrule patterns.\n\n");
 #else
-      PrintString(theEnv,logicalName,"\n");
+      WriteString(theEnv,logicalName,"\n");
 #endif
      }
    PrintPackedClassLinks(theEnv,logicalName,"Direct Superclasses:",&theDefclass->directSuperclasses);
@@ -288,7 +288,7 @@ void DescribeClass(
 #endif
 */
       DisplaySlotBasicInfo(theEnv,logicalName,slotNamePrintFormat,overrideMessagePrintFormat,buf,theDefclass);
-      PrintString(theEnv,logicalName,"\nConstraint information for slots:\n\n");
+      WriteString(theEnv,logicalName,"\nConstraint information for slots:\n\n");
       DisplaySlotConstraintInfo(theEnv,logicalName,slotNamePrintFormat,buf,82,theDefclass);
      }
    if (theDefclass->handlerCount > 0)
@@ -306,7 +306,7 @@ void DescribeClass(
    if (messageBanner)
      {
       DisplaySeparator(theEnv,logicalName,buf,82,'-');
-      PrintString(theEnv,logicalName,"Recognized message-handlers:\n");
+      WriteString(theEnv,logicalName,"Recognized message-handlers:\n");
       DisplayHandlersInLinks(theEnv,logicalName,&theDefclass->allSuperclasses,0);
      }
    DisplaySeparator(theEnv,logicalName,buf,82,'*');
@@ -982,13 +982,13 @@ static SlotDescriptor *CheckSlotExists(
      { return sd; }
 
    PrintErrorID(theEnv,"CLASSEXM",1,false);
-   PrintString(theEnv,WERROR,"Inherited slot ");
-   PrintString(theEnv,WERROR,ssym->contents);
-   PrintString(theEnv,WERROR," from class ");
-   PrintClassName(theEnv,WERROR,sd->cls,false);
-   PrintString(theEnv,WERROR," is not valid for function ");
-   PrintString(theEnv,WERROR,func);
-   PrintString(theEnv,WERROR,"\n");
+   WriteString(theEnv,STDERR,"Inherited slot ");
+   WriteString(theEnv,STDERR,ssym->contents);
+   WriteString(theEnv,STDERR," from class ");
+   PrintClassName(theEnv,STDERR,sd->cls,false);
+   WriteString(theEnv,STDERR," is not valid for function ");
+   WriteString(theEnv,STDERR,func);
+   WriteString(theEnv,STDERR,"\n");
    SetEvaluationError(theEnv,true);
    return NULL;
   }
@@ -1095,11 +1095,11 @@ static void PrintClassBrowse(
    unsigned long i;
 
    for (i = 0 ; i < depth ; i++)
-     PrintString(theEnv,logicalName,"  ");
-   PrintString(theEnv,logicalName,DefclassName(cls));
+     WriteString(theEnv,logicalName,"  ");
+   WriteString(theEnv,logicalName,DefclassName(cls));
    if (cls->directSuperclasses.classCount > 1)
-     PrintString(theEnv,logicalName," *");
-   PrintString(theEnv,logicalName,"\n");
+     WriteString(theEnv,logicalName," *");
+   WriteString(theEnv,logicalName,"\n");
    for (i = 0 ;i < cls->directSubclasses.classCount ; i++)
      PrintClassBrowse(theEnv,logicalName,cls->directSubclasses.classArray[i],depth+1);
   }
@@ -1128,7 +1128,7 @@ static void DisplaySeparator(
      buf[i] = (char) sepchar;
    buf[i++] = '\n';
    buf[i] = '\0';
-   PrintString(theEnv,logicalName,buf);
+   WriteString(theEnv,logicalName,buf);
   }
 
 /*************************************************************
@@ -1178,10 +1178,10 @@ static void DisplaySlotBasicInfo(
 #else
    genstrcat(buf,"FLD DEF PRP ACC STO SRC VIS CRT ");
 #endif
-   PrintString(theEnv,logicalName,buf);
+   WriteString(theEnv,logicalName,buf);
    gensprintf(buf,overrideMessagePrintFormat,"OVRD-MSG");
-   PrintString(theEnv,logicalName,buf);
-   PrintString(theEnv,logicalName,"SOURCE(S)\n");
+   WriteString(theEnv,logicalName,buf);
+   WriteString(theEnv,logicalName,"SOURCE(S)\n");
    for (i = 0 ; i < cls->instanceSlotCount ; i++)
      {
       sp = cls->instanceTemplate[i];
@@ -1211,12 +1211,12 @@ static void DisplaySlotBasicInfo(
       if ((createString[1] == '\0') ? true : (createString[2] == '\0'))
         genstrcat(buf," ");
       genstrcat(buf," ");
-      PrintString(theEnv,logicalName,buf);
+      WriteString(theEnv,logicalName,buf);
       gensprintf(buf,overrideMessagePrintFormat,
               sp->noWrite ? "NIL" : sp->overrideMessage->contents);
-      PrintString(theEnv,logicalName,buf);
+      WriteString(theEnv,logicalName,buf);
       PrintSlotSources(theEnv,logicalName,sp->slotName->name,&sp->cls->allSuperclasses,0,true);
-      PrintString(theEnv,logicalName,"\n");
+      WriteString(theEnv,logicalName,"\n");
      }
   }
 
@@ -1258,7 +1258,7 @@ static bool PrintSlotSources(
       if (csp->composite)
         {
          if (PrintSlotSources(theEnv,logicalName,sname,sprec,theIndex+1,false))
-           PrintString(theEnv,logicalName," ");
+           WriteString(theEnv,logicalName," ");
         }
       PrintClassName(theEnv,logicalName,sprec->classArray[theIndex],false);
       return true;
@@ -1306,7 +1306,7 @@ static void DisplaySlotConstraintInfo(
 
    gensprintf(buf,slotNamePrintFormat,"SLOTS");
    genstrcat(buf,"SYM STR INN INA EXA FTA INT FLT\n");
-   PrintString(theEnv,logicalName,buf);
+   WriteString(theEnv,logicalName,buf);
    for (i = 0 ; i < cls->instanceSlotCount ; i++)
      {
       cr = cls->instanceTemplate[i]->constraint;
@@ -1325,31 +1325,31 @@ static void DisplaySlotConstraintInfo(
          OpenStringDestination(theEnv,strdest,buf + strlen(buf),(maxlen - strlen(buf) - 1));
          if (cr->integersAllowed || cr->floatsAllowed || cr->anyAllowed)
            {
-            PrintString(theEnv,strdest,"RNG:[");
+            WriteString(theEnv,strdest,"RNG:[");
             PrintExpression(theEnv,strdest,cr->minValue);
-            PrintString(theEnv,strdest,"..");
+            WriteString(theEnv,strdest,"..");
             PrintExpression(theEnv,strdest,cr->maxValue);
-            PrintString(theEnv,strdest,"] ");
+            WriteString(theEnv,strdest,"] ");
            }
          if (cls->instanceTemplate[i]->multiple)
            {
-            PrintString(theEnv,strdest,"CRD:[");
+            WriteString(theEnv,strdest,"CRD:[");
             PrintExpression(theEnv,strdest,cr->minFields);
-            PrintString(theEnv,strdest,"..");
+            WriteString(theEnv,strdest,"..");
             PrintExpression(theEnv,strdest,cr->maxFields);
-            PrintString(theEnv,strdest,"]");
+            WriteString(theEnv,strdest,"]");
            }
         }
       else
         {
          OpenStringDestination(theEnv,strdest,buf,maxlen);
-         PrintString(theEnv,strdest," +   +   +   +   +   +   +   +  RNG:[-oo..+oo]");
+         WriteString(theEnv,strdest," +   +   +   +   +   +   +   +  RNG:[-oo..+oo]");
          if (cls->instanceTemplate[i]->multiple)
-           PrintString(theEnv,strdest," CRD:[0..+oo]");
+           WriteString(theEnv,strdest," CRD:[0..+oo]");
         }
-      PrintString(theEnv,strdest,"\n");
+      WriteString(theEnv,strdest,"\n");
       CloseStringDestination(theEnv,strdest);
-      PrintString(theEnv,logicalName,buf);
+      WriteString(theEnv,logicalName,buf);
      }
   }
 

@@ -45,7 +45,7 @@
 #define _H_sortfun
 
    void                           SortFunctionDefinitions(Environment *);
-   void                           MergeSort(Environment *,unsigned long,UDFValue *,
+   void                           MergeSort(Environment *,size_t,UDFValue *,
                                             bool (*)(Environment *,UDFValue *,UDFValue *));
    void                           SortFunction(Environment *,UDFContext *,UDFValue *);
 

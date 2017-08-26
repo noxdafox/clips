@@ -619,9 +619,9 @@ void UndefmethodCommand(
    if ((gfunc == NULL) ? (strcmp(theArg.lexemeValue->contents,"*") != 0) : false)
      {
       PrintErrorID(theEnv,"GENRCCOM",1,false);
-      PrintString(theEnv,WERROR,"No such generic function ");
-      PrintString(theEnv,WERROR,theArg.lexemeValue->contents);
-      PrintString(theEnv,WERROR," in function undefmethod.\n");
+      WriteString(theEnv,STDERR,"No such generic function ");
+      WriteString(theEnv,STDERR,theArg.lexemeValue->contents);
+      WriteString(theEnv,STDERR," in function undefmethod.\n");
       return;
      }
 
@@ -632,7 +632,7 @@ void UndefmethodCommand(
       if (strcmp(theArg.lexemeValue->contents,"*") != 0)
         {
          PrintErrorID(theEnv,"GENRCCOM",2,false);
-         PrintString(theEnv,WERROR,"Expected a valid method index in function undefmethod.\n");
+         WriteString(theEnv,STDERR,"Expected a valid method index in function undefmethod.\n");
          return;
         }
       mi = 0;
@@ -643,14 +643,14 @@ void UndefmethodCommand(
       if (mi == 0)
         {
          PrintErrorID(theEnv,"GENRCCOM",2,false);
-         PrintString(theEnv,WERROR,"Expected a valid method index in function undefmethod.\n");
+         WriteString(theEnv,STDERR,"Expected a valid method index in function undefmethod.\n");
          return;
         }
      }
    else
      {
       PrintErrorID(theEnv,"GENRCCOM",2,false);
-      PrintString(theEnv,WERROR,"Expected a valid method index in function undefmethod.\n");
+      WriteString(theEnv,STDERR,"Expected a valid method index in function undefmethod.\n");
       return;
      }
    Undefmethod(gfunc,mi,theEnv);
@@ -736,16 +736,16 @@ bool Undefmethod(
    
 #if RUN_TIME || BLOAD_ONLY
    PrintErrorID(theEnv,"PRNTUTIL",4,false);
-   PrintString(theEnv,WERROR,"Unable to delete method ");
+   WriteString(theEnv,STDERR,"Unable to delete method ");
    if (theDefgeneric != NULL)
      {
-      PrintGenericName(theEnv,WERROR,theDefgeneric);
-      PrintString(theEnv,WERROR," #");
-      PrintUnsignedInteger(theEnv,WERROR,mi);
+      PrintGenericName(theEnv,STDERR,theDefgeneric);
+      WriteString(theEnv,STDERR," #");
+      PrintUnsignedInteger(theEnv,STDERR,mi);
      }
    else
-     PrintString(theEnv,WERROR,"*");
-   PrintString(theEnv,WERROR,".\n");
+     WriteString(theEnv,STDERR,"*");
+   WriteString(theEnv,STDERR,".\n");
    return false;
 #else
 
@@ -753,16 +753,16 @@ bool Undefmethod(
    if (Bloaded(theEnv) == true)
      {
       PrintErrorID(theEnv,"PRNTUTIL",4,false);
-      PrintString(theEnv,WERROR,"Unable to delete method ");
+      WriteString(theEnv,STDERR,"Unable to delete method ");
       if (theDefgeneric != NULL)
         {
-         PrintString(theEnv,WERROR,DefgenericName(theDefgeneric));
-         PrintString(theEnv,WERROR," #");
-         PrintUnsignedInteger(theEnv,WERROR,mi);
+         WriteString(theEnv,STDERR,DefgenericName(theDefgeneric));
+         WriteString(theEnv,STDERR," #");
+         PrintUnsignedInteger(theEnv,STDERR,mi);
         }
       else
-        PrintString(theEnv,WERROR,"*");
-      PrintString(theEnv,WERROR,".\n");
+        WriteString(theEnv,STDERR,"*");
+      WriteString(theEnv,STDERR,".\n");
       return false;
      }
 #endif
@@ -775,7 +775,7 @@ bool Undefmethod(
       if (mi != 0)
         {
          PrintErrorID(theEnv,"GENRCCOM",3,false);
-         PrintString(theEnv,WERROR,"Incomplete method specification for deletion.\n");
+         WriteString(theEnv,STDERR,"Incomplete method specification for deletion.\n");
          GCBlockEnd(theEnv,&gcb);
          return false;
         }
@@ -980,7 +980,7 @@ void PPDefmethodCommand(
    if (gi == METHOD_NOT_FOUND)
      return;
    if (gfunc->methods[gi].header.ppForm != NULL)
-     PrintString(theEnv,STDOUT,gfunc->methods[gi].header.ppForm);
+     WriteString(theEnv,STDOUT,gfunc->methods[gi].header.ppForm);
   }
 
 /******************************************************
@@ -1097,7 +1097,7 @@ void ListDefmethods(
         {
          count += ListMethodsForGeneric(theEnv,logicalName,gfunc);
          if (GetNextDefgeneric(theEnv,gfunc) != NULL)
-           PrintString(theEnv,logicalName,"\n");
+           WriteString(theEnv,logicalName,"\n");
         }
      }
    PrintTally(theEnv,logicalName,count,"method","methods");
@@ -1388,14 +1388,14 @@ static void PrintGenericCall(
   {
 #if DEVELOPER
 
-   PrintString(theEnv,logName,"(");
-   PrintString(theEnv,logName,DefgenericName(theDefgeneric));
+   WriteString(theEnv,logName,"(");
+   WriteString(theEnv,logName,DefgenericName(theDefgeneric));
    if (GetFirstArgument() != NULL)
      {
-      PrintString(theEnv,logName," ");
+      WriteString(theEnv,logName," ");
       PrintExpression(theEnv,logName,GetFirstArgument());
      }
-   PrintString(theEnv,logName,")");
+   WriteString(theEnv,logName,")");
 #else
 #if MAC_XCD
 #pragma unused(theEnv)
@@ -1542,8 +1542,8 @@ static void SaveDefmethodsForDefgeneric(
      {
       if (gfunc->methods[i].header.ppForm != NULL)
         {
-         PrintString(theEnv,logName,gfunc->methods[i].header.ppForm);
-         PrintString(theEnv,logName,"\n");
+         WriteString(theEnv,logName,gfunc->methods[i].header.ppForm);
+         WriteString(theEnv,logName,"\n");
         }
      }
   }
@@ -1572,9 +1572,9 @@ static void RemoveDefgenericMethod(
      {
       SetEvaluationError(theEnv,true);
       PrintErrorID(theEnv,"GENRCCOM",4,false);
-      PrintString(theEnv,WERROR,"Cannot remove implicit system function method for generic function ");
-      PrintString(theEnv,WERROR,DefgenericName(gfunc));
-      PrintString(theEnv,WERROR,".\n");
+      WriteString(theEnv,STDERR,"Cannot remove implicit system function method for generic function ");
+      WriteString(theEnv,STDERR,DefgenericName(gfunc));
+      WriteString(theEnv,STDERR,".\n");
       return;
      }
    DeleteMethodInfo(theEnv,gfunc,&gfunc->methods[gi]);
@@ -1625,11 +1625,11 @@ static unsigned short ListMethodsForGeneric(
 
    for (gi = 0 ; gi < gfunc->mcnt ; gi++)
      {
-      PrintString(theEnv,logicalName,DefgenericName(gfunc));
-      PrintString(theEnv,logicalName," #");
+      WriteString(theEnv,logicalName,DefgenericName(gfunc));
+      WriteString(theEnv,logicalName," #");
       PrintMethod(theEnv,&gfunc->methods[gi],theSB);
-      PrintString(theEnv,logicalName,theSB->contents);
-      PrintString(theEnv,logicalName,"\n");
+      WriteString(theEnv,logicalName,theSB->contents);
+      WriteString(theEnv,logicalName,"\n");
      }
      
    SBDispose(theSB);
@@ -1791,8 +1791,8 @@ static bool DefmethodWatchSupport(
          SetCurrentModule(theEnv,theModule);
          if (traceFunc == NULL)
            {
-            PrintString(theEnv,logName,DefmoduleName(theModule));
-            PrintString(theEnv,logName,":\n");
+            WriteString(theEnv,logName,DefmoduleName(theModule));
+            WriteString(theEnv,logName,":\n");
            }
          theGeneric = GetNextDefgeneric(theEnv,NULL);
          while (theGeneric != NULL)
@@ -1804,7 +1804,7 @@ static bool DefmethodWatchSupport(
                   (*traceFunc)(theGeneric,theMethod,newState);
                 else
                   {
-                   PrintString(theEnv,logName,"   ");
+                   WriteString(theEnv,logName,"   ");
                    (*printFunc)(theEnv,logName,theGeneric,theMethod);
                   }
                 theMethod = GetNextDefmethod(theGeneric,theMethod);
@@ -1892,14 +1892,14 @@ static void PrintMethodWatchFlag(
   {
    StringBuilder *theSB = CreateStringBuilder(theEnv,60);
 
-   PrintString(theEnv,logName,DefgenericName(theGeneric));
-   PrintString(theEnv,logName," ");
+   WriteString(theEnv,logName,DefgenericName(theGeneric));
+   WriteString(theEnv,logName," ");
    DefmethodDescription(theGeneric,theMethod,theSB);
-   PrintString(theEnv,logName,theSB->contents);
+   WriteString(theEnv,logName,theSB->contents);
    if (DefmethodGetWatch(theGeneric,theMethod))
-     PrintString(theEnv,logName," = on\n");
+     WriteString(theEnv,logName," = on\n");
    else
-     PrintString(theEnv,logName," = off\n");
+     WriteString(theEnv,logName," = off\n");
      
    SBDispose(theSB);
   }

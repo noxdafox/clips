@@ -79,8 +79,8 @@ struct multifieldBuilder
 
    Multifield                    *CreateUnmanagedMultifield(Environment *,size_t);
    void                           ReturnMultifield(Environment *,Multifield *);
-   void                           IncrementMultifieldReferenceCount(Environment *,Multifield *);
-   void                           DecrementMultifieldReferenceCount(Environment *,Multifield *);
+   void                           RetainMultifield(Environment *,Multifield *);
+   void                           ReleaseMultifield(Environment *,Multifield *);
    void                           IncrementCLIPSValueMultifieldReferenceCount(Environment *,Multifield *);
    void                           DecrementCLIPSValueMultifieldReferenceCount(Environment *,Multifield *);
    Multifield                    *StringToMultifield(Environment *,const char *);
@@ -88,14 +88,14 @@ struct multifieldBuilder
    void                           AddToMultifieldList(Environment *,Multifield *);
    void                           FlushMultifields(Environment *);
    void                           DuplicateMultifield(Environment *,UDFValue *,UDFValue *);
-   void                           PrintMultifield(Environment *,const char *,Multifield *);
+   void                           WriteMultifield(Environment *,const char *,Multifield *);
    void                           PrintMultifieldDriver(Environment *,const char *,Multifield *,size_t,size_t,bool);
    bool                           MultifieldDOsEqual(UDFValue *,UDFValue *);
    void                           StoreInMultifield(Environment *,UDFValue *,Expression *,bool);
    Multifield                    *CopyMultifield(Environment *,Multifield *);
    bool                           MultifieldsEqual(Multifield *,Multifield *);
    Multifield                    *DOToMultifield(Environment *,UDFValue *);
-   unsigned long                  HashMultifield(Multifield *,unsigned long);
+   size_t                         HashMultifield(Multifield *,size_t);
    Multifield                    *GetMultifieldList(Environment *);
    CLIPSLexeme                   *ImplodeMultifield(Environment *,UDFValue *);
    void                           EphemerateMultifield(Environment *,Multifield *);

@@ -314,7 +314,7 @@ TEMP_SLOT_LINK *ParseSlot(
            goto ParseSlotError;
          if (rtnCode == 4)
            {
-            DecrementLexemeReferenceCount(theEnv,slot->overrideMessage);
+            ReleaseLexeme(theEnv,slot->overrideMessage);
             slot->overrideMessage = newOverrideMsg;
             IncrementLexemeCount(slot->overrideMessage);
            }
@@ -391,7 +391,7 @@ void DeleteSlots(
       stmp = slots;
       slots = slots->nxt;
       DeleteSlotName(theEnv,stmp->desc->slotName);
-      DecrementLexemeReferenceCount(theEnv,stmp->desc->overrideMessage);
+      ReleaseLexeme(theEnv,stmp->desc->overrideMessage);
       RemoveConstraint(theEnv,stmp->desc->constraint);
       if (stmp->desc->dynamicDefault == 1)
         {
@@ -400,7 +400,7 @@ void DeleteSlots(
         }
       else if (stmp->desc->defaultValue != NULL)
         {
-         DecrementUDFValueReferenceCount(theEnv,(UDFValue *) stmp->desc->defaultValue);
+         ReleaseUDFV(theEnv,(UDFValue *) stmp->desc->defaultValue);
          rtn_struct(theEnv,udfValue,stmp->desc->defaultValue);
         }
       rtn_struct(theEnv,slotDescriptor,stmp->desc);
@@ -490,7 +490,7 @@ static TEMP_SLOT_LINK *InsertSlot(
             tmp->nxt = slist;
             DeleteSlots(theEnv,tmp);
             PrintErrorID(theEnv,"CLSLTPSR",1,false);
-            PrintString(theEnv,WERROR,"Duplicate slots not allowed.\n");
+            WriteString(theEnv,STDERR,"Duplicate slots not allowed.\n");
             return NULL;
            }
          sprv = stmp;
@@ -551,8 +551,8 @@ static int ParseSimpleFacet(
    if (TestBitMap(specbits,testBit))
      {
       PrintErrorID(theEnv,"CLSLTPSR",2,false);
-      PrintString(theEnv,WERROR,facetName);
-      PrintString(theEnv,WERROR," facet already specified.\n");
+      WriteString(theEnv,STDERR,facetName);
+      WriteString(theEnv,STDERR," facet already specified.\n");
       return(-1);
      }
    SetBitMap(specbits,testBit);
@@ -631,7 +631,7 @@ static bool ParseDefaultFacet(
    if (TestBitMap(specbits,DEFAULT_BIT))
      {
       PrintErrorID(theEnv,"CLSLTPSR",2,false);
-      PrintString(theEnv,WERROR,"default facet already specified.\n");
+      WriteString(theEnv,STDERR,"default facet already specified.\n");
       return false;
      }
    SetBitMap(specbits,DEFAULT_BIT);
@@ -720,7 +720,7 @@ static void BuildCompositeFacets(
               {
                sd->defaultValue = get_struct(theEnv,udfValue);
                GenCopyMemory(UDFValue,1,sd->defaultValue,compslot->defaultValue);
-               IncrementUDFValueReferenceCount(theEnv,(UDFValue *) sd->defaultValue);
+               RetainUDFV(theEnv,(UDFValue *) sd->defaultValue);
               }
            }
         }
@@ -747,7 +747,7 @@ static void BuildCompositeFacets(
       if ((! TestBitMap(specbits,OVERRIDE_MSG_BIT)) &&
           compslot->overrideMessageSpecified)
         {
-         DecrementLexemeReferenceCount(theEnv,sd->overrideMessage);
+         ReleaseLexeme(theEnv,sd->overrideMessage);
          sd->overrideMessage = compslot->overrideMessage;
          IncrementLexemeCount(sd->overrideMessage);
          sd->overrideMessageSpecified = true;
@@ -780,7 +780,7 @@ static bool CheckForFacetConflicts(
       if (parsedConstraint->cardinality)
         {
          PrintErrorID(theEnv,"CLSLTPSR",3,true);
-         PrintString(theEnv,WERROR,"Cardinality facet can only be used with multifield slots\n");
+         WriteString(theEnv,STDERR,"Cardinality facet can only be used with multifield slots\n");
          return false;
         }
       else
@@ -794,19 +794,19 @@ static bool CheckForFacetConflicts(
    if (sd->noDefault && sd->noWrite)
      {
       PrintErrorID(theEnv,"CLSLTPSR",4,true);
-      PrintString(theEnv,WERROR,"read-only slots must have a default value\n");
+      WriteString(theEnv,STDERR,"read-only slots must have a default value\n");
       return false;
      }
    if (sd->noWrite && (sd->createWriteAccessor || sd->overrideMessageSpecified))
      {
       PrintErrorID(theEnv,"CLSLTPSR",5,true);
-      PrintString(theEnv,WERROR,"read-only slots cannot have a write accessor\n");
+      WriteString(theEnv,STDERR,"read-only slots cannot have a write accessor\n");
       return false;
      }
    if (sd->noInherit && sd->publicVisibility)
      {
       PrintErrorID(theEnv,"CLSLTPSR",6,true);
-      PrintString(theEnv,WERROR,"no-inherit slots cannot also be public\n");
+      WriteString(theEnv,STDERR,"no-inherit slots cannot also be public\n");
       return false;
      }
    return true;
@@ -865,7 +865,7 @@ static bool EvaluateSlotDefaultValue(
             ReturnPackedExpression(theEnv,(Expression *) sd->defaultValue);
             sd->defaultValue = get_struct(theEnv,udfValue);
             GenCopyMemory(UDFValue,1,sd->defaultValue,&temp);
-            IncrementUDFValueReferenceCount(theEnv,(UDFValue *) sd->defaultValue);
+            RetainUDFV(theEnv,(UDFValue *) sd->defaultValue);
            }
          else
            {
@@ -878,7 +878,7 @@ static bool EvaluateSlotDefaultValue(
          sd->defaultValue = get_struct(theEnv,udfValue);
          DeriveDefaultFromConstraints(theEnv,sd->constraint,
                                       (UDFValue *) sd->defaultValue,sd->multiple,true);
-         IncrementUDFValueReferenceCount(theEnv,(UDFValue *) sd->defaultValue);
+         RetainUDFV(theEnv,(UDFValue *) sd->defaultValue);
         }
      }
    else
@@ -887,8 +887,8 @@ static bool EvaluateSlotDefaultValue(
       if (vCode != NO_VIOLATION)
         {
          PrintErrorID(theEnv,"CSTRNCHK",1,false);
-         PrintString(theEnv,WERROR,"Expression for ");
-         PrintSlot(theEnv,WERROR,sd,NULL,"dynamic default value");
+         WriteString(theEnv,STDERR,"Expression for ");
+         PrintSlot(theEnv,STDERR,sd,NULL,"dynamic default value");
          ConstraintViolationErrorMessage(theEnv,NULL,NULL,0,0,NULL,0,
                                          vCode,sd->constraint,false);
          return false;

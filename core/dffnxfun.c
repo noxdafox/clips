@@ -501,7 +501,7 @@ void RemoveDeffunction(
   {
    if (theDeffunction == NULL)
      return;
-   DecrementLexemeReferenceCount(theEnv,GetDeffunctionNamePointer(theEnv,theDeffunction));
+   ReleaseLexeme(theEnv,GetDeffunctionNamePointer(theEnv,theDeffunction));
    ExpressionDeinstall(theEnv,theDeffunction->code);
    ReturnPackedExpression(theEnv,theDeffunction->code);
    SetDeffunctionPPForm(theEnv,theDeffunction,NULL);
@@ -700,14 +700,14 @@ static void PrintDeffunctionCall(
   {
 #if DEVELOPER
 
-   PrintString(theEnv,logName,"(");
-   PrintString(theEnv,logName,DeffunctionName(theDeffunction));
+   WriteString(theEnv,logName,"(");
+   WriteString(theEnv,logName,DeffunctionName(theDeffunction));
    if (GetFirstArgument() != NULL)
      {
-      PrintString(theEnv,logName," ");
+      WriteString(theEnv,logName," ");
       PrintExpression(theEnv,logName,GetFirstArgument());
      }
-   PrintString(theEnv,logName,")");
+   WriteString(theEnv,logName,")");
 #else
 #if MAC_XCD
 #pragma unused(theEnv)
@@ -933,9 +933,9 @@ static bool RemoveAllDeffunctions(
          if (dtmp->busy > 0)
            {
             PrintWarningID(theEnv,"DFFNXFUN",1,false);
-            PrintString(theEnv,WWARNING,"Deffunction ");
-            PrintString(theEnv,WWARNING,DeffunctionName(dtmp));
-            PrintString(theEnv,WWARNING," only partially deleted due to usage by other constructs.\n");
+            WriteString(theEnv,STDWRN,"Deffunction ");
+            WriteString(theEnv,STDWRN,DeffunctionName(dtmp));
+            WriteString(theEnv,STDWRN," only partially deleted due to usage by other constructs.\n");
             SetDeffunctionPPForm(theEnv,dtmp,NULL);
             success = false;
            }
@@ -1010,26 +1010,26 @@ static void SaveDeffunctionHeader(
 
    if (DeffunctionPPForm(dfnxPtr) != NULL)
      {
-      PrintString(theEnv,logicalName,"(deffunction ");
-      PrintString(theEnv,logicalName,DeffunctionModule(dfnxPtr));
-      PrintString(theEnv,logicalName,"::");
-      PrintString(theEnv,logicalName,DeffunctionName(dfnxPtr));
-      PrintString(theEnv,logicalName," (");
+      WriteString(theEnv,logicalName,"(deffunction ");
+      WriteString(theEnv,logicalName,DeffunctionModule(dfnxPtr));
+      WriteString(theEnv,logicalName,"::");
+      WriteString(theEnv,logicalName,DeffunctionName(dfnxPtr));
+      WriteString(theEnv,logicalName," (");
       for (i = 0 ; i < dfnxPtr->minNumberOfParameters ; i++)
         {
-         PrintString(theEnv,logicalName,"?p");
+         WriteString(theEnv,logicalName,"?p");
          PrintUnsignedInteger(theEnv,logicalName,i);
          if ((i + 1) != dfnxPtr->minNumberOfParameters)
-           PrintString(theEnv,logicalName," ");
+           WriteString(theEnv,logicalName," ");
         }
       if (dfnxPtr->maxNumberOfParameters == PARAMETERS_UNBOUNDED)
         {
          if (dfnxPtr->minNumberOfParameters != 0)
-           PrintString(theEnv,logicalName," ");
-         PrintString(theEnv,logicalName,"$?wildargs))\n\n");
+           WriteString(theEnv,logicalName," ");
+         WriteString(theEnv,logicalName,"$?wildargs))\n\n");
         }
       else
-        PrintString(theEnv,logicalName,"))\n\n");
+        WriteString(theEnv,logicalName,"))\n\n");
      }
   }
 

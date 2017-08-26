@@ -734,10 +734,10 @@ static void PatternNetErrorMessage(
    /*=======================================*/
 
    PrintErrorID(theEnv,"FACTMCH",1,true);
-   PrintString(theEnv,WERROR,"This error occurred in the fact pattern network\n");
-   PrintString(theEnv,WERROR,"   Currently active fact: ");
-   PrintFact(theEnv,WERROR,FactData(theEnv)->CurrentPatternFact,false,false,NULL);
-   PrintString(theEnv,WERROR,"\n");
+   WriteString(theEnv,STDERR,"This error occurred in the fact pattern network\n");
+   WriteString(theEnv,STDERR,"   Currently active fact: ");
+   PrintFact(theEnv,STDERR,FactData(theEnv)->CurrentPatternFact,false,false,NULL);
+   WriteString(theEnv,STDERR,"\n");
 
    /*==============================================*/
    /* Print the field position or slot name of the */
@@ -753,7 +753,7 @@ static void PatternNetErrorMessage(
       gensprintf(buffer,"   Problem resides in slot %s\n",theSlots->slotName->contents);
      }
 
-   PrintString(theEnv,WERROR,buffer);
+   WriteString(theEnv,STDERR,buffer);
 
    /*==========================================================*/
    /* Trace the pattern to its entry point to the join network */
@@ -763,7 +763,7 @@ static void PatternNetErrorMessage(
    /*==========================================================*/
 
    TraceErrorToJoin(theEnv,patternPtr,false);
-   PrintString(theEnv,WERROR,"\n");
+   WriteString(theEnv,STDERR,"\n");
   }
 
 /***************************************************************************/

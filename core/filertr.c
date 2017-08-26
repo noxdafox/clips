@@ -68,10 +68,10 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static void                    ExitFile(Environment *,int,void *);
-   static void                    PrintFile(Environment *,const char *,const char *,void *);
-   static int                     GetcFile(Environment *,const char *,void *);
-   static int                     UngetcFile(Environment *,const char *,int,void *);
+   static void                    ExitFileCallback(Environment *,int,void *);
+   static void                    WriteFileCallback(Environment *,const char *,const char *,void *);
+   static int                     ReadFileCallback(Environment *,const char *,void *);
+   static int                     UnreadFileCallback(Environment *,const char *,int,void *);
    static void                    DeallocateFileRouterData(Environment *);
 
 /***************************************************************/
@@ -83,8 +83,8 @@ void InitializeFileRouter(
    AllocateEnvironmentData(theEnv,FILE_ROUTER_DATA,sizeof(struct fileRouterData),DeallocateFileRouterData);
 
    AddRouter(theEnv,"fileio",0,FindFile,
-             PrintFile,GetcFile,
-             UngetcFile,ExitFile,NULL);
+             WriteFileCallback,ReadFileCallback,
+             UnreadFileCallback,ExitFileCallback,NULL);
   }
 
 /*****************************************/
@@ -125,9 +125,9 @@ FILE *FindFptr(
      { return(stdout); }
    else if (strcmp(logicalName,STDIN) == 0)
      { return(stdin);  }
-   else if (strcmp(logicalName,WERROR) == 0)
+   else if (strcmp(logicalName,STDERR) == 0)
      { return(stdout); }
-   else if (strcmp(logicalName,WWARNING) == 0)
+   else if (strcmp(logicalName,STDWRN) == 0)
      { return(stdout); }
 
    /*==============================================================*/
@@ -160,10 +160,10 @@ bool FindFile(
    return false;
   }
 
-/********************************************/
-/* ExitFile:  Exit routine for file router. */
-/********************************************/
-static void ExitFile(
+/***************************************************/
+/* ExitFileCallback: Exit routine for file router. */
+/***************************************************/
+static void ExitFileCallback(
   Environment *theEnv,
   int num,
   void *context)
@@ -180,10 +180,10 @@ static void ExitFile(
 #endif
   }
 
-/*********************************************/
-/* PrintFile: Print routine for file router. */
-/*********************************************/
-static void PrintFile(
+/******************************************************/
+/* WriteFileCallback: Write callback for file router. */
+/******************************************************/
+static void WriteFileCallback(
   Environment *theEnv,
   const char *logicalName,
   const char *str,
@@ -196,10 +196,10 @@ static void PrintFile(
    genprintfile(theEnv,fptr,str);
   }
 
-/*******************************************/
-/* GetcFile: Getc routine for file router. */
-/*******************************************/
-static int GetcFile(
+/****************************************************/
+/* ReadFileCallback: Read callback for file router. */
+/****************************************************/
+static int ReadFileCallback(
   Environment *theEnv,
   const char *logicalName,
   void *context)
@@ -224,10 +224,10 @@ static int GetcFile(
    return(theChar);
   }
 
-/***********************************************/
-/* UngetcFile: Ungetc routine for file router. */
-/***********************************************/
-static int UngetcFile(
+/********************************************************/
+/* UnreadFileCallback: Unread callback for file router. */
+/********************************************************/
+static int UnreadFileCallback(
   Environment *theEnv,
   const char *logicalName,
   int ch,

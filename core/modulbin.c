@@ -96,7 +96,7 @@ void UpdateDefmoduleItemHeader(
   size_t itemSize,
   void *itemArray)
   {
-   unsigned long firstOffset, lastOffset;
+   size_t firstOffset, lastOffset;
 
    theHeader->theModule = ModulePointer(theBsaveHeader->theModule);
    if (theBsaveHeader->firstItem == ULONG_MAX)
@@ -553,23 +553,23 @@ static void ClearBload(
 
    for (i = 0; i < DefmoduleData(theEnv)->BNumberOfDefmodules; i++)
      {
-      DecrementLexemeReferenceCount(theEnv,DefmoduleData(theEnv)->DefmoduleArray[i].header.name);
+      ReleaseLexeme(theEnv,DefmoduleData(theEnv)->DefmoduleArray[i].header.name);
       for (theList = DefmoduleData(theEnv)->DefmoduleArray[i].importList;
            theList != NULL;
            theList = theList->next)
         {
-         if (theList->moduleName != NULL) DecrementLexemeReferenceCount(theEnv,theList->moduleName);
-         if (theList->constructType != NULL) DecrementLexemeReferenceCount(theEnv,theList->constructType);
-         if (theList->constructName != NULL) DecrementLexemeReferenceCount(theEnv,theList->constructName);
+         if (theList->moduleName != NULL) ReleaseLexeme(theEnv,theList->moduleName);
+         if (theList->constructType != NULL) ReleaseLexeme(theEnv,theList->constructType);
+         if (theList->constructName != NULL) ReleaseLexeme(theEnv,theList->constructName);
         }
 
       for (theList = DefmoduleData(theEnv)->DefmoduleArray[i].exportList;
            theList != NULL;
            theList = theList->next)
         {
-         if (theList->moduleName != NULL) DecrementLexemeReferenceCount(theEnv,theList->moduleName);
-         if (theList->constructType != NULL) DecrementLexemeReferenceCount(theEnv,theList->constructType);
-         if (theList->constructName != NULL) DecrementLexemeReferenceCount(theEnv,theList->constructName);
+         if (theList->moduleName != NULL) ReleaseLexeme(theEnv,theList->moduleName);
+         if (theList->constructType != NULL) ReleaseLexeme(theEnv,theList->constructType);
+         if (theList->constructName != NULL) ReleaseLexeme(theEnv,theList->constructName);
         }
 
       rm(theEnv,DefmoduleData(theEnv)->DefmoduleArray[i].itemsArray,sizeof(void *) * GetNumberOfModuleItems(theEnv));

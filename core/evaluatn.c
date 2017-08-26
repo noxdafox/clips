@@ -225,9 +225,9 @@ bool EvaluateExpression(
         if (GetBoundVariable(theEnv,returnValue,problem->lexemeValue) == false)
           {
            PrintErrorID(theEnv,"EVALUATN",1,false);
-           PrintString(theEnv,WERROR,"Variable ");
-           PrintString(theEnv,WERROR,problem->lexemeValue->contents);
-           PrintString(theEnv,WERROR," is unbound\n");
+           WriteString(theEnv,STDERR,"Variable ");
+           WriteString(theEnv,STDERR,problem->lexemeValue->contents);
+           WriteString(theEnv,STDERR," is unbound\n");
            returnValue->value = FalseSymbol(theEnv);
            SetEvaluationError(theEnv,true);
           }
@@ -371,19 +371,19 @@ void ReturnValues(
    while (garbagePtr != NULL)
      {
       nextPtr = garbagePtr->next;
-      DecrementUDFValueReferenceCount(theEnv,garbagePtr);
+      ReleaseUDFV(theEnv,garbagePtr);
       if ((garbagePtr->supplementalInfo != NULL) && decrementSupplementalInfo)
-        { DecrementLexemeReferenceCount(theEnv,(CLIPSLexeme *) garbagePtr->supplementalInfo); }
+        { ReleaseLexeme(theEnv,(CLIPSLexeme *) garbagePtr->supplementalInfo); }
       rtn_struct(theEnv,udfValue,garbagePtr);
       garbagePtr = nextPtr;
      }
   }
 
 /**************************************************/
-/* PrintCLIPSValue: Prints a CLIPSValue structure */
+/* WriteCLIPSValue: Prints a CLIPSValue structure */
 /*   to the specified logical name.               */
 /**************************************************/
-void PrintCLIPSValue(
+void WriteCLIPSValue(
   Environment *theEnv,
   const char *fileid,
   CLIPSValue *argPtr)
@@ -410,9 +410,9 @@ void PrintCLIPSValue(
         break;
 
       default:
-        PrintString(theEnv,fileid,"<UnknownPrintType");
-        PrintInteger(theEnv,fileid,argPtr->header->type);
-        PrintString(theEnv,fileid,">");
+        WriteString(theEnv,fileid,"<UnknownPrintType");
+        WriteInteger(theEnv,fileid,argPtr->header->type);
+        WriteString(theEnv,fileid,">");
         SetHaltExecution(theEnv,true);
         SetEvaluationError(theEnv,true);
         break;
@@ -420,10 +420,10 @@ void PrintCLIPSValue(
   }
 
 /**********************************************/
-/* PrintUDFValue: Prints a UDFValue structure */
+/* WriteUDFValue: Prints a UDFValue structure */
 /*   to the specified logical name.           */
 /**********************************************/
-void PrintUDFValue(
+void WriteUDFValue(
   Environment *theEnv,
   const char *fileid,
   UDFValue *argPtr)
@@ -450,9 +450,9 @@ void PrintUDFValue(
         break;
 
       default:
-        PrintString(theEnv,fileid,"<UnknownPrintType");
-        PrintInteger(theEnv,fileid,argPtr->header->type);
-        PrintString(theEnv,fileid,">");
+        WriteString(theEnv,fileid,"<UnknownPrintType");
+        WriteInteger(theEnv,fileid,argPtr->header->type);
+        WriteString(theEnv,fileid,">");
         SetHaltExecution(theEnv,true);
         SetEvaluationError(theEnv,true);
         break;
@@ -472,39 +472,67 @@ void SetMultifieldErrorValue(
    returnValue->range = 0;
   }
 
-/***************************************************************/
-/* IncrementUDFValueReferenceCount: Increments the appropriate */
-/*   count (in use) values for a UDFValue structure.           */
-/***************************************************************/
-void IncrementUDFValueReferenceCount(
+/***********************************************/
+/* RetainUDFV: Increments the appropriate count */
+/*   (in use) values for a UDFValue structure. */
+/***********************************************/
+void RetainUDFV(
   Environment *theEnv,
   UDFValue *vPtr)
   {
    if (vPtr->header->type == MULTIFIELD_TYPE)
      { IncrementCLIPSValueMultifieldReferenceCount(theEnv,vPtr->multifieldValue); }
    else
-     { IncrementReferenceCount(theEnv,vPtr->header); }
+     { Retain(theEnv,vPtr->header); }
   }
 
-/***************************************************************/
-/* IncrementUDFValueReferenceCount: Decrements the appropriate */
-/*   count (in use) values for a UDFValue structure.           */
-/***************************************************************/
-void DecrementUDFValueReferenceCount(
+/***********************************************/
+/* RetainUDFV: Decrements the appropriate count */
+/*   (in use) values for a UDFValue structure. */
+/***********************************************/
+void ReleaseUDFV(
   Environment *theEnv,
   UDFValue *vPtr)
   {
    if (vPtr->header->type == MULTIFIELD_TYPE)
      { DecrementCLIPSValueMultifieldReferenceCount(theEnv,vPtr->multifieldValue); }
    else
-     { DecrementReferenceCount(theEnv,vPtr->header); }
+     { Release(theEnv,vPtr->header); }
   }
 
-/*********************************************/
-/* IncrementReferenceCount: Increments the   */
-/*   reference count of an atomic data type. */
-/*********************************************/
-void IncrementReferenceCount(
+/*************************************************/
+/* RetainCV: Increments the appropriate count    */
+/*   (in use) values for a CLIPSValue structure. */
+/*************************************************/
+void RetainCV(
+  Environment *theEnv,
+  CLIPSValue *vPtr)
+  {
+   if (vPtr->header->type == MULTIFIELD_TYPE)
+     { IncrementCLIPSValueMultifieldReferenceCount(theEnv,vPtr->multifieldValue); }
+   else
+     { Retain(theEnv,vPtr->header); }
+  }
+
+/*************************************************/
+/* ReleaseCV: Decrements the appropriate count   */
+/*   (in use) values for a CLIPSValue structure. */
+/*************************************************/
+void ReleaseCV(
+  Environment *theEnv,
+  CLIPSValue *vPtr)
+  {
+   if (vPtr->header->type == MULTIFIELD_TYPE)
+     { DecrementCLIPSValueMultifieldReferenceCount(theEnv,vPtr->multifieldValue); }
+   else
+     { Release(theEnv,vPtr->header); }
+  }
+
+/******************************************/
+/* Retain: Increments the reference count */
+/*   of an atomic data type.              */
+/******************************************/
+void Retain(
   Environment *theEnv,
   TypeHeader *th)
   {
@@ -531,18 +559,18 @@ void IncrementReferenceCount(
         break;
 
       case MULTIFIELD_TYPE:
-        IncrementMultifieldReferenceCount(theEnv,(Multifield *) th);
+        RetainMultifield(theEnv,(Multifield *) th);
         break;
         
 #if OBJECT_SYSTEM
       case INSTANCE_ADDRESS_TYPE:
-        IncrementInstanceReferenceCount((Instance *) th);
+        RetainInstance((Instance *) th);
         break;
 #endif
 
 #if DEFTEMPLATE_CONSTRUCT
       case FACT_ADDRESS_TYPE:
-        IncrementFactReferenceCount((Fact *) th);
+        RetainFact((Fact *) th);
         break;
 #endif
      
@@ -556,11 +584,11 @@ void IncrementReferenceCount(
      }
   }
 
-/*********************************************/
-/* DecrementReferenceCount: Decrements the   */
-/*   reference count of an atomic data type. */
-/*********************************************/
-void DecrementReferenceCount(
+/*************************************/
+/* Release: Decrements the reference */
+/*   count of an atomic data type.   */
+/*************************************/
+void Release(
   Environment *theEnv,
   TypeHeader *th)
   {
@@ -571,34 +599,34 @@ void DecrementReferenceCount(
 #if OBJECT_SYSTEM
       case INSTANCE_NAME_TYPE:
 #endif
-        DecrementLexemeReferenceCount(theEnv,(CLIPSLexeme *) th);
+        ReleaseLexeme(theEnv,(CLIPSLexeme *) th);
         break;
 
       case FLOAT_TYPE:
-        DecrementFloatReferenceCount(theEnv,(CLIPSFloat *) th);
+        ReleaseFloat(theEnv,(CLIPSFloat *) th);
         break;
 
       case INTEGER_TYPE:
-        DecrementIntegerReferenceCount(theEnv,(CLIPSInteger *) th);
+        ReleaseInteger(theEnv,(CLIPSInteger *) th);
         break;
 
       case EXTERNAL_ADDRESS_TYPE:
-        DecrementExternalAddressReferenceCount(theEnv,(CLIPSExternalAddress *) th);
+        ReleaseExternalAddress(theEnv,(CLIPSExternalAddress *) th);
         break;
 
       case MULTIFIELD_TYPE:
-        DecrementMultifieldReferenceCount(theEnv,(Multifield *) th);
+        ReleaseMultifield(theEnv,(Multifield *) th);
         break;
         
 #if OBJECT_SYSTEM
       case INSTANCE_ADDRESS_TYPE:
-        DecrementInstanceReferenceCount((Instance *) th);
+        ReleaseInstance((Instance *) th);
         break;
 #endif
      
 #if DEFTEMPLATE_CONSTRUCT
       case FACT_ADDRESS_TYPE:
-        DecrementFactReferenceCount((Fact *) th);
+        ReleaseFact((Fact *) th);
         break;
 #endif
 
@@ -647,7 +675,7 @@ void AtomInstall(
         break;
 
       case MULTIFIELD_TYPE:
-        IncrementMultifieldReferenceCount(theEnv,(Multifield *) vPtr);
+        RetainMultifield(theEnv,(Multifield *) vPtr);
         break;
 
       case VOID_TYPE:
@@ -681,23 +709,23 @@ void AtomDeinstall(
 #if OBJECT_SYSTEM
       case INSTANCE_NAME_TYPE:
 #endif
-        DecrementLexemeReferenceCount(theEnv,(CLIPSLexeme *) vPtr);
+        ReleaseLexeme(theEnv,(CLIPSLexeme *) vPtr);
         break;
 
       case FLOAT_TYPE:
-        DecrementFloatReferenceCount(theEnv,(CLIPSFloat *) vPtr);
+        ReleaseFloat(theEnv,(CLIPSFloat *) vPtr);
         break;
 
       case INTEGER_TYPE:
-        DecrementIntegerReferenceCount(theEnv,(CLIPSInteger *) vPtr);
+        ReleaseInteger(theEnv,(CLIPSInteger *) vPtr);
         break;
 
       case EXTERNAL_ADDRESS_TYPE:
-        DecrementExternalAddressReferenceCount(theEnv,(CLIPSExternalAddress *) vPtr);
+        ReleaseExternalAddress(theEnv,(CLIPSExternalAddress *) vPtr);
         break;
 
       case MULTIFIELD_TYPE:
-        DecrementMultifieldReferenceCount(theEnv,(Multifield *) vPtr);
+        ReleaseMultifield(theEnv,(Multifield *) vPtr);
         break;
 
       case VOID_TYPE:
@@ -1035,11 +1063,11 @@ static void PrintCAddress(
   {
    char buffer[20];
 
-   PrintString(theEnv,logicalName,"<Pointer-C-");
+   WriteString(theEnv,logicalName,"<Pointer-C-");
 
    gensprintf(buffer,"%p",((CLIPSExternalAddress *) theValue)->contents);
-   PrintString(theEnv,logicalName,buffer);
-   PrintString(theEnv,logicalName,">");
+   WriteString(theEnv,logicalName,buffer);
+   WriteString(theEnv,logicalName,">");
   }
 
 /****************/
@@ -1057,7 +1085,7 @@ static void NewCAddress(
    if (numberOfArguments != 1)
      {
       PrintErrorID(theEnv,"NEW",1,false);
-      PrintString(theEnv,WERROR,"Function new expected no additional arguments for the C external language type.\n");
+      WriteString(theEnv,STDERR,"Function new expected no additional arguments for the C external language type.\n");
       SetEvaluationError(theEnv,true);
       return;
      }
@@ -1073,7 +1101,7 @@ static bool DiscardCAddress(
   Environment *theEnv,
   void *theValue)
   {
-   PrintString(theEnv,STDOUT,"Discarding C Address\n");
+   WriteString(theEnv,STDOUT,"Discarding C Address\n");
 
    return true;
   }

@@ -203,14 +203,14 @@ static void UpdateExpression(
 #if DEFTEMPLATE_CONSTRUCT
       case FACT_ADDRESS_TYPE:
         ExpressionData(theEnv)->ExpressionArray[obji].value = &FactData(theEnv)->DummyFact;
-        IncrementFactReferenceCount((Fact *) ExpressionData(theEnv)->ExpressionArray[obji].value);
+        RetainFact((Fact *) ExpressionData(theEnv)->ExpressionArray[obji].value);
         break;
 #endif
 
 #if OBJECT_SYSTEM
       case INSTANCE_ADDRESS_TYPE:
         ExpressionData(theEnv)->ExpressionArray[obji].value = &InstanceData(theEnv)->DummyInstance;
-        IncrementInstanceReferenceCount((Instance *) ExpressionData(theEnv)->ExpressionArray[obji].value);
+        RetainInstance((Instance *) ExpressionData(theEnv)->ExpressionArray[obji].value);
         break;
 #endif
 
@@ -266,24 +266,24 @@ void ClearBloadedExpressions(
          case STRING_TYPE          :
          case INSTANCE_NAME_TYPE   :
          case GBL_VARIABLE    :
-           DecrementLexemeReferenceCount(theEnv,ExpressionData(theEnv)->ExpressionArray[i].lexemeValue);
+           ReleaseLexeme(theEnv,ExpressionData(theEnv)->ExpressionArray[i].lexemeValue);
            break;
          case FLOAT_TYPE           :
-           DecrementFloatReferenceCount(theEnv,ExpressionData(theEnv)->ExpressionArray[i].floatValue);
+           ReleaseFloat(theEnv,ExpressionData(theEnv)->ExpressionArray[i].floatValue);
            break;
          case INTEGER_TYPE         :
-           DecrementIntegerReferenceCount(theEnv,ExpressionData(theEnv)->ExpressionArray[i].integerValue);
+           ReleaseInteger(theEnv,ExpressionData(theEnv)->ExpressionArray[i].integerValue);
            break;
 
 #if DEFTEMPLATE_CONSTRUCT
          case FACT_ADDRESS_TYPE    :
-           DecrementFactReferenceCount((Fact *) ExpressionData(theEnv)->ExpressionArray[i].value);
+           ReleaseFact((Fact *) ExpressionData(theEnv)->ExpressionArray[i].value);
            break;
 #endif
 
 #if OBJECT_SYSTEM
          case INSTANCE_ADDRESS_TYPE :
-           DecrementInstanceReferenceCount((Instance *) ExpressionData(theEnv)->ExpressionArray[i].value);
+           ReleaseInstance((Instance *) ExpressionData(theEnv)->ExpressionArray[i].value);
            break;
 #endif
 

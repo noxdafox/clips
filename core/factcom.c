@@ -643,7 +643,7 @@ void Facts(
       if (factPtr->factIndex >= start)
         {
          PrintFactWithIdentifier(theEnv,logicalName,factPtr,NULL);
-         PrintString(theEnv,logicalName,"\n");
+         WriteString(theEnv,logicalName,"\n");
          count++;
          if (max > 0) max--;
         }
@@ -961,7 +961,7 @@ bool SaveFactsDriver(
       if (printFact)
         {
          PrintFact(theEnv,(char *) filePtr,theFact,false,false,NULL);
-         PrintString(theEnv,(char *) filePtr,"\n");
+         WriteString(theEnv,(char *) filePtr,"\n");
         }
      }
 
@@ -1247,7 +1247,7 @@ static struct expr *StandardLoadFact(
 
    if (error == true)
      {
-      PrintString(theEnv,WERROR,"Function load-facts encountered an error\n");
+      WriteString(theEnv,STDERR,"Function load-facts encountered an error\n");
       SetEvaluationError(theEnv,true);
       ReturnExpression(theEnv,temp);
       return NULL;

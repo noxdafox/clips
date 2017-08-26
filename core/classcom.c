@@ -788,16 +788,16 @@ static void SaveDefclass(
    ppForm = DefclassPPForm(theDefclass);
    if (ppForm != NULL)
      {
-      PrintString(theEnv,logName,ppForm);
-      PrintString(theEnv,logName,"\n");
+      WriteString(theEnv,logName,ppForm);
+      WriteString(theEnv,logName,"\n");
       hnd = GetNextDefmessageHandler(theDefclass,0);
       while (hnd != 0)
         {
          ppForm = DefmessageHandlerPPForm(theDefclass,hnd);
          if (ppForm != NULL)
            {
-            PrintString(theEnv,logName,ppForm);
-            PrintString(theEnv,logName,"\n");
+            WriteString(theEnv,logName,ppForm);
+            WriteString(theEnv,logName,"\n");
            }
          hnd = GetNextDefmessageHandler(theDefclass,hnd);
         }

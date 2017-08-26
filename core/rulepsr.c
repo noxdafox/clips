@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.50  07/30/16             */
+   /*            CLIPS Version 6.50  06/28/17             */
    /*                                                     */
    /*                 RULE PARSING MODULE                 */
    /*******************************************************/
@@ -35,6 +35,9 @@
 /*            Changed find construct functionality so that   */
 /*            imported modules are search when locating a    */
 /*            named construct.                               */
+/*                                                           */
+/*      6.31: DR#882 Logical retraction not working if       */
+/*            logical CE starts with test CE.                */
 /*                                                           */
 /*      6.40: Pragma once and other inclusion changes.       */
 /*                                                           */
@@ -376,18 +379,6 @@ static Defrule *ProcessRuleLHS(
         { DumpRuleAnalysis(theEnv,tempNode); }
 #endif
 
-      /*========================================*/
-      /* Check to see that logical CEs are used */
-      /* appropriately in the LHS of the rule.  */
-      /*========================================*/
-
-      if ((logicalJoin = LogicalAnalysis(theEnv,tempNode)) < 0)
-        {
-         *error = true;
-         ReturnDefrule(theEnv,topDisjunct);
-         return NULL;
-        }
-
       /*======================================================*/
       /* Check to see if there are any RHS constraint errors. */
       /*======================================================*/
@@ -398,7 +389,7 @@ static Defrule *ProcessRuleLHS(
          ReturnDefrule(theEnv,topDisjunct);
          return NULL;
         }
-
+        
       /*=================================================*/
       /* Replace variable references in the RHS with the */
       /* appropriate variable retrieval functions.       */
@@ -407,6 +398,27 @@ static Defrule *ProcessRuleLHS(
       newActions = CopyExpression(theEnv,actions);
       if (ReplaceProcVars(theEnv,"RHS of defrule",newActions,NULL,NULL,
                           ReplaceRHSVariable,tempNode))
+        {
+         *error = true;
+         ReturnDefrule(theEnv,topDisjunct);
+         ReturnExpression(theEnv,newActions);
+         return NULL;
+        }
+
+      /*===================================================*/
+      /* Remove any test CEs from the LHS and attach their */
+      /* expression to the closest preceeding non-negated  */
+      /* join at the same not/and depth.                   */
+      /*===================================================*/
+
+      AttachTestCEsToPatternCEs(theEnv,tempNode);
+
+      /*========================================*/
+      /* Check to see that logical CEs are used */
+      /* appropriately in the LHS of the rule.  */
+      /*========================================*/
+
+      if ((logicalJoin = LogicalAnalysis(theEnv,tempNode)) < 0)
         {
          *error = true;
          ReturnDefrule(theEnv,topDisjunct);
@@ -799,7 +811,9 @@ static int LogicalAnalysis(
       /* or is embedded within a not/and CE.   */
       /*=======================================*/
 
-      if ((patternList->pnType != PATTERN_CE_NODE) || (patternList->endNandDepth != 1))
+      if (((patternList->pnType != PATTERN_CE_NODE) &&
+           (patternList->pnType != TEST_CE_NODE)) ||
+          (patternList->endNandDepth != 1))
         { continue; }
 
       /*=====================================================*/
@@ -825,7 +839,7 @@ static int LogicalAnalysis(
       if (! firstLogical)
         {
          PrintErrorID(theEnv,"RULEPSR",1,true);
-         PrintString(theEnv,WERROR,"Logical CEs must be placed first in a rule\n");
+         WriteString(theEnv,STDERR,"Logical CEs must be placed first in a rule\n");
          return -1;
         }
 
@@ -838,7 +852,7 @@ static int LogicalAnalysis(
       if (gap)
         {
          PrintErrorID(theEnv,"RULEPSR",2,true);
-         PrintString(theEnv,WERROR,"Gaps may not exist between logical CEs\n");
+         WriteString(theEnv,STDERR,"Gaps may not exist between logical CEs\n");
          return -1;
         }
 
@@ -1001,7 +1015,7 @@ void DumpRuleAnalysis(
    struct lhsParseNode *traceNode;
    char buffer[20];
 
-   PrintString(theEnv,STDOUT,"\n");
+   WriteString(theEnv,STDOUT,"\n");
    for (traceNode = tempNode; traceNode != NULL; traceNode = traceNode->bottom)
      {
       if (traceNode->userCE)
@@ -1009,58 +1023,58 @@ void DumpRuleAnalysis(
       else
         { gensprintf(buffer,"SCE %2d J%2d (%2d %2d): ",traceNode->whichCE,traceNode->joinDepth,traceNode->beginNandDepth,traceNode->endNandDepth); }
 
-      PrintString(theEnv,STDOUT,buffer);
+      WriteString(theEnv,STDOUT,buffer);
 
       PrintExpression(theEnv,STDOUT,traceNode->networkTest);
-      PrintString(theEnv,STDOUT,"\n");
+      WriteString(theEnv,STDOUT,"\n");
 
       if (traceNode->externalNetworkTest != NULL)
         {
-         PrintString(theEnv,STDOUT,"      ENT: ");
+         WriteString(theEnv,STDOUT,"      ENT: ");
          PrintExpression(theEnv,STDOUT,traceNode->externalNetworkTest);
-         PrintString(theEnv,STDOUT,"\n");
+         WriteString(theEnv,STDOUT,"\n");
         }
 
       if (traceNode->secondaryNetworkTest != NULL)
         {
-         PrintString(theEnv,STDOUT,"      SNT: ");
+         WriteString(theEnv,STDOUT,"      SNT: ");
          PrintExpression(theEnv,STDOUT,traceNode->secondaryNetworkTest);
-         PrintString(theEnv,STDOUT,"\n");
+         WriteString(theEnv,STDOUT,"\n");
         }
 
       if (traceNode->externalRightHash != NULL)
         {
-         PrintString(theEnv,STDOUT,"      ERH: ");
+         WriteString(theEnv,STDOUT,"      ERH: ");
          PrintExpression(theEnv,STDOUT,traceNode->externalRightHash);
-         PrintString(theEnv,STDOUT,"\n");
+         WriteString(theEnv,STDOUT,"\n");
         }
 
       if (traceNode->externalLeftHash != NULL)
         {
-         PrintString(theEnv,STDOUT,"      ELH: ");
+         WriteString(theEnv,STDOUT,"      ELH: ");
          PrintExpression(theEnv,STDOUT,traceNode->externalLeftHash);
-         PrintString(theEnv,STDOUT,"\n");
+         WriteString(theEnv,STDOUT,"\n");
         }
 
       if (traceNode->leftHash != NULL)
         {
-         PrintString(theEnv,STDOUT,"       LH: ");
+         WriteString(theEnv,STDOUT,"       LH: ");
          PrintExpression(theEnv,STDOUT,traceNode->leftHash);
-         PrintString(theEnv,STDOUT,"\n");
+         WriteString(theEnv,STDOUT,"\n");
         }
 
       if (traceNode->rightHash != NULL)
         {
-         PrintString(theEnv,STDOUT,"       RH: ");
+         WriteString(theEnv,STDOUT,"       RH: ");
          PrintExpression(theEnv,STDOUT,traceNode->rightHash);
-         PrintString(theEnv,STDOUT,"\n");
+         WriteString(theEnv,STDOUT,"\n");
         }
 
       if (traceNode->betaHash != NULL)
         {
-         PrintString(theEnv,STDOUT,"       BH: ");
+         WriteString(theEnv,STDOUT,"       BH: ");
          PrintExpression(theEnv,STDOUT,traceNode->betaHash);
-         PrintString(theEnv,STDOUT,"\n");
+         WriteString(theEnv,STDOUT,"\n");
         }
      }
   }

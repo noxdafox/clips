@@ -160,7 +160,7 @@ bool Bsave(
    if (Bloaded(theEnv))
      {
       PrintErrorID(theEnv,"BSAVE",1,false);
-      PrintString(theEnv,WERROR,
+      WriteString(theEnv,STDERR,
           "Cannot perform a binary save while a binary load is in effect.\n");
       return false;
      }

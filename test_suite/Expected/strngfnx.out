@@ -107,7 +107,7 @@ CLIPS> (str-index a "a")                  ; 10.4.4
 CLIPS> (str-index "" "")                  ; 10.4.4
 1
 CLIPS> (str-index "" "xy")                ; 10.4.4
-3
+1
 CLIPS> (str-index "xy" "")                ; 10.4.4
 FALSE
 CLIPS> (str-index "ab" "abcd")            ; 10.4.4

@@ -59,16 +59,16 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static bool                    FindStringCallback(Environment *,const char *,void *);
-   static void                    PrintStringCallback(Environment *,const char *,const char *,void *);
-   static int                     GetcStringCallback(Environment *,const char *,void *);
-   static int                     UngetcStringCallback(Environment *,const char *,int,void *);
+   static bool                    QueryStringCallback(Environment *,const char *,void *);
+   static void                    WriteStringCallback(Environment *,const char *,const char *,void *);
+   static int                     ReadStringCallback(Environment *,const char *,void *);
+   static int                     UnreadStringCallback(Environment *,const char *,int,void *);
    static StringRouter           *FindStringRouter(Environment *,const char *);
    static bool                    CreateReadStringSource(Environment *,const char *,const char *,size_t,size_t);
    static void                    DeallocateStringRouterData(Environment *);
    static StringBuilderRouter    *FindStringBuilderRouter(Environment *,const char *);
-   static bool                    FindStringBuilderCallback(Environment *,const char *,void *);
-   static void                    PrintStringBuilderCallback(Environment *,const char *,const char *,void *);
+   static bool                    QueryStringBuilderCallback(Environment *,const char *,void *);
+   static void                    WriteStringBuilderCallback(Environment *,const char *,const char *,void *);
 
 /**********************************************************/
 /* InitializeStringRouter: Initializes string I/O router. */
@@ -78,8 +78,8 @@ void InitializeStringRouter(
   {
    AllocateEnvironmentData(theEnv,STRING_ROUTER_DATA,sizeof(struct stringRouterData),DeallocateStringRouterData);
 
-   AddRouter(theEnv,"string",0,FindStringCallback,PrintStringCallback,GetcStringCallback,UngetcStringCallback,NULL,NULL);
-   AddRouter(theEnv,"stringBuilder",0,FindStringBuilderCallback,PrintStringBuilderCallback,NULL,NULL,NULL,NULL);
+   AddRouter(theEnv,"string",0,QueryStringCallback,WriteStringCallback,ReadStringCallback,UnreadStringCallback,NULL,NULL);
+   AddRouter(theEnv,"stringBuilder",0,QueryStringBuilderCallback,WriteStringBuilderCallback,NULL,NULL,NULL,NULL);
   }
 
 /*******************************************/
@@ -112,9 +112,9 @@ static void DeallocateStringRouterData(
   }
 
 /*********************************************************************/
-/* FindStringCallback: Find routine for string router logical names. */
+/* QueryStringCallback: Find routine for string router logical names. */
 /*********************************************************************/
-static bool FindStringCallback(
+static bool QueryStringCallback(
   Environment *theEnv,
   const char *logicalName,
   void *context)
@@ -133,9 +133,9 @@ static bool FindStringCallback(
   }
 
 /**********************************************************/
-/* PrintStringCallback: Print routine for string routers. */
+/* WriteStringCallback: Print routine for string routers. */
 /**********************************************************/
-static void PrintStringCallback(
+static void WriteStringCallback(
   Environment *theEnv,
   const char *logicalName,
   const char *str,
@@ -164,9 +164,9 @@ static void PrintStringCallback(
   }
 
 /********************************************************/
-/* GetcStringCallback: Getc routine for string routers. */
+/* ReadStringCallback: Getc routine for string routers. */
 /********************************************************/
-static int GetcStringCallback(
+static int ReadStringCallback(
   Environment *theEnv,
   const char *logicalName,
   void *context)
@@ -195,9 +195,9 @@ static int GetcStringCallback(
   }
 
 /************************************************************/
-/* UngetcStringCallback: Ungetc routine for string routers. */
+/* UnreadStringCallback: Ungetc routine for string routers. */
 /************************************************************/
-static int UngetcStringCallback(
+static int UnreadStringCallback(
   Environment *theEnv,
   const char *logicalName,
   int ch,
@@ -475,11 +475,11 @@ static struct stringBuilderRouter *FindStringBuilderRouter(
    return NULL;
   }
 
-/***********************************************/
-/* FindStringBuilderCallback: Find routine for */
-/*   stringBuilder router logical names.       */
-/***********************************************/
-static bool FindStringBuilderCallback(
+/*********************************************/
+/* QueryStringBuilderCallback: Query routine */
+/*   for stringBuilder router logical names. */
+/*********************************************/
+static bool QueryStringBuilderCallback(
   Environment *theEnv,
   const char *logicalName,
   void *context)
@@ -498,10 +498,10 @@ static bool FindStringBuilderCallback(
   }
 
 /*********************************************/
-/* PrintStringBuilderCallback: Print routine */
+/* WriteStringBuilderCallback: Print routine */
 /*    for stringBuilder routers.             */
 /*********************************************/
-static void PrintStringBuilderCallback(
+static void WriteStringBuilderCallback(
   Environment *theEnv,
   const char *logicalName,
   const char *str,

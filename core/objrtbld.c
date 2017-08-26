@@ -153,7 +153,7 @@
    static void                    DeleteIntermediateClassBitMap(Environment *,CLASS_BITMAP *);
    static void                   *CopyClassBitMap(Environment *,void *);
    static void                    DeleteClassBitMap(Environment *,void *);
-   static void                    MarkBitMapClassesBusy(Environment *,CLIPSBitMap *,bool);
+   static void                    MarkBitMapClassesBusy(Environment *,CLIPSBitMap *,int);
    static bool                    EmptyClassBitMap(CLASS_BITMAP *);
    static bool                    IdenticalClassBitMap(CLASS_BITMAP *,CLASS_BITMAP *);
    static bool                    ProcessClassRestriction(Environment *,CLASS_BITMAP *,struct lhsParseNode **,bool);
@@ -332,7 +332,7 @@ static struct lhsParseNode *ObjectLHSParse(
    if (EmptyClassBitMap(clsset))
      {
       PrintErrorID(theEnv,"OBJRTBLD",1,false);
-      PrintString(theEnv,WERROR,"No objects of existing classes can satisfy pattern.\n");
+      WriteString(theEnv,STDERR,"No objects of existing classes can satisfy pattern.\n");
       DeleteIntermediateClassBitMap(theEnv,clsset);
       return NULL;
      }
@@ -403,16 +403,16 @@ static struct lhsParseNode *ObjectLHSParse(
       if (EmptyClassBitMap(tmpset))
         {
          PrintErrorID(theEnv,"OBJRTBLD",2,false);
-         PrintString(theEnv,WERROR,"No objects of existing classes can satisfy ");
-         PrintString(theEnv,WERROR,tmpNode->slot->contents);
-         PrintString(theEnv,WERROR," restriction in object pattern.\n");
+         WriteString(theEnv,STDERR,"No objects of existing classes can satisfy ");
+         WriteString(theEnv,STDERR,tmpNode->slot->contents);
+         WriteString(theEnv,STDERR," restriction in object pattern.\n");
          ReturnLHSParseNodes(theEnv,tmpNode);
          goto ObjectLHSParseERROR;
         }
       if (EmptyClassBitMap(clsset))
         {
          PrintErrorID(theEnv,"OBJRTBLD",1,false);
-         PrintString(theEnv,WERROR,"No objects of existing classes can satisfy pattern.\n");
+         WriteString(theEnv,STDERR,"No objects of existing classes can satisfy pattern.\n");
          ReturnLHSParseNodes(theEnv,tmpNode);
          goto ObjectLHSParseERROR;
         }
@@ -432,7 +432,7 @@ static struct lhsParseNode *ObjectLHSParse(
       if (EmptyClassBitMap(clsset))
         {
          PrintErrorID(theEnv,"OBJRTBLD",1,false);
-         PrintString(theEnv,WERROR,"No objects of existing classes can satisfy pattern.\n");
+         WriteString(theEnv,STDERR,"No objects of existing classes can satisfy pattern.\n");
          goto ObjectLHSParseERROR;
         }
       firstNode = GetLHSParseNode(theEnv);
@@ -622,9 +622,9 @@ static bool ReorderAndAnalyzeObjectPattern(
         {
          PrintErrorID(theEnv,"OBJRTBLD",3,true);
          DeleteIntermediateClassBitMap(theEnv,tmpset);
-         PrintString(theEnv,WERROR,"No objects of existing classes can satisfy pattern #");
-         PrintInteger(theEnv,WERROR,topNode->pattern);
-         PrintString(theEnv,WERROR,".\n");
+         WriteString(theEnv,STDERR,"No objects of existing classes can satisfy pattern #");
+         WriteInteger(theEnv,STDERR,topNode->pattern);
+         WriteString(theEnv,STDERR,".\n");
          return true;
         }
       clsset = PackClassBitMap(theEnv,tmpset);
@@ -768,7 +768,7 @@ static struct patternNodeHeader *PlaceObjectPattern(
    newAlphaNode->patternNode = lastLevel;
    newAlphaNode->classbmp = newClassBitMap;
    IncrementBitMapCount(newClassBitMap);
-   MarkBitMapClassesBusy(theEnv,newClassBitMap,true);
+   MarkBitMapClassesBusy(theEnv,newClassBitMap,1);
    newAlphaNode->slotbmp = newSlotBitMap;
    if (newSlotBitMap != NULL)
      IncrementBitMapCount(newSlotBitMap);
@@ -1052,7 +1052,7 @@ static void DetachObjectPattern(
    /* become ephemeral.                                      */
    /*========================================================*/
 
-   MarkBitMapClassesBusy(theEnv,alphaPtr->classbmp,false);
+   MarkBitMapClassesBusy(theEnv,alphaPtr->classbmp,-1);
    DeleteClassBitMap(theEnv,alphaPtr->classbmp);
    if (alphaPtr->slotbmp != NULL)
      { DecrementBitMapReferenceCount(theEnv,alphaPtr->slotbmp); }
@@ -1304,9 +1304,9 @@ static bool CheckDuplicateSlots(
       if (nodeList->slot == slotName)
         {
          PrintErrorID(theEnv,"OBJRTBLD",4,true);
-         PrintString(theEnv,WERROR,"Multiple restrictions on attribute ");
-         PrintString(theEnv,WERROR,slotName->contents);
-         PrintString(theEnv,WERROR," not allowed.\n");
+         WriteString(theEnv,STDERR,"Multiple restrictions on attribute ");
+         WriteString(theEnv,STDERR,slotName->contents);
+         WriteString(theEnv,STDERR," not allowed.\n");
          return true;
         }
       nodeList = nodeList->right;
@@ -1614,7 +1614,7 @@ static void DeleteClassBitMap(
   DESCRIPTION  : Increments/Decrements busy counts
                  of all classes marked in a bitmap
   INPUTS       : 1) The bitmap hash node
-                 2) true or false (to increment or
+                 2) 1 or -1 (to increment or
                     decrement class busy counts)
   RETURNS      : Nothing useful
   SIDE EFFECTS : Bitmap class busy counts updated
@@ -1623,7 +1623,7 @@ static void DeleteClassBitMap(
 static void MarkBitMapClassesBusy(
   Environment *theEnv,
   CLIPSBitMap *bmphn,
-  bool increment)
+  int offset)
   {
    CLASS_BITMAP *bmp;
    unsigned short i;
@@ -1640,8 +1640,7 @@ static void MarkBitMapClassesBusy(
      if (TestBitMap(bmp->map,i))
        {
         cls =  DefclassData(theEnv)->ClassIDMap[i];
-        if (increment) cls->busy++;
-        else cls->busy--;
+        cls->busy += (unsigned int) offset;
        }
   }
 
@@ -1742,7 +1741,7 @@ static bool ProcessClassRestriction(
          if (chk->value == NULL)
            {
             PrintErrorID(theEnv,"OBJRTBLD",5,false);
-            PrintString(theEnv,WERROR,"Undefined class in object pattern.\n");
+            WriteString(theEnv,STDERR,"Undefined class in object pattern.\n");
             DeleteIntermediateClassBitMap(theEnv,tmpset1);
             DeleteIntermediateClassBitMap(theEnv,tmpset2);
             return false;
@@ -1765,8 +1764,8 @@ static bool ProcessClassRestriction(
    if (EmptyClassBitMap(tmpset1))
      {
       PrintErrorID(theEnv,"OBJRTBLD",2,false);
-      PrintString(theEnv,WERROR,"No objects of existing classes can satisfy ");
-      PrintString(theEnv,WERROR,"is-a restriction in object pattern.\n");
+      WriteString(theEnv,STDERR,"No objects of existing classes can satisfy ");
+      WriteString(theEnv,STDERR,"is-a restriction in object pattern.\n");
       DeleteIntermediateClassBitMap(theEnv,tmpset1);
       DeleteIntermediateClassBitMap(theEnv,tmpset2);
       return false;

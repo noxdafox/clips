@@ -158,7 +158,7 @@ void AddHashedPatternNode(
   unsigned short keyType,
   void *keyValue)
   {
-   unsigned long hashValue;
+   size_t hashValue;
    struct patternNodeHashEntry *newhash, *temp;
 
    hashValue = GetAtomicHashValue(keyType,keyValue,1) + HashExternalAddress(parent,0); /* TBD mult * 30 */
@@ -187,7 +187,7 @@ bool RemoveHashedPatternNode(
   unsigned short keyType,
   void *keyValue)
   {
-   unsigned long hashValue;
+   size_t hashValue;
    struct patternNodeHashEntry *hptr, *prev;
 
    hashValue = GetAtomicHashValue(keyType,keyValue,1) + HashExternalAddress(parent,0); /* TBD mult * 30 */
@@ -228,7 +228,7 @@ void *FindHashedPatternNode(
   unsigned short keyType,
   void *keyValue)
   {
-   unsigned long hashValue;
+   size_t hashValue;
    struct patternNodeHashEntry *hptr;
 
    hashValue = GetAtomicHashValue(keyType,keyValue,1) + HashExternalAddress(parent,0); /* TBD mult * 30 */
@@ -310,12 +310,12 @@ void ReservedPatternSymbolErrorMsg(
   const char *usedFor)
   {
    PrintErrorID(theEnv,"PATTERN",1,true);
-   PrintString(theEnv,WERROR,"The symbol ");
-   PrintString(theEnv,WERROR,theSymbol);
-   PrintString(theEnv,WERROR," has special meaning\n");
-   PrintString(theEnv,WERROR,"and may not be used as ");
-   PrintString(theEnv,WERROR,usedFor);
-   PrintString(theEnv,WERROR,".\n");
+   WriteString(theEnv,STDERR,"The symbol ");
+   WriteString(theEnv,STDERR,theSymbol);
+   WriteString(theEnv,STDERR," has special meaning\n");
+   WriteString(theEnv,STDERR,"and may not be used as ");
+   WriteString(theEnv,STDERR,usedFor);
+   WriteString(theEnv,STDERR,".\n");
   }
 
 /************************************************************/
@@ -1101,7 +1101,7 @@ static bool CheckForVariableMixing(
 
      {
       PrintErrorID(theEnv,"PATTERN",2,true);
-      PrintString(theEnv,WERROR,"Single and multifield constraints cannot be mixed in a field constraint\n");
+      WriteString(theEnv,STDERR,"Single and multifield constraints cannot be mixed in a field constraint\n");
       return true;
      }
 

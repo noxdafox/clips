@@ -156,7 +156,7 @@ bool ParseDefmessageHandler(
    if (cls == NULL)
      {
       PrintErrorID(theEnv,"MSGPSR",1,false);
-      PrintString(theEnv,WERROR,"A class must be defined before its message-handlers.\n");
+      WriteString(theEnv,STDERR,"A class must be defined before its message-handlers.\n");
       return true;
      }
    if ((cls == DefclassData(theEnv)->PrimitiveClassMap[INSTANCE_NAME_TYPE]) ||
@@ -164,16 +164,16 @@ bool ParseDefmessageHandler(
        (cls == DefclassData(theEnv)->PrimitiveClassMap[INSTANCE_NAME_TYPE]->directSuperclasses.classArray[0]))
      {
       PrintErrorID(theEnv,"MSGPSR",8,false);
-      PrintString(theEnv,WERROR,"Message-handlers cannot be attached to the class ");
-      PrintString(theEnv,WERROR,DefclassName(cls));
-      PrintString(theEnv,WERROR,".\n");
+      WriteString(theEnv,STDERR,"Message-handlers cannot be attached to the class ");
+      WriteString(theEnv,STDERR,DefclassName(cls));
+      WriteString(theEnv,STDERR,".\n");
       return true;
      }
    if (HandlersExecuting(cls))
      {
       PrintErrorID(theEnv,"MSGPSR",2,false);
-      PrintString(theEnv,WERROR,"Cannot (re)define message-handlers during execution of \n");
-      PrintString(theEnv,WERROR,"  other message-handlers for the same class.\n");
+      WriteString(theEnv,STDERR,"Cannot (re)define message-handlers during execution of \n");
+      WriteString(theEnv,STDERR,"  other message-handlers for the same class.\n");
       return true;
      }
    if (DefclassData(theEnv)->ObjectParseToken.tknType != SYMBOL_TOKEN)
@@ -223,20 +223,20 @@ bool ParseDefmessageHandler(
    hnd = FindHandlerByAddress(cls,mname,mtype);
    if (GetPrintWhileLoading(theEnv) && GetCompilationsWatch(theEnv))
      {
-      PrintString(theEnv,STDOUT,"   Handler ");
-      PrintString(theEnv,STDOUT,mname->contents);
-      PrintString(theEnv,STDOUT," ");
-      PrintString(theEnv,STDOUT,MessageHandlerData(theEnv)->hndquals[mtype]);
+      WriteString(theEnv,STDOUT,"   Handler ");
+      WriteString(theEnv,STDOUT,mname->contents);
+      WriteString(theEnv,STDOUT," ");
+      WriteString(theEnv,STDOUT,MessageHandlerData(theEnv)->hndquals[mtype]);
       if (hnd == NULL)
-        PrintString(theEnv,STDOUT," defined.\n");
+        WriteString(theEnv,STDOUT," defined.\n");
       else
-        PrintString(theEnv,STDOUT," redefined.\n");
+        WriteString(theEnv,STDOUT," redefined.\n");
      }
 
    if ((hnd != NULL) ? hnd->system : false)
      {
       PrintErrorID(theEnv,"MSGPSR",3,false);
-      PrintString(theEnv,WERROR,"System message-handlers may not be modified.\n");
+      WriteString(theEnv,STDERR,"System message-handlers may not be modified.\n");
       return true;
      }
 
@@ -448,7 +448,7 @@ static bool IsParameterSlotReference(
                   (pname[SELF_LEN] == SELF_SLOT_REF) : false)
      {
       PrintErrorID(theEnv,"MSGPSR",4,false);
-      PrintString(theEnv,WERROR,"Illegal slot reference in parameter list.\n");
+      WriteString(theEnv,STDERR,"Illegal slot reference in parameter list.\n");
       return true;
      }
    return false;
@@ -542,7 +542,7 @@ static int BindSlotReference(
    if (strcmp(bindName,SELF_STRING) == 0)
      {
       PrintErrorID(theEnv,"MSGPSR",5,false);
-      PrintString(theEnv,WERROR,"Active instance parameter cannot be changed.\n");
+      WriteString(theEnv,STDERR,"Active instance parameter cannot be changed.\n");
       return -1;
      }
    if ((strncmp(bindName,SELF_STRING,SELF_LEN) == 0) ?
@@ -613,18 +613,18 @@ static SlotDescriptor *CheckSlotReference(
    if (theType != SYMBOL_TYPE)
      {
       PrintErrorID(theEnv,"MSGPSR",7,false);
-      PrintString(theEnv,WERROR,"Illegal value for ?self reference.\n");
+      WriteString(theEnv,STDERR,"Illegal value for ?self reference.\n");
       return NULL;
      }
    slotIndex = FindInstanceTemplateSlot(theEnv,theDefclass,(CLIPSLexeme *) theValue);
    if (slotIndex == -1)
      {
       PrintErrorID(theEnv,"MSGPSR",6,false);
-      PrintString(theEnv,WERROR,"No such slot ");
-      PrintString(theEnv,WERROR,((CLIPSLexeme *) theValue)->contents);
-      PrintString(theEnv,WERROR," in class ");
-      PrintString(theEnv,WERROR,DefclassName(theDefclass));
-      PrintString(theEnv,WERROR," for ?self reference.\n");
+      WriteString(theEnv,STDERR,"No such slot ");
+      WriteString(theEnv,STDERR,((CLIPSLexeme *) theValue)->contents);
+      WriteString(theEnv,STDERR," in class ");
+      WriteString(theEnv,STDERR,DefclassName(theDefclass));
+      WriteString(theEnv,STDERR," for ?self reference.\n");
       return NULL;
      }
    sd = theDefclass->instanceTemplate[slotIndex];
@@ -653,8 +653,8 @@ static SlotDescriptor *CheckSlotReference(
    if (vCode != NO_VIOLATION)
      {
       PrintErrorID(theEnv,"CSTRNCHK",1,false);
-      PrintString(theEnv,WERROR,"Expression for ");
-      PrintSlot(theEnv,WERROR,sd,NULL,"direct slot write");
+      WriteString(theEnv,STDERR,"Expression for ");
+      PrintSlot(theEnv,STDERR,sd,NULL,"direct slot write");
       ConstraintViolationErrorMessage(theEnv,NULL,NULL,0,0,NULL,0,
                                       vCode,sd->constraint,false);
       return NULL;

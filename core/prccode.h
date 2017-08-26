@@ -75,7 +75,7 @@ typedef struct ProcParamStack
 
    unsigned int ParamArraySize;
    UDFValue *WildcardValue;
-   void (*UnboundErrFunc)(Environment *);
+   void (*UnboundErrFunc)(Environment *,const char *);
    struct ProcParamStack *nxt;
   } PROC_PARAM_STACK;
 
@@ -93,7 +93,7 @@ struct proceduralPrimitiveData
    PROC_PARAM_STACK *pstack;
    UDFValue *WildcardValue;
    UDFValue *LocalVarArray;
-   void (*ProcUnboundErrFunc)(Environment *);
+   void (*ProcUnboundErrFunc)(Environment *,const char *);
    EntityRecord ProcParameterInfo;
    EntityRecord ProcWildInfo;
    EntityRecord ProcGetInfo;
@@ -129,7 +129,7 @@ struct proceduralPrimitiveData
 #endif
 #endif
 
-   void                           PushProcParameters(Environment *,Expression *,unsigned int,const char *,const char *,void (*)(Environment *));
+   void                           PushProcParameters(Environment *,Expression *,unsigned int,const char *,const char *,void (*)(Environment *,const char *));
    void                           PopProcParameters(Environment *);
 
 #if DEFGENERIC_CONSTRUCT
@@ -137,7 +137,7 @@ struct proceduralPrimitiveData
 #endif
 
    void                           EvaluateProcActions(Environment *,Defmodule *,Expression *,unsigned short,
-                                                      UDFValue *,void (*)(Environment *));
+                                                      UDFValue *,void (*)(Environment *,const char *));
    void                           PrintProcParamArray(Environment *,const char *);
    void                           GrabProcWildargs(Environment *,UDFValue *,unsigned int);
 

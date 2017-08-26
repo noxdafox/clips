@@ -133,11 +133,11 @@ void OpenErrorMessage(
   const char *fileName)
   {
    PrintErrorID(theEnv,"ARGACCES",2,false);
-   PrintString(theEnv,WERROR,"Function ");
-   PrintString(theEnv,WERROR,functionName);
-   PrintString(theEnv,WERROR," was unable to open file ");
-   PrintString(theEnv,WERROR,fileName);
-   PrintString(theEnv,WERROR,".\n");
+   WriteString(theEnv,STDERR,"Function ");
+   WriteString(theEnv,STDERR,functionName);
+   WriteString(theEnv,STDERR," was unable to open file ");
+   WriteString(theEnv,STDERR,fileName);
+   WriteString(theEnv,STDERR,".\n");
   }
 
 /************************************************************/
@@ -229,20 +229,20 @@ void ExpectedCountError(
   unsigned int expectedNumber)
   {
    PrintErrorID(theEnv,"ARGACCES",4,false);
-   PrintString(theEnv,WERROR,"Function ");
-   PrintString(theEnv,WERROR,functionName);
+   WriteString(theEnv,STDERR,"Function ");
+   WriteString(theEnv,STDERR,functionName);
 
    if (countRelation == EXACTLY)
-     { PrintString(theEnv,WERROR," expected exactly "); }
+     { WriteString(theEnv,STDERR," expected exactly "); }
    else if (countRelation == AT_LEAST)
-     { PrintString(theEnv,WERROR," expected at least "); }
+     { WriteString(theEnv,STDERR," expected at least "); }
    else if (countRelation == NO_MORE_THAN)
-     { PrintString(theEnv,WERROR," expected no more than "); }
+     { WriteString(theEnv,STDERR," expected no more than "); }
    else
-     { PrintString(theEnv,WERROR," generated an illegal argument check for "); }
+     { WriteString(theEnv,STDERR," generated an illegal argument check for "); }
 
-   PrintUnsignedInteger(theEnv,WERROR,expectedNumber);
-   PrintString(theEnv,WERROR," argument(s)\n");
+   PrintUnsignedInteger(theEnv,STDERR,expectedNumber);
+   WriteString(theEnv,STDERR," argument(s)\n");
   }
 
 /*************************************************************/
@@ -349,11 +349,11 @@ void ExpectedTypeError0(
   unsigned int whichArg)
   {
    PrintErrorID(theEnv,"ARGACCES",5,false);
-   PrintString(theEnv,WERROR,"Function ");
-   PrintString(theEnv,WERROR,functionName);
-   PrintString(theEnv,WERROR," expected argument #");
-   PrintInteger(theEnv,WERROR,whichArg);
-   PrintString(theEnv,WERROR," to be of type ");
+   WriteString(theEnv,STDERR,"Function ");
+   WriteString(theEnv,STDERR,functionName);
+   WriteString(theEnv,STDERR," expected argument #");
+   WriteInteger(theEnv,STDERR,whichArg);
+   WriteString(theEnv,STDERR," to be of type ");
   }
 
 /*******************************************************************/
@@ -368,8 +368,8 @@ void ExpectedTypeError1(
   const char *expectedType)
   {
    ExpectedTypeError0(theEnv,functionName,whichArg);
-   PrintString(theEnv,WERROR,expectedType);
-   PrintString(theEnv,WERROR,"\n");
+   WriteString(theEnv,STDERR,expectedType);
+   WriteString(theEnv,STDERR,"\n");
   }
 
 /**************************************************************/
@@ -392,7 +392,7 @@ void ExpectedTypeError2(
 
    theRestriction = GetNthRestriction(theEnv,theFunction,whichArg);
    ExpectedTypeError0(theEnv,functionName,whichArg);
-   PrintTypesString(theEnv,WERROR,theRestriction,true);
+   PrintTypesString(theEnv,STDERR,theRestriction,true);
   }
 
 /***************************************************/
@@ -473,7 +473,7 @@ void IllegalLogicalNameMessage(
   const char *theFunction)
   {
    PrintErrorID(theEnv,"IOFUN",1,false);
-   PrintString(theEnv,WERROR,"Illegal logical name used for ");
-   PrintString(theEnv,WERROR,theFunction);
-   PrintString(theEnv,WERROR," function.\n");
+   WriteString(theEnv,STDERR,"Illegal logical name used for ");
+   WriteString(theEnv,STDERR,theFunction);
+   WriteString(theEnv,STDERR," function.\n");
   }

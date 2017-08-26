@@ -194,11 +194,11 @@ void GenericDispatch(
          PrintErrorID(theEnv,"GENRCEXE",4,false);
          SetEvaluationError(theEnv,true);
          DefgenericData(theEnv)->CurrentMethod = NULL;
-         PrintString(theEnv,WERROR,"Generic function ");
-         PrintString(theEnv,WERROR,DefgenericName(gfunc));
-         PrintString(theEnv,WERROR," method #");
-         PrintUnsignedInteger(theEnv,WERROR,meth->index);
-         PrintString(theEnv,WERROR," is not applicable to the given arguments.\n");
+         WriteString(theEnv,STDERR,"Generic function ");
+         WriteString(theEnv,STDERR,DefgenericName(gfunc));
+         WriteString(theEnv,STDERR," method #");
+         PrintUnsignedInteger(theEnv,STDERR,meth->index);
+         WriteString(theEnv,STDERR," is not applicable to the given arguments.\n");
         }
      }
    else
@@ -248,9 +248,9 @@ void GenericDispatch(
    else if (! EvaluationData(theEnv)->EvaluationError)
      {
       PrintErrorID(theEnv,"GENRCEXE",1,false);
-      PrintString(theEnv,WERROR,"No applicable methods for ");
-      PrintString(theEnv,WERROR,DefgenericName(gfunc));
-      PrintString(theEnv,WERROR,".\n");
+      WriteString(theEnv,STDERR,"No applicable methods for ");
+      WriteString(theEnv,STDERR,DefgenericName(gfunc));
+      WriteString(theEnv,STDERR,".\n");
       SetEvaluationError(theEnv,true);
      }
    gfunc->busy--;
@@ -273,17 +273,18 @@ void GenericDispatch(
                    errors
   INPUTS       : None
   RETURNS      : Nothing useful
-  SIDE EFFECTS : Error synopsis printed to WERROR
+  SIDE EFFECTS : Error synopsis printed to STDERR
   NOTES        : None
  *******************************************************/
 void UnboundMethodErr(
-  Environment *theEnv)
+  Environment *theEnv,
+  const char *logName)
   {
-   PrintString(theEnv,WERROR,"generic function ");
-   PrintString(theEnv,WERROR,DefgenericName(DefgenericData(theEnv)->CurrentGeneric));
-   PrintString(theEnv,WERROR," method #");
-   PrintUnsignedInteger(theEnv,WERROR,DefgenericData(theEnv)->CurrentMethod->index);
-   PrintString(theEnv,WERROR,".\n");
+   WriteString(theEnv,logName,"generic function ");
+   WriteString(theEnv,logName,DefgenericName(DefgenericData(theEnv)->CurrentGeneric));
+   WriteString(theEnv,logName," method #");
+   PrintUnsignedInteger(theEnv,logName,DefgenericData(theEnv)->CurrentMethod->index);
+   WriteString(theEnv,logName,".\n");
   }
 
 /***********************************************************************
@@ -441,7 +442,7 @@ void CallNextMethod(
      {
       DefgenericData(theEnv)->CurrentMethod = oldMethod;
       PrintErrorID(theEnv,"GENRCEXE",2,false);
-      PrintString(theEnv,WERROR,"Shadowed methods not applicable in current context.\n");
+      WriteString(theEnv,STDERR,"Shadowed methods not applicable in current context.\n");
       SetEvaluationError(theEnv,true);
       return;
      }
@@ -545,7 +546,7 @@ void OverrideNextMethod(
    if (DefgenericData(theEnv)->CurrentMethod == NULL)
      {
       PrintErrorID(theEnv,"GENRCEXE",2,false);
-      PrintString(theEnv,WERROR,"Shadowed methods not applicable in current context.\n");
+      WriteString(theEnv,STDERR,"Shadowed methods not applicable in current context.\n");
       SetEvaluationError(theEnv,true);
       return;
      }
@@ -631,18 +632,18 @@ static void WatchGeneric(
        ConstructData(theEnv)->ClearInProgress)
      { return; }
 
-   PrintString(theEnv,STDOUT,"GNC ");
-   PrintString(theEnv,STDOUT,tstring);
-   PrintString(theEnv,STDOUT," ");
+   WriteString(theEnv,STDOUT,"GNC ");
+   WriteString(theEnv,STDOUT,tstring);
+   WriteString(theEnv,STDOUT," ");
    if (DefgenericData(theEnv)->CurrentGeneric->header.whichModule->theModule != GetCurrentModule(theEnv))
      {
-      PrintString(theEnv,STDOUT,DefgenericModule(DefgenericData(theEnv)->CurrentGeneric));
-      PrintString(theEnv,STDOUT,"::");
+      WriteString(theEnv,STDOUT,DefgenericModule(DefgenericData(theEnv)->CurrentGeneric));
+      WriteString(theEnv,STDOUT,"::");
      }
-   PrintString(theEnv,STDOUT,DefgenericData(theEnv)->CurrentGeneric->header.name->contents);
-   PrintString(theEnv,STDOUT," ");
-   PrintString(theEnv,STDOUT," ED:");
-   PrintInteger(theEnv,STDOUT,EvaluationData(theEnv)->CurrentEvaluationDepth);
+   WriteString(theEnv,STDOUT,DefgenericData(theEnv)->CurrentGeneric->header.name->contents);
+   WriteString(theEnv,STDOUT," ");
+   WriteString(theEnv,STDOUT," ED:");
+   WriteInteger(theEnv,STDOUT,EvaluationData(theEnv)->CurrentEvaluationDepth);
    PrintProcParamArray(theEnv,STDOUT);
   }
 
@@ -666,22 +667,22 @@ static void WatchMethod(
        ConstructData(theEnv)->ClearInProgress)
      { return; }
 
-   PrintString(theEnv,STDOUT,"MTH ");
-   PrintString(theEnv,STDOUT,tstring);
-   PrintString(theEnv,STDOUT," ");
+   WriteString(theEnv,STDOUT,"MTH ");
+   WriteString(theEnv,STDOUT,tstring);
+   WriteString(theEnv,STDOUT," ");
    if (DefgenericData(theEnv)->CurrentGeneric->header.whichModule->theModule != GetCurrentModule(theEnv))
      {
-      PrintString(theEnv,STDOUT,DefgenericModule(DefgenericData(theEnv)->CurrentGeneric));
-      PrintString(theEnv,STDOUT,"::");
+      WriteString(theEnv,STDOUT,DefgenericModule(DefgenericData(theEnv)->CurrentGeneric));
+      WriteString(theEnv,STDOUT,"::");
      }
-   PrintString(theEnv,STDOUT,DefgenericData(theEnv)->CurrentGeneric->header.name->contents);
-   PrintString(theEnv,STDOUT,":#");
+   WriteString(theEnv,STDOUT,DefgenericData(theEnv)->CurrentGeneric->header.name->contents);
+   WriteString(theEnv,STDOUT,":#");
    if (DefgenericData(theEnv)->CurrentMethod->system)
-     PrintString(theEnv,STDOUT,"SYS");
+     WriteString(theEnv,STDOUT,"SYS");
    PrintUnsignedInteger(theEnv,STDOUT,DefgenericData(theEnv)->CurrentMethod->index);
-   PrintString(theEnv,STDOUT," ");
-   PrintString(theEnv,STDOUT," ED:");
-   PrintInteger(theEnv,STDOUT,EvaluationData(theEnv)->CurrentEvaluationDepth);
+   WriteString(theEnv,STDOUT," ");
+   WriteString(theEnv,STDOUT," ED:");
+   WriteInteger(theEnv,STDOUT,EvaluationData(theEnv)->CurrentEvaluationDepth);
    PrintProcParamArray(theEnv,STDOUT);
   }
 
@@ -721,11 +722,11 @@ static Defclass *DetermineRestrictionClass(
      {
       SetEvaluationError(theEnv,true);
       PrintErrorID(theEnv,"GENRCEXE",3,false);
-      PrintString(theEnv,WERROR,"Unable to determine class of ");
-      PrintUDFValue(theEnv,WERROR,dobj);
-      PrintString(theEnv,WERROR," in generic function ");
-      PrintString(theEnv,WERROR,DefgenericName(DefgenericData(theEnv)->CurrentGeneric));
-      PrintString(theEnv,WERROR,".\n");
+      WriteString(theEnv,STDERR,"Unable to determine class of ");
+      WriteUDFValue(theEnv,STDERR,dobj);
+      WriteString(theEnv,STDERR," in generic function ");
+      WriteString(theEnv,STDERR,DefgenericName(DefgenericData(theEnv)->CurrentGeneric));
+      WriteString(theEnv,STDERR,".\n");
      }
    return(cls);
   }

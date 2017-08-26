@@ -332,9 +332,9 @@ int LoadConstructsFromLogicalName(
 
       if (constructFlag == 1)
         {
-         PrintString(theEnv,WERROR,"\nERROR:\n");
-         PrintString(theEnv,WERROR,GetPPBuffer(theEnv));
-         PrintString(theEnv,WERROR,"\n");
+         WriteString(theEnv,STDERR,"\nERROR:\n");
+         WriteString(theEnv,STDERR,GetPPBuffer(theEnv));
+         WriteString(theEnv,STDERR,"\n");
 
          FlushParsingMessages(theEnv);
 
@@ -367,7 +367,7 @@ int LoadConstructsFromLogicalName(
       YieldTime(theEnv);
 
       if (foundConstruct)
-         { DecrementLexemeReferenceCount(theEnv,theToken.lexemeValue); }
+         { ReleaseLexeme(theEnv,theToken.lexemeValue); }
      }
 
    /*========================================================*/
@@ -380,7 +380,7 @@ int LoadConstructsFromLogicalName(
 #else
    if (GetPrintWhileLoading(theEnv))
 #endif
-     { PrintString(theEnv,STDOUT,"\n"); }
+     { WriteString(theEnv,STDOUT,"\n"); }
 
    /*=============================================================*/
    /* Once the load is complete, destroy the pretty print buffer. */
@@ -480,7 +480,7 @@ static bool FindConstructBeginning(
             errorCorrection = true;
             *noErrors = false;
             PrintErrorID(theEnv,"CSTRCPSR",1,true);
-            PrintString(theEnv,WERROR,"Expected the beginning of a construct.\n");
+            WriteString(theEnv,STDERR,"Expected the beginning of a construct.\n");
            }
 
          /*======================================================*/
@@ -506,7 +506,7 @@ static bool FindConstructBeginning(
             errorCorrection = true;
             *noErrors = false;
             PrintErrorID(theEnv,"CSTRCPSR",1,true);
-            PrintString(theEnv,WERROR,"Expected the beginning of a construct.\n");
+            WriteString(theEnv,STDERR,"Expected the beginning of a construct.\n");
            }
 
          firstAttempt = false;
@@ -527,10 +527,10 @@ static bool FindConstructBeginning(
    return false;
   }
 
-/*************************************************/
-/* FindError: Find routine for the error router. */
-/*************************************************/
-static bool FindError(
+/***********************************************************/
+/* QueryErrorCallback: Query routine for the error router. */
+/***********************************************************/
+static bool QueryErrorCallback(
   Environment *theEnv,
   const char *logicalName,
   void *context)
@@ -539,30 +539,30 @@ static bool FindError(
 #pragma unused(theEnv,context)
 #endif
 
-   if ((strcmp(logicalName,WERROR) == 0) ||
-       (strcmp(logicalName,WWARNING) == 0))
+   if ((strcmp(logicalName,STDERR) == 0) ||
+       (strcmp(logicalName,STDWRN) == 0))
      { return true; }
 
     return false;
   }
 
-/***************************************************/
-/* PrintError: Print routine for the error router. */
-/***************************************************/
-static void PrintError(
+/***********************************************************/
+/* WriteErrorCallback: Write routine for the error router. */
+/***********************************************************/
+static void WriteErrorCallback(
   Environment *theEnv,
   const char *logicalName,
   const char *str,
   void *context)
   {
-   if (strcmp(logicalName,WERROR) == 0)
+   if (strcmp(logicalName,STDERR) == 0)
      {
       ConstructData(theEnv)->ErrorString =
          AppendToString(theEnv,str,ConstructData(theEnv)->ErrorString,
                                    &ConstructData(theEnv)->CurErrPos,
                                    &ConstructData(theEnv)->MaxErrChars);
      }
-   else if (strcmp(logicalName,WWARNING) == 0)
+   else if (strcmp(logicalName,STDWRN) == 0)
      {
       ConstructData(theEnv)->WarningString =
          AppendToString(theEnv,str,ConstructData(theEnv)->WarningString,
@@ -571,7 +571,7 @@ static void PrintError(
      }
 
    DeactivateRouter(theEnv,"error-capture");
-   PrintString(theEnv,logicalName,str);
+   WriteString(theEnv,logicalName,str);
    ActivateRouter(theEnv,"error-capture");
   }
 
@@ -597,8 +597,9 @@ void CreateErrorCaptureRouter(
 
    if (ConstructData(theEnv)->errorCaptureRouterCount == 0)
      {
-      AddRouter(theEnv,"error-capture",40,FindError,PrintError,
-                NULL, NULL,NULL,NULL);
+      AddRouter(theEnv,"error-capture",40,
+                QueryErrorCallback,WriteErrorCallback,
+                NULL,NULL,NULL,NULL);
      }
 
    /*==================================================*/
@@ -656,14 +657,16 @@ void FlushParsingMessages(
      {
       (*ConstructData(theEnv)->ParserErrorCallback)(theEnv,GetErrorFileName(theEnv),
                                                            NULL,ConstructData(theEnv)->ErrorString,
-                                                           ConstructData(theEnv)->ErrLineNumber);
+                                                           ConstructData(theEnv)->ErrLineNumber,
+                                                           ConstructData(theEnv)->ParserErrorContext);
      }
 
    if (ConstructData(theEnv)->WarningString != NULL)
      {
       (*ConstructData(theEnv)->ParserErrorCallback)(theEnv,GetWarningFileName(theEnv),
                                                            ConstructData(theEnv)->WarningString,NULL,
-                                                           ConstructData(theEnv)->WrnLineNumber);
+                                                           ConstructData(theEnv)->WrnLineNumber,
+                                                           ConstructData(theEnv)->ParserErrorContext);
      }
 
    /*===================================*/
@@ -778,20 +781,20 @@ void ImportExportConflictMessage(
   const char *causedByName)
   {
    PrintErrorID(theEnv,"CSTRCPSR",3,true);
-   PrintString(theEnv,WERROR,"Cannot define ");
-   PrintString(theEnv,WERROR,constructName);
-   PrintString(theEnv,WERROR," ");
-   PrintString(theEnv,WERROR,itemName);
-   PrintString(theEnv,WERROR," because of an import/export conflict");
+   WriteString(theEnv,STDERR,"Cannot define ");
+   WriteString(theEnv,STDERR,constructName);
+   WriteString(theEnv,STDERR," ");
+   WriteString(theEnv,STDERR,itemName);
+   WriteString(theEnv,STDERR," because of an import/export conflict");
 
-   if (causedByConstruct == NULL) PrintString(theEnv,WERROR,".\n");
+   if (causedByConstruct == NULL) WriteString(theEnv,STDERR,".\n");
    else
      {
-      PrintString(theEnv,WERROR," caused by the ");
-      PrintString(theEnv,WERROR,causedByConstruct);
-      PrintString(theEnv,WERROR," ");
-      PrintString(theEnv,WERROR,causedByName);
-      PrintString(theEnv,WERROR,".\n");
+      WriteString(theEnv,STDERR," caused by the ");
+      WriteString(theEnv,STDERR,causedByConstruct);
+      WriteString(theEnv,STDERR," ");
+      WriteString(theEnv,STDERR,causedByName);
+      WriteString(theEnv,STDERR,".\n");
      }
   }
 

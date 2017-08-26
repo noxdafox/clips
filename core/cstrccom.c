@@ -435,7 +435,7 @@ bool PPConstruct(
    /* Print the pretty print string. */
    /*================================*/
 
-   PrintString(theEnv,logicalName,(*constructClass->getPPFormFunction)(constructPtr));
+   WriteString(theEnv,logicalName,(*constructClass->getPPFormFunction)(constructPtr));
 
    /*=======================================*/
    /* Return true to indicate the construct */
@@ -707,8 +707,8 @@ void SaveConstruct(
       ppform = (*constructClass->getPPFormFunction)(theConstruct);
       if (ppform != NULL)
         {
-         PrintString(theEnv,logicalName,ppform);
-         PrintString(theEnv,logicalName,"\n");
+         WriteString(theEnv,logicalName,ppform);
+         WriteString(theEnv,logicalName,"\n");
         }
       }
 
@@ -1090,8 +1090,8 @@ void ListConstruct(
 
       if (allModules)
         {
-         PrintString(theEnv,logicalName,DefmoduleName(theModule));
-         PrintString(theEnv,logicalName,":\n");
+         WriteString(theEnv,logicalName,DefmoduleName(theModule));
+         WriteString(theEnv,logicalName,":\n");
         }
 
       /*===============================*/
@@ -1115,9 +1115,9 @@ void ListConstruct(
 
          if (constructName != NULL)
            {
-            if (allModules) PrintString(theEnv,STDOUT,"   ");
-            PrintString(theEnv,logicalName,constructName->contents);
-            PrintString(theEnv,logicalName,"\n");
+            if (allModules) WriteString(theEnv,STDOUT,"   ");
+            WriteString(theEnv,logicalName,constructName->contents);
+            WriteString(theEnv,logicalName,"\n");
            }
 
          count++;
@@ -1456,7 +1456,7 @@ bool ConstructSetWatchAccess(
   ConstructGetWatchFunction *getWatchFunc,
   ConstructSetWatchFunction *setWatchFunc)
   {
-   return(ConstructWatchSupport(theEnv,constructClass,"watch",WERROR,argExprs,
+   return(ConstructWatchSupport(theEnv,constructClass,"watch",STDERR,argExprs,
                                 true,newState,getWatchFunc,setWatchFunc));
   }
 
@@ -1516,8 +1516,8 @@ static bool ConstructWatchSupport(
 
          if (setFlag == false)
            {
-            PrintString(theEnv,logName,DefmoduleName(theModule));
-            PrintString(theEnv,logName,":\n");
+            WriteString(theEnv,logName,DefmoduleName(theModule));
+            WriteString(theEnv,logName,":\n");
            }
 
          /*============================================*/
@@ -1537,7 +1537,7 @@ static bool ConstructWatchSupport(
               { (*setWatchFunc)(theConstruct,newState); }
             else
               {
-               PrintString(theEnv,logName,"   ");
+               WriteString(theEnv,logName,"   ");
                ConstructPrintWatch(theEnv,logName,constructClass,theConstruct,getWatchFunc);
               }
            }
@@ -1621,11 +1621,11 @@ static void ConstructPrintWatch(
   ConstructHeader *theConstruct,
   ConstructGetWatchFunction *getWatchFunc)
   {
-   PrintString(theEnv,logName,(*constructClass->getConstructNameFunction)(theConstruct)->contents);
+   WriteString(theEnv,logName,(*constructClass->getConstructNameFunction)(theConstruct)->contents);
    if ((*getWatchFunc)(theConstruct))
-     PrintString(theEnv,logName," = on\n");
+     WriteString(theEnv,logName," = on\n");
    else
-     PrintString(theEnv,logName," = off\n");
+     WriteString(theEnv,logName," = off\n");
   }
 
 #endif /* DEBUGGING_FUNCTIONS */

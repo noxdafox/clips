@@ -4,7 +4,7 @@ TRUE
 CLIPS> (str-index "" "")                 ; DR0103 - 1
 1
 CLIPS> (str-index "" "a")                ; DR0103 - 2
-2
+1
 CLIPS> (explode$ "")                     ; DR0104 - ()
 ()
 CLIPS> (sub-string 1 2 "a")              ; DR0105 - "a"

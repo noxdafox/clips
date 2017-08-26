@@ -176,7 +176,7 @@ static unsigned int SymbolHashNodesToCode(
            { fprintf(fp,"NULL,"); }
          else
            {
-            if ((j + 1) >= ConstructCompilerData(theEnv)->MaxIndices)
+            if ((j + 1) >= (unsigned long) ConstructCompilerData(theEnv)->MaxIndices)
               { fprintf(fp,"&S%d_%d[%d],",ConstructCompilerData(theEnv)->ImageID,arrayVersion + 1,0); }
             else
               { fprintf(fp,"&S%d_%d[%ld],",ConstructCompilerData(theEnv)->ImageID,arrayVersion,j + 1); }
@@ -276,7 +276,7 @@ static unsigned int BitMapHashNodesToCode(
             newHeader = false;
            }
            
-         fprintf(fp,"{{BITMAP},");
+         fprintf(fp,"{{BITMAP_TYPE},");
          
          if (hashPtr->next == NULL)
            { fprintf(fp,"NULL,"); }

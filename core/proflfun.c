@@ -259,21 +259,21 @@ void ProfileInfoCommand(
      {
       gensprintf(buffer,"Profile elapsed time = %g seconds\n",
                       ProfileFunctionData(theEnv)->ProfileTotalTime);
-      PrintString(theEnv,STDOUT,buffer);
+      WriteString(theEnv,STDOUT,buffer);
 
       if (ProfileFunctionData(theEnv)->LastProfileInfo == USER_FUNCTIONS)
-        { PrintString(theEnv,STDOUT,"Function Name                            "); }
+        { WriteString(theEnv,STDOUT,"Function Name                            "); }
       else if (ProfileFunctionData(theEnv)->LastProfileInfo == CONSTRUCTS_CODE)
-        { PrintString(theEnv,STDOUT,"Construct Name                           "); }
+        { WriteString(theEnv,STDOUT,"Construct Name                           "); }
 
-      PrintString(theEnv,STDOUT,"Entries         Time           %          Time+Kids     %+Kids\n");
+      WriteString(theEnv,STDOUT,"Entries         Time           %          Time+Kids     %+Kids\n");
 
       if (ProfileFunctionData(theEnv)->LastProfileInfo == USER_FUNCTIONS)
-        { PrintString(theEnv,STDOUT,"-------------                            "); }
+        { WriteString(theEnv,STDOUT,"-------------                            "); }
       else if (ProfileFunctionData(theEnv)->LastProfileInfo == CONSTRUCTS_CODE)
-        { PrintString(theEnv,STDOUT,"--------------                           "); }
+        { WriteString(theEnv,STDOUT,"--------------                           "); }
 
-      PrintString(theEnv,STDOUT,"-------        ------        -----        ---------     ------\n");
+      WriteString(theEnv,STDOUT,"-------        ------        -----        ---------     ------\n");
      }
 
    if (ProfileFunctionData(theEnv)->LastProfileInfo == USER_FUNCTIONS) OutputUserFunctionsInfo(theEnv);
@@ -387,23 +387,23 @@ static bool OutputProfileInfo(
 
    if ((banner != NULL) && (*banner != NULL))
      {
-      PrintString(theEnv,STDOUT,*banner);
+      WriteString(theEnv,STDOUT,*banner);
       *banner = NULL;
      }
 
    if (printPrefixBefore != NULL)
-     { PrintString(theEnv,STDOUT,printPrefixBefore); }
+     { WriteString(theEnv,STDOUT,printPrefixBefore); }
 
    if (printPrefix != NULL)
-     { PrintString(theEnv,STDOUT,printPrefix); }
+     { WriteString(theEnv,STDOUT,printPrefix); }
 
    if (printPrefixAfter != NULL)
-     { PrintString(theEnv,STDOUT,printPrefixAfter); }
+     { WriteString(theEnv,STDOUT,printPrefixAfter); }
 
    if (strlen(itemName) >= 40)
      {
-      PrintString(theEnv,STDOUT,itemName);
-      PrintString(theEnv,STDOUT,"\n");
+      WriteString(theEnv,STDOUT,itemName);
+      WriteString(theEnv,STDOUT,"\n");
       itemName = "";
      }
 
@@ -416,7 +416,7 @@ static bool OutputProfileInfo(
 
                         (double) profileInfo->totalWithChildrenTime,
                         (double) percentWithKids);
-   PrintString(theEnv,STDOUT,buffer);
+   WriteString(theEnv,STDOUT,buffer);
 
    return true;
   }

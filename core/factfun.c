@@ -569,7 +569,7 @@ void PPFact(
 
    PrintFact(theEnv,logicalName,theFact,true,ignoreDefaults,NULL);
 
-   PrintString(theEnv,logicalName,"\n");
+   WriteString(theEnv,logicalName,"\n");
   }
 
 /**************************************************************/

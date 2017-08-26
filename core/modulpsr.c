@@ -1044,26 +1044,26 @@ static void NotExportedErrorMessage(
   const char *theName)
   {
    PrintErrorID(theEnv,"MODULPSR",1,true);
-   PrintString(theEnv,WERROR,"Module ");
-   PrintString(theEnv,WERROR,theModule);
-   PrintString(theEnv,WERROR," does not export ");
+   WriteString(theEnv,STDERR,"Module ");
+   WriteString(theEnv,STDERR,theModule);
+   WriteString(theEnv,STDERR," does not export ");
 
-   if (theConstruct == NULL) PrintString(theEnv,WERROR,"any constructs");
+   if (theConstruct == NULL) WriteString(theEnv,STDERR,"any constructs");
    else if (theName == NULL)
      {
-      PrintString(theEnv,WERROR,"any ");
-      PrintString(theEnv,WERROR,theConstruct);
-      PrintString(theEnv,WERROR," constructs");
+      WriteString(theEnv,STDERR,"any ");
+      WriteString(theEnv,STDERR,theConstruct);
+      WriteString(theEnv,STDERR," constructs");
      }
    else
      {
-      PrintString(theEnv,WERROR,"the ");
-      PrintString(theEnv,WERROR,theConstruct);
-      PrintString(theEnv,WERROR," ");
-      PrintString(theEnv,WERROR,theName);
+      WriteString(theEnv,STDERR,"the ");
+      WriteString(theEnv,STDERR,theConstruct);
+      WriteString(theEnv,STDERR," ");
+      WriteString(theEnv,STDERR,theName);
      }
 
-   PrintString(theEnv,WERROR,".\n");
+   WriteString(theEnv,STDERR,".\n");
   }
 
 /*************************************************************/

@@ -115,15 +115,15 @@ static void ConstraintConflictMessage(
 
    if (variableName != NULL)
      {
-      PrintString(theEnv,WERROR,"Variable ?");
-      PrintString(theEnv,WERROR,variableName->contents);
-      PrintString(theEnv,WERROR," in CE #");
-      PrintInteger(theEnv,WERROR,thePattern);
+      WriteString(theEnv,STDERR,"Variable ?");
+      WriteString(theEnv,STDERR,variableName->contents);
+      WriteString(theEnv,STDERR," in CE #");
+      WriteInteger(theEnv,STDERR,thePattern);
      }
    else
      {
-      PrintString(theEnv,WERROR,"Pattern #");
-      PrintInteger(theEnv,WERROR,thePattern);
+      WriteString(theEnv,STDERR,"Pattern #");
+      WriteInteger(theEnv,STDERR,thePattern);
      }
 
    /*=======================================*/
@@ -133,20 +133,20 @@ static void ConstraintConflictMessage(
 
    if (theSlot == NULL)
      {
-      PrintString(theEnv,WERROR," field #");
-      PrintInteger(theEnv,WERROR,theField);
+      WriteString(theEnv,STDERR," field #");
+      WriteInteger(theEnv,STDERR,theField);
      }
    else
      {
-      PrintString(theEnv,WERROR," slot ");
-      PrintString(theEnv,WERROR,theSlot->contents);
+      WriteString(theEnv,STDERR," slot ");
+      WriteString(theEnv,STDERR,theSlot->contents);
      }
 
    /*======================================*/
    /* Print the rest of the error message. */
    /*======================================*/
 
-   PrintString(theEnv,WERROR,"\nhas constraint conflicts which make the pattern unmatchable.\n");
+   WriteString(theEnv,STDERR,"\nhas constraint conflicts which make the pattern unmatchable.\n");
   }
 
 /***************************************************************/
@@ -427,27 +427,27 @@ void ConstraintReferenceErrorMessage(
    /* Print the variable name. */
    /*==========================*/
 
-   PrintString(theEnv,WERROR,"Previous variable bindings of ?");
-   PrintString(theEnv,WERROR,theVariable->contents);
-   PrintString(theEnv,WERROR," caused the type restrictions");
+   WriteString(theEnv,STDERR,"Previous variable bindings of ?");
+   WriteString(theEnv,STDERR,theVariable->contents);
+   WriteString(theEnv,STDERR," caused the type restrictions");
 
    /*============================*/
    /* Print the argument number. */
    /*============================*/
 
-   PrintString(theEnv,WERROR,"\nfor argument #");
-   PrintInteger(theEnv,WERROR,whichArgument);
+   WriteString(theEnv,STDERR,"\nfor argument #");
+   WriteInteger(theEnv,STDERR,whichArgument);
 
    /*=======================*/
    /* Print the expression. */
    /*=======================*/
 
-   PrintString(theEnv,WERROR," of the expression ");
+   WriteString(theEnv,STDERR," of the expression ");
    temprv = LHSParseNodesToExpression(theEnv,theExpression);
    ReturnExpression(theEnv,temprv->nextArg);
    temprv->nextArg = NULL;
-   PrintExpression(theEnv,WERROR,temprv);
-   PrintString(theEnv,WERROR,"\n");
+   PrintExpression(theEnv,STDERR,temprv);
+   WriteString(theEnv,STDERR,"\n");
    ReturnExpression(theEnv,temprv);
 
    /*========================================*/
@@ -456,23 +456,23 @@ void ConstraintReferenceErrorMessage(
    /* index where the violation occured.     */
    /*========================================*/
 
-   PrintString(theEnv,WERROR,"found in CE #");
-   PrintInteger(theEnv,WERROR,theExpression->whichCE);
+   WriteString(theEnv,STDERR,"found in CE #");
+   WriteInteger(theEnv,STDERR,theExpression->whichCE);
    if (slotName == NULL)
      {
       if (theField > 0)
         {
-         PrintString(theEnv,WERROR," field #");
-         PrintInteger(theEnv,WERROR,theField);
+         WriteString(theEnv,STDERR," field #");
+         WriteInteger(theEnv,STDERR,theField);
         }
      }
    else
      {
-      PrintString(theEnv,WERROR," slot ");
-      PrintString(theEnv,WERROR,slotName->contents);
+      WriteString(theEnv,STDERR," slot ");
+      WriteString(theEnv,STDERR,slotName->contents);
      }
 
-   PrintString(theEnv,WERROR," to be violated.\n");
+   WriteString(theEnv,STDERR," to be violated.\n");
   }
 
 /********************************************************/
@@ -840,17 +840,17 @@ static bool CheckArgumentForConstraintError(
    if (UnmatchableConstraint(constraint4))
      {
       PrintErrorID(theEnv,"RULECSTR",3,true);
-      PrintString(theEnv,WERROR,"Previous variable bindings of ?");
-      PrintString(theEnv,WERROR,expressionList->lexemeValue->contents);
-      PrintString(theEnv,WERROR," caused the type restrictions");
-      PrintString(theEnv,WERROR,"\nfor argument #");
-      PrintInteger(theEnv,WERROR,i);
-      PrintString(theEnv,WERROR," of the expression ");
+      WriteString(theEnv,STDERR,"Previous variable bindings of ?");
+      WriteString(theEnv,STDERR,expressionList->lexemeValue->contents);
+      WriteString(theEnv,STDERR," caused the type restrictions");
+      WriteString(theEnv,STDERR,"\nfor argument #");
+      WriteInteger(theEnv,STDERR,i);
+      WriteString(theEnv,STDERR," of the expression ");
       tmpPtr = lastOne->nextArg;
       lastOne->nextArg = NULL;
-      PrintExpression(theEnv,WERROR,lastOne);
+      PrintExpression(theEnv,STDERR,lastOne);
       lastOne->nextArg = tmpPtr;
-      PrintString(theEnv,WERROR,"\nfound in the rule's RHS to be violated.\n");
+      WriteString(theEnv,STDERR,"\nfound in the rule's RHS to be violated.\n");
 
       rv = true;
      }

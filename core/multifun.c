@@ -579,7 +579,7 @@ void ExplodeFunction(
   {
    UDFValue value;
    Multifield *theMultifield;
-   unsigned long end;
+   size_t end;
 
    /*==================================*/
    /* The argument should be a string. */
@@ -1185,7 +1185,7 @@ static struct expr *MultifieldPrognParser(
          ClearParsedBindNames(theEnv);
          SetParsedBindNames(theEnv,oldBindList);
          PrintErrorID(theEnv,"MULTIFUN",2,false);
-         PrintString(theEnv,WERROR,"Cannot rebind field variable in function progn$.\n");
+         WriteString(theEnv,STDERR,"Cannot rebind field variable in function progn$.\n");
          ReturnExpression(theEnv,top);
          return NULL;
         }
@@ -1269,7 +1269,7 @@ static struct expr *ForeachParser(
          ClearParsedBindNames(theEnv);
          SetParsedBindNames(theEnv,oldBindList);
          PrintErrorID(theEnv,"MULTIFUN",2,false);
-         PrintString(theEnv,WERROR,"Cannot rebind field variable in function foreach.\n");
+         WriteString(theEnv,STDERR,"Cannot rebind field variable in function foreach.\n");
          ReturnExpression(theEnv,top);
          return NULL;
         }
@@ -1676,24 +1676,24 @@ void MVRangeError(
   const char *funcName)
   {
    PrintErrorID(theEnv,"MULTIFUN",1,false);
-   PrintString(theEnv,WERROR,"Multifield index ");
+   WriteString(theEnv,STDERR,"Multifield index ");
    if (brb == bre)
-     PrintInteger(theEnv,WERROR,brb);
+     WriteInteger(theEnv,STDERR,brb);
    else
      {
-      PrintString(theEnv,WERROR,"range ");
-      PrintInteger(theEnv,WERROR,brb);
-      PrintString(theEnv,WERROR,"..");
-      PrintInteger(theEnv,WERROR,bre);
+      WriteString(theEnv,STDERR,"range ");
+      WriteInteger(theEnv,STDERR,brb);
+      WriteString(theEnv,STDERR,"..");
+      WriteInteger(theEnv,STDERR,bre);
      }
-   PrintString(theEnv,WERROR," out of range 1..");
-   PrintUnsignedInteger(theEnv,WERROR,max);
+   WriteString(theEnv,STDERR," out of range 1..");
+   PrintUnsignedInteger(theEnv,STDERR,max);
    if (funcName != NULL)
      {
-      PrintString(theEnv,WERROR," in function ");
-      PrintString(theEnv,WERROR,funcName);
+      WriteString(theEnv,STDERR," in function ");
+      WriteString(theEnv,STDERR,funcName);
      }
-   PrintString(theEnv,WERROR,".\n");
+   WriteString(theEnv,STDERR,".\n");
   }
 
 static void MVRangeErrorSizet(
@@ -1704,24 +1704,24 @@ static void MVRangeErrorSizet(
   const char *funcName)
   {
    PrintErrorID(theEnv,"MULTIFUN",1,false);
-   PrintString(theEnv,WERROR,"Multifield index ");
+   WriteString(theEnv,STDERR,"Multifield index ");
    if (brb == bre)
-     PrintUnsignedInteger(theEnv,WERROR,brb);
+     PrintUnsignedInteger(theEnv,STDERR,brb);
    else
      {
-      PrintString(theEnv,WERROR,"range ");
-      PrintUnsignedInteger(theEnv,WERROR,brb);
-      PrintString(theEnv,WERROR,"..");
-      PrintUnsignedInteger(theEnv,WERROR,bre);
+      WriteString(theEnv,STDERR,"range ");
+      PrintUnsignedInteger(theEnv,STDERR,brb);
+      WriteString(theEnv,STDERR,"..");
+      PrintUnsignedInteger(theEnv,STDERR,bre);
      }
-   PrintString(theEnv,WERROR," out of range 1..");
-   PrintUnsignedInteger(theEnv,WERROR,max);
+   WriteString(theEnv,STDERR," out of range 1..");
+   PrintUnsignedInteger(theEnv,STDERR,max);
    if (funcName != NULL)
      {
-      PrintString(theEnv,WERROR," in function ");
-      PrintString(theEnv,WERROR,funcName);
+      WriteString(theEnv,STDERR," in function ");
+      WriteString(theEnv,STDERR,funcName);
      }
-   PrintString(theEnv,WERROR,".\n");
+   WriteString(theEnv,STDERR,".\n");
   }
 
 #endif /* OBJECT_SYSTEM || MULTIFIELD_FUNCTIONS */

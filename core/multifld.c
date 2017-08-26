@@ -87,7 +87,7 @@ Multifield *CreateUnmanagedMultifield(
    Multifield *theSegment;
    size_t newSize = size;
 
-   if (size <= 0) newSize = 1;
+   if (size == 0) newSize = 1;
 
    theSegment = get_var_struct(theEnv,multifield,sizeof(struct clipsValue) * (newSize - 1));
 
@@ -106,7 +106,7 @@ void ReturnMultifield(
   Environment *theEnv,
   Multifield *theSegment)
   {
-   unsigned long newSize;
+   size_t newSize;
 
    if (theSegment == NULL) return;
 
@@ -116,14 +116,14 @@ void ReturnMultifield(
    rtn_var_struct(theEnv,multifield,sizeof(struct clipsValue) * (newSize - 1),theSegment);
   }
 
-/**************************************/
-/* IncrementMultifieldReferenceCount: */
-/**************************************/
-void IncrementMultifieldReferenceCount(
+/*********************/
+/* RetainMultifield: */
+/*********************/
+void RetainMultifield(
   Environment *theEnv,
   Multifield *theSegment)
   {
-   unsigned long length, i;
+   size_t length, i;
    CLIPSValue *contents;
 
    if (theSegment == NULL) return;
@@ -137,14 +137,14 @@ void IncrementMultifieldReferenceCount(
      { AtomInstall(theEnv,contents[i].header->type,contents[i].value); }
   }
 
-/**************************************/
-/* DecrementMultifieldReferenceCount: */
-/**************************************/
-void DecrementMultifieldReferenceCount(
+/**********************/
+/* ReleaseMultifield: */
+/**********************/
+void ReleaseMultifield(
   Environment *theEnv,
   Multifield *theSegment)
   {
-   unsigned long length, i;
+   size_t length, i;
    CLIPSValue *contents;
 
    if (theSegment == NULL) return;
@@ -164,7 +164,7 @@ void IncrementCLIPSValueMultifieldReferenceCount(
   Environment *theEnv,
   Multifield *theSegment)
   {
-   unsigned long length, i;
+   size_t length, i;
    CLIPSValue *contents;
 
    if (theSegment == NULL) return;
@@ -175,7 +175,7 @@ void IncrementCLIPSValueMultifieldReferenceCount(
    contents = theSegment->contents;
 
    for (i = 0 ; i < length ; i++)
-     { IncrementReferenceCount(theEnv,contents[i].header); }
+     { Retain(theEnv,contents[i].header); }
   }
 
 /************************************************/
@@ -185,7 +185,7 @@ void DecrementCLIPSValueMultifieldReferenceCount(
   Environment *theEnv,
   Multifield *theSegment)
   {
-   unsigned long length, i;
+   size_t length, i;
    CLIPSValue *contents;
 
    if (theSegment == NULL) return;
@@ -195,7 +195,7 @@ void DecrementCLIPSValueMultifieldReferenceCount(
    contents = theSegment->contents;
 
    for (i = 0 ; i < length ; i++)
-     { DecrementReferenceCount(theEnv,contents[i].header); }
+     { Release(theEnv,contents[i].header); }
   }
 
 /*******************************************************/
@@ -310,7 +310,7 @@ Multifield *CreateMultifield(
   size_t size)
   {
    Multifield *theSegment;
-   unsigned long newSize;
+   size_t newSize;
 
    if (size == 0) newSize = 1;
    else newSize = size;
@@ -342,7 +342,7 @@ Multifield *DOToMultifield(
 
    if (theValue->header->type != MULTIFIELD_TYPE) return NULL;
 
-   dst = CreateUnmanagedMultifield(theEnv,theValue->range);
+   dst = CreateUnmanagedMultifield(theEnv,(unsigned long) theValue->range);
 
    src = theValue->multifieldValue;
    GenCopyMemory(struct clipsValue,dst->length,
@@ -372,7 +372,7 @@ void FlushMultifields(
   Environment *theEnv)
   {
    Multifield *theSegment, *nextPtr, *lastPtr = NULL;
-   unsigned long newSize;
+   size_t newSize;
 
    theSegment = UtilityData(theEnv)->CurrentGarbageFrame->ListOfMultifields;
    while (theSegment != NULL)
@@ -451,7 +451,7 @@ void DuplicateMultifield(
   {
    dst->begin = 0;
    dst->range = src->range;
-   dst->value = CreateUnmanagedMultifield(theEnv,dst->range);
+   dst->value = CreateUnmanagedMultifield(theEnv,(unsigned long) dst->range);
    GenCopyMemory(struct clipsValue,dst->range,&dst->multifieldValue->contents[0],
                                          &src->multifieldValue->contents[src->begin]);
   }
@@ -478,7 +478,7 @@ void EphemerateMultifield(
   Environment *theEnv,
   Multifield *theSegment)
   {
-   unsigned long length, i;
+   size_t length, i;
    CLIPSValue *contents;
 
    if (theSegment == NULL) return;
@@ -492,9 +492,9 @@ void EphemerateMultifield(
   }
 
 /*********************************************/
-/* PrintMultifield: Prints out a multifield. */
+/* WriteMultifield: Prints out a multifield. */
 /*********************************************/
-void PrintMultifield(
+void WriteMultifield(
   Environment *theEnv,
   const char *fileid,
   Multifield *segment)
@@ -519,18 +519,18 @@ void PrintMultifieldDriver(
    theMultifield = segment->contents;
    
    if (printParens)
-     { PrintString(theEnv,fileid,"("); }
+     { WriteString(theEnv,fileid,"("); }
 
    for (i = 0; i < range; i++)
      {
       PrintAtom(theEnv,fileid,theMultifield[begin+i].header->type,theMultifield[begin+i].value);
      
       if ((i + 1) < range)
-        { PrintString(theEnv,fileid," "); }
+        { WriteString(theEnv,fileid," "); }
      }
 
    if (printParens)
-     { PrintString(theEnv,fileid,")"); }
+     { WriteString(theEnv,fileid,")"); }
   }
 
 /****************************************************/
@@ -547,9 +547,9 @@ void StoreInMultifield(
    Multifield *theMultifield;
    Multifield *orig_ptr;
    size_t start, range;
-   unsigned long i, j, k;
+   size_t i, j, k;
    unsigned int argCount;
-   size_t seg_size;
+   unsigned long seg_size;
 
    argCount = CountArguments(expptr);
 
@@ -610,7 +610,7 @@ void StoreInMultifield(
             range = 1;
            }
 
-         seg_size += range;
+         seg_size += (unsigned long) range;
          (val_arr+i-1)->begin = start;
          (val_arr+i-1)->range = range;
         }
@@ -732,13 +732,13 @@ bool MultifieldsEqual(
 /************************************************************/
 /* HashMultifield: Returns the hash value for a multifield. */
 /************************************************************/
-unsigned long HashMultifield(
+size_t HashMultifield(
   Multifield *theSegment,
-  unsigned long theRange)
+  size_t theRange)
   {
-   unsigned long length, i;
-   unsigned long tvalue;
-   unsigned long count;
+   size_t length, i;
+   size_t tvalue;
+   size_t count;
    CLIPSValue *fieldPtr;
    union
      {
@@ -802,7 +802,7 @@ unsigned long HashMultifield(
 #if OBJECT_SYSTEM
           case INSTANCE_NAME_TYPE:
 #endif
-            tvalue = (unsigned long) HashSymbol(fieldPtr[i].lexemeValue->contents,theRange);
+            tvalue = HashSymbol(fieldPtr[i].lexemeValue->contents,theRange);
             count += tvalue * (i + 29);
             break;
          }
@@ -812,7 +812,7 @@ unsigned long HashMultifield(
    /* Return the hash value. */
    /*========================*/
 
-   return(count);
+   return count;
   }
 
 /**********************/
@@ -1082,14 +1082,14 @@ void MBAppendUDFValue(
       for (j = theValue->begin; j < (theValue->begin +theValue->range); j++)
         {
          theMB->contents[theMB->length].value = theValue->multifieldValue->contents[j].value;
-         IncrementReferenceCount(theEnv,theMB->contents[theMB->length].header);
+         Retain(theEnv,theMB->contents[theMB->length].header);
          theMB->length++;
         }
      }
    else
      {
       theMB->contents[theMB->length].value = theValue->value;
-      IncrementReferenceCount(theEnv,theMB->contents[theMB->length].header);
+      Retain(theEnv,theMB->contents[theMB->length].header);
       theMB->length++;
      }
   }
@@ -1156,14 +1156,14 @@ void MBAppend(
       for (j = 0; j < theValue->multifieldValue->length; j++)
         {
          theMB->contents[theMB->length].value = theValue->multifieldValue->contents[j].value;
-         IncrementReferenceCount(theEnv,theMB->contents[theMB->length].header);
+         Retain(theEnv,theMB->contents[theMB->length].header);
          theMB->length++;
         }
      }
    else
      {
       theMB->contents[theMB->length].value = theValue->value;
-      IncrementReferenceCount(theEnv,theMB->contents[theMB->length].header);
+      Retain(theEnv,theMB->contents[theMB->length].header);
       theMB->length++;
      }
   }
@@ -1387,7 +1387,7 @@ Multifield *MBCreate(
    for (i = 0; i < theMB->length; i++)
      {
       rv->contents[i].value = theMB->contents[i].value;
-      DecrementReferenceCount(theMB->mbEnv,rv->contents[i].header);
+      Release(theMB->mbEnv,rv->contents[i].header);
      }
 
    theMB->length = 0;
@@ -1404,7 +1404,7 @@ void MBReset(
    size_t i;
    
    for (i = 0; i < theMB->length; i++)
-     { DecrementReferenceCount(theMB->mbEnv,theMB->contents[i].header); }
+     { Release(theMB->mbEnv,theMB->contents[i].header); }
      
    if (theMB->bufferReset != theMB->bufferMaximum)
      {
@@ -1432,7 +1432,7 @@ void MBDispose(
    size_t i;
    
    for (i = 0; i < theMB->length; i++)
-     { DecrementReferenceCount(theMB->mbEnv,theMB->contents[i].header); }
+     { Release(theMB->mbEnv,theMB->contents[i].header); }
    
    if (theMB->bufferMaximum != 0)
      { rm(theMB->mbEnv,theMB->contents,sizeof(CLIPSValue) * theMB->bufferMaximum); }

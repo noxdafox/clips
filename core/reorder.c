@@ -2011,55 +2011,55 @@ static void PrintNodes(
       switch (theNode->type)
         {
          case PATTERN_CE:
-           PrintString(theEnv,fileid,"(");
-           if (theNode->negated) PrintString(theEnv,fileid,"n");
-           if (theNode->exists) PrintString(theEnv,fileid,"x");
-           if (theNode->logical) PrintString(theEnv,fileid,"l");
+           WriteString(theEnv,fileid,"(");
+           if (theNode->negated) WriteString(theEnv,fileid,"n");
+           if (theNode->exists) WriteString(theEnv,fileid,"x");
+           if (theNode->logical) WriteString(theEnv,fileid,"l");
            PrintUnsignedInteger(theEnv,fileid,theNode->beginNandDepth);
-           PrintString(theEnv,fileid,"-");
+           WriteString(theEnv,fileid,"-");
            PrintUnsignedInteger(theEnv,fileid,theNode->endNandDepth);
-           PrintString(theEnv,fileid," ");
-           PrintString(theEnv,fileid,ValueToString(theNode->right->bottom->value));
-           PrintString(theEnv,fileid,")");
+           WriteString(theEnv,fileid," ");
+           WriteString(theEnv,fileid,ValueToString(theNode->right->bottom->value));
+           WriteString(theEnv,fileid,")");
            break;
 
          case TEST_CE:
-           PrintString(theEnv,fileid,"(test ");
+           WriteString(theEnv,fileid,"(test ");
            PrintUnsignedInteger(theEnv,fileid,theNode->beginNandDepth);
-           PrintString(theEnv,fileid,"-");
+           WriteString(theEnv,fileid,"-");
            PrintUnsignedInteger(theEnv,fileid,theNode->endNandDepth);
-           PrintString(theEnv,fileid,")");
+           WriteString(theEnv,fileid,")");
            break;
 
          case NOT_CE:
-           if (theNode->logical) PrintString(theEnv,fileid,"(lnot ");
-           else PrintString(theEnv,fileid,"(not ");;
+           if (theNode->logical) WriteString(theEnv,fileid,"(lnot ");
+           else WriteString(theEnv,fileid,"(not ");;
            PrintNodes(theEnv,fileid,theNode->right);
-           PrintString(theEnv,fileid,")");
+           WriteString(theEnv,fileid,")");
            break;
 
          case OR_CE:
-           if (theNode->logical) PrintString(theEnv,fileid,"(lor ");
-           else PrintString(theEnv,fileid,"(or ");
+           if (theNode->logical) WriteString(theEnv,fileid,"(lor ");
+           else WriteString(theEnv,fileid,"(or ");
            PrintNodes(theEnv,fileid,theNode->right);
-           PrintString(theEnv,fileid,")");
+           WriteString(theEnv,fileid,")");
            break;
 
          case AND_CE:
-           if (theNode->logical) PrintString(theEnv,fileid,"(land ");
-           else PrintString(theEnv,fileid,"(and ");
+           if (theNode->logical) WriteString(theEnv,fileid,"(land ");
+           else WriteString(theEnv,fileid,"(and ");
            PrintNodes(theEnv,fileid,theNode->right);
-           PrintString(theEnv,fileid,")");
+           WriteString(theEnv,fileid,")");
            break;
 
          default:
-           PrintString(theEnv,fileid,"(unknown)");
+           WriteString(theEnv,fileid,"(unknown)");
            break;
 
         }
 
       theNode = theNode->bottom;
-      if (theNode != NULL) PrintString(theEnv,fileid," ");
+      if (theNode != NULL) WriteString(theEnv,fileid," ");
      }
 
    return;

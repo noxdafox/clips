@@ -461,7 +461,7 @@ void BindFunction(
         }
      }
    else
-     { DecrementUDFValueReferenceCount(theEnv,theBind); }
+     { ReleaseUDFV(theEnv,theBind); }
 
    /*================================*/
    /* Set the value of the variable. */
@@ -472,13 +472,13 @@ void BindFunction(
       theBind->value = returnValue->value;
       theBind->begin = returnValue->begin;
       theBind->range = returnValue->range;
-      IncrementUDFValueReferenceCount(theEnv,returnValue);
+      RetainUDFV(theEnv,returnValue);
      }
    else
      {
       if (lastBind == NULL) ProcedureFunctionData(theEnv)->BindList = theBind->next;
       else lastBind->next = theBind->next;
-      DecrementLexemeReferenceCount(theEnv,(CLIPSLexeme *) theBind->supplementalInfo);
+      ReleaseLexeme(theEnv,(CLIPSLexeme *) theBind->supplementalInfo);
       rtn_struct(theEnv,udfValue,theBind);
       returnValue->value = FalseSymbol(theEnv);
      }

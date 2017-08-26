@@ -90,7 +90,7 @@ void InitializeMemory(
    if (MemoryData(theEnv)->MemoryTable == NULL)
      {
       PrintErrorID(theEnv,"MEMORY",1,true);
-      PrintString(theEnv,WERROR,"Out of memory.\n");
+      WriteString(theEnv,STDERR,"Out of memory.\n");
       ExitRouter(theEnv,EXIT_FAILURE);
      }
    else
@@ -151,7 +151,7 @@ bool DefaultOutOfMemoryFunction(
 #endif
 
    PrintErrorID(theEnv,"MEMORY",1,true);
-   PrintString(theEnv,WERROR,"Out of memory.\n");
+   WriteString(theEnv,STDERR,"Out of memory.\n");
    ExitRouter(theEnv,EXIT_FAILURE);
    return true;
   }
@@ -403,13 +403,13 @@ void rm(
 /***************************************************/
 /* PoolSize: Returns number of bytes in free pool. */
 /***************************************************/
-size_t PoolSize(
+unsigned long PoolSize(
   Environment *theEnv)
   {
-   size_t cnt = 0;
+   unsigned long cnt = 0;
 
 #if (MEM_TABLE_SIZE > 0)
-   size_t i;
+   int i;
    struct memoryPtr *memPtr;
 
    for (i = sizeof(char *) ; i < MEM_TABLE_SIZE ; i++)
@@ -417,13 +417,13 @@ size_t PoolSize(
       memPtr = MemoryData(theEnv)->MemoryTable[i];
       while (memPtr != NULL)
         {
-         cnt += i;
+         cnt += (unsigned long) i;
          memPtr = memPtr->next;
         }
      }
 #endif
 
-   return cnt;
+   return(cnt);
   }
 
 /***************************************************************/
@@ -431,10 +431,10 @@ size_t PoolSize(
 /*   store the free pool.  This routine is functionally        */
 /*   equivalent to pool_size on anything other than the IBM-PC */
 /***************************************************************/
-size_t ActualPoolSize(
+unsigned long ActualPoolSize(
   Environment *theEnv)
   {
-   return PoolSize(theEnv);
+   return(PoolSize(theEnv));
   }
 
 /*****************************************/

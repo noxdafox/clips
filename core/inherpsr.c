@@ -161,7 +161,7 @@ PACKED_CLASS_LINKS *ParseSuperclasses(
       if (DefclassData(theEnv)->ObjectParseToken.value == (void *) newClassName)
         {
          PrintErrorID(theEnv,"INHERPSR",1,false);
-         PrintString(theEnv,WERROR,"A class may not have itself as a superclass.\n");
+         WriteString(theEnv,STDERR,"A class may not have itself as a superclass.\n");
          goto SuperclassParseError;
         }
       for (ctmp = clink ; ctmp != NULL ; ctmp = ctmp->nxt)
@@ -169,7 +169,7 @@ PACKED_CLASS_LINKS *ParseSuperclasses(
          if (DefclassData(theEnv)->ObjectParseToken.value == (void *) ctmp->cls->header.name)
            {
             PrintErrorID(theEnv,"INHERPSR",2,false);
-            PrintString(theEnv,WERROR,"A class may inherit from a superclass only once.\n");
+            WriteString(theEnv,STDERR,"A class may inherit from a superclass only once.\n");
             goto SuperclassParseError;
            }
         }
@@ -177,7 +177,7 @@ PACKED_CLASS_LINKS *ParseSuperclasses(
       if (sclass == NULL)
         {
          PrintErrorID(theEnv,"INHERPSR",3,false);
-         PrintString(theEnv,WERROR,"A class must be defined after all its superclasses.\n");
+         WriteString(theEnv,STDERR,"A class must be defined after all its superclasses.\n");
          goto SuperclassParseError;
         }
       if ((sclass == DefclassData(theEnv)->PrimitiveClassMap[INSTANCE_NAME_TYPE]) ||
@@ -185,9 +185,9 @@ PACKED_CLASS_LINKS *ParseSuperclasses(
           (sclass == DefclassData(theEnv)->PrimitiveClassMap[INSTANCE_NAME_TYPE]->directSuperclasses.classArray[0]))
         {
          PrintErrorID(theEnv,"INHERPSR",6,false);
-         PrintString(theEnv,WERROR,"A user-defined class cannot be a subclass of ");
-         PrintString(theEnv,WERROR,DefclassName(sclass));
-         PrintString(theEnv,WERROR,".\n");
+         WriteString(theEnv,STDERR,"A user-defined class cannot be a subclass of ");
+         WriteString(theEnv,STDERR,DefclassName(sclass));
+         WriteString(theEnv,STDERR,".\n");
          goto SuperclassParseError;
         }
       ctmp = get_struct(theEnv,classLink);
@@ -205,7 +205,7 @@ PACKED_CLASS_LINKS *ParseSuperclasses(
    if (clink == NULL)
      {
       PrintErrorID(theEnv,"INHERPSR",4,false);
-      PrintString(theEnv,WERROR,"Must have at least one superclass.\n");
+      WriteString(theEnv,STDERR,"Must have at least one superclass.\n");
       return NULL;
      }
    PPBackup(theEnv);
@@ -454,7 +454,7 @@ PACKED_CLASS_LINKS *FindPrecedenceList(
    if (po_table != NULL)
      {
       PrintErrorID(theEnv,"INHERPSR",5,false);
-      PrintClassLinks(theEnv,WERROR,"Partial precedence list formed:",ptop);
+      PrintClassLinks(theEnv,STDERR,"Partial precedence list formed:",ptop);
       PrintPartialOrderLoop(theEnv,po_table);
       while (po_table != NULL)
         {
@@ -806,16 +806,16 @@ static void PrintPartialOrderLoop(
       pop1 = pop1->suc->po;
      }
 
-   PrintString(theEnv,WERROR,"Precedence loop in superclasses:");
+   WriteString(theEnv,STDERR,"Precedence loop in superclasses:");
    while (pop1->pre == 1)
      {
-      PrintString(theEnv,WERROR," ");
-      PrintClassName(theEnv,WERROR,pop1->cls,false);
+      WriteString(theEnv,STDERR," ");
+      PrintClassName(theEnv,STDERR,pop1->cls,false);
       pop1->pre = 0;
       pop1 = pop1->suc->po;
      }
-   PrintString(theEnv,WERROR," ");
-   PrintClassName(theEnv,WERROR,pop1->cls,true);
+   WriteString(theEnv,STDERR," ");
+   PrintClassName(theEnv,STDERR,pop1->cls,true);
   }
 
 /***************************************************
@@ -836,14 +836,14 @@ static void PrintClassLinks(
   CLASS_LINK *clink)
   {
    if (title != NULL)
-     PrintString(theEnv,logicalName,title);
+     WriteString(theEnv,logicalName,title);
    while (clink != NULL)
      {
-      PrintString(theEnv,logicalName," ");
+      WriteString(theEnv,logicalName," ");
       PrintClassName(theEnv,logicalName,clink->cls,false);
       clink = clink->nxt;
      }
-   PrintString(theEnv,logicalName,"\n");
+   WriteString(theEnv,logicalName,"\n");
   }
 
 #endif

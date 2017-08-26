@@ -200,8 +200,8 @@ struct memoryData
    void                          *gm1(Environment *,size_t);
    void                          *gm2(Environment *,size_t);
    void                           rm(Environment *,void *,size_t);
-   size_t                         PoolSize(Environment *);
-   size_t                         ActualPoolSize(Environment *);
+   unsigned long                  PoolSize(Environment *);
+   unsigned long                  ActualPoolSize(Environment *);
    void                          *RequestChunk(Environment *,size_t);
    int                            ReturnChunk(Environment *,void *,size_t);
    bool                           SetConserveMemory(Environment *,bool);

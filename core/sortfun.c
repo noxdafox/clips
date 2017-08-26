@@ -62,8 +62,8 @@ struct sortFunctionData
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static void                    DoMergeSort(Environment *,UDFValue *,UDFValue *,unsigned long,
-                                              unsigned long,unsigned long,unsigned long,
+   static void                    DoMergeSort(Environment *,UDFValue *,UDFValue *,size_t,
+                                              size_t,size_t,size_t,
                                               bool (*)(Environment *,UDFValue *,UDFValue *));
    static bool                    DefaultCompareSwapFunction(Environment *,UDFValue *,UDFValue *);
    static void                    DeallocateSortFunctionData(Environment *);
@@ -132,7 +132,7 @@ void SortFunction(
    Multifield *theMultifield, *tempMultifield;
    const char *functionName;
    struct expr *functionReference;
-   unsigned int argumentSize = 0;
+   size_t argumentSize = 0;
    struct functionDefinition *fptr;
 #if DEFFUNCTION_CONSTRUCT
    Deffunction *dptr;
@@ -266,12 +266,12 @@ void SortFunction(
    SortFunctionData(theEnv)->SortComparisonFunction = functionReference;
 
    for (i = 0; i < argumentSize; i++)
-     { IncrementUDFValueReferenceCount(theEnv,&theArguments2[i]); }
+     { RetainUDFV(theEnv,&theArguments2[i]); }
 
    MergeSort(theEnv,argumentSize,theArguments2,DefaultCompareSwapFunction);
 
    for (i = 0; i < argumentSize; i++)
-     { DecrementUDFValueReferenceCount(theEnv,&theArguments2[i]); }
+     { ReleaseUDFV(theEnv,&theArguments2[i]); }
 
    SortFunctionData(theEnv)->SortComparisonFunction = SortFunctionData(theEnv)->SortComparisonFunction->nextArg;
    functionReference->nextArg = NULL;
@@ -297,12 +297,12 @@ void SortFunction(
 /*******************************************/
 void MergeSort(
   Environment *theEnv,
-  unsigned long listSize,
+  size_t listSize,
   UDFValue *theList,
   bool (*swapFunction)(Environment *,UDFValue *,UDFValue *))
   {
    UDFValue *tempList;
-   unsigned long middle;
+   size_t middle;
 
    if (listSize <= 1) return;
 
@@ -337,15 +337,15 @@ static void DoMergeSort(
   Environment *theEnv,
   UDFValue *theList,
   UDFValue *tempList,
-  unsigned long s1,
-  unsigned long e1,
-  unsigned long s2,
-  unsigned long e2,
+  size_t s1,
+  size_t e1,
+  size_t s2,
+  size_t e2,
   bool (*swapFunction)(Environment *,UDFValue *,UDFValue *))
   {
    UDFValue temp;
-   unsigned long middle, size;
-   unsigned long c1, c2, mergePoint;
+   size_t middle, size;
+   size_t c1, c2, mergePoint;
 
    /* Sort the two subareas before merging them. */
 

@@ -214,7 +214,7 @@ void InstallProcedurePrimitives(
       and zero-length multifield parameters
       ============================================= */
    ProceduralPrimitiveData(theEnv)->NoParamValue = CreateUnmanagedMultifield(theEnv,0L);
-   IncrementMultifieldReferenceCount(theEnv,ProceduralPrimitiveData(theEnv)->NoParamValue);
+   RetainMultifield(theEnv,ProceduralPrimitiveData(theEnv)->NoParamValue);
   }
 
 /**************************************************************/
@@ -293,14 +293,14 @@ Expression *ParseProcParameters(
         if (check->value == tkn->value)
          {
           PrintErrorID(theEnv,"PRCCODE",7,false);
-          PrintString(theEnv,WERROR,"Duplicate parameter names not allowed.\n");
+          WriteString(theEnv,STDERR,"Duplicate parameter names not allowed.\n");
           ReturnExpression(theEnv,parameterList);
           return NULL;
          }
       if (*wildcard != NULL)
         {
          PrintErrorID(theEnv,"PRCCODE",8,false);
-         PrintString(theEnv,WERROR,"No parameters allowed after wildcard parameter.\n");
+         WriteString(theEnv,STDERR,"No parameters allowed after wildcard parameter.\n");
          ReturnExpression(theEnv,parameterList);
          return NULL;
         }
@@ -542,11 +542,11 @@ int ReplaceProcVars( // TBD should be bool? returns -1, 0, 1
                if (errorCode == 0)
                  {
                   PrintErrorID(theEnv,"PRCCODE",3,true);
-                  PrintString(theEnv,WERROR,"Undefined variable ");
-                  PrintString(theEnv,WERROR,bindName->contents);
-                  PrintString(theEnv,WERROR," referenced in ");
-                  PrintString(theEnv,WERROR,bodytype);
-                  PrintString(theEnv,WERROR,".\n");
+                  WriteString(theEnv,STDERR,"Undefined variable ");
+                  WriteString(theEnv,STDERR,bindName->contents);
+                  WriteString(theEnv,STDERR," referenced in ");
+                  WriteString(theEnv,STDERR,bodytype);
+                  WriteString(theEnv,STDERR,".\n");
                  }
                return 1;
               }
@@ -677,7 +677,7 @@ Expression *GenProcWildcardReference(
                     procedure when unbound variables are detected
                     at runtime (The function should take no
                     arguments and have no return value.  The
-                    function should print its synopsis to WERROR
+                    function should print its synopsis to STDERR
                     and include the final carriage-return.)
   RETURNS      : Nothing useful
   SIDE EFFECTS : Any side-effects of the evaluation of the
@@ -692,7 +692,7 @@ void PushProcParameters(
   unsigned int numberOfParameters,
   const char *pname,
   const char *bodytype,
-  void (*UnboundErrFunc)(Environment *))
+  void (*UnboundErrFunc)(Environment *,const char *))
   {
    PROC_PARAM_STACK *ptmp;
 
@@ -758,7 +758,7 @@ void PopProcParameters(
 
    if (ProceduralPrimitiveData(theEnv)->WildcardValue != NULL)
      {
-      DecrementMultifieldReferenceCount(theEnv,ProceduralPrimitiveData(theEnv)->WildcardValue->multifieldValue);
+      ReleaseMultifield(theEnv,ProceduralPrimitiveData(theEnv)->WildcardValue->multifieldValue);
       if (ProceduralPrimitiveData(theEnv)->WildcardValue->value != ProceduralPrimitiveData(theEnv)->NoParamValue)
         AddToMultifieldList(theEnv,ProceduralPrimitiveData(theEnv)->WildcardValue->multifieldValue);
       rtn_struct(theEnv,udfValue,ProceduralPrimitiveData(theEnv)->WildcardValue);
@@ -889,7 +889,7 @@ void EvaluateProcActions(
   Expression *actions,
   unsigned short lvarcnt,
   UDFValue *returnValue,
-  void (*crtproc)(Environment *))
+  void (*crtproc)(Environment *,const char *))
   {
    UDFValue *oldLocalVarArray;
    unsigned short i;
@@ -925,13 +925,25 @@ void EvaluateProcActions(
      SetCurrentModule(theEnv,oldModule);
    if ((crtproc != NULL) ? EvaluationData(theEnv)->HaltExecution : false)
      {
-      PrintErrorID(theEnv,"PRCCODE",4,false);
-      PrintString(theEnv,WERROR,"Execution halted during the actions of ");
-      (*crtproc)(theEnv);
+      const char *logName;
+
+      if (GetEvaluationError(theEnv))
+        {
+         PrintErrorID(theEnv,"PRCCODE",4,false);
+         logName = STDERR;
+        }
+      else
+        {
+         PrintWarningID(theEnv,"PRCCODE",4,false);
+         logName = STDWRN;
+        }
+      WriteString(theEnv,logName,"Execution halted during the actions of ");
+      (*crtproc)(theEnv,logName);
      }
+
    if ((ProceduralPrimitiveData(theEnv)->WildcardValue != NULL) ? (returnValue->value == ProceduralPrimitiveData(theEnv)->WildcardValue->value) : false)
      {
-      DecrementMultifieldReferenceCount(theEnv,ProceduralPrimitiveData(theEnv)->WildcardValue->multifieldValue);
+      ReleaseMultifield(theEnv,ProceduralPrimitiveData(theEnv)->WildcardValue->multifieldValue);
       if (ProceduralPrimitiveData(theEnv)->WildcardValue->value != ProceduralPrimitiveData(theEnv)->NoParamValue)
         AddToMultifieldList(theEnv,ProceduralPrimitiveData(theEnv)->WildcardValue->multifieldValue);
       rtn_struct(theEnv,udfValue,ProceduralPrimitiveData(theEnv)->WildcardValue);
@@ -943,7 +955,7 @@ void EvaluateProcActions(
       RemoveTrackedMemory(theEnv,theTM);
       for (i = 0 ; i < lvarcnt ; i++)
         if (ProceduralPrimitiveData(theEnv)->LocalVarArray[i].supplementalInfo == TrueSymbol(theEnv))
-          DecrementUDFValueReferenceCount(theEnv,&ProceduralPrimitiveData(theEnv)->LocalVarArray[i]);
+          ReleaseUDFV(theEnv,&ProceduralPrimitiveData(theEnv)->LocalVarArray[i]);
       rm(theEnv,ProceduralPrimitiveData(theEnv)->LocalVarArray,(sizeof(UDFValue) * lvarcnt));
      }
 
@@ -965,14 +977,14 @@ void PrintProcParamArray(
   {
    unsigned int i;
 
-   PrintString(theEnv,logName," (");
+   WriteString(theEnv,logName," (");
    for (i = 0 ; i < ProceduralPrimitiveData(theEnv)->ProcParamArraySize ; i++)
      {
-      PrintUDFValue(theEnv,logName,&ProceduralPrimitiveData(theEnv)->ProcParamArray[i]);
+      WriteUDFValue(theEnv,logName,&ProceduralPrimitiveData(theEnv)->ProcParamArray[i]);
       if (i != ProceduralPrimitiveData(theEnv)->ProcParamArraySize-1)
-        PrintString(theEnv,logName," ");
+        WriteString(theEnv,logName," ");
      }
-   PrintString(theEnv,logName,")\n");
+   WriteString(theEnv,logName,")\n");
   }
 
 /****************************************************************
@@ -995,7 +1007,7 @@ void GrabProcWildargs(
   {
    unsigned int i, j;
    size_t k; /* 6.04 Bug Fix */
-   unsigned long size;
+   size_t size;
    UDFValue *val;
 
    returnValue->begin = 0;
@@ -1012,7 +1024,7 @@ void GrabProcWildargs(
      }
    else
      {
-      DecrementMultifieldReferenceCount(theEnv,ProceduralPrimitiveData(theEnv)->WildcardValue->multifieldValue);
+      ReleaseMultifield(theEnv,ProceduralPrimitiveData(theEnv)->WildcardValue->multifieldValue);
       if (ProceduralPrimitiveData(theEnv)->WildcardValue->value != ProceduralPrimitiveData(theEnv)->NoParamValue)
         AddToMultifieldList(theEnv,ProceduralPrimitiveData(theEnv)->WildcardValue->multifieldValue);
      }
@@ -1024,7 +1036,7 @@ void GrabProcWildargs(
       returnValue->range = 0;
       ProceduralPrimitiveData(theEnv)->WildcardValue->range = 0;
       returnValue->value = ProceduralPrimitiveData(theEnv)->WildcardValue->value = ProceduralPrimitiveData(theEnv)->NoParamValue;
-      IncrementMultifieldReferenceCount(theEnv,ProceduralPrimitiveData(theEnv)->WildcardValue->multifieldValue);
+      RetainMultifield(theEnv,ProceduralPrimitiveData(theEnv)->WildcardValue->multifieldValue);
       return;
      }
    for (i = theIndex-1 ; i < ProceduralPrimitiveData(theEnv)->ProcParamArraySize ; i++)
@@ -1051,7 +1063,7 @@ void GrabProcWildargs(
            }
         }
      }
-   IncrementMultifieldReferenceCount(theEnv,ProceduralPrimitiveData(theEnv)->WildcardValue->multifieldValue);
+   RetainMultifield(theEnv,ProceduralPrimitiveData(theEnv)->WildcardValue->multifieldValue);
   }
 
 /* =========================================
@@ -1106,18 +1118,18 @@ static void EvaluateProcParameters(
          if (temp.header->type == VOID_TYPE)
            {
             PrintErrorID(theEnv,"PRCCODE",2,false);
-            PrintString(theEnv,WERROR,"Functions without a return value are illegal as ");
-            PrintString(theEnv,WERROR,bodytype);
-            PrintString(theEnv,WERROR," arguments.\n");
+            WriteString(theEnv,STDERR,"Functions without a return value are illegal as ");
+            WriteString(theEnv,STDERR,bodytype);
+            WriteString(theEnv,STDERR," arguments.\n");
             SetEvaluationError(theEnv,true);
            }
          PrintErrorID(theEnv,"PRCCODE",6,false);
-         PrintString(theEnv,WERROR,"This error occurred while evaluating arguments ");
-         PrintString(theEnv,WERROR,"for the ");
-         PrintString(theEnv,WERROR,bodytype);
-         PrintString(theEnv,WERROR," ");
-         PrintString(theEnv,WERROR,pname);
-         PrintString(theEnv,WERROR,".\n");
+         WriteString(theEnv,STDERR,"This error occurred while evaluating arguments ");
+         WriteString(theEnv,STDERR,"for the ");
+         WriteString(theEnv,STDERR,bodytype);
+         WriteString(theEnv,STDERR," ");
+         WriteString(theEnv,STDERR,pname);
+         WriteString(theEnv,STDERR,".\n");
          rm(theEnv,rva,(sizeof(UDFValue) * numberOfParameters));
          return;
         }
@@ -1197,15 +1209,15 @@ static bool GetProcBind(
      {
       PrintErrorID(theEnv,"PRCCODE",5,false);
       SetEvaluationError(theEnv,true);
-      PrintString(theEnv,WERROR,"Variable ");
-      PrintString(theEnv,WERROR,GetFirstArgument()->lexemeValue->contents);
+      WriteString(theEnv,STDERR,"Variable ");
+      WriteString(theEnv,STDERR,GetFirstArgument()->lexemeValue->contents);
       if (ProceduralPrimitiveData(theEnv)->ProcUnboundErrFunc != NULL)
         {
-         PrintString(theEnv,WERROR," unbound in ");
-         (*ProceduralPrimitiveData(theEnv)->ProcUnboundErrFunc)(theEnv);
+         WriteString(theEnv,STDERR," unbound in ");
+         (*ProceduralPrimitiveData(theEnv)->ProcUnboundErrFunc)(theEnv,STDERR);
         }
       else
-        PrintString(theEnv,WERROR," unbound.\n");
+        WriteString(theEnv,STDERR," unbound.\n");
       returnValue->value = FalseSymbol(theEnv);
       return true;
      }
@@ -1244,7 +1256,7 @@ static bool PutProcBind(
    if (GetFirstArgument() == NULL)
      {
       if (dst->supplementalInfo == TrueSymbol(theEnv))
-        DecrementUDFValueReferenceCount(theEnv,dst);
+        ReleaseUDFV(theEnv,dst);
       dst->supplementalInfo = FalseSymbol(theEnv);
       returnValue->value = FalseSymbol(theEnv);
      }
@@ -1255,12 +1267,12 @@ static bool PutProcBind(
       else
         EvaluateExpression(theEnv,GetFirstArgument(),returnValue);
       if (dst->supplementalInfo == TrueSymbol(theEnv))
-        DecrementUDFValueReferenceCount(theEnv,dst);
+        ReleaseUDFV(theEnv,dst);
       dst->supplementalInfo = TrueSymbol(theEnv);
       dst->value = returnValue->value;
       dst->begin = returnValue->begin;
       dst->range = returnValue->range;
-      IncrementUDFValueReferenceCount(theEnv,dst);
+      RetainUDFV(theEnv,dst);
      }
    return true;
   }
@@ -1455,8 +1467,8 @@ static bool EvaluateBadCall(
 #pragma unused(value)
 #endif
    PrintErrorID(theEnv,"PRCCODE",1,false);
-   PrintString(theEnv,WERROR,"Attempted to call a deffunction/generic function ");
-   PrintString(theEnv,WERROR,"which does not exist.\n");
+   WriteString(theEnv,STDERR,"Attempted to call a deffunction/generic function ");
+   WriteString(theEnv,STDERR,"which does not exist.\n");
    SetEvaluationError(theEnv,true);
    returnValue->value = FalseSymbol(theEnv);
    return false;

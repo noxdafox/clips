@@ -341,7 +341,7 @@ static void ReturnDefglobal(
    /* Return the global's current value. */
    /*====================================*/
 
-   DecrementReferenceCount(theEnv,theDefglobal->current.header);
+   Release(theEnv,theDefglobal->current.header);
    if (theDefglobal->current.header->type == MULTIFIELD_TYPE)
      {
       if (theDefglobal->current.multifieldValue->busyCount == 0)
@@ -453,13 +453,13 @@ void QSetDefglobalValue(
        (! ConstructData(theEnv)->ClearReadyInProgress) &&
        (! ConstructData(theEnv)->ClearInProgress))
      {
-      PrintString(theEnv,STDOUT,":== ?*");
-      PrintString(theEnv,STDOUT,theGlobal->header.name->contents);
-      PrintString(theEnv,STDOUT,"* ==> ");
-      PrintUDFValue(theEnv,STDOUT,vPtr);
-      PrintString(theEnv,STDOUT," <== ");
-      PrintCLIPSValue(theEnv,STDOUT,&theGlobal->current);
-      PrintString(theEnv,STDOUT,"\n");
+      WriteString(theEnv,STDOUT,":== ?*");
+      WriteString(theEnv,STDOUT,theGlobal->header.name->contents);
+      WriteString(theEnv,STDOUT,"* ==> ");
+      WriteUDFValue(theEnv,STDOUT,vPtr);
+      WriteString(theEnv,STDOUT," <== ");
+      WriteCLIPSValue(theEnv,STDOUT,&theGlobal->current);
+      WriteString(theEnv,STDOUT,"\n");
      }
 #endif
 
@@ -467,7 +467,7 @@ void QSetDefglobalValue(
    /* Remove the old value of the global variable. */
    /*==============================================*/
 
-   DecrementReferenceCount(theEnv,theGlobal->current.header);
+   Release(theEnv,theGlobal->current.header);
    if (theGlobal->current.header->type == MULTIFIELD_TYPE)
      {
       if (theGlobal->current.multifieldValue->busyCount == 0)
@@ -484,7 +484,7 @@ void QSetDefglobalValue(
      { theGlobal->current.value = vPtr->value; }
    else
      { theGlobal->current.value = CopyMultifield(theEnv,vPtr->multifieldValue); }
-   IncrementReferenceCount(theEnv,theGlobal->current.header);
+   Retain(theEnv,theGlobal->current.header);
 
    /*===========================================*/
    /* Set the variable indicating that a change */
@@ -534,10 +534,10 @@ void DefglobalValueForm(
    Environment *theEnv = theGlobal->header.env;
 
    OpenStringBuilderDestination(theEnv,"GlobalValueForm",theSB);
-   PrintString(theEnv,"GlobalValueForm","?*");
-   PrintString(theEnv,"GlobalValueForm",theGlobal->header.name->contents);
-   PrintString(theEnv,"GlobalValueForm","* = ");
-   PrintCLIPSValue(theEnv,"GlobalValueForm",&theGlobal->current);
+   WriteString(theEnv,"GlobalValueForm","?*");
+   WriteString(theEnv,"GlobalValueForm",theGlobal->header.name->contents);
+   WriteString(theEnv,"GlobalValueForm","* = ");
+   WriteCLIPSValue(theEnv,"GlobalValueForm",&theGlobal->current);
    CloseStringBuilderDestination(theEnv,"GlobalValueForm");
   }
 
@@ -588,9 +588,9 @@ static bool EntityGetDefglobalValue(
    if (theGlobal == NULL)
      {
       PrintErrorID(theEnv,"GLOBLDEF",1,false);
-      PrintString(theEnv,WERROR,"Global variable ?*");
-      PrintString(theEnv,WERROR,((CLIPSLexeme *) theValue)->contents);
-      PrintString(theEnv,WERROR,"* is unbound.\n");
+      WriteString(theEnv,STDERR,"Global variable ?*");
+      WriteString(theEnv,STDERR,((CLIPSLexeme *) theValue)->contents);
+      WriteString(theEnv,STDERR,"* is unbound.\n");
       vPtr->value = FalseSymbol(theEnv);
       SetEvaluationError(theEnv,true);
       return false;

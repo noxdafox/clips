@@ -342,22 +342,22 @@ void PrintExpression(
         {
          case SF_VARIABLE:
          case GBL_VARIABLE:
-            PrintString(theEnv,fileid,"?");
-            PrintString(theEnv,fileid,theExpression->lexemeValue->contents);
+            WriteString(theEnv,fileid,"?");
+            WriteString(theEnv,fileid,theExpression->lexemeValue->contents);
             break;
 
          case MF_VARIABLE:
          case MF_GBL_VARIABLE:
-            PrintString(theEnv,fileid,"$?");
-            PrintString(theEnv,fileid,theExpression->lexemeValue->contents);
+            WriteString(theEnv,fileid,"$?");
+            WriteString(theEnv,fileid,theExpression->lexemeValue->contents);
             break;
 
          case FCALL:
-           PrintString(theEnv,fileid,"(");
-           PrintString(theEnv,fileid,ExpressionFunctionCallName(theExpression)->contents);
-           if (theExpression->argList != NULL) { PrintString(theEnv,fileid," "); }
+           WriteString(theEnv,fileid,"(");
+           WriteString(theEnv,fileid,ExpressionFunctionCallName(theExpression)->contents);
+           if (theExpression->argList != NULL) { WriteString(theEnv,fileid," "); }
            PrintExpression(theEnv,fileid,theExpression->argList);
-           PrintString(theEnv,fileid,")");
+           WriteString(theEnv,fileid,")");
            break;
 
          default:
@@ -369,7 +369,7 @@ void PrintExpression(
         }
 
       theExpression = theExpression->nextArg;
-      if (theExpression != NULL) PrintString(theEnv,fileid," ");
+      if (theExpression != NULL) WriteString(theEnv,fileid," ");
      }
 
    return;

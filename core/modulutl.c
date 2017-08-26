@@ -367,11 +367,11 @@ void AmbiguousReferenceErrorMessage(
   const char *constructName,
   const char *findName)
   {
-   PrintString(theEnv,WERROR,"Ambiguous reference to ");
-   PrintString(theEnv,WERROR,constructName);
-   PrintString(theEnv,WERROR," ");
-   PrintString(theEnv,WERROR,findName);
-   PrintString(theEnv,WERROR,".\nIt is imported from more than one module.\n");
+   WriteString(theEnv,STDERR,"Ambiguous reference to ");
+   WriteString(theEnv,STDERR,constructName);
+   WriteString(theEnv,STDERR," ");
+   WriteString(theEnv,STDERR,findName);
+   WriteString(theEnv,STDERR,".\nIt is imported from more than one module.\n");
   }
 
 /****************************************************/
@@ -664,8 +664,8 @@ void ListItemsDriver(
      {
       if (allModules)
         {
-         PrintString(theEnv,logicalName,DefmoduleName(theModule));
-         PrintString(theEnv,logicalName,":\n");
+         WriteString(theEnv,logicalName,DefmoduleName(theModule));
+         WriteString(theEnv,logicalName,":\n");
         }
 
       SetCurrentModule(theEnv,theModule);
@@ -683,16 +683,16 @@ void ListItemsDriver(
             constructName = (*nameFunction)(constructPtr);
             if (constructName != NULL)
               {
-               if (allModules) PrintString(theEnv,logicalName,"   ");
-               PrintString(theEnv,logicalName,constructName);
-               PrintString(theEnv,logicalName,"\n");
+               if (allModules) WriteString(theEnv,logicalName,"   ");
+               WriteString(theEnv,logicalName,constructName);
+               WriteString(theEnv,logicalName,"\n");
               }
            }
          else if (printFunction != NULL)
            {
-            if (allModules) PrintString(theEnv,logicalName,"   ");
+            if (allModules) WriteString(theEnv,logicalName,"   ");
             (*printFunction)(theEnv,logicalName,constructPtr);
-            PrintString(theEnv,logicalName,"\n");
+            WriteString(theEnv,logicalName,"\n");
            }
 
          constructPtr = (*nextFunction)(theEnv,constructPtr);
@@ -851,9 +851,9 @@ CLIPSLexeme *GetConstructNameAndComment(
    if (inputToken->tknType != SYMBOL_TOKEN)
      {
       PrintErrorID(theEnv,"CSTRCPSR",2,true);
-      PrintString(theEnv,WERROR,"Missing name for ");
-      PrintString(theEnv,WERROR,constructName);
-      PrintString(theEnv,WERROR," construct\n");
+      WriteString(theEnv,STDERR,"Missing name for ");
+      WriteString(theEnv,STDERR,constructName);
+      WriteString(theEnv,STDERR," construct\n");
       return NULL;
      }
 
@@ -937,19 +937,19 @@ CLIPSLexeme *GetConstructNameAndComment(
          redefining = true;
          if (deleteFunction != NULL)
            {
-            IncrementLexemeReferenceCount(theEnv,name);
+            RetainLexeme(theEnv,name);
             if ((*deleteFunction)(theConstruct,theEnv) == false)
               {
                PrintErrorID(theEnv,"CSTRCPSR",4,true);
-               PrintString(theEnv,WERROR,"Cannot redefine ");
-               PrintString(theEnv,WERROR,constructName);
-               PrintString(theEnv,WERROR," ");
-               PrintString(theEnv,WERROR,name->contents);
-               PrintString(theEnv,WERROR," while it is in use.\n");
-               DecrementLexemeReferenceCount(theEnv,name);
+               WriteString(theEnv,STDERR,"Cannot redefine ");
+               WriteString(theEnv,STDERR,constructName);
+               WriteString(theEnv,STDERR," ");
+               WriteString(theEnv,STDERR,name->contents);
+               WriteString(theEnv,STDERR," while it is in use.\n");
+               ReleaseLexeme(theEnv,name);
                return NULL;
               }
-            DecrementLexemeReferenceCount(theEnv,name);
+            ReleaseLexeme(theEnv,name);
            }
         }
      }
@@ -966,24 +966,24 @@ CLIPSLexeme *GetConstructNameAndComment(
       const char *outRouter = STDOUT;
       if (redefining && (! ignoreRedefinition))
         {
-         outRouter = WWARNING;
+         outRouter = STDWRN;
          PrintWarningID(theEnv,"CSTRCPSR",1,true);
-         PrintString(theEnv,outRouter,"Redefining ");
+         WriteString(theEnv,outRouter,"Redefining ");
         }
-      else PrintString(theEnv,outRouter,"Defining ");
+      else WriteString(theEnv,outRouter,"Defining ");
 
-      PrintString(theEnv,outRouter,constructName);
-      PrintString(theEnv,outRouter,": ");
-      PrintString(theEnv,outRouter,name->contents);
+      WriteString(theEnv,outRouter,constructName);
+      WriteString(theEnv,outRouter,": ");
+      WriteString(theEnv,outRouter,name->contents);
 
-      if (fullMessageCR) PrintString(theEnv,outRouter,"\n");
-      else PrintString(theEnv,outRouter," ");
+      if (fullMessageCR) WriteString(theEnv,outRouter,"\n");
+      else WriteString(theEnv,outRouter," ");
      }
    else
 #endif
      {
       if (GetPrintWhileLoading(theEnv) && (! ConstructData(theEnv)->CheckSyntaxMode))
-        { PrintString(theEnv,STDOUT,constructSymbol); }
+        { WriteString(theEnv,STDOUT,constructSymbol); }
      }
 
    /*===============================*/
