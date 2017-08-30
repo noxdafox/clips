@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*             CLIPS Version 6.31  08/28/17            */
    /*                                                     */
    /*                  MATCH HEADER FILE                  */
    /*******************************************************/
@@ -20,6 +20,9 @@
 /*                                                           */
 /*            Added additional members to partialMatch to    */
 /*            support changes to the matching algorithm.     */
+/*                                                           */
+/*      6.31: Bug fix to prevent rule activations for        */
+/*            partial matches being deleted.                 */
 /*                                                           */
 /*************************************************************/
 
@@ -43,9 +46,9 @@ struct multifieldMarker;
 #include "pattern.h"
 #endif
 
-/************************************************************/
-/* PATTERNMATCH STRUCTURE:                                  */
-/************************************************************/
+/***************************/
+/* PATTERNMATCH STRUCTURE: */
+/***************************/
 struct patternMatch
   {
    struct patternMatch *next;
@@ -65,14 +68,15 @@ struct genericMatch
      } gm;
   };
 
-/************************************************************/
-/* PARTIALMATCH STRUCTURE:                                  */
-/************************************************************/
+/***************************/
+/* PARTIALMATCH STRUCTURE: */
+/***************************/
 struct partialMatch
   {
    unsigned int betaMemory  :  1;
    unsigned int busy        :  1;
    unsigned int rhsMemory   :  1;
+   unsigned int deleting    :  1;
    unsigned short bcount; 
    unsigned long hashValue;
    void *owner;
@@ -93,9 +97,9 @@ struct partialMatch
    struct genericMatch binds[1];
   };
 
-/************************************************************/
-/* ALPHAMATCH STRUCTURE:                                    */
-/************************************************************/
+/*************************/
+/* ALPHAMATCH STRUCTURE: */
+/*************************/
 struct alphaMatch
   {
    struct patternEntity *matchingItem;

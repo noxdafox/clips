@@ -874,5 +874,24 @@ CLIPS> (assert (A))
 <Fact-1>
 CLIPS> (retract 1)
 CLIPS> (unwatch activations)
+CLIPS> (clear) ; CLIPSESG Bug
+CLIPS> (watch activations)
+CLIPS> 
+(defclass A
+  (is-a USER)
+  (slot a))
+CLIPS> 
+(defrule test
+  (not (object (is-a A) (a 1)))
+  (object (is-a A) (a 1))
+  =>)
+CLIPS> (make-instance [a1] of A (a 1))
+==> Activation 0      test: *,[a1]
+<== Activation 0      test: *,[a1]
+[a1]
+CLIPS> (modify-instance [a1] (a 2))
+TRUE
+CLIPS> (agenda)
+CLIPS> (unwatch activations)
 CLIPS> (clear)
 CLIPS> (dribble-off)

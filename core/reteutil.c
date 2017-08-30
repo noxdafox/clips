@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/22/14            */
+   /*             CLIPS Version 6.30  08/28/17            */
    /*                                                     */
    /*                 RETE UTILITY MODULE                 */
    /*******************************************************/
@@ -41,6 +41,9 @@
 /*                                                           */
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
+/*                                                           */
+/*      6.31: Bug fix to prevent rule activations for        */
+/*            partial matches being deleted.                 */
 /*                                                           */
 /*************************************************************/
 
@@ -130,6 +133,7 @@ globle struct partialMatch *CopyPartialMatch(
    linker->betaMemory = TRUE;
    linker->busy = FALSE;
    linker->rhsMemory = FALSE;
+   linker->deleting = FALSE;
    linker->bcount = list->bcount;
    linker->hashValue = 0;
 
@@ -138,9 +142,9 @@ globle struct partialMatch *CopyPartialMatch(
    return(linker);
   }
 
-/**********************************************/
-/* CreateEmptyPartialMatch:  */
-/**********************************************/
+/****************************/
+/* CreateEmptyPartialMatch: */
+/****************************/
 globle struct partialMatch *CreateEmptyPartialMatch(
   void *theEnv)
   {
@@ -152,6 +156,7 @@ globle struct partialMatch *CreateEmptyPartialMatch(
    linker->betaMemory = TRUE;
    linker->busy = FALSE;
    linker->rhsMemory = FALSE;
+   linker->deleting = FALSE;
    linker->bcount = 1;
    linker->hashValue = 0;
    linker->binds[0].gm.theValue = NULL;
@@ -159,9 +164,9 @@ globle struct partialMatch *CreateEmptyPartialMatch(
    return(linker);
   }
 
-/****************************************************/
+/**********************/
 /* InitializePMLinks: */
-/****************************************************/
+/**********************/
 static void InitializePMLinks(
   struct partialMatch *theMatch)
   {
@@ -181,9 +186,9 @@ static void InitializePMLinks(
    theMatch->dependents = NULL;
   }
   
-/***********************************************************/
-/* UpdateBetaPMLinks: . */
-/***********************************************************/
+/**********************/
+/* UpdateBetaPMLinks: */
+/**********************/
 globle void UpdateBetaPMLinks(
   void *theEnv,
   struct partialMatch *thePM,
@@ -589,6 +594,7 @@ globle struct partialMatch *MergePartialMatches(
    
    memcpy(linker,&mergeTemplate,sizeof(struct partialMatch) - sizeof(struct genericMatch));
    
+   linker->deleting = FALSE;
    linker->bcount = (unsigned short) (lhsBind->bcount + 1);
    
    /*========================================================*/
@@ -666,6 +672,7 @@ globle struct partialMatch *CreateAlphaMatch(
    InitializePMLinks(theMatch);
    theMatch->betaMemory = FALSE;
    theMatch->busy = FALSE;
+   theMatch->deleting = FALSE;
    theMatch->bcount = 1;
    theMatch->hashValue = hashOffset;
 

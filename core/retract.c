@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*             CLIPS Version 6.31  08/28/17            */
    /*                                                     */
    /*                   RETRACT MODULE                    */
    /*******************************************************/
@@ -31,6 +31,9 @@
 /*            analyze join network performance.              */
 /*                                                           */
 /*            Removed pseudo-facts used in not CEs.          */
+/*                                                           */
+/*      6.31: Bug fix to prevent rule activations for        */
+/*            partial matches being deleted.                 */
 /*                                                           */
 /*************************************************************/
 
@@ -90,6 +93,8 @@ globle void NetworkRetract(
      {
       nextMatch = tempMatch->next;
 
+      tempMatch->theMatch->deleting = TRUE;
+      
       if (tempMatch->theMatch->children != NULL)
         { PosEntryRetractAlpha(theEnv,tempMatch->theMatch,NETWORK_RETRACT); }
 
@@ -110,9 +115,9 @@ globle void NetworkRetract(
      }
   }
 
-/***************************************************************/
-/* PosEntryRetractAlpha:           */
-/***************************************************************/
+/*************************/
+/* PosEntryRetractAlpha: */
+/*************************/
 globle void PosEntryRetractAlpha(
   void *theEnv,
   struct partialMatch *alphaMatch,
@@ -151,9 +156,9 @@ globle void PosEntryRetractAlpha(
      }
   }
   
-/***************************************************************/
-/* NegEntryRetractAlpha:           */
-/***************************************************************/
+/*************************/
+/* NegEntryRetractAlpha: */
+/*************************/
 static void NegEntryRetractAlpha(
   void *theEnv,
   struct partialMatch *alphaMatch,
@@ -181,9 +186,9 @@ static void NegEntryRetractAlpha(
      }
   }
 
-/***************************************************************/
-/* NegEntryRetractBeta:           */
-/***************************************************************/
+/************************/
+/* NegEntryRetractBeta: */
+/************************/
 static void NegEntryRetractBeta(
   void *theEnv,
   struct joinNode *joinPtr,
@@ -242,9 +247,9 @@ static void NegEntryRetractBeta(
    PPDrive(theEnv,betaMatch,NULL,joinPtr,operation);
   }
 
-/***************************************************************/
-/* PosEntryRetractBeta:           */
-/***************************************************************/
+/************************/
+/* PosEntryRetractBeta: */
+/************************/
 globle void PosEntryRetractBeta(
   void *theEnv,
   struct partialMatch *parentMatch,
@@ -442,6 +447,8 @@ static intBool PartialMatchDefunct(
   {
    register unsigned short i;
    register struct patternEntity * thePE;
+   
+   if (thePM->deleting) return TRUE;
 
    for (i = 0 ; i < thePM->bcount ; i++)
      {
@@ -471,16 +478,18 @@ intBool PartialMatchWillBeDeleted(
 
    if (thePM == NULL) return FALSE;
    
+   if (thePM->deleting) return TRUE;
+
    for (i = 0 ; i < thePM->bcount ; i++)
      {
       if (thePM->binds[i].gm.theMatch == NULL) continue;
       thePE = thePM->binds[i].gm.theMatch->matchingItem;
       if (thePE && thePE->theInfo->isDeleted &&
           (*thePE->theInfo->isDeleted)(theEnv,thePE))
-        return(TRUE);
+        { return TRUE; }
      }
-     
-   return(FALSE);
+
+   return FALSE;
   }
 
 /***************************************************/
