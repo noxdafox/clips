@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  11/01/16             */
+   /*            CLIPS Version 6.40  08/28/17             */
    /*                                                     */
    /*                  MATCH HEADER FILE                  */
    /*******************************************************/
@@ -20,6 +20,9 @@
 /*                                                           */
 /*            Added additional members to partialMatch to    */
 /*            support changes to the matching algorithm.     */
+/*                                                           */
+/*      6.31: Bug fix to prevent rule activations for        */
+/*            partial matches being deleted.                 */
 /*                                                           */
 /*      6.40: Pragma once and other inclusion changes.       */
 /*                                                           */
@@ -73,6 +76,7 @@ struct partialMatch
    unsigned int betaMemory  :  1;
    unsigned int busy        :  1;
    unsigned int rhsMemory   :  1;
+   unsigned int deleting    :  1;
    unsigned short bcount;
    unsigned long hashValue;
    void *owner;

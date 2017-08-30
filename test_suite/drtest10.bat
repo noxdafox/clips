@@ -474,4 +474,19 @@
 (assert (A))
 (retract 1)
 (unwatch activations)
+(clear) ; CLIPSESG Bug
+(watch activations)
+
+(defclass A
+  (is-a USER)
+  (slot a))
+
+(defrule test
+  (not (object (is-a A) (a 1)))
+  (object (is-a A) (a 1))
+  =>)
+(make-instance [a1] of A (a 1))
+(modify-instance [a1] (a 2))
+(agenda)
+(unwatch activations)
 (clear)
