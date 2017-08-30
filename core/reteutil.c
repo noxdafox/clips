@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  10/01/16             */
+   /*            CLIPS Version 6.40  08/28/17             */
    /*                                                     */
    /*                 RETE UTILITY MODULE                 */
    /*******************************************************/
@@ -41,6 +41,9 @@
 /*                                                           */
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
+/*                                                           */
+/*      6.31: Bug fix to prevent rule activations for        */
+/*            partial matches being deleted.                 */
 /*                                                           */
 /*      6.40: Added Env prefix to GetHaltExecution and       */
 /*            SetHaltExecution functions.                    */
@@ -142,6 +145,7 @@ struct partialMatch *CopyPartialMatch(
    linker->betaMemory = true;
    linker->busy = false;
    linker->rhsMemory = false;
+   linker->deleting = false;
    linker->bcount = list->bcount;
    linker->hashValue = 0;
 
@@ -164,6 +168,7 @@ struct partialMatch *CreateEmptyPartialMatch(
    linker->betaMemory = true;
    linker->busy = false;
    linker->rhsMemory = false;
+   linker->deleting = false;
    linker->bcount = 1;
    linker->hashValue = 0;
    linker->binds[0].gm.theValue = NULL;
@@ -601,6 +606,7 @@ struct partialMatch *MergePartialMatches(
 
    memcpy(linker,&mergeTemplate,sizeof(struct partialMatch) - sizeof(struct genericMatch));
 
+   linker->deleting = false;
    linker->bcount = lhsBind->bcount + 1;
 
    /*========================================================*/
@@ -678,6 +684,7 @@ struct partialMatch *CreateAlphaMatch(
    InitializePMLinks(theMatch);
    theMatch->betaMemory = false;
    theMatch->busy = false;
+   theMatch->deleting = false;
    theMatch->bcount = 1;
    theMatch->hashValue = hashOffset;
 

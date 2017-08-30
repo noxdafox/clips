@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/30/16             */
+   /*            CLIPS Version 6.40  08/28/17             */
    /*                                                     */
    /*                   RETRACT MODULE                    */
    /*******************************************************/
@@ -31,6 +31,9 @@
 /*            analyze join network performance.              */
 /*                                                           */
 /*            Removed pseudo-facts used in not CEs.          */
+/*                                                           */
+/*      6.31: Bug fix to prevent rule activations for        */
+/*            partial matches being deleted.                 */
 /*                                                           */
 /*      6.40: Pragma once and other inclusion changes.       */
 /*                                                           */
@@ -95,6 +98,8 @@ void NetworkRetract(
      {
       nextMatch = tempMatch->next;
 
+      tempMatch->theMatch->deleting = true;
+      
       if (tempMatch->theMatch->children != NULL)
         { PosEntryRetractAlpha(theEnv,tempMatch->theMatch,NETWORK_RETRACT); }
 
@@ -447,6 +452,8 @@ static bool PartialMatchDefunct(
   {
    unsigned short i;
    struct patternEntity * thePE;
+   
+   if (thePM->deleting) return true;
 
    for (i = 0 ; i < thePM->bcount ; i++)
      {
@@ -475,6 +482,8 @@ bool PartialMatchWillBeDeleted(
    struct patternEntity * thePE;
 
    if (thePM == NULL) return false;
+   
+   if (thePM->deleting) return true;
 
    for (i = 0 ; i < thePM->bcount ; i++)
      {
