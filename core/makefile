@@ -7,36 +7,21 @@
 
 # https://felixcrux.com/blog/creating-basic-makefile
 
-# set COMPILE_AS to either C or C++
-COMPILE_AS = C
+# platform detection
+PLATFORM = $(shell uname -s)
 
-# set CONFIGURATION to DEBUG or RELEASE
-CONFIGURATION = RELEASE
-
-CLIPS_OS = DARWIN
-
-WARNINGS = -Wall -Wundef -Wpointer-arith -Wshadow -Wstrict-aliasing \
-	       -Winline -Wmissing-declarations -Wredundant-decls \
-	       -Wmissing-prototypes -Wnested-externs -Wstrict-prototypes \
-	       -Waggregate-return -Wno-implicit
-
-ifeq ($(COMPILE_AS),C)
-CC = gcc
-OTHER_FLAGS = -std=c99
-LIBRARIES = -lm
-endif 
-ifeq ($(COMPILE_AS),C++)
-CC = g++
-OTHER_FLAGS = -x c++ -std=c++11
-LIBRARIES = -lstdc++
-WARNINGS += -Wcast-qual
+ifeq ($(PLATFORM),Darwin) # macOS
+	CLIPS_OS = DARWIN
+	WARNINGS = -Wall -Wundef -Wpointer-arith -Wshadow -Wstrict-aliasing \
+	           -Winline -Wmissing-declarations -Wredundant-decls \
+	           -Wmissing-prototypes -Wnested-externs -Wstrict-prototypes \
+	           -Waggregate-return -Wno-implicit
 endif
 
-ifeq ($(CONFIGURATION),RELEASE)
-CONFIG_FLAGS = -O3 -fno-strict-aliasing
-endif 
-ifeq ($(CONFIGURATION),DEBUG)
-CONFIG_FLAGS = -O0 -g
+ifeq ($(PLATFORM),Linux) # linux
+	CLIPS_OS = LINUX
+	WARNINGS = -Wall -Wundef -Wpointer-arith -Wshadow -Wstrict-aliasing \
+               -Winline -Wredundant-decls -Waggregate-return
 endif
 	    
 OBJS = agenda.o analysis.o argacces.o bload.o bmathfun.o bsave.o \
@@ -69,13 +54,39 @@ OBJS = agenda.o analysis.o argacces.o bload.o bmathfun.o bsave.o \
  	tmpltpsr.o tmpltrhs.o tmpltutl.o userdata.o userfunctions.o \
  	utility.o watch.o
 
-.c.o :
-	$(CC) -c -D$(CLIPS_OS) $(CONFIG_FLAGS) $(OTHER_FLAGS) $(WARNINGS) $<
+all: release
 
-all: clips
+debug : CC = gcc
+debug : CFLAGS = -std=c99 -O0 -g
+debug : LDLIBS = -lm
+debug : clips
+
+release : CC = gcc
+release : CFLAGS = -std=c99 -O3 -fno-strict-aliasing
+release : LDLIBS = -lm
+release : clips
+
+debug_cpp : CC = g++
+debug_cpp : CFLAGS = -x c++ -std=c++11 -O0 -g
+ifeq ($(PLATFORM),Darwin) # macOS
+debug_cpp : WARNINGS += -Wcast-qual
+endif
+debug_cpp : LDLIBS = -lstdc++
+debug_cpp : clips
+
+release_cpp : CC = g++
+release_cpp : CFLAGS = -x c++ -std=c++11 -O3 -fno-strict-aliasing
+ifeq ($(PLATFORM),Darwin) # macOS
+release_cpp : WARNINGS += -Wcast-qual
+endif
+release_cpp : LDLIBS = -lstdc++
+release_cpp : clips
+
+.c.o :
+	$(CC) -c -D$(CLIPS_OS) $(CFLAGS) $(WARNINGS) $<
 
 clips : main.o libclips.a
-	$(CC) -o clips main.o -L. -lclips $(LIBRARIES)
+	$(CC) -o clips main.o -L. -lclips $(LDLIBS)
 	
 libclips.a : $(OBJS)
 	rm -f $@   
@@ -85,7 +96,7 @@ clean :
 	-rm -f main.o $(OBJS)
 	-rm -f clips libclips.a
 	
-.PHONY : all clips clean
+.PHONY : all clips clean debug release debug_cpp release_cpp
 
 # Dependencies generated using "gcc -MM *.c"
 
