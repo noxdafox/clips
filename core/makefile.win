@@ -6,11 +6,28 @@
 
 # https://felixcrux.com/blog/creating-basic-makefile
 
-# set COMPILE_AS to either C or C++
-COMPILE_AS = C++
+# set BUILD to either RELEASE, DEBUG, RELEASE_CPP, or DEBUG_CPP
+BUILD = RELEASE
 
-# set CONFIGURATION to DEBUG or RELEASE
+!IF "$(BUILD)" == "RELEASE"
+COMPILE_AS = C
 CONFIGURATION = RELEASE
+!ENDIF
+
+!IF "$(BUILD)" == "DEBUG"
+COMPILE_AS = C
+CONFIGURATION = DEBUG
+!ENDIF
+
+!IF "$(BUILD)" == "RELEASE_CPP"
+COMPILE_AS = C++
+CONFIGURATION = RELEASE
+!ENDIF
+
+!IF "$(BUILD)" == "DEBUG_CPP"
+COMPILE_AS = C++
+CONFIGURATION = DEBUG
+!ENDIF
 
 CLIPS_OS = WIN_MVC
 
@@ -72,9 +89,6 @@ OBJS = agenda.obj analysis.obj argacces.obj bload.obj bmathfun.obj bsave.obj \
 	$(CC) -c -D$(CLIPS_OS) $(CONFIG_FLAGS) $(OTHER_FLAGS) $(WARNINGS) $<
 	
 all: clips
-
-##clips : main.obj libclips.a
-##	$(CC) -o clips main.obj -L. -lclips $(LIBRARIES)
 
 clips : main.obj clips.lib
 	$(CC) /Feclips.exe main.obj clips.lib /link $(LINK_FLAGS) 
