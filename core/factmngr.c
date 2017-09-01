@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.31  08/15/17            */
+   /*             CLIPS Version 6.31  09/01/17            */
    /*                                                     */
    /*                 FACT MANAGER MODULE                 */
    /*******************************************************/
@@ -62,7 +62,8 @@
 /*            to constructs, DanglingConstructs.             */
 /*                                                           */
 /*      6.31: Added NULL check for slotName in function      */
-/*            EnvGetFactSlot.                                */
+/*            EnvGetFactSlot. Return value of FALSE now      */
+/*            returned if garbage flag set for fact.         */
 /*                                                           */
 /*************************************************************/
 
@@ -960,7 +961,14 @@ globle intBool EnvGetFactSlot(
    struct fact *theFact = (struct fact *) vTheFact;
    struct deftemplate *theDeftemplate;
    short whichSlot;
-
+   
+   if (theFact->garbage)
+     {
+      theValue->type = SYMBOL;
+      theValue->value = EnvFalseSymbol(theEnv);
+      return(FALSE);
+     }
+   
    /*===============================================*/
    /* Get the deftemplate associated with the fact. */
    /*===============================================*/

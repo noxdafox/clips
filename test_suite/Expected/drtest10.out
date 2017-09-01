@@ -893,5 +893,80 @@ CLIPS> (modify-instance [a1] (a 2))
 TRUE
 CLIPS> (agenda)
 CLIPS> (unwatch activations)
+CLIPS> (clear) ; SourceForge Ticket #14
+CLIPS> (watch facts)
+CLIPS> (deftemplate foo (multislot x))
+CLIPS> (deffacts start (foo (x 1 2)) (foo (x a)))
+CLIPS> (reset)
+<== f-0     (initial-fact)
+==> f-0     (initial-fact)
+==> f-1     (foo (x 1 2))
+==> f-2     (foo (x a))
+CLIPS> 
+(do-for-fact ((?f foo)) TRUE
+  (retract ?f)
+  (bind ?x ?f:x)
+  (assert (foo (x $?x 3))))
+<== f-1     (foo (x 1 2))
+==> f-3     (foo (x FALSE 3))
+<Fact-3>
+CLIPS> (reset)
+<== f-0     (initial-fact)
+<== f-2     (foo (x a))
+<== f-3     (foo (x FALSE 3))
+==> f-0     (initial-fact)
+==> f-1     (foo (x 1 2))
+==> f-2     (foo (x a))
+CLIPS> (do-for-all-facts ((?f foo)) TRUE
+  (retract ?f)
+  (printout t ?f " " ?f:x crlf))
+<== f-1     (foo (x 1 2))
+<Fact-1> FALSE
+<== f-2     (foo (x a))
+<Fact-2> FALSE
+CLIPS>   
+(unwatch facts)
+CLIPS> (clear)  
+CLIPS> (watch instances)
+CLIPS> (watch slots)
+CLIPS> (defclass FOO (is-a USER) (multislot x))
+CLIPS> 
+(definstances start
+   ([f1] of FOO (x 1 2))
+   ([f2] of FOO (x a)))
+CLIPS> (reset)
+<== instance [initial-object] of INITIAL-OBJECT
+==> instance [initial-object] of INITIAL-OBJECT
+==> instance [f1] of FOO
+::= local slot x in instance f1 <- (1 2)
+==> instance [f2] of FOO
+::= local slot x in instance f2 <- (a)
+CLIPS> 
+(do-for-instance ((?f FOO)) TRUE
+  (send ?f delete)
+  (bind ?x ?f:x)
+  (make-instance [f3] of FOO (x $?x 3)))
+<== instance [f1] of FOO
+==> instance [f3] of FOO
+::= local slot x in instance f3 <- (FALSE 3)
+[f3]
+CLIPS> (reset)
+<== instance [initial-object] of INITIAL-OBJECT
+<== instance [f2] of FOO
+<== instance [f3] of FOO
+==> instance [initial-object] of INITIAL-OBJECT
+==> instance [f1] of FOO
+::= local slot x in instance f1 <- (1 2)
+==> instance [f2] of FOO
+::= local slot x in instance f2 <- (a)
+CLIPS> 
+(do-for-all-instances ((?f FOO)) TRUE
+  (send ?f delete)
+  (printout t ?f " " ?f:x crlf))
+<== instance [f1] of FOO
+[f1] FALSE
+<== instance [f2] of FOO
+[f2] FALSE
+CLIPS> (unwatch all)
 CLIPS> (clear)
 CLIPS> (dribble-off)

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*               CLIPS Version 6.30  08/22/14          */
+   /*               CLIPS Version 6.31  09/01/17          */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -30,6 +30,9 @@
 /*                                                           */
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
+/*                                                           */
+/*      6.31: Retrieval for instance query slot function     */
+/*            returns FALSE if fact has been retracted.      */
 /*                                                           */
 /*************************************************************/
 
@@ -168,6 +171,9 @@ globle void GetQueryInstanceSlot(
 
    core = FindQueryCore(theEnv,ValueToInteger(GetpValue(GetFirstArgument())));
    ins = core->solns[ValueToInteger(GetpValue(GetFirstArgument()->nextArg))];
+   
+   if (ins->garbage) return;
+   
    EvaluateExpression(theEnv,GetFirstArgument()->nextArg->nextArg,&temp);
    if (temp.type != SYMBOL)
      {
