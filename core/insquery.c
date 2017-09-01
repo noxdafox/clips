@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  10/18/16             */
+   /*            CLIPS Version 6.40  09/01/17             */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -30,6 +30,9 @@
 /*                                                           */
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
+/*                                                           */
+/*      6.31: Retrieval for instance query slot function     */
+/*            returns FALSE if fact has been retracted.      */
 /*                                                           */
 /*      6.40: Added Env prefix to GetEvaluationError and     */
 /*            SetEvaluationError functions.                  */
@@ -178,6 +181,9 @@ void GetQueryInstanceSlot(
 
    core = FindQueryCore(theEnv,GetFirstArgument()->integerValue->contents);
    ins = core->solns[GetFirstArgument()->nextArg->integerValue->contents];
+   
+   if (ins->garbage) return;
+   
    EvaluateExpression(theEnv,GetFirstArgument()->nextArg->nextArg,&temp);
    if (temp.header->type != SYMBOL_TYPE)
      {

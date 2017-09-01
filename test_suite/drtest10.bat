@@ -489,4 +489,40 @@
 (modify-instance [a1] (a 2))
 (agenda)
 (unwatch activations)
+(clear) ; SourceForge Ticket #14
+(watch facts)
+(deftemplate foo (multislot x))
+(deffacts start (foo (x 1 2)) (foo (x a)))
+(reset)
+
+(do-for-fact ((?f foo)) TRUE
+  (retract ?f)
+  (bind ?x ?f:x)
+  (assert (foo (x $?x 3))))
+(reset)
+(do-for-all-facts ((?f foo)) TRUE
+  (retract ?f)
+  (printout t ?f " " ?f:x crlf))
+  
+(unwatch facts)
+(clear)  
+(watch instances)
+(watch slots)
+(defclass FOO (is-a USER) (multislot x))
+
+(definstances start
+   ([f1] of FOO (x 1 2))
+   ([f2] of FOO (x a)))
+(reset)
+
+(do-for-instance ((?f FOO)) TRUE
+  (send ?f delete)
+  (bind ?x ?f:x)
+  (make-instance [f3] of FOO (x $?x 3)))
+(reset)
+
+(do-for-all-instances ((?f FOO)) TRUE
+  (send ?f delete)
+  (printout t ?f " " ?f:x crlf))
+(unwatch all)
 (clear)

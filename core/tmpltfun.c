@@ -85,6 +85,10 @@
 /*            Assert returns duplicate fact. FALSE is now    */
 /*            returned only if an error occurs.              */
 /*                                                           */
+/*            For the modify command, specifying the fact    */
+/*            using a fact-index is no longer limited to     */
+/*            top-level commands.                            */
+/*                                                           */
 /*************************************************************/
 
 #include "setup.h"
