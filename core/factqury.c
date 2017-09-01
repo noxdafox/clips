@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  10/18/16             */
+   /*            CLIPS Version 6.40  09/01/17             */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -29,6 +29,9 @@
 /*            Fixes for run-time use of query functions.     */
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
+/*                                                           */
+/*      6.31: Retrieval for fact query slot function returns */
+/*            FALSE if fact has been retracted .             */
 /*                                                           */
 /*      6.40: Added Env prefix to GetEvaluationError and     */
 /*            SetEvaluationError functions.                  */
@@ -181,6 +184,9 @@ void GetQueryFactSlot(
 
    core = FindQueryCore(theEnv,GetFirstArgument()->integerValue->contents);
    theFact = core->solns[GetFirstArgument()->nextArg->integerValue->contents];
+   
+   if (theFact->garbage) return; // TBD Should throw error like (slot-value)
+   
    EvaluateExpression(theEnv,GetFirstArgument()->nextArg->nextArg,&temp);
    if (temp.header->type != SYMBOL_TYPE)
      {

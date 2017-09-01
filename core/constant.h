@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/28/17             */
+   /*            CLIPS Version 6.40  09/01/17             */
    /*                                                     */
    /*                CONSTANTS HEADER FILE                */
    /*******************************************************/
@@ -94,11 +94,11 @@ typedef enum
 #endif
 
 #ifndef CREATION_DATE_STRING
-#define CREATION_DATE_STRING "8/28/17"
+#define CREATION_DATE_STRING "9/1/17"
 #endif
 
 #ifndef BANNER_STRING
-#define BANNER_STRING "         CLIPS (Forge Alpha 8/28/17)\n"
+#define BANNER_STRING "         CLIPS (Forge Alpha 9/1/17)\n"
 #endif
 
 /*************************/
