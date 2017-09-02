@@ -65,6 +65,9 @@
 /*            EnvGetFactSlot. Return value of FALSE now      */
 /*            returned if garbage flag set for fact.         */
 /*                                                           */
+/*            Added constraint checking for slot value in    */
+/*            EnvPutFactSlot function.                       */
+/*                                                           */
 /*      6.40: Added Env prefix to GetEvaluationError and     */
 /*            SetEvaluationError functions.                  */
 /*                                                           */
@@ -122,6 +125,7 @@
 #include "tmpltutl.h"
 #include "utility.h"
 #include "watch.h"
+#include "cstrnchk.h"
 
 #include "factmngr.h"
 
@@ -1184,6 +1188,16 @@ bool PutFactSlot(
    if (((theSlot->multislot == 0) && (theValue->header->type == MULTIFIELD_TYPE)) ||
        ((theSlot->multislot == 1) && (theValue->header->type != MULTIFIELD_TYPE)))
      { return false; }
+     
+   /*=================================*/
+   /* Check constraints for the slot. */
+   /*=================================*/
+   
+   if (theSlot->constraints != NULL)
+     {
+      if (ConstraintCheckValue(theEnv,theValue->header->type,theValue->value,theSlot->constraints) != NO_VIOLATION)
+        { return false; }
+     }
 
    /*=====================*/
    /* Set the slot value. */
@@ -2289,6 +2303,20 @@ bool FBPutSlot(
        ((theSlot->multislot == 1) && (slotValue->header->type != MULTIFIELD_TYPE)))
      { return false; }
      
+   /*=================================*/
+   /* Check constraints for the slot. */
+   /*=================================*/
+   
+   if (theSlot->constraints != NULL)
+     {
+      if (ConstraintCheckValue(theEnv,slotValue->header->type,slotValue->value,theSlot->constraints) != NO_VIOLATION)
+        { return false; }
+     }
+
+   /*==========================*/
+   /* Set up the change array. */
+   /*==========================*/
+
    if (theFB->fbValueArray == NULL)
      {
       theFB->fbValueArray = (CLIPSValue *) gm2(theFB->fbEnv,sizeof(CLIPSValue) * theFB->fbDeftemplate->numberOfSlots);
@@ -2736,7 +2764,21 @@ bool FMPutSlot(
    if (((theSlot->multislot == 0) && (slotValue->header->type == MULTIFIELD_TYPE)) ||
        ((theSlot->multislot == 1) && (slotValue->header->type != MULTIFIELD_TYPE)))
      { return false; }
+   
+   /*=================================*/
+   /* Check constraints for the slot. */
+   /*=================================*/
+   
+   if (theSlot->constraints != NULL)
+     {
+      if (ConstraintCheckValue(theEnv,slotValue->header->type,slotValue->value,theSlot->constraints) != NO_VIOLATION)
+        { return false; }
+     }
 
+   /*===========================*/
+   /* Set up the change arrays. */
+   /*===========================*/
+   
    if (theFM->fmValueArray == NULL)
      {
       theFM->fmValueArray = (CLIPSValue *) gm2(theFM->fmEnv,sizeof(CLIPSValue) * theFM->fmOldFact->whichDeftemplate->numberOfSlots);
@@ -2749,7 +2791,7 @@ bool FMPutSlot(
       theFM->changeMap = (char *) gm2(theFM->fmEnv,CountToBitMapSize(theFM->fmOldFact->whichDeftemplate->numberOfSlots));
       ClearBitString((void *) theFM->changeMap,CountToBitMapSize(theFM->fmOldFact->whichDeftemplate->numberOfSlots));
      }
-     
+
    /*=====================*/
    /* Set the slot value. */
    /*=====================*/
