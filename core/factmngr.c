@@ -65,6 +65,9 @@
 /*            EnvGetFactSlot. Return value of FALSE now      */
 /*            returned if garbage flag set for fact.         */
 /*                                                           */
+/*            Added constraint checking for slot value in    */
+/*            EnvPutFactSlot function.                       */
+/*                                                           */
 /*************************************************************/
 
 
@@ -106,6 +109,7 @@
 #include "commline.h"
 #include "envrnmnt.h"
 #include "sysdep.h"
+#include "cstrnchk.h"
 
 #include "engine.h"
 #include "lgcldpnd.h"
@@ -1076,6 +1080,17 @@ globle intBool EnvPutFactSlot(
    if (((theSlot->multislot == 0) && (theValue->type == MULTIFIELD)) ||
        ((theSlot->multislot == 1) && (theValue->type != MULTIFIELD)))
      { return(FALSE); }
+     
+   /*=================================*/
+   /* Check constraints for the slot. */
+   /*=================================*/
+
+   if ((theSlot->constraints != NULL) &&
+       EnvGetStaticConstraintChecking(theEnv))
+     {
+      if (ConstraintCheckValue(theEnv,theValue->type,theValue->value,theSlot->constraints) != NO_VIOLATION)
+        { return(FALSE); }
+     }
 
    /*=====================*/
    /* Set the slot value. */
