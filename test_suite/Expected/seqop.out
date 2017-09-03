@@ -38,7 +38,7 @@ CLIPS> (run)
 CLIPS> (undeffunction boggle)
 CLIPS> (undefrule foo)
 CLIPS> (+ $?*x*)
-6
+[ARGACCES4] Function + expected at least 2 argument(s)
 CLIPS> (deffunction bar ($?a) (foo $?a))
 [ARGACCES4] Function foo expected exactly 2 argument(s)
 
