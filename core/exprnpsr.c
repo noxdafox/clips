@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  11/01/16             */
+   /*            CLIPS Version 6.40  09/02/17             */
    /*                                                     */
    /*              EXPRESSION PARSER MODULE               */
    /*******************************************************/
@@ -37,6 +37,9 @@
 /*            Changed find construct functionality so that   */
 /*            imported modules are search when locating a    */
 /*            named construct.                               */
+/*                                                           */
+/*      6.31: Fixed bug where sequence expansion was always  */
+/*            occurring when using $ with global variables.  */
 /*                                                           */
 /*      6.40: Changed restrictions from char * to            */
 /*            CLIPSLexeme * to support strings               */
@@ -370,8 +373,14 @@ bool ReplaceSequenceExpansionOps(
 
    while (actions != NULL)
      {
-      if ((ExpressionData(theEnv)->SequenceOpMode == false) && (actions->type == MF_VARIABLE))
-        actions->type = SF_VARIABLE;
+      if (ExpressionData(theEnv)->SequenceOpMode == false)
+        {
+         if (actions->type == MF_VARIABLE)
+           { actions->type = SF_VARIABLE; }
+         else if (actions->type == MF_GBL_VARIABLE)
+           { actions->type = GBL_VARIABLE; }
+        }
+        
       if ((actions->type == MF_VARIABLE) || (actions->type == MF_GBL_VARIABLE) ||
           (actions->value == expmult))
         {
