@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/30/16             */
+   /*            CLIPS Version 6.40  09/04/17             */
    /*                                                     */
    /*               FILE I/O ROUTER MODULE                */
    /*******************************************************/
@@ -39,6 +39,9 @@
 /*                                                           */
 /*            Added STDOUT and STDIN logical name            */
 /*            definitions.                                   */
+/*                                                           */
+/*      6.31: Output to logical WERROR is now sent to stderr */
+/*            rather than stdout.                            */
 /*                                                           */
 /*      6.40: Pragma once and other inclusion changes.       */
 /*                                                           */
@@ -122,13 +125,13 @@ FILE *FindFptr(
    /*========================================================*/
 
    if (strcmp(logicalName,STDOUT) == 0)
-     { return(stdout); }
+     { return stdout; }
    else if (strcmp(logicalName,STDIN) == 0)
-     { return(stdin);  }
+     { return stdin;  }
    else if (strcmp(logicalName,STDERR) == 0)
-     { return(stdout); }
+     { return stderr; }
    else if (strcmp(logicalName,STDWRN) == 0)
-     { return(stdout); }
+     { return stdout; }
 
    /*==============================================================*/
    /* Otherwise, look up the logical name on the global file list. */
@@ -138,7 +141,7 @@ FILE *FindFptr(
    while ((fptr != NULL) ? (strcmp(logicalName,fptr->logicalName) != 0) : false)
      { fptr = fptr->next; }
 
-   if (fptr != NULL) return(fptr->stream);
+   if (fptr != NULL) return fptr->stream;
 
    return NULL;
   }
@@ -221,7 +224,7 @@ static int ReadFileCallback(
 
    if ((fptr == stdin) && (theChar == EOF)) clearerr(stdin);
 
-   return(theChar);
+   return theChar;
   }
 
 /********************************************************/
@@ -238,9 +241,9 @@ static int UnreadFileCallback(
    fptr = FindFptr(theEnv,logicalName);
 
    if (fptr == stdin)
-     { return(genungetchar(theEnv,ch)); }
+     { return genungetchar(theEnv,ch); }
    else
-     { return(ungetc(ch,fptr)); }
+     { return ungetc(ch,fptr); }
   }
 
 /*********************************************************/
