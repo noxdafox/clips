@@ -9,10 +9,10 @@
 #import <Cocoa/Cocoa.h>
 #import <CLIPS/clips.h>
 
-   bool                    QueryInterfaceRouter(Environment *,const char *,void *);
-   void                    PrintInterfaceRouter(Environment *,const char *,const char *,void *);
-   int                     GetcInterfaceRouter(Environment *,const char *,void *);
-   void                    ExitInterfaceRouter(Environment *,int,void *);
+   bool                    QueryInterfaceCallback(Environment *,const char *,void *);
+   void                    WriteInterfaceCallback(Environment *,const char *,const char *,void *);
+   int                     ReadInterfaceCallback(Environment *,const char *,void *);
+   void                    ExitInterfaceCallback(Environment *,int,void *);
    void                    MacPeriodicFunction(Environment *,void *);
    void                    ClearEnvironmentWindowCommand(Environment *,UDFContext *,UDFValue *);
    int                     MacBeforeOpenFunction(Environment *);
