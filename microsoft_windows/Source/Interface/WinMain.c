@@ -253,7 +253,7 @@ static int PrintInterfaceRouter(
    FILE *fptr;
 
    fptr = FindFptr(theEnv,logicalName);
-   if (fptr == stdout)
+   if ((fptr == stdout) || (fptr == stderr))
      { DisplayPrint(DialogWindow,str); }
    else
      { fprintf(fptr,"%s",str); }

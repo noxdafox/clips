@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  01/26/15            */
+   /*             CLIPS Version 6.31  09/04/17            */
    /*                                                     */
    /*               FILE I/O ROUTER MODULE                */
    /*******************************************************/
@@ -39,6 +39,9 @@
 /*                                                           */
 /*            Added STDOUT and STDIN logical name            */
 /*            definitions.                                   */
+/*                                                           */
+/*      6.31: Output to logical WERROR is now sent to stderr */
+/*            rather than stdout.                            */
 /*                                                           */
 /*************************************************************/
 
@@ -128,7 +131,7 @@ globle FILE *FindFptr(
    else if (strcmp(logicalName,WDISPLAY) == 0)
      { return(stdout); }
    else if (strcmp(logicalName,WERROR) == 0)
-     { return(stdout); }
+     { return(stderr); }
    else if (strcmp(logicalName,WWARNING) == 0)
      { return(stdout); }
 

@@ -64,7 +64,7 @@ int PrintInterfaceRouter(
    id theObject = (id) GetEnvironmentRouterContext(theEnv);
 
    fptr = FindFptr(theEnv,logicalName);
-   if (fptr == stdout)
+   if ((fptr == stdout) || (fptr == stderr))
      { [theObject printC: str]; }
    else
      { fprintf(fptr,"%s",str); } // TBD Is this necessary?
