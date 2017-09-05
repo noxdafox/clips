@@ -171,10 +171,10 @@ struct factsData
 
 #define FactData(theEnv) ((struct factsData *) GetEnvironmentData(theEnv,FACTS_DATA))
 
-   Fact                          *Assert(Environment *,Fact *);
-   Fact                          *AssertDriver(Environment *,Fact *,long long,Fact *,Fact *,char *);
+   Fact                          *Assert(Fact *);
+   Fact                          *AssertDriver(Fact *,long long,Fact *,Fact *,char *);
    Fact                          *AssertString(Environment *,const char *);
-   Fact                          *CreateFact(Environment *,Deftemplate *);
+   Fact                          *CreateFact(Deftemplate *);
    void                           ReleaseFact(Fact *);
    void                           DecrementFactCallback(Environment *,Fact *);
    long long                      FactIndex(Fact *);
@@ -204,8 +204,8 @@ struct factsData
    bool                           FactIsDeleted(Environment *,Fact *);
    void                           ReturnFact(Environment *,Fact *);
    void                           MatchFactFunction(Environment *,Fact *);
-   bool                           PutFactSlot(Environment *,Fact *,const char *,CLIPSValue *);
-   bool                           AssignFactSlotDefaults(Environment *,Fact *);
+   bool                           PutFactSlot(Fact *,const char *,CLIPSValue *);
+   bool                           AssignFactSlotDefaults(Fact *);
    bool                           CopyFactSlotValues(Environment *,Fact *,Fact *);
    bool                           DeftemplateSlotDefault(Environment *,Deftemplate *,
                                                          struct templateSlot *,UDFValue *,bool);

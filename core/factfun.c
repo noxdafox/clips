@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  11/01/16             */
+   /*            CLIPS Version 6.40  09/04/17             */
    /*                                                     */
    /*               FACT FUNCTIONS MODULE                 */
    /*******************************************************/
@@ -61,6 +61,10 @@
 /*                                                           */
 /*            Added STDOUT and STDIN logical name            */
 /*            definitions.                                   */
+/*                                                           */
+/*      6.31: Calling EnvFactExistp for a fact that has      */
+/*            been created, but not asserted now returns     */
+/*            FALSE.                                         */
 /*                                                           */
 /*      6.40: Added Env prefix to GetEvaluationError and     */
 /*            SetEvaluationError functions.                  */
@@ -190,6 +194,8 @@ bool FactExistp(
    if (theFact == NULL) return false;
 
    if (theFact->garbage) return false;
+
+   if (theFact->factIndex == 0LL) return false;
 
    return true;
   }

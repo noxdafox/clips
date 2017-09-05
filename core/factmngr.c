@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  09/01/17             */
+   /*            CLIPS Version 6.40  09/04/17             */
    /*                                                     */
    /*                 FACT MANAGER MODULE                 */
    /*******************************************************/
@@ -67,6 +67,20 @@
 /*                                                           */
 /*            Added constraint checking for slot value in    */
 /*            EnvPutFactSlot function.                       */
+/*                                                           */
+/*            Calling EnvFactExistp for a fact that has      */
+/*            been created, but not asserted now returns     */
+/*            FALSE.                                         */
+/*                                                           */
+/*            Calling EnvRetract for a fact that has been    */
+/*            created, but not asserted now returns FALSE.   */
+/*                                                           */
+/*            Calling EnvAssignFactSlotDefaults or           */
+/*            EnvPutFactSlot for a fact that has been        */
+/*            asserted now returns FALSE.                    */
+/*                                                           */
+/*            Retracted and existing facts cannot be         */
+/*            asserted.                                      */
 /*                                                           */
 /*      6.40: Added Env prefix to GetEvaluationError and     */
 /*            SetEvaluationError functions.                  */
@@ -538,6 +552,12 @@ bool RetractDriver(
 
    if (theFact->garbage) return false;
 
+   /*=================================================*/
+   /* Check to see if the fact has not been asserted. */
+   /*=================================================*/
+   
+   if (theFact->factIndex == 0) return false;
+   
    /*===========================================*/
    /* Execute the list of functions that are    */
    /* to be called before each fact retraction. */
@@ -762,7 +782,6 @@ static void RemoveGarbageFacts(
 /* AssertDriver: Driver routine for the assert command. */
 /********************************************************/
 Fact *AssertDriver(
-  Environment *theEnv,
   Fact *theFact,
   long long reuseIndex,
   Fact *factListPosition,
@@ -774,6 +793,17 @@ Fact *AssertDriver(
    CLIPSValue *theField;
    Fact *duplicate;
    struct callFunctionItemWithArg *theAssertFunction;
+   Environment *theEnv = theFact->whichDeftemplate->header.env;
+
+   /*==================================================*/
+   /* Retracted and existing facts cannot be asserted. */
+   /*==================================================*/
+   
+   if (theFact->garbage)
+     { return NULL; }
+
+   if (reuseIndex != theFact->factIndex)
+     { return NULL; }
 
    /*==========================================*/
    /* A fact can not be asserted while another */
@@ -994,10 +1024,9 @@ Fact *AssertDriver(
 /* Assert: C access routine for the assert function. */
 /*****************************************************/
 Fact *Assert(
-  Environment *theEnv,
   Fact *theFact)
   {
-   return AssertDriver(theEnv,theFact,0,NULL,NULL,NULL);
+   return AssertDriver(theFact,0,NULL,NULL,NULL);
   }
 
 /**************************************/
@@ -1023,11 +1052,11 @@ bool RetractAllFacts(
 /*   of the specified deftemplate.           */
 /*********************************************/
 Fact *CreateFact(
-  Environment *theEnv,
   Deftemplate *theDeftemplate)
   {
    Fact *newFact;
    unsigned short i;
+   Environment *theEnv = theDeftemplate->header.env;
 
    /*=================================*/
    /* A deftemplate must be specified */
@@ -1138,7 +1167,6 @@ bool GetFactSlot(
 /*   of the specified slot of a fact. */
 /**************************************/
 bool PutFactSlot(
-  Environment *theEnv,
   Fact *theFact,
   const char *slotName,
   CLIPSValue *theValue)
@@ -1146,7 +1174,16 @@ bool PutFactSlot(
    Deftemplate *theDeftemplate;
    struct templateSlot *theSlot;
    unsigned short whichSlot;
+   Environment *theEnv = theFact->whichDeftemplate->header.env;
 
+   /*========================================*/
+   /* This function cannot be used on a fact */
+   /* that's already been asserted.          */
+   /*========================================*/
+   
+   if (theFact->factIndex != 0LL)
+     { return false; }
+     
    /*===============================================*/
    /* Get the deftemplate associated with the fact. */
    /*===============================================*/
@@ -1220,14 +1257,22 @@ bool PutFactSlot(
 /*   not yet been set.                                 */
 /*******************************************************/
 bool AssignFactSlotDefaults(
-  Environment *theEnv,
   Fact *theFact)
   {
    Deftemplate *theDeftemplate;
    struct templateSlot *slotPtr;
    unsigned short i;
    UDFValue theResult;
+   Environment *theEnv = theFact->whichDeftemplate->header.env;
 
+   /*========================================*/
+   /* This function cannot be used on a fact */
+   /* that's already been asserted.          */
+   /*========================================*/
+   
+   if (theFact->factIndex != 0LL)
+     { return false; }
+     
    /*===============================================*/
    /* Get the deftemplate associated with the fact. */
    /*===============================================*/
@@ -1681,7 +1726,7 @@ Fact *AssertString(
        (EvaluationData(theEnv)->CurrentExpression == NULL))
      { ConstructData(theEnv)->DanglingConstructs = danglingConstructs; }
 
-   rv = Assert(theEnv,theFact);
+   rv = Assert(theFact);
    
    GCBlockEnd(theEnv,&gcb);
    
@@ -2366,7 +2411,7 @@ Fact *FBAssert(
    int i;
    Fact *theFact;
    
-   theFact = CreateFact(theEnv,theFB->fbDeftemplate);
+   theFact = CreateFact(theFB->fbDeftemplate);
    
    for (i = 0; i < theFB->fbDeftemplate->numberOfSlots; i++)
      {
@@ -2378,9 +2423,9 @@ Fact *FBAssert(
         }
      }
 
-   AssignFactSlotDefaults(theEnv,theFact);
+   AssignFactSlotDefaults(theFact);
    
-   theFact = Assert(theEnv,theFact);
+   theFact = Assert(theFact);
       
    return theFact;
   }
