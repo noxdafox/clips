@@ -565,7 +565,7 @@ Fact *ReplaceFact(
    /* Assert the new fact. */
    /*======================*/
 
-   theFact = AssertDriver(theEnv,oldFact,oldFact->factIndex,factListPosition,templatePosition,changeMap);
+   theFact = AssertDriver(oldFact,oldFact->factIndex,factListPosition,templatePosition,changeMap);
 
    /*===============================================*/
    /* Call registered modify notification functions */
@@ -835,7 +835,7 @@ void DuplicateCommand(
    /* Perform the duplicate action. */
    /*===============================*/
 
-   theFact = AssertDriver(theEnv,newFact,0,NULL,NULL,NULL);
+   theFact = AssertDriver(newFact,0,NULL,NULL,NULL);
 
    /*========================================*/
    /* The asserted fact is the return value. */

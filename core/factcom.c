@@ -267,7 +267,7 @@ void AssertCommand(
    /* Add the fact to the fact-list. */
    /*================================*/
 
-   theFact = Assert(theEnv,newFact);
+   theFact = Assert(newFact);
 
    /*========================================*/
    /* The asserted fact is the return value. */
