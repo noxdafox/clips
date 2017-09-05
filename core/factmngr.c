@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.31  09/01/17            */
+   /*             CLIPS Version 6.31  09/04/17            */
    /*                                                     */
    /*                 FACT MANAGER MODULE                 */
    /*******************************************************/
@@ -67,6 +67,20 @@
 /*                                                           */
 /*            Added constraint checking for slot value in    */
 /*            EnvPutFactSlot function.                       */
+/*                                                           */
+/*            Calling EnvFactExistp for a fact that has      */
+/*            been created, but not asserted now returns     */
+/*            FALSE.                                         */
+/*                                                           */
+/*            Calling EnvRetract for a fact that has been    */
+/*            created, but not asserted now returns FALSE.   */
+/*                                                           */
+/*            Calling EnvAssignFactSlotDefaults or           */
+/*            EnvPutFactSlot for a fact that has been        */
+/*            asserted now returns FALSE.                    */
+/*                                                           */
+/*            Retracted and existing facts cannot be         */
+/*            asserted.                                      */
 /*                                                           */
 /*************************************************************/
 
@@ -502,6 +516,12 @@ globle intBool EnvRetract(
    /*======================================================*/
 
    if (theFact->garbage) return(FALSE);
+
+   /*=================================================*/
+   /* Check to see if the fact has not been asserted. */
+   /*=================================================*/
+   
+   if (theFact->factIndex == -1LL) return(FALSE);
    
    /*==========================================*/
    /* Execute the list of functions that are   */
@@ -703,6 +723,13 @@ globle void *EnvAssert(
    intBool duplicate;
    struct callFunctionItemWithArg *theAssertFunction;
 
+   /*==================================================*/
+   /* Retracted and existing facts cannot be asserted. */
+   /*==================================================*/
+   
+   if (theFact->garbage || (theFact->factIndex != -1LL))
+     { return(NULL); }
+     
    /*==========================================*/
    /* A fact can not be asserted while another */
    /* fact is being asserted or retracted.     */
@@ -1038,6 +1065,14 @@ globle intBool EnvPutFactSlot(
    struct templateSlot *theSlot;
    short whichSlot;
 
+   /*========================================*/
+   /* This function cannot be used on a fact */
+   /* that's already been asserted.          */
+   /*========================================*/
+   
+   if (theFact->factIndex != -1LL)
+     { return(FALSE); }
+     
    /*===============================================*/
    /* Get the deftemplate associated with the fact. */
    /*===============================================*/
@@ -1124,6 +1159,14 @@ globle intBool EnvAssignFactSlotDefaults(
    int i;
    DATA_OBJECT theResult;
 
+   /*========================================*/
+   /* This function cannot be used on a fact */
+   /* that's already been asserted.          */
+   /*========================================*/
+   
+   if (theFact->factIndex != -1LL)
+     { return(FALSE); }
+     
    /*===============================================*/
    /* Get the deftemplate associated with the fact. */
    /*===============================================*/
@@ -1321,7 +1364,7 @@ globle struct fact *CreateFactBySize(
    theFact = get_var_struct(theEnv,fact,sizeof(struct field) * (newSize - 1));
 
    theFact->garbage = FALSE;
-   theFact->factIndex = 0LL;
+   theFact->factIndex = -1LL;
    theFact->factHeader.busyCount = 0;
    theFact->factHeader.theInfo = &FactData(theEnv)->FactInfo;
    theFact->factHeader.dependents = NULL;

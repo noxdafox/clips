@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  01/26/15            */
+   /*             CLIPS Version 6.31  09/04/17            */
    /*                                                     */
    /*               FACT FUNCTIONS MODULE                 */
    /*******************************************************/
@@ -61,6 +61,10 @@
 /*                                                           */
 /*            Added STDOUT and STDIN logical name            */
 /*            definitions.                                   */
+/*                                                           */
+/*      6.31: Calling EnvFactExistp for a fact that has      */
+/*            been created, but not asserted now returns     */
+/*            FALSE.                                         */
 /*                                                           */
 /*************************************************************/
 
@@ -183,6 +187,8 @@ globle int EnvFactExistp(
    if (theFact == NULL) return(FALSE);
 
    if (theFact->garbage) return(FALSE);
+   
+   if (theFact->factIndex == -1LL) return(FALSE);
 
    return(TRUE);
   }
