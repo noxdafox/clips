@@ -310,9 +310,9 @@ void ReservedPatternSymbolErrorMsg(
   const char *usedFor)
   {
    PrintErrorID(theEnv,"PATTERN",1,true);
-   WriteString(theEnv,STDERR,"The symbol ");
+   WriteString(theEnv,STDERR,"The symbol '");
    WriteString(theEnv,STDERR,theSymbol);
-   WriteString(theEnv,STDERR," has special meaning\n");
+   WriteString(theEnv,STDERR,"' has special meaning ");
    WriteString(theEnv,STDERR,"and may not be used as ");
    WriteString(theEnv,STDERR,usedFor);
    WriteString(theEnv,STDERR,".\n");
@@ -1101,7 +1101,7 @@ static bool CheckForVariableMixing(
 
      {
       PrintErrorID(theEnv,"PATTERN",2,true);
-      WriteString(theEnv,STDERR,"Single and multifield constraints cannot be mixed in a field constraint\n");
+      WriteString(theEnv,STDERR,"Single and multifield constraints cannot be mixed in a field constraint.\n");
       return true;
      }
 

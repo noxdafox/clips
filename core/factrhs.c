@@ -655,9 +655,9 @@ static void NoSuchTemplateError(
   const char *templateName)
   {
    PrintErrorID(theEnv,"FACTRHS",1,false);
-   WriteString(theEnv,STDERR,"Template ");
+   WriteString(theEnv,STDERR,"Implied deftemplate '");
    WriteString(theEnv,STDERR,templateName);
-   WriteString(theEnv,STDERR," does not exist for assert.\n");
+   WriteString(theEnv,STDERR,"' cannot be created with binary load in effect.\n");
   }
 
 #endif /* RUN_TIME || BLOAD_ONLY || BLOAD || BLOAD_AND_BSAVE */

@@ -613,7 +613,7 @@ Fact *GetFactAddressOrIndexArgument(
       if ((theFact == NULL) && noFactError)
         {
          gensprintf(tempBuffer,"f-%lld",factIndex);
-         CantFindItemErrorMessage(theEnv,"fact",tempBuffer);
+         CantFindItemErrorMessage(theEnv,"fact",tempBuffer,false);
          return NULL;
         }
 

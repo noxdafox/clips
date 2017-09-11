@@ -767,7 +767,7 @@ void SetCurrentModuleCommand(
 
    if (theModule == NULL)
      {
-      CantFindItemErrorMessage(theEnv,"defmodule",argument);
+      CantFindItemErrorMessage(theEnv,"defmodule",argument,true);
       return;
      }
 

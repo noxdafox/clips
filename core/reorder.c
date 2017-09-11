@@ -1451,7 +1451,6 @@ ParseNodeType TypeToNodeType(
      }
   }
 
-
 /************************************************************/
 /* IncrementNandDepth: Increments the nand depth of a group */
 /*   of CEs. The nand depth is used to indicate the nesting */

@@ -545,7 +545,7 @@ void MessageHandlerExistPCommand(
       if (! UDFNextArgument(context,SYMBOL_BIT,&theArg))
         { return; }
 
-      mtype = HandlerType(theEnv,"message-handler-existp",theArg.lexemeValue->contents);
+      mtype = HandlerType(theEnv,"message-handler-existp",true,theArg.lexemeValue->contents);
       if (mtype == MERROR)
         {
          SetEvaluationError(theEnv,true);
@@ -982,13 +982,13 @@ static SlotDescriptor *CheckSlotExists(
      { return sd; }
 
    PrintErrorID(theEnv,"CLASSEXM",1,false);
-   WriteString(theEnv,STDERR,"Inherited slot ");
+   WriteString(theEnv,STDERR,"Inherited slot '");
    WriteString(theEnv,STDERR,ssym->contents);
-   WriteString(theEnv,STDERR," from class ");
-   PrintClassName(theEnv,STDERR,sd->cls,false);
-   WriteString(theEnv,STDERR," is not valid for function ");
+   WriteString(theEnv,STDERR,"' from class '");
+   PrintClassName(theEnv,STDERR,sd->cls,true,false);
+   WriteString(theEnv,STDERR,"' is not valid for function '");
    WriteString(theEnv,STDERR,func);
-   WriteString(theEnv,STDERR,"\n");
+   WriteString(theEnv,STDERR,"'.\n");
    SetEvaluationError(theEnv,true);
    return NULL;
   }
@@ -1260,7 +1260,7 @@ static bool PrintSlotSources(
          if (PrintSlotSources(theEnv,logicalName,sname,sprec,theIndex+1,false))
            WriteString(theEnv,logicalName," ");
         }
-      PrintClassName(theEnv,logicalName,sprec->classArray[theIndex],false);
+      PrintClassName(theEnv,logicalName,sprec->classArray[theIndex],false,false);
       return true;
      }
    else

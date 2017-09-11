@@ -923,8 +923,8 @@ For a total of 300 instances.
 CLIPS> (bsave-instances "Temp//inssav1.bin")
 200
 CLIPS> (bload-instances inssav.clp)
-[INSFILE2] inssav.clp file is not a binary instances file.
-[INSFILE1] Function bload-instances could not completely process file inssav.clp.
+[INSFILE2] File 'inssav.clp' is not a binary instances file.
+[INSFILE1] Function 'bload-instances' could not completely process file 'inssav.clp'.
 -1
 CLIPS> (save-instances "Actual//inssav1.out")
 200
@@ -945,15 +945,15 @@ CLIPS> (save-instances "Actual//inssav1.out")
 CLIPS> (file-message "Actual//inssav1.out" "D E")
 TRUE
 CLIPS> (save-instances "Actual//inssav2.out" gobbledy-gook)
-[ARGACCES5] Function save-instances expected argument #2 to be of type symbol "local" or "visible"
+[ARGACCES2] Function 'save-instances' expected argument #2 to be of type symbol "local" or "visible".
 0
 CLIPS> (bsave-instances "Temp//inssav2.bin" gobbledy-gook)
-[ARGACCES5] Function bsave-instances expected argument #2 to be of type symbol "local" or "visible"
+[ARGACCES2] Function 'bsave-instances' expected argument #2 to be of type symbol "local" or "visible".
 0
 CLIPS> (save-instances "Actual//inssav2.out" 123)
-[ARGACCES5] Function save-instances expected argument #2 to be of type symbol
+[ARGACCES2] Function 'save-instances' expected argument #2 to be of type symbol.
 CLIPS> (bsave-instances "Temp//inssav2.bin" 123)
-[ARGACCES5] Function bsave-instances expected argument #2 to be of type symbol
+[ARGACCES2] Function 'bsave-instances' expected argument #2 to be of type symbol.
 CLIPS> (bsave-instances "Temp//inssav2.bin" local)
 200
 CLIPS> (bload-instances "Temp//inssav2.bin")
@@ -971,13 +971,13 @@ CLIPS> (save-instances "Actual//inssav3.out" visible)
 CLIPS> (file-message "Actual//inssav3.out" "INITIAL-OBJECT B D E")
 TRUE
 CLIPS> (save-instances "Actual//inssav4.out" local inherit)
-[ARGACCES5] Function save-instances expected argument #3 to be of type valid concrete class name
+[ARGACCES2] Function 'save-instances' expected argument #3 to be of type 'valid concrete class name'.
 0
 CLIPS> (save-instances "Actual//inssav4.out" local inherit A)
-[ARGACCES5] Function save-instances expected argument #4 to be of type valid class name
+[ARGACCES2] Function 'save-instances' expected argument #4 to be of type 'valid class name'.
 0
 CLIPS> (save-instances "Actual//inssav4.out" local A)
-[ARGACCES5] Function save-instances expected argument #3 to be of type valid concrete class name
+[ARGACCES2] Function 'save-instances' expected argument #3 to be of type 'valid concrete class name'.
 0
 CLIPS> (bsave-instances "Temp//inssav4.bin" visible inherit A)
 200
@@ -988,10 +988,10 @@ CLIPS> (save-instances "Actual//inssav4.out" visible inherit A)
 CLIPS> (file-message "Actual//inssav4.out" "B E")
 TRUE
 CLIPS> (save-instances "Actual//inssav5.out" local C)
-[ARGACCES5] Function save-instances expected argument #3 to be of type valid concrete class name
+[ARGACCES2] Function 'save-instances' expected argument #3 to be of type 'valid concrete class name'.
 0
 CLIPS> (save-instances "Actual//inssav5.out" local inherit inherit)
-[ARGACCES5] Function save-instances expected argument #4 to be of type valid class name
+[ARGACCES2] Function 'save-instances' expected argument #4 to be of type 'valid class name'.
 0
 CLIPS> (save-instances "Actual//inssav5.out" local inherit C)
 200
@@ -1306,7 +1306,7 @@ TRUE
 CLIPS> (close inssav6)
 TRUE
 CLIPS> (save-instances "Actual//inssav6.out" local inherit B)
-[ARGACCES5] Function save-instances expected argument #4 to be of type valid class name
+[ARGACCES2] Function 'save-instances' expected argument #4 to be of type 'valid class name'.
 0
 CLIPS> (file-message "Actual//inssav6.out" "no classes")
 TRUE

@@ -552,13 +552,12 @@ void ConstraintViolationErrorMessage(
       if (violationType == FUNCTION_RETURN_TYPE_VIOLATION)
         {
          PrintErrorID(theEnv,"CSTRNCHK",1,true);
-         WriteString(theEnv,STDERR,"The function return value ");
+         WriteString(theEnv,STDERR,"The function return value");
         }
       else if (theWhat != NULL)
         {
          PrintErrorID(theEnv,"CSTRNCHK",1,true);
          WriteString(theEnv,STDERR,theWhat);
-         WriteString(theEnv,STDERR," ");
         }
 
       /*=======================================*/
@@ -568,10 +567,10 @@ void ConstraintViolationErrorMessage(
 
       if (thePlace != NULL)
         {
-         WriteString(theEnv,STDERR,"found in ");
-         if (command) WriteString(theEnv,STDERR,"the ");
+         WriteString(theEnv,STDERR," found in ");
+         if (command) WriteString(theEnv,STDERR,"the '");
          WriteString(theEnv,STDERR,thePlace);
-         if (command) WriteString(theEnv,STDERR," command");
+         if (command) WriteString(theEnv,STDERR,"' command");
         }
 
       /*================================================*/
@@ -581,7 +580,7 @@ void ConstraintViolationErrorMessage(
 
       if (thePattern > 0)
         {
-         WriteString(theEnv,STDERR,"found in CE #");
+         WriteString(theEnv,STDERR," found in CE #");
          WriteInteger(theEnv,STDERR,thePattern);
         }
      }
@@ -592,18 +591,18 @@ void ConstraintViolationErrorMessage(
 
    if ((violationType == TYPE_VIOLATION) ||
        (violationType == FUNCTION_RETURN_TYPE_VIOLATION))
-     { WriteString(theEnv,STDERR,"\ndoes not match the allowed types"); }
+     { WriteString(theEnv,STDERR," does not match the allowed types"); }
    else if (violationType == RANGE_VIOLATION)
      {
-      WriteString(theEnv,STDERR,"\ndoes not fall in the allowed range ");
+      WriteString(theEnv,STDERR," does not fall in the allowed range ");
       PrintRange(theEnv,STDERR,theConstraint);
      }
    else if (violationType == ALLOWED_VALUES_VIOLATION)
-     { WriteString(theEnv,STDERR,"\ndoes not match the allowed values"); }
+     { WriteString(theEnv,STDERR," does not match the allowed values"); }
    else if (violationType == CARDINALITY_VIOLATION)
-     { WriteString(theEnv,STDERR,"\ndoes not satisfy the cardinality restrictions"); }
+     { WriteString(theEnv,STDERR," does not satisfy the cardinality restrictions"); }
    else if (violationType == ALLOWED_CLASSES_VIOLATION)
-     { WriteString(theEnv,STDERR,"\ndoes not match the allowed classes"); }
+     { WriteString(theEnv,STDERR," does not match the allowed classes"); }
 
    /*==============================================*/
    /* Print either the slot name or field position */
@@ -612,8 +611,9 @@ void ConstraintViolationErrorMessage(
 
    if (theSlot != NULL)
      {
-      WriteString(theEnv,STDERR," for slot ");
+      WriteString(theEnv,STDERR," for slot '");
       WriteString(theEnv,STDERR,theSlot->contents);
+      WriteString(theEnv,STDERR,"'");
      }
    else if (theField > 0)
      {

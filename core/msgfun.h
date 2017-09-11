@@ -92,9 +92,9 @@ typedef struct handlerSlotReference
    bool             DeleteHandler(Environment *,Defclass *,CLIPSLexeme *,int,bool);
    void             DeallocateMarkedHandlers(Environment *,Defclass *);
 #endif
-   unsigned short   HandlerType(Environment *,const char *,const char *);
+   unsigned short   HandlerType(Environment *,const char *,bool,const char *);
    bool             CheckCurrentMessage(Environment *,const char *,bool);
-   void             PrintHandler(Environment *,const char *,DefmessageHandler *,bool);
+   void             PrintHandler(Environment *,const char *,DefmessageHandler *,bool,bool);
    DefmessageHandler
                    *FindHandlerByAddress(Defclass *,CLIPSLexeme *,unsigned);
    int              FindHandlerByIndex(Defclass *,CLIPSLexeme *,unsigned);

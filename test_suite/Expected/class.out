@@ -316,16 +316,16 @@ get-foo primary in class A5
 ********************************************************************************
 ================================================================================
 CLIPS> (make-instance a6 of A6 (bar 34))
-[MSGFUN1] No applicable primary message-handlers found for put-bar.
+[MSGFUN1] No applicable primary message-handlers found for 'put-bar'.
 FALSE
 CLIPS> (make-instance a6 of A6 (foo 34) (woz 65))
 [a6]
 CLIPS> (send [a6] put-bar 1)
-[MSGFUN1] No applicable primary message-handlers found for put-bar.
+[MSGFUN1] No applicable primary message-handlers found for 'put-bar'.
 FALSE
 CLIPS> (send [a6] put-woz 1)
-[MSGFUN3] woz slot in [a6] of A6: write access denied.
-[PRCCODE4] Execution halted during the actions of message-handler put-woz primary in class A6
+[MSGFUN3] Write access denied for slot 'woz' in instance [a6] of class 'A6'.
+[PRCCODE4] Execution halted during the actions of message-handler 'put-woz' primary in class 'A6'
 FALSE
 CLIPS> (send [a6] print)
 [a6] of A6

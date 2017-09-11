@@ -1,16 +1,14 @@
 TRUE
 CLIPS> (load "fctpcstr.clp")
 %%*
-[RULECSTR1] fctpcstr.clp, Line 12: Variable ?x in CE #1 slot y
-has constraint conflicts which make the pattern unmatchable.
+[RULECSTR1] fctpcstr.clp, Line 12: Variable ?x in CE #1 slot 'y' has constraint conflicts which make the pattern unmatchable.
 
 ERROR:
 (defrule MAIN::error-1 "Caught by CRSV, but only warning"
    (foo (x ?x) (y ?x))
    =>)
 *
-[RULECSTR1] fctpcstr.clp, Line 17: Variable ?x in CE #2 slot y
-has constraint conflicts which make the pattern unmatchable.
+[RULECSTR1] fctpcstr.clp, Line 17: Variable ?x in CE #2 slot 'y' has constraint conflicts which make the pattern unmatchable.
 
 ERROR:
 (defrule MAIN::error-2 "Caught by CRSV, but only warning"
@@ -18,16 +16,14 @@ ERROR:
    (foo (y ?x))
    =>)
 *
-[RULECSTR1] fctpcstr.clp, Line 21: Variable ?x in CE #1 slot c
-has constraint conflicts which make the pattern unmatchable.
+[RULECSTR1] fctpcstr.clp, Line 21: Variable ?x in CE #1 slot 'c' has constraint conflicts which make the pattern unmatchable.
 
 ERROR:
 (defrule MAIN::error-3 "Caught by CRSV, but only warning"
    (bar (a ?x) (b ?x) (c ?x))
    =>)
 *
-[RULECSTR1] fctpcstr.clp, Line 27: Variable ?x in CE #3 slot c
-has constraint conflicts which make the pattern unmatchable.
+[RULECSTR1] fctpcstr.clp, Line 27: Variable ?x in CE #3 slot 'c' has constraint conflicts which make the pattern unmatchable.
 
 ERROR:
 (defrule MAIN::error-4 "Caught by CRSV, but only warning"
@@ -36,8 +32,7 @@ ERROR:
    (bar (c ?x))
    =>)
 *%%%%*
-[RULECSTR1] fctpcstr.clp, Line 53: Variable ?x in CE #2 slot a
-has constraint conflicts which make the pattern unmatchable.
+[RULECSTR1] fctpcstr.clp, Line 53: Variable ?x in CE #2 slot 'a' has constraint conflicts which make the pattern unmatchable.
 
 ERROR:
 (defrule MAIN::error-5 "Range Violation: Caught by CRSV"
@@ -45,8 +40,7 @@ ERROR:
    (obo (a ?x))
    =>)
 *
-[RULECSTR1] fctpcstr.clp, Line 59: Variable ?x in CE #3 slot a
-has constraint conflicts which make the pattern unmatchable.
+[RULECSTR1] fctpcstr.clp, Line 59: Variable ?x in CE #3 slot 'a' has constraint conflicts which make the pattern unmatchable.
 
 ERROR:
 (defrule MAIN::error-6 "Range Violation: Caught by CRSV"
@@ -55,8 +49,7 @@ ERROR:
    (obo (a ?x))
    =>)
 *
-[RULECSTR1] fctpcstr.clp, Line 65: Pattern #3 slot a
-has constraint conflicts which make the pattern unmatchable.
+[RULECSTR1] fctpcstr.clp, Line 65: Pattern #3 slot 'a' has constraint conflicts which make the pattern unmatchable.
 
 ERROR:
 (defrule MAIN::error-7 "Range Violation: Caught by CRSV"
@@ -65,16 +58,14 @@ ERROR:
    (vod (a ?x|?y))
    =>)
 *%*
-[RULECSTR1] fctpcstr.clp, Line 80: Variable ?x in CE #1 slot y
-has constraint conflicts which make the pattern unmatchable.
+[RULECSTR1] fctpcstr.clp, Line 80: Variable ?x in CE #1 slot 'y' has constraint conflicts which make the pattern unmatchable.
 
 ERROR:
 (defrule MAIN::error-8 "CRSV gives only 1 possible value warning--should be error"
    (kji (x ?x) (y ?x&~on))
    =>)
 %%%**
-[RULECSTR1] fctpcstr.clp, Line 107: Variable ?x in CE #3 slot x
-has constraint conflicts which make the pattern unmatchable.
+[RULECSTR1] fctpcstr.clp, Line 107: Variable ?x in CE #3 slot 'x' has constraint conflicts which make the pattern unmatchable.
 
 ERROR:
 (defrule MAIN::error-9 "No possible values: Caught by CRSV"
@@ -83,8 +74,7 @@ ERROR:
    (yak7 (x ?x))
    =>)
 %%**%%*
-[RULECSTR1] fctpcstr.clp, Line 140: Variable ?x in CE #2 slot q
-has constraint conflicts which make the pattern unmatchable.
+[RULECSTR1] fctpcstr.clp, Line 140: Variable ?x in CE #2 slot 'q' has constraint conflicts which make the pattern unmatchable.
 
 ERROR:
 (defrule MAIN::error-10 "CRSV does not give a warning for this one"
@@ -92,8 +82,7 @@ ERROR:
    (yxk (q $?x))
    =>)
 %%%*
-[CSTRNCHK1] fctpcstr.clp, Line 155: The group of restrictions found in CE #3
-does not satisfy the cardinality restrictions for slot z.
+[CSTRNCHK1] fctpcstr.clp, Line 155: The group of restrictions found in CE #3 does not satisfy the cardinality restrictions for slot 'z'.
 
 ERROR:
 (defrule MAIN::error-11 "CRSV does not give a warning for this one"
@@ -102,8 +91,7 @@ ERROR:
    (wak (z $?x $?y))
    =>)
 %%%%*
-[CSTRNCHK1] fctpcstr.clp, Line 170: The group of restrictions found in CE #4
-does not satisfy the cardinality restrictions for slot q.
+[CSTRNCHK1] fctpcstr.clp, Line 170: The group of restrictions found in CE #4 does not satisfy the cardinality restrictions for slot 'q'.
 
 ERROR:
 (defrule MAIN::error-12 "CRSV does not give a warning for this one"
@@ -113,16 +101,14 @@ ERROR:
    (ylk (q $?x ? $?y ? b $?z))
    =>)
 *
-[CSTRNCHK1] fctpcstr.clp, Line 174: The group of restrictions found in CE #1
-does not satisfy the cardinality restrictions for slot x.
+[CSTRNCHK1] fctpcstr.clp, Line 174: The group of restrictions found in CE #1 does not satisfy the cardinality restrictions for slot 'x'.
 
 ERROR:
 (defrule MAIN::error-13 "CRSV does not give a warning for this one"
    (fll (x ?))
    =>)
 *%*%*
-[RULECSTR1] fctpcstr.clp, Line 203: Pattern #1 slot x
-has constraint conflicts which make the pattern unmatchable.
+[RULECSTR1] fctpcstr.clp, Line 203: Pattern #1 slot 'x' has constraint conflicts which make the pattern unmatchable.
 
 ERROR:
 (defrule MAIN::error-14 "CRSV gives inappropriate error--does not detect return value error"
@@ -131,7 +117,7 @@ ERROR:
 %*
 [RULECSTR2] fctpcstr.clp, Line 214: Previous variable bindings of ?x caused the type restrictions
 for argument #2 of the expression (> ?y ?x)
-found in CE #1 slot y to be violated.
+found in CE #1 slot 'y' to be violated.
 
 ERROR:
 (defrule MAIN::error-15 "Type Violation to LHS function call: Not caught by CRSV"
@@ -164,28 +150,26 @@ ERROR:
 (defrule MAIN::error-18 "Unbound variable error: Not caught by CRSV"
    (a ?y&:(or (> ?x 3) (< ?x 5)))
    =>)
-*[ARGACCES5] fctpcstr.clp, Line 241: Function + expected argument #2 to be of type integer or float
+*[ARGACCES2] fctpcstr.clp, Line 241: Function '+' expected argument #2 to be of type integer or float.
 
 ERROR:
 (defrule MAIN::error-19 "Wrong argument type: Not caught by CRSV"
    =>
    (+ 3 a)
-*[ARGACCES5] fctpcstr.clp, Line 248: Function + expected argument #2 to be of type integer or float
+*[ARGACCES2] fctpcstr.clp, Line 248: Function '+' expected argument #2 to be of type integer or float.
 
 ERROR:
 (defrule MAIN::error-20 "Wrong argument type: Not caught by CRSV"
    (buffy =(+ 3 a)
 %*
-[RULECSTR1] fctpcstr.clp, Line 259: Pattern #1 field #1
-has constraint conflicts which make the pattern unmatchable.
+[RULECSTR1] fctpcstr.clp, Line 259: Pattern #1 field #1 has constraint conflicts which make the pattern unmatchable.
 
 ERROR:
 (defrule MAIN::error-21 "CRSV gives warning about & -- Rule cannot be  matched"
    (buffy a&b)
    =>)
 *
-[RULECSTR1] fctpcstr.clp, Line 263: Pattern #1 field #1
-has constraint conflicts which make the pattern unmatchable.
+[RULECSTR1] fctpcstr.clp, Line 263: Pattern #1 field #1 has constraint conflicts which make the pattern unmatchable.
 
 ERROR:
 (defrule MAIN::error-22 "CRSV does not detect this error"
@@ -193,8 +177,7 @@ ERROR:
    =>)
 *%*
 [RULECSTR3] fctpcstr.clp, Line 278: Previous variable bindings of ?q caused the type restrictions
-for argument #3 of the expression (+ 3 5 ?q)
-found in the rule's RHS to be violated.
+for argument #3 of the expression (+ 3 5 ?q) found in the rule's RHS to be violated.
 
 ERROR:
 (defrule MAIN::error-23 "Not detected by CRSV"
@@ -203,8 +186,7 @@ ERROR:
    (+ 3 5 ?q))
 **
 [RULECSTR3] fctpcstr.clp, Line 290: Previous variable bindings of ?q caused the type restrictions
-for argument #3 of the expression (+ 3 5 ?q)
-found in the rule's RHS to be violated.
+for argument #3 of the expression (+ 3 5 ?q) found in the rule's RHS to be violated.
 
 ERROR:
 (defrule MAIN::error-24 "Not detected by CRSV"
@@ -213,16 +195,14 @@ ERROR:
    (bind ?q (gensym))
    (+ 3 5 ?q))
 *%*
-[RULECSTR1] fctpcstr.clp, Line 307: Variable ?x in CE #1 slot y
-has constraint conflicts which make the pattern unmatchable.
+[RULECSTR1] fctpcstr.clp, Line 307: Variable ?x in CE #1 slot 'y' has constraint conflicts which make the pattern unmatchable.
 
 ERROR:
 (defrule MAIN::error-25
    (jhj (x ?x&2) (y ?x))
    =>)
 %*
-[RULECSTR1] fctpcstr.clp, Line 318: Variable ?x in CE #2 slot foo
-has constraint conflicts which make the pattern unmatchable.
+[RULECSTR1] fctpcstr.clp, Line 318: Variable ?x in CE #2 slot 'foo' has constraint conflicts which make the pattern unmatchable.
 
 ERROR:
 (defrule MAIN::error-26
@@ -240,8 +220,7 @@ ERROR:
    (test (> ?x 5))
    =>)
 *
-[RULECSTR1] fctpcstr.clp, Line 329: Variable ?x in CE #3 slot foo
-has constraint conflicts which make the pattern unmatchable.
+[RULECSTR1] fctpcstr.clp, Line 329: Variable ?x in CE #3 slot 'foo' has constraint conflicts which make the pattern unmatchable.
 
 ERROR:
 (defrule MAIN::error-28

@@ -416,7 +416,7 @@ static bool ReplaceTemplateNameWithReference(
 
       if (theDeftemplate == NULL)
         {
-         CantFindItemErrorMessage(theEnv,"deftemplate",theTemplateName);
+         CantFindItemErrorMessage(theEnv,"deftemplate",theTemplateName,true);
          return false;
         }
 

@@ -81,7 +81,7 @@ we didn't have = (we didn't have)
 CLIPS> (clear)                            ; DR0232
 CLIPS> (defrule a => (initialize-it))     ; DR0232
 
-[EXPRNPSR3] Missing function declaration for initialize-it.
+[EXPRNPSR3] Missing function declaration for 'initialize-it'.
 
 ERROR:
 (defrule MAIN::a
@@ -115,7 +115,7 @@ CLIPS> (defrule one
    =>
    (modify ?f1 (namse any))) 
 
-[TMPLTDEF1] Invalid slot namse not defined in corresponding deftemplate auto.
+[TMPLTDEF1] Invalid slot 'namse' not defined in corresponding deftemplate 'auto'.
 
 ERROR:
 (defrule MAIN::one
@@ -140,7 +140,7 @@ CLIPS> (defrule b
    (not (a (one anything) (three whatever)))
    =>)       
 
-[TMPLTDEF1] Invalid slot three not defined in corresponding deftemplate a.
+[TMPLTDEF1] Invalid slot 'three' not defined in corresponding deftemplate 'a'.
 
 ERROR:
 (defrule MAIN::b
@@ -167,7 +167,7 @@ CLIPS> (defrule one "test the naked assert & modify"
    =>
    (modify ?f1 (name any)))
 
-[TMPLTDEF1] Invalid slot mane not defined in corresponding deftemplate auto.
+[TMPLTDEF1] Invalid slot 'mane' not defined in corresponding deftemplate 'auto'.
 
 ERROR:
 (defrule MAIN::one "test the naked assert & modify"
@@ -203,7 +203,7 @@ CLIPS> (clear)                            ; DR0279
 CLIPS> (defrule with-error                ; DR0279
    (value ?a&:(> ?a max))
    =>)
-[ARGACCES5] Function > expected argument #2 to be of type integer or float
+[ARGACCES2] Function '>' expected argument #2 to be of type integer or float.
 
 ERROR:
 (defrule MAIN::with-error
@@ -211,7 +211,7 @@ ERROR:
 CLIPS> (defrule with-error-inside-not     ; DR0279
    (not (value ?b&:(> ?b max)))
    =>)
-[ARGACCES5] Function > expected argument #2 to be of type integer or float
+[ARGACCES2] Function '>' expected argument #2 to be of type integer or float.
 
 ERROR:
 (defrule MAIN::with-error-inside-not
@@ -235,7 +235,7 @@ CLIPS> (defrule this-rule-works           ; DR0298
    (foo (y ?x1&~?x2) (x ?x2))
    =>)
 
-[ANALYSIS4] Variable ?x2 was referenced in CE #1 slot y before being defined.
+[ANALYSIS4] Variable ?x2 was referenced in CE #1 slot 'y' before being defined.
 
 ERROR:
 (defrule MAIN::this-rule-works

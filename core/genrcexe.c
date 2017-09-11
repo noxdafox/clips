@@ -194,9 +194,9 @@ void GenericDispatch(
          PrintErrorID(theEnv,"GENRCEXE",4,false);
          SetEvaluationError(theEnv,true);
          DefgenericData(theEnv)->CurrentMethod = NULL;
-         WriteString(theEnv,STDERR,"Generic function ");
+         WriteString(theEnv,STDERR,"Generic function '");
          WriteString(theEnv,STDERR,DefgenericName(gfunc));
-         WriteString(theEnv,STDERR," method #");
+         WriteString(theEnv,STDERR,"' method #");
          PrintUnsignedInteger(theEnv,STDERR,meth->index);
          WriteString(theEnv,STDERR," is not applicable to the given arguments.\n");
         }
@@ -248,9 +248,9 @@ void GenericDispatch(
    else if (! EvaluationData(theEnv)->EvaluationError)
      {
       PrintErrorID(theEnv,"GENRCEXE",1,false);
-      WriteString(theEnv,STDERR,"No applicable methods for ");
+      WriteString(theEnv,STDERR,"No applicable methods for '");
       WriteString(theEnv,STDERR,DefgenericName(gfunc));
-      WriteString(theEnv,STDERR,".\n");
+      WriteString(theEnv,STDERR,"'.\n");
       SetEvaluationError(theEnv,true);
      }
    gfunc->busy--;
@@ -280,9 +280,9 @@ void UnboundMethodErr(
   Environment *theEnv,
   const char *logName)
   {
-   WriteString(theEnv,logName,"generic function ");
+   WriteString(theEnv,logName,"generic function '");
    WriteString(theEnv,logName,DefgenericName(DefgenericData(theEnv)->CurrentGeneric));
-   WriteString(theEnv,logName," method #");
+   WriteString(theEnv,logName,"' method #");
    PrintUnsignedInteger(theEnv,logName,DefgenericData(theEnv)->CurrentMethod->index);
    WriteString(theEnv,logName,".\n");
   }
@@ -724,9 +724,9 @@ static Defclass *DetermineRestrictionClass(
       PrintErrorID(theEnv,"GENRCEXE",3,false);
       WriteString(theEnv,STDERR,"Unable to determine class of ");
       WriteUDFValue(theEnv,STDERR,dobj);
-      WriteString(theEnv,STDERR," in generic function ");
+      WriteString(theEnv,STDERR," in generic function '");
       WriteString(theEnv,STDERR,DefgenericName(DefgenericData(theEnv)->CurrentGeneric));
-      WriteString(theEnv,STDERR,".\n");
+      WriteString(theEnv,STDERR,"'.\n");
      }
    return(cls);
   }

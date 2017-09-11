@@ -49,15 +49,15 @@ CLIPS> 3e+Пр                              ; UTF-8 Support
 CLIPS> 5.1e-여                             ; UTF-8 Support
 5.1e-여
 CLIPS> ?Привет                            ; UTF-8 Support
-[EVALUATN1] Variable Привет is unbound
+[EVALUATN1] Variable ?Привет is unbound.
 FALSE
 CLIPS> ?여러분                              ; UTF-8 Support
-[EVALUATN1] Variable 여러분 is unbound
+[EVALUATN1] Variable ?여러분 is unbound.
 FALSE
 CLIPS> $?Привет                           ; UTF-8 Support
-[EVALUATN1] Variable Привет is unbound
+[EVALUATN1] Variable $?Привет is unbound.
 FALSE
 CLIPS> $?여러분                             ; UTF-8 Support
-[EVALUATN1] Variable 여러분 is unbound
+[EVALUATN1] Variable $?여러분 is unbound.
 FALSE
 CLIPS> (dribble-off)

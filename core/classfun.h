@@ -78,7 +78,7 @@
    SlotDescriptor                *FindClassSlot(Defclass *,CLIPSLexeme *);
    void                           ClassExistError(Environment *,const char *,const char *);
    void                           DeleteClassLinks(Environment *,CLASS_LINK *);
-   void                           PrintClassName(Environment *,const char *,Defclass *,bool);
+   void                           PrintClassName(Environment *,const char *,Defclass *,bool,bool);
 
 #if DEBUGGING_FUNCTIONS || ((! BLOAD_ONLY) && (! RUN_TIME))
    void                           PrintPackedClassLinks(Environment *,const char *,const char *,PACKED_CLASS_LINKS *);

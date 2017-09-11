@@ -261,7 +261,7 @@ void ModifyCommand(
         {
          char tempBuffer[20];
          gensprintf(tempBuffer,"f-%lld",factNum);
-         CantFindItemErrorMessage(theEnv,"fact",tempBuffer);
+         CantFindItemErrorMessage(theEnv,"fact",tempBuffer,false);
          return;
         }
      }
@@ -652,7 +652,7 @@ void DuplicateCommand(
         {
          char tempBuffer[20];
          gensprintf(tempBuffer,"f-%lld",factNum);
-         CantFindItemErrorMessage(theEnv,"fact",tempBuffer);
+         CantFindItemErrorMessage(theEnv,"fact",tempBuffer,false);
          return;
         }
      }
@@ -883,7 +883,7 @@ void DeftemplateSlotNamesFunction(
    theDeftemplate = FindDeftemplate(theEnv,deftemplateName);
    if (theDeftemplate == NULL)
      {
-      CantFindItemErrorMessage(theEnv,"deftemplate",deftemplateName);
+      CantFindItemErrorMessage(theEnv,"deftemplate",deftemplateName,true);
       return;
      }
 
@@ -2058,7 +2058,7 @@ static CLIPSLexeme *CheckDeftemplateAndSlotArguments(
    *theDeftemplate = FindDeftemplate(theEnv,deftemplateName);
    if (*theDeftemplate == NULL)
      {
-      CantFindItemErrorMessage(theEnv,"deftemplate",deftemplateName);
+      CantFindItemErrorMessage(theEnv,"deftemplate",deftemplateName,true);
       return NULL;
      }
 

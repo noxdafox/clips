@@ -28,7 +28,7 @@ CLIPS> (assert (a |d))                    ; 10.1.1
 
 [PRNTUTIL2] Syntax Error:  Check appropriate syntax for RHS patterns.
 CLIPS> (assert (a ?x))                    ; 10.1.1
-[EVALUATN1] Variable x is unbound
+[EVALUATN1] Variable ?x is unbound.
 ==> f-1     (a)
 <Fact-1>
 CLIPS> (assert (e))                       ; 10.1.1
@@ -43,7 +43,7 @@ CLIPS> (assert (i =(+ 3 4)))              ; 10.1.1
 ==> f-6     (i 7)
 <Fact-6>
 CLIPS> (retract)                          ; 10.1.2
-[ARGACCES4] Function retract expected at least 1 argument(s)
+[ARGACCES1] Function 'retract' expected at least 1 argument.
 CLIPS> (retract 1)                        ; 10.1.2
 <== f-1     (a)
 CLIPS> (retract 2 4)                      ; 10.1.2
@@ -60,13 +60,13 @@ CLIPS> (unwatch facts)                    ; 10.1.2
 CLIPS> (clear)                            ; 10.1.5
 CLIPS> (deftemplate foo (slot x) (slot y))
 CLIPS> (assert-string)                    ; 10.1.5
-[ARGACCES4] Function assert-string expected exactly 1 argument(s)
+[ARGACCES1] Function 'assert-string' expected exactly 1 argument.
 CLIPS> (assert-string "a b c" "d e f")    ; 10.1.5
-[ARGACCES4] Function assert-string expected exactly 1 argument(s)
+[ARGACCES1] Function 'assert-string' expected exactly 1 argument.
 CLIPS> (assert-string 7)                  ; 10.1.5
-[ARGACCES5] Function assert-string expected argument #1 to be of type string
+[ARGACCES2] Function 'assert-string' expected argument #1 to be of type string.
 CLIPS> (assert-string hello)              ; 10.1.5
-[ARGACCES5] Function assert-string expected argument #1 to be of type string
+[ARGACCES2] Function 'assert-string' expected argument #1 to be of type string.
 CLIPS> (assert-string "(x y z)")          ; 10.1.5
 <Fact-1>
 CLIPS> (assert-string "(foo (y 3))")      ; 10.1.5
@@ -87,5 +87,5 @@ CLIPS> (bind ?x 3 4)                      ; 10.1.6
 (3 4)
 CLIPS> (halt)                             ; 10.1.7
 CLIPS> (halt 3)                           ; 10.1.7
-[ARGACCES4] Function halt expected exactly 0 argument(s)
+[ARGACCES1] Function 'halt' expected exactly 0 arguments.
 CLIPS> (dribble-off)

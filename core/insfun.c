@@ -643,11 +643,11 @@ bool DirectPutSlotValue(
       else
         {
          PrintErrorID(theEnv,"INSMNGR",14,false);
-         WriteString(theEnv,STDERR,"Override required for slot ");
+         WriteString(theEnv,STDERR,"Override required for slot '");
          WriteString(theEnv,STDERR,sp->desc->slotName->name->contents);
-         WriteString(theEnv,STDERR," in instance ");
+         WriteString(theEnv,STDERR,"' in instance [");
          WriteString(theEnv,STDERR,ins->name->contents);
-         WriteString(theEnv,STDERR,".\n");
+         WriteString(theEnv,STDERR,"].\n");
          SetEvaluationError(theEnv,true);
          return false;
         }
@@ -657,8 +657,8 @@ bool DirectPutSlotValue(
        (ins->cls->reactive || sp->desc->shared))
      {
       PrintErrorID(theEnv,"INSFUN",5,false);
-      WriteString(theEnv,STDERR,"Cannot modify reactive instance slots while\n");
-      WriteString(theEnv,STDERR,"  pattern-matching is in process.\n");
+      WriteString(theEnv,STDERR,"Cannot modify reactive instance slots while ");
+      WriteString(theEnv,STDERR,"pattern-matching is in process.\n");
       SetEvaluationError(theEnv,true);
       return false;
      }
@@ -779,11 +779,11 @@ bool DirectPutSlotValue(
          else
            {
             PrintErrorID(theEnv,"INSFUN",6,false);
-            WriteString(theEnv,STDERR,"Unable to pattern-match on shared slot ");
+            WriteString(theEnv,STDERR,"Unable to pattern-match on shared slot '");
             WriteString(theEnv,STDERR,sp->desc->slotName->name->contents);
-            WriteString(theEnv,STDERR," in class ");
+            WriteString(theEnv,STDERR,"' in class '");
             WriteString(theEnv,STDERR,DefclassName(sp->desc->cls));
-            WriteString(theEnv,STDERR,".\n");
+            WriteString(theEnv,STDERR,"'.\n");
            }
         }
       else
@@ -828,8 +828,9 @@ bool ValidSlotValue(
                               (val->range != 1))
      {
       PrintErrorID(theEnv,"INSFUN",7,false);
+      WriteString(theEnv,STDERR,"The value ");
       WriteUDFValue(theEnv,STDERR,val);
-      WriteString(theEnv,STDERR," illegal for single-field ");
+      WriteString(theEnv,STDERR," is illegal for single-field ");
       PrintSlot(theEnv,STDERR,sd,ins,theCommand);
       WriteString(theEnv,STDERR,".\n");
       SetEvaluationError(theEnv,true);
@@ -850,6 +851,7 @@ bool ValidSlotValue(
       if (violationCode != NO_VIOLATION)
         {
          PrintErrorID(theEnv,"CSTRNCHK",1,false);
+         WriteString(theEnv,STDERR,"The value ");
          if ((val->header->type == MULTIFIELD_TYPE) && (sd->multiple == 0))
            PrintAtom(theEnv,STDERR,val->multifieldValue->contents[val->begin].header->type,
                                    val->multifieldValue->contents[val->begin].value);
@@ -916,9 +918,9 @@ Instance *CheckInstance(
    else
      {
       PrintErrorID(theEnv,"INSFUN",1,false);
-      WriteString(theEnv,STDERR,"Expected a valid instance in function ");
+      WriteString(theEnv,STDERR,"Expected a valid instance in function '");
       WriteString(theEnv,STDERR,UDFContextFunctionName(context));
-      WriteString(theEnv,STDERR,".\n");
+      WriteString(theEnv,STDERR,"'.\n");
       SetEvaluationError(theEnv,true);
       return NULL;
      }
@@ -942,11 +944,11 @@ void NoInstanceError(
   const char *func)
   {
    PrintErrorID(theEnv,"INSFUN",2,false);
-   WriteString(theEnv,STDERR,"No such instance ");
+   WriteString(theEnv,STDERR,"No such instance [");
    WriteString(theEnv,STDERR,iname);
-   WriteString(theEnv,STDERR," in function ");
+   WriteString(theEnv,STDERR,"] in function '");
    WriteString(theEnv,STDERR,func);
-   WriteString(theEnv,STDERR,".\n");
+   WriteString(theEnv,STDERR,"'.\n");
    SetEvaluationError(theEnv,true);
   }
 
@@ -966,8 +968,9 @@ void StaleInstanceAddress(
   int whichArg)
   {
    PrintErrorID(theEnv,"INSFUN",4,false);
-   WriteString(theEnv,STDERR,"Invalid instance-address in function ");
+   WriteString(theEnv,STDERR,"Invalid instance-address in function '");
    WriteString(theEnv,STDERR,func);
+   WriteString(theEnv,STDERR,"'");
    if (whichArg > 0)
      {
       WriteString(theEnv,STDERR,", argument #");
@@ -1027,8 +1030,9 @@ void PrintSlot(
   Instance *ins,
   const char *theCommand)
   {
-   WriteString(theEnv,logName,"slot ");
+   WriteString(theEnv,logName,"slot '");
    WriteString(theEnv,logName,sd->slotName->name->contents);
+   WriteString(theEnv,logName,"'");
    if (ins != NULL)
      {
       WriteString(theEnv,logName," of instance [");
@@ -1037,14 +1041,15 @@ void PrintSlot(
      }
    else if (sd->cls != NULL)
      {
-      WriteString(theEnv,logName," of class ");
+      WriteString(theEnv,logName," of class '");
       WriteString(theEnv,logName,DefclassName(sd->cls));
+      WriteString(theEnv,logName," of class '");
      }
    WriteString(theEnv,logName," found in ");
    if (theCommand != NULL)
      WriteString(theEnv,logName,theCommand);
    else
-     PrintHandler(theEnv,logName,MessageHandlerData(theEnv)->CurrentCore->hnd,false);
+     PrintHandler(theEnv,logName,MessageHandlerData(theEnv)->CurrentCore->hnd,true,false);
   }
 
 /*****************************************************
@@ -1067,7 +1072,7 @@ void PrintInstanceNameAndClass(
    WriteString(theEnv,logicalName,"[");
    WriteString(theEnv,logicalName,InstanceName(theInstance));
    WriteString(theEnv,logicalName,"] of ");
-   PrintClassName(theEnv,logicalName,theInstance->cls,linefeedFlag);
+   PrintClassName(theEnv,logicalName,theInstance->cls,false,linefeedFlag);
   }
 
 /***************************************************

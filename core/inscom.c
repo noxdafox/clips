@@ -494,7 +494,7 @@ void InstancesCommand(
           (strcmp(theArg.lexemeValue->contents,"*") != 0))
         {
          SetEvaluationError(theEnv,true);
-         ExpectedTypeError1(theEnv,"instances",1,"defmodule name");
+         ExpectedTypeError1(theEnv,"instances",1,"'defmodule name'");
          return;
         }
       if (UDFHasNextArgument(context))
@@ -1102,9 +1102,9 @@ void ClassCommand(
                          return;
 
          default       : PrintErrorID(theEnv,"INSCOM",1,false);
-                         WriteString(theEnv,STDERR,"Undefined type in function ");
+                         WriteString(theEnv,STDERR,"Undefined type in function '");
                          WriteString(theEnv,STDERR,func);
-                         WriteString(theEnv,STDERR,".\n");
+                         WriteString(theEnv,STDERR,"'.\n");
                          SetEvaluationError(theEnv,true);
         }
      }
@@ -1295,7 +1295,7 @@ void InstanceAddressCommand(
       theModule = FindDefmodule(theEnv,temp.lexemeValue->contents);
       if ((theModule == NULL) ? (strcmp(temp.lexemeValue->contents,"*") != 0) : false)
         {
-         ExpectedTypeError1(theEnv,"instance-address",1,"module name");
+         ExpectedTypeError1(theEnv,"instance-address",1,"'module name'");
          SetEvaluationError(theEnv,true);
          return;
         }

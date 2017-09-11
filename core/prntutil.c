@@ -341,13 +341,16 @@ void PrintWarningID(
 void CantFindItemErrorMessage(
   Environment *theEnv,
   const char *itemType,
-  const char *itemName)
+  const char *itemName,
+  bool useQuotes)
   {
    PrintErrorID(theEnv,"PRNTUTIL",1,false);
    WriteString(theEnv,STDERR,"Unable to find ");
    WriteString(theEnv,STDERR,itemType);
    WriteString(theEnv,STDERR," ");
+   if (useQuotes) WriteString(theEnv,STDERR,"'");
    WriteString(theEnv,STDERR,itemName);
+   if (useQuotes) WriteString(theEnv,STDERR,"'");
    WriteString(theEnv,STDERR,".\n");
   }
 
@@ -359,16 +362,19 @@ void CantFindItemInFunctionErrorMessage(
   Environment *theEnv,
   const char *itemType,
   const char *itemName,
-  const char *func)
+  const char *func,
+  bool useQuotes)
   {
    PrintErrorID(theEnv,"PRNTUTIL",1,false);
    WriteString(theEnv,STDERR,"Unable to find ");
    WriteString(theEnv,STDERR,itemType);
    WriteString(theEnv,STDERR," ");
+   if (useQuotes) WriteString(theEnv,STDERR,"'");
    WriteString(theEnv,STDERR,itemName);
-   WriteString(theEnv,STDERR," in function ");
+   if (useQuotes) WriteString(theEnv,STDERR,"'");
+   WriteString(theEnv,STDERR," in function '");
    WriteString(theEnv,STDERR,func);
-   WriteString(theEnv,STDERR,".\n");
+   WriteString(theEnv,STDERR,"'.\n");
   }
 
 /*****************************************************/
@@ -383,9 +389,9 @@ void CantDeleteItemErrorMessage(
    PrintErrorID(theEnv,"PRNTUTIL",4,false);
    WriteString(theEnv,STDERR,"Unable to delete ");
    WriteString(theEnv,STDERR,itemType);
-   WriteString(theEnv,STDERR," ");
+   WriteString(theEnv,STDERR," '");
    WriteString(theEnv,STDERR,itemName);
-   WriteString(theEnv,STDERR,".\n");
+   WriteString(theEnv,STDERR,"'.\n");
   }
 
 /****************************************************/
@@ -400,7 +406,12 @@ void AlreadyParsedErrorMessage(
    PrintErrorID(theEnv,"PRNTUTIL",5,true);
    WriteString(theEnv,STDERR,"The ");
    if (itemType != NULL) WriteString(theEnv,STDERR,itemType);
-   if (itemName != NULL) WriteString(theEnv,STDERR,itemName);
+   if (itemName != NULL)
+     {
+      WriteString(theEnv,STDERR,"'");
+      WriteString(theEnv,STDERR,itemName);
+      WriteString(theEnv,STDERR,"'");
+     }
    WriteString(theEnv,STDERR," has already been parsed.\n");
   }
 
@@ -473,9 +484,9 @@ void DivideByZeroErrorMessage(
   const char *functionName)
   {
    PrintErrorID(theEnv,"PRNTUTIL",7,false);
-   WriteString(theEnv,STDERR,"Attempt to divide by zero in ");
+   WriteString(theEnv,STDERR,"Attempt to divide by zero in '");
    WriteString(theEnv,STDERR,functionName);
-   WriteString(theEnv,STDERR," function.\n");
+   WriteString(theEnv,STDERR,"' function.\n");
   }
 
 /*******************************************************/
@@ -638,8 +649,9 @@ void SalienceInformationError(
      {
       WriteString(theEnv,STDERR," for ");
       WriteString(theEnv,STDERR,constructType);
-      WriteString(theEnv,STDERR," ");
+      WriteString(theEnv,STDERR," '");
       WriteString(theEnv,STDERR,constructName);
+      WriteString(theEnv,STDERR,"'");
      }
    WriteString(theEnv,STDERR,".\n");
   }
@@ -685,10 +697,10 @@ void SlotExistError(
   const char *func)
   {
    PrintErrorID(theEnv,"INSFUN",3,false);
-   WriteString(theEnv,STDERR,"No such slot ");
+   WriteString(theEnv,STDERR,"No such slot '");
    WriteString(theEnv,STDERR,sname);
-   WriteString(theEnv,STDERR," in function ");
+   WriteString(theEnv,STDERR,"' in function '");
    WriteString(theEnv,STDERR,func);
-   WriteString(theEnv,STDERR,".\n");
+   WriteString(theEnv,STDERR,"'.\n");
    SetEvaluationError(theEnv,true);
   }

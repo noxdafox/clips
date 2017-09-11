@@ -24,22 +24,22 @@ CLIPS> (agenda)
 For a total of 1 activation.
 CLIPS> (get-dynamic-deftemplate-checking) ;; CR0191
 
-[EXPRNPSR3] Missing function declaration for get-dynamic-deftemplate-checking.
+[EXPRNPSR3] Missing function declaration for 'get-dynamic-deftemplate-checking'.
 CLIPS> (set-dynamic-deftemplate-checking)
 
-[EXPRNPSR3] Missing function declaration for set-dynamic-deftemplate-checking.
+[EXPRNPSR3] Missing function declaration for 'set-dynamic-deftemplate-checking'.
 CLIPS> (crsv-trace-on) ;; CR0207
 
-[EXPRNPSR3] Missing function declaration for crsv-trace-on.
+[EXPRNPSR3] Missing function declaration for 'crsv-trace-on'.
 CLIPS> (crsv-trace-off)
 
-[EXPRNPSR3] Missing function declaration for crsv-trace-off.
+[EXPRNPSR3] Missing function declaration for 'crsv-trace-off'.
 CLIPS> (defexternal) ;; CR0219
 
-[EXPRNPSR3] Missing function declaration for defexternal.
+[EXPRNPSR3] Missing function declaration for 'defexternal'.
 CLIPS> (defrelation) 
 
-[EXPRNPSR3] Missing function declaration for defrelation.
+[EXPRNPSR3] Missing function declaration for 'defrelation'.
 CLIPS> (defrule foo (?x ?y) =>) ;; CR0220
 
 [PRNTUTIL2] Syntax Error:  Check appropriate syntax for the first field of a pattern.
@@ -58,7 +58,7 @@ CLIPS> (clear) ;; CR0222
 CLIPS> (remove blah.clp)
 FALSE
 CLIPS> (load blah.clp)
-[ARGACCES2] Function load was unable to open file blah.clp.
+[ARGACCES3] Function 'load' was unable to open file 'blah.clp'.
 FALSE
 CLIPS> (save blah.clp)
 TRUE
@@ -70,7 +70,7 @@ TRUE
 CLIPS> (remove blah.bin)
 FALSE
 CLIPS> (bload blah.bin)
-[ARGACCES2] Function bload was unable to open file blah.bin.
+[ARGACCES3] Function 'bload' was unable to open file 'blah.bin'.
 FALSE
 CLIPS> (bsave blah.bin)
 TRUE
@@ -88,11 +88,11 @@ f-1     (a 7)
 f-2     (a 11)
 For a total of 2 facts.
 CLIPS> (remove) ;; CR0240
-[ARGACCES4] Function remove expected exactly 1 argument(s)
+[ARGACCES1] Function 'remove' expected exactly 1 argument.
 CLIPS> (remove 7)
-[ARGACCES5] Function remove expected argument #1 to be of type symbol or string
+[ARGACCES2] Function 'remove' expected argument #1 to be of type symbol or string.
 CLIPS> (remove blah.txt 7)
-[ARGACCES4] Function remove expected exactly 1 argument(s)
+[ARGACCES1] Function 'remove' expected exactly 1 argument.
 CLIPS> (open "blah.txt" blah "w")
 TRUE
 CLIPS> (printout blah "(printout t Greetings from blah.txt crlf)" crlf)
@@ -105,18 +105,18 @@ Greetingsfromblah.txt
 CLIPS> (remove blah.txt)
 TRUE
 CLIPS> (batch blah.txt)
-[ARGACCES2] Function batch was unable to open file blah.txt.
+[ARGACCES3] Function 'batch' was unable to open file 'blah.txt'.
 FALSE
 CLIPS> (remove yuck.txt)
 FALSE
 CLIPS> (rename)
-[ARGACCES4] Function rename expected exactly 2 argument(s)
+[ARGACCES1] Function 'rename' expected exactly 2 arguments.
 CLIPS> (rename 7)
-[ARGACCES4] Function rename expected exactly 2 argument(s)
+[ARGACCES1] Function 'rename' expected exactly 2 arguments.
 CLIPS> (rename blah.txt 7)
-[ARGACCES5] Function rename expected argument #2 to be of type symbol or string
+[ARGACCES2] Function 'rename' expected argument #2 to be of type symbol or string.
 CLIPS> (rename blah.txt yuck.txt 7)
-[ARGACCES4] Function rename expected exactly 2 argument(s)
+[ARGACCES1] Function 'rename' expected exactly 2 arguments.
 CLIPS> (open "blah.txt" blah "w")
 TRUE
 CLIPS> (printout blah "(printout t Greetings from blah.txt crlf)" crlf)
@@ -133,20 +133,20 @@ Greetingsfromblah.txt
 CLIPS> (remove yuck.txt)
 TRUE
 CLIPS> (apropos) ;; CR0241
-[ARGACCES4] Function apropos expected exactly 1 argument(s)
+[ARGACCES1] Function 'apropos' expected exactly 1 argument.
 CLIPS> (apropos 7)
-[ARGACCES5] Function apropos expected argument #1 to be of type symbol
+[ARGACCES2] Function 'apropos' expected argument #1 to be of type symbol.
 CLIPS> (apropos "dynamic" 7)
-[ARGACCES4] Function apropos expected exactly 1 argument(s)
+[ARGACCES1] Function 'apropos' expected exactly 1 argument.
 CLIPS> (apropos "dynamic")
-[ARGACCES5] Function apropos expected argument #1 to be of type symbol
+[ARGACCES2] Function 'apropos' expected argument #1 to be of type symbol.
 CLIPS> (apropos dynamic)
 get-dynamic-constraint-checking
 dynamic-put
 set-dynamic-constraint-checking
 dynamic-get
 CLIPS> (list-watch-items 7) ;; CR0263
-[ARGACCES5] Function list-watch-items expected argument #1 to be of type symbol
+[ARGACCES2] Function 'list-watch-items' expected argument #1 to be of type symbol.
 CLIPS> (unwatch all)
 CLIPS> (list-watch-items)
 facts = off
@@ -170,7 +170,7 @@ CLIPS> (list-deftemplates)
 foo
 For a total of 1 deftemplate.
 CLIPS> (undeftemplate foo)
-[PRNTUTIL4] Unable to delete deftemplate foo.
+[PRNTUTIL4] Unable to delete deftemplate 'foo'.
 CLIPS> (retract 1)
 CLIPS> (undeftemplate foo)
 CLIPS> (clear) ;; CR0265
@@ -186,10 +186,10 @@ CLIPS> (clear) ;; CR0269
 CLIPS> (remove blah.txt)
 FALSE
 CLIPS> (load-facts blah.txt)
-[ARGACCES2] Function load-facts was unable to open file blah.txt.
+[ARGACCES3] Function 'load-facts' was unable to open file 'blah.txt'.
 FALSE
 CLIPS> (batch blah.txt)
-[ARGACCES2] Function batch was unable to open file blah.txt.
+[ARGACCES3] Function 'batch' was unable to open file 'blah.txt'.
 FALSE
 CLIPS> (assert (foo))
 <Fact-1>
@@ -199,7 +199,7 @@ For a total of 1 deftemplate.
 CLIPS> (ppdeftemplate foo)
 CLIPS> (trunc) ;; CR0271
 
-[EXPRNPSR3] Missing function declaration for trunc.
+[EXPRNPSR3] Missing function declaration for 'trunc'.
 CLIPS> (clear) ;; CR0272
 CLIPS> (defmodule A)
 CLIPS> (defrule A::foo (not (b)) =>)
@@ -207,46 +207,46 @@ CLIPS> (deftemplate A::bar)
 CLIPS> (deffacts A::yak)
 CLIPS> (defglobal A ?*woz* = 3)
 CLIPS> (defrule-module)
-[ARGACCES4] Function defrule-module expected exactly 1 argument(s)
+[ARGACCES1] Function 'defrule-module' expected exactly 1 argument.
 CLIPS> (defrule-module 7)
-[ARGACCES5] Function defrule-module expected argument #1 to be of type symbol
+[ARGACCES2] Function 'defrule-module' expected argument #1 to be of type symbol.
 CLIPS> (defrule-module foo 7)
-[ARGACCES4] Function defrule-module expected exactly 1 argument(s)
+[ARGACCES1] Function 'defrule-module' expected exactly 1 argument.
 CLIPS> (defrule-module huh)
-[PRNTUTIL1] Unable to find defrule huh.
+[PRNTUTIL1] Unable to find defrule 'huh'.
 FALSE
 CLIPS> (defrule-module foo)
 A
 CLIPS> (deftemplate-module)
-[ARGACCES4] Function deftemplate-module expected exactly 1 argument(s)
+[ARGACCES1] Function 'deftemplate-module' expected exactly 1 argument.
 CLIPS> (deftemplate-module 7)
-[ARGACCES5] Function deftemplate-module expected argument #1 to be of type symbol
+[ARGACCES2] Function 'deftemplate-module' expected argument #1 to be of type symbol.
 CLIPS> (deftemplate-module bar 7)
-[ARGACCES4] Function deftemplate-module expected exactly 1 argument(s)
+[ARGACCES1] Function 'deftemplate-module' expected exactly 1 argument.
 CLIPS> (deftemplate-module huh)
-[PRNTUTIL1] Unable to find deftemplate huh.
+[PRNTUTIL1] Unable to find deftemplate 'huh'.
 FALSE
 CLIPS> (deftemplate-module bar)
 A
 CLIPS> (deffacts-module)
-[ARGACCES4] Function deffacts-module expected exactly 1 argument(s)
+[ARGACCES1] Function 'deffacts-module' expected exactly 1 argument.
 CLIPS> (deffacts-module 7)
-[ARGACCES5] Function deffacts-module expected argument #1 to be of type symbol
+[ARGACCES2] Function 'deffacts-module' expected argument #1 to be of type symbol.
 CLIPS> (deffacts-module yak 7)
-[ARGACCES4] Function deffacts-module expected exactly 1 argument(s)
+[ARGACCES1] Function 'deffacts-module' expected exactly 1 argument.
 CLIPS> (deffacts-module huh)
-[PRNTUTIL1] Unable to find deffacts huh.
+[PRNTUTIL1] Unable to find deffacts 'huh'.
 FALSE
 CLIPS> (deffacts-module yak)
 A
 CLIPS> (defglobal-module)
-[ARGACCES4] Function defglobal-module expected exactly 1 argument(s)
+[ARGACCES1] Function 'defglobal-module' expected exactly 1 argument.
 CLIPS> (defglobal-module 7)
-[ARGACCES5] Function defglobal-module expected argument #1 to be of type symbol
+[ARGACCES2] Function 'defglobal-module' expected argument #1 to be of type symbol.
 CLIPS> (defglobal-module woz 7)
-[ARGACCES4] Function defglobal-module expected exactly 1 argument(s)
+[ARGACCES1] Function 'defglobal-module' expected exactly 1 argument.
 CLIPS> (defglobal-module huh)
-[PRNTUTIL1] Unable to find defglobal huh.
+[PRNTUTIL1] Unable to find defglobal 'huh'.
 FALSE
 CLIPS> (defglobal-module woz)
 A

@@ -164,16 +164,16 @@ bool ParseDefmessageHandler(
        (cls == DefclassData(theEnv)->PrimitiveClassMap[INSTANCE_NAME_TYPE]->directSuperclasses.classArray[0]))
      {
       PrintErrorID(theEnv,"MSGPSR",8,false);
-      WriteString(theEnv,STDERR,"Message-handlers cannot be attached to the class ");
+      WriteString(theEnv,STDERR,"Message-handlers cannot be attached to the class '");
       WriteString(theEnv,STDERR,DefclassName(cls));
-      WriteString(theEnv,STDERR,".\n");
+      WriteString(theEnv,STDERR,"'.\n");
       return true;
      }
    if (HandlersExecuting(cls))
      {
       PrintErrorID(theEnv,"MSGPSR",2,false);
-      WriteString(theEnv,STDERR,"Cannot (re)define message-handlers during execution of \n");
-      WriteString(theEnv,STDERR,"  other message-handlers for the same class.\n");
+      WriteString(theEnv,STDERR,"Cannot (re)define message-handlers during execution of ");
+      WriteString(theEnv,STDERR,"other message-handlers for the same class.\n");
       return true;
      }
    if (DefclassData(theEnv)->ObjectParseToken.tknType != SYMBOL_TOKEN)
@@ -198,7 +198,7 @@ bool ParseDefmessageHandler(
             SyntaxErrorMessage(theEnv,"defmessage-handler");
             return true;
            }
-         mtype = HandlerType(theEnv,"defmessage-handler",DefclassData(theEnv)->ObjectParseToken.lexemeValue->contents);
+         mtype = HandlerType(theEnv,"defmessage-handler",false,DefclassData(theEnv)->ObjectParseToken.lexemeValue->contents);
          if (mtype == MERROR)
            return true;
 
@@ -620,11 +620,11 @@ static SlotDescriptor *CheckSlotReference(
    if (slotIndex == -1)
      {
       PrintErrorID(theEnv,"MSGPSR",6,false);
-      WriteString(theEnv,STDERR,"No such slot ");
+      WriteString(theEnv,STDERR,"No such slot '");
       WriteString(theEnv,STDERR,((CLIPSLexeme *) theValue)->contents);
-      WriteString(theEnv,STDERR," in class ");
+      WriteString(theEnv,STDERR,"' in class '");
       WriteString(theEnv,STDERR,DefclassName(theDefclass));
-      WriteString(theEnv,STDERR," for ?self reference.\n");
+      WriteString(theEnv,STDERR,"' for ?self reference.\n");
       return NULL;
      }
    sd = theDefclass->instanceTemplate[slotIndex];

@@ -344,7 +344,7 @@ void UndefconstructCommand(
    if (((*constructClass->findFunction)(theEnv,constructName) == NULL) &&
        (strcmp("*",constructName) != 0))
      {
-      CantFindItemErrorMessage(theEnv,constructClass->constructName,constructName);
+      CantFindItemErrorMessage(theEnv,constructClass->constructName,constructName,true);
       return;
      }
 
@@ -399,7 +399,7 @@ void PPConstructCommand(
    /*================================*/
 
    if (PPConstruct(theEnv,constructName,STDOUT,constructClass) == false)
-     { CantFindItemErrorMessage(theEnv,constructClass->constructName,constructName); }
+     { CantFindItemErrorMessage(theEnv,constructClass->constructName,constructName,true); }
   }
 
 /***********************************/
@@ -476,7 +476,7 @@ CLIPSLexeme *GetConstructModuleCommand(
    constructModule = GetConstructModule(theEnv,constructName,constructClass);
    if (constructModule == NULL)
      {
-      CantFindItemErrorMessage(theEnv,constructClass->constructName,constructName);
+      CantFindItemErrorMessage(theEnv,constructClass->constructName,constructName,true);
       return FalseSymbol(theEnv);
      }
 
@@ -783,7 +783,7 @@ void GetConstructListFunction(
          if (strcmp("*",result.lexemeValue->contents) != 0)
            {
             SetMultifieldErrorValue(theEnv,returnValue);
-            ExpectedTypeError1(theEnv,UDFContextFunctionName(context),1,"defmodule name");
+            ExpectedTypeError1(theEnv,UDFContextFunctionName(context),1,"'defmodule name'");
             return;
            }
 
@@ -1020,7 +1020,7 @@ void ListConstructCommand(
         {
          if (strcmp("*",result.lexemeValue->contents) != 0)
            {
-            ExpectedTypeError1(theEnv,UDFContextFunctionName(context),1,"defmodule name");
+            ExpectedTypeError1(theEnv,UDFContextFunctionName(context),1,"'defmodule name'");
             return;
            }
 

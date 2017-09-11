@@ -262,7 +262,7 @@ void ConstructsToCCommand(
 
    if ((nameLength + EXTRA_FILE_NAME) > FILENAME_MAX)
      {
-      PrintErrorID(theEnv,"CONSCOMP",1,false);
+      PrintErrorID(theEnv,"CONSCOMP",2,false);
       WriteString(theEnv,STDERR,"Aborting because the base file name may cause the fopen maximum of ");
       WriteInteger(theEnv,STDERR,FILENAME_MAX);
       WriteString(theEnv,STDERR," to be violated when file names are generated.\n");
@@ -279,7 +279,7 @@ void ConstructsToCCommand(
    id = theArg.integerValue->contents;
    if (id < 0)
      {
-      ExpectedTypeError1(theEnv,"constructs-to-c",2,"positive integer");
+      ExpectedTypeError1(theEnv,"constructs-to-c",2,"'positive integer'");
       return;
      }
 
@@ -315,7 +315,7 @@ void ConstructsToCCommand(
 
       if (max < 0)
         {
-         ExpectedTypeError1(theEnv,"constructs-to-c",4,"positive integer");
+         ExpectedTypeError1(theEnv,"constructs-to-c",4,"'positive integer'");
          return;
         }
      }
@@ -1118,7 +1118,7 @@ struct CodeGeneratorItem *AddCodeGeneratorItem(
      {
       if ((arrayCount + ConstructCompilerData(theEnv)->CodeGeneratorCount) > (PRIMARY_LEN + SECONDARY_LEN))
         {
-         SystemError(theEnv,"CONSCOMP",2);
+         SystemError(theEnv,"CONSCOMP",3);
          ExitRouter(theEnv,EXIT_FAILURE);
         }
 
@@ -1233,7 +1233,7 @@ FILE *CloseFileIfNeeded(
      {
       if ((canBeReopened == NULL) || (codeFile == NULL))
         {
-         SystemError(theEnv,"CONSCOMP",3);
+         SystemError(theEnv,"CONSCOMP",4);
          ExitRouter(theEnv,EXIT_FAILURE);
         }
 
@@ -1245,7 +1245,7 @@ FILE *CloseFileIfNeeded(
                          codeFile->id,codeFile->version,true);
       if (theFile == NULL)
         {
-         SystemError(theEnv,"CONSCOMP",4);
+         SystemError(theEnv,"CONSCOMP",5);
          ExitRouter(theEnv,EXIT_FAILURE);
         }
      }
@@ -1310,7 +1310,7 @@ FILE *OpenFileIfNeeded(
      {
       if (codeFile == NULL)
         {
-         SystemError(theEnv,"CONSCOMP",5);
+         SystemError(theEnv,"CONSCOMP",6);
          ExitRouter(theEnv,EXIT_FAILURE);
         }
 

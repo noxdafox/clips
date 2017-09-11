@@ -254,7 +254,7 @@ bool ParseDefclass(
 #endif
       else if (strcmp(DefclassData(theEnv)->ObjectParseToken.lexemeValue->contents,SLOT_RLN) == 0)
         {
-         slots = ParseSlot(theEnv,readSource,slots,preclist,false,false);
+         slots = ParseSlot(theEnv,readSource,cname->contents,slots,preclist,false,false);
          if (slots == NULL)
            {
             parseError = true;
@@ -263,7 +263,7 @@ bool ParseDefclass(
         }
       else if (strcmp(DefclassData(theEnv)->ObjectParseToken.lexemeValue->contents,SGL_SLOT_RLN) == 0)
         {
-         slots = ParseSlot(theEnv,readSource,slots,preclist,false,true);
+         slots = ParseSlot(theEnv,readSource,cname->contents,slots,preclist,false,true);
          if (slots == NULL)
            {
             parseError = true;
@@ -272,7 +272,7 @@ bool ParseDefclass(
         }
       else if (strcmp(DefclassData(theEnv)->ObjectParseToken.lexemeValue->contents,MLT_SLOT_RLN) == 0)
         {
-         slots = ParseSlot(theEnv,readSource,slots,preclist,true,true);
+         slots = ParseSlot(theEnv,readSource,cname->contents,slots,preclist,true,true);
          if (slots == NULL)
            {
             parseError = true;
@@ -435,9 +435,10 @@ static bool ValidClassName(
           (! ConstructData(theEnv)->CheckSyntaxMode))
         {
          PrintErrorID(theEnv,"CLASSPSR",3,false);
+         WriteString(theEnv,STDERR,"Class '");
          WriteString(theEnv,STDERR,DefclassName(*theDefclass));
-         WriteString(theEnv,STDERR," class cannot be redefined while\n");
-         WriteString(theEnv,STDERR,"    outstanding references to it still exist.\n");
+         WriteString(theEnv,STDERR,"' cannot be redefined while ");
+         WriteString(theEnv,STDERR,"outstanding references to it still exist.\n");
          return false;
         }
      }
@@ -474,9 +475,9 @@ static bool ParseSimpleQualifier(
    if (*alreadyTestedFlag)
      {
       PrintErrorID(theEnv,"CLASSPSR",4,false);
-      WriteString(theEnv,STDERR,"Class ");
+      WriteString(theEnv,STDERR,"The '");
       WriteString(theEnv,STDERR,classQualifier);
-      WriteString(theEnv,STDERR," already declared.\n");
+      WriteString(theEnv,STDERR,"' class attribute is already specified.\n");
       return false;
      }
    SavePPBuffer(theEnv," ");

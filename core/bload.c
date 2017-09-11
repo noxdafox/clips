@@ -150,9 +150,9 @@ bool Bload(
    if (strcmp(IDbuffer,BloadData(theEnv)->BinaryPrefixID) != 0)
      {
       PrintErrorID(theEnv,"BLOAD",2,false);
-      WriteString(theEnv,STDERR,"File ");
+      WriteString(theEnv,STDERR,"File '");
       WriteString(theEnv,STDERR,fileName);
-      WriteString(theEnv,STDERR," is not a binary construct file.\n");
+      WriteString(theEnv,STDERR,"' is not a binary construct file.\n");
       GenCloseBinary(theEnv);
       return false;
      }
@@ -166,9 +166,9 @@ bool Bload(
    if (strcmp(IDbuffer,BloadData(theEnv)->BinaryVersionID) != 0)
      {
       PrintErrorID(theEnv,"BLOAD",3,false);
-      WriteString(theEnv,STDERR,"File ");
+      WriteString(theEnv,STDERR,"File '");
       WriteString(theEnv,STDERR,fileName);
-      WriteString(theEnv,STDERR," is an incompatible binary construct file.\n");
+      WriteString(theEnv,STDERR,"' is an incompatible binary construct file.\n");
       GenCloseBinary(theEnv);
       return false;
      }
@@ -182,9 +182,9 @@ bool Bload(
    if (strcmp(sizesBuffer,BloadData(theEnv)->BinarySizes) != 0)
      {
       PrintErrorID(theEnv,"BLOAD",3,false);
-      WriteString(theEnv,STDERR,"File ");
+      WriteString(theEnv,STDERR,"File '");
       WriteString(theEnv,STDERR,fileName);
-      WriteString(theEnv,STDERR," is an incompatible binary construct file.\n");
+      WriteString(theEnv,STDERR,"' is an incompatible binary construct file.\n");
       GenCloseBinary(theEnv);
       return false;
      }
@@ -210,6 +210,7 @@ bool Bload(
    if (ClearReady(theEnv) == false)
      {
       GenCloseBinary(theEnv);
+      PrintErrorID(theEnv,"BLOAD",4,false);
       WriteString(theEnv,STDERR,"The ");
       WriteString(theEnv,STDERR,APPLICATION_NAME);
       WriteString(theEnv,STDERR," environment could not be cleared.\n");

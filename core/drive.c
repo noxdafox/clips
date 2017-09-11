@@ -1182,13 +1182,8 @@ static void JoinNetErrorMessage(
   struct joinNode *joinPtr)
   {
    PrintErrorID(theEnv,"DRIVE",1,true);
-   WriteString(theEnv,STDERR,"This error occurred in the join network\n");
-
+   WriteString(theEnv,STDERR,"This error occurred in the join network.\n");
    WriteString(theEnv,STDERR,"   Problem resides in associated join\n"); /* TBD generate test case for join with JFTR */
-/*
-   sprintf(buffer,"   Problem resides in join #%d in rule(s):\n",joinPtr->depth);
-   WriteString(theEnv,STDERR,buffer);
-*/
    TraceErrorToRule(theEnv,joinPtr,"      ");
    WriteString(theEnv,STDERR,"\n");
   }

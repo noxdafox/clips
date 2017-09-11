@@ -542,7 +542,7 @@ int ReplaceProcVars(
                if (errorCode == 0)
                  {
                   PrintErrorID(theEnv,"PRCCODE",3,true);
-                  WriteString(theEnv,STDERR,"Undefined variable ");
+                  WriteString(theEnv,STDERR,"Undefined variable ?");
                   WriteString(theEnv,STDERR,bindName->contents);
                   WriteString(theEnv,STDERR," referenced in ");
                   WriteString(theEnv,STDERR,bodytype);
@@ -1127,9 +1127,9 @@ static void EvaluateProcParameters(
          WriteString(theEnv,STDERR,"This error occurred while evaluating arguments ");
          WriteString(theEnv,STDERR,"for the ");
          WriteString(theEnv,STDERR,bodytype);
-         WriteString(theEnv,STDERR," ");
+         WriteString(theEnv,STDERR," '");
          WriteString(theEnv,STDERR,pname);
-         WriteString(theEnv,STDERR,".\n");
+         WriteString(theEnv,STDERR,"'.\n");
          rm(theEnv,rva,(sizeof(UDFValue) * numberOfParameters));
          return;
         }
@@ -1209,7 +1209,7 @@ static bool GetProcBind(
      {
       PrintErrorID(theEnv,"PRCCODE",5,false);
       SetEvaluationError(theEnv,true);
-      WriteString(theEnv,STDERR,"Variable ");
+      WriteString(theEnv,STDERR,"Variable ?");
       WriteString(theEnv,STDERR,GetFirstArgument()->lexemeValue->contents);
       if (ProceduralPrimitiveData(theEnv)->ProcUnboundErrFunc != NULL)
         {

@@ -81,28 +81,28 @@ CLIPS> (clear) ; Test for importing undefined constructs
 CLIPS> (defmodule A (export ?ALL))
 CLIPS> (defmodule B (import A deftemplate foo))
 
-[MODULPSR1] Module A does not export the deftemplate foo.
+[MODULPSR1] Module 'A' does not export the deftemplate 'foo'.
 
 ERROR:
 (defmodule B
    (import A deftemplate foo)
 CLIPS> (defmodule B (import A defglobal foo))
 
-[MODULPSR1] Module A does not export the defglobal foo.
+[MODULPSR1] Module 'A' does not export the defglobal 'foo'.
 
 ERROR:
 (defmodule B
    (import A defglobal foo)
 CLIPS> (defmodule B (import A defclass FOO))
 
-[MODULPSR1] Module A does not export the defclass FOO.
+[MODULPSR1] Module 'A' does not export the defclass 'FOO'.
 
 ERROR:
 (defmodule B
    (import A defclass FOO)
 CLIPS> (defmodule B (import A defgeneric foo))
 
-[MODULPSR1] Module A does not export the defgeneric foo.
+[MODULPSR1] Module 'A' does not export the defgeneric 'foo'.
 
 ERROR:
 (defmodule B
@@ -124,31 +124,31 @@ CLIPS> (defrule B::foo (b) =>)
 CLIPS> (deffacts B::foo)
 CLIPS> (deftemplate B::foo)
 
-[CSTRCPSR3] Cannot define deftemplate foo because of an import/export conflict.
+[CSTRCPSR3] Cannot define deftemplate 'foo' because of an import/export conflict.
 
 ERROR:
 (deftemplate B::foo
 CLIPS> (defglobal B ?*foo* = 3)
 
-[CSTRCPSR3] Cannot define defglobal foo because of an import/export conflict.
+[CSTRCPSR3] Cannot define defglobal 'foo' because of an import/export conflict.
 
 ERROR:
 (defglobal B ?*foo* 
 CLIPS> (defgeneric B::foo)
 
-[CSTRCPSR3] Cannot define defgeneric foo because of an import/export conflict.
+[CSTRCPSR3] Cannot define defgeneric 'foo' because of an import/export conflict.
 
 ERROR:
 (defgeneric B::foo
 CLIPS> (defmethod B::foo ())
 
-[CSTRCPSR3] Cannot define defgeneric foo because of an import/export conflict.
+[CSTRCPSR3] Cannot define defgeneric 'foo' because of an import/export conflict.
 
 ERROR:
 (defmethod B::foo
 CLIPS> (defclass B::FOO (is-a USER))
 
-[CSTRCPSR3] Cannot define defclass FOO because of an import/export conflict.
+[CSTRCPSR3] Cannot define defclass 'FOO' because of an import/export conflict.
 
 ERROR:
 (defclass B::FOO
@@ -160,31 +160,31 @@ CLIPS> (defrule C::foo =>)
 CLIPS> (deffacts C::foo)
 CLIPS> (deftemplate C::foo)
 
-[CSTRCPSR3] Cannot define deftemplate foo because of an import/export conflict.
+[CSTRCPSR3] Cannot define deftemplate 'foo' because of an import/export conflict.
 
 ERROR:
 (deftemplate C::foo
 CLIPS> (defglobal C ?*foo* = 3)
 
-[CSTRCPSR3] Cannot define defglobal foo because of an import/export conflict.
+[CSTRCPSR3] Cannot define defglobal 'foo' because of an import/export conflict.
 
 ERROR:
 (defglobal C ?*foo* 
 CLIPS> (defgeneric C::foo)
 
-[CSTRCPSR3] Cannot define defgeneric foo because of an import/export conflict.
+[CSTRCPSR3] Cannot define defgeneric 'foo' because of an import/export conflict.
 
 ERROR:
 (defgeneric C::foo
 CLIPS> (defmethod C::foo ())
 
-[CSTRCPSR3] Cannot define defgeneric foo because of an import/export conflict.
+[CSTRCPSR3] Cannot define defgeneric 'foo' because of an import/export conflict.
 
 ERROR:
 (defmethod C::foo
 CLIPS> (defclass C::FOO (is-a USER))
 
-[CSTRCPSR3] Cannot define defclass FOO because of an import/export conflict.
+[CSTRCPSR3] Cannot define defclass 'FOO' because of an import/export conflict.
 
 ERROR:
 (defclass C::FOO
@@ -251,11 +251,11 @@ CLIPS> (list-defmethods A::foo)
 foo #1  
 For a total of 1 method.
 CLIPS> (list-defmethods B::foo)
-[GENRCFUN3] Unable to find generic function B::foo in function list-defmethods.
+[GENRCFUN3] Unable to find generic function 'B::foo' in function 'list-defmethods'.
 CLIPS> (list-defmethods C::foo)
-[GENRCFUN3] Unable to find generic function C::foo in function list-defmethods.
+[GENRCFUN3] Unable to find generic function 'C::foo' in function 'list-defmethods'.
 CLIPS> (list-defmethods D::foo)
-[GENRCFUN3] Unable to find generic function D::foo in function list-defmethods.
+[GENRCFUN3] Unable to find generic function 'D::foo' in function 'list-defmethods'.
 CLIPS> (list-defclasses *)
 MAIN:
    FLOAT
@@ -285,11 +285,11 @@ CLIPS> (list-defmessage-handlers A::FOO)
 bar primary in class A::FOO
 For a total of 1 message-handler.
 CLIPS> (list-defmessage-handlers B::FOO)
-[CLASSFUN1] Unable to find class B::FOO in function list-defmessage-handlers.
+[CLASSFUN1] Unable to find class 'B::FOO' in function 'list-defmessage-handlers'.
 CLIPS> (list-defmessage-handlers C::FOO)
-[CLASSFUN1] Unable to find class C::FOO in function list-defmessage-handlers.
+[CLASSFUN1] Unable to find class 'C::FOO' in function 'list-defmessage-handlers'.
 CLIPS> (list-defmessage-handlers D::FOO)
-[CLASSFUN1] Unable to find class D::FOO in function list-defmessage-handlers.
+[CLASSFUN1] Unable to find class 'D::FOO' in function 'list-defmessage-handlers'.
 CLIPS> (list-definstances *)
 MAIN:
 A:
@@ -350,7 +350,7 @@ CLIPS> (clear) ; Test redefinition of MAIN module
 CLIPS> (defmodule MAIN (export ?ALL))
 CLIPS> (defmodule MAIN (export deftemplate ?ALL))
 
-[CSTRCPSR4] Cannot redefine defmodule MAIN while it is in use.
+[CSTRCPSR4] Cannot redefine defmodule 'MAIN' while it is in use.
 
 ERROR:
 (defmodule MAIN
@@ -376,7 +376,7 @@ CLIPS> (deftemplate MAIN::foo (slot x))
 CLIPS> (defmodule MAIN (export ?NONE))
 CLIPS> (defmodule FOO (import MAIN ?NONE))
 
-[MODULPSR1] Module MAIN does not export any constructs.
+[MODULPSR1] Module 'MAIN' does not export any constructs.
 
 ERROR:
 (defmodule FOO
@@ -386,7 +386,7 @@ CLIPS> (deftemplate MAIN::foo (slot x))
 CLIPS> (defmodule MAIN (export ?NONE))
 CLIPS> (defmodule FOO (import MAIN deftemplate ?NONE))
 
-[MODULPSR1] Module MAIN does not export any constructs.
+[MODULPSR1] Module 'MAIN' does not export any constructs.
 
 ERROR:
 (defmodule FOO
@@ -396,7 +396,7 @@ CLIPS> (deftemplate MAIN::foo (slot x))
 CLIPS> (defmodule MAIN (export deftemplate ?NONE))
 CLIPS> (defmodule FOO (import MAIN ?NONE))
 
-[MODULPSR1] Module MAIN does not export any constructs.
+[MODULPSR1] Module 'MAIN' does not export any constructs.
 
 ERROR:
 (defmodule FOO
@@ -406,7 +406,7 @@ CLIPS> (deftemplate MAIN::foo (slot x))
 CLIPS> (defmodule MAIN (export deftemplate ?NONE))
 CLIPS> (defmodule FOO (import MAIN deftemplate ?NONE))
 
-[MODULPSR1] Module MAIN does not export any constructs.
+[MODULPSR1] Module 'MAIN' does not export any constructs.
 
 ERROR:
 (defmodule FOO
@@ -417,21 +417,21 @@ CLIPS> (defmodule MAIN (export deftemplate foo))
 CLIPS> (defmodule FOO (import MAIN ?NONE))
 CLIPS> (assert (foo (x 3)))
 
-[EXPRNPSR3] Missing function declaration for x.
+[EXPRNPSR3] Missing function declaration for 'x'.
 CLIPS> (clear)
 CLIPS> (deftemplate MAIN::foo (slot x))
 CLIPS> (defmodule MAIN (export deftemplate foo))
 CLIPS> (defmodule FOO (import MAIN deftemplate ?NONE))
 CLIPS> (assert (foo (x 3)))
 
-[EXPRNPSR3] Missing function declaration for x.
+[EXPRNPSR3] Missing function declaration for 'x'.
 CLIPS> (clear) ; Miscellaneous (previously a bug)
 CLIPS> (defmodule FOO (export deftemplate woz pif))
 CLIPS> (deftemplate FOO::bar)
 CLIPS> (deftemplate FOO::woz)
 CLIPS> (defmodule YAK1 (import FOO deftemplate bar))
 
-[MODULPSR1] Module FOO does not export the deftemplate bar.
+[MODULPSR1] Module 'FOO' does not export the deftemplate 'bar'.
 
 ERROR:
 (defmodule YAK1
@@ -439,7 +439,7 @@ ERROR:
 CLIPS> (defmodule YAK2 (import FOO deftemplate woz))
 CLIPS> (defmodule YAK3 (import FOO deftemplate pif))
 
-[MODULPSR1] Module FOO does not export the deftemplate pif.
+[MODULPSR1] Module 'FOO' does not export the deftemplate 'pif'.
 
 ERROR:
 (defmodule YAK3
@@ -447,7 +447,7 @@ ERROR:
 CLIPS> (defmodule FIB)
 CLIPS> (defmodule BIK (import FIB ?ALL))
 
-[MODULPSR1] Module FIB does not export any constructs.
+[MODULPSR1] Module 'FIB' does not export any constructs.
 
 ERROR:
 (defmodule BIK
@@ -455,7 +455,7 @@ ERROR:
 CLIPS> (defmodule FIB1 (export defglobal ?ALL))
 CLIPS> (defmodule BIK1 (import FIB1 deftemplate ?ALL))
 
-[MODULPSR1] Module FIB1 does not export any deftemplate constructs.
+[MODULPSR1] Module 'FIB1' does not export any deftemplate constructs.
 
 ERROR:
 (defmodule BIK1
@@ -470,10 +470,10 @@ CLIPS> (set-current-module MAIN)
 BAR
 CLIPS> (assert (b 3))
 
-[CSTRCPSR3] Cannot define implied deftemplate b because of an import/export conflict.
+[CSTRCPSR3] Cannot define implied deftemplate 'b' because of an import/export conflict.
 CLIPS> (defrule foo => (assert (b)))
 
-[CSTRCPSR3] Cannot define implied deftemplate b because of an import/export conflict.
+[CSTRCPSR3] Cannot define implied deftemplate 'b' because of an import/export conflict.
 
 ERROR:
 (defrule MAIN::foo
@@ -481,7 +481,7 @@ ERROR:
    (assert (b
 CLIPS> (defrule foo (b) =>)
 
-[CSTRCPSR3] Cannot define implied deftemplate b because of an import/export conflict.
+[CSTRCPSR3] Cannot define implied deftemplate 'b' because of an import/export conflict.
 
 ERROR:
 (defrule MAIN::foo

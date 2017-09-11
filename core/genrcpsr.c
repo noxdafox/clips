@@ -730,11 +730,11 @@ static bool ValidGenericName(
       if (theModule != GetCurrentModule(theEnv))
         {
          PrintErrorID(theEnv,"GENRCPSR",4,false);
-         WriteString(theEnv,STDERR,"Deffunction ");
+         WriteString(theEnv,STDERR,"Deffunction '");
          WriteString(theEnv,STDERR,DeffunctionName(theDeffunction));
-         WriteString(theEnv,STDERR," imported from module ");
+         WriteString(theEnv,STDERR,"' imported from module '");
          WriteString(theEnv,STDERR,DefmoduleName(theModule));
-         WriteString(theEnv,STDERR," conflicts with this defgeneric.\n");
+         WriteString(theEnv,STDERR,"' conflicts with this defgeneric.\n");
          return false;
         }
       else
@@ -775,9 +775,9 @@ static bool ValidGenericName(
        (systemFunction->overloadable == false) : false)
      {
       PrintErrorID(theEnv,"GENRCPSR",16,false);
-      WriteString(theEnv,STDERR,"The system function ");
+      WriteString(theEnv,STDERR,"The system function '");
       WriteString(theEnv,STDERR,theDefgenericName);
-      WriteString(theEnv,STDERR," cannot be overloaded.\n");
+      WriteString(theEnv,STDERR,"' cannot be overloaded.\n");
       return false;
      }
    return true;
@@ -1318,8 +1318,9 @@ static bool RedundantClasses(
    else
      return false;
    PrintErrorID(theEnv,"GENRCPSR",15,false);
+   WriteString(theEnv,STDERR,"Class '");
    WriteString(theEnv,STDERR,tname);
-   WriteString(theEnv,STDERR," class is redundant.\n");
+   WriteString(theEnv,STDERR,"' is redundant.\n");
    return true;
   }
 

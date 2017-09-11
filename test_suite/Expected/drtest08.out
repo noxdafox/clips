@@ -4,7 +4,7 @@ TRUE
 CLIPS> (clear) ;; DR0705
 CLIPS> (= 5 (read))
 Whatever
-[ARGACCES5] Function = expected argument #2 to be of type integer or float
+[ARGACCES2] Function '=' expected argument #2 to be of type integer or float.
 FALSE
 CLIPS> (clear) ;; DR0707
 CLIPS> (defclass A (is-a USER) (role concrete) (slot foo (create-accessor read-write)))
@@ -49,9 +49,9 @@ CLIPS>
    =>)
 CLIPS> (reset)
 CLIPS> (assert (c 1) (d a)) ; should not hang
-[ARGACCES5] Function > expected argument #1 to be of type integer or float
+[ARGACCES2] Function '>' expected argument #1 to be of type integer or float.
 
-[FACTMCH1] This error occurred in the fact pattern network
+[FACTMCH1] This error occurred in the fact pattern network.
    Currently active fact: (d a)
    Problem resides in field #1
       Of pattern #2 in rule bar
@@ -65,9 +65,9 @@ CLIPS>
    =>)
 CLIPS> (reset)
 CLIPS> (assert (d a)) ; Error should be for pattern 5
-[ARGACCES5] Function > expected argument #1 to be of type integer or float
+[ARGACCES2] Function '>' expected argument #1 to be of type integer or float.
 
-[FACTMCH1] This error occurred in the fact pattern network
+[FACTMCH1] This error occurred in the fact pattern network.
    Currently active fact: (d a)
    Problem resides in field #1
       Of pattern #4 in rule foo
@@ -168,8 +168,7 @@ CLIPS>
    (member$ a ?x))
 
 [RULECSTR3] Previous variable bindings of ?x caused the type restrictions
-for argument #2 of the expression (member$ a ?x)
-found in the rule's RHS to be violated.
+for argument #2 of the expression (member$ a ?x) found in the rule's RHS to be violated.
 
 ERROR:
 (defrule MAIN::this-1
@@ -418,7 +417,7 @@ CLIPS> (defclass A (is-a USER) (role concrete))
 CLIPS> (make-instance a of A)
 [a]
 CLIPS> (any-instancep ((?long-var A)) ?long-var:)
-[EVALUATN1] Variable long-var: is unbound
+[EVALUATN1] Variable ?long-var: is unbound.
 FALSE
 CLIPS> (clear)                ; DR0757 - Error ID should be [INSMNGR11]
 CLIPS> (defclass A (is-a USER) (role concrete))
@@ -446,7 +445,7 @@ CLIPS>
    (slot foo (type INTEGER)
              (allowed-instance-names [a])))
 
-[CSTRNPSR1] The type attribute conflicts with the allowed-instance-names attribute.
+[CSTRNPSR1] The 'type' attribute conflicts with the 'allowed-instance-names' attribute.
 
 ERROR:
 (deftemplate MAIN::A
@@ -466,7 +465,7 @@ CLIPS>
    (slot foo (type INTEGER)
              (allowed-values abc def)))
 
-[CSTRNPSR1] The type attribute conflicts with the allowed-values attribute.
+[CSTRNPSR1] The 'type' attribute conflicts with the 'allowed-values' attribute.
 
 ERROR:
 (deftemplate MAIN::bar
@@ -485,8 +484,7 @@ CLIPS>
    (multislot foofoo (type INTEGER LEXEME)))
 CLIPS> (assert (temp2 (foofoo (progn 3.4))))
 
-[CSTRNCHK1] Slot value (3.4) found in fact f-2     
-does not match the allowed types for slot foofoo.
+[CSTRNCHK1] Slot value (3.4) found in fact f-2 does not match the allowed types for slot 'foofoo'.
 <Fact-2>
 CLIPS> (set-dynamic-constraint-checking FALSE)
 TRUE
@@ -631,7 +629,7 @@ CLIPS> (assert (nanu))
 <Fact-1>
 CLIPS> (modify 1 (c 4))
 
-[TMPLTDEF1] Invalid slot c not defined in corresponding deftemplate nanu.
+[TMPLTDEF1] Invalid slot 'c' not defined in corresponding deftemplate 'nanu'.
 FALSE
 CLIPS> (clear)               ; DR0788
 CLIPS> 
@@ -676,7 +674,7 @@ CLIPS>
   =>
   ?st_B1)
 
-[PRCCODE3] Undefined variable st_B1 referenced in RHS of defrule.
+[PRCCODE3] Undefined variable ?st_B1 referenced in RHS of defrule.
 
 ERROR:
 (defrule MAIN::autorule2_B2

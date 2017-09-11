@@ -2,8 +2,7 @@ TRUE
 CLIPS> (batch "dyobjcst.bat")
 TRUE
 CLIPS> (load "dyobjcst.clp")
-####[CSTRNCHK1] dyobjcst.clp, Line 47: 36 for slot float found in slot default value
-does not match the allowed types.
+####[CSTRNCHK1] dyobjcst.clp, Line 47: The value 36 for slot 'float' found in the 'default' facet does not match the allowed types.
 
 ERROR:
 (defclass MAIN::ERROR-1
@@ -11,8 +10,7 @@ ERROR:
    (slot float
       (source composite)
       (default 36))
-#[CSTRNCHK1] dyobjcst.clp, Line 50: Expression for slot float found in dynamic default value
-does not match the allowed types.
+#[CSTRNCHK1] dyobjcst.clp, Line 50: Expression for slot 'float' found in dynamic default value does not match the allowed types.
 
 ERROR:
 (defclass MAIN::ERROR-2
@@ -20,8 +18,7 @@ ERROR:
    (slot float
       (source composite)
       (default-dynamic (sym-cat abc)))
-#[CSTRNCHK1] dyobjcst.clp, Line 54: 36.0 for slot float found in slot default value
-does not match the allowed values.
+#[CSTRNCHK1] dyobjcst.clp, Line 54: The value 36.0 for slot 'float' found in the 'default' facet does not match the allowed values.
 
 ERROR:
 (defclass MAIN::ERROR-3
@@ -29,8 +26,7 @@ ERROR:
    (slot float
       (source composite)
       (default 36.0))
-#[CSTRNCHK1] dyobjcst.clp, Line 58: () for slot any found in slot default value
-does not satisfy the cardinality restrictions.
+#[CSTRNCHK1] dyobjcst.clp, Line 58: The value () for slot 'any' found in the 'default' facet does not satisfy the cardinality restrictions.
 
 ERROR:
 (defclass MAIN::ERROR-4
@@ -245,14 +241,12 @@ put-float primary in class DERIVE-1-2
 CLIPS> (reset)
 CLIPS> (defglobal ?*iaddress* = (instance-address [base]))
 CLIPS> (send [base] put-symbol 34)
-[CSTRNCHK1] 34 for slot symbol of instance [base] found in put-symbol primary in class BASE
-does not match the allowed types.
-[PRCCODE4] Execution halted during the actions of message-handler put-symbol primary in class BASE
+[CSTRNCHK1] The value 34 for slot 'symbol' of instance [base] found in 'put-symbol' primary in class 'BASE' does not match the allowed types.
+[PRCCODE4] Execution halted during the actions of message-handler 'put-symbol' primary in class 'BASE'
 FALSE
 CLIPS> (send [base] put-fact-address ?*iaddress*)
-[CSTRNCHK1] <Instance-base> for slot fact-address of instance [base] found in put-fact-address primary in class BASE
-does not match the allowed types.
-[PRCCODE4] Execution halted during the actions of message-handler put-fact-address primary in class BASE
+[CSTRNCHK1] The value <Instance-base> for slot 'fact-address' of instance [base] found in 'put-fact-address' primary in class 'BASE' does not match the allowed types.
+[PRCCODE4] Execution halted during the actions of message-handler 'put-fact-address' primary in class 'BASE'
 FALSE
 CLIPS> (set-dynamic-constraint-checking FALSE)
 TRUE
@@ -263,54 +257,46 @@ FALSE
 CLIPS> (send [base] put-instance-address ?*iaddress*)
 <Instance-base>
 CLIPS> (send [base] put-external-address ?*iaddress*)
-[CSTRNCHK1] <Instance-base> for slot external-address of instance [base] found in put-external-address primary in class BASE
-does not match the allowed types.
-[PRCCODE4] Execution halted during the actions of message-handler put-external-address primary in class BASE
+[CSTRNCHK1] The value <Instance-base> for slot 'external-address' of instance [base] found in 'put-external-address' primary in class 'BASE' does not match the allowed types.
+[PRCCODE4] Execution halted during the actions of message-handler 'put-external-address' primary in class 'BASE'
 FALSE
 CLIPS> (send [base] put-address ?*iaddress*)
 <Instance-base>
 CLIPS> (send [derive-1-1] put-address)
-[CSTRNCHK1] () for slot address of instance [derive-1-1] found in put-address primary in class DERIVE-1-1
-does not satisfy the cardinality restrictions.
-[PRCCODE4] Execution halted during the actions of message-handler put-address primary in class DERIVE-1-1
+[CSTRNCHK1] The value () for slot 'address' of instance [derive-1-1] found in 'put-address' primary in class 'DERIVE-1-1' does not satisfy the cardinality restrictions.
+[PRCCODE4] Execution halted during the actions of message-handler 'put-address' primary in class 'DERIVE-1-1'
 FALSE
 CLIPS> (send [derive-1-1] put-address ?*iaddress*)
-[CSTRNCHK1] (<Instance-base>) for slot address of instance [derive-1-1] found in put-address primary in class DERIVE-1-1
-does not satisfy the cardinality restrictions.
-[PRCCODE4] Execution halted during the actions of message-handler put-address primary in class DERIVE-1-1
+[CSTRNCHK1] The value (<Instance-base>) for slot 'address' of instance [derive-1-1] found in 'put-address' primary in class 'DERIVE-1-1' does not satisfy the cardinality restrictions.
+[PRCCODE4] Execution halted during the actions of message-handler 'put-address' primary in class 'DERIVE-1-1'
 FALSE
 CLIPS> (send [derive-1-1] put-address ?*iaddress* ?*iaddress*)
 (<Instance-base> <Instance-base>)
 CLIPS> (send [derive-1-1] put-address ?*iaddress* ?*iaddress* ?*iaddress*)
 (<Instance-base> <Instance-base> <Instance-base>)
 CLIPS> (send [derive-1-1] put-address ?*iaddress* ?*iaddress* ?*iaddress* ?*iaddress*)
-[CSTRNCHK1] (<Instance-base> <Instance-base> <Instance-base> <Instance-base>) for slot address of instance [derive-1-1] found in put-address primary in class DERIVE-1-1
-does not satisfy the cardinality restrictions.
-[PRCCODE4] Execution halted during the actions of message-handler put-address primary in class DERIVE-1-1
+[CSTRNCHK1] The value (<Instance-base> <Instance-base> <Instance-base> <Instance-base>) for slot 'address' of instance [derive-1-1] found in 'put-address' primary in class 'DERIVE-1-1' does not satisfy the cardinality restrictions.
+[PRCCODE4] Execution halted during the actions of message-handler 'put-address' primary in class 'DERIVE-1-1'
 FALSE
 CLIPS> (send [derive-1-1] put-any 45)
-[CSTRNCHK1] 45 for slot any of instance [derive-1-1] found in put-any primary in class DERIVE-1-1
-does not match the allowed values.
-[PRCCODE4] Execution halted during the actions of message-handler put-any primary in class DERIVE-1-1
+[CSTRNCHK1] The value 45 for slot 'any' of instance [derive-1-1] found in 'put-any' primary in class 'DERIVE-1-1' does not match the allowed values.
+[PRCCODE4] Execution halted during the actions of message-handler 'put-any' primary in class 'DERIVE-1-1'
 FALSE
 CLIPS> (send [derive-1-1] put-any 123 123)
-[INSFUN7] (123 123) illegal for single-field slot any of instance [derive-1-1] found in put-any primary in class DERIVE-1-1.
-[PRCCODE4] Execution halted during the actions of message-handler put-any primary in class DERIVE-1-1
+[INSFUN7] The value (123 123) is illegal for single-field slot 'any' of instance [derive-1-1] found in 'put-any' primary in class 'DERIVE-1-1'.
+[PRCCODE4] Execution halted during the actions of message-handler 'put-any' primary in class 'DERIVE-1-1'
 FALSE
 CLIPS> (send [derive-1-1] put-any 7.34)
-[CSTRNCHK1] 7.34 for slot any of instance [derive-1-1] found in put-any primary in class DERIVE-1-1
-does not match the allowed values.
-[PRCCODE4] Execution halted during the actions of message-handler put-any primary in class DERIVE-1-1
+[CSTRNCHK1] The value 7.34 for slot 'any' of instance [derive-1-1] found in 'put-any' primary in class 'DERIVE-1-1' does not match the allowed values.
+[PRCCODE4] Execution halted during the actions of message-handler 'put-any' primary in class 'DERIVE-1-1'
 FALSE
 CLIPS> (send [derive-1-1] put-any def)
-[CSTRNCHK1] def for slot any of instance [derive-1-1] found in put-any primary in class DERIVE-1-1
-does not match the allowed values.
-[PRCCODE4] Execution halted during the actions of message-handler put-any primary in class DERIVE-1-1
+[CSTRNCHK1] The value def for slot 'any' of instance [derive-1-1] found in 'put-any' primary in class 'DERIVE-1-1' does not match the allowed values.
+[PRCCODE4] Execution halted during the actions of message-handler 'put-any' primary in class 'DERIVE-1-1'
 FALSE
 CLIPS> (send [derive-1-1] put-any "abc")
-[CSTRNCHK1] "abc" for slot any of instance [derive-1-1] found in put-any primary in class DERIVE-1-1
-does not match the allowed values.
-[PRCCODE4] Execution halted during the actions of message-handler put-any primary in class DERIVE-1-1
+[CSTRNCHK1] The value "abc" for slot 'any' of instance [derive-1-1] found in 'put-any' primary in class 'DERIVE-1-1' does not match the allowed values.
+[PRCCODE4] Execution halted during the actions of message-handler 'put-any' primary in class 'DERIVE-1-1'
 FALSE
 CLIPS> (send [derive-1-1] put-any "def")
 "def"

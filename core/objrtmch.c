@@ -1449,9 +1449,9 @@ static void ObjectPatternNetErrorMessage(
    WriteString(theEnv,STDERR,"   Currently active instance: [");
    WriteString(theEnv,STDERR,ObjectReteData(theEnv)->CurrentPatternObject->name->contents);
    WriteString(theEnv,STDERR,"]\n");
-   WriteString(theEnv,STDERR,"   Problem resides in slot ");
+   WriteString(theEnv,STDERR,"   Problem resides in slot '");
    WriteString(theEnv,STDERR,FindIDSlotName(theEnv,patternPtr->slotNameID)->contents);
-   WriteString(theEnv,STDERR," field #");
+   WriteString(theEnv,STDERR,"' field #");
    PrintUnsignedInteger(theEnv,STDERR,patternPtr->whichField);
    WriteString(theEnv,STDERR,"\n");
    TraceErrorToObjectPattern(theEnv,true,patternPtr);

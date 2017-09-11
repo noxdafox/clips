@@ -4,7 +4,7 @@ TRUE
 CLIPS> (reset)
 CLIPS> (do-for-all-facts ((?i MAN)) TRUE
    (+ (eval "(gensym)") 2))
-[ARGACCES5] Function + expected argument #1 to be of type integer or float
+[ARGACCES2] Function '+' expected argument #1 to be of type integer or float.
 FALSE
 CLIPS> (do-for-all-facts ((?mb MALE) (?wg FEMALE))
    TRUE
@@ -291,13 +291,13 @@ CLIPS> (any-factp ((?b A)))
 
 [PRNTUTIL2] Syntax Error:  Check appropriate syntax for fact-set query function.
 CLIPS> (any-factp ((?b BOGUS)) TRUE)
-[PRNTUTIL1] Unable to find deftemplate BOGUS.
+[PRNTUTIL1] Unable to find deftemplate 'BOGUS'.
 CLIPS> (any-factp ((?b 34)) TRUE)
 
 [PRNTUTIL2] Syntax Error:  Check appropriate syntax for fact-set query class restrictions.
 FALSE
 CLIPS> (any-factp ((?b (create$ BOGUS USER))) TRUE)
-[PRNTUTIL1] Unable to find deftemplate BOGUS in function any-factp.
+[PRNTUTIL1] Unable to find deftemplate 'BOGUS' in function 'any-factp'.
 
 [PRNTUTIL2] Syntax Error:  Check appropriate syntax for fact-set query class restrictions.
 FALSE
@@ -323,13 +323,13 @@ CLIPS> (find-fact ((?b A)))
 
 [PRNTUTIL2] Syntax Error:  Check appropriate syntax for fact-set query function.
 CLIPS> (find-fact ((?b BOGUS)) TRUE)
-[PRNTUTIL1] Unable to find deftemplate BOGUS.
+[PRNTUTIL1] Unable to find deftemplate 'BOGUS'.
 CLIPS> (find-fact ((?b 34)) TRUE)
 
 [PRNTUTIL2] Syntax Error:  Check appropriate syntax for fact-set query class restrictions.
 ()
 CLIPS> (find-fact ((?b (create$ BOGUS USER))) TRUE)
-[PRNTUTIL1] Unable to find deftemplate BOGUS in function find-fact.
+[PRNTUTIL1] Unable to find deftemplate 'BOGUS' in function 'find-fact'.
 
 [PRNTUTIL2] Syntax Error:  Check appropriate syntax for fact-set query class restrictions.
 ()
@@ -355,13 +355,13 @@ CLIPS> (find-all-facts ((?b A)))
 
 [PRNTUTIL2] Syntax Error:  Check appropriate syntax for fact-set query function.
 CLIPS> (find-all-facts ((?b BOGUS)) TRUE)
-[PRNTUTIL1] Unable to find deftemplate BOGUS.
+[PRNTUTIL1] Unable to find deftemplate 'BOGUS'.
 CLIPS> (find-all-facts ((?b 34)) TRUE)
 
 [PRNTUTIL2] Syntax Error:  Check appropriate syntax for fact-set query class restrictions.
 ()
 CLIPS> (find-all-facts ((?b (create$ BOGUS USER))) TRUE)
-[PRNTUTIL1] Unable to find deftemplate BOGUS in function find-all-facts.
+[PRNTUTIL1] Unable to find deftemplate 'BOGUS' in function 'find-all-facts'.
 
 [PRNTUTIL2] Syntax Error:  Check appropriate syntax for fact-set query class restrictions.
 ()
@@ -387,7 +387,7 @@ CLIPS> (do-for-fact ((?b A)))
 
 [PRNTUTIL2] Syntax Error:  Check appropriate syntax for fact-set query function.
 CLIPS> (do-for-fact ((?b BOGUS)) TRUE)
-[PRNTUTIL1] Unable to find deftemplate BOGUS.
+[PRNTUTIL1] Unable to find deftemplate 'BOGUS'.
 CLIPS> (do-for-fact ((?b A)) (progn (bind ?b 1) TRUE))
 [FACTQPSR2] Binds are not allowed in fact-set query in function do-for-fact.
 CLIPS> (do-for-fact ((?b 34)) TRUE abc)
@@ -395,7 +395,7 @@ CLIPS> (do-for-fact ((?b 34)) TRUE abc)
 [PRNTUTIL2] Syntax Error:  Check appropriate syntax for fact-set query class restrictions.
 FALSE
 CLIPS> (do-for-fact ((?b (create$ BOGUS USER))) TRUE abc)
-[PRNTUTIL1] Unable to find deftemplate BOGUS in function do-for-fact.
+[PRNTUTIL1] Unable to find deftemplate 'BOGUS' in function 'do-for-fact'.
 
 [PRNTUTIL2] Syntax Error:  Check appropriate syntax for fact-set query class restrictions.
 FALSE
@@ -421,7 +421,7 @@ CLIPS> (do-for-all-facts ((?b A)))
 
 [PRNTUTIL2] Syntax Error:  Check appropriate syntax for fact-set query function.
 CLIPS> (do-for-all-facts ((?b BOGUS)) TRUE)
-[PRNTUTIL1] Unable to find deftemplate BOGUS.
+[PRNTUTIL1] Unable to find deftemplate 'BOGUS'.
 CLIPS> (do-for-all-facts ((?b A)) (progn (bind ?b 1) TRUE))
 [FACTQPSR2] Binds are not allowed in fact-set query in function do-for-all-facts.
 CLIPS> (do-for-all-facts ((?b 34)) TRUE abc)
@@ -429,7 +429,7 @@ CLIPS> (do-for-all-facts ((?b 34)) TRUE abc)
 [PRNTUTIL2] Syntax Error:  Check appropriate syntax for fact-set query class restrictions.
 FALSE
 CLIPS> (do-for-all-facts ((?b (create$ BOGUS USER))) TRUE abc)
-[PRNTUTIL1] Unable to find deftemplate BOGUS in function do-for-all-facts.
+[PRNTUTIL1] Unable to find deftemplate 'BOGUS' in function 'do-for-all-facts'.
 
 [PRNTUTIL2] Syntax Error:  Check appropriate syntax for fact-set query class restrictions.
 FALSE
@@ -455,7 +455,7 @@ CLIPS> (delayed-do-for-all-facts ((?b A)))
 
 [PRNTUTIL2] Syntax Error:  Check appropriate syntax for fact-set query function.
 CLIPS> (delayed-do-for-all-facts ((?b BOGUS)) TRUE)
-[PRNTUTIL1] Unable to find deftemplate BOGUS.
+[PRNTUTIL1] Unable to find deftemplate 'BOGUS'.
 CLIPS> (delayed-do-for-all-facts ((?b A)) (progn (bind ?b 1) TRUE))
 [FACTQPSR2] Binds are not allowed in fact-set query in function delayed-do-for-all-facts.
 CLIPS> (delayed-do-for-all-facts ((?b 34)) TRUE abc)
@@ -463,7 +463,7 @@ CLIPS> (delayed-do-for-all-facts ((?b 34)) TRUE abc)
 [PRNTUTIL2] Syntax Error:  Check appropriate syntax for fact-set query class restrictions.
 FALSE
 CLIPS> (delayed-do-for-all-facts ((?b (create$ BOGUS USER))) TRUE abc)
-[PRNTUTIL1] Unable to find deftemplate BOGUS in function delayed-do-for-all-facts.
+[PRNTUTIL1] Unable to find deftemplate 'BOGUS' in function 'delayed-do-for-all-facts'.
 
 [PRNTUTIL2] Syntax Error:  Check appropriate syntax for fact-set query class restrictions.
 FALSE

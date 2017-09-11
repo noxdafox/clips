@@ -12,9 +12,9 @@ CLIPS> (defrule foo                       ; DR0410
    (fact ?x&:(and (< ?x 3) (> ?x 1)))
    =>)
 CLIPS> (assert (fact a))                  ; DR0410 - Only one error message
-[ARGACCES5] Function < expected argument #1 to be of type integer or float
+[ARGACCES2] Function '<' expected argument #1 to be of type integer or float.
 
-[FACTMCH1] This error occurred in the fact pattern network
+[FACTMCH1] This error occurred in the fact pattern network.
    Currently active fact: (fact a)
    Problem resides in field #1
       Of pattern #1 in rule foo
@@ -61,7 +61,7 @@ ERROR:
 CLIPS> (list-deftemplates)                ; DR0427
 CLIPS> (eval (str-cat                     ; DR0435
       (printout t " fact-list "))) ; DR0435
-[ARGACCES5] Function str-cat expected argument #1 to be of type integer, float, symbol, string, or instance name
+[ARGACCES2] Function 'str-cat' expected argument #1 to be of type integer, float, symbol, string, or instance name.
 CLIPS> (clear)                            ; DR0441
 CLIPS> (deftemplate a)                    ; DR0441
 CLIPS> (assert (a))                       ; DR0441
@@ -148,7 +148,7 @@ CLIPS> (defrule one                       ; DR0460
    =>
    (modify ?a (two)))
 
-[PRCCODE3] Undefined variable a referenced in RHS of defrule.
+[PRCCODE3] Undefined variable ?a referenced in RHS of defrule.
 
 ERROR:
 (defrule MAIN::one
@@ -158,7 +158,7 @@ ERROR:
 CLIPS> (clear)                            ; DR0462
 CLIPS> (defrule a => (assert (x ?h)))     ; DR0462
 
-[PRCCODE3] Undefined variable h referenced in RHS of defrule.
+[PRCCODE3] Undefined variable ?h referenced in RHS of defrule.
 
 ERROR:
 (defrule MAIN::a
@@ -177,8 +177,8 @@ CLIPS> (reset)                            ; DR0466
 CLIPS> (assert (fact 1))                  ; DR0466
 <Fact-1>
 CLIPS> (run)                              ; DR0466
-[EVALUATN1] Variable f1 is unbound
-[PRCCODE4] Execution halted during the actions of defrule a.
+[EVALUATN1] Variable ?f1 is unbound.
+[PRCCODE4] Execution halted during the actions of defrule 'a'.
 CLIPS> (facts)                            ; DR0466
 f-1     (fact 1)
 For a total of 1 fact.
@@ -187,7 +187,7 @@ CLIPS> (mod 160 100)                      ; DR0475
 CLIPS> (mod (+ 100 60) 100)               ; DR0475
 60
 CLIPS> (send diamond get-hardness)        ; DR0478
-[MSGFUN1] No applicable primary message-handlers found for get-hardness.
+[MSGFUN1] No applicable primary message-handlers found for 'get-hardness'.
 FALSE
 CLIPS> (clear)                            ; DR0479
 CLIPS> (defclass FOO (is-a USER)          ; DR0479
@@ -213,10 +213,10 @@ CLIPS> (definstances gems                 ; DR0480
    (spessartite of mineral
       (gemname spessartite) (group garnet)))
 CLIPS> (reset)                            ; DR0480 - one error message
-[INSMNGR13] Slot class does not exist in instance almandite.
+[INSMNGR13] Slot 'class' does not exist in instance [almandite].
 CLIPS> (clear)                            ; DR0484
 CLIPS> (send [bogus-instance] bogus-message) ; DR0484
-[MSGPASS2] No such instance bogus-instance in function send.
+[MSGPASS2] No such instance [bogus-instance] in function 'send'.
 FALSE
 CLIPS> (clear)                            ; DR0486
 CLIPS> (defrule allie                     ; DR0486
@@ -252,7 +252,7 @@ CLIPS> "1234567890
  1234567890
  1234567890"
 CLIPS> (instance-address [bogus])         ; DR0491 - Error should contain function name
-[INSFUN2] No such instance bogus in function instance-address.
+[INSFUN2] No such instance [bogus] in function 'instance-address'.
 FALSE
 CLIPS> (instance-namep [foo])             ; DR0492 - TRUE
 TRUE
@@ -278,7 +278,7 @@ CLIPS> (clear)                            ; DR0499
 CLIPS> (defmethod foo 1 (?a))             ; DR0499
 CLIPS> (defmethod foo 2 () (undefmethod foo 1))
 CLIPS> (foo)                              ; DR0499
-[GENRCFUN1] Defgeneric foo cannot be modified while one of its methods is executing.
+[GENRCFUN1] Defgeneric 'foo' cannot be modified while one of its methods is executing.
 CLIPS> (clear)                            ; DR0500
 CLIPS> (defclass a (is-a USER) (role concrete))           ; DR0500
 CLIPS> (defmessage-handler a create-new-handler ()
@@ -286,8 +286,7 @@ CLIPS> (defmessage-handler a create-new-handler ()
 CLIPS> (make-instance a of a)             ; DR0500 - [a]
 [a]
 CLIPS> (send [a] create-new-handler)      ; DR0500 - Error
-[MSGPSR2] Cannot (re)define message-handlers during execution of 
-  other message-handlers for the same class.
+[MSGPSR2] Cannot (re)define message-handlers during execution of other message-handlers for the same class.
 
 ERROR:
 (defmessage-handler MAIN::a

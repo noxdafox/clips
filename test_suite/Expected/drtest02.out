@@ -18,7 +18,7 @@ CLIPS> (subseq$ (create$ a) 1 2)     ; DR0106 - (a)
 CLIPS> (str-index "a" "aba")             ; DR0109 - 1
 1
 CLIPS> (implode$)                        ; DR0112 - Error
-[ARGACCES4] Function implode$ expected exactly 1 argument(s)
+[ARGACCES1] Function 'implode$' expected exactly 1 argument.
 CLIPS> (sub-string 1 3 "abc")            ; DR0113 - memory loss
 "abc"
 CLIPS> (sub-string 1 3 "abc")            ; DR0113 - memory loss
@@ -26,25 +26,25 @@ CLIPS> (sub-string 1 3 "abc")            ; DR0113 - memory loss
 CLIPS> (setgen 1)                        ; DR0114 - Error
 1
 CLIPS> (setgen a)                        ; DR0114 - Error
-[ARGACCES5] Function setgen expected argument #1 to be of type integer
+[ARGACCES2] Function 'setgen' expected argument #1 to be of type integer.
 CLIPS> (read 1 1)                        ; DR0114 - Error
-[ARGACCES4] Function read expected no more than 1 argument(s)
+[ARGACCES1] Function 'read' expected no more than 1 argument.
 CLIPS> (readline 1 1)                    ; DR0114 - Error
-[ARGACCES4] Function readline expected no more than 1 argument(s)
+[ARGACCES1] Function 'readline' expected no more than 1 argument.
 CLIPS> (min)                             ; DR0114 - Error
-[ARGACCES4] Function min expected at least 1 argument(s)
+[ARGACCES1] Function 'min' expected at least 1 argument.
 CLIPS> (max)                             ; DR0114 - Error
-[ARGACCES4] Function max expected at least 1 argument(s)
+[ARGACCES1] Function 'max' expected at least 1 argument.
 CLIPS> (pi 1)                            ; DR0114 - Error
-[ARGACCES4] Function pi expected exactly 0 argument(s)
+[ARGACCES1] Function 'pi' expected exactly 0 arguments.
 CLIPS> (halt 1)                          ; DR0114 - Error
-[ARGACCES4] Function halt expected exactly 0 argument(s)
+[ARGACCES1] Function 'halt' expected exactly 0 arguments.
 CLIPS> (mod x y)                         ; DR0114 - Error
-[ARGACCES5] Function mod expected argument #1 to be of type integer or float
+[ARGACCES2] Function 'mod' expected argument #1 to be of type integer or float.
 CLIPS> (setgen 1)                        ; DR0114 - Error
 1
 CLIPS> (gensym 10)                       ; DR0114 - Error
-[ARGACCES4] Function gensym expected exactly 0 argument(s)
+[ARGACCES1] Function 'gensym' expected exactly 0 arguments.
 CLIPS> (if (eq 1 2) then)                ; DR0115 - Syntax
 FALSE
 CLIPS> (if (eq 1 2) then else)           ; DR0115 - Syntax
@@ -70,12 +70,12 @@ CLIPS> (run)                             ; DR0120
 (a b c 1 2 3) a b c 1 2 3
 (a b c 1 2 3) a b c 1 2 3
 CLIPS> (batch "a*a")                     ; DR0127
-[ARGACCES2] Function batch was unable to open file a*a.
+[ARGACCES3] Function 'batch' was unable to open file 'a*a'.
 FALSE
 CLIPS> (open "a*a" a)                    ; DR0127
 FALSE
 CLIPS> (fetch "a*a")                     ; DR0127
-[TEXTPRO1] Could not open file "a*a".
+[TEXTPRO1] Could not open file 'a*a'.
 FALSE
 CLIPS> (clear)                           ; DR0135
 CLIPS> (defrule rule1 ""
@@ -107,20 +107,20 @@ For a total of 4 activations.
 CLIPS> (setgen 1)                        ; DR0156
 1
 CLIPS> (setgen -1)                       ; DR0156
-[ARGACCES5] Function setgen expected argument #1 to be of type integer (greater than or equal to 1)
+[ARGACCES2] Function 'setgen' expected argument #1 to be of type integer (greater than or equal to 1).
 1
 CLIPS> (gensym)                          ; DR0156
 gen1
 CLIPS> (evenp dlaj)                      ; DR0159
-[ARGACCES5] Function evenp expected argument #1 to be of type integer
+[ARGACCES2] Function 'evenp' expected argument #1 to be of type integer.
 CLIPS> (evenp 2e1)                       ; DR0159
-[ARGACCES5] Function evenp expected argument #1 to be of type integer
+[ARGACCES2] Function 'evenp' expected argument #1 to be of type integer.
 CLIPS> (oddp 4.3)                        ; DR0159
-[ARGACCES5] Function oddp expected argument #1 to be of type integer
+[ARGACCES2] Function 'oddp' expected argument #1 to be of type integer.
 CLIPS> (oddp 5e1)                        ; DR0159
-[ARGACCES5] Function oddp expected argument #1 to be of type integer
+[ARGACCES2] Function 'oddp' expected argument #1 to be of type integer.
 CLIPS> (/ d 6)                           ; DR0160
-[ARGACCES5] Function / expected argument #1 to be of type integer or float
+[ARGACCES2] Function '/' expected argument #1 to be of type integer or float.
 CLIPS> (clear)                           ; DR0198
 CLIPS> (deffacts bugfacts
    (base-count a 2 strand_13)

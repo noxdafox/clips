@@ -384,10 +384,10 @@ static bool ValidDeffunctionName(
 
       if (theDeffunction->executing)
         {
-         PrintErrorID(theEnv,"DFNXPSR",4,false);
-         WriteString(theEnv,STDERR,"Deffunction ");
+         PrintErrorID(theEnv,"DFFNXPSR",4,false);
+         WriteString(theEnv,STDERR,"Deffunction '");
          WriteString(theEnv,STDERR,DeffunctionName(theDeffunction));
-         WriteString(theEnv,STDERR," may not be redefined while it is executing.\n");
+         WriteString(theEnv,STDERR,"' may not be redefined while it is executing.\n");
          return false;
         }
      }

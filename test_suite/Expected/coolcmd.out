@@ -5,10 +5,10 @@ CLIPS> (defclass PP-TEST (is-a USER)
    (multislot x)
    (slot y))
 CLIPS> (ppdefclass)
-[ARGACCES4] Function ppdefclass expected exactly 1 argument(s)
+[ARGACCES1] Function 'ppdefclass' expected exactly 1 argument.
 CLIPS> (ppdefclass USER)
 CLIPS> (ppdefclass BOGUS)
-[PRNTUTIL1] Unable to find defclass BOGUS.
+[PRNTUTIL1] Unable to find defclass 'BOGUS'.
 CLIPS> (ppdefclass PP-TEST)
 (defclass MAIN::PP-TEST
    (is-a USER)
@@ -37,37 +37,37 @@ CLIPS> (defclass TEST (is-a USER) (role concrete))
 CLIPS> (defclass ANOTHER-TEST (is-a TEST))
 CLIPS> (defclass * (is-a OBJECT))
 CLIPS> (undefclass BOGUS)
-[PRNTUTIL1] Unable to find defclass BOGUS.
+[PRNTUTIL1] Unable to find defclass 'BOGUS'.
 CLIPS> (undefclass *)
 CLIPS> (undefclass OBJECT)
-[PRNTUTIL4] Unable to delete defclass OBJECT.
+[PRNTUTIL4] Unable to delete defclass 'OBJECT'.
 CLIPS> (undefclass PRIMITIVE)
-[PRNTUTIL4] Unable to delete defclass PRIMITIVE.
+[PRNTUTIL4] Unable to delete defclass 'PRIMITIVE'.
 CLIPS> (undefclass MULTIFIELD)
-[PRNTUTIL4] Unable to delete defclass MULTIFIELD.
+[PRNTUTIL4] Unable to delete defclass 'MULTIFIELD'.
 CLIPS> (undefclass EXTERNAL-ADDRESS)
-[PRNTUTIL4] Unable to delete defclass EXTERNAL-ADDRESS.
+[PRNTUTIL4] Unable to delete defclass 'EXTERNAL-ADDRESS'.
 CLIPS> (undefclass NUMBER)
-[PRNTUTIL4] Unable to delete defclass NUMBER.
+[PRNTUTIL4] Unable to delete defclass 'NUMBER'.
 CLIPS> (undefclass LEXEME)
-[PRNTUTIL4] Unable to delete defclass LEXEME.
+[PRNTUTIL4] Unable to delete defclass 'LEXEME'.
 CLIPS> (undefclass INTEGER)
-[PRNTUTIL4] Unable to delete defclass INTEGER.
+[PRNTUTIL4] Unable to delete defclass 'INTEGER'.
 CLIPS> (undefclass FLOAT)
-[PRNTUTIL4] Unable to delete defclass FLOAT.
+[PRNTUTIL4] Unable to delete defclass 'FLOAT'.
 CLIPS> (undefclass SYMBOL)
-[PRNTUTIL4] Unable to delete defclass SYMBOL.
+[PRNTUTIL4] Unable to delete defclass 'SYMBOL'.
 CLIPS> (undefclass STRING)
-[PRNTUTIL4] Unable to delete defclass STRING.
+[PRNTUTIL4] Unable to delete defclass 'STRING'.
 CLIPS> (make-instance t of TEST)
 [t]
 CLIPS> (undefclass TEST)
-[PRNTUTIL4] Unable to delete defclass TEST.
+[PRNTUTIL4] Unable to delete defclass 'TEST'.
 CLIPS> (unmake-instance *)
 TRUE
 CLIPS> (defmethod foo ((?a TEST)))
 CLIPS> (undefclass TEST)
-[PRNTUTIL4] Unable to delete defclass TEST.
+[PRNTUTIL4] Unable to delete defclass 'TEST'.
 CLIPS> (undefgeneric foo)
 CLIPS> (undefclass TEST)
 CLIPS> (list-defclasses)
@@ -225,19 +225,19 @@ a
     e *
       f
 CLIPS> (browse-classes BOGUS)
-[CLASSFUN1] Unable to find class BOGUS in function browse-classes.
+[CLASSFUN1] Unable to find class 'BOGUS' in function 'browse-classes'.
 CLIPS> (browse-classes 34)
-[ARGACCES5] Function browse-classes expected argument #1 to be of type symbol
+[ARGACCES2] Function 'browse-classes' expected argument #1 to be of type symbol.
 CLIPS> (ppdefmessage-handler)
-[ARGACCES4] Function ppdefmessage-handler expected at least 2 argument(s)
+[ARGACCES1] Function 'ppdefmessage-handler' expected at least 2 arguments.
 CLIPS> (ppdefmessage-handler bogus)
-[ARGACCES4] Function ppdefmessage-handler expected at least 2 argument(s)
+[ARGACCES1] Function 'ppdefmessage-handler' expected at least 2 arguments.
 CLIPS> (ppdefmessage-handler bogus bogus)
-[MSGCOM2] Unable to find message-handler bogus primary for class bogus in function ppdefmessage-handler.
+[MSGCOM2] Unable to find message-handler 'bogus' primary for class 'bogus' in function 'ppdefmessage-handler'.
 CLIPS> (ppdefmessage-handler USER bogus)
-[MSGCOM2] Unable to find message-handler bogus primary for class USER in function ppdefmessage-handler.
+[MSGCOM2] Unable to find message-handler 'bogus' primary for class 'USER' in function 'ppdefmessage-handler'.
 CLIPS> (ppdefmessage-handler bogus init)
-[MSGCOM2] Unable to find message-handler init primary for class bogus in function ppdefmessage-handler.
+[MSGCOM2] Unable to find message-handler 'init' primary for class 'bogus' in function 'ppdefmessage-handler'.
 CLIPS> (ppdefmessage-handler USER init)
 CLIPS> (ppdefmessage-handler BOY play)
 (defmessage-handler MAIN::BOY play
@@ -248,11 +248,11 @@ CLIPS> (ppdefmessage-handler BOY play primary)
    ()
    (printout t "The boy is now playing..." crlf))
 CLIPS> (ppdefmessage-handler USER init around)
-[MSGCOM2] Unable to find message-handler init around for class USER in function ppdefmessage-handler.
+[MSGCOM2] Unable to find message-handler 'init' around for class 'USER' in function 'ppdefmessage-handler'.
 CLIPS> (ppdefmessage-handler USER init before)
-[MSGCOM2] Unable to find message-handler init before for class USER in function ppdefmessage-handler.
+[MSGCOM2] Unable to find message-handler 'init' before for class 'USER' in function 'ppdefmessage-handler'.
 CLIPS> (ppdefmessage-handler USER init after)
-[MSGCOM2] Unable to find message-handler init after for class USER in function ppdefmessage-handler.
+[MSGCOM2] Unable to find message-handler 'init' after for class 'USER' in function 'ppdefmessage-handler'.
 CLIPS> (defmessage-handler BOY init after ())
 CLIPS> (list-defmessage-handlers)
 init primary in class USER
@@ -267,7 +267,7 @@ play primary in class BOY
 init after in class BOY
 For a total of 10 message-handlers.
 CLIPS> (list-defmessage-handlers *)
-[CLASSFUN1] Unable to find class * in function list-defmessage-handlers.
+[CLASSFUN1] Unable to find class '*' in function 'list-defmessage-handlers'.
 CLIPS> (defclass * (is-a USER))
 CLIPS> (list-defmessage-handlers)
 init primary in class USER
@@ -319,7 +319,7 @@ message-duplicate primary in class USER
 bogus primary in class USER
 For a total of 9 message-handlers.
 CLIPS> (undefmessage-handler)
-[ARGACCES4] Function undefmessage-handler expected at least 2 argument(s)
+[ARGACCES1] Function 'undefmessage-handler' expected at least 2 arguments.
 CLIPS> (undefmessage-handler * *)
 CLIPS> (list-defmessage-handlers)
 init primary in class USER
@@ -353,11 +353,11 @@ CLIPS> (defmessage-handler OBJECT my-message before ())
 CLIPS> (defmessage-handler OBJECT my-message primary ())
 CLIPS> (defmessage-handler OBJECT my-message after ())
 CLIPS> (preview-send)
-[ARGACCES4] Function preview-send expected exactly 2 argument(s)
+[ARGACCES1] Function 'preview-send' expected exactly 2 arguments.
 CLIPS> (preview-send BOGUS blah)
-[CLASSFUN1] Unable to find class BOGUS in function preview-send.
+[CLASSFUN1] Unable to find class 'BOGUS' in function 'preview-send'.
 CLIPS> (preview-send USER blah)
-[MSGFUN1] No applicable primary message-handlers found for blah.
+[MSGFUN1] No applicable primary message-handlers found for 'blah'.
 CLIPS> (preview-send USER my-message)
 >> my-message around in class USER
 | >> my-message around in class OBJECT
@@ -393,11 +393,11 @@ CLIPS> (definstances TEST-CASES "Random comment..."
    (t1 of TEST (x 100) (y a b c d e f))
    (t2 of TEST (y blah)))
 CLIPS> (ppdefinstances)
-[ARGACCES4] Function ppdefinstances expected exactly 1 argument(s)
+[ARGACCES1] Function 'ppdefinstances' expected exactly 1 argument.
 CLIPS> (ppdefinstances BOGUS)
-[PRNTUTIL1] Unable to find definstances BOGUS.
+[PRNTUTIL1] Unable to find definstances 'BOGUS'.
 CLIPS> (ppdefinstances 34)
-[ARGACCES5] Function ppdefinstances expected argument #1 to be of type symbol
+[ARGACCES2] Function 'ppdefinstances' expected argument #1 to be of type symbol.
 CLIPS> (ppdefinstances TEST-CASES)
 (definstances MAIN::TEST-CASES "Random comment..."
    (t1 of TEST
@@ -423,9 +423,9 @@ CLIPS> (instances MAIN USER inherit)
 [t2] of TEST
 For a total of 2 instances.
 CLIPS> (instances MAIN BOGUS)
-[CLASSFUN1] Unable to find class BOGUS in function instances.
+[CLASSFUN1] Unable to find class 'BOGUS' in function 'instances'.
 CLIPS> (instances MAIN USER junk)
-[ARGACCES5] Function instances expected argument #3 to be of type keyword "inherit"
+[ARGACCES2] Function 'instances' expected argument #3 to be of type keyword "inherit".
 CLIPS> (send [t1] print)
 [t1] of TEST
 (x 100)
@@ -448,7 +448,7 @@ Printing twice...
 (z nil)
 Done!
 CLIPS> (undefinstances)
-[ARGACCES4] Function undefinstances expected exactly 1 argument(s)
+[ARGACCES1] Function 'undefinstances' expected exactly 1 argument.
 CLIPS> (definstances * (t3 of TEST))
 CLIPS> (undefinstances *)
 CLIPS> (list-definstances)
@@ -457,18 +457,18 @@ For a total of 1 definstances.
 CLIPS> (undefinstances *)
 CLIPS> (list-definstances)
 CLIPS> (load-instances)
-[ARGACCES4] Function load-instances expected exactly 1 argument(s)
+[ARGACCES1] Function 'load-instances' expected exactly 1 argument.
 CLIPS> (load-instances 34)
-[ARGACCES5] Function load-instances expected argument #1 to be of type symbol or string
+[ARGACCES2] Function 'load-instances' expected argument #1 to be of type symbol or string.
 CLIPS> (load-instances "coolcmd.bat")
 
 [PRNTUTIL2] Syntax Error:  Check appropriate syntax for make-instance.
-[INSFILE1] Function load-instances could not completely process file coolcmd.bat.
+[INSFILE1] Function 'load-instances' could not completely process file 'coolcmd.bat'.
 0
 CLIPS> (save-instances)
-[ARGACCES4] Function save-instances expected at least 1 argument(s)
+[ARGACCES1] Function 'save-instances' expected at least 1 argument.
 CLIPS> (save-instances 34)
-[ARGACCES5] Function save-instances expected argument #1 to be of type symbol or string
+[ARGACCES2] Function 'save-instances' expected argument #1 to be of type symbol or string.
 CLIPS> (send [t2] put-z (instance-address t1))
 <Instance-t1>
 CLIPS> (slot-replace$ t1 y 2 2 (instance-address t2))

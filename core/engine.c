@@ -435,9 +435,9 @@ long long Run(
             logName = STDWRN;
            }
 
-         WriteString(theEnv,logName,"Execution halted during the actions of defrule ");
+         WriteString(theEnv,logName,"Execution halted during the actions of defrule '");
          WriteString(theEnv,logName,ruleFiring);
-         WriteString(theEnv,logName,".\n");
+         WriteString(theEnv,logName,"'.\n");
         }
 
       /*===================================================*/
@@ -1284,7 +1284,7 @@ void SetBreakCommand(
 
    if ((defrulePtr = FindDefrule(theEnv,argument)) == NULL)
      {
-      CantFindItemErrorMessage(theEnv,"defrule",argument);
+      CantFindItemErrorMessage(theEnv,"defrule",argument,true);
       return;
      }
 
@@ -1316,7 +1316,7 @@ void RemoveBreakCommand(
 
    if ((defrulePtr = FindDefrule(theEnv,argument)) == NULL)
      {
-      CantFindItemErrorMessage(theEnv,"defrule",argument);
+      CantFindItemErrorMessage(theEnv,"defrule",argument,true);
       return;
      }
 
@@ -1503,7 +1503,7 @@ void FocusCommand(
 
       if (theModule == NULL)
         {
-         CantFindItemErrorMessage(theEnv,"defmodule",argument);
+         CantFindItemErrorMessage(theEnv,"defmodule",argument,true);
          returnValue->lexemeValue = FalseSymbol(theEnv);
          return;
         }

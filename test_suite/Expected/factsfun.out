@@ -27,23 +27,23 @@ FALSE
 CLIPS> (fact-existp 5)
 FALSE
 CLIPS> (fact-existp -1)
-[ARGACCES5] Function fact-existp expected argument #1 to be of type fact-address or fact-index
+[ARGACCES2] Function 'fact-existp' expected argument #1 to be of type fact-address or fact-index.
 FALSE
 CLIPS> (fact-existp a)
-[ARGACCES5] Function fact-existp expected argument #1 to be of type integer or fact address
+[ARGACCES2] Function 'fact-existp' expected argument #1 to be of type integer or fact address.
 CLIPS> (fact-existp 1 2)
-[ARGACCES4] Function fact-existp expected exactly 1 argument(s)
+[ARGACCES1] Function 'fact-existp' expected exactly 1 argument.
 CLIPS> (clear)
 CLIPS> (reset)
 CLIPS> (deftemplate foo (slot x) (slot y))
 CLIPS> (defglobal ?*w* = (assert (foo (x 1) (y 2))))
 CLIPS> (defglobal ?*x* = (assert (a)))
 CLIPS> (fact-relation)
-[ARGACCES4] Function fact-relation expected exactly 1 argument(s)
+[ARGACCES1] Function 'fact-relation' expected exactly 1 argument.
 CLIPS> (fact-relation a)
-[ARGACCES5] Function fact-relation expected argument #1 to be of type integer or fact address
+[ARGACCES2] Function 'fact-relation' expected argument #1 to be of type integer or fact address.
 CLIPS> (fact-relation 2 3)
-[ARGACCES4] Function fact-relation expected exactly 1 argument(s)
+[ARGACCES1] Function 'fact-relation' expected exactly 1 argument.
 CLIPS> (fact-relation ?*w*)
 foo
 CLIPS> (fact-relation ?*x*)
@@ -69,22 +69,22 @@ CLIPS> (defglobal ?*x1* = (assert (a)))
 CLIPS> (defglobal ?*x2* = (assert (a b)))
 CLIPS> (defglobal ?*x3* = (assert (a b c)))
 CLIPS> (fact-slot-value)
-[ARGACCES4] Function fact-slot-value expected exactly 2 argument(s)
+[ARGACCES1] Function 'fact-slot-value' expected exactly 2 arguments.
 CLIPS> (fact-slot-value 1)
-[ARGACCES4] Function fact-slot-value expected exactly 2 argument(s)
+[ARGACCES1] Function 'fact-slot-value' expected exactly 2 arguments.
 CLIPS> (fact-slot-value ?*w1*)
-[ARGACCES4] Function fact-slot-value expected exactly 2 argument(s)
+[ARGACCES1] Function 'fact-slot-value' expected exactly 2 arguments.
 CLIPS> (fact-slot-value a)
-[ARGACCES4] Function fact-slot-value expected exactly 2 argument(s)
+[ARGACCES1] Function 'fact-slot-value' expected exactly 2 arguments.
 CLIPS> (fact-slot-value 1 2)
-[ARGACCES5] Function fact-slot-value expected argument #2 to be of type symbol
+[ARGACCES2] Function 'fact-slot-value' expected argument #2 to be of type symbol.
 CLIPS> (fact-slot-value 1 x 3)
-[ARGACCES4] Function fact-slot-value expected exactly 2 argument(s)
+[ARGACCES1] Function 'fact-slot-value' expected exactly 2 arguments.
 CLIPS> (fact-slot-value 1 z)
-[TMPLTDEF1] Invalid slot z not defined in corresponding deftemplate foo.
+[TMPLTDEF1] Invalid slot 'z' not defined in corresponding deftemplate 'foo'.
 FALSE
 CLIPS> (fact-slot-value 4 z)
-[TMPLTDEF1] Invalid slot z not defined in corresponding deftemplate a.
+[TMPLTDEF1] Invalid slot 'z' not defined in corresponding deftemplate 'a'.
 FALSE
 CLIPS> (fact-slot-value 1 x)
 1
@@ -124,11 +124,11 @@ CLIPS> (defglobal ?*w4* = (assert (foo4)))
 CLIPS> (defglobal ?*x1* = (assert (a)))
 CLIPS> (defglobal ?*x2* = (assert (b c)))
 CLIPS> (fact-slot-names) 
-[ARGACCES4] Function fact-slot-names expected exactly 1 argument(s)
+[ARGACCES1] Function 'fact-slot-names' expected exactly 1 argument.
 CLIPS> (fact-slot-names a)
-[ARGACCES5] Function fact-slot-names expected argument #1 to be of type integer or fact address
+[ARGACCES2] Function 'fact-slot-names' expected argument #1 to be of type integer or fact address.
 CLIPS> (fact-slot-names 1 a)
-[ARGACCES4] Function fact-slot-names expected exactly 1 argument(s)
+[ARGACCES1] Function 'fact-slot-names' expected exactly 1 argument.
 CLIPS> (fact-slot-names ?*w1*)
 ()
 CLIPS> (fact-slot-names 2)

@@ -659,7 +659,8 @@ bool HandlerSlotGetFunction(
 
    if (theInstance->garbage)
      {
-      StaleInstanceAddress(theEnv,"for slot get",0);
+      PrintErrorID(theEnv,"INSFUN",4,false);
+      WriteString(theEnv,STDERR,"Invalid instance-address in ?self slot reference.\n");
       theResult->value = FalseSymbol(theEnv);
       SetEvaluationError(theEnv,true);
       return false;
@@ -1054,9 +1055,9 @@ static bool PerformMessage(
       if (ins == NULL)
         {
          PrintErrorID(theEnv,"MSGPASS",2,false);
-         WriteString(theEnv,STDERR,"No such instance ");
+         WriteString(theEnv,STDERR,"No such instance [");
          WriteString(theEnv,STDERR,ProceduralPrimitiveData(theEnv)->ProcParamArray->lexemeValue->contents);
-         WriteString(theEnv,STDERR," in function send.\n");
+         WriteString(theEnv,STDERR,"] in function 'send'.\n");
          SetEvaluationError(theEnv,true);
         }
       else
@@ -1422,12 +1423,15 @@ static void EarlySlotBindError(
 
    sd = theDefclass->instanceTemplate[theDefclass->slotNameMap[slotID] - 1];
    PrintErrorID(theEnv,"MSGPASS",3,false);
-   WriteString(theEnv,STDERR,"Static reference to slot ");
+   WriteString(theEnv,STDERR,"Static reference to slot '");
    WriteString(theEnv,STDERR,sd->slotName->name->contents);
-   WriteString(theEnv,STDERR," of class ");
-   PrintClassName(theEnv,STDERR,theDefclass,false);
-   WriteString(theEnv,STDERR," does not apply to ");
-   PrintInstanceNameAndClass(theEnv,STDERR,theInstance,true);
+   WriteString(theEnv,STDERR,"' of class ");
+   PrintClassName(theEnv,STDERR,theDefclass,true,false);
+   WriteString(theEnv,STDERR," does not apply to instance [");
+   WriteString(theEnv,STDERR,InstanceName(theInstance));
+   WriteString(theEnv,STDERR,"] of class ");
+   PrintClassName(theEnv,STDERR,theInstance->cls,true,false);
+   WriteString(theEnv,STDERR,".\n");
   }
 
 #endif /* OBJECT_SYSTEM */

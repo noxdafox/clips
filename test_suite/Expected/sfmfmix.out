@@ -1,73 +1,73 @@
 TRUE
 CLIPS> (load "sfmfmix.clp")
 *
-[PATTERN2] sfmfmix.clp, Line 2: Single and multifield constraints cannot be mixed in a field constraint
+[PATTERN2] sfmfmix.clp, Line 2: Single and multifield constraints cannot be mixed in a field constraint.
 
 ERROR:
 (defrule MAIN::error-1 "constant & $?var"
    (bar $?y&yak)
 *
-[PATTERN2] sfmfmix.clp, Line 5: Single and multifield constraints cannot be mixed in a field constraint
+[PATTERN2] sfmfmix.clp, Line 5: Single and multifield constraints cannot be mixed in a field constraint.
 
 ERROR:
 (defrule MAIN::error-2 "constant & $?var"
    (bar $?y yak&$?y)
 *
-[PATTERN2] sfmfmix.clp, Line 8: Single and multifield constraints cannot be mixed in a field constraint
+[PATTERN2] sfmfmix.clp, Line 8: Single and multifield constraints cannot be mixed in a field constraint.
 
 ERROR:
 (defrule MAIN::error-3 "constant & $?var"
    (bar yak&$?y)
 *
-[PATTERN2] sfmfmix.clp, Line 11: Single and multifield constraints cannot be mixed in a field constraint
+[PATTERN2] sfmfmix.clp, Line 11: Single and multifield constraints cannot be mixed in a field constraint.
 
 ERROR:
 (defrule MAIN::error-4 "constant & $?var"
    (bar $?y $?y|yak)
 *
-[PATTERN2] sfmfmix.clp, Line 14: Single and multifield constraints cannot be mixed in a field constraint
+[PATTERN2] sfmfmix.clp, Line 14: Single and multifield constraints cannot be mixed in a field constraint.
 
 ERROR:
 (defrule MAIN::error-5 "constant & $?var"
    (bar $?y yak|$?y)
 *
-[PATTERN2] sfmfmix.clp, Line 17: Single and multifield constraints cannot be mixed in a field constraint
+[PATTERN2] sfmfmix.clp, Line 17: Single and multifield constraints cannot be mixed in a field constraint.
 
 ERROR:
 (defrule MAIN::error-6 "constant & $?var"
    (bar yak|$?y)
 *
-[PATTERN2] sfmfmix.clp, Line 21: Single and multifield constraints cannot be mixed in a field constraint
+[PATTERN2] sfmfmix.clp, Line 21: Single and multifield constraints cannot be mixed in a field constraint.
 
 ERROR:
 (defrule MAIN::error-7 "? return value & $?var"
    (bar $?y&=(+ 3 4))
 *
-[PATTERN2] sfmfmix.clp, Line 24: Single and multifield constraints cannot be mixed in a field constraint
+[PATTERN2] sfmfmix.clp, Line 24: Single and multifield constraints cannot be mixed in a field constraint.
 
 ERROR:
 (defrule MAIN::error-8 "? return value & $?var"
    (bar $?y =(+ 3 4)&$?y)
 *
-[PATTERN2] sfmfmix.clp, Line 27: Single and multifield constraints cannot be mixed in a field constraint
+[PATTERN2] sfmfmix.clp, Line 27: Single and multifield constraints cannot be mixed in a field constraint.
 
 ERROR:
 (defrule MAIN::error-9 "? return value & $?var"
    (bar =(+ 3 4)&$?y)
 *
-[PATTERN2] sfmfmix.clp, Line 30: Single and multifield constraints cannot be mixed in a field constraint
+[PATTERN2] sfmfmix.clp, Line 30: Single and multifield constraints cannot be mixed in a field constraint.
 
 ERROR:
 (defrule MAIN::error-10 "? return value & $?var"
    (bar $?y $?y|=(+ 3 4))
 *
-[PATTERN2] sfmfmix.clp, Line 33: Single and multifield constraints cannot be mixed in a field constraint
+[PATTERN2] sfmfmix.clp, Line 33: Single and multifield constraints cannot be mixed in a field constraint.
 
 ERROR:
 (defrule MAIN::error-11 "? return value & $?var"
    (bar $?y =(+ 3 4)|$?y)
 *
-[PATTERN2] sfmfmix.clp, Line 36: Single and multifield constraints cannot be mixed in a field constraint
+[PATTERN2] sfmfmix.clp, Line 36: Single and multifield constraints cannot be mixed in a field constraint.
 
 ERROR:
 (defrule MAIN::error-12 "? return value & $?var"
@@ -157,201 +157,201 @@ ERROR:
    (bar ?z ?z|?y)
    =>)
 **
-[PATTERN2] sfmfmix.clp, Line 109: Single and multifield constraints cannot be mixed in a field constraint
+[PATTERN2] sfmfmix.clp, Line 109: Single and multifield constraints cannot be mixed in a field constraint.
 
 ERROR:
 (defrule MAIN::error-23 "$?var & ?var"
    (bar $?z&?y)
 *
-[PATTERN2] sfmfmix.clp, Line 112: Single and multifield constraints cannot be mixed in a field constraint
+[PATTERN2] sfmfmix.clp, Line 112: Single and multifield constraints cannot be mixed in a field constraint.
 
 ERROR:
 (defrule MAIN::error-24 "$?var & ?var"
    (bar ?y $?z&?y)
 *
-[PATTERN2] sfmfmix.clp, Line 115: Single and multifield constraints cannot be mixed in a field constraint
+[PATTERN2] sfmfmix.clp, Line 115: Single and multifield constraints cannot be mixed in a field constraint.
 
 ERROR:
 (defrule MAIN::error-25 "$?var & ?var"
    (bar $?z $?z&?y)
 *
-[PATTERN2] sfmfmix.clp, Line 118: Single and multifield constraints cannot be mixed in a field constraint
+[PATTERN2] sfmfmix.clp, Line 118: Single and multifield constraints cannot be mixed in a field constraint.
 
 ERROR:
 (defrule MAIN::error-26 "$?var & ?var"
    (bar $?z ?y $?z&?y)
 *
-[PATTERN2] sfmfmix.clp, Line 121: Single and multifield constraints cannot be mixed in a field constraint
+[PATTERN2] sfmfmix.clp, Line 121: Single and multifield constraints cannot be mixed in a field constraint.
 
 ERROR:
 (defrule MAIN::error-27 "$?var & ?var"
    (bar $?z|?y)
 *
-[PATTERN2] sfmfmix.clp, Line 124: Single and multifield constraints cannot be mixed in a field constraint
+[PATTERN2] sfmfmix.clp, Line 124: Single and multifield constraints cannot be mixed in a field constraint.
 
 ERROR:
 (defrule MAIN::error-28 "$?var & ?var"
    (bar ?y $?z|?y)
 *
-[PATTERN2] sfmfmix.clp, Line 127: Single and multifield constraints cannot be mixed in a field constraint
+[PATTERN2] sfmfmix.clp, Line 127: Single and multifield constraints cannot be mixed in a field constraint.
 
 ERROR:
 (defrule MAIN::error-29 "$?var & ?var"
    (bar $?z $?z|?y)
 *
-[PATTERN2] sfmfmix.clp, Line 130: Single and multifield constraints cannot be mixed in a field constraint
+[PATTERN2] sfmfmix.clp, Line 130: Single and multifield constraints cannot be mixed in a field constraint.
 
 ERROR:
 (defrule MAIN::error-30 "$?var & ?var"
    (bar $?z ?y $?z|?y)
 *
-[PATTERN2] sfmfmix.clp, Line 133: Single and multifield constraints cannot be mixed in a field constraint
+[PATTERN2] sfmfmix.clp, Line 133: Single and multifield constraints cannot be mixed in a field constraint.
 
 ERROR:
 (defrule MAIN::error-31 "$?var & ?var"
    (bar ?z&$?y)
 *
-[PATTERN2] sfmfmix.clp, Line 136: Single and multifield constraints cannot be mixed in a field constraint
+[PATTERN2] sfmfmix.clp, Line 136: Single and multifield constraints cannot be mixed in a field constraint.
 
 ERROR:
 (defrule MAIN::error-32 "$?var & ?var"
    (bar $?y ?z&$?y)
 *
-[PATTERN2] sfmfmix.clp, Line 139: Single and multifield constraints cannot be mixed in a field constraint
+[PATTERN2] sfmfmix.clp, Line 139: Single and multifield constraints cannot be mixed in a field constraint.
 
 ERROR:
 (defrule MAIN::error-33 "$?var & ?var"
    (bar ?z ?z&$?y)
 *
-[PATTERN2] sfmfmix.clp, Line 142: Single and multifield constraints cannot be mixed in a field constraint
+[PATTERN2] sfmfmix.clp, Line 142: Single and multifield constraints cannot be mixed in a field constraint.
 
 ERROR:
 (defrule MAIN::error-34 "$?var & ?var"
    (bar ?z $?y ?z&$?y)
 *
-[PATTERN2] sfmfmix.clp, Line 145: Single and multifield constraints cannot be mixed in a field constraint
+[PATTERN2] sfmfmix.clp, Line 145: Single and multifield constraints cannot be mixed in a field constraint.
 
 ERROR:
 (defrule MAIN::error-35 "$?var & ?var"
    (bar ?z|$?y)
 *
-[PATTERN2] sfmfmix.clp, Line 148: Single and multifield constraints cannot be mixed in a field constraint
+[PATTERN2] sfmfmix.clp, Line 148: Single and multifield constraints cannot be mixed in a field constraint.
 
 ERROR:
 (defrule MAIN::error-36 "$?var & ?var"
    (bar $?y ?z|$?y)
 *
-[PATTERN2] sfmfmix.clp, Line 151: Single and multifield constraints cannot be mixed in a field constraint
+[PATTERN2] sfmfmix.clp, Line 151: Single and multifield constraints cannot be mixed in a field constraint.
 
 ERROR:
 (defrule MAIN::error-37 "$?var & ?var"
    (bar ?z ?z|$?y)
 *
-[PATTERN2] sfmfmix.clp, Line 154: Single and multifield constraints cannot be mixed in a field constraint
+[PATTERN2] sfmfmix.clp, Line 154: Single and multifield constraints cannot be mixed in a field constraint.
 
 ERROR:
 (defrule MAIN::error-38 "$?var & ?var"
    (bar ?z $?y ?z|$?y)
 *
-[ANALYSIS3] sfmfmix.clp, Line 158: Variable ?y is used as both a single and multifield variable in the LHS
+[ANALYSIS3] sfmfmix.clp, Line 158: Variable ?y is used as both a single and multifield variable in the LHS.
 
 ERROR:
 (defrule MAIN::error-39 "$?var & ?var"
    (bar $?y ?z&?y)
    =>)
 *
-[PATTERN2] sfmfmix.clp, Line 160: Single and multifield constraints cannot be mixed in a field constraint
+[PATTERN2] sfmfmix.clp, Line 160: Single and multifield constraints cannot be mixed in a field constraint.
 
 ERROR:
 (defrule MAIN::error-40 "$?var & ?var"
    (bar ?y ?z&$?y)
 *
-[ANALYSIS3] sfmfmix.clp, Line 164: Variable ?y is used as both a single and multifield variable in the LHS
+[ANALYSIS3] sfmfmix.clp, Line 164: Variable ?y is used as both a single and multifield variable in the LHS.
 
 ERROR:
 (defrule MAIN::error-41 "$?var & ?var"
    (bar ?z $?y ?z&?y)
    =>)
 *
-[PATTERN2] sfmfmix.clp, Line 166: Single and multifield constraints cannot be mixed in a field constraint
+[PATTERN2] sfmfmix.clp, Line 166: Single and multifield constraints cannot be mixed in a field constraint.
 
 ERROR:
 (defrule MAIN::error-42 "$?var & ?var"
    (bar ?z ?y ?z&$?y)
 *
-[ANALYSIS3] sfmfmix.clp, Line 170: Variable ?y is used as both a single and multifield variable in the LHS
+[ANALYSIS3] sfmfmix.clp, Line 170: Variable ?y is used as both a single and multifield variable in the LHS.
 
 ERROR:
 (defrule MAIN::error-43 "$?var & ?var"
    (bar $?y ?z|?y)
    =>)
 *
-[PATTERN2] sfmfmix.clp, Line 172: Single and multifield constraints cannot be mixed in a field constraint
+[PATTERN2] sfmfmix.clp, Line 172: Single and multifield constraints cannot be mixed in a field constraint.
 
 ERROR:
 (defrule MAIN::error-44 "$?var & ?var"
    (bar ?y ?z|$?y)
 *
-[ANALYSIS3] sfmfmix.clp, Line 176: Variable ?y is used as both a single and multifield variable in the LHS
+[ANALYSIS3] sfmfmix.clp, Line 176: Variable ?y is used as both a single and multifield variable in the LHS.
 
 ERROR:
 (defrule MAIN::error-45 "$?var & ?var"
    (bar ?z $?y ?z|?y)
    =>)
 *
-[PATTERN2] sfmfmix.clp, Line 178: Single and multifield constraints cannot be mixed in a field constraint
+[PATTERN2] sfmfmix.clp, Line 178: Single and multifield constraints cannot be mixed in a field constraint.
 
 ERROR:
 (defrule MAIN::error-46 "$?var & ?var"
    (bar ?z ?y ?z|$?y)
 *
-[ANALYSIS3] sfmfmix.clp, Line 182: Variable ?z is used as both a single and multifield variable in the LHS
+[ANALYSIS3] sfmfmix.clp, Line 182: Variable ?z is used as both a single and multifield variable in the LHS.
 
 ERROR:
 (defrule MAIN::error-47 "$?var & ?var"
    (bar $?z ?z&?y)
    =>)
 *
-[PATTERN2] sfmfmix.clp, Line 184: Single and multifield constraints cannot be mixed in a field constraint
+[PATTERN2] sfmfmix.clp, Line 184: Single and multifield constraints cannot be mixed in a field constraint.
 
 ERROR:
 (defrule MAIN::error-48 "$?var & ?var"
    (bar ?z $?z&?y)
 *
-[ANALYSIS3] sfmfmix.clp, Line 188: Variable ?z is used as both a single and multifield variable in the LHS
+[ANALYSIS3] sfmfmix.clp, Line 188: Variable ?z is used as both a single and multifield variable in the LHS.
 
 ERROR:
 (defrule MAIN::error-49 "$?var & ?var"
    (bar $?z ?y ?z&?y)
    =>)
 *
-[PATTERN2] sfmfmix.clp, Line 190: Single and multifield constraints cannot be mixed in a field constraint
+[PATTERN2] sfmfmix.clp, Line 190: Single and multifield constraints cannot be mixed in a field constraint.
 
 ERROR:
 (defrule MAIN::error-50 "$?var & ?var"
    (bar ?z ?y $?z&?y)
 *
-[ANALYSIS3] sfmfmix.clp, Line 194: Variable ?z is used as both a single and multifield variable in the LHS
+[ANALYSIS3] sfmfmix.clp, Line 194: Variable ?z is used as both a single and multifield variable in the LHS.
 
 ERROR:
 (defrule MAIN::error-51 "$?var & ?var"
    (bar $?z ?z|?y)
    =>)
 *
-[PATTERN2] sfmfmix.clp, Line 196: Single and multifield constraints cannot be mixed in a field constraint
+[PATTERN2] sfmfmix.clp, Line 196: Single and multifield constraints cannot be mixed in a field constraint.
 
 ERROR:
 (defrule MAIN::error-52 "$?var & ?var"
    (bar ?z $?z|?y)
 *
-[ANALYSIS3] sfmfmix.clp, Line 200: Variable ?z is used as both a single and multifield variable in the LHS
+[ANALYSIS3] sfmfmix.clp, Line 200: Variable ?z is used as both a single and multifield variable in the LHS.
 
 ERROR:
 (defrule MAIN::error-53 "$?var & ?var"
    (bar $?z ?y ?z|?y)
    =>)
 *
-[PATTERN2] sfmfmix.clp, Line 202: Single and multifield constraints cannot be mixed in a field constraint
+[PATTERN2] sfmfmix.clp, Line 202: Single and multifield constraints cannot be mixed in a field constraint.
 
 ERROR:
 (defrule MAIN::error-54 "$?var & ?var"
@@ -385,105 +385,105 @@ ERROR:
    (bar =(+ 3 4)|?y)
    =>)
 *
-[PATTERN2] sfmfmix.clp, Line 244: Single and multifield constraints cannot be mixed in a field constraint
+[PATTERN2] sfmfmix.clp, Line 244: Single and multifield constraints cannot be mixed in a field constraint.
 
 ERROR:
 (defrule MAIN::error-57 "$? return value & ?var"
    (bar ?y&=(create$))
 *
-[PATTERN2] sfmfmix.clp, Line 247: Single and multifield constraints cannot be mixed in a field constraint
+[PATTERN2] sfmfmix.clp, Line 247: Single and multifield constraints cannot be mixed in a field constraint.
 
 ERROR:
 (defrule MAIN::error-58 "$? return value & ?var"
    (bar ?y =(create$)&?y)
 *
-[PATTERN2] sfmfmix.clp, Line 250: Single and multifield constraints cannot be mixed in a field constraint
+[PATTERN2] sfmfmix.clp, Line 250: Single and multifield constraints cannot be mixed in a field constraint.
 
 ERROR:
 (defrule MAIN::error-59 "$? return value & ?var"
    (bar =(create$)&?y)
 *
-[PATTERN2] sfmfmix.clp, Line 253: Single and multifield constraints cannot be mixed in a field constraint
+[PATTERN2] sfmfmix.clp, Line 253: Single and multifield constraints cannot be mixed in a field constraint.
 
 ERROR:
 (defrule MAIN::error-60 "$? return value & ?var"
    (bar ?y ?y|=(create$))
 *
-[PATTERN2] sfmfmix.clp, Line 256: Single and multifield constraints cannot be mixed in a field constraint
+[PATTERN2] sfmfmix.clp, Line 256: Single and multifield constraints cannot be mixed in a field constraint.
 
 ERROR:
 (defrule MAIN::error-61 "$? return value & ?var"
    (bar ?y =(create$)|?y)
 *
-[PATTERN2] sfmfmix.clp, Line 259: Single and multifield constraints cannot be mixed in a field constraint
+[PATTERN2] sfmfmix.clp, Line 259: Single and multifield constraints cannot be mixed in a field constraint.
 
 ERROR:
 (defrule MAIN::error-62 "$? return value & ?var"
    (bar =(create$)|?y)
 *******
-[PATTERN2] sfmfmix.clp, Line 284: Single and multifield constraints cannot be mixed in a field constraint
+[PATTERN2] sfmfmix.clp, Line 284: Single and multifield constraints cannot be mixed in a field constraint.
 
 ERROR:
 (defrule MAIN::error-63 "? return value & $? return value"
    (bar =(+ 3 4)&=(create$))
 *
-[PATTERN2] sfmfmix.clp, Line 287: Single and multifield constraints cannot be mixed in a field constraint
+[PATTERN2] sfmfmix.clp, Line 287: Single and multifield constraints cannot be mixed in a field constraint.
 
 ERROR:
 (defrule MAIN::error-64 "? return value & $? return value"
    (bar =(create$)&=(+ 3 4))
 *
-[PATTERN2] sfmfmix.clp, Line 290: Single and multifield constraints cannot be mixed in a field constraint
+[PATTERN2] sfmfmix.clp, Line 290: Single and multifield constraints cannot be mixed in a field constraint.
 
 ERROR:
 (defrule MAIN::error-65 "? return value & $? return value"
    (bar =(+ 3 4)|=(create$))
 *
-[PATTERN2] sfmfmix.clp, Line 293: Single and multifield constraints cannot be mixed in a field constraint
+[PATTERN2] sfmfmix.clp, Line 293: Single and multifield constraints cannot be mixed in a field constraint.
 
 ERROR:
 (defrule MAIN::error-66 "? return value & $? return value"
    (bar =(create$)|=(+ 3 4))
 *****
-[PATTERN2] sfmfmix.clp, Line 310: Single and multifield constraints cannot be mixed in a field constraint
+[PATTERN2] sfmfmix.clp, Line 310: Single and multifield constraints cannot be mixed in a field constraint.
 
 ERROR:
 (defrule MAIN::error-67 "constant & $? return value"
    (bar 7&=(create$))
 *
-[PATTERN2] sfmfmix.clp, Line 312: Single and multifield constraints cannot be mixed in a field constraint
+[PATTERN2] sfmfmix.clp, Line 312: Single and multifield constraints cannot be mixed in a field constraint.
 
 ERROR:
 (defrule MAIN::error-68 "constant & $? return value"
    (bar =(create$)&7)
 *
-[PATTERN2] sfmfmix.clp, Line 315: Single and multifield constraints cannot be mixed in a field constraint
+[PATTERN2] sfmfmix.clp, Line 315: Single and multifield constraints cannot be mixed in a field constraint.
 
 ERROR:
 (defrule MAIN::error-69 "constant & $? return value"
    (bar yak|=(create$))
 *
-[PATTERN2] sfmfmix.clp, Line 317: Single and multifield constraints cannot be mixed in a field constraint
+[PATTERN2] sfmfmix.clp, Line 317: Single and multifield constraints cannot be mixed in a field constraint.
 
 ERROR:
 (defrule MAIN::error-70 "constant & $? return value"
    (bar =(create$)|yak)
 *
-[ANALYSIS3] sfmfmix.clp, Line 322: Variable ?f is used as both a single and multifield variable in the LHS
+[ANALYSIS3] sfmfmix.clp, Line 322: Variable ?f is used as both a single and multifield variable in the LHS.
 
 ERROR:
 (defrule MAIN::error-71 "? and $? mixing"
    (foo ?f $?f)
    =>)
 *
-[ANALYSIS3] sfmfmix.clp, Line 325: Variable ?f is used as both a single and multifield variable in the LHS
+[ANALYSIS3] sfmfmix.clp, Line 325: Variable ?f is used as both a single and multifield variable in the LHS.
 
 ERROR:
 (defrule MAIN::error-72 "? and $? mixing"
    (foo $?f ?f)
    =>)
 *
-[ANALYSIS3] sfmfmix.clp, Line 328: Variable ?f is used as both a single and multifield variable in the LHS
+[ANALYSIS3] sfmfmix.clp, Line 328: Variable ?f is used as both a single and multifield variable in the LHS.
 
 ERROR:
 (defrule MAIN::error-73 "? and $? mixing"
@@ -496,7 +496,7 @@ ERROR:
 (defrule MAIN::error-74 "? and $? mixing"
    $?f
 *
-[ANALYSIS3] sfmfmix.clp, Line 335: Variable ?f is used as both a single and multifield variable in the LHS
+[ANALYSIS3] sfmfmix.clp, Line 335: Variable ?f is used as both a single and multifield variable in the LHS.
 
 ERROR:
 (defrule MAIN::error-75 "? and $? mixing"
@@ -504,7 +504,7 @@ ERROR:
    (foo $?f)
    =>)
 *
-[ANALYSIS3] sfmfmix.clp, Line 339: Variable ?f is used as both a single and multifield variable in the LHS
+[ANALYSIS3] sfmfmix.clp, Line 339: Variable ?f is used as both a single and multifield variable in the LHS.
 
 ERROR:
 (defrule MAIN::error-76 "? and $? mixing"
@@ -512,7 +512,7 @@ ERROR:
    (foo ?f)
    =>)
 *
-[ANALYSIS3] sfmfmix.clp, Line 343: Variable ?f is used as both a single and multifield variable in the LHS
+[ANALYSIS3] sfmfmix.clp, Line 343: Variable ?f is used as both a single and multifield variable in the LHS.
 
 ERROR:
 (defrule MAIN::error-77 "? and $? mixing"
@@ -526,35 +526,35 @@ ERROR:
 (defrule MAIN::error-78 "? and $? mixing"
    $?f
 *
-[ANALYSIS3] sfmfmix.clp, Line 350: Variable ?f is used as both a single and multifield variable in the LHS
+[ANALYSIS3] sfmfmix.clp, Line 350: Variable ?f is used as both a single and multifield variable in the LHS.
 
 ERROR:
 (defrule MAIN::error-79 "? and $? mixing"
    (foo ?f $?x&$?f)
    =>)
 *
-[ANALYSIS3] sfmfmix.clp, Line 353: Variable ?f is used as both a single and multifield variable in the LHS
+[ANALYSIS3] sfmfmix.clp, Line 353: Variable ?f is used as both a single and multifield variable in the LHS.
 
 ERROR:
 (defrule MAIN::error-80 "? and $? mixing"
    (foo ?f $?x|$?f)
    =>)
 *
-[ANALYSIS3] sfmfmix.clp, Line 356: Variable ?f is used as both a single and multifield variable in the LHS
+[ANALYSIS3] sfmfmix.clp, Line 356: Variable ?f is used as both a single and multifield variable in the LHS.
 
 ERROR:
 (defrule MAIN::error-81 "? and $? mixing"
    (foo $?f ?x&?f)
    =>)
 *
-[ANALYSIS3] sfmfmix.clp, Line 359: Variable ?f is used as both a single and multifield variable in the LHS
+[ANALYSIS3] sfmfmix.clp, Line 359: Variable ?f is used as both a single and multifield variable in the LHS.
 
 ERROR:
 (defrule MAIN::error-82 "? and $? mixing"
    (foo $?f ?x|?f)
    =>)
 *
-[ANALYSIS3] sfmfmix.clp, Line 363: Variable ?f is used as both a single and multifield variable in the LHS
+[ANALYSIS3] sfmfmix.clp, Line 363: Variable ?f is used as both a single and multifield variable in the LHS.
 
 ERROR:
 (defrule MAIN::error-83 "? and $? mixing"
@@ -562,7 +562,7 @@ ERROR:
    (foo ?x&?f)
    =>)
 *
-[ANALYSIS3] sfmfmix.clp, Line 367: Variable ?f is used as both a single and multifield variable in the LHS
+[ANALYSIS3] sfmfmix.clp, Line 367: Variable ?f is used as both a single and multifield variable in the LHS.
 
 ERROR:
 (defrule MAIN::error-84 "? and $? mixing"

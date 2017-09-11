@@ -93,7 +93,7 @@ struct printUtilityData
    void                           SystemError(Environment *,const char *,int);
    void                           PrintErrorID(Environment *,const char *,int,bool);
    void                           PrintWarningID(Environment *,const char *,int,bool);
-   void                           CantFindItemErrorMessage(Environment *,const char *,const char *);
+   void                           CantFindItemErrorMessage(Environment *,const char *,const char *,bool);
    void                           CantDeleteItemErrorMessage(Environment *,const char *,const char *);
    void                           AlreadyParsedErrorMessage(Environment *,const char *,const char *);
    void                           LocalVariableErrorMessage(Environment *,const char *);
@@ -101,7 +101,7 @@ struct printUtilityData
    void                           SalienceInformationError(Environment *,const char *,const char *);
    void                           SalienceRangeError(Environment *,int,int);
    void                           SalienceNonIntegerError(Environment *);
-   void                           CantFindItemInFunctionErrorMessage(Environment *,const char *,const char *,const char *);
+   void                           CantFindItemInFunctionErrorMessage(Environment *,const char *,const char *,const char *,bool);
    void                           SlotExistError(Environment *,const char *,const char *);
 
 #endif /* _H_prntutil */

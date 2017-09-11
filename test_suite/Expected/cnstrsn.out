@@ -184,20 +184,20 @@ For a total of 3 definstances.
 CLIPS> (get-definstances-list)
 (foo bar woz)
 CLIPS> (get-defrule-list abc)
-[ARGACCES5] Function get-defrule-list expected argument #1 to be of type defmodule name
+[ARGACCES2] Function 'get-defrule-list' expected argument #1 to be of type 'defmodule name'.
 ()
 CLIPS> (get-defmessage-handler-list no-exist)
-[CLASSFUN1] Unable to find class no-exist in function get-defmessage-handler-list.
+[CLASSFUN1] Unable to find class 'no-exist' in function 'get-defmessage-handler-list'.
 ()
 CLIPS> (get-defmethod-list no-exist)
-[GENRCFUN3] Unable to find generic function no-exist in function get-defmethod-list.
+[GENRCFUN3] Unable to find generic function 'no-exist' in function 'get-defmethod-list'.
 ()
 CLIPS> (get-defmessage-handler-list USER junk)
 
 [PRNTUTIL2] Syntax Error:  Check appropriate syntax for get-defmessage-handler-list.
 ()
 CLIPS> (get-defmessage-handler-list USER inherit abc)
-[ARGACCES4] Function get-defmessage-handler-list expected no more than 2 argument(s)
+[ARGACCES1] Function 'get-defmessage-handler-list' expected no more than 2 arguments.
 CLIPS> (get-defmethod-list oof abc)
-[ARGACCES4] Function get-defmethod-list expected no more than 1 argument(s)
+[ARGACCES1] Function 'get-defmethod-list' expected no more than 1 argument.
 CLIPS> (dribble-off)

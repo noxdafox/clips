@@ -2,33 +2,33 @@ TRUE
 CLIPS> (batch "jstfctns.bat")
 TRUE
 CLIPS> (set-rule-justifications 3)
-[ARGACCES5] Function set-rule-justifications expected argument #1 to be of type symbol
+[ARGACCES2] Function set-rule-justifications expected argument #1 to be of type symbol
 none
 CLIPS> (set-rule-justifications none 3)
-[ARGACCES4] Function set-rule-justifications expected exactly 1 argument(s)
+[ARGACCES1] Function set-rule-justifications expected exactly 1 argument(s)
 CLIPS> (set-rule-justifications off)
-[ARGACCES5] Function set-rule-justifications expected argument #1 to be of type symbol with value none, name, or text
+[ARGACCES2] Function set-rule-justifications expected argument #1 to be of type symbol with value none, name, or text
 none
 CLIPS> (get-rule-justifications 3)
-[ARGACCES4] Function get-rule-justifications expected exactly 0 argument(s)
+[ARGACCES1] Function get-rule-justifications expected exactly 0 argument(s)
 CLIPS> (justification-names)
-[ARGACCES4] Function justification-names expected exactly 1 argument(s)
+[ARGACCES1] Function justification-names expected exactly 1 argument(s)
 CLIPS> (justification-texts)
-[ARGACCES4] Function justification-texts expected exactly 1 argument(s)
+[ARGACCES1] Function justification-texts expected exactly 1 argument(s)
 CLIPS> (justification-names 2 2)
-[ARGACCES4] Function justification-names expected exactly 1 argument(s)
+[ARGACCES1] Function justification-names expected exactly 1 argument(s)
 CLIPS> (justification-texts 2 2)
-[ARGACCES4] Function justification-texts expected exactly 1 argument(s)
+[ARGACCES1] Function justification-texts expected exactly 1 argument(s)
 CLIPS> (show-justifications)
-[ARGACCES4] Function show-justifications expected exactly 1 argument(s)
+[ARGACCES1] Function show-justifications expected exactly 1 argument(s)
 CLIPS> (show-justifications 2)
 [PRNTUTIL1] Unable to find fact f-2.
 CLIPS> (show-justifications 2.1)
-[ARGACCES5] Function show-justifications expected argument #1 to be of type instance address, instance name, fact address, integer, or symbol
+[ARGACCES2] Function show-justifications expected argument #1 to be of type instance address, instance name, fact address, integer, or symbol
 CLIPS> (show-justifications [a])
 [PRNTUTIL1] Unable to find instance a.
 CLIPS> (show-justifications 2 2)
-[ARGACCES4] Function show-justifications expected exactly 1 argument(s)
+[ARGACCES1] Function show-justifications expected exactly 1 argument(s)
 CLIPS> (justification-names 2)
 [PRNTUTIL1] Unable to find fact f-2.
 ()
@@ -36,9 +36,9 @@ CLIPS> (justification-texts 2)
 [PRNTUTIL1] Unable to find fact f-2.
 ()
 CLIPS> (justification-names 2.1)
-[ARGACCES5] Function justification-names expected argument #1 to be of type instance address, instance name, fact address, integer, or symbol
+[ARGACCES2] Function justification-names expected argument #1 to be of type instance address, instance name, fact address, integer, or symbol
 CLIPS> (justification-texts 2.2)
-[ARGACCES5] Function justification-texts expected argument #1 to be of type instance address, instance name, fact address, integer, or symbol
+[ARGACCES2] Function justification-texts expected argument #1 to be of type instance address, instance name, fact address, integer, or symbol
 CLIPS> (justification-names [a])
 [PRNTUTIL1] Unable to find instance a.
 ()

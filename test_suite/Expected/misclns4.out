@@ -8,7 +8,7 @@ CLIPS> (defmodule MAIN (import A ?ALL) (export ?ALL))
 CLIPS> (defmodule B (import MAIN ?ALL))
 CLIPS> (deftemplate B::foo)
 
-[CSTRCPSR3] Cannot define deftemplate foo because of an import/export conflict.
+[CSTRCPSR3] Cannot define deftemplate 'foo' because of an import/export conflict.
 
 ERROR:
 (deftemplate B::foo
@@ -35,7 +35,7 @@ CLIPS> (clear) ;; Case 5
 CLIPS> (deftemplate foo (slot x) (slot y))
 CLIPS> (defrule bar (foo (x 3) (x 4) (y 3)) =>)
 
-[PRNTUTIL5] The slot x has already been parsed.
+[PRNTUTIL5] The slot 'x' has already been parsed.
 
 ERROR:
 (defrule MAIN::bar
@@ -45,8 +45,7 @@ CLIPS> (deftemplate foo (slot x (type SYMBOL)))
 CLIPS> (defrule bar (foo (x ?x)) => (+ ?x 1))
 
 [RULECSTR3] Previous variable bindings of ?x caused the type restrictions
-for argument #1 of the expression (+ ?x 1)
-found in the rule's RHS to be violated.
+for argument #1 of the expression (+ ?x 1) found in the rule's RHS to be violated.
 
 ERROR:
 (defrule MAIN::bar
@@ -56,8 +55,7 @@ ERROR:
 CLIPS> (defrule bar (foo (x ?x)) => (assert (yak (+ ?x 1))))
 
 [RULECSTR3] Previous variable bindings of ?x caused the type restrictions
-for argument #1 of the expression (+ ?x 1)
-found in the rule's RHS to be violated.
+for argument #1 of the expression (+ ?x 1) found in the rule's RHS to be violated.
 
 ERROR:
 (defrule MAIN::bar
@@ -107,7 +105,7 @@ CLIPS> (deftemplate FOO::foo)
 CLIPS> (defmodule BAR (export ?ALL) (import FOO ?ALL))
 CLIPS> (deftemplate BAR::foo)
 
-[CSTRCPSR3] Cannot define deftemplate foo because of an import/export conflict.
+[CSTRCPSR3] Cannot define deftemplate 'foo' because of an import/export conflict.
 
 ERROR:
 (deftemplate BAR::foo
@@ -118,7 +116,7 @@ CLIPS> (defmodule BAR (export ?ALL))
 CLIPS> (deftemplate BAR::foo)
 CLIPS> (defmodule YAK (import FOO ?ALL) (import BAR ?ALL))
 
-[CSTRCPSR3] Cannot define defmodule YAK because of an import/export conflict caused by the deftemplate foo.
+[CSTRCPSR3] Cannot define defmodule 'YAK' because of an import/export conflict caused by the deftemplate 'foo'.
 
 ERROR:
 (defmodule YAK
@@ -298,7 +296,7 @@ TRUE
 CLIPS> (bload "Temp//bug.bin")
 TRUE
 CLIPS> (load-facts "Temp//bug.tmp") 
-[FACTRHS1] Template bar does not exist for assert.
+[FACTRHS1] Implied deftemplate 'bar' cannot be created with binary load in effect.
 Function load-facts encountered an error
 FALSE
 CLIPS> (facts)
@@ -348,19 +346,19 @@ CLIPS> (watch globals foo)
 CLIPS> (watch facts foo)
 CLIPS> (watch activations foo)
 CLIPS> (watch rules yak)
-[ARGACCES5] Function watch expected argument #2 to be of type defrule
+[ARGACCES2] Function 'watch' expected argument #2 to be of type defrule.
 CLIPS> (watch globals yak)
-[ARGACCES5] Function watch expected argument #2 to be of type defglobal
+[ARGACCES2] Function 'watch' expected argument #2 to be of type defglobal.
 CLIPS> (watch facts yak)
-[ARGACCES5] Function watch expected argument #2 to be of type deftemplate
+[ARGACCES2] Function 'watch' expected argument #2 to be of type deftemplate.
 CLIPS> (watch activations yak)
-[ARGACCES5] Function watch expected argument #2 to be of type defrule
+[ARGACCES2] Function 'watch' expected argument #2 to be of type defrule.
 CLIPS> (watch compilations foo)
-[ARGACCES4] Function watch expected exactly 1 argument(s)
+[ARGACCES1] Function 'watch' expected exactly 1 argument.
 CLIPS> (watch statistics foo)
-[ARGACCES4] Function watch expected exactly 1 argument(s)
+[ARGACCES1] Function 'watch' expected exactly 1 argument.
 CLIPS> (watch focus foo)
-[ARGACCES4] Function watch expected exactly 1 argument(s)
+[ARGACCES1] Function 'watch' expected exactly 1 argument.
 CLIPS> (reset)
 :== ?*foo* ==> 1 <== 1
 CLIPS> (bind ?*foo* 3)
@@ -589,7 +587,7 @@ CLIPS> (clear) ; Multifield wildcard not allowed in single field slot
 CLIPS> (deftemplate bar (slot x))
 CLIPS> (defrule blah (bar (x $?)) =>) 
 
-[TMPLTDEF2] The single field slot x can only contain a single field value.
+[TMPLTDEF2] The single field slot 'x' can only contain a single field value.
 
 ERROR:
 (defrule MAIN::blah

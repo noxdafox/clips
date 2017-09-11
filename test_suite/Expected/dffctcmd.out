@@ -11,7 +11,7 @@ CLIPS> (deffacts d5 (a) (foo (y a) (x 3)))
 CLIPS> (deffacts d6 (foo (y a b)) (b) (foo (x 3)) (d))
 CLIPS> (deffacts *)
 CLIPS> (list-deffacts d6)
-[ARGACCES5] Function list-deffacts expected argument #1 to be of type defmodule name
+[ARGACCES2] Function 'list-deffacts' expected argument #1 to be of type 'defmodule name'.
 CLIPS> (list-deffacts)
 d1
 d2
@@ -45,13 +45,13 @@ CLIPS> (ppdeffacts d6)
    (foo (x 3))
    (d))
 CLIPS> (undeffacts)
-[ARGACCES4] Function undeffacts expected exactly 1 argument(s)
+[ARGACCES1] Function 'undeffacts' expected exactly 1 argument.
 CLIPS> (undeffacts 10)
-[ARGACCES5] Function undeffacts expected argument #1 to be of type symbol
+[ARGACCES2] Function 'undeffacts' expected argument #1 to be of type symbol.
 CLIPS> (undeffacts bad-name)
-[PRNTUTIL1] Unable to find deffacts bad-name.
+[PRNTUTIL1] Unable to find deffacts 'bad-name'.
 CLIPS> (undeffacts d6 10)
-[ARGACCES4] Function undeffacts expected exactly 1 argument(s)
+[ARGACCES1] Function 'undeffacts' expected exactly 1 argument.
 CLIPS> (list-deffacts)
 d1
 d2
@@ -80,7 +80,7 @@ CLIPS> (undeffacts *)
 CLIPS> (list-deffacts)
 CLIPS> (clear) ; Some new 6.0 features
 CLIPS> (deffacts BOGUS::d5)
-[PRNTUTIL1] Unable to find defmodule BOGUS.
+[PRNTUTIL1] Unable to find defmodule 'BOGUS'.
 
 ERROR:
 (deffacts BOGUS::d5
@@ -91,9 +91,9 @@ CLIPS> (defmodule BAR)
 CLIPS> (deffacts BAR::d2)
 CLIPS> (deffacts BAR::d3)
 CLIPS> (list-deffacts BOGUS)
-[ARGACCES5] Function list-deffacts expected argument #1 to be of type defmodule name
+[ARGACCES2] Function 'list-deffacts' expected argument #1 to be of type 'defmodule name'.
 CLIPS> (list-deffacts FOO 7)
-[ARGACCES4] Function list-deffacts expected no more than 1 argument(s)
+[ARGACCES1] Function 'list-deffacts' expected no more than 1 argument.
 CLIPS> (list-deffacts FOO)
 d1
 d2
@@ -116,13 +116,13 @@ BAR:
    d3
 For a total of 4 deffacts.
 CLIPS> (get-deffacts-list 7)
-[ARGACCES5] Function get-deffacts-list expected argument #1 to be of type symbol
+[ARGACCES2] Function 'get-deffacts-list' expected argument #1 to be of type symbol.
 CLIPS> (get-deffacts-list BOGUS 7)
-[ARGACCES4] Function get-deffacts-list expected no more than 1 argument(s)
+[ARGACCES1] Function 'get-deffacts-list' expected no more than 1 argument.
 CLIPS> (get-deffacts-list)
 (d2 d3)
 CLIPS> (get-deffacts-list BOGUS)
-[ARGACCES5] Function get-deffacts-list expected argument #1 to be of type defmodule name
+[ARGACCES2] Function 'get-deffacts-list' expected argument #1 to be of type 'defmodule name'.
 ()
 CLIPS> (get-deffacts-list FOO)
 (d1 d2)
@@ -131,32 +131,32 @@ CLIPS> (get-deffacts-list BAR)
 CLIPS> (get-deffacts-list *)
 (FOO::d1 FOO::d2 BAR::d2 BAR::d3)
 CLIPS> (ppdeffacts d1)
-[PRNTUTIL1] Unable to find deffacts d1.
+[PRNTUTIL1] Unable to find deffacts 'd1'.
 CLIPS> (ppdeffacts d2)
 (deffacts BAR::d2)
 CLIPS> (ppdeffacts d3)
 (deffacts BAR::d3)
 CLIPS> (ppdeffacts BOGUS::d2)
-[PRNTUTIL1] Unable to find deffacts BOGUS::d2.
+[PRNTUTIL1] Unable to find deffacts 'BOGUS::d2'.
 CLIPS> (ppdeffacts FOO::d1)
 (deffacts FOO::d1)
 CLIPS> (ppdeffacts FOO::d2)
 (deffacts FOO::d2)
 CLIPS> (ppdeffacts FOO::d3)
-[PRNTUTIL1] Unable to find deffacts FOO::d3.
+[PRNTUTIL1] Unable to find deffacts 'FOO::d3'.
 CLIPS> (ppdeffacts BAR::d1)
-[PRNTUTIL1] Unable to find deffacts BAR::d1.
+[PRNTUTIL1] Unable to find deffacts 'BAR::d1'.
 CLIPS> (ppdeffacts BAR::d2)
 (deffacts BAR::d2)
 CLIPS> (ppdeffacts BAR::d3)
 (deffacts BAR::d3)
 CLIPS> (deffacts-module)
-[ARGACCES4] Function deffacts-module expected exactly 1 argument(s)
+[ARGACCES1] Function 'deffacts-module' expected exactly 1 argument.
 CLIPS> (deffacts-module bogus)
-[PRNTUTIL1] Unable to find deffacts bogus.
+[PRNTUTIL1] Unable to find deffacts 'bogus'.
 FALSE
 CLIPS> (deffacts-module d3 7)
-[ARGACCES4] Function deffacts-module expected exactly 1 argument(s)
+[ARGACCES1] Function 'deffacts-module' expected exactly 1 argument.
 CLIPS> (deffacts-module d2)
 BAR
 CLIPS> (deffacts-module d3)
@@ -170,7 +170,7 @@ BAR
 CLIPS> (deffacts-module BAR::d3)
 BAR
 CLIPS> (undeffacts BOGUS::d2)
-[PRNTUTIL1] Unable to find deffacts BOGUS::d2.
+[PRNTUTIL1] Unable to find deffacts 'BOGUS::d2'.
 CLIPS> (undeffacts FOO::d2)
 CLIPS> (list-deffacts *)
 MAIN:

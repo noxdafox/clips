@@ -207,13 +207,15 @@ void RerouteStdin(
       else if (theSwitch == NO_SWITCH)
         {
          PrintErrorID(theEnv,"SYSDEP",2,false);
-         WriteString(theEnv,STDERR,"Invalid option\n");
+         WriteString(theEnv,STDERR,"Invalid option '");
+         WriteString(theEnv,STDERR,argv[i]);
+         WriteString(theEnv,STDERR,"'.\n");
         }
 
       if (i > (argc-1))
         {
          PrintErrorID(theEnv,"SYSDEP",1,false);
-         WriteString(theEnv,STDERR,"No file found for ");
+         WriteString(theEnv,STDERR,"No file found for '");
 
          switch(theSwitch)
            {
@@ -229,7 +231,7 @@ void RerouteStdin(
                WriteString(theEnv,STDERR,"-l");
            }
 
-         WriteString(theEnv,STDERR," option\n");
+         WriteString(theEnv,STDERR,"' option.\n");
          return;
         }
 
@@ -956,7 +958,7 @@ bool RouteCommand(
    if (theToken.tknType != LEFT_PARENTHESIS_TOKEN)
      {
       PrintErrorID(theEnv,"COMMLINE",1,false);
-      WriteString(theEnv,STDERR,"Expected a '(', constant, or variable\n");
+      WriteString(theEnv,STDERR,"Expected a '(', constant, or variable.\n");
       CloseStringSource(theEnv,"command");
       return false;
      }
