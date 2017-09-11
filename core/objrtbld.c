@@ -403,9 +403,9 @@ static struct lhsParseNode *ObjectLHSParse(
       if (EmptyClassBitMap(tmpset))
         {
          PrintErrorID(theEnv,"OBJRTBLD",2,false);
-         WriteString(theEnv,STDERR,"No objects of existing classes can satisfy ");
+         WriteString(theEnv,STDERR,"No objects of existing classes can satisfy '");
          WriteString(theEnv,STDERR,tmpNode->slot->contents);
-         WriteString(theEnv,STDERR," restriction in object pattern.\n");
+         WriteString(theEnv,STDERR,"' restriction in object pattern.\n");
          ReturnLHSParseNodes(theEnv,tmpNode);
          goto ObjectLHSParseERROR;
         }
@@ -1304,9 +1304,9 @@ static bool CheckDuplicateSlots(
       if (nodeList->slot == slotName)
         {
          PrintErrorID(theEnv,"OBJRTBLD",4,true);
-         WriteString(theEnv,STDERR,"Multiple restrictions on attribute ");
+         WriteString(theEnv,STDERR,"Multiple restrictions on attribute '");
          WriteString(theEnv,STDERR,slotName->contents);
-         WriteString(theEnv,STDERR," not allowed.\n");
+         WriteString(theEnv,STDERR,"' not allowed.\n");
          return true;
         }
       nodeList = nodeList->right;
@@ -1765,7 +1765,7 @@ static bool ProcessClassRestriction(
      {
       PrintErrorID(theEnv,"OBJRTBLD",2,false);
       WriteString(theEnv,STDERR,"No objects of existing classes can satisfy ");
-      WriteString(theEnv,STDERR,"is-a restriction in object pattern.\n");
+      WriteString(theEnv,STDERR,"'is-a' restriction in object pattern.\n");
       DeleteIntermediateClassBitMap(theEnv,tmpset1);
       DeleteIntermediateClassBitMap(theEnv,tmpset2);
       return false;

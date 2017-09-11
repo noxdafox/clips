@@ -3,12 +3,12 @@ CLIPS> (batch "dfnxerr.bat")
 TRUE
 CLIPS> (deffunction test-args (?a ?b))
 CLIPS> (test-args)
-[ARGACCES4] Function test-args expected exactly 2 argument(s)
+[ARGACCES1] Function 'test-args' expected exactly 2 arguments.
 CLIPS> (test-args 1 2 3)
-[ARGACCES4] Function test-args expected exactly 2 argument(s)
+[ARGACCES1] Function 'test-args' expected exactly 2 arguments.
 CLIPS> (deffunction test-args (?a ?b $?c))
 CLIPS> (test-args 1)
-[ARGACCES4] Function test-args expected at least 2 argument(s)
+[ARGACCES1] Function 'test-args' expected at least 2 arguments.
 CLIPS> (deffunction bad (?a $?b ?c))
 [PRCCODE8] No parameters allowed after wildcard parameter.
 
@@ -18,7 +18,7 @@ ERROR:
 CLIPS> (deffunction bad ()
    (+ ?a 1))
 
-[PRCCODE3] Undefined variable a referenced in deffunction.
+[PRCCODE3] Undefined variable ?a referenced in deffunction.
 
 ERROR:
 (deffunction MAIN::bad
@@ -66,7 +66,7 @@ ERROR:
 CLIPS> (deffunction weird ()
   (build "(deffunction weird ())"))
 CLIPS> (weird)
-[DFNXPSR4] Deffunction weird may not be redefined while it is executing.
+[DFFNXPSR4] Deffunction 'weird' may not be redefined while it is executing.
 
 ERROR:
 (deffunction MAIN::weird
@@ -74,13 +74,13 @@ ERROR:
 FALSE
 CLIPS> (deffunction)
 
-[CSTRCPSR2] Missing name for deffunction construct
+[CSTRCPSR2] Missing name for deffunction construct.
 
 ERROR:
 (deffunction )
 CLIPS> (deffunction foo (?a))
 CLIPS> (deffunction globble () (foo))
-[ARGACCES4] Function foo expected exactly 1 argument(s)
+[ARGACCES1] Function 'foo' expected exactly 1 argument.
 
 ERROR:
 (deffunction MAIN::globble
@@ -88,27 +88,27 @@ ERROR:
    (foo)
 CLIPS> (globble)
 
-[EXPRNPSR3] Missing function declaration for globble.
+[EXPRNPSR3] Missing function declaration for 'globble'.
 CLIPS> (deffunction globble ($?any) (foo $?any))
 CLIPS> (globble)
-[ARGACCES4] Function foo expected exactly 1 argument(s)
-[PRCCODE4] Execution halted during the actions of deffunction globble.
+[ARGACCES1] Function 'foo' expected exactly 1 argument.
+[PRCCODE4] Execution halted during the actions of deffunction 'globble'.
 FALSE
 CLIPS> (foo (+ (eval "(gensym)") 2))
-[ARGACCES5] Function + expected argument #1 to be of type integer or float
-[PRCCODE6] This error occurred while evaluating arguments for the deffunction foo.
+[ARGACCES2] Function '+' expected argument #1 to be of type integer or float.
+[PRCCODE6] This error occurred while evaluating arguments for the deffunction 'foo'.
 FALSE
 CLIPS> (foo (instances))
 [PRCCODE2] Functions without a return value are illegal as deffunction arguments.
-[PRCCODE6] This error occurred while evaluating arguments for the deffunction foo.
+[PRCCODE6] This error occurred while evaluating arguments for the deffunction 'foo'.
 FALSE
 CLIPS> (deffunction foo ()
   (+ ?a 2)
   (bind ?a 1))
 CLIPS> (foo)
-[PRCCODE5] Variable a unbound in deffunction foo.
-[ARGACCES5] Function + expected argument #1 to be of type integer or float
-[PRCCODE4] Execution halted during the actions of deffunction foo.
+[PRCCODE5] Variable ?a unbound in deffunction 'foo'.
+[ARGACCES2] Function '+' expected argument #1 to be of type integer or float.
+[PRCCODE4] Execution halted during the actions of deffunction 'foo'.
 FALSE
 CLIPS> (deffunction foo ()
   (printout t "Hello world!" crlf))
@@ -117,8 +117,8 @@ CLIPS> (deffunction bar ()
   (undeffunction *))
 CLIPS> (bar)
 Hello world!
-[PRNTUTIL4] Unable to delete deffunction bar.
-[DFFNXFUN1] WARNING: Deffunction foo only partially deleted due to usage by other constructs.
+[PRNTUTIL4] Unable to delete deffunction 'bar'.
+[DFFNXFUN1] WARNING: Deffunction 'foo' only partially deleted due to usage by other constructs.
 CLIPS> (list-deffunctions)
 foo
 bar

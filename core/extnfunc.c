@@ -967,5 +967,5 @@ void PrintTypesString(
      { PrintType(theEnv,logicalName,typeCount,&typesPrinted,"multifield"); }
 
    if (printCRLF)
-     { WriteString(theEnv,logicalName,"\n"); }
+     { WriteString(theEnv,logicalName,".\n"); }
   }

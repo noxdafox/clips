@@ -197,9 +197,9 @@ static void UnboundDeffunctionErr(
   Environment *theEnv,
   const char *logName)
   {
-   WriteString(theEnv,logName,"deffunction ");
+   WriteString(theEnv,logName,"deffunction '");
    WriteString(theEnv,logName,DeffunctionName(DeffunctionData(theEnv)->ExecutingDeffunction));
-   WriteString(theEnv,logName,".\n");
+   WriteString(theEnv,logName,"'.\n");
   }
 
 #if DEBUGGING_FUNCTIONS

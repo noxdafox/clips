@@ -783,18 +783,18 @@ void ImportExportConflictMessage(
    PrintErrorID(theEnv,"CSTRCPSR",3,true);
    WriteString(theEnv,STDERR,"Cannot define ");
    WriteString(theEnv,STDERR,constructName);
-   WriteString(theEnv,STDERR," ");
+   WriteString(theEnv,STDERR," '");
    WriteString(theEnv,STDERR,itemName);
-   WriteString(theEnv,STDERR," because of an import/export conflict");
+   WriteString(theEnv,STDERR,"' because of an import/export conflict");
 
    if (causedByConstruct == NULL) WriteString(theEnv,STDERR,".\n");
    else
      {
       WriteString(theEnv,STDERR," caused by the ");
       WriteString(theEnv,STDERR,causedByConstruct);
-      WriteString(theEnv,STDERR," ");
+      WriteString(theEnv,STDERR," '");
       WriteString(theEnv,STDERR,causedByName);
-      WriteString(theEnv,STDERR,".\n");
+      WriteString(theEnv,STDERR,"'.\n");
      }
   }
 

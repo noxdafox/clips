@@ -7,9 +7,9 @@ CLIPS> (toss a)                          ; DR0001
 FALSE
 CLIPS> (clear)                           ; DR0003
 CLIPS> (>= 1)                            ; DR0003
-[ARGACCES4] Function >= expected at least 2 argument(s)
+[ARGACCES1] Function '>=' expected at least 2 arguments.
 CLIPS> (defrule b (x ?y&:(>= 1)) =>)     ; DR0003
-[ARGACCES4] Function >= expected at least 2 argument(s)
+[ARGACCES1] Function '>=' expected at least 2 arguments.
 
 ERROR:
 (defrule MAIN::b
@@ -32,9 +32,9 @@ CLIPS> (reset)                           ; DR0012
 CLIPS> (agenda)                          ; DR0012
 CLIPS> (clear)                           ; DR0033
 CLIPS> (=)                               ; DR0033
-[ARGACCES4] Function = expected at least 2 argument(s)
+[ARGACCES1] Function '=' expected at least 2 arguments.
 CLIPS> (defrule b (x ?v) (test (=)) =>)  ; DR0033
-[ARGACCES4] Function = expected at least 2 argument(s)
+[ARGACCES1] Function '=' expected at least 2 arguments.
 
 ERROR:
 (defrule MAIN::b
@@ -65,7 +65,7 @@ CLIPS> (assert ())                       ; DR0039
 
 [PRNTUTIL2] Syntax Error:  Check appropriate syntax for first field of a RHS pattern.
 CLIPS> (system)                          ; DR0043
-[ARGACCES4] Function system expected at least 1 argument(s)
+[ARGACCES1] Function 'system' expected at least 1 argument.
 CLIPS> (clear)                           ; DR0047
 CLIPS> (defrule a (= 5 7) =>)            ; DR0047
 
@@ -81,7 +81,7 @@ CLIPS> (agenda)                          ; DR0047
 CLIPS> (open "Temp//f1.tmp" name "w")    ; DR0048
 TRUE
 CLIPS> (open "Temp//f2.tmp" name "w")    ; DR0048
-[IOFUN2] Logical name name already in use.
+[IOFUN2] Logical name 'name' already in use.
 FALSE
 CLIPS> (close name)                      ; DR0048
 TRUE
@@ -93,8 +93,8 @@ CLIPS> (defrule a                        ; DR0051
 CLIPS> (assert (data a b c d))           ; DR0051
 <Fact-1>
 CLIPS> (run)                             ; DR0051
-[ARGACCES5] Function format expected argument #3 to be of type symbol or string
-[PRCCODE4] Execution halted during the actions of defrule a.
+[ARGACCES2] Function 'format' expected argument #3 to be of type symbol or string.
+[PRCCODE4] Execution halted during the actions of defrule 'a'.
 CLIPS> (clear)                           ; DR0052
 CLIPS> (defrule one                      ; DR0052
    (b ?x ?y&:(evenp ?value)|?y&:(oddp ?value) ?z)
@@ -129,13 +129,13 @@ CLIPS> (assert (a 3) (b 3))              ; DR0054
 <Fact-2>
 CLIPS> (agenda)                          ; DR0054
 CLIPS> (oddp 3.1)                        ; DR0056
-[ARGACCES5] Function oddp expected argument #1 to be of type integer
+[ARGACCES2] Function 'oddp' expected argument #1 to be of type integer.
 CLIPS> (oddp 4.1)                        ; DR0056
-[ARGACCES5] Function oddp expected argument #1 to be of type integer
+[ARGACCES2] Function 'oddp' expected argument #1 to be of type integer.
 CLIPS> (evenp 3.1)                       ; DR0056
-[ARGACCES5] Function evenp expected argument #1 to be of type integer
+[ARGACCES2] Function 'evenp' expected argument #1 to be of type integer.
 CLIPS> (evenp 4.1)                       ; DR0056
-[ARGACCES5] Function evenp expected argument #1 to be of type integer
+[ARGACCES2] Function 'evenp' expected argument #1 to be of type integer.
 CLIPS> (integerp a)                      ; DR0058
 FALSE
 CLIPS> (symbolp 3)                       ; DR0059
@@ -154,7 +154,7 @@ CLIPS> (assert (data foo a b here d))    ; DR0063
 CLIPS> (run)                             ; DR0063
 here
 CLIPS> (retract ?f)                      ; DR0067
-[EVALUATN1] Variable f is unbound
+[EVALUATN1] Variable ?f is unbound.
 CLIPS> (clear)                           ; DR0068
 CLIPS> (defrule foo =>)                  ; DR0068
 CLIPS> (reset)                           ; DR0068
@@ -196,21 +196,21 @@ CLIPS> (facts)                           ; DR0075
 CLIPS> (print-region t "f.f")            ; DR0077
 FALSE
 CLIPS> (printout q)                      ; DR0080
-[ROUTER1] Logical name q was not recognized by any routers
+[ROUTER1] Logical name 'q' was not recognized by any routers.
 CLIPS> (eq)                              ; DR0082
-[ARGACCES4] Function eq expected at least 2 argument(s)
+[ARGACCES1] Function 'eq' expected at least 2 arguments.
 CLIPS> (neq)                             ; DR0082
-[ARGACCES4] Function neq expected at least 2 argument(s)
+[ARGACCES1] Function 'neq' expected at least 2 arguments.
 CLIPS> (neq 1 1 2)                       ; DR0082
 FALSE
 CLIPS> (!= 1 1 2)                        ; DR0082
 FALSE
 CLIPS> (and)                             ; DR0083
-[ARGACCES4] Function and expected at least 2 argument(s)
+[ARGACCES1] Function 'and' expected at least 2 arguments.
 CLIPS> (or)                              ; DR0083
-[ARGACCES4] Function or expected at least 2 argument(s)
+[ARGACCES1] Function 'or' expected at least 2 arguments.
 CLIPS> (not)                             ; DR0083
-[ARGACCES4] Function not expected exactly 1 argument(s)
+[ARGACCES1] Function 'not' expected exactly 1 argument.
 CLIPS> (clear)                           ; DR0087
 CLIPS> (defrule a                        ; DR0087
   (x $?y) 
@@ -224,9 +224,9 @@ f-1     (x q)
 f-2     (z q)
 For a total of 2 facts.
 CLIPS> (subseq$ a 2 4)                   ; DR0090
-[ARGACCES5] Function subseq$ expected argument #1 to be of type multifield
+[ARGACCES2] Function 'subseq$' expected argument #1 to be of type multifield.
 CLIPS> (sub-string)                      ; DR0092
-[ARGACCES4] Function sub-string expected exactly 3 argument(s)
+[ARGACCES1] Function 'sub-string' expected exactly 3 arguments.
 CLIPS> (explode$ "a b c")                ; DR0093
 (a b c)
 CLIPS> (length$ (explode$ "a b c"))      ; DR0093
@@ -236,32 +236,32 @@ CLIPS> (tan 0)                           ; DR0096
 CLIPS> (sec 0)                           ; DR0096
 1.0
 CLIPS> (/ 1 0)                           ; DR0097
-[PRNTUTIL7] Attempt to divide by zero in / function.
+[PRNTUTIL7] Attempt to divide by zero in '/' function.
 1.0
 CLIPS> (/ 1.0 0.0)                       ; DR0097 
-[PRNTUTIL7] Attempt to divide by zero in / function.
+[PRNTUTIL7] Attempt to divide by zero in '/' function.
 1.0
 CLIPS> (** 0 0)                          ; DR0098
-[EMATHFUN1] Domain error for ** function.
+[EMATHFUN1] Domain error for '**' function.
 0.0
 CLIPS> (** 0 -.5)                        ; DR0098
-[EMATHFUN1] Domain error for ** function.
+[EMATHFUN1] Domain error for '**' function.
 0.0
 CLIPS> (** -2 .5)                        ; DR0098 
-[EMATHFUN1] Domain error for ** function.
+[EMATHFUN1] Domain error for '**' function.
 0.0
 CLIPS> (** 0.0 0.0)                      ; DR0098
-[EMATHFUN1] Domain error for ** function.
+[EMATHFUN1] Domain error for '**' function.
 0.0
 CLIPS> (** 0.0 -.5)                      ; DR0098
-[EMATHFUN1] Domain error for ** function.
+[EMATHFUN1] Domain error for '**' function.
 0.0
 CLIPS> (** -2.0 .5)                      ; DR0098
-[EMATHFUN1] Domain error for ** function.
+[EMATHFUN1] Domain error for '**' function.
 0.0
 CLIPS> (** -3 2)                         ; DR0098
 9.0
 CLIPS> (** -3 2.2)                       ; DR0098
-[EMATHFUN1] Domain error for ** function.
+[EMATHFUN1] Domain error for '**' function.
 0.0
 CLIPS> (dribble-off)

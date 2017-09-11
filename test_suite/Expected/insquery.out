@@ -4,7 +4,7 @@ TRUE
 CLIPS> (reset)
 CLIPS> (do-for-all-instances ((?i OBJECT)) TRUE
    (+ (eval "(gensym)") 2))
-[ARGACCES5] Function + expected argument #1 to be of type integer or float
+[ARGACCES2] Function '+' expected argument #1 to be of type integer or float.
 FALSE
 CLIPS> (do-for-all-instances ((?mb MALE) (?wg FEMALE))
    TRUE
@@ -357,13 +357,13 @@ CLIPS> (any-instancep ((?b A)))
 
 [PRNTUTIL2] Syntax Error:  Check appropriate syntax for instance-set query function.
 CLIPS> (any-instancep ((?b BOGUS)) TRUE)
-[PRNTUTIL1] Unable to find class BOGUS.
+[PRNTUTIL1] Unable to find class 'BOGUS'.
 CLIPS> (any-instancep ((?b 34)) TRUE)
 
 [PRNTUTIL2] Syntax Error:  Check appropriate syntax for instance-set query class restrictions.
 FALSE
 CLIPS> (any-instancep ((?b (create$ BOGUS USER))) TRUE)
-[CLASSFUN1] Unable to find class BOGUS in function any-instancep.
+[CLASSFUN1] Unable to find class 'BOGUS' in function 'any-instancep'.
 
 [PRNTUTIL2] Syntax Error:  Check appropriate syntax for instance-set query class restrictions.
 FALSE
@@ -372,7 +372,7 @@ CLIPS> (any-instancep ((?b (create$ USER 34))) TRUE)
 [PRNTUTIL2] Syntax Error:  Check appropriate syntax for instance-set query class restrictions.
 FALSE
 CLIPS> (any-instancep ((?b A)) (progn (bind ?b 1) TRUE))
-[INSQYPSR2] Binds are not allowed in instance-set query in function any-instancep.
+[INSQYPSR2] Binds are not allowed in instance-set query in function 'any-instancep'.
 CLIPS> (find-instance)
 
 [PRNTUTIL2] Syntax Error:  Check appropriate syntax for instance-set query function.
@@ -389,13 +389,13 @@ CLIPS> (find-instance ((?b A)))
 
 [PRNTUTIL2] Syntax Error:  Check appropriate syntax for instance-set query function.
 CLIPS> (find-instance ((?b BOGUS)) TRUE)
-[PRNTUTIL1] Unable to find class BOGUS.
+[PRNTUTIL1] Unable to find class 'BOGUS'.
 CLIPS> (find-instance ((?b 34)) TRUE)
 
 [PRNTUTIL2] Syntax Error:  Check appropriate syntax for instance-set query class restrictions.
 ()
 CLIPS> (find-instance ((?b (create$ BOGUS USER))) TRUE)
-[CLASSFUN1] Unable to find class BOGUS in function find-instance.
+[CLASSFUN1] Unable to find class 'BOGUS' in function 'find-instance'.
 
 [PRNTUTIL2] Syntax Error:  Check appropriate syntax for instance-set query class restrictions.
 ()
@@ -404,7 +404,7 @@ CLIPS> (find-instance ((?b (create$ USER 34))) TRUE)
 [PRNTUTIL2] Syntax Error:  Check appropriate syntax for instance-set query class restrictions.
 ()
 CLIPS> (find-instance ((?b A)) (progn (bind ?b 1) TRUE))
-[INSQYPSR2] Binds are not allowed in instance-set query in function find-instance.
+[INSQYPSR2] Binds are not allowed in instance-set query in function 'find-instance'.
 CLIPS> (find-all-instances)
 
 [PRNTUTIL2] Syntax Error:  Check appropriate syntax for instance-set query function.
@@ -421,13 +421,13 @@ CLIPS> (find-all-instances ((?b A)))
 
 [PRNTUTIL2] Syntax Error:  Check appropriate syntax for instance-set query function.
 CLIPS> (find-all-instances ((?b BOGUS)) TRUE)
-[PRNTUTIL1] Unable to find class BOGUS.
+[PRNTUTIL1] Unable to find class 'BOGUS'.
 CLIPS> (find-all-instances ((?b 34)) TRUE)
 
 [PRNTUTIL2] Syntax Error:  Check appropriate syntax for instance-set query class restrictions.
 ()
 CLIPS> (find-all-instances ((?b (create$ BOGUS USER))) TRUE)
-[CLASSFUN1] Unable to find class BOGUS in function find-all-instances.
+[CLASSFUN1] Unable to find class 'BOGUS' in function 'find-all-instances'.
 
 [PRNTUTIL2] Syntax Error:  Check appropriate syntax for instance-set query class restrictions.
 ()
@@ -436,7 +436,7 @@ CLIPS> (find-all-instances ((?b (create$ USER 34))) TRUE)
 [PRNTUTIL2] Syntax Error:  Check appropriate syntax for instance-set query class restrictions.
 ()
 CLIPS> (find-all-instances ((?b A)) (progn (bind ?b 1) TRUE))
-[INSQYPSR2] Binds are not allowed in instance-set query in function find-all-instances.
+[INSQYPSR2] Binds are not allowed in instance-set query in function 'find-all-instances'.
 CLIPS> (do-for-instance)
 
 [PRNTUTIL2] Syntax Error:  Check appropriate syntax for instance-set query function.
@@ -453,15 +453,15 @@ CLIPS> (do-for-instance ((?b A)))
 
 [PRNTUTIL2] Syntax Error:  Check appropriate syntax for instance-set query function.
 CLIPS> (do-for-instance ((?b BOGUS)) TRUE)
-[PRNTUTIL1] Unable to find class BOGUS.
+[PRNTUTIL1] Unable to find class 'BOGUS'.
 CLIPS> (do-for-instance ((?b A)) (progn (bind ?b 1) TRUE))
-[INSQYPSR2] Binds are not allowed in instance-set query in function do-for-instance.
+[INSQYPSR2] Binds are not allowed in instance-set query in function 'do-for-instance'.
 CLIPS> (do-for-instance ((?b 34)) TRUE abc)
 
 [PRNTUTIL2] Syntax Error:  Check appropriate syntax for instance-set query class restrictions.
 FALSE
 CLIPS> (do-for-instance ((?b (create$ BOGUS USER))) TRUE abc)
-[CLASSFUN1] Unable to find class BOGUS in function do-for-instance.
+[CLASSFUN1] Unable to find class 'BOGUS' in function 'do-for-instance'.
 
 [PRNTUTIL2] Syntax Error:  Check appropriate syntax for instance-set query class restrictions.
 FALSE
@@ -470,7 +470,7 @@ CLIPS> (do-for-instance ((?b (create$ USER 34))) TRUE abc)
 [PRNTUTIL2] Syntax Error:  Check appropriate syntax for instance-set query class restrictions.
 FALSE
 CLIPS> (do-for-instance ((?b OBJECT)) TRUE (bind ?b 1))
-[INSQYPSR3] Cannot rebind instance-set member variable b in function do-for-instance.
+[INSQYPSR3] Cannot rebind instance-set member variable ?b in function 'do-for-instance'.
 CLIPS> (do-for-all-instances)
 
 [PRNTUTIL2] Syntax Error:  Check appropriate syntax for instance-set query function.
@@ -487,15 +487,15 @@ CLIPS> (do-for-all-instances ((?b A)))
 
 [PRNTUTIL2] Syntax Error:  Check appropriate syntax for instance-set query function.
 CLIPS> (do-for-all-instances ((?b BOGUS)) TRUE)
-[PRNTUTIL1] Unable to find class BOGUS.
+[PRNTUTIL1] Unable to find class 'BOGUS'.
 CLIPS> (do-for-all-instances ((?b A)) (progn (bind ?b 1) TRUE))
-[INSQYPSR2] Binds are not allowed in instance-set query in function do-for-all-instances.
+[INSQYPSR2] Binds are not allowed in instance-set query in function 'do-for-all-instances'.
 CLIPS> (do-for-all-instances ((?b 34)) TRUE abc)
 
 [PRNTUTIL2] Syntax Error:  Check appropriate syntax for instance-set query class restrictions.
 FALSE
 CLIPS> (do-for-all-instances ((?b (create$ BOGUS USER))) TRUE abc)
-[CLASSFUN1] Unable to find class BOGUS in function do-for-all-instances.
+[CLASSFUN1] Unable to find class 'BOGUS' in function 'do-for-all-instances'.
 
 [PRNTUTIL2] Syntax Error:  Check appropriate syntax for instance-set query class restrictions.
 FALSE
@@ -504,7 +504,7 @@ CLIPS> (do-for-all-instances ((?b (create$ USER 34))) TRUE abc)
 [PRNTUTIL2] Syntax Error:  Check appropriate syntax for instance-set query class restrictions.
 FALSE
 CLIPS> (do-for-all-instances ((?b OBJECT)) TRUE (bind ?b 1))
-[INSQYPSR3] Cannot rebind instance-set member variable b in function do-for-all-instances.
+[INSQYPSR3] Cannot rebind instance-set member variable ?b in function 'do-for-all-instances'.
 CLIPS> (delayed-do-for-all-instances)
 
 [PRNTUTIL2] Syntax Error:  Check appropriate syntax for instance-set query function.
@@ -521,15 +521,15 @@ CLIPS> (delayed-do-for-all-instances ((?b A)))
 
 [PRNTUTIL2] Syntax Error:  Check appropriate syntax for instance-set query function.
 CLIPS> (delayed-do-for-all-instances ((?b BOGUS)) TRUE)
-[PRNTUTIL1] Unable to find class BOGUS.
+[PRNTUTIL1] Unable to find class 'BOGUS'.
 CLIPS> (delayed-do-for-all-instances ((?b A)) (progn (bind ?b 1) TRUE))
-[INSQYPSR2] Binds are not allowed in instance-set query in function delayed-do-for-all-instances.
+[INSQYPSR2] Binds are not allowed in instance-set query in function 'delayed-do-for-all-instances'.
 CLIPS> (delayed-do-for-all-instances ((?b 34)) TRUE abc)
 
 [PRNTUTIL2] Syntax Error:  Check appropriate syntax for instance-set query class restrictions.
 FALSE
 CLIPS> (delayed-do-for-all-instances ((?b (create$ BOGUS USER))) TRUE abc)
-[CLASSFUN1] Unable to find class BOGUS in function delayed-do-for-all-instances.
+[CLASSFUN1] Unable to find class 'BOGUS' in function 'delayed-do-for-all-instances'.
 
 [PRNTUTIL2] Syntax Error:  Check appropriate syntax for instance-set query class restrictions.
 FALSE
@@ -538,7 +538,7 @@ CLIPS> (delayed-do-for-all-instances ((?b (create$ USER 34))) TRUE abc)
 [PRNTUTIL2] Syntax Error:  Check appropriate syntax for instance-set query class restrictions.
 FALSE
 CLIPS> (delayed-do-for-all-instances ((?b OBJECT)) TRUE (bind ?b 1))
-[INSQYPSR3] Cannot rebind instance-set member variable b in function delayed-do-for-all-instances.
+[INSQYPSR3] Cannot rebind instance-set member variable ?b in function 'delayed-do-for-all-instances'.
 CLIPS> (make-instance v of V)
 [v]
 CLIPS> (make-instance w of W)

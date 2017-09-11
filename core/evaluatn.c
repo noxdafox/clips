@@ -226,8 +226,12 @@ bool EvaluateExpression(
           {
            PrintErrorID(theEnv,"EVALUATN",1,false);
            WriteString(theEnv,STDERR,"Variable ");
+           if (problem->type == MF_VARIABLE)
+             { WriteString(theEnv,STDERR,"$?"); }
+           else
+             { WriteString(theEnv,STDERR,"?"); }
            WriteString(theEnv,STDERR,problem->lexemeValue->contents);
-           WriteString(theEnv,STDERR," is unbound\n");
+           WriteString(theEnv,STDERR," is unbound.\n");
            returnValue->value = FalseSymbol(theEnv);
            SetEvaluationError(theEnv,true);
           }

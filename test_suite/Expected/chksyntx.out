@@ -3,19 +3,19 @@ CLIPS> (batch "chksyntx.bat")
 TRUE
 CLIPS> (clear)                          
 CLIPS> (check-syntax)                           
-[ARGACCES4] Function check-syntax expected exactly 1 argument(s)
+[ARGACCES1] Function 'check-syntax' expected exactly 1 argument.
 CLIPS> (check-syntax "cat" "dog")                 
-[ARGACCES4] Function check-syntax expected exactly 1 argument(s)
+[ARGACCES1] Function 'check-syntax' expected exactly 1 argument.
 CLIPS> (check-syntax 7.8)                        
-[ARGACCES5] Function check-syntax expected argument #1 to be of type string
+[ARGACCES2] Function 'check-syntax' expected argument #1 to be of type string.
 CLIPS> (check-syntax 900)                        
-[ARGACCES5] Function check-syntax expected argument #1 to be of type string
+[ARGACCES2] Function 'check-syntax' expected argument #1 to be of type string.
 CLIPS> (check-syntax [abc])                      
-[ARGACCES5] Function check-syntax expected argument #1 to be of type string
+[ARGACCES2] Function 'check-syntax' expected argument #1 to be of type string.
 CLIPS> (check-syntax (create$ a x y))            
-[ARGACCES5] Function check-syntax expected argument #1 to be of type string
+[ARGACCES2] Function 'check-syntax' expected argument #1 to be of type string.
 CLIPS> (check-syntax cat)                       
-[ARGACCES5] Function check-syntax expected argument #1 to be of type string
+[ARGACCES2] Function 'check-syntax' expected argument #1 to be of type string.
 CLIPS> (check-syntax "dog")                    
 MISSING-LEFT-PARENTHESIS
 CLIPS> (check-syntax "7")                     
@@ -37,7 +37,7 @@ FALSE
 CLIPS> (check-syntax "(+ 3 (* 4 5))")   
 FALSE
 CLIPS> (check-syntax "(+ a b)")
-("[ARGACCES5] Function + expected argument #1 to be of type integer or float
+("[ARGACCES2] Function '+' expected argument #1 to be of type integer or float.
 " FALSE)
 CLIPS> (check-syntax "(+ 3 4")
 ("

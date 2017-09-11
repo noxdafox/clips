@@ -619,9 +619,9 @@ void UndefmethodCommand(
    if ((gfunc == NULL) ? (strcmp(theArg.lexemeValue->contents,"*") != 0) : false)
      {
       PrintErrorID(theEnv,"GENRCCOM",1,false);
-      WriteString(theEnv,STDERR,"No such generic function ");
+      WriteString(theEnv,STDERR,"No such generic function '");
       WriteString(theEnv,STDERR,theArg.lexemeValue->contents);
-      WriteString(theEnv,STDERR," in function undefmethod.\n");
+      WriteString(theEnv,STDERR,"' in function undefmethod.\n");
       return;
      }
 
@@ -739,7 +739,9 @@ bool Undefmethod(
    WriteString(theEnv,STDERR,"Unable to delete method ");
    if (theDefgeneric != NULL)
      {
+      WriteString(theEnv,STDERR,"'");
       PrintGenericName(theEnv,STDERR,theDefgeneric);
+      WriteString(theEnv,STDERR,"'");
       WriteString(theEnv,STDERR," #");
       PrintUnsignedInteger(theEnv,STDERR,mi);
      }
@@ -756,7 +758,9 @@ bool Undefmethod(
       WriteString(theEnv,STDERR,"Unable to delete method ");
       if (theDefgeneric != NULL)
         {
+         WriteString(theEnv,STDERR,"'");
          WriteString(theEnv,STDERR,DefgenericName(theDefgeneric));
+         WriteString(theEnv,STDERR,"'");
          WriteString(theEnv,STDERR," #");
          PrintUnsignedInteger(theEnv,STDERR,mi);
         }
@@ -1572,9 +1576,9 @@ static void RemoveDefgenericMethod(
      {
       SetEvaluationError(theEnv,true);
       PrintErrorID(theEnv,"GENRCCOM",4,false);
-      WriteString(theEnv,STDERR,"Cannot remove implicit system function method for generic function ");
+      WriteString(theEnv,STDERR,"Cannot remove implicit system function method for generic function '");
       WriteString(theEnv,STDERR,DefgenericName(gfunc));
-      WriteString(theEnv,STDERR,".\n");
+      WriteString(theEnv,STDERR,"'.\n");
       return;
      }
    DeleteMethodInfo(theEnv,gfunc,&gfunc->methods[gi]);
@@ -1828,7 +1832,7 @@ static bool DefmethodWatchSupport(
           ((theGeneric =
               LookupDefgenericByMdlOrScope(theEnv,genericName.lexemeValue->contents)) == NULL))
         {
-         ExpectedTypeError1(theEnv,funcName,argIndex,"generic function name");
+         ExpectedTypeError1(theEnv,funcName,argIndex,"'generic function name'");
          return false;
         }
       if (GetNextArgument(argExprs) == NULL)
@@ -1845,7 +1849,7 @@ static bool DefmethodWatchSupport(
            theMethod = (unsigned short) methodIndex.integerValue->contents;
          else
            {
-            ExpectedTypeError1(theEnv,funcName,argIndex,"method index");
+            ExpectedTypeError1(theEnv,funcName,argIndex,"'method index'");
             return false;
            }
         }

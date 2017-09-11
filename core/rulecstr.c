@@ -138,15 +138,16 @@ static void ConstraintConflictMessage(
      }
    else
      {
-      WriteString(theEnv,STDERR," slot ");
+      WriteString(theEnv,STDERR," slot '");
       WriteString(theEnv,STDERR,theSlot->contents);
+      WriteString(theEnv,STDERR,"'");
      }
 
    /*======================================*/
    /* Print the rest of the error message. */
    /*======================================*/
 
-   WriteString(theEnv,STDERR,"\nhas constraint conflicts which make the pattern unmatchable.\n");
+   WriteString(theEnv,STDERR," has constraint conflicts which make the pattern unmatchable.\n");
   }
 
 /***************************************************************/
@@ -468,8 +469,9 @@ void ConstraintReferenceErrorMessage(
      }
    else
      {
-      WriteString(theEnv,STDERR," slot ");
+      WriteString(theEnv,STDERR," slot '");
       WriteString(theEnv,STDERR,slotName->contents);
+      WriteString(theEnv,STDERR,"'");
      }
 
    WriteString(theEnv,STDERR," to be violated.\n");
@@ -850,7 +852,7 @@ static bool CheckArgumentForConstraintError(
       lastOne->nextArg = NULL;
       PrintExpression(theEnv,STDERR,lastOne);
       lastOne->nextArg = tmpPtr;
-      WriteString(theEnv,STDERR,"\nfound in the rule's RHS to be violated.\n");
+      WriteString(theEnv,STDERR," found in the rule's RHS to be violated.\n");
 
       rv = true;
      }

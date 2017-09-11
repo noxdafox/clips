@@ -123,10 +123,10 @@ CE 3: 4
 CLIPS> (join-activity joins terse)
 (4 7 0)
 CLIPS> (join-activity joins bogus)
-[ARGACCES5] Function join-activity expected argument #2 to be of type symbol with value verbose, succinct, or terse
+[ARGACCES2] Function 'join-activity' expected argument #2 to be of type symbol with value verbose, succinct, or terse.
 FALSE
 CLIPS> (join-activity bogus)
-[PRNTUTIL1] Unable to find defrule bogus.
+[PRNTUTIL1] Unable to find defrule 'bogus'.
 FALSE
 CLIPS> (clear)
 CLIPS> 
@@ -665,10 +665,10 @@ Activations: 0
 CLIPS> (matches joins terse)
 (0 0 0)
 CLIPS> (matches joins bogus)
-[ARGACCES5] Function matches expected argument #2 to be of type symbol with value verbose, succinct, or terse
+[ARGACCES2] Function 'matches' expected argument #2 to be of type symbol with value verbose, succinct, or terse.
 FALSE
 CLIPS> (matches bogus)
-[PRNTUTIL1] Unable to find defrule bogus.
+[PRNTUTIL1] Unable to find defrule 'bogus'.
 FALSE
 CLIPS> (assert (c))
 <Fact-1>

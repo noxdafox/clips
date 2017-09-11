@@ -973,7 +973,7 @@ void DummyExpandFuncMultifield(
    returnValue->lexemeValue = FalseSymbol(theEnv);
    SetEvaluationError(theEnv,true);
    PrintErrorID(theEnv,"MISCFUN",1,false);
-   WriteString(theEnv,STDERR,"expand$ must be used in the argument list of a function call.\n");
+   WriteString(theEnv,STDERR,"The function 'expand$' must be used in the argument list of a function call.\n");
   }
 
 /***********************************************************************
@@ -1138,7 +1138,7 @@ void GetFunctionRestrictions(
    fptr = FindFunction(theEnv,theArg.lexemeValue->contents);
    if (fptr == NULL)
      {
-      CantFindItemErrorMessage(theEnv,"function",theArg.lexemeValue->contents);
+      CantFindItemErrorMessage(theEnv,"function",theArg.lexemeValue->contents,true);
       SetEvaluationError(theEnv,true);
       returnValue->lexemeValue = CreateString(theEnv,"");
       return;
@@ -1332,9 +1332,9 @@ void FuncallFunction(
       if (CheckDeffunctionCall(theEnv,(Deffunction *) theReference.value,CountArguments(theReference.argList)) == false)
         {
          PrintErrorID(theEnv,"MISCFUN",4,false);
-         WriteString(theEnv,STDERR,"Function funcall called with the wrong number of arguments for deffunction ");
+         WriteString(theEnv,STDERR,"Function 'funcall' called with the wrong number of arguments for deffunction '");
          WriteString(theEnv,STDERR,DeffunctionName((Deffunction *) theReference.value));
-         WriteString(theEnv,STDERR,"\n");
+         WriteString(theEnv,STDERR,"'.\n");
          ExpressionDeinstall(theEnv,&theReference);
          ReturnExpression(theEnv,theReference.argList);
          return;
@@ -1751,7 +1751,7 @@ void SlotValueFunction(
       return;
      }
 
-   if (((Fact *) factReference.value)->garbage)
+   if (factReference.factValue->garbage)
      {
       PrintErrorID(theEnv,"MISCFUN",5,false);
       WriteString(theEnv,STDERR,"The variable/slot reference ?");
@@ -1761,7 +1761,7 @@ void SlotValueFunction(
       return;
      }
    else
-     { theFact = ((Fact *) factReference.value); }
+     { theFact = factReference.factValue; }
 
    /*===========================*/
    /* Get the name of the slot. */

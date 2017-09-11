@@ -132,12 +132,12 @@ void OpenErrorMessage(
   const char *functionName,
   const char *fileName)
   {
-   PrintErrorID(theEnv,"ARGACCES",2,false);
-   WriteString(theEnv,STDERR,"Function ");
+   PrintErrorID(theEnv,"ARGACCES",3,false);
+   WriteString(theEnv,STDERR,"Function '");
    WriteString(theEnv,STDERR,functionName);
-   WriteString(theEnv,STDERR," was unable to open file ");
+   WriteString(theEnv,STDERR,"' was unable to open file '");
    WriteString(theEnv,STDERR,fileName);
-   WriteString(theEnv,STDERR,".\n");
+   WriteString(theEnv,STDERR,"'.\n");
   }
 
 /************************************************************/
@@ -178,7 +178,7 @@ Defmodule *GetModuleName(
      {
       if (strcmp("*",returnValue.lexemeValue->contents) != 0)
         {
-         ExpectedTypeError1(theEnv,functionName,whichArgument,"defmodule name");
+         ExpectedTypeError1(theEnv,functionName,whichArgument,"'defmodule name'");
          *error = true;
         }
       return NULL;
@@ -228,9 +228,10 @@ void ExpectedCountError(
   int countRelation,
   unsigned int expectedNumber)
   {
-   PrintErrorID(theEnv,"ARGACCES",4,false);
-   WriteString(theEnv,STDERR,"Function ");
+   PrintErrorID(theEnv,"ARGACCES",1,false);
+   WriteString(theEnv,STDERR,"Function '");
    WriteString(theEnv,STDERR,functionName);
+   WriteString(theEnv,STDERR,"'");
 
    if (countRelation == EXACTLY)
      { WriteString(theEnv,STDERR," expected exactly "); }
@@ -242,7 +243,11 @@ void ExpectedCountError(
      { WriteString(theEnv,STDERR," generated an illegal argument check for "); }
 
    PrintUnsignedInteger(theEnv,STDERR,expectedNumber);
-   WriteString(theEnv,STDERR," argument(s)\n");
+   
+   if (expectedNumber == 1)
+     { WriteString(theEnv,STDERR," argument.\n"); }
+   else
+     { WriteString(theEnv,STDERR," arguments.\n"); }
   }
 
 /*************************************************************/
@@ -348,10 +353,10 @@ void ExpectedTypeError0(
   const char *functionName,
   unsigned int whichArg)
   {
-   PrintErrorID(theEnv,"ARGACCES",5,false);
-   WriteString(theEnv,STDERR,"Function ");
+   PrintErrorID(theEnv,"ARGACCES",2,false);
+   WriteString(theEnv,STDERR,"Function '");
    WriteString(theEnv,STDERR,functionName);
-   WriteString(theEnv,STDERR," expected argument #");
+   WriteString(theEnv,STDERR,"' expected argument #");
    WriteInteger(theEnv,STDERR,whichArg);
    WriteString(theEnv,STDERR," to be of type ");
   }
@@ -369,7 +374,7 @@ void ExpectedTypeError1(
   {
    ExpectedTypeError0(theEnv,functionName,whichArg);
    WriteString(theEnv,STDERR,expectedType);
-   WriteString(theEnv,STDERR,"\n");
+   WriteString(theEnv,STDERR,".\n");
   }
 
 /**************************************************************/
@@ -434,7 +439,7 @@ void *GetFactOrInstanceArgument(
         {
          char tempBuffer[20];
          gensprintf(tempBuffer,"f-%lld",item->integerValue->contents);
-         CantFindItemErrorMessage(theEnv,"fact",tempBuffer);
+         CantFindItemErrorMessage(theEnv,"fact",tempBuffer,false);
         }
       return(ptr);
      }
@@ -450,7 +455,7 @@ void *GetFactOrInstanceArgument(
      {
       if ((ptr = (void *) FindInstanceBySymbol(theEnv,item->lexemeValue)) == NULL)
         {
-         CantFindItemErrorMessage(theEnv,"instance",item->lexemeValue->contents);
+         CantFindItemErrorMessage(theEnv,"instance",item->lexemeValue->contents,false);
         }
       return(ptr);
      }
@@ -473,7 +478,7 @@ void IllegalLogicalNameMessage(
   const char *theFunction)
   {
    PrintErrorID(theEnv,"IOFUN",1,false);
-   WriteString(theEnv,STDERR,"Illegal logical name used for ");
+   WriteString(theEnv,STDERR,"Illegal logical name used for '");
    WriteString(theEnv,STDERR,theFunction);
-   WriteString(theEnv,STDERR," function.\n");
+   WriteString(theEnv,STDERR,"' function.\n");
   }

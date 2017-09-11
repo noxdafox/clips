@@ -1185,7 +1185,7 @@ static struct expr *MultifieldPrognParser(
          ClearParsedBindNames(theEnv);
          SetParsedBindNames(theEnv,oldBindList);
          PrintErrorID(theEnv,"MULTIFUN",2,false);
-         WriteString(theEnv,STDERR,"Cannot rebind field variable in function progn$.\n");
+         WriteString(theEnv,STDERR,"Cannot rebind field variable in function 'progn$'.\n");
          ReturnExpression(theEnv,top);
          return NULL;
         }
@@ -1269,7 +1269,7 @@ static struct expr *ForeachParser(
          ClearParsedBindNames(theEnv);
          SetParsedBindNames(theEnv,oldBindList);
          PrintErrorID(theEnv,"MULTIFUN",2,false);
-         WriteString(theEnv,STDERR,"Cannot rebind field variable in function foreach.\n");
+         WriteString(theEnv,STDERR,"Cannot rebind field variable in function 'foreach'.\n");
          ReturnExpression(theEnv,top);
          return NULL;
         }
@@ -1690,8 +1690,9 @@ void MVRangeError(
    PrintUnsignedInteger(theEnv,STDERR,max);
    if (funcName != NULL)
      {
-      WriteString(theEnv,STDERR," in function ");
+      WriteString(theEnv,STDERR," in function '");
       WriteString(theEnv,STDERR,funcName);
+      WriteString(theEnv,STDERR,"'");
      }
    WriteString(theEnv,STDERR,".\n");
   }
@@ -1718,8 +1719,9 @@ static void MVRangeErrorSizet(
    PrintUnsignedInteger(theEnv,STDERR,max);
    if (funcName != NULL)
      {
-      WriteString(theEnv,STDERR," in function ");
+      WriteString(theEnv,STDERR," in function '");
       WriteString(theEnv,STDERR,funcName);
+      WriteString(theEnv,STDERR,"'");
      }
    WriteString(theEnv,STDERR,".\n");
   }

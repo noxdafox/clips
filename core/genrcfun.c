@@ -381,9 +381,9 @@ void MethodAlterError(
   Defgeneric *gfunc)
   {
    PrintErrorID(theEnv,"GENRCFUN",1,false);
-   WriteString(theEnv,STDERR,"Defgeneric ");
+   WriteString(theEnv,STDERR,"Defgeneric '");
    WriteString(theEnv,STDERR,DefgenericName(gfunc));
-   WriteString(theEnv,STDERR," cannot be modified while one of its methods is executing.\n");
+   WriteString(theEnv,STDERR,"' cannot be modified while one of its methods is executing.\n");
   }
 
 /***************************************************
@@ -658,9 +658,9 @@ void PreviewGeneric(
    if (gfunc == NULL)
      {
       PrintErrorID(theEnv,"GENRCFUN",3,false);
-      WriteString(theEnv,STDERR,"Unable to find generic function ");
+      WriteString(theEnv,STDERR,"Unable to find generic function '");
       WriteString(theEnv,STDERR,theArg.lexemeValue->contents);
-      WriteString(theEnv,STDERR," in function preview-generic.\n");
+      WriteString(theEnv,STDERR,"' in function preview-generic.\n");
       return;
      }
    oldce = ExecutingConstruct(theEnv);
@@ -714,11 +714,11 @@ Defgeneric *CheckGenericExists(
    if (gfunc == NULL)
      {
       PrintErrorID(theEnv,"GENRCFUN",3,false);
-      WriteString(theEnv,STDERR,"Unable to find generic function ");
+      WriteString(theEnv,STDERR,"Unable to find generic function '");
       WriteString(theEnv,STDERR,gname);
-      WriteString(theEnv,STDERR," in function ");
+      WriteString(theEnv,STDERR,"' in function '");
       WriteString(theEnv,STDERR,fname);
-      WriteString(theEnv,STDERR,".\n");
+      WriteString(theEnv,STDERR,"'.\n");
       SetEvaluationError(theEnv,true);
      }
    return(gfunc);
@@ -748,13 +748,13 @@ unsigned short CheckMethodExists(
    if (fi == METHOD_NOT_FOUND)
      {
       PrintErrorID(theEnv,"GENRCFUN",2,false);
-      WriteString(theEnv,STDERR,"Unable to find method ");
+      WriteString(theEnv,STDERR,"Unable to find method '");
       WriteString(theEnv,STDERR,DefgenericName(gfunc));
-      WriteString(theEnv,STDERR," #");
+      WriteString(theEnv,STDERR,"' #");
       PrintUnsignedInteger(theEnv,STDERR,mi);
-      WriteString(theEnv,STDERR," in function ");
+      WriteString(theEnv,STDERR," in function '");
       WriteString(theEnv,STDERR,fname);
-      WriteString(theEnv,STDERR,".\n");
+      WriteString(theEnv,STDERR,"'.\n");
       SetEvaluationError(theEnv,true);
      }
    return fi;
@@ -797,7 +797,7 @@ const char *TypeName(
       case ADDRESS_TYPE_CODE   : return(ADDRESS_TYPE_NAME);
       case INSTANCE_TYPE_CODE  : return(INSTANCE_TYPE_NAME);
       default                  : PrintErrorID(theEnv,"INSCOM",1,false);
-                                 WriteString(theEnv,STDERR,"Undefined type in function type.\n");
+                                 WriteString(theEnv,STDERR,"Undefined type in function 'type'.\n");
                                  SetEvaluationError(theEnv,true);
                                  return("<UNKNOWN-TYPE>");
      }

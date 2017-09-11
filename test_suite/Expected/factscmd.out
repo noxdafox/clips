@@ -14,19 +14,19 @@ f-5     (e)
 f-6     (f)
 For a total of 6 facts.
 CLIPS> (facts 1 2 3 4 5)
-[ARGACCES4] Function facts expected no more than 4 argument(s)
+[ARGACCES1] Function 'facts' expected no more than 4 arguments.
 CLIPS> (facts "a")
-[ARGACCES5] Function facts expected argument #1 to be of type integer or symbol
+[ARGACCES2] Function 'facts' expected argument #1 to be of type integer or symbol.
 CLIPS> (facts 1 a)
-[ARGACCES5] Function facts expected argument #2 to be of type integer
+[ARGACCES2] Function 'facts' expected argument #2 to be of type integer.
 CLIPS> (facts 1 2 a)
-[ARGACCES5] Function facts expected argument #3 to be of type integer
+[ARGACCES2] Function 'facts' expected argument #3 to be of type integer.
 CLIPS> (facts -1 5 2)
-[ARGACCES5] Function facts expected argument #1 to be of type symbol or positive number
+[ARGACCES2] Function 'facts' expected argument #1 to be of type symbol or 'positive number'.
 CLIPS> (facts 4 -1 2)
-[ARGACCES5] Function facts expected argument #2 to be of type positive number
+[ARGACCES2] Function 'facts' expected argument #2 to be of type positive number.
 CLIPS> (facts 3 4 -2)
-[ARGACCES5] Function facts expected argument #3 to be of type positive number
+[ARGACCES2] Function 'facts' expected argument #3 to be of type positive number.
 CLIPS> (facts 4 2)
 CLIPS> (facts 5)
 f-5     (e)
@@ -42,21 +42,21 @@ f-2     (b)
 f-3     (c)
 For a total of 2 facts.
 CLIPS> (save-facts)                       ; save-facts and load-facts
-[ARGACCES4] Function save-facts expected at least 1 argument(s)
+[ARGACCES1] Function 'save-facts' expected at least 1 argument.
 CLIPS> (save-facts 10)
-[ARGACCES5] Function save-facts expected argument #1 to be of type symbol or string
+[ARGACCES2] Function 'save-facts' expected argument #1 to be of type symbol or string.
 CLIPS> (save-facts "Temp//factscmd.tmp" 10)
-[ARGACCES5] Function save-facts expected argument #2 to be of type symbol
+[ARGACCES2] Function 'save-facts' expected argument #2 to be of type symbol.
 CLIPS> (save-facts "Temp//factscmd.tmp")
 TRUE
 CLIPS> (clear)
 CLIPS> (facts)
 CLIPS> (load-facts)
-[ARGACCES4] Function load-facts expected exactly 1 argument(s)
+[ARGACCES1] Function 'load-facts' expected exactly 1 argument.
 CLIPS> (load-facts 10)
-[ARGACCES5] Function load-facts expected argument #1 to be of type symbol or string
+[ARGACCES2] Function 'load-facts' expected argument #1 to be of type symbol or string.
 CLIPS> (load-facts "Temp//factscmd.tmp" 10)
-[ARGACCES4] Function load-facts expected exactly 1 argument(s)
+[ARGACCES1] Function 'load-facts' expected exactly 1 argument.
 CLIPS> (load-facts "Temp//factscmd.tmp")
 TRUE
 CLIPS> (facts)
@@ -90,13 +90,13 @@ f-6     (f)
 f-7     (g)
 For a total of 7 facts.
 CLIPS> (dependencies)
-[ARGACCES4] Function dependencies expected exactly 1 argument(s)
+[ARGACCES1] Function 'dependencies' expected exactly 1 argument.
 CLIPS> (dependencies a)
 [PRNTUTIL1] Unable to find instance a.
 CLIPS> (dependencies 10)
 [PRNTUTIL1] Unable to find fact f-10.
 CLIPS> (dependencies 5 6)
-[ARGACCES4] Function dependencies expected exactly 1 argument(s)
+[ARGACCES1] Function 'dependencies' expected exactly 1 argument.
 CLIPS> (dependencies 5)
 f-1,f-2
 f-2
@@ -106,13 +106,13 @@ f-4,f-2,f-1
 CLIPS> (dependencies 3)
 None
 CLIPS> (dependents)
-[ARGACCES4] Function dependents expected exactly 1 argument(s)
+[ARGACCES1] Function 'dependents' expected exactly 1 argument.
 CLIPS> (dependents a)
 [PRNTUTIL1] Unable to find instance a.
 CLIPS> (dependents 10)
 [PRNTUTIL1] Unable to find fact f-10.
 CLIPS> (dependents 5 6)
-[ARGACCES4] Function dependents expected exactly 1 argument(s)
+[ARGACCES1] Function 'dependents' expected exactly 1 argument.
 CLIPS> (dependents 1)
 f-5,f-6
 CLIPS> (dependents 2)
@@ -136,11 +136,11 @@ For a total of 1 fact.
 CLIPS> (get-fact-duplication)  
 FALSE
 CLIPS> (get-fact-duplication TRUE)
-[ARGACCES4] Function get-fact-duplication expected exactly 0 argument(s)
+[ARGACCES1] Function 'get-fact-duplication' expected exactly 0 arguments.
 CLIPS> (set-fact-duplication)
-[ARGACCES4] Function set-fact-duplication expected exactly 1 argument(s)
+[ARGACCES1] Function 'set-fact-duplication' expected exactly 1 argument.
 CLIPS> (set-fact-duplication TRUE FALSE)
-[ARGACCES4] Function set-fact-duplication expected exactly 1 argument(s)
+[ARGACCES1] Function 'set-fact-duplication' expected exactly 1 argument.
 CLIPS> (set-fact-duplication 10)
 FALSE
 CLIPS> (get-fact-duplication)
@@ -202,9 +202,9 @@ f-6     (c)
 For a total of 6 facts.
 CLIPS> (clear) ;; New 6.24 stuff
 CLIPS> (ppfact)
-[ARGACCES4] Function ppfact expected at least 1 argument(s)
+[ARGACCES1] Function 'ppfact' expected at least 1 argument.
 CLIPS> (ppfact a)
-[ARGACCES5] Function ppfact expected argument #1 to be of type integer or fact address
+[ARGACCES2] Function 'ppfact' expected argument #1 to be of type integer or fact address.
 CLIPS> (ppfact 2)
 [PRNTUTIL1] Unable to find fact f-2.
 CLIPS> (assert (foo a b c d))

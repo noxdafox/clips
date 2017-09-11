@@ -5,8 +5,7 @@ CLIPS> (deftemplate error1 "Wrong Type"
   (field x (type SYMBOL)
            (default 7)))
 
-[CSTRNCHK1] An expression found in the default attribute
-does not match the allowed types for slot x.
+[CSTRNCHK1] An expression found in the default attribute does not match the allowed types for slot 'x'.
 
 ERROR:
 (deftemplate MAIN::error1 "Wrong Type"
@@ -15,8 +14,7 @@ CLIPS> (deftemplate error2 "Wrong Type"
   (field x (type SYMBOL)
            (default (+ 3 4))))
 
-[CSTRNCHK1] An expression found in the default attribute
-does not match the allowed types for slot x.
+[CSTRNCHK1] An expression found in the default attribute does not match the allowed types for slot 'x'.
 
 ERROR:
 (deftemplate MAIN::error2 "Wrong Type"
@@ -25,8 +23,7 @@ CLIPS> (deftemplate error3 "Wrong Type"
   (field x (type SYMBOL)
            (default-dynamic 7)))
 
-[CSTRNCHK1] An expression found in the default-dynamic attribute
-does not match the allowed types for slot x.
+[CSTRNCHK1] An expression found in the default-dynamic attribute does not match the allowed types for slot 'x'.
 
 ERROR:
 (deftemplate MAIN::error3 "Wrong Type"
@@ -35,8 +32,7 @@ CLIPS> (deftemplate error4 "Wrong Type"
   (field x (type SYMBOL)
            (default-dynamic (+ 3 4))))
 
-[CSTRNCHK1] The function return value found in the default-dynamic attribute
-does not match the allowed types for slot x.
+[CSTRNCHK1] The function return value found in the default-dynamic attribute does not match the allowed types for slot 'x'.
 
 ERROR:
 (deftemplate MAIN::error4 "Wrong Type"
@@ -45,8 +41,7 @@ CLIPS> (deftemplate error5 "Wrong Value"
   (field x (allowed-symbols a b c)
            (default f)))
 
-[CSTRNCHK1] An expression found in the default attribute
-does not match the allowed values for slot x.
+[CSTRNCHK1] An expression found in the default attribute does not match the allowed values for slot 'x'.
 
 ERROR:
 (deftemplate MAIN::error5 "Wrong Value"
@@ -54,7 +49,7 @@ ERROR:
 CLIPS> (deftemplate error6 "Wrong Cardinality"
   (field x (default 1 2 3)))
 
-[DEFAULT1] The default value for a single field slot must be a single field value
+[DEFAULT1] The default value for a single field slot must be a single field value.
 
 ERROR:
 (deftemplate MAIN::error6 "Wrong Cardinality"
@@ -62,7 +57,7 @@ ERROR:
 CLIPS> (deftemplate error7 "Wrong Cardinality"
   (field x (default)))
 
-[DEFAULT1] The default value for a single field slot must be a single field value
+[DEFAULT1] The default value for a single field slot must be a single field value.
 
 ERROR:
 (deftemplate MAIN::error7 "Wrong Cardinality"
@@ -70,7 +65,7 @@ ERROR:
 CLIPS> (deftemplate error8 "Wrong Cardinality"
   (field x (default (create$ a b c))))
 
-[DEFAULT1] The default value for a single field slot must be a single field value
+[DEFAULT1] The default value for a single field slot must be a single field value.
 
 ERROR:
 (deftemplate MAIN::error8 "Wrong Cardinality"
@@ -78,7 +73,7 @@ ERROR:
 CLIPS> (deftemplate error9 "Wrong Cardinality"
   (field x (default (create$))))
 
-[DEFAULT1] The default value for a single field slot must be a single field value
+[DEFAULT1] The default value for a single field slot must be a single field value.
 
 ERROR:
 (deftemplate MAIN::error9 "Wrong Cardinality"
@@ -86,7 +81,7 @@ ERROR:
 CLIPS> (deftemplate error11 "Wrong Cardinality"
   (field x (default-dynamic 1 2 3)))
 
-[DEFAULT1] The default value for a single field slot must be a single field value
+[DEFAULT1] The default value for a single field slot must be a single field value.
 
 ERROR:
 (deftemplate MAIN::error11 "Wrong Cardinality"
@@ -94,7 +89,7 @@ ERROR:
 CLIPS> (deftemplate error12 "Wrong Cardinality"
   (field x (default-dynamic)))
 
-[DEFAULT1] The default value for a single field slot must be a single field value
+[DEFAULT1] The default value for a single field slot must be a single field value.
 
 ERROR:
 (deftemplate MAIN::error12 "Wrong Cardinality"
@@ -102,7 +97,7 @@ ERROR:
 CLIPS> (deftemplate error13 "Wrong Cardinality"
   (field x (default-dynamic (create$ a b c))))
 
-[DEFAULT1] The default value for a single field slot must be a single field value
+[DEFAULT1] The default value for a single field slot must be a single field value.
 
 ERROR:
 (deftemplate MAIN::error13 "Wrong Cardinality"
@@ -110,7 +105,7 @@ ERROR:
 CLIPS> (deftemplate error14 "Wrong Cardinality"
   (field x (default-dynamic (create$))))
 
-[DEFAULT1] The default value for a single field slot must be a single field value
+[DEFAULT1] The default value for a single field slot must be a single field value.
 
 ERROR:
 (deftemplate MAIN::error14 "Wrong Cardinality"
@@ -119,8 +114,7 @@ CLIPS> (deftemplate error16 "Wrong Cardinality"
   (multifield x (cardinality 3 5)
                 (default a b c d e f)))
 
-[CSTRNCHK1] An expression found in the default attribute
-does not satisfy the cardinality restrictions for slot x.
+[CSTRNCHK1] An expression found in the default attribute does not satisfy the cardinality restrictions for slot 'x'.
 
 ERROR:
 (deftemplate MAIN::error16 "Wrong Cardinality"
@@ -129,8 +123,7 @@ CLIPS> (deftemplate error17 "Wrong Cardinality"
   (multifield x (cardinality 3 5)
                 (default a)))
 
-[CSTRNCHK1] An expression found in the default attribute
-does not satisfy the cardinality restrictions for slot x.
+[CSTRNCHK1] An expression found in the default attribute does not satisfy the cardinality restrictions for slot 'x'.
 
 ERROR:
 (deftemplate MAIN::error17 "Wrong Cardinality"
@@ -139,8 +132,7 @@ CLIPS> (deftemplate error18 "Wrong Cardinality"
   (multifield x (cardinality 3 5)
                 (default (create$ a b c d e f))))
 
-[CSTRNCHK1] An expression found in the default attribute
-does not satisfy the cardinality restrictions for slot x.
+[CSTRNCHK1] An expression found in the default attribute does not satisfy the cardinality restrictions for slot 'x'.
 
 ERROR:
 (deftemplate MAIN::error18 "Wrong Cardinality"
@@ -149,8 +141,7 @@ CLIPS> (deftemplate error19 "Wrong Cardinality"
   (multifield x (cardinality 3 5)
                 (default (create$ a))))
 
-[CSTRNCHK1] An expression found in the default attribute
-does not satisfy the cardinality restrictions for slot x.
+[CSTRNCHK1] An expression found in the default attribute does not satisfy the cardinality restrictions for slot 'x'.
 
 ERROR:
 (deftemplate MAIN::error19 "Wrong Cardinality"
@@ -159,8 +150,7 @@ CLIPS> (deftemplate error20 "Wrong Cardinality"
   (multifield x (cardinality 3 5)
                 (default (create$ a) (create$ a))))
 
-[CSTRNCHK1] An expression found in the default attribute
-does not satisfy the cardinality restrictions for slot x.
+[CSTRNCHK1] An expression found in the default attribute does not satisfy the cardinality restrictions for slot 'x'.
 
 ERROR:
 (deftemplate MAIN::error20 "Wrong Cardinality"
@@ -169,8 +159,7 @@ CLIPS> (deftemplate error21 "Wrong Cardinality"
   (multifield x (cardinality 3 5)
                 (default (create$ a b c) (create$ a b c))))
 
-[CSTRNCHK1] An expression found in the default attribute
-does not satisfy the cardinality restrictions for slot x.
+[CSTRNCHK1] An expression found in the default attribute does not satisfy the cardinality restrictions for slot 'x'.
 
 ERROR:
 (deftemplate MAIN::error21 "Wrong Cardinality"
@@ -179,8 +168,7 @@ CLIPS> (deftemplate error22 "Wrong Cardinality"
   (multifield x (cardinality 3 5)
                 (default a b c d e f)))
 
-[CSTRNCHK1] An expression found in the default attribute
-does not satisfy the cardinality restrictions for slot x.
+[CSTRNCHK1] An expression found in the default attribute does not satisfy the cardinality restrictions for slot 'x'.
 
 ERROR:
 (deftemplate MAIN::error22 "Wrong Cardinality"
@@ -189,8 +177,7 @@ CLIPS> (deftemplate error23 "Wrong Cardinality"
   (multifield x (cardinality 3 5)
                 (default a)))
 
-[CSTRNCHK1] An expression found in the default attribute
-does not satisfy the cardinality restrictions for slot x.
+[CSTRNCHK1] An expression found in the default attribute does not satisfy the cardinality restrictions for slot 'x'.
 
 ERROR:
 (deftemplate MAIN::error23 "Wrong Cardinality"
@@ -199,8 +186,7 @@ CLIPS> (deftemplate error24 "Wrong Cardinality"
   (multifield x (cardinality 3 5)
                 (default (create$ a b c d e f))))
 
-[CSTRNCHK1] An expression found in the default attribute
-does not satisfy the cardinality restrictions for slot x.
+[CSTRNCHK1] An expression found in the default attribute does not satisfy the cardinality restrictions for slot 'x'.
 
 ERROR:
 (deftemplate MAIN::error24 "Wrong Cardinality"
@@ -209,8 +195,7 @@ CLIPS> (deftemplate error25 "Wrong Cardinality"
   (multifield x (cardinality 3 5)
                 (default (create$ a))))
 
-[CSTRNCHK1] An expression found in the default attribute
-does not satisfy the cardinality restrictions for slot x.
+[CSTRNCHK1] An expression found in the default attribute does not satisfy the cardinality restrictions for slot 'x'.
 
 ERROR:
 (deftemplate MAIN::error25 "Wrong Cardinality"
@@ -219,8 +204,7 @@ CLIPS> (deftemplate error26 "Wrong Cardinality"
   (multifield x (cardinality 3 5)
                 (default (create$ a) (create$ a))))
 
-[CSTRNCHK1] An expression found in the default attribute
-does not satisfy the cardinality restrictions for slot x.
+[CSTRNCHK1] An expression found in the default attribute does not satisfy the cardinality restrictions for slot 'x'.
 
 ERROR:
 (deftemplate MAIN::error26 "Wrong Cardinality"
@@ -229,8 +213,7 @@ CLIPS> (deftemplate error27 "Wrong Cardinality"
   (multifield x (cardinality 3 5)
                 (default (create$ a b c) (create$ a b c))))
 
-[CSTRNCHK1] An expression found in the default attribute
-does not satisfy the cardinality restrictions for slot x.
+[CSTRNCHK1] An expression found in the default attribute does not satisfy the cardinality restrictions for slot 'x'.
 
 ERROR:
 (deftemplate MAIN::error27 "Wrong Cardinality"
@@ -239,8 +222,7 @@ CLIPS> (deftemplate error28 "Wrong Cardinality"
   (multifield x (cardinality 3 5)
                 (default)))
 
-[CSTRNCHK1] An expression found in the default attribute
-does not satisfy the cardinality restrictions for slot x.
+[CSTRNCHK1] An expression found in the default attribute does not satisfy the cardinality restrictions for slot 'x'.
 
 ERROR:
 (deftemplate MAIN::error28 "Wrong Cardinality"
@@ -249,8 +231,7 @@ CLIPS> (deftemplate error29 "Wrong Cardinality"
   (multifield x (cardinality 3 5)
                 (default-dynamic)))
 
-[CSTRNCHK1] An expression found in the default-dynamic attribute
-does not satisfy the cardinality restrictions for slot x.
+[CSTRNCHK1] An expression found in the default-dynamic attribute does not satisfy the cardinality restrictions for slot 'x'.
 
 ERROR:
 (deftemplate MAIN::error29 "Wrong Cardinality"
@@ -283,8 +264,7 @@ CLIPS> (deftemplate error33 "Wrong Type"
   (multifield x (allowed-symbols a b c)
                 (default 8 7 a 9 d)))
 
-[CSTRNCHK1] An expression found in the default attribute
-does not match the allowed values for slot x.
+[CSTRNCHK1] An expression found in the default attribute does not match the allowed values for slot 'x'.
 
 ERROR:
 (deftemplate MAIN::error33 "Wrong Type"
@@ -374,7 +354,7 @@ CLIPS> (assert (foo20))
 CLIPS> (deftemplate foo21 (field x (default ?NONE)))
 CLIPS> (assert (foo21))
 
-[TMPLTRHS1] Slot x requires a value because of its (default ?NONE) attribute.
+[TMPLTRHS1] Slot 'x' requires a value because of its (default ?NONE) attribute.
 CLIPS> (setgen 1)
 1
 CLIPS> (deftemplate foo22 (field x (default b)) (field y (default (gensym))))

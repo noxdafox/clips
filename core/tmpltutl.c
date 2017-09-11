@@ -102,11 +102,11 @@ void InvalidDeftemplateSlotMessage(
   bool printCR)
   {
    PrintErrorID(theEnv,"TMPLTDEF",1,printCR);
-   WriteString(theEnv,STDERR,"Invalid slot ");
+   WriteString(theEnv,STDERR,"Invalid slot '");
    WriteString(theEnv,STDERR,slotName);
-   WriteString(theEnv,STDERR," not defined in corresponding deftemplate ");
+   WriteString(theEnv,STDERR,"' not defined in corresponding deftemplate '");
    WriteString(theEnv,STDERR,deftemplateName);
-   WriteString(theEnv,STDERR,".\n");
+   WriteString(theEnv,STDERR,"'.\n");
   }
 
 /**********************************************************/
@@ -119,9 +119,9 @@ void SingleFieldSlotCardinalityError(
   const char *slotName)
   {
    PrintErrorID(theEnv,"TMPLTDEF",2,true);
-   WriteString(theEnv,STDERR,"The single field slot ");
+   WriteString(theEnv,STDERR,"The single field slot '");
    WriteString(theEnv,STDERR,slotName);
-   WriteString(theEnv,STDERR," can only contain a single field value.\n");
+   WriteString(theEnv,STDERR,"' can only contain a single field value.\n");
   }
 
 /**********************************************************************/
@@ -133,14 +133,26 @@ void MultiIntoSingleFieldSlotError(
   struct templateSlot *theSlot,
   Deftemplate *theDeftemplate)
   {
-   PrintErrorID(theEnv,"TMPLTFUN",2,true);
-   WriteString(theEnv,STDERR,"Attempted to assert a multifield value \n");
+   PrintErrorID(theEnv,"TMPLTFUN",1,true);
+   WriteString(theEnv,STDERR,"Attempted to assert a multifield value ");
    WriteString(theEnv,STDERR,"into the single field slot ");
-   if (theSlot != NULL) WriteString(theEnv,STDERR,theSlot->slotName->contents);
-   else WriteString(theEnv,STDERR,"<<unknown>>");
+   if (theSlot != NULL)
+     {
+      WriteString(theEnv,STDERR,"'");
+      WriteString(theEnv,STDERR,theSlot->slotName->contents);
+      WriteString(theEnv,STDERR,"'");
+     }
+   else
+     { WriteString(theEnv,STDERR,"<<unknown>>"); }
    WriteString(theEnv,STDERR," of deftemplate ");
-   if (theDeftemplate != NULL) WriteString(theEnv,STDERR,theDeftemplate->header.name->contents);
-   else WriteString(theEnv,STDERR,"<<unknown>>");
+   if (theDeftemplate != NULL)
+     {
+      WriteString(theEnv,STDERR,"'");
+      WriteString(theEnv,STDERR,theDeftemplate->header.name->contents);
+      WriteString(theEnv,STDERR,"'");
+     }
+   else
+     { WriteString(theEnv,STDERR,"<<unknown>>"); }
    WriteString(theEnv,STDERR,".\n");
 
    SetEvaluationError(theEnv,true);
@@ -211,12 +223,11 @@ void CheckTemplateFact(
       rv = ConstraintCheckDataObject(theEnv,&theData,slotPtr->constraints);
       if (rv != NO_VIOLATION)
         {
-         gensprintf(thePlace,"fact f-%-5lld ",theFact->factIndex);
+         gensprintf(thePlace,"fact f-%lld",theFact->factIndex);
 
          PrintErrorID(theEnv,"CSTRNCHK",1,true);
          WriteString(theEnv,STDERR,"Slot value ");
          WriteUDFValue(theEnv,STDERR,&theData);
-         WriteString(theEnv,STDERR," ");
          ConstraintViolationErrorMessage(theEnv,NULL,thePlace,false,0,slotPtr->slotName,
                                          0,rv,slotPtr->constraints,true);
          SetHaltExecution(theEnv,true);

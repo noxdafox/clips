@@ -151,7 +151,7 @@ struct expr *Function1Parse(
    if (theToken.tknType != SYMBOL_TOKEN)
      {
       PrintErrorID(theEnv,"EXPRNPSR",1,true);
-      WriteString(theEnv,STDERR,"A function name must be a symbol\n");
+      WriteString(theEnv,STDERR,"A function name must be a symbol.\n");
       return NULL;
      }
 
@@ -255,9 +255,9 @@ struct expr *Function2Parse(
    else
      {
       PrintErrorID(theEnv,"EXPRNPSR",3,true);
-      WriteString(theEnv,STDERR,"Missing function declaration for ");
+      WriteString(theEnv,STDERR,"Missing function declaration for '");
       WriteString(theEnv,STDERR,name);
-      WriteString(theEnv,STDERR,".\n");
+      WriteString(theEnv,STDERR,"'.\n");
       return NULL;
      }
 
@@ -373,7 +373,8 @@ bool ReplaceSequenceExpansionOps(
 
    while (actions != NULL)
      {
-      if (ExpressionData(theEnv)->SequenceOpMode == false)
+      if ((ExpressionData(theEnv)->SequenceOpMode == false) &&
+          ((actions->type == MF_VARIABLE) || (actions->type == MF_GBL_VARIABLE)))
         {
          if (actions->type == MF_VARIABLE)
            { actions->type = SF_VARIABLE; }
@@ -388,9 +389,9 @@ bool ReplaceSequenceExpansionOps(
              (fcallexp->functionValue->sequenceuseok == false))
            {
             PrintErrorID(theEnv,"EXPRNPSR",4,false);
-            WriteString(theEnv,STDERR,"$ Sequence operator not a valid argument for ");
+            WriteString(theEnv,STDERR,"$ Sequence operator not a valid argument for function '");
             WriteString(theEnv,STDERR,fcallexp->functionValue->callFunctionName->contents);
-            WriteString(theEnv,STDERR,".\n");
+            WriteString(theEnv,STDERR,"'.\n");
             return true;
            }
          if (fcallexp->value != expcall)
@@ -1011,8 +1012,8 @@ Expression *ParseConstantArguments(
 
    if (OpenStringSource(theEnv,router,argstr,0) == 0)
      {
-      PrintErrorID(theEnv,"EXPRNPSR",6,false);
-      WriteString(theEnv,STDERR,"Cannot read arguments for external call.\n");
+      PrintErrorID(theEnv,"EXPRNPSR",5,false);
+      WriteString(theEnv,STDERR,"Cannot read arguments for external function call.\n");
       *error = true;
       return NULL;
      }
@@ -1028,7 +1029,7 @@ Expression *ParseConstantArguments(
           (tkn.tknType != FLOAT_TOKEN) && (tkn.tknType != INTEGER_TOKEN) &&
           (tkn.tknType != INSTANCE_NAME_TOKEN))
         {
-         PrintErrorID(theEnv,"EXPRNPSR",7,false);
+         PrintErrorID(theEnv,"EXPRNPSR",6,false);
          WriteString(theEnv,STDERR,"Only constant arguments allowed for external function call.\n");
          ReturnExpression(theEnv,top);
          *error = true;

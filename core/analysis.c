@@ -1108,8 +1108,9 @@ static void VariableReferenceErrorMessage(
      }
    else
      {
-      WriteString(theEnv,STDERR," slot ");
+      WriteString(theEnv,STDERR," slot '");
       WriteString(theEnv,STDERR,slotName->contents);
+      WriteString(theEnv,STDERR,"'");
      }
 
    WriteString(theEnv,STDERR," before being defined.\n");
@@ -1127,7 +1128,7 @@ static void VariableMixingErrorMessage(
    PrintErrorID(theEnv,"ANALYSIS",3,true);
    WriteString(theEnv,STDERR,"Variable ?");
    WriteString(theEnv,STDERR,theVariable->contents);
-   WriteString(theEnv,STDERR," is used as both a single and multifield variable in the LHS\n");
+   WriteString(theEnv,STDERR," is used as both a single and multifield variable in the LHS.\n");
   }
 
 #endif /* (! RUN_TIME) && (! BLOAD_ONLY) && DEFRULE_CONSTRUCT */

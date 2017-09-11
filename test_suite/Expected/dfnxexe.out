@@ -13,8 +13,8 @@ CLIPS> (deffunction test-return ()
    (+ (eval "(gensym)") 2)
    TRUE)
 CLIPS> (test-return)
-[ARGACCES5] Function + expected argument #1 to be of type integer or float
-[PRCCODE4] Execution halted during the actions of deffunction test-return.
+[ARGACCES2] Function '+' expected argument #1 to be of type integer or float.
+[PRCCODE4] Execution halted during the actions of deffunction 'test-return'.
 FALSE
 CLIPS> (deffunction test-return ()
   1 2 3 4)

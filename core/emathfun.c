@@ -191,9 +191,9 @@ static void DomainErrorMessage(
    Environment *theEnv = context->environment;
 
    PrintErrorID(theEnv,"EMATHFUN",1,false);
-   WriteString(theEnv,STDERR,"Domain error for ");
+   WriteString(theEnv,STDERR,"Domain error for '");
    WriteString(theEnv,STDERR,UDFContextFunctionName(context));
-   WriteString(theEnv,STDERR," function.\n");
+   WriteString(theEnv,STDERR,"' function.\n");
    SetHaltExecution(theEnv,true);
    SetEvaluationError(theEnv,true);
    returnValue->floatValue = CreateFloat(theEnv,0.0);
@@ -211,9 +211,9 @@ static void ArgumentOverflowErrorMessage(
    Environment *theEnv = context->environment;
 
    PrintErrorID(theEnv,"EMATHFUN",2,false);
-   WriteString(theEnv,STDERR,"Argument overflow for ");
+   WriteString(theEnv,STDERR,"Argument overflow for '");
    WriteString(theEnv,STDERR,UDFContextFunctionName(context));
-   WriteString(theEnv,STDERR," function.\n");
+   WriteString(theEnv,STDERR,"' function.\n");
    SetHaltExecution(theEnv,true);
    SetEvaluationError(theEnv,true);
    returnValue->floatValue = CreateFloat(theEnv,0.0);
@@ -231,9 +231,9 @@ static void SingularityErrorMessage(
    Environment *theEnv = context->environment;
 
    PrintErrorID(theEnv,"EMATHFUN",3,false);
-   WriteString(theEnv,STDERR,"Singularity at asymptote in ");
+   WriteString(theEnv,STDERR,"Singularity at asymptote in '");
    WriteString(theEnv,STDERR,UDFContextFunctionName(context));
-   WriteString(theEnv,STDERR," function.\n");
+   WriteString(theEnv,STDERR,"' function.\n");
    SetHaltExecution(theEnv,true);
    SetEvaluationError(theEnv,true);
    returnValue->floatValue = CreateFloat(theEnv,0.0);

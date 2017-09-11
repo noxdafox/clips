@@ -531,7 +531,7 @@ bool RetractDriver(
    if (EngineData(theEnv)->JoinOperationInProgress)
      {
       PrintErrorID(theEnv,"FACTMNGR",1,true);
-      WriteString(theEnv,STDERR,"Facts may not be retracted during pattern-matching\n");
+      WriteString(theEnv,STDERR,"Facts may not be retracted during pattern-matching.\n");
       return false;
      }
 
@@ -814,7 +814,7 @@ Fact *AssertDriver(
      {
       ReturnFact(theEnv,theFact);
       PrintErrorID(theEnv,"FACTMNGR",2,true);
-      WriteString(theEnv,STDERR,"Facts may not be asserted during pattern-matching\n");
+      WriteString(theEnv,STDERR,"Facts may not be asserted during pattern-matching.\n");
       return NULL;
      }
 

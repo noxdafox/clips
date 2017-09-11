@@ -185,9 +185,9 @@ PACKED_CLASS_LINKS *ParseSuperclasses(
           (sclass == DefclassData(theEnv)->PrimitiveClassMap[INSTANCE_NAME_TYPE]->directSuperclasses.classArray[0]))
         {
          PrintErrorID(theEnv,"INHERPSR",6,false);
-         WriteString(theEnv,STDERR,"A user-defined class cannot be a subclass of ");
+         WriteString(theEnv,STDERR,"A user-defined class cannot be a subclass of '");
          WriteString(theEnv,STDERR,DefclassName(sclass));
-         WriteString(theEnv,STDERR,".\n");
+         WriteString(theEnv,STDERR,"'.\n");
          goto SuperclassParseError;
         }
       ctmp = get_struct(theEnv,classLink);
@@ -205,7 +205,7 @@ PACKED_CLASS_LINKS *ParseSuperclasses(
    if (clink == NULL)
      {
       PrintErrorID(theEnv,"INHERPSR",4,false);
-      WriteString(theEnv,STDERR,"Must have at least one superclass.\n");
+      WriteString(theEnv,STDERR,"A class must have at least one superclass.\n");
       return NULL;
      }
    PPBackup(theEnv);
@@ -810,12 +810,12 @@ static void PrintPartialOrderLoop(
    while (pop1->pre == 1)
      {
       WriteString(theEnv,STDERR," ");
-      PrintClassName(theEnv,STDERR,pop1->cls,false);
+      PrintClassName(theEnv,STDERR,pop1->cls,false,false);
       pop1->pre = 0;
       pop1 = pop1->suc->po;
      }
    WriteString(theEnv,STDERR," ");
-   PrintClassName(theEnv,STDERR,pop1->cls,true);
+   PrintClassName(theEnv,STDERR,pop1->cls,false,true);
   }
 
 /***************************************************
@@ -840,7 +840,7 @@ static void PrintClassLinks(
    while (clink != NULL)
      {
       WriteString(theEnv,logicalName," ");
-      PrintClassName(theEnv,logicalName,clink->cls,false);
+      PrintClassName(theEnv,logicalName,clink->cls,false,false);
       clink = clink->nxt;
      }
    WriteString(theEnv,logicalName,"\n");

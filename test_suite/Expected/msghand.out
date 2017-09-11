@@ -4,12 +4,12 @@ TRUE
 CLIPS> (make-instance bogusi of BOGUS)
 [bogusi]
 CLIPS> (send [bogusi] bad-message-1)
-[ARGACCES5] Function integer expected argument #1 to be of type integer or float
-[PRCCODE4] Execution halted during the actions of message-handler bad-message-1 primary in class BOGUS
+[ARGACCES2] Function 'integer' expected argument #1 to be of type integer or float.
+[PRCCODE4] Execution halted during the actions of message-handler 'bad-message-1' primary in class 'BOGUS'
 FALSE
 CLIPS> (send [bogusi] bad-message-2)
-[ARGACCES5] Function integer expected argument #1 to be of type integer or float
-[PRCCODE4] Execution halted during the actions of message-handler bad-message-2 primary in class BOGUS
+[ARGACCES2] Function 'integer' expected argument #1 to be of type integer or float.
+[PRCCODE4] Execution halted during the actions of message-handler 'bad-message-2' primary in class 'BOGUS'
 FALSE
 CLIPS> (send [bogusi] add-em-up)
 2

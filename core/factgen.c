@@ -102,8 +102,8 @@ struct factgenData
    static void                      *FactGetVarPN1(Environment *,struct lhsParseNode *);
    static void                      *FactGetVarPN2(Environment *,struct lhsParseNode *);
    static void                      *FactGetVarPN3(Environment *,struct lhsParseNode *);
-   static CLIPSLexeme               *ExtractSlotName(Environment *,unsigned,const char *);
-   static CLIPSLexeme               *ExtractVariableName(Environment *,unsigned,const char *);
+   static CLIPSLexeme               *ExtractSlotName(Environment *,size_t,const char *);
+   static CLIPSLexeme               *ExtractVariableName(Environment *,size_t,const char *);
    static void                       ReplaceVarSlotReference(Environment *,Expression *,CLIPSLexeme *,CLIPSLexeme *,CLIPSLexeme *);
 #endif
 
@@ -1292,7 +1292,7 @@ struct expr *FactJNVariableComparison(
 /**************************************************************/
 static CLIPSLexeme *ExtractSlotName(
   Environment *theEnv,
-  unsigned thePosition,
+  size_t thePosition,
   const char *theString)
   {
    size_t theLength;
@@ -1354,7 +1354,7 @@ static CLIPSLexeme *ExtractSlotName(
 /******************************************************************/
 static CLIPSLexeme *ExtractVariableName(
   Environment *theEnv,
-  unsigned thePosition,
+  size_t thePosition,
   const char *theString)
   {
    char *newString;
@@ -1441,29 +1441,29 @@ int FactSlotReferenceVar(
    /*==============================================*/
 
    if (varexp->type != SF_VARIABLE)
-     { return(0); }
+     { return 0; }
 
    fullVar = varexp->lexemeValue->contents;
 
    result = strchr(fullVar,SLOT_REF);
    if (result == NULL)
-     { return(0); }
+     { return 0; }
 
-   position = result - fullVar;
+   position = (size_t) (result - fullVar);
 
    slotName = ExtractSlotName(theEnv,position,fullVar);
 
    if (slotName == NULL)
-     { return(-1); }
+     { return -1; }
 
    variableName = ExtractVariableName(theEnv,position,fullVar);
 
    if (variableName == NULL)
-     { return(-1);}
+     { return -1;}
 
-   ReplaceVarSlotReference(theEnv,varexp,variableName,slotName,(CLIPSLexeme *) varexp->value);
+   ReplaceVarSlotReference(theEnv,varexp,variableName,slotName,varexp->lexemeValue);
 
-   return(1);
+   return 1;
   }
 
 /*****************************/
@@ -1493,19 +1493,19 @@ int RuleFactSlotReferenceVar(
 
    result = strchr(fullVar,SLOT_REF);
    if (result == NULL)
-     { return(0); }
+     { return 0; }
 
-   position = result - fullVar;
+   position = (size_t) (result - fullVar);
 
    slotName = ExtractSlotName(theEnv,position,fullVar);
 
    if (slotName == NULL)
-     { return(-1); }
+     { return -1; }
 
    variableName = ExtractVariableName(theEnv,position,fullVar);
 
    if (variableName == NULL)
-     { return(-1);}
+     { return -1;}
 
    /*============================================*/
    /* If the variable has been bound on the RHS, */
@@ -1517,7 +1517,7 @@ int RuleFactSlotReferenceVar(
    if (boundPosn != 0)
      {
       ReplaceVarSlotReference(theEnv,varexp,variableName,slotName,(CLIPSLexeme *) varexp->value);
-      return (1);
+      return 1;
      }
 
    /*======================================================*/
@@ -1528,17 +1528,17 @@ int RuleFactSlotReferenceVar(
    if (templateName == NULL)
      {
       ReplaceVarSlotReference(theEnv,varexp,variableName,slotName,(CLIPSLexeme *) varexp->value);
-      return (1);
+      return 1;
      }
 
-   theDeftemplate = (struct deftemplate *)
+   theDeftemplate = (Deftemplate *)
                     LookupConstruct(theEnv,DeftemplateData(theEnv)->DeftemplateConstruct,
                                     templateName->contents,false);
 
    if ((theDeftemplate == NULL) || (theDeftemplate->implied))
      {
       ReplaceVarSlotReference(theEnv,varexp,variableName,slotName,(CLIPSLexeme *) varexp->value);
-      return (1);
+      return 1;
      }
 
    /*====================================================*/
@@ -1552,7 +1552,7 @@ int RuleFactSlotReferenceVar(
       WriteString(theEnv,STDERR,varexp->lexemeValue->contents);
       WriteString(theEnv,STDERR," is invalid because the referenced deftemplate does not contain the specified slot\n");
       SetEvaluationError(theEnv,true);
-      return(-1);
+      return -1;
      }
 
    /*==================================================================*/
@@ -1561,7 +1561,7 @@ int RuleFactSlotReferenceVar(
 
    ReplaceVarSlotReference(theEnv,varexp,variableName,slotName,(CLIPSLexeme *) varexp->value);
 
-   return(1);
+   return 1;
   }
 
 #endif /* (! RUN_TIME) && (! BLOAD_ONLY) */

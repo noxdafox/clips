@@ -6,13 +6,13 @@ CLIPS> (defmodule A)
 CLIPS> (deftemplate A::foo (slot x))
 CLIPS> (defmodule B (import A ?ALL))
 
-[MODULPSR1] Module A does not export any constructs.
+[MODULPSR1] Module 'A' does not export any constructs.
 
 ERROR:
 (defmodule B
    (import A
 CLIPS> (defrule B::rule1 (foo (x 3)) =>)
-[PRNTUTIL1] Unable to find defmodule B.
+[PRNTUTIL1] Unable to find defmodule 'B'.
 
 ERROR:
 (defrule B::rule1
@@ -130,18 +130,18 @@ CLIPS> (defrule E2::rule2 (bar (x 3)) =>)
 CLIPS> (defmodule F1 (import A deftemplate bar) (export ?ALL))
 CLIPS> (defmodule F2 (import F1 deftemplate foo))
 
-[MODULPSR1] Module F1 does not export the deftemplate foo.
+[MODULPSR1] Module 'F1' does not export the deftemplate 'foo'.
 
 ERROR:
 (defmodule F2
    (import F1 deftemplate foo)
 CLIPS> (defrule F2::rule1 (foo (x 3)) =>)
-[PRNTUTIL1] Unable to find defmodule F2.
+[PRNTUTIL1] Unable to find defmodule 'F2'.
 
 ERROR:
 (defrule F2::rule1
 CLIPS> (defrule F2::rule2 (bar (x 3)) =>)
-[PRNTUTIL1] Unable to find defmodule F2.
+[PRNTUTIL1] Unable to find defmodule 'F2'.
 
 ERROR:
 (defrule F2::rule2
@@ -157,7 +157,7 @@ ERROR:
    (bar (
 CLIPS> (clear) ;; Redefining module
 CLIPS> (deftemplate A::a)
-[PRNTUTIL1] Unable to find defmodule A.
+[PRNTUTIL1] Unable to find defmodule 'A'.
 
 ERROR:
 (deftemplate A::a
@@ -166,7 +166,7 @@ CLIPS> (deftemplate A::a)
 CLIPS> (clear) ;; Bad defmodule name
 CLIPS> (defmodule)
 
-[CSTRCPSR2] Missing name for defmodule construct
+[CSTRCPSR2] Missing name for defmodule construct.
 
 ERROR:
 (defmodule )
@@ -225,14 +225,14 @@ ERROR:
 CLIPS> (defrule B::good (foo (x 2)) (bar (y 3)) =>)
 CLIPS> (defrule A::bad1 (yak (z 4)) =>)
 
-[CSTRCPSR3] Cannot define implied deftemplate yak because of an import/export conflict.
+[CSTRCPSR3] Cannot define implied deftemplate 'yak' because of an import/export conflict.
 
 ERROR:
 (defrule A::bad1
    (yak
 CLIPS> (defrule A::bad2 (bar (y 3)) =>)
 
-[CSTRCPSR3] Cannot define implied deftemplate bar because of an import/export conflict.
+[CSTRCPSR3] Cannot define implied deftemplate 'bar' because of an import/export conflict.
 
 ERROR:
 (defrule A::bad2
@@ -247,14 +247,14 @@ CLIPS> (defmodule C
    (import A ?ALL)
    (import B ?ALL))
 
-[CSTRCPSR3] Cannot define defmodule C because of an import/export conflict caused by the deftemplate foo.
+[CSTRCPSR3] Cannot define defmodule 'C' because of an import/export conflict caused by the deftemplate 'foo'.
 
 ERROR:
 (defmodule C
    (import A ?ALL)
    (import B ?ALL))
 CLIPS> (defrule C::bar (foo) =>)
-[PRNTUTIL1] Unable to find defmodule C.
+[PRNTUTIL1] Unable to find defmodule 'C'.
 
 ERROR:
 (defrule C::bar
@@ -273,7 +273,7 @@ CLIPS> (deftemplate A::foo)
 CLIPS> (defmodule B (import A ?ALL))
 CLIPS> (deftemplate B::foo)
 
-[CSTRCPSR3] Cannot define deftemplate foo because of an import/export conflict.
+[CSTRCPSR3] Cannot define deftemplate 'foo' because of an import/export conflict.
 
 ERROR:
 (deftemplate B::foo
@@ -294,30 +294,30 @@ ERROR:
 (defmodule B
    (import )
 CLIPS> (defmodule B (import C))
-[PRNTUTIL1] Unable to find defmodule C.
+[PRNTUTIL1] Unable to find defmodule 'C'.
 
 ERROR:
 (defmodule B
    (import C
 CLIPS> (defmodule B (import A))
 
-[MODULPSR1] Module A does not export any constructs.
+[MODULPSR1] Module 'A' does not export any constructs.
 
 ERROR:
 (defmodule B
    (import A
 CLIPS> (ppdefmodule B)
-[PRNTUTIL1] Unable to find defmodule B.
+[PRNTUTIL1] Unable to find defmodule 'B'.
 CLIPS> (defmodule B (import A C))
 
-[MODULPSR1] Module A does not export any constructs.
+[MODULPSR1] Module 'A' does not export any constructs.
 
 ERROR:
 (defmodule B
    (import A
 CLIPS> (defmodule B (import A) (import MAIN))
 
-[MODULPSR1] Module A does not export any constructs.
+[MODULPSR1] Module 'A' does not export any constructs.
 
 ERROR:
 (defmodule B
@@ -325,7 +325,7 @@ ERROR:
 CLIPS> (ppdefmodule A)
 (defmodule A)
 CLIPS> (ppdefmodule B)
-[PRNTUTIL1] Unable to find defmodule B.
+[PRNTUTIL1] Unable to find defmodule 'B'.
 CLIPS> (clear) ;; auto-focus
 CLIPS> (defmodule MAIN (export ?ALL))
 CLIPS> (defrule MAIN::bar 

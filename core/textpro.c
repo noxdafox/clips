@@ -229,10 +229,10 @@ static int TextLookupFetch(
    if (fp == NULL)
      {
       PrintErrorID(theEnv,"TEXTPRO",1,false);
-      WriteString(theEnv,STDERR,"Could not open file \"");
+      WriteString(theEnv,STDERR,"Could not open file '");
       WriteString(theEnv,STDERR,file);
-      WriteString(theEnv,STDERR,"\".\n");
-      return(-1);
+      WriteString(theEnv,STDERR,"'.\n");
+      return -1;
      }
 
    if ((lnode = NewFetchFile(theEnv,file)) == NULL)
@@ -240,10 +240,10 @@ static int TextLookupFetch(
       GenClose(theEnv,fp);
 
       PrintErrorID(theEnv,"TEXTPRO",2,false);
-      WriteString(theEnv,STDERR,"File \"");
+      WriteString(theEnv,STDERR,"File '");
       WriteString(theEnv,STDERR,file);
-      WriteString(theEnv,STDERR,"\" already loaded.\n");
-      return(-1);
+      WriteString(theEnv,STDERR,"' already loaded.\n");
+      return -1;
      }
 
    /*===========================*/

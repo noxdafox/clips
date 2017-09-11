@@ -771,7 +771,7 @@ void ListWatchItemsCommand(
    if ((recognized == false) || (wPtr == NULL))
      {
       SetEvaluationError(theEnv,true);
-      ExpectedTypeError1(theEnv,"list-watch-items",1,"watchable symbol");
+      ExpectedTypeError1(theEnv,"list-watch-items",1,"'watchable symbol'");
       return;
      }
 
@@ -832,7 +832,7 @@ void GetWatchItemCommand(
    if (recognized == false)
      {
       SetEvaluationError(theEnv,true);
-      ExpectedTypeError1(theEnv,"get-watch-item",1,"watchable symbol");
+      ExpectedTypeError1(theEnv,"get-watch-item",1,"'watchable symbol'");
       returnValue->lexemeValue = FalseSymbol(theEnv);
       return;
      }

@@ -562,15 +562,15 @@ static bool ReplaceClassNameWithReference(
       theDefclass = LookupDefclassByMdlOrScope(theEnv,theClassName); // Module or scope is now allowed
       if (theDefclass == NULL)
         {
-         CantFindItemErrorMessage(theEnv,"class",theClassName);
+         CantFindItemErrorMessage(theEnv,"class",theClassName,true);
          return false;
         }
       if (ClassAbstractP(theDefclass))
         {
          PrintErrorID(theEnv,"INSMNGR",3,false);
-         WriteString(theEnv,STDERR,"Cannot create instances of abstract class ");
+         WriteString(theEnv,STDERR,"Cannot create instances of abstract class '");
          WriteString(theEnv,STDERR,theClassName);
-         WriteString(theEnv,STDERR,".\n");
+         WriteString(theEnv,STDERR,"'.\n");
          return false;
         }
       theExp->type = DEFCLASS_PTR;

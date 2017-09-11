@@ -734,7 +734,7 @@ static void PatternNetErrorMessage(
    /*=======================================*/
 
    PrintErrorID(theEnv,"FACTMCH",1,true);
-   WriteString(theEnv,STDERR,"This error occurred in the fact pattern network\n");
+   WriteString(theEnv,STDERR,"This error occurred in the fact pattern network.\n");
    WriteString(theEnv,STDERR,"   Currently active fact: ");
    PrintFact(theEnv,STDERR,FactData(theEnv)->CurrentPatternFact,false,false,NULL);
    WriteString(theEnv,STDERR,"\n");

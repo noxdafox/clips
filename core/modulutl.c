@@ -853,7 +853,7 @@ CLIPSLexeme *GetConstructNameAndComment(
       PrintErrorID(theEnv,"CSTRCPSR",2,true);
       WriteString(theEnv,STDERR,"Missing name for ");
       WriteString(theEnv,STDERR,constructName);
-      WriteString(theEnv,STDERR," construct\n");
+      WriteString(theEnv,STDERR," construct.\n");
       return NULL;
      }
 
@@ -882,7 +882,7 @@ CLIPSLexeme *GetConstructNameAndComment(
       theModule = FindDefmodule(theEnv,moduleName->contents);
       if (theModule == NULL)
         {
-         CantFindItemErrorMessage(theEnv,"defmodule",moduleName->contents);
+         CantFindItemErrorMessage(theEnv,"defmodule",moduleName->contents,true);
          return NULL;
         }
 
@@ -943,9 +943,9 @@ CLIPSLexeme *GetConstructNameAndComment(
                PrintErrorID(theEnv,"CSTRCPSR",4,true);
                WriteString(theEnv,STDERR,"Cannot redefine ");
                WriteString(theEnv,STDERR,constructName);
-               WriteString(theEnv,STDERR," ");
+               WriteString(theEnv,STDERR," '");
                WriteString(theEnv,STDERR,name->contents);
-               WriteString(theEnv,STDERR," while it is in use.\n");
+               WriteString(theEnv,STDERR,"' while it is in use.\n");
                ReleaseLexeme(theEnv,name);
                return NULL;
               }

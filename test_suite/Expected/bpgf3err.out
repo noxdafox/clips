@@ -3,7 +3,7 @@ CLIPS> (batch "bpgf3err.bat")
 TRUE
 CLIPS> (defgeneric ())
 
-[CSTRCPSR2] Missing name for defgeneric construct
+[CSTRCPSR2] Missing name for defgeneric construct.
 
 ERROR:
 (defgeneric (
@@ -19,7 +19,7 @@ ERROR:
    (fact ?x))
 CLIPS> (defmethod foo () (+ ?a 2))
 
-[PRCCODE3] Undefined variable a referenced in method.
+[PRCCODE3] Undefined variable ?a referenced in method.
 
 ERROR:
 (defmethod MAIN::foo
@@ -40,7 +40,7 @@ ERROR:
    (?a ?a
 CLIPS> (assert (fact 1 (fact 2)))
 
-[EXPRNPSR3] Missing function declaration for fact.
+[EXPRNPSR3] Missing function declaration for 'fact'.
 CLIPS> (assert ())
 
 [PRNTUTIL2] Syntax Error:  Check appropriate syntax for first field of a RHS pattern.
@@ -49,10 +49,10 @@ CLIPS> (assert)
 [PRNTUTIL2] Syntax Error:  Check appropriate syntax for assert command.
 CLIPS> (+ (~ 3 4) 4)
 
-[EXPRNPSR1] A function name must be a symbol
+[EXPRNPSR1] A function name must be a symbol.
 CLIPS> (xyz)
 
-[EXPRNPSR3] Missing function declaration for xyz.
+[EXPRNPSR3] Missing function declaration for 'xyz'.
 CLIPS> (<= ~ 4)
 
 [EXPRNPSR2] Expected a constant, variable, or expression.
@@ -123,7 +123,7 @@ ERROR:
    =>)
 CLIPS> (defrule error => (assert (a ?f)))
 
-[PRCCODE3] Undefined variable f referenced in RHS of defrule.
+[PRCCODE3] Undefined variable ?f referenced in RHS of defrule.
 
 ERROR:
 (defrule MAIN::error
@@ -131,7 +131,7 @@ ERROR:
    (assert (a ?f)))
 CLIPS> (defrule error => (retract ?f))
 
-[PRCCODE3] Undefined variable f referenced in RHS of defrule.
+[PRCCODE3] Undefined variable ?f referenced in RHS of defrule.
 
 ERROR:
 (defrule MAIN::error
@@ -203,7 +203,7 @@ ERROR:
    (field x (default ~
 CLIPS> (deftemplate error (field x (default)))
 
-[DEFAULT1] The default value for a single field slot must be a single field value
+[DEFAULT1] The default value for a single field slot must be a single field value.
 
 ERROR:
 (deftemplate MAIN::error
@@ -211,13 +211,13 @@ ERROR:
 CLIPS> (deftemplate example (field x))
 CLIPS> (assert (example (x)))
 
-[TMPLTDEF2] The single field slot x can only contain a single field value.
+[TMPLTDEF2] The single field slot 'x' can only contain a single field value.
 CLIPS> (assert (example (x a b)))
 
-[TMPLTDEF2] The single field slot x can only contain a single field value.
+[TMPLTDEF2] The single field slot 'x' can only contain a single field value.
 CLIPS> (defrule error ?f <- (example) => (modify ?f (x)))
 
-[TMPLTDEF2] The single field slot x can only contain a single field value.
+[TMPLTDEF2] The single field slot 'x' can only contain a single field value.
 
 ERROR:
 (defrule MAIN::error
@@ -226,7 +226,7 @@ ERROR:
    (modify ?f (x)))
 CLIPS> (defrule error ?f <- (example) => (modify ?f (x 3 4)))
 
-[TMPLTDEF2] The single field slot x can only contain a single field value.
+[TMPLTDEF2] The single field slot 'x' can only contain a single field value.
 
 ERROR:
 (defrule MAIN::error
@@ -236,11 +236,11 @@ ERROR:
 CLIPS> (deftemplate example (field x))
 CLIPS> (assert (example (x =(create$ a b c))))
 
-[TMPLTDEF2] The single field slot x can only contain a single field value.
+[TMPLTDEF2] The single field slot 'x' can only contain a single field value.
 CLIPS> (deftemplate example (field x))
 CLIPS> (assert (example (x a) (x b)))
 
-[PRNTUTIL5] The slot x has already been parsed.
+[PRNTUTIL5] The slot 'x' has already been parsed.
 CLIPS> (deftemplate example (field x))
 CLIPS> (defrule error (example|other (x 3)) =>)
 
@@ -252,7 +252,7 @@ ERROR:
 CLIPS> (deftemplate example (field x))
 CLIPS> (defrule error (example (z 3)) =>)
 
-[TMPLTDEF1] Invalid slot z not defined in corresponding deftemplate example.
+[TMPLTDEF1] Invalid slot 'z' not defined in corresponding deftemplate 'example'.
 
 ERROR:
 (defrule MAIN::error
@@ -263,8 +263,7 @@ CLIPS> (defrule error => (modify 1 (x 3)))
 CLIPS> (deftemplate example (field x (type INTEGER)))
 CLIPS> (defrule testit (example (x a)) =>)
 
-[CSTRNCHK1] A literal restriction value found in CE #1
-does not match the allowed types for slot x.
+[CSTRNCHK1] A literal restriction value found in CE #1 does not match the allowed types for slot 'x'.
 
 ERROR:
 (defrule MAIN::testit
@@ -273,13 +272,11 @@ ERROR:
 CLIPS> (deftemplate example (field x (type INTEGER)))
 CLIPS> (assert (example (x =(float 3))))
 
-[CSTRNCHK1] The function return value found in the assert command
-does not match the allowed types for slot x.
+[CSTRNCHK1] The function return value found in the 'assert' command does not match the allowed types for slot 'x'.
 CLIPS> (deftemplate example (field x (allowed-integers 1 2 3)))
 CLIPS> (defrule testit (example (x 4)) =>)
 
-[CSTRNCHK1] A literal restriction value found in CE #1
-does not match the allowed values for slot x.
+[CSTRNCHK1] A literal restriction value found in CE #1 does not match the allowed values for slot 'x'.
 
 ERROR:
 (defrule MAIN::testit
@@ -288,12 +285,11 @@ ERROR:
 CLIPS> (deftemplate example (field x (range 1 3)))
 CLIPS> (assert (example (x 4)))
 
-[CSTRNCHK1] A literal slot value found in the assert command
-does not fall in the allowed range 1 to 3 for slot x.
+[CSTRNCHK1] A literal slot value found in the 'assert' command does not fall in the allowed range 1 to 3 for slot 'x'.
 CLIPS> (deftemplate example1 (field x (type SYMBOL) 
                                       (allowed-integers 1 2 3)))
 
-[CSTRNPSR1] The type attribute conflicts with the allowed-integers/numbers attribute.
+[CSTRNPSR1] The 'type' attribute conflicts with the 'allowed-integers/numbers' attribute.
 
 ERROR:
 (deftemplate MAIN::example1
@@ -301,8 +297,7 @@ ERROR:
 CLIPS> (deftemplate example2 (field x (range 1 3)
                                       (default 5)))
 
-[CSTRNCHK1] An expression found in the default attribute
-does not fall in the allowed range 1 to 3 for slot x.
+[CSTRNCHK1] An expression found in the default attribute does not fall in the allowed range 1 to 3 for slot 'x'.
 
 ERROR:
 (deftemplate MAIN::example2
@@ -310,7 +305,7 @@ ERROR:
 CLIPS> (deftemplate example3 (field x (type SYMBOL)
                                       (range 1 5)))
 
-[CSTRNPSR1] The type attribute conflicts with the range attribute.
+[CSTRNPSR1] The 'type' attribute conflicts with the 'range' attribute.
 
 ERROR:
 (deftemplate MAIN::example3
@@ -319,14 +314,12 @@ CLIPS> (deftemplate example (field x))
 CLIPS> (defglobal ?*x* = (create$ a b c))
 CLIPS> (assert (example (x ?*x*)))
 
-[TMPLTFUN2] Attempted to assert a multifield value 
-into the single field slot x of deftemplate example.
+[TMPLTFUN1] Attempted to assert a multifield value into the single field slot 'x' of deftemplate 'example'.
 FALSE
 CLIPS> (deftemplate example (field x (allowed-values a b 2 3) 
                                      (allowed-integers 4 5 6)))
 
-[CSTRNPSR3] The allowed-integers attribute cannot be used
-in conjunction with the allowed-values attribute.
+[CSTRNPSR3] The 'allowed-integers' attribute cannot be used in conjunction with the 'allowed-values' attribute.
 
 ERROR:
 (deftemplate MAIN::example
@@ -334,8 +327,7 @@ ERROR:
 CLIPS> (deftemplate example (field x (allowed-integers 1 2 3) 
                                      (range 4 6)))
 
-[CSTRNPSR3] The range attribute cannot be used
-in conjunction with the allowed-integers attribute.
+[CSTRNPSR3] The 'range' attribute cannot be used in conjunction with the 'allowed-integers' attribute.
 
 ERROR:
 (deftemplate MAIN::example
@@ -356,7 +348,7 @@ ERROR:
    (field x (type INTEGERFLOAT 
 CLIPS> (deftemplate example (field x (allowed-integers 3.0)))
 
-[CSTRNPSR4] Value does not match the expected type for the allowed-integers attribute
+[CSTRNPSR4] Value does not match the expected type for the 'allowed-integers' attribute.
 
 ERROR:
 (deftemplate MAIN::example
@@ -410,7 +402,7 @@ ERROR:
    (?a abc
 CLIPS> (deffunction foo () (build "(deffunction foo ())"))
 CLIPS> (foo)
-[DFNXPSR4] Deffunction foo may not be redefined while it is executing.
+[DFFNXPSR4] Deffunction 'foo' may not be redefined while it is executing.
 
 ERROR:
 (deffunction MAIN::foo
@@ -437,7 +429,7 @@ ERROR:
    (
 CLIPS> (defgeneric)
 
-[CSTRCPSR2] Missing name for defgeneric construct
+[CSTRCPSR2] Missing name for defgeneric construct.
 
 ERROR:
 (defgeneric )
@@ -492,7 +484,7 @@ ERROR:
    ((?a INTEGER INTEGER
 CLIPS> (clear)
 CLIPS> (defmethod foo ((?a INTEGER NUMBER)))
-[GENRCPSR15] INTEGER class is redundant.
+[GENRCPSR15] Class 'INTEGER' is redundant.
 
 ERROR:
 (defmethod MAIN::foo
@@ -522,8 +514,7 @@ CLIPS> (clear)
 CLIPS> (defclass A (is-a USER))
 CLIPS> (defmethod foo ((?a A LEXEME)))
 CLIPS> (defclass A (is-a OBJECT)))
-[CLASSPSR3] A class cannot be redefined while
-    outstanding references to it still exist.
+[CLASSPSR3] Class 'A' cannot be redefined while outstanding references to it still exist.
 
 ERROR:
 (defclass MAIN::A
@@ -569,7 +560,7 @@ ERROR:
    (is-a C)
 CLIPS> (clear)
 CLIPS> (defclass A (is-a))
-[INHERPSR4] Must have at least one superclass.
+[INHERPSR4] A class must have at least one superclass.
 
 ERROR:
 (defclass MAIN::A
@@ -577,7 +568,7 @@ ERROR:
 CLIPS> (defclass A (is-a USER)
   (role abstract)
   (role concrete))
-[CLASSPSR4] Class role already declared.
+[CLASSPSR4] The 'role' class attribute is already specified.
 
 ERROR:
 (defclass MAIN::A
@@ -587,7 +578,7 @@ ERROR:
 CLIPS> (defclass A (is-a USER)
   (slot foo (default 1)
             (default 2)))
-[CLSLTPSR2] default facet already specified.
+[CLSLTPSR2] The 'default' facet for slot 'foo' is already specified.
 
 ERROR:
 (defclass MAIN::A
@@ -598,7 +589,7 @@ ERROR:
 CLIPS> (defclass A (is-a USER)
   (slot foo (access read-only)
             (access initialize-only)))
-[CLSLTPSR2] access facet already specified.
+[CLSLTPSR2] The 'access' facet for slot 'foo' is already specified.
 
 ERROR:
 (defclass MAIN::A
@@ -608,7 +599,7 @@ ERROR:
       (access
 CLIPS> (defclass A (is-a USER)
   (slot foo (default 1 2 3 4)))
-[INSFUN7] (1 2 3 4) illegal for single-field slot foo found in slot default value.
+[INSFUN7] The value (1 2 3 4) is illegal for single-field slot 'foo' found in the 'default' facet.
 
 ERROR:
 (defclass MAIN::A
@@ -618,7 +609,7 @@ ERROR:
 CLIPS> (defclass A (is-a USER)
   (slot foo)
   (slot foo))
-[CLSLTPSR1] Duplicate slots not allowed.
+[CLSLTPSR1] The 'foo' slot for class 'A' is already specified.
 
 ERROR:
 (defclass MAIN::A
@@ -644,8 +635,7 @@ CLIPS> (make-instance a of A)
 CLIPS> (defmessage-handler A build-new ()
   (build "(defmessage-handler A new ())"))
 CLIPS> (send [a] build-new)
-[MSGPSR2] Cannot (re)define message-handlers during execution of 
-  other message-handlers for the same class.
+[MSGPSR2] Cannot (re)define message-handlers during execution of other message-handlers for the same class.
 
 ERROR:
 (defmessage-handler MAIN::A
@@ -691,18 +681,18 @@ CLIPS> (definstances A-objects
     (foo (build "(definstances A-objects (b of A))"))))
 CLIPS> (reset)
 
-[CSTRCPSR4] Cannot redefine definstances A-objects while it is in use.
+[CSTRCPSR4] Cannot redefine definstances 'A-objects' while it is in use.
 
 ERROR:
 (definstances MAIN::A-objects
 CLIPS> (any-instancep ((?a OBJECT) (?a OBJECT)) TRUE)
-[INSQYPSR1] Duplicate instance member variable name in function any-instancep.
+[INSQYPSR1] Duplicate instance member variable name in function 'any-instancep'.
 CLIPS> (any-instancep ((?a OBJECT) (?b OBJECT)) 
   (bind ?c 1))
-[INSQYPSR2] Binds are not allowed in instance-set query in function any-instancep.
+[INSQYPSR2] Binds are not allowed in instance-set query in function 'any-instancep'.
 CLIPS> (do-for-all-instances ((?a USER)) 
   (if (slot-existp ?a age) then
      (> ?a:age 30))
   (bind ?a (send ?a get-brother)))
-[INSQYPSR3] Cannot rebind instance-set member variable a in function do-for-all-instances.
+[INSQYPSR3] Cannot rebind instance-set member variable ?a in function 'do-for-all-instances'.
 CLIPS> (dribble-off)

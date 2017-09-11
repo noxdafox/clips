@@ -301,7 +301,7 @@ void MatchesCommand(
    rulePtr = FindDefrule(theEnv,ruleName);
    if (rulePtr == NULL)
      {
-      CantFindItemErrorMessage(theEnv,"defrule",ruleName);
+      CantFindItemErrorMessage(theEnv,"defrule",ruleName,true);
       returnValue->lexemeValue = FalseSymbol(theEnv);
       return;
      }
@@ -1001,7 +1001,7 @@ void JoinActivityCommand(
    rulePtr = FindDefrule(theEnv,ruleName);
    if (rulePtr == NULL)
      {
-      CantFindItemErrorMessage(theEnv,"defrule",ruleName);
+      CantFindItemErrorMessage(theEnv,"defrule",ruleName,true);
       returnValue->lexemeValue = FalseSymbol(theEnv);
       return;
      }

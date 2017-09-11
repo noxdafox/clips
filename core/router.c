@@ -700,9 +700,9 @@ void UnrecognizedRouterMessage(
   const char *logicalName)
   {
    PrintErrorID(theEnv,"ROUTER",1,false);
-   WriteString(theEnv,STDERR,"Logical name ");
+   WriteString(theEnv,STDERR,"Logical name '");
    WriteString(theEnv,STDERR,logicalName);
-   WriteString(theEnv,STDERR," was not recognized by any routers\n");
+   WriteString(theEnv,STDERR,"' was not recognized by any routers.\n");
   }
 
 /*****************************************/

@@ -3,15 +3,15 @@ CLIPS> (batch "focuscmd.bat")
 TRUE
 CLIPS> (clear)
 CLIPS> (get-focus 6)
-[ARGACCES4] Function get-focus expected exactly 0 argument(s)
+[ARGACCES1] Function 'get-focus' expected exactly 0 arguments.
 CLIPS> (get-focus-stack 6)
-[ARGACCES4] Function get-focus-stack expected exactly 0 argument(s)
+[ARGACCES1] Function 'get-focus-stack' expected exactly 0 arguments.
 CLIPS> (pop-focus 6)
-[ARGACCES4] Function pop-focus expected exactly 0 argument(s)
+[ARGACCES1] Function 'pop-focus' expected exactly 0 arguments.
 CLIPS> (list-focus-stack 6)
-[ARGACCES4] Function list-focus-stack expected exactly 0 argument(s)
+[ARGACCES1] Function 'list-focus-stack' expected exactly 0 arguments.
 CLIPS> (clear-focus-stack 6)
-[ARGACCES4] Function clear-focus-stack expected exactly 0 argument(s)
+[ARGACCES1] Function 'clear-focus-stack' expected exactly 0 arguments.
 CLIPS> (clear)
 CLIPS> (get-focus)
 MAIN
@@ -83,16 +83,16 @@ CLIPS> (get-focus-stack)
 ()
 CLIPS> (list-focus-stack)
 CLIPS> (focus 6)
-[ARGACCES5] Function focus expected argument #1 to be of type symbol
+[ARGACCES2] Function 'focus' expected argument #1 to be of type symbol.
 CLIPS> (focus "A")
-[ARGACCES5] Function focus expected argument #1 to be of type symbol
+[ARGACCES2] Function 'focus' expected argument #1 to be of type symbol.
 CLIPS> (focus A 6)
-[ARGACCES5] Function focus expected argument #2 to be of type symbol
+[ARGACCES2] Function 'focus' expected argument #2 to be of type symbol.
 CLIPS> (focus C)
-[PRNTUTIL1] Unable to find defmodule C.
+[PRNTUTIL1] Unable to find defmodule 'C'.
 FALSE
 CLIPS> (focus)
-[ARGACCES4] Function focus expected at least 1 argument(s)
+[ARGACCES1] Function 'focus' expected at least 1 argument.
 CLIPS> (list-focus-stack)
 CLIPS> (focus A)
 TRUE
@@ -111,13 +111,13 @@ CLIPS> (clear)
 CLIPS> (defmodule A)
 CLIPS> (defmodule B)
 CLIPS> (watch focus 6)
-[ARGACCES4] Function watch expected exactly 1 argument(s)
+[ARGACCES1] Function 'watch' expected exactly 1 argument.
 CLIPS> (unwatch focus 6)
-[ARGACCES4] Function unwatch expected exactly 1 argument(s)
+[ARGACCES1] Function 'unwatch' expected exactly 1 argument.
 CLIPS> (focus A B)
 TRUE
 CLIPS> (focus B C)
-[PRNTUTIL1] Unable to find defmodule C.
+[PRNTUTIL1] Unable to find defmodule 'C'.
 FALSE
 CLIPS> (list-focus-stack)
 A

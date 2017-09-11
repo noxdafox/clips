@@ -933,9 +933,9 @@ static bool RemoveAllDeffunctions(
          if (dtmp->busy > 0)
            {
             PrintWarningID(theEnv,"DFFNXFUN",1,false);
-            WriteString(theEnv,STDWRN,"Deffunction ");
+            WriteString(theEnv,STDWRN,"Deffunction '");
             WriteString(theEnv,STDWRN,DeffunctionName(dtmp));
-            WriteString(theEnv,STDWRN," only partially deleted due to usage by other constructs.\n");
+            WriteString(theEnv,STDWRN,"' only partially deleted due to usage by other constructs.\n");
             SetDeffunctionPPForm(theEnv,dtmp,NULL);
             success = false;
            }

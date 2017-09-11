@@ -395,7 +395,7 @@ unsigned FindDefmessageHandler(
    int theIndex;
    Environment *theEnv = theDefclass->header.env;
 
-   htype = HandlerType(theEnv,"handler-lookup",htypestr);
+   htype = HandlerType(theEnv,"handler-lookup",false,htypestr);
    if (htype == MERROR)
      { return 0; }
 
@@ -606,7 +606,7 @@ void PPDefmessageHandlerCommand(
      }
    else
      tname = MessageHandlerData(theEnv)->hndquals[MPRIMARY];
-   mtype = HandlerType(theEnv,"ppdefmessage-handler",tname);
+   mtype = HandlerType(theEnv,"ppdefmessage-handler",true,tname);
    if (mtype == MERROR)
      {
       SetEvaluationError(theEnv,true);
@@ -618,13 +618,13 @@ void PPDefmessageHandlerCommand(
        ((hnd = FindHandlerByAddress(cls,msym,mtype)) == NULL))
      {
       PrintErrorID(theEnv,"MSGCOM",2,false);
-      WriteString(theEnv,STDERR,"Unable to find message-handler ");
+      WriteString(theEnv,STDERR,"Unable to find message-handler '");
       WriteString(theEnv,STDERR,msym->contents);
-      WriteString(theEnv,STDERR," ");
+      WriteString(theEnv,STDERR,"' ");
       WriteString(theEnv,STDERR,tname);
-      WriteString(theEnv,STDERR," for class ");
+      WriteString(theEnv,STDERR," for class '");
       WriteString(theEnv,STDERR,csym->contents);
-      WriteString(theEnv,STDERR," in function ppdefmessage-handler.\n");
+      WriteString(theEnv,STDERR,"' in function 'ppdefmessage-handler'.\n");
       SetEvaluationError(theEnv,true);
       return;
      }
@@ -816,7 +816,7 @@ unsigned long DisplayHandlersInLinks(
    if ((theIndex + 1) < plinks->classCount)
      cnt += DisplayHandlersInLinks(theEnv,logName,plinks,theIndex + 1);
    for (i = 0 ; i < plinks->classArray[theIndex]->handlerCount ; i++)
-     PrintHandler(theEnv,logName,&plinks->classArray[theIndex]->handlers[i],true);
+     PrintHandler(theEnv,logName,&plinks->classArray[theIndex]->handlers[i],false,true);
    return cnt;
   }
 
@@ -883,7 +883,7 @@ static bool WildDeleteHandler(
      msym = CreateSymbol(theEnv,"*");
    if (tname != NULL)
      {
-      mtype = (int) HandlerType(theEnv,"undefmessage-handler",tname);
+      mtype = (int) HandlerType(theEnv,"undefmessage-handler",true,tname);
       if (mtype == MERROR)
         return false;
      }
@@ -1036,13 +1036,13 @@ static bool DefmessageHandlerWatchSupport(
         return false;
       if (tmpData.header->type != SYMBOL_TYPE)
         {
-         ExpectedTypeError1(theEnv,funcName,argIndex,"class name");
+         ExpectedTypeError1(theEnv,funcName,argIndex,"'class name'");
          return false;
         }
       theClass = LookupDefclassByMdlOrScope(theEnv,tmpData.lexemeValue->contents);
       if (theClass == NULL)
         {
-         ExpectedTypeError1(theEnv,funcName,argIndex,"class name");
+         ExpectedTypeError1(theEnv,funcName,argIndex,"'class name'");
          return false;
         }
       if (GetNextArgument(argExprs) != NULL)
@@ -1053,7 +1053,7 @@ static bool DefmessageHandlerWatchSupport(
            return false;
          if (tmpData.header->type != SYMBOL_TYPE)
            {
-            ExpectedTypeError1(theEnv,funcName,argIndex,"handler name");
+            ExpectedTypeError1(theEnv,funcName,argIndex,"'handler name'");
             return false;
            }
          theHandlerStr = tmpData.lexemeValue->contents;
@@ -1065,10 +1065,10 @@ static bool DefmessageHandlerWatchSupport(
               return false;
             if (tmpData.header->type != SYMBOL_TYPE)
               {
-               ExpectedTypeError1(theEnv,funcName,argIndex,"handler type");
+               ExpectedTypeError1(theEnv,funcName,argIndex,"'handler type'");
                return false;
               }
-            if ((theType = (int) HandlerType(theEnv,funcName,tmpData.lexemeValue->contents)) == MERROR)
+            if ((theType = (int) HandlerType(theEnv,funcName,true,tmpData.lexemeValue->contents)) == MERROR)
               return false;
            }
          else

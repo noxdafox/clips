@@ -522,7 +522,7 @@ static bool ParseImportSpec(
 
    if ((theModule = FindDefmodule(theEnv,theToken->lexemeValue->contents)) == NULL)
      {
-      CantFindItemErrorMessage(theEnv,"defmodule",theToken->lexemeValue->contents);
+      CantFindItemErrorMessage(theEnv,"defmodule",theToken->lexemeValue->contents,true);
       return true;
      }
 
@@ -1044,9 +1044,9 @@ static void NotExportedErrorMessage(
   const char *theName)
   {
    PrintErrorID(theEnv,"MODULPSR",1,true);
-   WriteString(theEnv,STDERR,"Module ");
+   WriteString(theEnv,STDERR,"Module '");
    WriteString(theEnv,STDERR,theModule);
-   WriteString(theEnv,STDERR," does not export ");
+   WriteString(theEnv,STDERR,"' does not export ");
 
    if (theConstruct == NULL) WriteString(theEnv,STDERR,"any constructs");
    else if (theName == NULL)
@@ -1059,8 +1059,9 @@ static void NotExportedErrorMessage(
      {
       WriteString(theEnv,STDERR,"the ");
       WriteString(theEnv,STDERR,theConstruct);
-      WriteString(theEnv,STDERR," ");
+      WriteString(theEnv,STDERR," '");
       WriteString(theEnv,STDERR,theName);
+      WriteString(theEnv,STDERR,"'");
      }
 
    WriteString(theEnv,STDERR,".\n");

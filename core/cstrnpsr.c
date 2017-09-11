@@ -214,11 +214,11 @@ void AttributeConflictErrorMessage(
   const char *attribute2)
   {
    PrintErrorID(theEnv,"CSTRNPSR",1,true);
-   WriteString(theEnv,STDERR,"The ");
+   WriteString(theEnv,STDERR,"The '");
    WriteString(theEnv,STDERR,attribute1);
-   WriteString(theEnv,STDERR," attribute conflicts with the ");
+   WriteString(theEnv,STDERR,"' attribute conflicts with the '");
    WriteString(theEnv,STDERR,attribute2);
-   WriteString(theEnv,STDERR," attribute.\n");
+   WriteString(theEnv,STDERR,"' attribute.\n");
   }
 
 #if (! RUN_TIME) && (! BLOAD_ONLY)
@@ -290,7 +290,7 @@ bool ParseStandardConstraint(
 
    if (GetAttributeParseValue(constraintName,parsedConstraints))
      {
-      AlreadyParsedErrorMessage(theEnv,constraintName," attribute");
+      AlreadyParsedErrorMessage(theEnv,"attribute ",constraintName);
       return false;
      }
 
@@ -750,9 +750,9 @@ static bool ParseAllowedValuesAttribute(
       if (error)
         {
          PrintErrorID(theEnv,"CSTRNPSR",4,true);
-         WriteString(theEnv,STDERR,"Value does not match the expected type for the ");
+         WriteString(theEnv,STDERR,"Value does not match the expected type for the '");
          WriteString(theEnv,STDERR,constraintName);
-         WriteString(theEnv,STDERR," attribute\n");
+         WriteString(theEnv,STDERR,"' attribute.\n");
          return false;
         }
 
@@ -881,12 +881,12 @@ static void NoConjunctiveUseError(
   const char *attribute2)
   {
    PrintErrorID(theEnv,"CSTRNPSR",3,true);
-   WriteString(theEnv,STDERR,"The ");
+   WriteString(theEnv,STDERR,"The '");
    WriteString(theEnv,STDERR,attribute1);
-   WriteString(theEnv,STDERR," attribute cannot be used\n");
-   WriteString(theEnv,STDERR,"in conjunction with the ");
+   WriteString(theEnv,STDERR,"' attribute cannot be used ");
+   WriteString(theEnv,STDERR,"in conjunction with the '");
    WriteString(theEnv,STDERR,attribute2);
-   WriteString(theEnv,STDERR," attribute.\n");
+   WriteString(theEnv,STDERR,"' attribute.\n");
   }
 
 /**************************************************/
@@ -1074,7 +1074,7 @@ static bool ParseRangeCardinalityAttribute(
        (multipleValuesAllowed == false))
      {
       PrintErrorID(theEnv,"CSTRNPSR",5,true);
-      WriteString(theEnv,STDERR,"The cardinality attribute ");
+      WriteString(theEnv,STDERR,"The 'cardinality' attribute ");
       WriteString(theEnv,STDERR,"can only be used with multifield slots.\n");
       return false;
      }
@@ -1119,7 +1119,7 @@ static bool ParseRangeCardinalityAttribute(
          if (inputToken.integerValue->contents < 0LL)
            {
             PrintErrorID(theEnv,"CSTRNPSR",6,true);
-            WriteString(theEnv,STDERR,"Minimum cardinality value must be greater than or equal to zero\n");
+            WriteString(theEnv,STDERR,"Minimum 'cardinality' value must be greater than or equal to zero.\n");
             return false;
            }
 
@@ -1198,8 +1198,8 @@ static bool ParseRangeCardinalityAttribute(
                          constraints->maxValue->value) == GREATER_THAN)
         {
          PrintErrorID(theEnv,"CSTRNPSR",2,true);
-         WriteString(theEnv,STDERR,"Minimum range value must be less than\n");
-         WriteString(theEnv,STDERR,"or equal to the maximum range value\n");
+         WriteString(theEnv,STDERR,"Minimum 'range' value must be less than ");
+         WriteString(theEnv,STDERR,"or equal to the maximum 'range' value.\n");
          return false;
         }
      }
@@ -1211,8 +1211,8 @@ static bool ParseRangeCardinalityAttribute(
                          constraints->maxFields->value) == GREATER_THAN)
         {
          PrintErrorID(theEnv,"CSTRNPSR",2,true);
-         WriteString(theEnv,STDERR,"Minimum cardinality value must be less than\n");
-         WriteString(theEnv,STDERR,"or equal to the maximum cardinality value\n");
+         WriteString(theEnv,STDERR,"Minimum 'cardinality' value must be less than ");
+         WriteString(theEnv,STDERR,"or equal to the maximum 'cardinality' value.\n");
          return false;
         }
      }

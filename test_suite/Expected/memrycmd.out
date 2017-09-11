@@ -3,21 +3,21 @@ CLIPS> (batch "memrycmd.bat")
 TRUE
 CLIPS> (clear)
 CLIPS> (mem-used 10)
-[ARGACCES4] Function mem-used expected exactly 0 argument(s)
+[ARGACCES1] Function 'mem-used' expected exactly 0 arguments.
 CLIPS> (progn (mem-used) TRUE)
 TRUE
 CLIPS> (mem-requests 20)
-[ARGACCES4] Function mem-requests expected exactly 0 argument(s)
+[ARGACCES1] Function 'mem-requests' expected exactly 0 arguments.
 CLIPS> (progn (mem-requests) TRUE)
 TRUE
 CLIPS> (release-mem 10)
-[ARGACCES4] Function release-mem expected exactly 0 argument(s)
+[ARGACCES1] Function 'release-mem' expected exactly 0 arguments.
 CLIPS> (progn (release-mem) TRUE)
 TRUE
 CLIPS> (conserve-mem)
-[ARGACCES4] Function conserve-mem expected exactly 1 argument(s)
+[ARGACCES1] Function 'conserve-mem' expected exactly 1 argument.
 CLIPS> (conserve-mem on off)
-[ARGACCES4] Function conserve-mem expected exactly 1 argument(s)
+[ARGACCES1] Function 'conserve-mem' expected exactly 1 argument.
 CLIPS> (conserve-mem off)
 CLIPS> (defrule foo =>)
 CLIPS> (deftemplate foo)

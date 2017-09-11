@@ -47,9 +47,9 @@ CLIPS> (undefgeneric *)
 CLIPS> (list-defgenerics)
 CLIPS> (list-defmethods)
 CLIPS> (call-next-method 0)
-[ARGACCES4] Function call-next-method expected exactly 0 argument(s)
+[ARGACCES1] Function 'call-next-method' expected exactly 0 arguments.
 CLIPS> (next-methodp 0)
-[ARGACCES4] Function next-methodp expected exactly 0 argument(s)
+[ARGACCES1] Function 'next-methodp' expected exactly 0 arguments.
 CLIPS> (preview-generic)
-[ARGACCES4] Function preview-generic expected at least 1 argument(s)
+[ARGACCES1] Function 'preview-generic' expected at least 1 argument.
 CLIPS> (dribble-off)

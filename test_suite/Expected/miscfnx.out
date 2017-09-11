@@ -3,11 +3,11 @@ CLIPS> (batch "miscfnx.bat")
 TRUE
 CLIPS> (clear)                            ; 10.9.1
 CLIPS> (fact-index)                       ; 10.9.1
-[ARGACCES4] Function fact-index expected exactly 1 argument(s)
+[ARGACCES1] Function 'fact-index' expected exactly 1 argument.
 CLIPS> (fact-index a)                     ; 10.9.1
-[ARGACCES5] Function fact-index expected argument #1 to be of type fact address
+[ARGACCES2] Function 'fact-index' expected argument #1 to be of type fact address.
 CLIPS> (fact-index 1)                     ; 10.9.1
-[ARGACCES5] Function fact-index expected argument #1 to be of type fact address
+[ARGACCES2] Function 'fact-index' expected argument #1 to be of type fact address.
 CLIPS> (defglobal ?*gfi* = 1)             ; 10.9.1
 CLIPS> (defrule foo
   ?f <- (the item)
@@ -23,7 +23,7 @@ CLIPS> (run)                              ; 10.9.1
 CLIPS> (fact-index ?*gfi*)                ; 10.9.1
 4
 CLIPS> (fact-index ?*gfi* ?*gfi*)         ; 10.9.1
-[ARGACCES4] Function fact-index expected exactly 1 argument(s)
+[ARGACCES1] Function 'fact-index' expected exactly 1 argument.
 CLIPS> (retract ?*gfi*)                   ; 10.9.1
 CLIPS> (fact-index ?*gfi*)                ; 10.9.1
 -1
@@ -31,13 +31,13 @@ CLIPS> (clear)                            ; 10.9.1
 CLIPS> (setgen 10)                        ; 10.9.4
 10
 CLIPS> (setgen)                           ; 10.9.4
-[ARGACCES4] Function setgen expected exactly 1 argument(s)
+[ARGACCES1] Function 'setgen' expected exactly 1 argument.
 CLIPS> (setgen 10 20)                     ; 10.9.4
-[ARGACCES4] Function setgen expected exactly 1 argument(s)
+[ARGACCES1] Function 'setgen' expected exactly 1 argument.
 CLIPS> (setgen a)                         ; 10.9.4
-[ARGACCES5] Function setgen expected argument #1 to be of type integer
+[ARGACCES2] Function 'setgen' expected argument #1 to be of type integer.
 CLIPS> (setgen 30.3)                      ; 10.9.4
-[ARGACCES5] Function setgen expected argument #1 to be of type integer
+[ARGACCES2] Function 'setgen' expected argument #1 to be of type integer.
 CLIPS> (setgen 20)                        ; 10.9.4  
 20
 CLIPS> (assert (gen20 gen21 gen22))       ; 10.9.4
@@ -45,7 +45,7 @@ CLIPS> (assert (gen20 gen21 gen22))       ; 10.9.4
 CLIPS> (gensym)                           ; 10.9.2
 gen20
 CLIPS> (gensym a)                         ; 10.9.2
-[ARGACCES4] Function gensym expected exactly 0 argument(s)
+[ARGACCES1] Function 'gensym' expected exactly 0 arguments.
 CLIPS> (gensym)                           ; 10.9.2
 gen21
 CLIPS> (gensym*)                          ; 10.9.3
@@ -60,13 +60,13 @@ CLIPS> (setgen 20)                        ; 10.9.3
 CLIPS> (gensym*)                          ; 10.9.3
 gen20
 CLIPS> (seed)                             ; 10.9.6
-[ARGACCES4] Function seed expected exactly 1 argument(s)
+[ARGACCES1] Function 'seed' expected exactly 1 argument.
 CLIPS> (seed a)                           ; 10.9.6
-[ARGACCES5] Function seed expected argument #1 to be of type integer
+[ARGACCES2] Function 'seed' expected argument #1 to be of type integer.
 CLIPS> (seed 20 a)                        ; 10.9.6
-[ARGACCES4] Function seed expected exactly 1 argument(s)
+[ARGACCES1] Function 'seed' expected exactly 1 argument.
 CLIPS> (seed 30.5)                        ; 10.9.6
-[ARGACCES5] Function seed expected argument #1 to be of type integer
+[ARGACCES2] Function 'seed' expected argument #1 to be of type integer.
 CLIPS> (seed 100)                         ; 10.9.6
 CLIPS> (defglobal ?*r1* = 0
            ?*r2* = 0
@@ -135,7 +135,7 @@ TRUE
 CLIPS> (<= (time) (time))                 ; 10.9.9
 TRUE
 CLIPS> (time a)                           ; 10.9.9
-[ARGACCES4] Function time expected exactly 0 argument(s)
+[ARGACCES1] Function 'time' expected exactly 0 arguments.
 CLIPS> (progn)                            ; 10.9.10
 FALSE
 CLIPS> (progn x)                          ; 10.9.10
@@ -225,12 +225,12 @@ CLIPS> (get-function-restrictions +)
 CLIPS> (get-function-restrictions make-instance)
 "0**"
 CLIPS> (get-function-restrictions)
-[ARGACCES4] Function get-function-restrictions expected exactly 1 argument(s)
+[ARGACCES1] Function 'get-function-restrictions' expected exactly 1 argument.
 CLIPS> (get-function-restrictions bogus)
-[PRNTUTIL1] Unable to find function bogus.
+[PRNTUTIL1] Unable to find function 'bogus'.
 ""
 CLIPS> (progn (bind ?x 1) (bind ?x) ?x)
-[EVALUATN1] Variable x is unbound
+[EVALUATN1] Variable ?x is unbound.
 FALSE
 CLIPS> (defglobal ?*x* = (pi))
 CLIPS> (watch globals)

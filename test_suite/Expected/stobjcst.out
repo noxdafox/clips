@@ -3,8 +3,7 @@ CLIPS> (batch "stobjcst.bat")
 TRUE
 CLIPS> (load "stobjcst.clp")
 ##*
-[RULECSTR1] stobjcst.clp, Line 12: Variable ?x in CE #1 slot y
-has constraint conflicts which make the pattern unmatchable.
+[RULECSTR1] stobjcst.clp, Line 12: Variable ?x in CE #1 slot 'y' has constraint conflicts which make the pattern unmatchable.
 
 ERROR:
 (defrule MAIN::error-1
@@ -13,8 +12,7 @@ ERROR:
            (y ?x))
    =>)
 *
-[RULECSTR1] stobjcst.clp, Line 17: Variable ?x in CE #2 slot y
-has constraint conflicts which make the pattern unmatchable.
+[RULECSTR1] stobjcst.clp, Line 17: Variable ?x in CE #2 slot 'y' has constraint conflicts which make the pattern unmatchable.
 
 ERROR:
 (defrule MAIN::error-2
@@ -24,8 +22,7 @@ ERROR:
            (y ?x))
    =>)
 *
-[RULECSTR1] stobjcst.clp, Line 21: Variable ?x in CE #1 slot c
-has constraint conflicts which make the pattern unmatchable.
+[RULECSTR1] stobjcst.clp, Line 21: Variable ?x in CE #1 slot 'c' has constraint conflicts which make the pattern unmatchable.
 
 ERROR:
 (defrule MAIN::error-3
@@ -35,8 +32,7 @@ ERROR:
            (c ?x))
    =>)
 *
-[RULECSTR1] stobjcst.clp, Line 27: Variable ?x in CE #3 slot c
-has constraint conflicts which make the pattern unmatchable.
+[RULECSTR1] stobjcst.clp, Line 27: Variable ?x in CE #3 slot 'c' has constraint conflicts which make the pattern unmatchable.
 
 ERROR:
 (defrule MAIN::error-4
@@ -48,8 +44,7 @@ ERROR:
            (c ?x))
    =>)
 *####*
-[RULECSTR1] stobjcst.clp, Line 49: Variable ?x in CE #2 slot a
-has constraint conflicts which make the pattern unmatchable.
+[RULECSTR1] stobjcst.clp, Line 49: Variable ?x in CE #2 slot 'a' has constraint conflicts which make the pattern unmatchable.
 
 ERROR:
 (defrule MAIN::error-5
@@ -59,8 +54,7 @@ ERROR:
            (a ?x))
    =>)
 *
-[RULECSTR1] stobjcst.clp, Line 55: Variable ?x in CE #3 slot a
-has constraint conflicts which make the pattern unmatchable.
+[RULECSTR1] stobjcst.clp, Line 55: Variable ?x in CE #3 slot 'a' has constraint conflicts which make the pattern unmatchable.
 
 ERROR:
 (defrule MAIN::error-6
@@ -72,8 +66,7 @@ ERROR:
            (a ?x))
    =>)
 *
-[RULECSTR1] stobjcst.clp, Line 61: Pattern #3 slot a
-has constraint conflicts which make the pattern unmatchable.
+[RULECSTR1] stobjcst.clp, Line 61: Pattern #3 slot 'a' has constraint conflicts which make the pattern unmatchable.
 
 ERROR:
 (defrule MAIN::error-7
@@ -85,8 +78,7 @@ ERROR:
            (a ?x|?y))
    =>)
 *#*
-[RULECSTR1] stobjcst.clp, Line 75: Variable ?x in CE #1 slot y
-has constraint conflicts which make the pattern unmatchable.
+[RULECSTR1] stobjcst.clp, Line 75: Variable ?x in CE #1 slot 'y' has constraint conflicts which make the pattern unmatchable.
 
 ERROR:
 (defrule MAIN::error-8
@@ -95,8 +87,7 @@ ERROR:
            (y ?x&~on))
    =>)
 ###**
-[RULECSTR1] stobjcst.clp, Line 98: Variable ?x in CE #3 slot x
-has constraint conflicts which make the pattern unmatchable.
+[RULECSTR1] stobjcst.clp, Line 98: Variable ?x in CE #3 slot 'x' has constraint conflicts which make the pattern unmatchable.
 
 ERROR:
 (defrule MAIN::error-9
@@ -108,8 +99,7 @@ ERROR:
            (x ?x))
    =>)
 ##**##*
-[RULECSTR1] stobjcst.clp, Line 129: Variable ?x in CE #2 slot q
-has constraint conflicts which make the pattern unmatchable.
+[RULECSTR1] stobjcst.clp, Line 129: Variable ?x in CE #2 slot 'q' has constraint conflicts which make the pattern unmatchable.
 
 ERROR:
 (defrule MAIN::error-10
@@ -119,8 +109,7 @@ ERROR:
            (q $?x))
    =>)
 ###*
-[CSTRNCHK1] stobjcst.clp, Line 147: The group of restrictions found in CE #3
-does not satisfy the cardinality restrictions for slot z.
+[CSTRNCHK1] stobjcst.clp, Line 147: The group of restrictions found in CE #3 does not satisfy the cardinality restrictions for slot 'z'.
 
 ERROR:
 (defrule MAIN::error-11
@@ -132,8 +121,7 @@ ERROR:
            (z $?x $?y))
    =>)
 ####*
-[CSTRNCHK1] stobjcst.clp, Line 165: The group of restrictions found in CE #4
-does not satisfy the cardinality restrictions for slot q.
+[CSTRNCHK1] stobjcst.clp, Line 165: The group of restrictions found in CE #4 does not satisfy the cardinality restrictions for slot 'q'.
 
 ERROR:
 (defrule MAIN::error-12
@@ -147,8 +135,7 @@ ERROR:
            (q $?x ? $?y ? b $?z))
    =>)
 *
-[CSTRNCHK1] stobjcst.clp, Line 169: The group of restrictions found in CE #1
-does not satisfy the cardinality restrictions for slot x.
+[CSTRNCHK1] stobjcst.clp, Line 169: The group of restrictions found in CE #1 does not satisfy the cardinality restrictions for slot 'x'.
 
 ERROR:
 (defrule MAIN::error-13
@@ -156,8 +143,7 @@ ERROR:
            (x ?))
    =>)
 *#*#*
-[RULECSTR1] stobjcst.clp, Line 198: Pattern #1 slot x
-has constraint conflicts which make the pattern unmatchable.
+[RULECSTR1] stobjcst.clp, Line 198: Pattern #1 slot 'x' has constraint conflicts which make the pattern unmatchable.
 
 ERROR:
 (defrule MAIN::error-14
@@ -168,7 +154,7 @@ ERROR:
 #*
 [RULECSTR2] stobjcst.clp, Line 211: Previous variable bindings of ?x caused the type restrictions
 for argument #2 of the expression (> ?y ?x)
-found in CE #1 slot y to be violated.
+found in CE #1 slot 'y' to be violated.
 
 ERROR:
 (defrule MAIN::error-15 "Type Violation to LHS function call"
@@ -190,8 +176,7 @@ ERROR:
    =>)
 #*
 [RULECSTR3] stobjcst.clp, Line 229: Previous variable bindings of ?q caused the type restrictions
-for argument #3 of the expression (+ 3 5 ?q)
-found in the rule's RHS to be violated.
+for argument #3 of the expression (+ 3 5 ?q) found in the rule's RHS to be violated.
 
 ERROR:
 (defrule MAIN::error-17
@@ -201,8 +186,7 @@ ERROR:
    (+ 3 5 ?q))
 **
 [RULECSTR3] stobjcst.clp, Line 241: Previous variable bindings of ?q caused the type restrictions
-for argument #3 of the expression (+ 3 5 ?q)
-found in the rule's RHS to be violated.
+for argument #3 of the expression (+ 3 5 ?q) found in the rule's RHS to be violated.
 
 ERROR:
 (defrule MAIN::error-18
@@ -211,8 +195,7 @@ ERROR:
    (bind ?q (gensym))
    (+ 3 5 ?q))
 *#*
-[RULECSTR1] stobjcst.clp, Line 260: Variable ?x in CE #1 slot y
-has constraint conflicts which make the pattern unmatchable.
+[RULECSTR1] stobjcst.clp, Line 260: Variable ?x in CE #1 slot 'y' has constraint conflicts which make the pattern unmatchable.
 
 ERROR:
 (defrule MAIN::error-19
@@ -221,8 +204,7 @@ ERROR:
            (y ?x))
    =>)
 #*
-[RULECSTR1] stobjcst.clp, Line 272: Variable ?x in CE #2 slot foo
-has constraint conflicts which make the pattern unmatchable.
+[RULECSTR1] stobjcst.clp, Line 272: Variable ?x in CE #2 slot 'foo' has constraint conflicts which make the pattern unmatchable.
 
 ERROR:
 (defrule MAIN::error-20
@@ -242,8 +224,7 @@ ERROR:
    (test (> ?x 5))
    =>)
 *
-[RULECSTR1] stobjcst.clp, Line 283: Variable ?x in CE #3 slot foo
-has constraint conflicts which make the pattern unmatchable.
+[RULECSTR1] stobjcst.clp, Line 283: Variable ?x in CE #3 slot 'foo' has constraint conflicts which make the pattern unmatchable.
 
 ERROR:
 (defrule MAIN::error-22
@@ -253,7 +234,7 @@ ERROR:
            (foo ?x))
    =>)
 ###
-[CSTRNPSR1] stobjcst.clp, Line 296: The type attribute conflicts with the allowed-integers/numbers attribute.
+[CSTRNPSR1] stobjcst.clp, Line 296: The 'type' attribute conflicts with the 'allowed-integers/numbers' attribute.
 
 ERROR:
 (defclass MAIN::DERIVE2
@@ -391,7 +372,7 @@ CLIPS> (clear)
 CLIPS> (defclass A (is-a USER)
   (slot foo (cardinality 3 4)))
 
-[CLSLTPSR3] Cardinality facet can only be used with multifield slots
+[CLSLTPSR3] The 'cardinality' facet can only be used with multifield slots.
 
 ERROR:
 (defclass MAIN::A
@@ -401,7 +382,7 @@ ERROR:
 CLIPS> (defclass A (is-a USER)
   (slot foo (type SYMBOL) (range 3 4)))
 
-[CSTRNPSR1] The type attribute conflicts with the range attribute.
+[CSTRNPSR1] The 'type' attribute conflicts with the 'range' attribute.
 
 ERROR:
 (defclass MAIN::A
@@ -442,7 +423,7 @@ ERROR:
 CLIPS> (defclass A (is-a USER)
   (slot foo (allowed-integers abc)))
 
-[CSTRNPSR4] Value does not match the expected type for the allowed-integers attribute
+[CSTRNPSR4] Value does not match the expected type for the 'allowed-integers' attribute.
 
 ERROR:
 (defclass MAIN::A
@@ -451,8 +432,7 @@ ERROR:
       (allowed-integers abc 
 CLIPS> (defclass A (is-a USER)
    (slot foo (type INTEGER) (default abc)))
-[CSTRNCHK1] abc for slot foo found in slot default value
-does not match the allowed types.
+[CSTRNCHK1] The value abc for slot 'foo' found in the 'default' facet does not match the allowed types.
 
 ERROR:
 (defclass MAIN::A
@@ -462,8 +442,7 @@ ERROR:
       (default abc))
 CLIPS> (defclass A (is-a USER)
    (slot foo (type INTEGER) (default-dynamic abc)))
-[CSTRNCHK1] Expression for slot foo found in dynamic default value
-does not match the allowed types.
+[CSTRNCHK1] Expression for slot 'foo' found in dynamic default value does not match the allowed types.
 
 ERROR:
 (defclass MAIN::A

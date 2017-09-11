@@ -245,11 +245,11 @@ void ClassExistError(
   const char *cname)
   {
    PrintErrorID(theEnv,"CLASSFUN",1,false);
-   WriteString(theEnv,STDERR,"Unable to find class ");
+   WriteString(theEnv,STDERR,"Unable to find class '");
    WriteString(theEnv,STDERR,cname);
-   WriteString(theEnv,STDERR," in function ");
+   WriteString(theEnv,STDERR,"' in function '");
    WriteString(theEnv,STDERR,func);
-   WriteString(theEnv,STDERR,".\n");
+   WriteString(theEnv,STDERR,"'.\n");
    SetEvaluationError(theEnv,true);
   }
 
@@ -290,8 +290,10 @@ void PrintClassName(
   Environment *theEnv,
   const char *logicalName,
   Defclass *theDefclass,
+  bool useQuotes,
   bool linefeedFlag)
   {
+   if (useQuotes) WriteString(theEnv,logicalName,"'");
    if ((theDefclass->header.whichModule->theModule != GetCurrentModule(theEnv)) &&
        (theDefclass->system == 0))
      {
@@ -300,6 +302,7 @@ void PrintClassName(
       WriteString(theEnv,logicalName,"::");
      }
    WriteString(theEnv,logicalName,theDefclass->header.name->contents);
+   if (useQuotes) WriteString(theEnv,logicalName,"'");
    if (linefeedFlag)
      WriteString(theEnv,logicalName,"\n");
   }
@@ -329,7 +332,7 @@ void PrintPackedClassLinks(
    for (i = 0 ; i < plinks->classCount ; i++)
      {
       WriteString(theEnv,logicalName," ");
-      PrintClassName(theEnv,logicalName,plinks->classArray[i],false);
+      PrintClassName(theEnv,logicalName,plinks->classArray[i],false,false);
      }
    WriteString(theEnv,logicalName,"\n");
   }

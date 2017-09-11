@@ -149,7 +149,7 @@ bool ParseDefglobal(
       theModule = FindDefmodule(theEnv,theToken.lexemeValue->contents);
       if (theModule == NULL)
         {
-         CantFindItemErrorMessage(theEnv,"defmodule",theToken.lexemeValue->contents);
+         CantFindItemErrorMessage(theEnv,"defmodule",theToken.lexemeValue->contents,true);
          return true;
         }
 

@@ -34,9 +34,9 @@ CLIPS> (print-region t "textpro.dat" ^ r s)
 SUBTOPIC3 TEXT
 TRUE
 CLIPS> (print-region 1 2 3)
-[ARGACCES5] Function print-region expected argument #1 to be of type symbol
+[ARGACCES2] Function 'print-region' expected argument #1 to be of type symbol.
 CLIPS> (print-region t 2 3)
-[ARGACCES5] Function print-region expected argument #2 to be of type symbol or string
+[ARGACCES2] Function 'print-region' expected argument #2 to be of type symbol or string.
 CLIPS> (defglobal ?*cnt* = 0)
 CLIPS> (while (< ?*cnt* 100) do
   (print-region t "textpro.dat" junk)
@@ -75,7 +75,7 @@ CLIPS> (get-region "textpro.dat" ^ r s)
 "SUBTOPIC3 TEXT
 "
 CLIPS> (get-region 2 3)
-[ARGACCES5] Function get-region expected argument #1 to be of type symbol or string
+[ARGACCES2] Function 'get-region' expected argument #1 to be of type symbol or string.
 CLIPS> (bind ?*cnt* 0)
 0
 CLIPS> (while (< ?*cnt* 100) do

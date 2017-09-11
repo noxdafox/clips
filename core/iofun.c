@@ -551,9 +551,9 @@ void OpenFunction(
       SetHaltExecution(theEnv,true);
       SetEvaluationError(theEnv,true);
       PrintErrorID(theEnv,"IOFUN",2,false);
-      WriteString(theEnv,STDERR,"Logical name ");
+      WriteString(theEnv,STDERR,"Logical name '");
       WriteString(theEnv,STDERR,logicalName);
-      WriteString(theEnv,STDERR," already in use.\n");
+      WriteString(theEnv,STDERR,"' already in use.\n");
       returnValue->lexemeValue = FalseSymbol(theEnv);
       return;
      }

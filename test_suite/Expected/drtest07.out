@@ -38,13 +38,13 @@ CLIPS>
   (bload "Temp//me.bin"))                 ; DR0606
 CLIPS> (reset)                            ; DR0606
 CLIPS> (run)                              ; DR0606
-The CLIPS environment could not be cleared.
+[BLOAD4] The CLIPS environment could not be cleared.
 Binary load cannot continue.
 CLIPS> (tan (deg-rad 270))                ; DR0609 - Error
-[EMATHFUN3] Singularity at asymptote in tan function.
+[EMATHFUN3] Singularity at asymptote in 'tan' function.
 0.0
 CLIPS> (sec (deg-rad 270))                ; DR0609 - Error
-[EMATHFUN3] Singularity at asymptote in sec function.
+[EMATHFUN3] Singularity at asymptote in 'sec' function.
 0.0
 CLIPS> (clear)                            ; DR0610
 CLIPS> (progn (release-mem) TRUE)         ; DR0610
@@ -82,7 +82,7 @@ CLIPS> (release-mem)                      ; DR0615
 937 ;; Different number is OK but should be same as reference number
 CLIPS> (deftemplate x (multifield y) (multifield y))
 
-[PRNTUTIL5] The slot y has already been parsed.
+[PRNTUTIL5] The slot 'y' has already been parsed.
 
 ERROR:
 (deftemplate MAIN::x
@@ -95,7 +95,7 @@ CLIPS> (clear)                            ; DR0616
 CLIPS> (release-mem)                      ; DR0616
 937 ;; Different number is OK but should be same as reference number
 CLIPS> (any-instancep ((?a OBJECT) (?a OBJECT)) TRUE)
-[INSQYPSR1] Duplicate instance member variable name in function any-instancep.
+[INSQYPSR1] Duplicate instance member variable name in function 'any-instancep'.
 CLIPS> (clear)                            ; DR0616
 CLIPS> (progn (release-mem) TRUE)         ; DR0616 - Memory Loss
 TRUE
@@ -227,7 +227,7 @@ CLIPS> (defrule blah                      ; DR0630
    =>)
 CLIPS> (assert (i-f))                     ; DR0630
 
-[FACTMNGR1] Facts may not be retracted during pattern-matching
+[FACTMNGR1] Facts may not be retracted during pattern-matching.
 <Fact-1>
 CLIPS> (facts)                            ; DR0630
 f-1     (i-f)
@@ -243,7 +243,7 @@ CLIPS> (defrule blah                      ; DR0630
    (test (progn (retract ?f) TRUE))
    =>)
 
-[FACTMNGR1] Facts may not be retracted during pattern-matching
+[FACTMNGR1] Facts may not be retracted during pattern-matching.
 CLIPS> (facts)                            ; DR0630
 f-1     (i-f)
 For a total of 1 fact.
@@ -305,7 +305,7 @@ CLIPS> (ppdeffunction foo)                ; DR0642
    (printout t "Finished." crlf))
 CLIPS> (clear)                            ; DR0644
 CLIPS> (ppdeffunction bad)                ; DR0644
-[PRNTUTIL1] Unable to find deffunction bad.
+[PRNTUTIL1] Unable to find deffunction 'bad'.
 CLIPS> (clear)                            ; DR0645
 CLIPS> (deffacts start (result # 0 1 0))
 CLIPS> (defrule print-responses
@@ -392,14 +392,14 @@ CLIPS> (bload "Temp//none.bin")           ; DR0648
 TRUE
 CLIPS> (clear)                            ; DR0649
 CLIPS> (div a)                            ; DR0649
-[ARGACCES4] Function div expected at least 2 argument(s)
+[ARGACCES1] Function 'div' expected at least 2 arguments.
 CLIPS> (div 1)                            ; DR0649
-[ARGACCES4] Function div expected at least 2 argument(s)
+[ARGACCES1] Function 'div' expected at least 2 arguments.
 CLIPS> (asin 2)                           ; DR0649
-[EMATHFUN1] Domain error for asin function.
+[EMATHFUN1] Domain error for 'asin' function.
 0.0
 CLIPS> (atanh 1.0)                        ; DR0649
-[EMATHFUN1] Domain error for atanh function.
+[EMATHFUN1] Domain error for 'atanh' function.
 0.0
 CLIPS> (clear)                            ; DR0650
 CLIPS> (deffacts foo)                     ; DR0650
@@ -422,7 +422,7 @@ foo
 For a total of 2 deftemplates.
 CLIPS> (clear)                            ; DR0654
 CLIPS> (fetch "XYZBEDQ.txt")              ; DR0654
-[TEXTPRO1] Could not open file "XYZBEDQ.txt".
+[TEXTPRO1] Could not open file 'XYZBEDQ.txt'.
 FALSE
 CLIPS> (clear)                            ; DR0655
 CLIPS> (defclass A (is-a USER) (slot x (create-accessor read-write)))  ; DR0655
@@ -500,7 +500,7 @@ ERROR:
    (a of )
 CLIPS> (clear)                            ; DR0661
 CLIPS> (definstances bad (a of BOGUS))    ; DR0661
-[PRNTUTIL1] Unable to find class BOGUS.
+[PRNTUTIL1] Unable to find class 'BOGUS'.
 
 ERROR:
 (definstances MAIN::bad
@@ -530,7 +530,7 @@ CLIPS> (defclass A (is-a USER)            ; DR0664
    (slot y (default-dynamic ?*x*) (create-accessor read-write)))
 CLIPS> (clear)                            ; DR0665
 CLIPS> (preview-send OBJECT bogus)        ; DR0665
-[MSGFUN1] No applicable primary message-handlers found for bogus.
+[MSGFUN1] No applicable primary message-handlers found for 'bogus'.
 CLIPS> (clear)                            ; DR0666
 CLIPS> (defglobal ?*x* = 300)             ; DR0666
 CLIPS> (defclass A (is-a USER) (role concrete)); DR0666
@@ -623,23 +623,23 @@ CLIPS> (foo bar)
 10
 CLIPS> (clear)
 CLIPS> (call-next-method 0)      ; DR0677
-[ARGACCES4] Function call-next-method expected exactly 0 argument(s)
+[ARGACCES1] Function 'call-next-method' expected exactly 0 arguments.
 CLIPS> (next-methodp 0)
-[ARGACCES4] Function next-methodp expected exactly 0 argument(s)
+[ARGACCES1] Function 'next-methodp' expected exactly 0 arguments.
 CLIPS> (preview-generic)
-[ARGACCES4] Function preview-generic expected at least 1 argument(s)
+[ARGACCES1] Function 'preview-generic' expected at least 1 argument.
 CLIPS> (clear)
 CLIPS> (delete-instance 0)       ; DR0678
-[ARGACCES4] Function delete-instance expected exactly 0 argument(s)
+[ARGACCES1] Function 'delete-instance' expected exactly 0 arguments.
 CLIPS> (init-slots 0)
-[ARGACCES4] Function init-slots expected exactly 0 argument(s)
+[ARGACCES1] Function 'init-slots' expected exactly 0 arguments.
 CLIPS> (ppinstance 0)
-[ARGACCES4] Function ppinstance expected exactly 0 argument(s)
+[ARGACCES1] Function 'ppinstance' expected exactly 0 arguments.
 CLIPS> (clear)
 CLIPS> (print-region 1 2 3)      ; DR0679
-[ARGACCES5] Function print-region expected argument #1 to be of type symbol
+[ARGACCES2] Function 'print-region' expected argument #1 to be of type symbol.
 CLIPS> (print-region t 2 3)
-[ARGACCES5] Function print-region expected argument #2 to be of type symbol or string
+[ARGACCES2] Function 'print-region' expected argument #2 to be of type symbol or string.
 CLIPS> (clear)
 CLIPS> (defclass A (is-a USER))  ; DR0680
 CLIPS> (class-superclasses A inherit)
@@ -650,145 +650,145 @@ CLIPS> (class-superclasses A inherit)
 CLIPS> (clear)
 CLIPS> ;; DRs 0681, 0682 and 0683 involve recompiling CLIPS
 (while 1 do ?a)           ; DR0684
-[EVALUATN1] Variable a is unbound
+[EVALUATN1] Variable ?a is unbound.
 FALSE
 CLIPS> (clear)
 CLIPS> (printout t ?a crlf)      ; DR0685
-[EVALUATN1] Variable a is unbound
+[EVALUATN1] Variable ?a is unbound.
 CLIPS> (defrule foo =>
    (printout t ?a)
    (bind ?a 1))
 CLIPS> (reset)
 CLIPS> (run)
-[PRCCODE5] Variable a unbound.
-[PRCCODE4] Execution halted during the actions of defrule foo.
+[PRCCODE5] Variable ?a unbound.
+[PRCCODE4] Execution halted during the actions of defrule 'foo'.
 CLIPS> (clear)
 CLIPS> (str-cat abc (eval "(+ abc)") def) ; DR0686
-[ARGACCES4] Function + expected at least 2 argument(s)
+[ARGACCES1] Function '+' expected at least 2 arguments.
 ""
 CLIPS> (sym-cat abc (eval "(+ abc)") def)
-[ARGACCES4] Function + expected at least 2 argument(s)
+[ARGACCES1] Function '+' expected at least 2 arguments.
 nil
 CLIPS> (clear)
 CLIPS> (deffunction foo (?a))    ; DR0687
 CLIPS> (foo (eval "(+ abc)"))
-[ARGACCES4] Function + expected at least 2 argument(s)
-[PRCCODE6] This error occurred while evaluating arguments for the deffunction foo.
+[ARGACCES1] Function '+' expected at least 2 arguments.
+[PRCCODE6] This error occurred while evaluating arguments for the deffunction 'foo'.
 FALSE
 CLIPS> (clear)
 CLIPS> (defgeneric any-instancep) ; DR0688
-[GENRCPSR16] The system function any-instancep cannot be overloaded.
+[GENRCPSR16] The system function 'any-instancep' cannot be overloaded.
 
 ERROR:
 (defgeneric MAIN::any-instancep)
 CLIPS> (defgeneric assert)
-[GENRCPSR16] The system function assert cannot be overloaded.
+[GENRCPSR16] The system function 'assert' cannot be overloaded.
 
 ERROR:
 (defgeneric MAIN::assert)
 CLIPS> (defgeneric bind)
-[GENRCPSR16] The system function bind cannot be overloaded.
+[GENRCPSR16] The system function 'bind' cannot be overloaded.
 
 ERROR:
 (defgeneric MAIN::bind)
 CLIPS> (defgeneric break)
-[GENRCPSR16] The system function break cannot be overloaded.
+[GENRCPSR16] The system function 'break' cannot be overloaded.
 
 ERROR:
 (defgeneric MAIN::break)
 CLIPS> (defgeneric call-next-handler)
-[GENRCPSR16] The system function call-next-handler cannot be overloaded.
+[GENRCPSR16] The system function 'call-next-handler' cannot be overloaded.
 
 ERROR:
 (defgeneric MAIN::call-next-handler)
 CLIPS> (defgeneric call-next-method)
-[GENRCPSR16] The system function call-next-method cannot be overloaded.
+[GENRCPSR16] The system function 'call-next-method' cannot be overloaded.
 
 ERROR:
 (defgeneric MAIN::call-next-method)
 CLIPS> (defgeneric delayed-do-for-all-instances)
-[GENRCPSR16] The system function delayed-do-for-all-instances cannot be overloaded.
+[GENRCPSR16] The system function 'delayed-do-for-all-instances' cannot be overloaded.
 
 ERROR:
 (defgeneric MAIN::delayed-do-for-all-instances)
 CLIPS> (defgeneric do-for-all-instances)
-[GENRCPSR16] The system function do-for-all-instances cannot be overloaded.
+[GENRCPSR16] The system function 'do-for-all-instances' cannot be overloaded.
 
 ERROR:
 (defgeneric MAIN::do-for-all-instances)
 CLIPS> (defgeneric do-for-instance)
-[GENRCPSR16] The system function do-for-instance cannot be overloaded.
+[GENRCPSR16] The system function 'do-for-instance' cannot be overloaded.
 
 ERROR:
 (defgeneric MAIN::do-for-instance)
 CLIPS> (defgeneric duplicate)
-[GENRCPSR16] The system function duplicate cannot be overloaded.
+[GENRCPSR16] The system function 'duplicate' cannot be overloaded.
 
 ERROR:
 (defgeneric MAIN::duplicate)
 CLIPS> (defgeneric expand$)
-[GENRCPSR16] The system function expand$ cannot be overloaded.
+[GENRCPSR16] The system function 'expand$' cannot be overloaded.
 
 ERROR:
 (defgeneric MAIN::expand$)
 CLIPS> (defgeneric find-all-instances)
-[GENRCPSR16] The system function find-all-instances cannot be overloaded.
+[GENRCPSR16] The system function 'find-all-instances' cannot be overloaded.
 
 ERROR:
 (defgeneric MAIN::find-all-instances)
 CLIPS> (defgeneric find-instance)
-[GENRCPSR16] The system function find-instance cannot be overloaded.
+[GENRCPSR16] The system function 'find-instance' cannot be overloaded.
 
 ERROR:
 (defgeneric MAIN::find-instance)
 CLIPS> (defgeneric if)
-[GENRCPSR16] The system function if cannot be overloaded.
+[GENRCPSR16] The system function 'if' cannot be overloaded.
 
 ERROR:
 (defgeneric MAIN::if)
 CLIPS> (defgeneric initialize-instance)
-[GENRCPSR16] The system function initialize-instance cannot be overloaded.
+[GENRCPSR16] The system function 'initialize-instance' cannot be overloaded.
 
 ERROR:
 (defgeneric MAIN::initialize-instance)
 CLIPS> (defgeneric make-instance)
-[GENRCPSR16] The system function make-instance cannot be overloaded.
+[GENRCPSR16] The system function 'make-instance' cannot be overloaded.
 
 ERROR:
 (defgeneric MAIN::make-instance)
 CLIPS> (defgeneric modify)
-[GENRCPSR16] The system function modify cannot be overloaded.
+[GENRCPSR16] The system function 'modify' cannot be overloaded.
 
 ERROR:
 (defgeneric MAIN::modify)
 CLIPS> (defgeneric next-handlerp)
-[GENRCPSR16] The system function next-handlerp cannot be overloaded.
+[GENRCPSR16] The system function 'next-handlerp' cannot be overloaded.
 
 ERROR:
 (defgeneric MAIN::next-handlerp)
 CLIPS> (defgeneric next-methodp)
-[GENRCPSR16] The system function next-methodp cannot be overloaded.
+[GENRCPSR16] The system function 'next-methodp' cannot be overloaded.
 
 ERROR:
 (defgeneric MAIN::next-methodp)
 CLIPS> (defgeneric override-next-handler)
-[GENRCPSR16] The system function override-next-handler cannot be overloaded.
+[GENRCPSR16] The system function 'override-next-handler' cannot be overloaded.
 
 ERROR:
 (defgeneric MAIN::override-next-handler)
 CLIPS> (defgeneric progn)
-[GENRCPSR16] The system function progn cannot be overloaded.
+[GENRCPSR16] The system function 'progn' cannot be overloaded.
 
 ERROR:
 (defgeneric MAIN::progn)
 CLIPS> (defgeneric retract)
 CLIPS> (defgeneric return)
-[GENRCPSR16] The system function return cannot be overloaded.
+[GENRCPSR16] The system function 'return' cannot be overloaded.
 
 ERROR:
 (defgeneric MAIN::return)
 CLIPS> (defgeneric while)
-[GENRCPSR16] The system function while cannot be overloaded.
+[GENRCPSR16] The system function 'while' cannot be overloaded.
 
 ERROR:
 (defgeneric MAIN::while)
@@ -796,21 +796,21 @@ CLIPS> (clear)
 CLIPS> (defmethod blah  ;; DR0689
   ((?a (progn (undefmethod blah *) TRUE))))
 CLIPS> (blah 1)
-[GENRCFUN1] Defgeneric blah cannot be modified while one of its methods is executing.
+[GENRCFUN1] Defgeneric 'blah' cannot be modified while one of its methods is executing.
 FALSE
 CLIPS> (clear)
 CLIPS> (defgeneric foo)  ;; DR0690
 CLIPS> (foo (progn (undefgeneric foo) 1))
-[PRNTUTIL4] Unable to delete defgeneric foo.
-[GENRCEXE1] No applicable methods for foo.
+[PRNTUTIL4] Unable to delete defgeneric 'foo'.
+[GENRCEXE1] No applicable methods for 'foo'.
 FALSE
 CLIPS> (deffunction bar (?a))
 CLIPS> (bar (progn (undeffunction bar) 1))
-[PRNTUTIL4] Unable to delete deffunction bar.
+[PRNTUTIL4] Unable to delete deffunction 'bar'.
 FALSE
 CLIPS> (clear)
 CLIPS> (printout t (eval "(+ abc)") " OOPS " (eval "(+ abc)") crlf)  ;; DR0691
-[ARGACCES4] Function + expected at least 2 argument(s)
+[ARGACCES1] Function '+' expected at least 2 arguments.
 CLIPS> (clear)
 CLIPS> (deftemplate foo             ;; DR0692
   (multifield linkTagList))
@@ -819,7 +819,7 @@ CLIPS> (defrule foo
    =>
    (modify ?w (linkTagList ?linktag ?linktagx ?a $?b)))
 
-[PRCCODE3] Undefined variable linktag referenced in RHS of defrule.
+[PRCCODE3] Undefined variable ?linktag referenced in RHS of defrule.
 
 ERROR:
 (defrule MAIN::foo
@@ -860,7 +860,7 @@ CLIPS> (send [quoxnar] put-bar (create$))
 CLIPS> (unmake-instance [fribban])
 TRUE
 CLIPS> (send (send [quoxnar] get-foo) print)
-[INSFUN4] Invalid instance-address in function send.
+[INSFUN4] Invalid instance-address in function 'send'.
 FALSE
 CLIPS> (save-instances "Temp//badfile.tmp")
 1
@@ -894,7 +894,7 @@ CLIPS> (defmethod bar () (foo))
 CLIPS> (bar)
 Foo
 CLIPS> (undeffunction *)
-[DFFNXFUN1] WARNING: Deffunction foo only partially deleted due to usage by other constructs.
+[DFFNXFUN1] WARNING: Deffunction 'foo' only partially deleted due to usage by other constructs.
 CLIPS> (bar)
 FALSE
 CLIPS> (ppdeffunction foo)

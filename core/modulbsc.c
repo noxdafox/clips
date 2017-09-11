@@ -240,7 +240,7 @@ bool PPDefmodule(
    defmodulePtr = FindDefmodule(theEnv,defmoduleName);
    if (defmodulePtr == NULL)
      {
-      CantFindItemErrorMessage(theEnv,"defmodule",defmoduleName);
+      CantFindItemErrorMessage(theEnv,"defmodule",defmoduleName,true);
       return false;
      }
 

@@ -185,7 +185,7 @@ void GetQueryFactSlot(
    core = FindQueryCore(theEnv,GetFirstArgument()->integerValue->contents);
    theFact = core->solns[GetFirstArgument()->nextArg->integerValue->contents];
    
-   if (theFact->garbage) return; // TBD Should throw error like (slot-value)
+   if (theFact->garbage) return;
    
    EvaluateExpression(theEnv,GetFirstArgument()->nextArg->nextArg,&temp);
    if (temp.header->type != SYMBOL_TYPE)
@@ -795,7 +795,7 @@ static QUERY_TEMPLATE *FormChain(
                                              &count,true,NULL);
       if (templatePtr == NULL)
         {
-         CantFindItemInFunctionErrorMessage(theEnv,"deftemplate",val->lexemeValue->contents,func);
+         CantFindItemInFunctionErrorMessage(theEnv,"deftemplate",val->lexemeValue->contents,func,true);
          return NULL;
         }
       IncrementDeftemplateBusyCount(theEnv,templatePtr);
@@ -822,7 +822,7 @@ static QUERY_TEMPLATE *FormChain(
 
             if (templatePtr == NULL)
               {
-               CantFindItemInFunctionErrorMessage(theEnv,"deftemplate",templateName,func);
+               CantFindItemInFunctionErrorMessage(theEnv,"deftemplate",templateName,func,true);
                DeleteQueryTemplates(theEnv,head);
                return NULL;
               }

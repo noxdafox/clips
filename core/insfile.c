@@ -803,9 +803,9 @@ static struct classItem *ProcessSaveClassList(
 
 ProcessClassListError:
    if (inheritFlag)
-     ExpectedTypeError1(theEnv,functionName,argIndex,"valid class name");
+     ExpectedTypeError1(theEnv,functionName,argIndex,"'valid class name'");
    else
-     ExpectedTypeError1(theEnv,functionName,argIndex,"valid concrete class name");
+     ExpectedTypeError1(theEnv,functionName,argIndex,"'valid concrete class name'");
    
    ReturnSaveClassList(theEnv,head);
    
@@ -1372,11 +1372,11 @@ static void ProcessFileErrorMessage(
   const char *fileName)
   {
    PrintErrorID(theEnv,"INSFILE",1,false);
-   WriteString(theEnv,STDERR,"Function ");
+   WriteString(theEnv,STDERR,"Function '");
    WriteString(theEnv,STDERR,functionName);
-   WriteString(theEnv,STDERR," could not completely process file ");
+   WriteString(theEnv,STDERR,"' could not completely process file '");
    WriteString(theEnv,STDERR,fileName);
-   WriteString(theEnv,STDERR,".\n");
+   WriteString(theEnv,STDERR,"'.\n");
   }
 
 #if BLOAD_INSTANCES
@@ -1402,16 +1402,18 @@ static bool VerifyBinaryHeader(
    if (strcmp(buf,InstanceFileData(theEnv)->InstanceBinaryPrefixID) != 0)
      {
       PrintErrorID(theEnv,"INSFILE",2,false);
+      WriteString(theEnv,STDERR,"File '");
       WriteString(theEnv,STDERR,theFile);
-      WriteString(theEnv,STDERR," file is not a binary instances file.\n");
+      WriteString(theEnv,STDERR,"' is not a binary instances file.\n");
       return false;
      }
    GenReadBinary(theEnv,buf,(strlen(InstanceFileData(theEnv)->InstanceBinaryVersionID) + 1));
    if (strcmp(buf,InstanceFileData(theEnv)->InstanceBinaryVersionID) != 0)
      {
       PrintErrorID(theEnv,"INSFILE",3,false);
+      WriteString(theEnv,STDERR,"File '");
       WriteString(theEnv,STDERR,theFile);
-      WriteString(theEnv,STDERR," file is not a compatible binary instances file.\n");
+      WriteString(theEnv,STDERR,"' is not a compatible binary instances file.\n");
       return false;
      }
    return true;
@@ -1562,10 +1564,10 @@ static void BinaryLoadInstanceError(
   Defclass *theDefclass)
   {
    PrintErrorID(theEnv,"INSFILE",4,false);
-   WriteString(theEnv,STDERR,"Function bload-instances unable to load instance [");
+   WriteString(theEnv,STDERR,"Function 'bload-instances' unable to load instance [");
    WriteString(theEnv,STDERR,instanceName->contents);
    WriteString(theEnv,STDERR,"] of class ");
-   PrintClassName(theEnv,STDERR,theDefclass,true);
+   PrintClassName(theEnv,STDERR,theDefclass,true,true);
   }
 
 /***************************************************

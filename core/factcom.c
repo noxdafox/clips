@@ -351,7 +351,7 @@ void RetractCommand(
            {
             char tempBuffer[20];
             gensprintf(tempBuffer,"f-%lld",factIndex);
-            CantFindItemErrorMessage(theEnv,"fact",tempBuffer);
+            CantFindItemErrorMessage(theEnv,"fact",tempBuffer,false);
            }
         }
 
@@ -508,7 +508,7 @@ void FactsCommand(
       if ((theModule == NULL) && (strcmp(theArg.lexemeValue->contents,"*") != 0))
         {
          SetEvaluationError(theEnv,true);
-         CantFindItemErrorMessage(theEnv,"defmodule",theArg.lexemeValue->contents);
+         CantFindItemErrorMessage(theEnv,"defmodule",theArg.lexemeValue->contents,true);
          return;
         }
 
@@ -525,7 +525,7 @@ void FactsCommand(
       start = theArg.integerValue->contents;
       if (start < 0)
         {
-         ExpectedTypeError1(theEnv,"facts",1,"symbol or positive number");
+         ExpectedTypeError1(theEnv,"facts",1,"symbol or 'positive number'");
          UDFThrowError(context);
          return;
         }
@@ -537,7 +537,7 @@ void FactsCommand(
 
    else
      {
-      UDFInvalidArgumentMessage(context,"symbol or positive number");
+      UDFInvalidArgumentMessage(context,"symbol or 'positive number'");
       UDFThrowError(context);
       return;
      }
@@ -1090,7 +1090,7 @@ static Deftemplate **GetSaveFactsDeftemplateNames(
          if (theDeftemplate == NULL)
            {
             *error = true;
-            ExpectedTypeError1(theEnv,"save-facts",3+i,"local deftemplate name");
+            ExpectedTypeError1(theEnv,"save-facts",3+i,"'local deftemplate name'");
             rm(theEnv,deftemplateArray,sizeof(Deftemplate *) * *count);
             return NULL;
            }
@@ -1104,7 +1104,7 @@ static Deftemplate **GetSaveFactsDeftemplateNames(
          if (theDeftemplate == NULL)
            {
             *error = true;
-            ExpectedTypeError1(theEnv,"save-facts",3+i,"visible deftemplate name");
+            ExpectedTypeError1(theEnv,"save-facts",3+i,"'visible deftemplate name'");
             rm(theEnv,deftemplateArray,sizeof(Deftemplate *) * *count);
             return NULL;
            }

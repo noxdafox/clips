@@ -7,10 +7,10 @@ FALSE
 CLIPS> (remove misclns2.bin)
 FALSE
 CLIPS> (load misclns2.tmp)
-[ARGACCES2] Function load was unable to open file misclns2.tmp.
+[ARGACCES3] Function 'load' was unable to open file 'misclns2.tmp'.
 FALSE
 CLIPS> (bload "Temp//misclns2.bin")
-[ARGACCES2] Function bload was unable to open file Temp//misclns2.bin.
+[ARGACCES3] Function 'bload' was unable to open file 'Temp//misclns2.bin'.
 FALSE
 CLIPS> (open "Temp//misclns2.tmp" misc2 "w")
 TRUE
@@ -23,7 +23,7 @@ TRUE
 CLIPS> (bsave "Temp//misclns2.bin")
 TRUE
 CLIPS> (bload "Temp//misclns2.tmp")
-[BLOAD2] File Temp//misclns2.tmp is not a binary construct file.
+[BLOAD2] File 'Temp//misclns2.tmp' is not a binary construct file.
 FALSE
 CLIPS> (bload "Temp//misclns2.bin")
 TRUE
@@ -193,74 +193,63 @@ CLIPS> (run)
 CLIPS> (clear)                              ; Use of reserved symbols
 CLIPS> (deftemplate and "example")
 
-[PATTERN1] The symbol and has special meaning
-and may not be used as a deftemplate name.
+[PATTERN1] The symbol 'and' has special meaning and may not be used as a deftemplate name.
 
 ERROR:
 (deftemplate MAIN::and "example")
 CLIPS> (deftemplate not)
 
-[PATTERN1] The symbol not has special meaning
-and may not be used as a deftemplate name.
+[PATTERN1] The symbol 'not' has special meaning and may not be used as a deftemplate name.
 
 ERROR:
 (deftemplate MAIN::not)
 CLIPS> (deftemplate or "example")
 
-[PATTERN1] The symbol or has special meaning
-and may not be used as a deftemplate name.
+[PATTERN1] The symbol 'or' has special meaning and may not be used as a deftemplate name.
 
 ERROR:
 (deftemplate MAIN::or "example")
 CLIPS> (deftemplate test)
 
-[PATTERN1] The symbol test has special meaning
-and may not be used as a deftemplate name.
+[PATTERN1] The symbol 'test' has special meaning and may not be used as a deftemplate name.
 
 ERROR:
 (deftemplate MAIN::test)
 CLIPS> (deftemplate logical "example" (field y))
 
-[PATTERN1] The symbol logical has special meaning
-and may not be used as a deftemplate name.
+[PATTERN1] The symbol 'logical' has special meaning and may not be used as a deftemplate name.
 
 ERROR:
 (deftemplate MAIN::logical "example"
    (
 CLIPS> (deftemplate exists)
 
-[PATTERN1] The symbol exists has special meaning
-and may not be used as a deftemplate name.
+[PATTERN1] The symbol 'exists' has special meaning and may not be used as a deftemplate name.
 
 ERROR:
 (deftemplate MAIN::exists)
 CLIPS> (deftemplate forall (field x))
 
-[PATTERN1] The symbol forall has special meaning
-and may not be used as a deftemplate name.
+[PATTERN1] The symbol 'forall' has special meaning and may not be used as a deftemplate name.
 
 ERROR:
 (deftemplate MAIN::forall
    (
 CLIPS> (deftemplate object "example")
 
-[PATTERN1] The symbol object has special meaning
-and may not be used as a deftemplate name.
+[PATTERN1] The symbol 'object' has special meaning and may not be used as a deftemplate name.
 
 ERROR:
 (deftemplate MAIN::object "example")
 CLIPS> (assert (and))
 
-[PATTERN1] The symbol and has special meaning
-and may not be used as a relation name.
+[PATTERN1] The symbol 'and' has special meaning and may not be used as a relation name.
 CLIPS> (assert (not b))
 
-[PATTERN1] The symbol not has special meaning
-and may not be used as a relation name.
+[PATTERN1] The symbol 'not' has special meaning and may not be used as a relation name.
 CLIPS> (defrule foo => (assert (or c)))
 
-[PATTERN1] The symbol or has special meaning
-and may not be used as a relation name.
+[PATTERN1] The symbol 'or' has special meaning and may not be used as a relation name.
 
 ERROR:
 (defrule MAIN::foo
@@ -268,24 +257,19 @@ ERROR:
    (assert (or
 CLIPS> (assert (test))
 
-[PATTERN1] The symbol test has special meaning
-and may not be used as a relation name.
+[PATTERN1] The symbol 'test' has special meaning and may not be used as a relation name.
 CLIPS> (assert (logical))
 
-[PATTERN1] The symbol logical has special meaning
-and may not be used as a relation name.
+[PATTERN1] The symbol 'logical' has special meaning and may not be used as a relation name.
 CLIPS> (assert (this) (exists))
 
-[PATTERN1] The symbol exists has special meaning
-and may not be used as a relation name.
+[PATTERN1] The symbol 'exists' has special meaning and may not be used as a relation name.
 CLIPS> (assert (forall) (that))
 
-[PATTERN1] The symbol forall has special meaning
-and may not be used as a relation name.
+[PATTERN1] The symbol 'forall' has special meaning and may not be used as a relation name.
 CLIPS> (assert (object))
 
-[PATTERN1] The symbol object has special meaning
-and may not be used as a relation name.
+[PATTERN1] The symbol 'object' has special meaning and may not be used as a relation name.
 CLIPS> (clear)                              ; First pattern field usage
 CLIPS> (defrule foo ($?x&abc) =>)
 
@@ -308,8 +292,7 @@ CLIPS>
   (+ ?x 1))
 
 [RULECSTR3] Previous variable bindings of ?x caused the type restrictions
-for argument #1 of the expression (+ ?x 1)
-found in the rule's RHS to be violated.
+for argument #1 of the expression (+ ?x 1) found in the rule's RHS to be violated.
 
 ERROR:
 (defrule MAIN::bar1
@@ -389,9 +372,9 @@ CLIPS> (clear) ; Thing 5
 CLIPS> (deftemplate foo (field x) (field y))
 CLIPS> (defrule bar (foo (y ?y&:(> ?y 3))) =>)
 CLIPS> (assert (foo (y a)))
-[ARGACCES5] Function > expected argument #1 to be of type integer or float
+[ARGACCES2] Function '>' expected argument #1 to be of type integer or float.
 
-[FACTMCH1] This error occurred in the fact pattern network
+[FACTMCH1] This error occurred in the fact pattern network.
    Currently active fact: (foo (x nil) (y a))
    Problem resides in slot y
       Of pattern #1 in rule bar
@@ -399,9 +382,9 @@ CLIPS> (assert (foo (y a)))
 <Fact-1>
 CLIPS> (defrule yak (quo ? ?x&:(> ?x 3)) =>)
 CLIPS> (assert (quo b a))
-[ARGACCES5] Function > expected argument #1 to be of type integer or float
+[ARGACCES2] Function '>' expected argument #1 to be of type integer or float.
 
-[FACTMCH1] This error occurred in the fact pattern network
+[FACTMCH1] This error occurred in the fact pattern network.
    Currently active fact: (quo b a)
    Problem resides in field #2
       Of pattern #1 in rule yak
@@ -418,9 +401,9 @@ CLIPS> (defrule foo2 (bar (y ?x&:(> ?x 3))) =>)
 CLIPS> (defrule foo3 (bar (z ?x&:(> ?x 3))) =>)
 CLIPS> (assert (bar (x a) (y 1) (z 1)))
 ==> f-1     (bar (y 1) (x a) (z 1))
-[ARGACCES5] Function > expected argument #1 to be of type integer or float
+[ARGACCES2] Function '>' expected argument #1 to be of type integer or float.
 
-[FACTMCH1] This error occurred in the fact pattern network
+[FACTMCH1] This error occurred in the fact pattern network.
    Currently active fact: (bar (y 1) (x a) (z 1))
    Problem resides in slot x
       Of pattern #1 in rule foo1
@@ -428,9 +411,9 @@ CLIPS> (assert (bar (x a) (y 1) (z 1)))
 <Fact-1>
 CLIPS> (assert (bar (x 1) (y a) (z 1)))
 ==> f-2     (bar (y a) (x 1) (z 1))
-[ARGACCES5] Function > expected argument #1 to be of type integer or float
+[ARGACCES2] Function '>' expected argument #1 to be of type integer or float.
 
-[FACTMCH1] This error occurred in the fact pattern network
+[FACTMCH1] This error occurred in the fact pattern network.
    Currently active fact: (bar (y a) (x 1) (z 1))
    Problem resides in slot y
       Of pattern #1 in rule foo2
@@ -438,9 +421,9 @@ CLIPS> (assert (bar (x 1) (y a) (z 1)))
 <Fact-2>
 CLIPS> (assert (bar (x 1) (y 1) (z a)))
 ==> f-3     (bar (y 1) (x 1) (z a))
-[ARGACCES5] Function > expected argument #1 to be of type integer or float
+[ARGACCES2] Function '>' expected argument #1 to be of type integer or float.
 
-[FACTMCH1] This error occurred in the fact pattern network
+[FACTMCH1] This error occurred in the fact pattern network.
    Currently active fact: (bar (y 1) (x 1) (z a))
    Problem resides in slot z
       Of pattern #1 in rule foo3
@@ -451,9 +434,9 @@ CLIPS> (defrule foo1 (bar ?x&:(> ?x 3) ?) =>)
 CLIPS> (defrule foo2 (bar ? ?x&:(> ?x 3)) =>)
 CLIPS> (assert (bar a 1))
 ==> f-1     (bar a 1)
-[ARGACCES5] Function > expected argument #1 to be of type integer or float
+[ARGACCES2] Function '>' expected argument #1 to be of type integer or float.
 
-[FACTMCH1] This error occurred in the fact pattern network
+[FACTMCH1] This error occurred in the fact pattern network.
    Currently active fact: (bar a 1)
    Problem resides in field #1
       Of pattern #1 in rule foo1
@@ -461,9 +444,9 @@ CLIPS> (assert (bar a 1))
 <Fact-1>
 CLIPS> (assert (bar 1 a))
 ==> f-2     (bar 1 a)
-[ARGACCES5] Function > expected argument #1 to be of type integer or float
+[ARGACCES2] Function '>' expected argument #1 to be of type integer or float.
 
-[FACTMCH1] This error occurred in the fact pattern network
+[FACTMCH1] This error occurred in the fact pattern network.
    Currently active fact: (bar 1 a)
    Problem resides in field #2
       Of pattern #1 in rule foo2
@@ -477,14 +460,14 @@ CLIPS> (assert (foo))
 ==> f-1     (foo)
 <Fact-1>
 CLIPS> (undeftemplate foo)
-[PRNTUTIL4] Unable to delete deftemplate foo.
+[PRNTUTIL4] Unable to delete deftemplate 'foo'.
 CLIPS> (defrule foobar => (assert (foo)))
 CLIPS> (undeftemplate foo)
-[PRNTUTIL4] Unable to delete deftemplate foo.
+[PRNTUTIL4] Unable to delete deftemplate 'foo'.
 CLIPS> (retract 1)
 <== f-1     (foo)
 CLIPS> (undeftemplate foo)
-[PRNTUTIL4] Unable to delete deftemplate foo.
+[PRNTUTIL4] Unable to delete deftemplate 'foo'.
 CLIPS> (undefrule foobar)
 CLIPS> (undeftemplate foo)
 CLIPS> (clear)
@@ -492,7 +475,7 @@ CLIPS> (deftemplate foo)
 CLIPS> (defrule bar (foo) =>)
 CLIPS> (deftemplate foo)
 
-[CSTRCPSR4] Cannot redefine deftemplate foo while it is in use.
+[CSTRCPSR4] Cannot redefine deftemplate 'foo' while it is in use.
 
 ERROR:
 (deftemplate MAIN::foo
