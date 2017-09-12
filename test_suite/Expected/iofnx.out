@@ -227,4 +227,27 @@ CLIPS> (close temp)
 TRUE
 CLIPS> (remove "Temp/iofun.dat") 
 TRUE
+CLIPS> (open "Temp/read.dat" temp "w") ; Return symbols for tokens that are not primitive values
+TRUE
+CLIPS> (printout temp "(foo ?foo \"?foo\" \")\")" crlf)
+CLIPS> (close temp)
+TRUE
+CLIPS> (open "Temp/read.dat" temp "r")
+TRUE
+CLIPS> (read temp)
+(
+CLIPS> (read temp)
+foo
+CLIPS> (read temp)
+?foo
+CLIPS> (read temp)
+"?foo"
+CLIPS> (read temp)
+")"
+CLIPS> (read temp)
+)
+CLIPS> (close temp)
+TRUE
+CLIPS> (remove "Temp/read.dat") 
+TRUE
 CLIPS> (dribble-off)
