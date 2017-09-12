@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/25/16             */
+   /*            CLIPS Version 6.40  09/11/17             */
    /*                                                     */
    /*                I/O FUNCTIONS MODULE                 */
    /*******************************************************/
@@ -86,6 +86,9 @@
 /*            UDF redesign.                                  */
 /*                                                           */
 /*            Added print and println functions.             */
+/*                                                           */
+/*            Read function now returns symbols for tokens   */
+/*            that are not primitive values.                 */
 /*                                                           */
 /*************************************************************/
 
@@ -407,7 +410,7 @@ void ReadFunction(
    else if (theToken.tknType == UNKNOWN_VALUE_TOKEN)
      { returnValue->lexemeValue = CreateString(theEnv,"*** READ ERROR ***"); }
    else
-     { returnValue->value = CreateString(theEnv,theToken.printForm); }
+     { returnValue->value = CreateSymbol(theEnv,theToken.printForm); }
   }
 
 /********************************************************/
