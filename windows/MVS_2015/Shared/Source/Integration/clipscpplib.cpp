@@ -1779,9 +1779,9 @@ FactAddressValue::FactAddressValue(
   Fact *theFact) : theFactAddress(theFact)
   {
 #ifndef CLIPS_DLL_WRAPPER
-   IncrementFactReferenceCount(theFact);
+   RetainFact(theFact);
 #else
-   __IncrementFactReferenceCount(theFact);
+   __RetainFact(theFact);
 #endif
   }
 
@@ -1799,9 +1799,9 @@ FactAddressValue::FactAddressValue( const FactAddressValue& v) : theFactAddress(
 FactAddressValue::~FactAddressValue()
   {   
 #ifndef CLIPS_DLL_WRAPPER
-   ::DecrementFactReferenceCount(theFactAddress);
+   ::ReleaseFact(theFactAddress);
 #else
-   __DecrementFactReferenceCount(theFactAddress);
+   __ReleaseFact(theFactAddress);
 #endif
   }
 
@@ -1824,18 +1824,18 @@ FactAddressValue& FactAddressValue::operator = (
    if (theFactAddress != NULL)
      { 
 #ifndef CLIPS_DLL_WRAPPER
-      ::DecrementFactReferenceCount(theFactAddress);
+      ::ReleaseFact(theFactAddress);
 #else
-      __DecrementFactReferenceCount(theFactAddress);
+      __ReleaseFact(theFactAddress);
 #endif
      }
         
    theFactAddress = v.theFactAddress;
      
 #ifndef CLIPS_DLL_WRAPPER
-   IncrementFactReferenceCount(theFactAddress);
+   RetainFact(theFactAddress);
 #else
-   __IncrementFactReferenceCount(theFactAddress);
+   __RetainFact(theFactAddress);
 #endif
    
    return *this;
@@ -1911,9 +1911,9 @@ InstanceAddressValue::InstanceAddressValue(
   Instance *theInstance) : theInstanceAddress(theInstance)
   {
 #ifndef CLIPS_DLL_WRAPPER
-   IncrementInstanceReferenceCount(theInstance);
+   RetainInstance(theInstance);
 #else
-   __IncrementInstanceReferenceCount(theInstance);
+   __RetainInstance(theInstance);
 #endif
   }
 
@@ -1931,9 +1931,9 @@ InstanceAddressValue::InstanceAddressValue( const InstanceAddressValue& v) : the
 InstanceAddressValue::~InstanceAddressValue()
   {   
 #ifndef CLIPS_DLL_WRAPPER
-   ::DecrementInstanceReferenceCount(theInstanceAddress);
+   ::ReleaseInstance(theInstanceAddress);
 #else
-   __DecrementInstanceReferenceCount(theInstanceAddress);
+   __ReleaseInstance(theInstanceAddress);
 #endif
   }
 
@@ -1948,9 +1948,9 @@ InstanceAddressValue& InstanceAddressValue::operator = (
    if (theInstanceAddress != NULL)
      { 
 #ifndef CLIPS_DLL_WRAPPER
-      ::DecrementInstanceReferenceCount(theInstanceAddress);
+      ::RetainInstance(theInstanceAddress);
 #else
-      __DecrementInstanceReferenceCount(theInstanceAddress);
+      __RetainInstance(theInstanceAddress);
 #endif
 
      }
@@ -1958,9 +1958,9 @@ InstanceAddressValue& InstanceAddressValue::operator = (
    theInstanceAddress = v.theInstanceAddress;
      
 #ifndef CLIPS_DLL_WRAPPER
-   ::IncrementInstanceReferenceCount(theInstanceAddress);
+   ::RetainInstance(theInstanceAddress);
 #else
-   __IncrementInstanceReferenceCount(theInstanceAddress);
+   __RetainInstance(theInstanceAddress);
 #endif
    
    return *this;

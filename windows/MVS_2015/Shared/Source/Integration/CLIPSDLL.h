@@ -57,10 +57,10 @@ bool DECLSPEC __AddRouter(Environment *,const char *,int,
 
 void DECLSPEC __SetCommandString(Environment *,const char *);
 void DECLSPEC __CommandLoop(Environment *);
-void DECLSPEC __IncrementFactReferenceCount(Fact *);
-void DECLSPEC __DecrementFactReferenceCount(Fact *);
-void DECLSPEC __IncrementInstanceReferenceCount(Instance *);
-void DECLSPEC __DecrementInstanceReferenceCount(Instance *);
+void DECLSPEC __RetainFact(Fact *);
+void DECLSPEC __ReleaseFact(Fact *);
+void DECLSPEC __RetainInstance(Instance *);
+void DECLSPEC __ReleaseInstance(Instance *);
 bool DECLSPEC __DirectGetSlot(Instance *,const char *,CLIPSValue *);  
 void DECLSPEC __SetHaltExecution(Environment *,bool);
 void DECLSPEC __SetHaltCommandLoopBatch(Environment *,bool);

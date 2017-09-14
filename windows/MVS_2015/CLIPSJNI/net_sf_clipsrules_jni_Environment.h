@@ -569,34 +569,34 @@ JNIEXPORT void JNICALL Java_net_sf_clipsrules_jni_Environment_setInstancesChange
 
 /*
  * Class:     net_sf_clipsrules_jni_Environment
- * Method:    incrementFactCount
+ * Method:    retainFact
  * Signature: (Lnet/sf/clipsrules/jni/Environment;JJ)V
  */
-JNIEXPORT void JNICALL Java_net_sf_clipsrules_jni_Environment_incrementFactCount
+JNIEXPORT void JNICALL Java_net_sf_clipsrules_jni_Environment_retainFact
   (JNIEnv *, jobject, jobject, jlong, jlong);
 
 /*
  * Class:     net_sf_clipsrules_jni_Environment
- * Method:    decrementFactCount
+ * Method:    releaseFact
  * Signature: (Lnet/sf/clipsrules/jni/Environment;JJ)V
  */
-JNIEXPORT void JNICALL Java_net_sf_clipsrules_jni_Environment_decrementFactCount
+JNIEXPORT void JNICALL Java_net_sf_clipsrules_jni_Environment_releaseFact
   (JNIEnv *, jobject, jobject, jlong, jlong);
 
 /*
  * Class:     net_sf_clipsrules_jni_Environment
- * Method:    incrementInstanceCount
+ * Method:    retainInstance
  * Signature: (Lnet/sf/clipsrules/jni/Environment;JJ)V
  */
-JNIEXPORT void JNICALL Java_net_sf_clipsrules_jni_Environment_incrementInstanceCount
+JNIEXPORT void JNICALL Java_net_sf_clipsrules_jni_Environment_retainInstance
   (JNIEnv *, jobject, jobject, jlong, jlong);
 
 /*
  * Class:     net_sf_clipsrules_jni_Environment
- * Method:    decrementInstanceCount
+ * Method:    releaseInstance
  * Signature: (Lnet/sf/clipsrules/jni/Environment;JJ)V
  */
-JNIEXPORT void JNICALL Java_net_sf_clipsrules_jni_Environment_decrementInstanceCount
+JNIEXPORT void JNICALL Java_net_sf_clipsrules_jni_Environment_releaseInstance
   (JNIEnv *, jobject, jobject, jlong, jlong);
 
 /*
