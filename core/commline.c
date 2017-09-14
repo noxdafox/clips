@@ -286,6 +286,7 @@ void FlushCommandString(
    CommandLineData(theEnv)->CommandString = NULL;
    CommandLineData(theEnv)->MaximumCharacters = 0;
    RouterData(theEnv)->CommandBufferInputCount = 0;
+   RouterData(theEnv)->InputUngets = 0;
    RouterData(theEnv)->AwaitingInput = true;
   }
 
@@ -647,6 +648,7 @@ void CommandLoop(
 
    PrintPrompt(theEnv);
    RouterData(theEnv)->CommandBufferInputCount = 0;
+   RouterData(theEnv)->InputUngets = 0;
    RouterData(theEnv)->AwaitingInput = true;
 
    while (true)
@@ -710,6 +712,7 @@ void CommandLoopBatch(
 
    PrintPrompt(theEnv);
    RouterData(theEnv)->CommandBufferInputCount = 0;
+   RouterData(theEnv)->InputUngets = 0;
    RouterData(theEnv)->AwaitingInput = true;
 
    CommandLoopBatchDriver(theEnv);
@@ -810,6 +813,7 @@ bool ExecuteIfCommandComplete(
    FlushPPBuffer(theEnv);
    SetPPBufferStatus(theEnv,false);
    RouterData(theEnv)->CommandBufferInputCount = 0;
+   RouterData(theEnv)->InputUngets = 0;
    RouterData(theEnv)->AwaitingInput = false;
    RouteCommand(theEnv,CommandLineData(theEnv)->CommandString,true);
    FlushPPBuffer(theEnv);

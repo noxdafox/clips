@@ -87,6 +87,7 @@
    void                           OpenFunction(Environment *,UDFContext *,UDFValue *);
    void                           CloseFunction(Environment *,UDFContext *,UDFValue *);
    void                           GetCharFunction(Environment *,UDFContext *,UDFValue *);
+   void                           UngetCharFunction(Environment *,UDFContext *,UDFValue *);
    void                           PutCharFunction(Environment *,UDFContext *,UDFValue *);
    void                           ReadlineFunction(Environment *,UDFContext *,UDFValue *);
    void                           FormatFunction(Environment *,UDFContext *,UDFValue *);

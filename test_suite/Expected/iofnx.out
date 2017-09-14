@@ -250,4 +250,92 @@ CLIPS> (close temp)
 TRUE
 CLIPS> (remove "Temp/read.dat") 
 TRUE
+CLIPS> (put-char) ; put-char/get-char
+[ARGACCES1] Function 'put-char' expected at least 1 argument.
+CLIPS> (put-char temp)
+[ARGACCES2] Function 'put-char' expected argument #1 to be of type integer.
+CLIPS> (open "Temp/read.dat" temp "w") 
+TRUE
+CLIPS> (put-char temp abc)
+[ARGACCES2] Function 'put-char' expected argument #2 to be of type integer.
+CLIPS> (put-char temp 72 34)
+[ARGACCES1] Function 'put-char' expected no more than 2 arguments.
+CLIPS> (put-char temp 72)
+CLIPS> (put-char temp 101)
+CLIPS> (put-char temp 108)
+CLIPS> (put-char temp 112)
+CLIPS> (put-char temp 111)
+CLIPS> (put-char temp 10)
+CLIPS> (close temp)
+TRUE
+CLIPS> (open "Temp/read.dat" temp "r")
+TRUE
+CLIPS> (read temp)
+Helpo
+CLIPS> (close temp)
+TRUE
+CLIPS> (open "Temp/read.dat" temp "r")
+TRUE
+CLIPS> (readline temp)
+"Helpo"
+CLIPS> (close temp)
+TRUE
+CLIPS> (open "Temp/read.dat" temp "r")
+TRUE
+CLIPS> (get-char temp)
+72
+CLIPS> (get-char temp)
+101
+CLIPS> (get-char temp)
+108
+CLIPS> (get-char temp)
+112
+CLIPS> (get-char temp)
+111
+CLIPS> (get-char temp)
+10
+CLIPS> (get-char temp)
+-1
+CLIPS> (close temp)
+TRUE
+CLIPS> (unget-char temp)
+[ARGACCES2] Function 'unget-char' expected argument #1 to be of type integer.
+0
+CLIPS> (open "Temp/read.dat" temp "r")
+TRUE
+CLIPS> (get-char temp)
+72
+CLIPS> (get-char temp)
+101
+CLIPS> (unget-char temp 101)
+101
+CLIPS> (get-char temp)
+101
+CLIPS> (get-char temp)
+108
+CLIPS> (unget-char temp 108)
+108
+CLIPS> (unget-char temp 101)
+101
+CLIPS> (get-char temp)
+101
+CLIPS> (get-char temp)
+108
+CLIPS> (get-char temp)
+112
+CLIPS> (get-char temp)
+111
+CLIPS> (unget-char temp -1)
+-1
+CLIPS> (get-char temp)
+10
+CLIPS> (get-char temp)
+-1
+CLIPS> (close temp)
+TRUE
+CLIPS> (remove "Temp/read.dat")
+TRUE
+CLIPS> (while (not (member$ (get-char) (create$ 10 13))) do)
+ab cd ef
+FALSE
 CLIPS> (dribble-off)

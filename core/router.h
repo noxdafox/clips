@@ -102,6 +102,7 @@ struct router
 struct routerData
   {
    size_t CommandBufferInputCount;
+   size_t InputUngets;
    bool AwaitingInput;
    const char *LineCountRouter;
    const char *FastCharGetRouter;
