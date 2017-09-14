@@ -90,6 +90,8 @@
 /*            Read function now returns symbols for tokens   */
 /*            that are not primitive values.                 */
 /*                                                           */
+/*            Added unget-char function.                     */
+/*                                                           */
 /*************************************************************/
 
 #include "setup.h"
@@ -178,6 +180,7 @@ void IOFunctionDefinitions(
    AddUDF(theEnv,"open","b",2,3,"*;sy",OpenFunction,"OpenFunction",NULL);
    AddUDF(theEnv,"close","b",0,1,NULL,CloseFunction,"CloseFunction",NULL);
    AddUDF(theEnv,"get-char","l",0,1,NULL,GetCharFunction,"GetCharFunction",NULL);
+   AddUDF(theEnv,"unget-char","l",1,2,NULL,UngetCharFunction,"UngetCharFunction",NULL);
    AddUDF(theEnv,"put-char","v",1,2,NULL,PutCharFunction,"PutCharFunction",NULL);
    AddUDF(theEnv,"remove","b",1,1,"sy",RemoveFunction,"RemoveFunction",NULL);
    AddUDF(theEnv,"rename","b",2,2,"sy",RenameFunction,"RenameFunction",NULL);
@@ -392,9 +395,6 @@ void ReadFunction(
    else
      { GetToken(theEnv,logicalName,&theToken); }
 
-   RouterData(theEnv)->CommandBufferInputCount = 0;
-   RouterData(theEnv)->AwaitingInput = false;
-
    /*====================================================*/
    /* Copy the token to the return value data structure. */
    /*====================================================*/
@@ -432,6 +432,7 @@ static void ReadTokenFromStdin(
 
    inputString = NULL;
    RouterData(theEnv)->CommandBufferInputCount = 0;
+   RouterData(theEnv)->InputUngets = 0;
    RouterData(theEnv)->AwaitingInput = true;
    inputStringSize = 0;
 
@@ -506,6 +507,10 @@ static void ReadTokenFromStdin(
      }
 
    if (inputStringSize > 0) rm(theEnv,inputString,inputStringSize);
+   
+   RouterData(theEnv)->CommandBufferInputCount = 0;
+   RouterData(theEnv)->InputUngets = 0;
+   RouterData(theEnv)->AwaitingInput = false;
   }
 
 /*************************************************************/
@@ -681,7 +686,104 @@ void GetCharFunction(
       return;
      }
 
+   if (strcmp(logicalName,STDIN) == 0)
+     {
+      if (RouterData(theEnv)->InputUngets > 0)
+        {
+         returnValue->integerValue = CreateInteger(theEnv,ReadRouter(theEnv,logicalName));
+         RouterData(theEnv)->InputUngets--;
+        }
+      else
+        {
+         int theChar;
+         
+         RouterData(theEnv)->AwaitingInput = true;
+         theChar = ReadRouter(theEnv,logicalName);
+         RouterData(theEnv)->AwaitingInput = false;
+
+         if (theChar == '\b')
+           {
+            if (RouterData(theEnv)->CommandBufferInputCount > 0)
+              { RouterData(theEnv)->CommandBufferInputCount--; }
+           }
+         else
+           { RouterData(theEnv)->CommandBufferInputCount++; }
+
+         returnValue->integerValue = CreateInteger(theEnv,theChar);
+        }
+      
+      return;
+     }
+      
    returnValue->integerValue = CreateInteger(theEnv,ReadRouter(theEnv,logicalName));
+  }
+
+/*****************************************/
+/* UngetCharFunction: H/L access routine */
+/*   for the unget-char function.        */
+/*****************************************/
+void UngetCharFunction(
+  Environment *theEnv,
+  UDFContext *context,
+  UDFValue *returnValue)
+  {
+   unsigned int numberOfArguments;
+   const char *logicalName;
+   UDFValue theArg;
+   long long theChar;
+
+   numberOfArguments = UDFArgumentCount(context);
+
+   /*=======================*/
+   /* Get the logical name. */
+   /*=======================*/
+
+   if (numberOfArguments == 1)
+     { logicalName = STDIN; }
+   else
+     {
+      logicalName = GetLogicalName(context,STDIN);
+      if (logicalName == NULL)
+        {
+         IllegalLogicalNameMessage(theEnv,"ungetc-char");
+         SetHaltExecution(theEnv,true);
+         SetEvaluationError(theEnv,true);
+         returnValue->integerValue = CreateInteger(theEnv,-1);
+         return;
+        }
+     }
+
+   if (QueryRouters(theEnv,logicalName) == false)
+     {
+      UnrecognizedRouterMessage(theEnv,logicalName);
+      SetHaltExecution(theEnv,true);
+      SetEvaluationError(theEnv,true);
+      returnValue->integerValue = CreateInteger(theEnv,-1);
+      return;
+     }
+
+   /*=============================*/
+   /* Get the character to unget. */
+   /*=============================*/
+
+   if (! UDFNextArgument(context,INTEGER_BIT,&theArg))
+     { return; }
+
+   theChar = theArg.integerValue->contents;
+   if (theChar == -1)
+     {
+      returnValue->integerValue = CreateInteger(theEnv,-1);
+      return;
+     }
+
+   /*=======================*/
+   /* Ungetc the character. */
+   /*=======================*/
+
+   if (strcmp(logicalName,STDIN) == 0)
+     { RouterData(theEnv)->InputUngets++; }
+   
+   returnValue->integerValue = CreateInteger(theEnv,UnreadRouter(theEnv,logicalName,(int) theChar));
   }
 
 /***************************************/
@@ -1253,11 +1355,24 @@ void ReadlineFunction(
       return;
      }
 
-   RouterData(theEnv)->CommandBufferInputCount = 0;
-   RouterData(theEnv)->AwaitingInput = true;
-   buffer = FillBuffer(theEnv,logicalName,&RouterData(theEnv)->CommandBufferInputCount,&line_max);
-   RouterData(theEnv)->CommandBufferInputCount = 0;
-   RouterData(theEnv)->AwaitingInput = false;
+   if (strcmp(logicalName,STDIN) == 0)
+     {
+      RouterData(theEnv)->CommandBufferInputCount = 0;
+      RouterData(theEnv)->InputUngets = 0;
+      RouterData(theEnv)->AwaitingInput = true;
+   
+      buffer = FillBuffer(theEnv,logicalName,&RouterData(theEnv)->CommandBufferInputCount,&line_max);
+   
+      RouterData(theEnv)->CommandBufferInputCount = 0;
+      RouterData(theEnv)->InputUngets = 0;
+      RouterData(theEnv)->AwaitingInput = false;
+     }
+   else
+     {
+      size_t currentPos = 0;
+      
+      buffer = FillBuffer(theEnv,logicalName,&currentPos,&line_max);
+     }
 
    if (GetHaltExecution(theEnv))
      {
@@ -1413,17 +1528,23 @@ void ReadNumberFunction(
    /*=======================================*/
 
    if (strcmp(logicalName,STDIN) == 0)
-     { ReadNumber(theEnv,logicalName,&theToken,true); }
+     {
+      RouterData(theEnv)->CommandBufferInputCount = 0;
+      RouterData(theEnv)->InputUngets = 0;
+      RouterData(theEnv)->AwaitingInput = true;
+      
+      ReadNumber(theEnv,logicalName,&theToken,true);
+      
+      RouterData(theEnv)->CommandBufferInputCount = 0;
+      RouterData(theEnv)->InputUngets = 0;
+      RouterData(theEnv)->AwaitingInput = false;
+     }
    else
      { ReadNumber(theEnv,logicalName,&theToken,false); }
-
-   RouterData(theEnv)->CommandBufferInputCount = 0;
-   RouterData(theEnv)->AwaitingInput = false;
 
    /*====================================================*/
    /* Copy the token to the return value data structure. */
    /*====================================================*/
-
 
    if ((theToken.tknType == FLOAT_TOKEN) || (theToken.tknType == STRING_TOKEN) ||
 #if OBJECT_SYSTEM
@@ -1467,8 +1588,6 @@ static void ReadNumber(
    /*===========================================*/
 
    inputString = NULL;
-   RouterData(theEnv)->CommandBufferInputCount = 0;
-   RouterData(theEnv)->AwaitingInput = true;
    inputStringSize = 0;
    inchar = ReadRouter(theEnv,logicalName);
 

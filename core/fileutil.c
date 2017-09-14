@@ -485,9 +485,12 @@ int LLGetcBatch(
    /* Add the character to the batch buffer. */
    /*========================================*/
 
-   FileCommandData(theEnv)->BatchBuffer = ExpandStringWithChar(theEnv,(char) rv,FileCommandData(theEnv)->BatchBuffer,&FileCommandData(theEnv)->BatchCurrentPosition,
-                                      &FileCommandData(theEnv)->BatchMaximumPosition,FileCommandData(theEnv)->BatchMaximumPosition+BUFFER_SIZE);
-
+   if (RouterData(theEnv)->InputUngets == 0)
+     {
+      FileCommandData(theEnv)->BatchBuffer = ExpandStringWithChar(theEnv,(char) rv,FileCommandData(theEnv)->BatchBuffer,&FileCommandData(theEnv)->BatchCurrentPosition,
+                                         &FileCommandData(theEnv)->BatchMaximumPosition,FileCommandData(theEnv)->BatchMaximumPosition+BUFFER_SIZE);
+     }
+      
    /*======================================*/
    /* If a carriage return is encountered, */
    /* then flush the batch buffer.         */
@@ -536,7 +539,7 @@ static int UnreadBatchCallback(
    if (FileCommandData(theEnv)->BatchCurrentPosition > 0) FileCommandData(theEnv)->BatchCurrentPosition--;
    if (FileCommandData(theEnv)->BatchBuffer != NULL) FileCommandData(theEnv)->BatchBuffer[FileCommandData(theEnv)->BatchCurrentPosition] = EOS;
    if (FileCommandData(theEnv)->BatchType == FILE_BATCH)
-     { return(ungetc(ch,FileCommandData(theEnv)->BatchFileSource)); }
+     { return ungetc(ch,FileCommandData(theEnv)->BatchFileSource); }
 
    return UnreadRouter(theEnv,FileCommandData(theEnv)->BatchLogicalSource,ch);
   }
