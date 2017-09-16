@@ -67,6 +67,14 @@
 (while)                            ; 10.9.8
 (while FALSE)                      ; 10.9.8
 (while FALSE do)                   ; 10.9.8
+(while FALSE 3)                    ; 10.9.8
+(while FALSE 3 4)                  ; 10.9.8
+(while FALSE (+ 2 3))              ; 10.9.8
+(while FALSE a (+ 2 3))            ; 10.9.8
+(while FALSE do 3)                 ; 10.9.8
+(while FALSE do 3 4)               ; 10.9.8
+(while FALSE do (+ 2 3))           ; 10.9.8
+(while FALSE do a (+ 2 3))         ; 10.9.8
 (clear)                            ; 10.9.8
 (defglobal ?*t* = 10)              ; 10.9.8
 (while (> ?*t* 0) do
