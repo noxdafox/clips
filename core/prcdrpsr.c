@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*             CLIPS Version 6.31  09/16/17            */
    /*                                                     */
    /*          PROCEDURAL FUNCTIONS PARSER MODULE         */
    /*******************************************************/
@@ -33,6 +33,9 @@
 /*                                                           */
 /*            Fixed linkage issue when BLOAD_ONLY compiler   */
 /*            flag is set to 1.                              */
+/*                                                           */
+/*      6.31: Fixed 'while' function bug with optional use   */
+/*            of 'do' keyword.                               */
 /*                                                           */
 /*************************************************************/
 
@@ -193,7 +196,7 @@ static struct expr *WhileParse(
   const char *infile)
   {
    struct token theToken;
-   int read_first_paren;
+   int read_first_token;
 
    /*===============================*/
    /* Process the while expression. */
@@ -215,26 +218,20 @@ static struct expr *WhileParse(
    GetToken(theEnv,infile,&theToken);
    if ((theToken.type == SYMBOL) && (strcmp(ValueToString(theToken.value),"do") == 0))
      {
-      read_first_paren = TRUE;
+      read_first_token = TRUE;
       PPBackup(theEnv);
       SavePPBuffer(theEnv," ");
       SavePPBuffer(theEnv,theToken.printForm);
       IncrementIndentDepth(theEnv,3);
       PPCRAndIndent(theEnv);
      }
-   else if (theToken.type == LPAREN)
+   else
      {
-      read_first_paren = FALSE;
+      read_first_token = FALSE;
       PPBackup(theEnv);
       IncrementIndentDepth(theEnv,3);
       PPCRAndIndent(theEnv);
       SavePPBuffer(theEnv,theToken.printForm);
-     }
-   else
-     {
-      SyntaxErrorMessage(theEnv,"while function");
-      ReturnExpression(theEnv,parse);
-      return(NULL);
      }
 
    /*============================*/
@@ -243,7 +240,7 @@ static struct expr *WhileParse(
    if (ExpressionData(theEnv)->svContexts->rtn == TRUE)
      ExpressionData(theEnv)->ReturnContext = TRUE;
    ExpressionData(theEnv)->BreakContext = TRUE;
-   parse->argList->nextArg = GroupActions(theEnv,infile,&theToken,read_first_paren,NULL,FALSE);
+   parse->argList->nextArg = GroupActions(theEnv,infile,&theToken,read_first_token,NULL,FALSE);
 
    if (parse->argList->nextArg == NULL)
      {
