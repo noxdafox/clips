@@ -32,7 +32,7 @@ a b
 (close blah)                      ; DR0037
 (deffacts a ())                   ; DR0039
 (assert ())                       ; DR0039
-(system)                          ; DR0043
+(system)                          ; DR0043 Should be non-zero if command processor available
 (clear)                           ; DR0047
 (defrule a (= 5 7) =>)            ; DR0047
 (assert (= 5 7))                  ; DR0047

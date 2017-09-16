@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/30/16             */
+   /*            CLIPS Version 6.40  09/16/17             */
    /*                                                     */
    /*            SYSTEM DEPENDENT HEADER FILE             */
    /*******************************************************/
@@ -58,7 +58,7 @@
 /*            Changed the EX_MATH compilation flag to        */
 /*            EXTENDED_MATH_FUNCTIONS.                       */
 /*                                                           */
-/*            Support for typed EXTERNAL_ADDRESS_TYPE.            */
+/*            Support for typed EXTERNAL_ADDRESS_TYPE.       */
 /*                                                           */
 /*            GenOpen function checks for UTF-8 Byte Order   */
 /*            Marker.                                        */
@@ -87,6 +87,11 @@
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
 /*                                                           */
+/*            Removed ContinueEnvFunction, PauseEnvFunction, */
+/*            and RedrawScreenFunction callbacks.            */
+/*                                                           */
+/*            Completion code now returned by gensystem.     */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_sysdep
@@ -98,14 +103,8 @@
 #include <stdio.h>
 #include <setjmp.h>
 
-   void                        SetRedrawFunction(Environment *,void (*)(Environment *));
-   void                        SetPauseEnvFunction(Environment *,void (*)(Environment *));
-   void                        SetContinueEnvFunction(Environment *,void (*)(Environment *,int));
-   void                        (*GetRedrawFunction(Environment *))(Environment *);
-   void                        (*GetPauseEnvFunction(Environment *))(Environment *);
-   void                        (*GetContinueEnvFunction(Environment *))(Environment *,int);
    double                      gentime(void);
-   void                        gensystem(Environment *,const char *);
+   int                         gensystem(Environment *,const char *);
    int                         GenOpenReadBinary(Environment *,const char *,const char *);
    void                        GetSeekCurBinary(Environment *,long);
    void                        GetSeekSetBinary(Environment *,long);
