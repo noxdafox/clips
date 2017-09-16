@@ -64,8 +64,8 @@ ERROR:
 CLIPS> (assert ())                       ; DR0039
 
 [PRNTUTIL2] Syntax Error:  Check appropriate syntax for first field of a RHS pattern.
-CLIPS> (system)                          ; DR0043
-[ARGACCES1] Function 'system' expected at least 1 argument.
+CLIPS> (system)                          ; DR0043 Should be non-zero if command processor available
+1
 CLIPS> (clear)                           ; DR0047
 CLIPS> (defrule a (= 5 7) =>)            ; DR0047
 

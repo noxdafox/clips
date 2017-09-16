@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.50  08/25/16             */
+   /*            CLIPS Version 6.50  09/15/17             */
    /*                                                     */
    /*            MISCELLANEOUS FUNCTIONS MODULE           */
    /*******************************************************/
@@ -92,6 +92,11 @@
 /*                                                           */
 /*            UDF redesign.                                  */
 /*                                                           */
+/*            The system function now returns the completion */
+/*            status of the command. If no arguments are     */
+/*            passed, the return value indicates whether a   */
+/*            command processor is available.                */
+/*                                                           */
 /*      6.50: Fact ?var:slot reference support.              */
 /*                                                           */
 /*************************************************************/
@@ -157,7 +162,7 @@ void MiscFunctionDefinitions(
    AddUDF(theEnv,"gensym*","y",0,0,NULL,GensymStarFunction,"GensymStarFunction",NULL);
    AddUDF(theEnv,"setgen","l",1,1,"l",SetgenFunction,"SetgenFunction",NULL);
 
-   AddUDF(theEnv,"system","v",1,UNBOUNDED,"sy",SystemCommand,"SystemCommand",NULL);
+   AddUDF(theEnv,"system","ly",0,UNBOUNDED,"sy",SystemCommand,"SystemCommand",NULL);
    AddUDF(theEnv,"length$","l",1,1,"m",LengthFunction,"LengthFunction",NULL);
    AddUDF(theEnv,"time","d",0,0,NULL,TimeFunction,"TimeFunction",NULL);
    AddUDF(theEnv,"local-time","m",0,0,NULL,LocalTimeFunction,"LocalTimeFunction",NULL);
@@ -1682,26 +1687,28 @@ void SystemCommand(
    while (UDFHasNextArgument(context))
      {
       if (! UDFNextArgument(context,LEXEME_BITS,&tempValue))
-        { return; }
+        {
+         returnValue->lexemeValue = FalseSymbol(theEnv);
+         return;
+        }
 
      theString = tempValue.lexemeValue->contents;
 
      commandBuffer = AppendToString(theEnv,theString,commandBuffer,&bufferPosition,&bufferMaximum);
     }
 
-   if (commandBuffer == NULL) return;
-
    /*=======================================*/
    /* Execute the operating system command. */
    /*=======================================*/
 
-   gensystem(theEnv,commandBuffer);
+   returnValue->integerValue = CreateInteger(theEnv,gensystem(theEnv,commandBuffer));
 
    /*==================================================*/
    /* Return the string buffer containing the command. */
    /*==================================================*/
 
-   rm(theEnv,commandBuffer,bufferMaximum);
+   if (commandBuffer != NULL)
+     { rm(theEnv,commandBuffer,bufferMaximum); }
   }
 
 /*****************************************/

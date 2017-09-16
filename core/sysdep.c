@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/06/16             */
+   /*            CLIPS Version 6.40  09/16/17             */
    /*                                                     */
    /*               SYSTEM DEPENDENT MODULE               */
    /*******************************************************/
@@ -95,6 +95,11 @@
 /*                                                           */
 /*            Removed VAX_VMS support.                       */
 /*                                                           */
+/*            Removed ContinueEnvFunction, PauseEnvFunction, */
+/*            and RedrawScreenFunction callbacks.            */
+/*                                                           */
+/*            Completion code now returned by gensystem.     */
+/*                                                           */
 /*************************************************************/
 
 #include "setup.h"
@@ -143,10 +148,6 @@
 
 struct systemDependentData
   {
-   void (*RedrawScreenFunction)(Environment *);
-   void (*PauseEnvFunction)(Environment *);
-   void (*ContinueEnvFunction)(Environment *,int);
-
 #if WIN_MVC
    int BinaryFileHandle;
    unsigned char getcBuffer[7];
@@ -171,66 +172,6 @@ void InitializeSystemDependentData(
   Environment *theEnv)
   {
    AllocateEnvironmentData(theEnv,SYSTEM_DEPENDENT_DATA,sizeof(struct systemDependentData),NULL);
-  }
-
-/******************************************************/
-/* SetRedrawFunction: Sets the redraw screen function */
-/*   for use with a user interface that may be        */
-/*   overwritten by execution of a command.           */
-/******************************************************/
-void SetRedrawFunction(
-  Environment *theEnv,
-  void (*theFunction)(Environment *))
-  {
-   SystemDependentData(theEnv)->RedrawScreenFunction = theFunction;
-  }
-
-/******************************************************/
-/* SetPauseEnvFunction: Set the normal state function */
-/*   which puts terminal in a normal state.           */
-/******************************************************/
-void SetPauseEnvFunction(
-  Environment *theEnv,
-  void (*theFunction)(Environment *))
-  {
-   SystemDependentData(theEnv)->PauseEnvFunction = theFunction;
-  }
-
-/*********************************************************/
-/* SetContinueEnvFunction: Sets the continue environment */
-/*   function which returns the terminal to a special    */
-/*   screen interface state.                             */
-/*********************************************************/
-void SetContinueEnvFunction(
-  Environment *theEnv,
-  void (*theFunction)(Environment *,int))
-  {
-   SystemDependentData(theEnv)->ContinueEnvFunction = theFunction;
-  }
-
-/*******************************************************/
-/* GetRedrawFunction: Gets the redraw screen function. */
-/*******************************************************/
-void (*GetRedrawFunction(Environment *theEnv))(Environment *)
-  {
-   return SystemDependentData(theEnv)->RedrawScreenFunction;
-  }
-
-/*****************************************************/
-/* GetPauseEnvFunction: Gets the normal state function. */
-/*****************************************************/
-void (*GetPauseEnvFunction(Environment *theEnv))(Environment *)
-  {
-   return SystemDependentData(theEnv)->PauseEnvFunction;
-  }
-
-/*********************************************/
-/* GetContinueEnvFunction: Gets the continue */
-/*   environment function.                   */
-/*********************************************/
-void (*GetContinueEnvFunction(Environment *theEnv))(Environment *,int)
-  {
-   return SystemDependentData(theEnv)->ContinueEnvFunction;
   }
 
 /*********************************************************/
@@ -264,25 +205,11 @@ double gentime()
 /* gensystem: Generic routine for passing a string   */
 /*   representing a command to the operating system. */
 /*****************************************************/
-void gensystem(
+int gensystem(
   Environment *theEnv,
   const char *commandBuffer)
   {
-   if (SystemDependentData(theEnv)->PauseEnvFunction != NULL) (*SystemDependentData(theEnv)->PauseEnvFunction)(theEnv);
-
-#if (! WIN_MVC)
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wunused-result" 
-#endif
-
-   system(commandBuffer);
-
-#if (! WIN_MVC)
-#pragma GCC diagnostic pop 
-#endif
-
-   if (SystemDependentData(theEnv)->ContinueEnvFunction != NULL) (*SystemDependentData(theEnv)->ContinueEnvFunction)(theEnv,1);
-   if (SystemDependentData(theEnv)->RedrawScreenFunction != NULL) (*SystemDependentData(theEnv)->RedrawScreenFunction)(theEnv);
+   return system(commandBuffer);
   }
 
 /*******************************************/
