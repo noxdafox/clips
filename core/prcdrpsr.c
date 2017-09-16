@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  10/18/16             */
+   /*            CLIPS Version 6.40  09/16/17             */
    /*                                                     */
    /*          PROCEDURAL FUNCTIONS PARSER MODULE         */
    /*******************************************************/
@@ -33,6 +33,9 @@
 /*                                                           */
 /*            Fixed linkage issue when BLOAD_ONLY compiler   */
 /*            flag is set to 1.                              */
+/*                                                           */
+/*      6.31: Fixed 'while' function bug with optional use   */
+/*            of 'do' keyword.                               */
 /*                                                           */
 /*      6.40: Pragma once and other inclusion changes.       */
 /*                                                           */
@@ -192,7 +195,7 @@ static struct expr *WhileParse(
   const char *infile)
   {
    struct token theToken;
-   bool read_first_paren;
+   bool read_first_token;
 
    /*===============================*/
    /* Process the while expression. */
@@ -214,41 +217,38 @@ static struct expr *WhileParse(
    GetToken(theEnv,infile,&theToken);
    if ((theToken.tknType == SYMBOL_TOKEN) && (strcmp(theToken.lexemeValue->contents,"do") == 0))
      {
-      read_first_paren = true;
+      read_first_token = true;
       PPBackup(theEnv);
       SavePPBuffer(theEnv," ");
       SavePPBuffer(theEnv,theToken.printForm);
       IncrementIndentDepth(theEnv,3);
       PPCRAndIndent(theEnv);
      }
-   else if (theToken.tknType == LEFT_PARENTHESIS_TOKEN)
+   else
      {
-      read_first_paren = false;
+      read_first_token = false;
       PPBackup(theEnv);
       IncrementIndentDepth(theEnv,3);
       PPCRAndIndent(theEnv);
       SavePPBuffer(theEnv,theToken.printForm);
      }
-   else
-     {
-      SyntaxErrorMessage(theEnv,"while function");
-      ReturnExpression(theEnv,parse);
-      return NULL;
-     }
 
    /*============================*/
    /* Process the while actions. */
    /*============================*/
+   
    if (ExpressionData(theEnv)->svContexts->rtn == true)
-     ExpressionData(theEnv)->ReturnContext = true;
+     { ExpressionData(theEnv)->ReturnContext = true; }
    ExpressionData(theEnv)->BreakContext = true;
-   parse->argList->nextArg = GroupActions(theEnv,infile,&theToken,read_first_paren,NULL,false);
+   
+   parse->argList->nextArg = GroupActions(theEnv,infile,&theToken,read_first_token,NULL,false);
 
    if (parse->argList->nextArg == NULL)
      {
       ReturnExpression(theEnv,parse);
       return NULL;
      }
+     
    PPBackup(theEnv);
    PPBackup(theEnv);
    SavePPBuffer(theEnv,theToken.printForm);
@@ -266,7 +266,7 @@ static struct expr *WhileParse(
 
    DecrementIndentDepth(theEnv,3);
 
-   return(parse);
+   return parse;
   }
 
 /******************************************************************************************/
