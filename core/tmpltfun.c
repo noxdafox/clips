@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  12/30/16             */
+   /*            CLIPS Version 6.40  09/20/17             */
    /*                                                     */
    /*             DEFTEMPLATE FUNCTIONS MODULE            */
    /*******************************************************/
@@ -58,6 +58,10 @@
 /*            Added code to prevent a clear command from     */
 /*            being executed during fact assertions via      */
 /*            Increment/DecrementClearReadyLocks API.        */
+/*                                                           */
+/*      6.31: Error messages are now generated when modify   */
+/*            and duplicate functions are given a retracted  */
+/*            fact.                                          */
 /*                                                           */
 /*      6.40: Added Env prefix to GetEvaluationError and     */
 /*            SetEvaluationError functions.                  */
@@ -285,6 +289,16 @@ void ModifyCommand(
       return;
      }
 
+   /*=====================================*/
+   /* Retracted facts cannot be modified. */
+   /*=====================================*/
+   
+   if (oldFact->garbage)
+     {
+      FactRetractedErrorMessage(theEnv,oldFact);
+      return;
+     }
+     
    /*==================================*/
    /* See if it is a deftemplate fact. */
    /*==================================*/
@@ -673,6 +687,16 @@ void DuplicateCommand(
      {
       ExpectedTypeError2(theEnv,"duplicate",1);
       SetEvaluationError(theEnv,true);
+      return;
+     }
+
+   /*=======================================*/
+   /* Retracted facts cannot be duplicated. */
+   /*=======================================*/
+   
+   if (oldFact->garbage)
+     {
+      FactRetractedErrorMessage(theEnv,oldFact);
       return;
      }
 

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  11/01/16             */
+   /*            CLIPS Version 6.40  09/20/17             */
    /*                                                     */
    /*                PRINT UTILITY MODULE                 */
    /*******************************************************/
@@ -44,6 +44,8 @@
 /*                                                           */
 /*            Fixed linkage issue when BLOAD_ONLY compiler   */
 /*            flag is set to 1.                              */
+/*                                                           */
+/*      6.31: Added FactRetractedErrorMessage function.      */
 /*                                                           */
 /*      6.40: Added Env prefix to GetEvaluationError and     */
 /*            SetEvaluationError functions.                  */
@@ -332,6 +334,23 @@ void PrintWarningID(
 #endif
 
    WriteString(theEnv,STDWRN,"WARNING: ");
+  }
+
+/****************************************************/
+/* FactRetractedErrorMessage: Generic error message */
+/*  when a fact has been retracted.                 */
+/****************************************************/
+void FactRetractedErrorMessage(
+  Environment *theEnv,
+  Fact *theFact)
+  {
+   char tempBuffer[20];
+   
+   PrintErrorID(theEnv,"PRNTUTIL",11,false);
+   WriteString(theEnv,STDERR,"The fact ");
+   gensprintf(tempBuffer,"f-%lld",theFact->factIndex);
+   WriteString(theEnv,STDERR,tempBuffer);
+   WriteString(theEnv,STDERR," has been retracted.\n");
   }
 
 /***************************************************/

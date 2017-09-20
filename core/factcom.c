@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  11/01/16             */
+   /*            CLIPS Version 6.40  09/20/17             */
    /*                                                     */
    /*                FACT COMMANDS MODULE                 */
    /*******************************************************/
@@ -44,6 +44,10 @@
 /*            Changed find construct functionality so that   */
 /*            imported modules are search when locating a    */
 /*            named construct.                               */
+/*                                                           */
+/*      6.31: Error messages are now generated when the      */
+/*            fact-index function is given a retracted       */
+/*            fact.                                          */
 /*                                                           */
 /*      6.40: Added Env prefix to GetEvaluationError and     */
 /*            SetEvaluationError functions.                  */
@@ -450,6 +454,7 @@ void FactIndexFunction(
 
    if (theArg.factValue->garbage)
      {
+      FactRetractedErrorMessage(theEnv,theArg.factValue);
       returnValue->integerValue = CreateInteger(theEnv,-1L);
       return;
      }

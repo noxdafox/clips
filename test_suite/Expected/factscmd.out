@@ -248,5 +248,25 @@ CLIPS> (ppfact 3 t TRUE)
    (x 2) 
    (y 3) 
    (z 4))
+CLIPS> (defglobal ?*b* = (assert (bar (w 5) (x 6))))
+CLIPS> (retract ?*b*)
+CLIPS> (ppfact ?*b*)
+[PRNTUTIL11] The fact f-4 has been retracted.
+CLIPS> (clear)
+CLIPS> (deftemplate point (slot x) (slot y))
+CLIPS> (bind ?f (assert (point (x 1) (y 2))))
+<Fact-1>
+CLIPS> (bind ?g (duplicate ?f (x 3)))
+<Fact-2>
+CLIPS> (modify ?f (x 4))
+<Fact-1>
+CLIPS> (retract ?f)
+CLIPS> (modify ?f (y 5))
+[PRNTUTIL11] The fact f-1 has been retracted.
+FALSE
+CLIPS> (retract ?g)
+CLIPS> (duplicate ?g (x 6))
+[PRNTUTIL11] The fact f-2 has been retracted.
+FALSE
 CLIPS> (clear)
 CLIPS> (dribble-off)
