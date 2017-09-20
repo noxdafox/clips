@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  09/04/17             */
+   /*            CLIPS Version 6.40  09/20/17             */
    /*                                                     */
    /*               FACT FUNCTIONS MODULE                 */
    /*******************************************************/
@@ -65,6 +65,11 @@
 /*      6.31: Calling EnvFactExistp for a fact that has      */
 /*            been created, but not asserted now returns     */
 /*            FALSE.                                         */
+/*                                                           */
+/*            Error messages are now generated when the      */
+/*            fact-relation, fact-slot-value,                */
+/*            fact-slot-names, and ppfact functions are      */
+/*            given a retracted fact.                        */
 /*                                                           */
 /*      6.40: Added Env prefix to GetEvaluationError and     */
 /*            SetEvaluationError functions.                  */
@@ -137,7 +142,7 @@ void FactRelationFunction(
   {
    Fact *theFact;
 
-   theFact = GetFactAddressOrIndexArgument(context,false);
+   theFact = GetFactAddressOrIndexArgument(context,true);
 
    if (theFact == NULL)
      {
@@ -597,7 +602,15 @@ Fact *GetFactAddressOrIndexArgument(
 
    if (theArg.header->type == FACT_ADDRESS_TYPE)
      {
-      if (theArg.factValue->garbage) return NULL;
+      if (theArg.factValue->garbage)
+        {
+         if (noFactError)
+           {
+            FactRetractedErrorMessage(theEnv,theArg.factValue);
+            SetEvaluationError(theEnv,true);
+           }
+         return NULL;
+        }
       else return theArg.factValue;
      }
    else if (theArg.header->type == INTEGER_TYPE)
@@ -617,7 +630,7 @@ Fact *GetFactAddressOrIndexArgument(
          return NULL;
         }
 
-      return(theFact);
+      return theFact;
      }
 
    UDFInvalidArgumentMessage(context,"fact-address or fact-index");

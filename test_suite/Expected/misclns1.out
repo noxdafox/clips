@@ -82,6 +82,21 @@ CLIPS> (dependencies [b])
 f-1
 CLIPS> (dependencies [c])
 [a]
+CLIPS> (bind ?v (assert (a b c)))
+<Fact-4>
+CLIPS> (retract ?v)
+CLIPS> (dependents ?v)
+[PRNTUTIL11] The fact f-4 has been retracted.
+CLIPS> (dependencies ?v)
+[PRNTUTIL11] The fact f-4 has been retracted.
+CLIPS> (bind ?v (instance-address [c]))
+<Instance-c>
+CLIPS> (send ?v delete)
+TRUE
+CLIPS> (dependents ?v)
+[PRNTUTIL1] Unable to find instance c.
+CLIPS> (dependencies ?v)
+[PRNTUTIL1] Unable to find instance c.
 CLIPS> (clear) ; Test Begin
 CLIPS> (deftemplate yak (multifield x (type SYMBOL) (cardinality 3 5)))
 CLIPS> (assert (yak (x a b c)))

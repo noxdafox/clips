@@ -97,6 +97,7 @@ CLIPS> (fact-index ?*x*)
 1
 CLIPS> (retract ?*x*)
 CLIPS> (fact-index ?*x*)
+[PRNTUTIL11] The fact f-1 has been retracted.
 -1
 CLIPS> (retract ?*x*)
 CLIPS> (clear) ;; Case 9

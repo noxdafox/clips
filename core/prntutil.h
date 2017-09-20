@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  08/25/16            */
+   /*             CLIPS Version 6.40  09/20/17            */
    /*                                                     */
    /*              PRINT UTILITY HEADER FILE              */
    /*******************************************************/
@@ -29,7 +29,7 @@
 /*                                                           */
 /*            Support for DATA_OBJECT_ARRAY primitive.       */
 /*                                                           */
-/*            Support for typed EXTERNAL_ADDRESS_TYPE.            */
+/*            Support for typed EXTERNAL_ADDRESS_TYPE.       */
 /*                                                           */
 /*            Used gensprintf and genstrcat instead of       */
 /*            sprintf and strcat.                            */
@@ -43,6 +43,8 @@
 /*                                                           */
 /*            Fixed linkage issue when BLOAD_ONLY compiler   */
 /*            flag is set to 1.                              */
+/*                                                           */
+/*      6.31: Added FactRetractedErrorMessage function.      */
 /*                                                           */
 /*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
@@ -103,6 +105,7 @@ struct printUtilityData
    void                           SalienceNonIntegerError(Environment *);
    void                           CantFindItemInFunctionErrorMessage(Environment *,const char *,const char *,const char *,bool);
    void                           SlotExistError(Environment *,const char *,const char *);
+   void                           FactRetractedErrorMessage(Environment *,Fact *);
 
 #endif /* _H_prntutil */
 

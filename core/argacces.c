@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/25/16             */
+   /*            CLIPS Version 6.40  09/20/17             */
    /*                                                     */
    /*               ARGUMENT ACCESS MODULE                */
    /*******************************************************/
@@ -31,6 +31,12 @@
 /*            Converted API macros to function calls.        */
 /*                                                           */
 /*            Support for fact-address arguments.            */
+/*                                                           */
+/*      6.31: Modified the GetFactOrInstanceArgument         */
+/*            function so that error messages are now        */
+/*            generated when the timetag, dependencies, and  */
+/*            dependents functions are given a retracted     */
+/*            fact.                                          */
 /*                                                           */
 /*      6.40: Added Env prefix to GetEvaluationError and     */
 /*            SetEvaluationError functions.                  */
@@ -424,8 +430,27 @@ void *GetFactOrInstanceArgument(
    /* Fact and instance addresses are valid arguments. */
    /*==================================================*/
 
-   if (CVIsType(item,FACT_ADDRESS_BIT | INSTANCE_ADDRESS_BIT))
-     { return item->value; }
+   if (CVIsType(item,FACT_ADDRESS_BIT))
+     {
+      if (item->factValue->garbage)
+        {
+         FactRetractedErrorMessage(theEnv,item->factValue);
+         return NULL;
+        }
+        
+      return item->value;
+     }
+
+   else if (CVIsType(item,INSTANCE_ADDRESS_BIT))
+     {
+      if (item->instanceValue->garbage)
+        {
+         CantFindItemErrorMessage(theEnv,"instance",item->instanceValue->name->contents,false);
+         return NULL;
+        }
+        
+      return item->value;
+     }
 
    /*==================================================*/
    /* An integer is a valid argument if it corresponds */
@@ -441,7 +466,7 @@ void *GetFactOrInstanceArgument(
          gensprintf(tempBuffer,"f-%lld",item->integerValue->contents);
          CantFindItemErrorMessage(theEnv,"fact",tempBuffer,false);
         }
-      return(ptr);
+      return ptr;
      }
 #endif
 
@@ -457,7 +482,7 @@ void *GetFactOrInstanceArgument(
         {
          CantFindItemErrorMessage(theEnv,"instance",item->lexemeValue->contents,false);
         }
-      return(ptr);
+      return ptr;
      }
 #endif
 

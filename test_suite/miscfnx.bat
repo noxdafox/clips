@@ -179,3 +179,13 @@
 (while TRUE do
   (progn (break) (printout t ERROR crlf)))
 (clear)
+(defclass A (is-a USER))
+(bind ?v (instance-address (make-instance [a1] of A)))
+(timetag ?v)
+(send ?v delete)
+(timetag ?v)
+(bind ?v (assert (a b c)))
+(timetag ?v)
+(retract ?v)
+(timetag ?v)
+(clear)
