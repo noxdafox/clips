@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/22/14            */
+   /*             CLIPS Version 6.31  09/20/17            */
    /*                                                     */
    /*             DEFTEMPLATE FUNCTIONS MODULE            */
    /*******************************************************/
@@ -58,6 +58,10 @@
 /*            Added code to prevent a clear command from     */
 /*            being executed during fact assertions via      */
 /*            Increment/DecrementClearReadyLocks API.        */
+/*                                                           */
+/*      6.31: Error messages are now generated when modify   */
+/*            and duplicate functions are given a retracted  */
+/*            fact.                                          */
 /*                                                           */
 /*************************************************************/
 
@@ -268,6 +272,16 @@ static void DuplicateModifyCommand(
       if (retractIt) ExpectedTypeError2(theEnv,"modify",1);
       else ExpectedTypeError2(theEnv,"duplicate",1);
       SetEvaluationError(theEnv,TRUE);
+      return;
+     }
+
+   /*===================================================*/
+   /* Retracted facts cannot be modified or duplicated. */
+   /*===================================================*/
+   
+   if (oldFact->garbage)
+     {
+      FactRetractedErrorMessage(theEnv,oldFact);
       return;
      }
 

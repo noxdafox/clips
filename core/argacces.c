@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/22/14            */
+   /*             CLIPS Version 6.31  09/20/17            */
    /*                                                     */
    /*               ARGUMENT ACCESS MODULE                */
    /*******************************************************/
@@ -31,6 +31,14 @@
 /*            Converted API macros to function calls.        */
 /*                                                           */
 /*            Support for fact-address arguments.            */
+/*                                                           */
+/*      6.30: Support for long long integers.                */
+/*                                                           */
+/*      6.31: Modified the GetFactOrInstanceArgument         */
+/*            function so that error messages are now        */
+/*            generated when the timetag, dependencies, and  */
+/*            dependents functions are given a retracted     */
+/*            fact.                                          */
 /*                                                           */
 /*************************************************************/
 
@@ -977,9 +985,27 @@ void *GetFactOrInstanceArgument(
    /* Fact and instance addresses are valid arguments. */
    /*==================================================*/
 
-   if ((GetpType(item) == FACT_ADDRESS) ||
-       (GetpType(item) == INSTANCE_ADDRESS))
-     { return(GetpValue(item)); }
+   if (GetpType(item) == FACT_ADDRESS)
+     {
+      if (((struct fact *) GetpValue(item))->garbage)
+        {
+         FactRetractedErrorMessage(theEnv,GetpValue(item));
+         return NULL;
+        }
+
+      return(GetpValue(item));
+     }
+
+   if (GetpType(item) == INSTANCE_ADDRESS)
+     {
+      if (((struct instance *) GetpValue(item))->garbage)
+        {
+         CantFindItemErrorMessage(theEnv,"instance",((struct instance *) GetpValue(item))->name->contents);
+         return NULL;
+        }
+
+      return(GetpValue(item));
+     }
 
    /*==================================================*/
    /* An integer is a valid argument if it corresponds */

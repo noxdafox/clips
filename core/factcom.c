@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  01/25/15            */
+   /*             CLIPS Version 6.31  09/20/17            */
    /*                                                     */
    /*                FACT COMMANDS MODULE                 */
    /*******************************************************/
@@ -44,6 +44,10 @@
 /*            Changed find construct functionality so that   */
 /*            imported modules are search when locating a    */
 /*            named construct.                               */
+/*                                                           */
+/*      6.31: Error messages are now generated when the      */
+/*            fact-index function is given a retracted       */
+/*            fact.                                          */
 /*                                                           */
 /*************************************************************/
 
@@ -483,7 +487,11 @@ globle long long FactIndexFunction(
    /* return -1 for the fact index.                  */
    /*================================================*/
 
-   if (((struct fact *) GetValue(item))->garbage) return(-1LL);
+   if (((struct fact *) GetValue(item))->garbage) 
+     {
+      FactRetractedErrorMessage(theEnv,GetValue(item));
+      return(-1LL);
+     }
 
    return (EnvFactIndex(theEnv,GetValue(item)));
   }

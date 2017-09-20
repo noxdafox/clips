@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/22/14            */
+   /*             CLIPS Version 6.31  09/20/17            */
    /*                                                     */
    /*                PRINT UTILITY MODULE                 */
    /*******************************************************/
@@ -44,6 +44,8 @@
 /*                                                           */
 /*            Fixed linkage issue when BLOAD_ONLY compiler   */
 /*            flag is set to 1.                              */
+/*                                                           */
+/*      6.31: Added FactRetractedErrorMessage function.      */
 /*                                                           */
 /*************************************************************/
 
@@ -308,6 +310,24 @@ globle void PrintWarningID(
    EnvPrintRouter(theEnv,WWARNING,module);
    PrintLongInteger(theEnv,WWARNING,(long int) warningID);
    EnvPrintRouter(theEnv,WWARNING,"] WARNING: ");
+  }
+  
+/****************************************************/
+/* FactRetractedErrorMessage: Generic error message */
+/*  when a fact has been retracted.                 */
+/****************************************************/
+void FactRetractedErrorMessage(
+  void *theEnv,
+  void *theVFact)
+  {
+   char tempBuffer[20];
+   struct fact *theFact = (struct fact *) theVFact;
+   
+   PrintErrorID(theEnv,"PRNTUTIL",11,FALSE);
+   EnvPrintRouter(theEnv,WERROR,"The fact ");
+   gensprintf(tempBuffer,"f-%lld",theFact->factIndex);
+   EnvPrintRouter(theEnv,WERROR,tempBuffer);
+   EnvPrintRouter(theEnv,WERROR," has been retracted.\n");
   }
 
 /***************************************************/

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/22/14            */
+   /*             CLIPS Version 6.31  09/20/17            */
    /*                                                     */
    /*              PRINT UTILITY HEADER FILE              */
    /*******************************************************/
@@ -43,6 +43,8 @@
 /*                                                           */
 /*            Fixed linkage issue when BLOAD_ONLY compiler   */
 /*            flag is set to 1.                              */
+/*                                                           */
+/*      6.31: Added FactRetractedErrorMessage function.      */
 /*                                                           */
 /*************************************************************/
 
@@ -102,6 +104,7 @@ struct printUtilityData
    LOCALE void                           SalienceNonIntegerError(void *);
    LOCALE void                           CantFindItemInFunctionErrorMessage(void *,const char *,const char *,const char *);
    LOCALE void                           SlotExistError(void *,const char *,const char *);
+   LOCALE void                           FactRetractedErrorMessage(void *,void *);
 
 #endif /* _H_prntutil */
 

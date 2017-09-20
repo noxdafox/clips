@@ -26,6 +26,7 @@ CLIPS> (fact-index ?*gfi* ?*gfi*)         ; 10.9.1
 [ARGACCES4] Function fact-index expected exactly 1 argument(s)
 CLIPS> (retract ?*gfi*)                   ; 10.9.1
 CLIPS> (fact-index ?*gfi*)                ; 10.9.1
+[PRNTUTIL11] The fact f-4 has been retracted.
 -1
 CLIPS> (clear)                            ; 10.9.1
 CLIPS> (setgen 10)                        ; 10.9.4
@@ -337,5 +338,24 @@ CLIPS> (foo)
 CLIPS> (while TRUE do
   (progn (break) (printout t ERROR crlf)))
 FALSE
+CLIPS> (clear)
+CLIPS> (defclass A (is-a USER))
+CLIPS> (bind ?v (instance-address (make-instance [a1] of A)))
+<Instance-a1>
+CLIPS> (timetag ?v)
+5
+CLIPS> (send ?v delete)
+TRUE
+CLIPS> (timetag ?v)
+[PRNTUTIL1] Unable to find instance a1.
+-1
+CLIPS> (bind ?v (assert (a b c)))
+<Fact-1>
+CLIPS> (timetag ?v)
+7
+CLIPS> (retract ?v)
+CLIPS> (timetag ?v)
+[PRNTUTIL11] The fact f-1 has been retracted.
+-1
 CLIPS> (clear)
 CLIPS> (dribble-off)

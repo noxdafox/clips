@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.31  09/04/17            */
+   /*             CLIPS Version 6.31  09/20/17            */
    /*                                                     */
    /*               FACT FUNCTIONS MODULE                 */
    /*******************************************************/
@@ -66,6 +66,11 @@
 /*            been created, but not asserted now returns     */
 /*            FALSE.                                         */
 /*                                                           */
+/*            Error messages are now generated when the      */
+/*            fact-relation, fact-slot-value,                */
+/*            fact-slot-names, and ppfact functions are      */
+/*            given a retracted fact.                        */
+/*                                                           */
 /*************************************************************/
 
 #include <stdio.h>
@@ -119,7 +124,7 @@ globle void *FactRelationFunction(
 
    if (EnvArgCountCheck(theEnv,"fact-relation",EXACTLY,1) == -1) return(EnvFalseSymbol(theEnv));
 
-   theFact = GetFactAddressOrIndexArgument(theEnv,"fact-relation",1,FALSE);
+   theFact = GetFactAddressOrIndexArgument(theEnv,"fact-relation",1,TRUE);
 
    if (theFact == NULL) return(EnvFalseSymbol(theEnv));
 
@@ -633,7 +638,15 @@ globle struct fact *GetFactAddressOrIndexArgument(
 
    if (GetType(item) == FACT_ADDRESS)
      {
-      if (((struct fact *) GetValue(item))->garbage) return(NULL);
+      if (((struct fact *) GetValue(item))->garbage)
+        {
+         if (noFactError)
+           {
+            FactRetractedErrorMessage(theEnv,GetValue(item));
+            SetEvaluationError(theEnv,TRUE);
+           }
+         return NULL;
+        }
       else return (((struct fact *) GetValue(item)));
      }
    else if (GetType(item) == INTEGER)
