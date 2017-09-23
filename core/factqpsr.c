@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  10/18/16             */
+   /*            CLIPS Version 6.40  09/22/17             */
    /*                                                     */
    /*            FACT-SET QUERIES PARSER MODULE           */
    /*******************************************************/
@@ -35,6 +35,8 @@
 /*            Added code to keep track of pointers to        */
 /*            constructs that are contained externally to    */
 /*            to constructs, DanglingConstructs.             */
+/*                                                           */
+/*      6.31: Error check for non-symbolic slot names.       */
 /*                                                           */
 /*      6.40: Pragma once and other inclusion changes.       */
 /*                                                           */
@@ -93,8 +95,8 @@
    static bool                    ReplaceTemplateNameWithReference(Environment *,Expression *);
    static bool                    ParseQueryTestExpression(Environment *,Expression *,const char *);
    static bool                    ParseQueryActionExpression(Environment *,Expression *,const char *,Expression *,struct token *);
-   static void                    ReplaceFactVariables(Environment *,Expression *,Expression *,bool,int);
-   static void                    ReplaceSlotReference(Environment *,Expression *,Expression *,
+   static bool                    ReplaceFactVariables(Environment *,Expression *,Expression *,bool,int);
+   static bool                    ReplaceSlotReference(Environment *,Expression *,Expression *,
                                                        struct functionDefinition *,int);
    static bool                    IsQueryFunction(Expression *);
 
@@ -166,10 +168,16 @@ Expression *FactParseQueryNoAction(
       return NULL;
      }
 
-   ReplaceFactVariables(theEnv,factQuerySetVars,top->argList,true,0);
+   if (ReplaceFactVariables(theEnv,factQuerySetVars,top->argList,true,0))
+     {
+      ReturnExpression(theEnv,top);
+      ReturnExpression(theEnv,factQuerySetVars);
+      return NULL;
+     }
+     
    ReturnExpression(theEnv,factQuerySetVars);
 
-   return(top);
+   return top;
   }
 
 /***********************************************************************
@@ -242,11 +250,23 @@ Expression *FactParseQueryAction(
       return NULL;
      }
 
-   ReplaceFactVariables(theEnv,factQuerySetVars,top->argList,true,0);
-   ReplaceFactVariables(theEnv,factQuerySetVars,top->argList->nextArg,false,0);
+   if (ReplaceFactVariables(theEnv,factQuerySetVars,top->argList,true,0))
+     {
+      ReturnExpression(theEnv,top);
+      ReturnExpression(theEnv,factQuerySetVars);
+      return NULL;
+     }
+
+   if (ReplaceFactVariables(theEnv,factQuerySetVars,top->argList->nextArg,false,0))
+     {
+      ReturnExpression(theEnv,top);
+      ReturnExpression(theEnv,factQuerySetVars);
+      return NULL;
+     }
+
    ReturnExpression(theEnv,factQuerySetVars);
 
-   return(top);
+   return top;
   }
 
 /* =========================================
@@ -605,7 +625,7 @@ static bool ParseQueryActionExpression(
                    defrule, and defmessage-handler variables within a query-function
                    where they do not conflict with fact-variable names.
  ***********************************************************************************/
-static void ReplaceFactVariables(
+static bool ReplaceFactVariables(
   Environment *theEnv,
   Expression *vlist,
   Expression *bexp,
@@ -613,7 +633,7 @@ static void ReplaceFactVariables(
   int ndepth)
   {
    Expression *eptr;
-   struct functionDefinition *rindx_func,*rslot_func;
+   struct functionDefinition *rindx_func, *rslot_func;
    int posn;
 
    rindx_func = FindFunction(theEnv,"(query-fact)");
@@ -638,17 +658,28 @@ static void ReplaceFactVariables(
             bexp->argList = eptr;
            }
          else if (sdirect == true)
-           { ReplaceSlotReference(theEnv,vlist,bexp,rslot_func,ndepth); }
+           {
+            if (ReplaceSlotReference(theEnv,vlist,bexp,rslot_func,ndepth))
+              { return true; }
+           }
         }
       if (bexp->argList != NULL)
         {
          if (IsQueryFunction(bexp))
-           { ReplaceFactVariables(theEnv,vlist,bexp->argList,sdirect,ndepth+1); }
+           {
+            if (ReplaceFactVariables(theEnv,vlist,bexp->argList,sdirect,ndepth+1))
+              { return true; }
+           }
          else
-           { ReplaceFactVariables(theEnv,vlist,bexp->argList,sdirect,ndepth); }
+           {
+            if (ReplaceFactVariables(theEnv,vlist,bexp->argList,sdirect,ndepth))
+              { return true; }
+           }
         }
       bexp = bexp->nextArg;
      }
+     
+   return false;
   }
 
 /*************************************************************************
@@ -666,7 +697,7 @@ static void ReplaceFactVariables(
                    with the appropriate function-call.
   NOTES        : None
  *************************************************************************/
-static void ReplaceSlotReference(
+static bool ReplaceSlotReference(
   Environment *theEnv,
   Expression *vlist,
   Expression *theExp,
@@ -684,7 +715,8 @@ static void ReplaceSlotReference(
    str = theExp->lexemeValue->contents;
    len =  strlen(str);
    if (len < 3)
-     return;
+     { return false; }
+     
    for (i = len-2 ; i >= 1 ; i--)
      {
       if ((str[i] == FACT_SLOT_REF) ? (i >= 1) : false)
@@ -706,16 +738,26 @@ static void ReplaceSlotReference(
             GetToken(theEnv,"query-var",&itkn);
             SetPPBufferStatus(theEnv,oldpp);
             CloseStringSource(theEnv,"query-var");
+            
+            if (itkn.tknType != SYMBOL_TOKEN)
+              {
+               InvalidVarSlotErrorMessage(theEnv,str);
+               SetEvaluationError(theEnv,true);
+               return true;
+              }
+              
             theExp->type = FCALL;
             theExp->value = func;
             theExp->argList = GenConstant(theEnv,INTEGER_TYPE,CreateInteger(theEnv,ndepth));
-            theExp->argList->nextArg =
-              GenConstant(theEnv,INTEGER_TYPE,CreateInteger(theEnv,posn));
+            theExp->argList->nextArg = GenConstant(theEnv,INTEGER_TYPE,CreateInteger(theEnv,posn));
             theExp->argList->nextArg->nextArg = GenConstant(theEnv,TokenTypeToType(itkn.tknType),itkn.value);
-            break;
+            theExp->argList->nextArg->nextArg->nextArg = GenConstant(theEnv,SYMBOL_TYPE,CreateSymbol(theEnv,str));
+            return false;
            }
         }
      }
+     
+   return false;
   }
 
 /********************************************************************

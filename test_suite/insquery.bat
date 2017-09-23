@@ -179,4 +179,12 @@
    (do-for-all-instances ((?b OBJECT)) TRUE 
      (progn (printout t INS-RETURN ?b crlf) (return))))
 (quoxnar)
-
+(clear)
+(defclass POINT (is-a USER) (slot x) (slot y))
+(definstances points ([p1] of POINT (x 1) (y 2)) ([p2] of POINT (x 3) (y 4)))
+(reset)
+(do-for-all-instances ((?f POINT)) TRUE (send ?f delete) (+ ?f:x ?f:y))
+(reset)
+(do-for-all-instances ((?f POINT)) TRUE (+ ?f:x ?f:z))
+(do-for-all-instances ((?f POINT)) TRUE (+ ?f:x ?f:78))
+(clear)

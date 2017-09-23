@@ -30,8 +30,9 @@
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
 /*                                                           */
-/*      6.31: Retrieval for fact query slot function returns */
-/*            FALSE if fact has been retracted .             */
+/*      6.31: Retrieval for fact query slot function         */
+/*            generates an error if the fact has been        */
+/*            retracted.                                     */
 /*                                                           */
 /*      6.40: Added Env prefix to GetEvaluationError and     */
 /*            SetEvaluationError functions.                  */
@@ -179,18 +180,34 @@ void GetQueryFactSlot(
    UDFValue temp;
    QUERY_CORE *core;
    unsigned short position;
+   const char *varSlot;
 
    returnValue->lexemeValue = FalseSymbol(theEnv);
 
    core = FindQueryCore(theEnv,GetFirstArgument()->integerValue->contents);
    theFact = core->solns[GetFirstArgument()->nextArg->integerValue->contents];
+   varSlot = GetFirstArgument()->nextArg->nextArg->nextArg->lexemeValue->contents;
    
-   if (theFact->garbage) return;
+   /*=========================================*/
+   /* Accessing the slot value of a retracted */
+   /* fact generates an error.                */
+   /*=========================================*/
+
+   if (theFact->garbage)
+     {
+      FactVarSlotErrorMessage1(theEnv,theFact,varSlot);
+      SetEvaluationError(theEnv,true);
+      return;
+     }
+   
+   /*=========================*/
+   /* Retrieve the slot name. */
+   /*=========================*/
    
    EvaluateExpression(theEnv,GetFirstArgument()->nextArg->nextArg,&temp);
    if (temp.header->type != SYMBOL_TYPE)
      {
-      ExpectedTypeError1(theEnv,"get",1,"symbol");
+      InvalidVarSlotErrorMessage(theEnv,varSlot);
       SetEvaluationError(theEnv,true);
       return;
      }
@@ -204,7 +221,8 @@ void GetQueryFactSlot(
      {
       if (strcmp(temp.lexemeValue->contents,"implied") != 0)
         {
-         SlotExistError(theEnv,temp.lexemeValue->contents,"fact-set query");
+         FactVarSlotErrorMessage2(theEnv,theFact,varSlot);
+         SetEvaluationError(theEnv,true);
          return;
         }
       position = 0;
@@ -213,7 +231,8 @@ void GetQueryFactSlot(
    else if (FindSlot(theFact->whichDeftemplate,
                      (CLIPSLexeme *) temp.value,&position) == NULL)
      {
-      SlotExistError(theEnv,temp.lexemeValue->contents,"fact-set query");
+      FactVarSlotErrorMessage2(theEnv,theFact,varSlot);
+      SetEvaluationError(theEnv,true);
       return;
      }
 
@@ -684,7 +703,7 @@ static QUERY_CORE *FindQueryCore(
                    linked by the chain pointer.
                  Rcnt caller's buffer is set to reflect the
                    total number of chains
-                 Assumes classExp is not NULL and that each
+                 Assumes templateExp is not NULL and that each
                    restriction chain is terminated with
                    the QUERY_DELIMITER_SYMBOL "(QDS)"
  **********************************************************/
@@ -694,7 +713,7 @@ static QUERY_TEMPLATE *DetermineQueryTemplates(
   const char *func,
   unsigned *rcnt)
   {
-   QUERY_TEMPLATE *clist = NULL,*cnxt = NULL,*cchain = NULL,*tmp;
+   QUERY_TEMPLATE *clist = NULL, *cnxt = NULL, *cchain = NULL, *tmp;
    bool new_list = false;
    UDFValue temp;
    Deftemplate *theDeftemplate;
@@ -721,7 +740,7 @@ static QUERY_TEMPLATE *DetermineQueryTemplates(
       else if ((tmp = FormChain(theEnv,func,theDeftemplate,&temp)) != NULL)
         {
          if (clist == NULL)
-           clist = cnxt = cchain = tmp;
+           { clist = cnxt = cchain = tmp; }
          else if (new_list == true)
            {
             new_list = false;
@@ -729,9 +748,10 @@ static QUERY_TEMPLATE *DetermineQueryTemplates(
             cnxt = cchain = tmp;
            }
          else
-           cchain->chain = tmp;
+           { cchain->chain = tmp; }
+           
          while (cchain->chain != NULL)
-           cchain = cchain->chain;
+           { cchain = cchain->chain; }
         }
       else
         {
@@ -740,14 +760,16 @@ static QUERY_TEMPLATE *DetermineQueryTemplates(
          SetEvaluationError(theEnv,true);
          return NULL;
         }
+        
       templateExp = templateExp->nextArg;
      }
-   return(clist);
+     
+   return clist;
   }
 
 /*************************************************************
   NAME         : FormChain
-  DESCRIPTION  : Builds a list of classes to be used in
+  DESCRIPTION  : Builds a list of deftemplates to be used in
                    fact queries - uses parse form.
   INPUTS       : 1) Name of calling function for error msgs
                  2) Data object - must be a symbol or a
@@ -765,7 +787,7 @@ static QUERY_TEMPLATE *FormChain(
   UDFValue *val)
   {
    Deftemplate *templatePtr;
-   QUERY_TEMPLATE *head,*bot,*tmp;
+   QUERY_TEMPLATE *head, *bot, *tmp;
    size_t i; /* 6.04 Bug Fix */
    const char *templateName;
    unsigned int count;
@@ -778,34 +800,37 @@ static QUERY_TEMPLATE *FormChain(
 
       head->chain = NULL;
       head->nxt = NULL;
-      return(head);
+      return head;
      }
 
    if (val->header->type == SYMBOL_TYPE)
      {
-      /* ===============================================
-         Allow instance-set query restrictions to have a
-         module specifier as part of the class name,
-         but search imported defclasses too if a
-         module specifier is not given
-         =============================================== */
+      /*============================================*/
+      /* Allow instance-set query restrictions to   */
+      /* have module specifier as part of the class */
+      /* name, but search imported defclasses too   */
+      /* if a module specifier is not given.        */
+      /*============================================*/
 
       templatePtr = (Deftemplate *)
                        FindImportedConstruct(theEnv,"deftemplate",NULL,val->lexemeValue->contents,
                                              &count,true,NULL);
+         
       if (templatePtr == NULL)
         {
          CantFindItemInFunctionErrorMessage(theEnv,"deftemplate",val->lexemeValue->contents,func,true);
          return NULL;
         }
+        
       IncrementDeftemplateBusyCount(theEnv,templatePtr);
       head = get_struct(theEnv,query_template);
       head->templatePtr = templatePtr;
 
       head->chain = NULL;
       head->nxt = NULL;
-      return(head);
+      return head;
      }
+     
    if (val->header->type == MULTIFIELD_TYPE)
      {
       head = bot = NULL;
@@ -832,19 +857,23 @@ static QUERY_TEMPLATE *FormChain(
             DeleteQueryTemplates(theEnv,head);
             return NULL;
            }
+           
          IncrementDeftemplateBusyCount(theEnv,templatePtr);
          tmp = get_struct(theEnv,query_template);
          tmp->templatePtr = templatePtr;
 
          tmp->chain = NULL;
          tmp->nxt = NULL;
+         
          if (head == NULL)
-           head = tmp;
+           { head = tmp; }
          else
-           bot->chain = tmp;
+           { bot->chain = tmp; }
+         
          bot = tmp;
         }
-      return(head);
+        
+      return head;
      }
    return NULL;
   }
@@ -955,20 +984,28 @@ static bool TestForFirstFactInTemplate(
       else
         {
          theFact->patternHeader.busyCount++;
+         
          EvaluateExpression(theEnv,FactQueryData(theEnv)->QueryCore->query,&temp);
 
          CleanCurrentGarbageFrame(theEnv,NULL);
          CallPeriodicTasks(theEnv);
 
          theFact->patternHeader.busyCount--;
+         
          if (EvaluationData(theEnv)->HaltExecution == true)
-           break;
+           { break; }
+           
          if (temp.value != FalseSymbol(theEnv))
-           break;
+           { break; }
         }
+        
+      /*================================================*/
+      /* Get the next fact that has not been retracted. */
+      /*================================================*/
+      
       theFact = theFact->nextTemplateFact;
       while ((theFact != NULL) ? (theFact->garbage == 1) : false)
-        theFact = theFact->nextTemplateFact;
+        { theFact = theFact->nextTemplateFact; }
      }
 
    GCBlockEnd(theEnv,&gcb);
