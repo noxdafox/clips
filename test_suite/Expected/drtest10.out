@@ -908,12 +908,11 @@ CLIPS>
   (bind ?x ?f:x)
   (assert (foo (x $?x 3))))
 <== f-1     (foo (x 1 2))
-==> f-3     (foo (x FALSE 3))
-<Fact-3>
+[PRNTUTIL12] The variable/slot reference ?f:x cannot be resolved because the referenced fact f-1 has been retracted.
+FALSE
 CLIPS> (reset)
 <== f-0     (initial-fact)
 <== f-2     (foo (x a))
-<== f-3     (foo (x FALSE 3))
 ==> f-0     (initial-fact)
 ==> f-1     (foo (x 1 2))
 ==> f-2     (foo (x a))
@@ -921,9 +920,8 @@ CLIPS> (do-for-all-facts ((?f foo)) TRUE
   (retract ?f)
   (printout t ?f " " ?f:x crlf))
 <== f-1     (foo (x 1 2))
-<Fact-1> FALSE
-<== f-2     (foo (x a))
-<Fact-2> FALSE
+<Fact-1> [PRNTUTIL12] The variable/slot reference ?f:x cannot be resolved because the referenced fact f-1 has been retracted.
+FALSE
 CLIPS>   
 (unwatch facts)
 CLIPS> (clear)  
@@ -947,13 +945,11 @@ CLIPS>
   (bind ?x ?f:x)
   (make-instance [f3] of FOO (x $?x 3)))
 <== instance [f1] of FOO
-==> instance [f3] of FOO
-::= local slot x in instance f3 <- (FALSE 3)
-[f3]
+[PRNTUTIL15] The variable/slot reference ?f:x cannot be resolved because the referenced instance [f1] has been deleted.
+FALSE
 CLIPS> (reset)
 <== instance [initial-object] of INITIAL-OBJECT
 <== instance [f2] of FOO
-<== instance [f3] of FOO
 ==> instance [initial-object] of INITIAL-OBJECT
 ==> instance [f1] of FOO
 ::= local slot x in instance f1 <- (1 2)
@@ -964,9 +960,8 @@ CLIPS>
   (send ?f delete)
   (printout t ?f " " ?f:x crlf))
 <== instance [f1] of FOO
-[f1] FALSE
-<== instance [f2] of FOO
-[f2] FALSE
+[f1] [PRNTUTIL15] The variable/slot reference ?f:x cannot be resolved because the referenced instance [f1] has been deleted.
+FALSE
 CLIPS> (unwatch all)
 CLIPS> (clear)
 CLIPS> (dribble-off)

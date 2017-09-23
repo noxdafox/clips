@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.31  09/20/17            */
+   /*             CLIPS Version 6.31  09/22/17            */
    /*                                                     */
    /*              PRINT UTILITY HEADER FILE              */
    /*******************************************************/
@@ -44,7 +44,8 @@
 /*            Fixed linkage issue when BLOAD_ONLY compiler   */
 /*            flag is set to 1.                              */
 /*                                                           */
-/*      6.31: Added FactRetractedErrorMessage function.      */
+/*      6.31: Added additional error messages for retracted  */
+/*            facts, deleted instances, and invalid slots.   */
 /*                                                           */
 /*************************************************************/
 
@@ -105,6 +106,11 @@ struct printUtilityData
    LOCALE void                           CantFindItemInFunctionErrorMessage(void *,const char *,const char *,const char *);
    LOCALE void                           SlotExistError(void *,const char *,const char *);
    LOCALE void                           FactRetractedErrorMessage(void *,void *);
+   LOCALE void                           FactVarSlotErrorMessage1(void *,void *,const char *);
+   LOCALE void                           FactVarSlotErrorMessage2(void *,void *,const char *);
+   LOCALE void                           InvalidVarSlotErrorMessage(void *,const char *);
+   LOCALE void                           InstanceVarSlotErrorMessage1(void *,void *,const char *);
+   LOCALE void                           InstanceVarSlotErrorMessage2(void *,void *,const char *);
 
 #endif /* _H_prntutil */
 

@@ -594,5 +594,20 @@ CLIPS> (deffunction quoxnar ()
      (progn (printout t INS-RETURN ?b crlf) (return))))
 CLIPS> (quoxnar)
 INS-RETURN[initial-object]
-CLIPS> 
-(dribble-off)
+CLIPS> (clear)
+CLIPS> (defclass POINT (is-a USER) (slot x) (slot y))
+CLIPS> (definstances points ([p1] of POINT (x 1) (y 2)) ([p2] of POINT (x 3) (y 4)))
+CLIPS> (reset)
+CLIPS> (do-for-all-instances ((?f POINT)) TRUE (send ?f delete) (+ ?f:x ?f:y))
+[PRNTUTIL15] The variable/slot reference ?f:x cannot be resolved because the referenced instance [p1] has been deleted.
+[ARGACCES5] Function + expected argument #1 to be of type integer or float
+FALSE
+CLIPS> (reset)
+CLIPS> (do-for-all-instances ((?f POINT)) TRUE (+ ?f:x ?f:z))
+[PRNTUTIL16] The variable/slot reference ?f:z is invalid because the referenced instance [p1] does not contain the specified slot.
+[ARGACCES5] Function + expected argument #2 to be of type integer or float
+FALSE
+CLIPS> (do-for-all-instances ((?f POINT)) TRUE (+ ?f:x ?f:78))
+[PRNTUTIL14] The variable/slot reference ?f:78 is invalid because slot names must be symbols.
+CLIPS> (clear)
+CLIPS> (dribble-off)

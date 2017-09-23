@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*               CLIPS Version 6.31  09/01/17          */
+   /*               CLIPS Version 6.31  09/22/17          */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -32,7 +32,8 @@
 /*            deprecation warnings.                          */
 /*                                                           */
 /*      6.31: Retrieval for instance query slot function     */
-/*            returns FALSE if fact has been retracted.      */
+/*            generates an error if the instance has been    */
+/*            deleted.                                       */
 /*                                                           */
 /*************************************************************/
 
@@ -165,26 +166,39 @@ globle void GetQueryInstanceSlot(
    INSTANCE_SLOT *sp;
    DATA_OBJECT temp;
    QUERY_CORE *core;
+   const char *varSlot;
 
    result->type = SYMBOL;
    result->value = EnvFalseSymbol(theEnv);
 
    core = FindQueryCore(theEnv,ValueToInteger(GetpValue(GetFirstArgument())));
    ins = core->solns[ValueToInteger(GetpValue(GetFirstArgument()->nextArg))];
-   
-   if (ins->garbage) return;
+   varSlot = ((SYMBOL_HN *) GetFirstArgument()->nextArg->nextArg->nextArg->value)->contents;
+
+   /*=======================================*/
+   /* Accessing the slot value of a deleted */
+   /* instance generates an error.          */
+   /*=======================================*/
+
+   if (ins->garbage)
+     {
+      InstanceVarSlotErrorMessage1(theEnv,ins,varSlot);
+      SetEvaluationError(theEnv,TRUE);
+      return;
+     }
    
    EvaluateExpression(theEnv,GetFirstArgument()->nextArg->nextArg,&temp);
    if (temp.type != SYMBOL)
      {
-      ExpectedTypeError1(theEnv,"get",1,"symbol");
+      InvalidVarSlotErrorMessage(theEnv,varSlot);
       SetEvaluationError(theEnv,TRUE);
       return;
      }
    sp = FindInstanceSlot(theEnv,ins,(SYMBOL_HN *) temp.value);
    if (sp == NULL)
      {
-      SlotExistError(theEnv,ValueToString(temp.value),"instance-set query");
+      InstanceVarSlotErrorMessage2(theEnv,ins,varSlot);
+      SetEvaluationError(theEnv,TRUE);
       return;
      }
    result->type = (unsigned short) sp->type;

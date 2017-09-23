@@ -139,4 +139,12 @@
    (do-for-all-facts ((?b initial-fact)) TRUE 
      (progn (printout t INS-RETURN ?b crlf) (return))))
 (quoxnar)
-
+(clear)
+(deftemplate point (slot x) (slot y))
+(deffacts points (point (x 1) (y 2)) (point (x 3) (y 4)))
+(reset)
+(do-for-all-facts ((?f point)) TRUE (retract ?f) (+ ?f:x ?f:y))
+(reset)
+(do-for-all-facts ((?f point)) TRUE (+ ?f:x ?f:z))
+(do-for-all-facts ((?f point)) TRUE (+ ?f:x ?f:78))
+(clear)

@@ -526,5 +526,20 @@ CLIPS> (deffunction quoxnar ()
      (progn (printout t INS-RETURN ?b crlf) (return))))
 CLIPS> (quoxnar)
 INS-RETURN<Fact-0>
-CLIPS> 
-(dribble-off)
+CLIPS> (clear)
+CLIPS> (deftemplate point (slot x) (slot y))
+CLIPS> (deffacts points (point (x 1) (y 2)) (point (x 3) (y 4)))
+CLIPS> (reset)
+CLIPS> (do-for-all-facts ((?f point)) TRUE (retract ?f) (+ ?f:x ?f:y))
+[PRNTUTIL12] The variable/slot reference ?f:x cannot be resolved because the referenced fact f-1 has been retracted.
+[ARGACCES5] Function + expected argument #1 to be of type integer or float
+FALSE
+CLIPS> (reset)
+CLIPS> (do-for-all-facts ((?f point)) TRUE (+ ?f:x ?f:z))
+[PRNTUTIL13] The variable/slot reference ?f:z is invalid because the referenced fact f-1 does not contain the specified slot.
+[ARGACCES5] Function + expected argument #2 to be of type integer or float
+FALSE
+CLIPS> (do-for-all-facts ((?f point)) TRUE (+ ?f:x ?f:78))
+[PRNTUTIL14] The variable/slot reference ?f:78 is invalid because slot names must be symbols.
+CLIPS> (clear)
+CLIPS> (dribble-off)

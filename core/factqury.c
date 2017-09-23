@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*               CLIPS Version 6.31  09/01/17          */
+   /*               CLIPS Version 6.31  09/22/17          */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -30,10 +30,11 @@
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
 /*                                                           */
-/*      6.31: Retrieval for fact query slot function returns */
-/*            FALSE if fact has been retracted .             */
+/*      6.31: Retrieval for fact query slot function         */
+/*            generates an error if the fact has been        */
+/*            retracted.                                     */
 /*                                                           */
-//*************************************************************/
+/*************************************************************/
 
 /* =========================================
    *****************************************
@@ -170,19 +171,35 @@ globle void GetQueryFactSlot(
    DATA_OBJECT temp;
    QUERY_CORE *core;
    short position;
+   const char *varSlot;
 
    result->type = SYMBOL;
    result->value = EnvFalseSymbol(theEnv);
 
    core = FindQueryCore(theEnv,ValueToInteger(GetpValue(GetFirstArgument())));
    theFact = core->solns[ValueToInteger(GetpValue(GetFirstArgument()->nextArg))];
+   varSlot = ((SYMBOL_HN *) GetFirstArgument()->nextArg->nextArg->nextArg->value)->contents;
    
-   if (theFact->garbage) return;
+   /*=========================================*/
+   /* Accessing the slot value of a retracted */
+   /* fact generates an error.                */
+   /*=========================================*/
+
+   if (theFact->garbage)
+     {
+      FactVarSlotErrorMessage1(theEnv,theFact,varSlot);
+      SetEvaluationError(theEnv,TRUE);
+      return;
+     }
+   
+   /*=========================*/
+   /* Retrieve the slot name. */
+   /*=========================*/
    
    EvaluateExpression(theEnv,GetFirstArgument()->nextArg->nextArg,&temp);
    if (temp.type != SYMBOL)
      {
-      ExpectedTypeError1(theEnv,"get",1,"symbol");
+      InvalidVarSlotErrorMessage(theEnv,varSlot);
       SetEvaluationError(theEnv,TRUE);
       return;
      }
@@ -196,7 +213,8 @@ globle void GetQueryFactSlot(
      {
       if (strcmp(ValueToString(temp.value),"implied") != 0)
         {
-         SlotExistError(theEnv,ValueToString(temp.value),"fact-set query");
+         FactVarSlotErrorMessage2(theEnv,theFact,varSlot);
+         SetEvaluationError(theEnv,TRUE);
          return;
         }
       position = 1;
@@ -205,7 +223,8 @@ globle void GetQueryFactSlot(
    else if (FindSlot((struct deftemplate *) theFact->whichDeftemplate,
                      (struct symbolHashNode *) temp.value,&position) == NULL)
      {
-      SlotExistError(theEnv,ValueToString(temp.value),"fact-set query");
+      FactVarSlotErrorMessage2(theEnv,theFact,varSlot);
+      SetEvaluationError(theEnv,TRUE);
       return;
      }
      
@@ -674,7 +693,7 @@ static QUERY_CORE *FindQueryCore(
                    linked by the chain pointer.
                  Rcnt caller's buffer is set to reflect the
                    total number of chains
-                 Assumes classExp is not NULL and that each
+                 Assumes templateExp is not NULL and that each
                    restriction chain is terminated with
                    the QUERY_DELIMITER_SYMBOL "(QDS)"
  **********************************************************/
@@ -730,7 +749,7 @@ static QUERY_TEMPLATE *DetermineQueryTemplates(
 
 /*************************************************************
   NAME         : FormChain
-  DESCRIPTION  : Builds a list of classes to be used in
+  DESCRIPTION  : Builds a list of deftemplates to be used in
                    fact queries - uses parse form.
   INPUTS       : 1) Name of calling function for error msgs
                  2) Data object - must be a symbol or a

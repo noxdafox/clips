@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.31  09/20/17            */
+   /*             CLIPS Version 6.31  09/22/17            */
    /*                                                     */
    /*                PRINT UTILITY MODULE                 */
    /*******************************************************/
@@ -45,7 +45,8 @@
 /*            Fixed linkage issue when BLOAD_ONLY compiler   */
 /*            flag is set to 1.                              */
 /*                                                           */
-/*      6.31: Added FactRetractedErrorMessage function.      */
+/*      6.31: Added additional error messages for retracted  */
+/*            facts, deleted instances, and invalid slots.   */
 /*                                                           */
 /*************************************************************/
 
@@ -310,24 +311,6 @@ globle void PrintWarningID(
    EnvPrintRouter(theEnv,WWARNING,module);
    PrintLongInteger(theEnv,WWARNING,(long int) warningID);
    EnvPrintRouter(theEnv,WWARNING,"] WARNING: ");
-  }
-  
-/****************************************************/
-/* FactRetractedErrorMessage: Generic error message */
-/*  when a fact has been retracted.                 */
-/****************************************************/
-void FactRetractedErrorMessage(
-  void *theEnv,
-  void *theVFact)
-  {
-   char tempBuffer[20];
-   struct fact *theFact = (struct fact *) theVFact;
-   
-   PrintErrorID(theEnv,"PRNTUTIL",11,FALSE);
-   EnvPrintRouter(theEnv,WERROR,"The fact ");
-   gensprintf(tempBuffer,"f-%lld",theFact->factIndex);
-   EnvPrintRouter(theEnv,WERROR,tempBuffer);
-   EnvPrintRouter(theEnv,WERROR," has been retracted.\n");
   }
 
 /***************************************************/
@@ -621,7 +604,7 @@ globle const char *DataObjectToString(
    genfree(theEnv,newString,length);
    return(ValueToString(thePtr));
   }
-  
+
 /************************************************************/
 /* SalienceInformationError: Error message for errors which */
 /*   occur during the evaluation of a salience value.       */
@@ -670,6 +653,128 @@ globle void SalienceNonIntegerError(
   {
    PrintErrorID(theEnv,"PRNTUTIL",10,TRUE);
    EnvPrintRouter(theEnv,WERROR,"Salience value must be an integer value.\n");
+  }
+
+/****************************************************/
+/* FactRetractedErrorMessage: Generic error message */
+/*  when a fact has been retracted.                 */
+/****************************************************/
+void FactRetractedErrorMessage(
+  void *theEnv,
+  void *theVFact)
+  {
+   char tempBuffer[20];
+   struct fact *theFact = (struct fact *) theVFact;
+   
+   PrintErrorID(theEnv,"PRNTUTIL",11,FALSE);
+   EnvPrintRouter(theEnv,WERROR,"The fact ");
+   gensprintf(tempBuffer,"f-%lld",theFact->factIndex);
+   EnvPrintRouter(theEnv,WERROR,tempBuffer);
+   EnvPrintRouter(theEnv,WERROR," has been retracted.\n");
+  }
+
+/****************************************************/
+/* FactVarSlotErrorMessage1: Generic error message  */
+/*   when a var/slot reference accesses a fact that */
+/*   has been retracted.                            */
+/****************************************************/
+void FactVarSlotErrorMessage1(
+  void *theEnv,
+  void *theVFact,
+  const char *varSlot)
+  {
+   char tempBuffer[20];
+   struct fact *theFact = (struct fact *) theVFact;
+
+   PrintErrorID(theEnv,"PRNTUTIL",12,FALSE);
+   
+   EnvPrintRouter(theEnv,WERROR,"The variable/slot reference ?");
+   EnvPrintRouter(theEnv,WERROR,varSlot);
+   EnvPrintRouter(theEnv,WERROR," cannot be resolved because the referenced fact ");
+   gensprintf(tempBuffer,"f-%lld",theFact->factIndex);
+   EnvPrintRouter(theEnv,WERROR,tempBuffer);
+   EnvPrintRouter(theEnv,WERROR," has been retracted.\n");
+  }
+
+/****************************************************/
+/* FactVarSlotErrorMessage2: Generic error message  */
+/*   when a var/slot reference accesses an invalid  */
+/*   slot.                                          */
+/****************************************************/
+void FactVarSlotErrorMessage2(
+  void *theEnv,
+  void *theVFact,
+  const char *varSlot)
+  {
+   char tempBuffer[20];
+   struct fact *theFact = (struct fact *) theVFact;
+
+   PrintErrorID(theEnv,"PRNTUTIL",13,FALSE);
+   
+   EnvPrintRouter(theEnv,WERROR,"The variable/slot reference ?");
+   EnvPrintRouter(theEnv,WERROR,varSlot);
+   EnvPrintRouter(theEnv,WERROR," is invalid because the referenced fact ");
+   gensprintf(tempBuffer,"f-%lld",theFact->factIndex);
+   EnvPrintRouter(theEnv,WERROR,tempBuffer);
+   EnvPrintRouter(theEnv,WERROR," does not contain the specified slot.\n");
+  }
+
+/******************************************************/
+/* InvalidVarSlotErrorMessage: Generic error message  */
+/*   when a var/slot reference accesses an invalid    */
+/*   slot.                                            */
+/******************************************************/
+void InvalidVarSlotErrorMessage(
+  void *theEnv,
+  const char *varSlot)
+  {
+   PrintErrorID(theEnv,"PRNTUTIL",14,FALSE);
+   
+   EnvPrintRouter(theEnv,WERROR,"The variable/slot reference ?");
+   EnvPrintRouter(theEnv,WERROR,varSlot);
+   EnvPrintRouter(theEnv,WERROR," is invalid because slot names must be symbols.\n");
+  }
+
+/*******************************************************/
+/* InstanceVarSlotErrorMessage1: Generic error message */
+/*   when a var/slot reference accesses an instance    */
+/*   that has been deleted.                            */
+/*******************************************************/
+void InstanceVarSlotErrorMessage1(
+  void *theEnv,
+  void *theVInstance,
+  const char *varSlot)
+  {
+   struct instance *theInstance = (struct instance *) theVInstance;
+   
+   PrintErrorID(theEnv,"PRNTUTIL",15,FALSE);
+   
+   EnvPrintRouter(theEnv,WERROR,"The variable/slot reference ?");
+   EnvPrintRouter(theEnv,WERROR,varSlot);
+   EnvPrintRouter(theEnv,WERROR," cannot be resolved because the referenced instance [");
+   EnvPrintRouter(theEnv,WERROR,theInstance->name->contents);
+   EnvPrintRouter(theEnv,WERROR,"] has been deleted.\n");
+  }
+  
+/************************************************/
+/* InstanceVarSlotErrorMessage2: Generic error  */
+/*   message when a var/slot reference accesses */
+/*   an invalid slot.                           */
+/************************************************/
+void InstanceVarSlotErrorMessage2(
+  void *theEnv,
+  void *theVInstance,
+  const char *varSlot)
+  {
+   struct instance *theInstance = (struct instance *) theVInstance;
+
+   PrintErrorID(theEnv,"PRNTUTIL",16,FALSE);
+   
+   EnvPrintRouter(theEnv,WERROR,"The variable/slot reference ?");
+   EnvPrintRouter(theEnv,WERROR,varSlot);
+   EnvPrintRouter(theEnv,WERROR," is invalid because the referenced instance [");
+   EnvPrintRouter(theEnv,WERROR,theInstance->name->contents);
+   EnvPrintRouter(theEnv,WERROR,"] does not contain the specified slot.\n");
   }
 
 /***************************************************/
