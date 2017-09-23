@@ -58,3 +58,15 @@
    ?p <- (point)
    =>
    (println "(" ?p:x "," ?p:y "," ?p:z ")"))
+
+(defrule munge
+   ?p <- (point)
+   =>
+   (retract ?p)
+   (+ ?p:x ?p:y))
+(reset)
+(run)
+(clear)
+(deffunction x (?x) (println ?x:foo))
+(x 3)
+(clear)

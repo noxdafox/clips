@@ -72,12 +72,30 @@ CLIPS>
    ?p <- (point)
    =>
    (println "(" ?p:x "," ?p:y "," ?p:z ")"))
-
-[FACTGEN1] The variable/slot reference ?p:z is invalid because the referenced deftemplate does not contain the specified slot
+[PRNTUTIL17] The variable/slot reference ?p:z is invalid because the deftemplate 'point' does not contain the specified slot.
 
 ERROR:
 (defrule MAIN::munge
    ?p <- (point)
    =>
    (println "(" ?p:x "," ?p:y "," ?p:z ")"))
+CLIPS> 
+(defrule munge
+   ?p <- (point)
+   =>
+   (retract ?p)
+   (+ ?p:x ?p:y))
+CLIPS> (reset)
+CLIPS> (run)
+[PRNTUTIL12] The variable/slot reference ?p:x cannot be resolved because the referenced fact f-1 has been retracted.
+[ARGACCES2] Function '+' expected argument #1 to be of type integer or float.
+[PRCCODE4] Execution halted during the actions of defrule 'munge'.
+CLIPS> (clear)
+CLIPS> (deffunction x (?x) (println ?x:foo))
+CLIPS> (x 3)
+[PRNTUTIL18] The variable/slot reference ?x:foo can not be resolved because the variable value is not a fact address.
+
+[PRCCODE4] Execution halted during the actions of deffunction 'x'.
+FALSE
+CLIPS> (clear)
 CLIPS> (dribble-off)

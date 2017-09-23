@@ -1723,8 +1723,10 @@ void SlotValueFunction(
 #if DEFTEMPLATE_CONSTRUCT
    struct fact *theFact;
 #endif
-   UDFValue slotNameReference, factReference, variableSlotReference;
+   UDFValue factReference;
    unsigned short position;
+   const char *varSlot;
+   CLIPSLexeme *slotName;
 
    /*=============================================*/
    /* Set up the default return value for errors. */
@@ -1734,36 +1736,27 @@ void SlotValueFunction(
 
 #if DEFTEMPLATE_CONSTRUCT
 
-   /*===========================*/
-   /* Get the name of the slot. */
-   /*===========================*/
+   /*=========================================*/
+   /* Get the name of the var/slot reference. */
+   /*=========================================*/
 
-   if (! UDFNthArgument(context,3,SYMBOL_BIT,&variableSlotReference))
-     {
-      returnValue->value = FalseSymbol(theEnv);
-      return;
-     }
+   varSlot = GetFirstArgument()->nextArg->nextArg->lexemeValue->contents;
 
    /*================================*/
    /* Get the reference to the fact. */
    /*================================*/
 
-   if (! UDFNthArgument(context,1,FACT_ADDRESS_BIT,&factReference))
+   EvaluateExpression(theEnv,GetFirstArgument(),&factReference);
+   if (factReference.header->type != FACT_ADDRESS_TYPE)
      {
-      PrintErrorID(theEnv,"MISCFUN",6,false);
-      WriteString(theEnv,STDERR,"The variable/slot reference ?");
-      WriteString(theEnv,STDERR,variableSlotReference.lexemeValue->contents);
-      WriteString(theEnv,STDERR," can not be resolved because the variable value is not a fact address\n");
-      returnValue->value = FalseSymbol(theEnv);
+      FactVarSlotErrorMessage4(theEnv,varSlot);
+      SetEvaluationError(theEnv,true);
       return;
      }
 
    if (factReference.factValue->garbage)
      {
-      PrintErrorID(theEnv,"MISCFUN",5,false);
-      WriteString(theEnv,STDERR,"The variable/slot reference ?");
-      WriteString(theEnv,STDERR,variableSlotReference.lexemeValue->contents);
-      WriteString(theEnv,STDERR," can not be resolved because the referenced fact has been retracted\n");
+      FactVarSlotErrorMessage1(theEnv,factReference.factValue,varSlot);
       SetEvaluationError(theEnv,true);
       return;
      }
@@ -1774,11 +1767,7 @@ void SlotValueFunction(
    /* Get the name of the slot. */
    /*===========================*/
 
-   if (! UDFNthArgument(context,2,SYMBOL_BIT,&slotNameReference))
-     {
-      returnValue->value = FalseSymbol(theEnv);
-      return;
-     }
+   slotName = GetFirstArgument()->nextArg->lexemeValue;
 
    /*=================================================*/
    /* If the specified slot exists, return the value. */
@@ -1786,7 +1775,7 @@ void SlotValueFunction(
 
    if (theFact->whichDeftemplate->implied)
      {
-      if (strcmp(slotNameReference.lexemeValue->contents,"implied") == 0)
+      if (strcmp(slotName->contents,"implied") == 0)
         {
          returnValue->value = theFact->theProposition.contents[0].value;
          returnValue->begin = 0;
@@ -1794,8 +1783,7 @@ void SlotValueFunction(
          return;
         }
      }
-   else if (FindSlot(theFact->whichDeftemplate,
-                     slotNameReference.lexemeValue,&position) != NULL)
+   else if (FindSlot(theFact->whichDeftemplate,slotName,&position) != NULL)
      {
       returnValue->value = theFact->theProposition.contents[position].value;
       if (returnValue->header->type == MULTIFIELD_TYPE)
@@ -1812,7 +1800,7 @@ void SlotValueFunction(
 
    PrintErrorID(theEnv,"MISCFUN",7,false);
    WriteString(theEnv,STDERR,"The variable/slot reference ?");
-   WriteString(theEnv,STDERR,variableSlotReference.lexemeValue->contents);
+   WriteString(theEnv,STDERR,varSlot);
    WriteString(theEnv,STDERR," can not be resolved because referenced fact does not contain the specified slot\n");
    SetEvaluationError(theEnv,true);
 #endif

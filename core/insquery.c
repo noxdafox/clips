@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  09/01/17             */
+   /*            CLIPS Version 6.40  09/22/17             */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -32,7 +32,8 @@
 /*            deprecation warnings.                          */
 /*                                                           */
 /*      6.31: Retrieval for instance query slot function     */
-/*            returns FALSE if fact has been retracted.      */
+/*            generates an error if the instance has been    */
+/*            deleted.                                       */
 /*                                                           */
 /*      6.40: Added Env prefix to GetEvaluationError and     */
 /*            SetEvaluationError functions.                  */
@@ -176,25 +177,38 @@ void GetQueryInstanceSlot(
    InstanceSlot *sp;
    UDFValue temp;
    QUERY_CORE *core;
+   const char *varSlot;
 
    returnValue->lexemeValue = FalseSymbol(theEnv);
 
    core = FindQueryCore(theEnv,GetFirstArgument()->integerValue->contents);
    ins = core->solns[GetFirstArgument()->nextArg->integerValue->contents];
-   
-   if (ins->garbage) return;
+   varSlot = GetFirstArgument()->nextArg->nextArg->nextArg->lexemeValue->contents;
+
+   /*=======================================*/
+   /* Accessing the slot value of a deleted */
+   /* instance generates an error.          */
+   /*=======================================*/
+
+   if (ins->garbage)
+     {
+      InstanceVarSlotErrorMessage1(theEnv,ins,varSlot);
+      SetEvaluationError(theEnv,true);
+      return;
+     }
    
    EvaluateExpression(theEnv,GetFirstArgument()->nextArg->nextArg,&temp);
    if (temp.header->type != SYMBOL_TYPE)
      {
-      ExpectedTypeError1(theEnv,"get",1,"symbol");
+      InvalidVarSlotErrorMessage(theEnv,varSlot);
       SetEvaluationError(theEnv,true);
       return;
      }
    sp = FindInstanceSlot(theEnv,ins,temp.lexemeValue);
    if (sp == NULL)
      {
-      SlotExistError(theEnv,temp.lexemeValue->contents,"instance-set query");
+      InstanceVarSlotErrorMessage2(theEnv,ins,varSlot);
+      SetEvaluationError(theEnv,true);
       return;
      }
    returnValue->value = sp->value;

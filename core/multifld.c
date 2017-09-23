@@ -888,7 +888,7 @@ CLIPSLexeme *ImplodeMultifield(
 
    /*=============================================*/
    /* Allocate the string and copy all components */
-   /* of the MULTIFIELD_TYPE variable to it.           */
+   /* of the MULTIFIELD_TYPE variable to it.      */
    /*=============================================*/
 
    if (strsize == 0) return(CreateString(theEnv,""));
@@ -905,7 +905,8 @@ CLIPSLexeme *ImplodeMultifield(
          while(*tmp_str)
            {
             *(ret_str+j) = *tmp_str;
-            j++, tmp_str++;
+            j++;
+            tmp_str++;
            }
         }
       else if (theMultifield->contents[i].header->type == INTEGER_TYPE)
@@ -914,7 +915,8 @@ CLIPSLexeme *ImplodeMultifield(
          while(*tmp_str)
            {
             *(ret_str+j) = *tmp_str;
-            j++, tmp_str++;
+            j++;
+            tmp_str++;
            }
         }
 
@@ -942,7 +944,8 @@ CLIPSLexeme *ImplodeMultifield(
               }                        /* GDR 111599 #835 */
 
             *(ret_str+j) = *tmp_str;
-            j++, tmp_str++;
+            j++;
+            tmp_str++;
            }
          *(ret_str+j) = '"';
          j++;
@@ -955,7 +958,8 @@ CLIPSLexeme *ImplodeMultifield(
          while(*tmp_str)
            {
             *(ret_str+j) = *tmp_str;
-            j++, tmp_str++;
+            j++;
+            tmp_str++;
            }
          *(ret_str + j++) = ']';
         }
@@ -966,7 +970,8 @@ CLIPSLexeme *ImplodeMultifield(
          while(*tmp_str)
            {
             *(ret_str+j) = *tmp_str;
-            j++, tmp_str++;
+            j++;
+            tmp_str++;
            }
          *(ret_str + j++) = ']';
         }
@@ -978,7 +983,8 @@ CLIPSLexeme *ImplodeMultifield(
          while(*tmp_str)
            {
             *(ret_str+j) = *tmp_str;
-            j++, tmp_str++;
+            j++;
+            tmp_str++;
            }
          }
       *(ret_str+j) = ' ';

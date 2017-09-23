@@ -1547,10 +1547,7 @@ int RuleFactSlotReferenceVar(
 
    if (FindSlot(theDeftemplate,slotName,NULL) == NULL)
      {
-      PrintErrorID(theEnv,"FACTGEN",1,true);
-      WriteString(theEnv,STDERR,"The variable/slot reference ?");
-      WriteString(theEnv,STDERR,varexp->lexemeValue->contents);
-      WriteString(theEnv,STDERR," is invalid because the referenced deftemplate does not contain the specified slot\n");
+      FactVarSlotErrorMessage3(theEnv,theDeftemplate->header.name->contents,varexp->lexemeValue->contents);
       SetEvaluationError(theEnv,true);
       return -1;
      }

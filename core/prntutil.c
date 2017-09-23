@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  09/20/17             */
+   /*            CLIPS Version 6.40  09/22/17             */
    /*                                                     */
    /*                PRINT UTILITY MODULE                 */
    /*******************************************************/
@@ -45,7 +45,8 @@
 /*            Fixed linkage issue when BLOAD_ONLY compiler   */
 /*            flag is set to 1.                              */
 /*                                                           */
-/*      6.31: Added FactRetractedErrorMessage function.      */
+/*      6.31: Added additional error messages for retracted  */
+/*            facts, deleted instances, and invalid slots.   */
 /*                                                           */
 /*      6.40: Added Env prefix to GetEvaluationError and     */
 /*            SetEvaluationError functions.                  */
@@ -334,23 +335,6 @@ void PrintWarningID(
 #endif
 
    WriteString(theEnv,STDWRN,"WARNING: ");
-  }
-
-/****************************************************/
-/* FactRetractedErrorMessage: Generic error message */
-/*  when a fact has been retracted.                 */
-/****************************************************/
-void FactRetractedErrorMessage(
-  Environment *theEnv,
-  Fact *theFact)
-  {
-   char tempBuffer[20];
-   
-   PrintErrorID(theEnv,"PRNTUTIL",11,false);
-   WriteString(theEnv,STDERR,"The fact ");
-   gensprintf(tempBuffer,"f-%lld",theFact->factIndex);
-   WriteString(theEnv,STDERR,tempBuffer);
-   WriteString(theEnv,STDERR," has been retracted.\n");
   }
 
 /***************************************************/
@@ -702,6 +686,156 @@ void SalienceNonIntegerError(
   {
    PrintErrorID(theEnv,"PRNTUTIL",10,true);
    WriteString(theEnv,STDERR,"Salience value must be an integer value.\n");
+  }
+
+/****************************************************/
+/* FactRetractedErrorMessage: Generic error message */
+/*  when a fact has been retracted.                 */
+/****************************************************/
+void FactRetractedErrorMessage(
+  Environment *theEnv,
+  Fact *theFact)
+  {
+   char tempBuffer[20];
+   
+   PrintErrorID(theEnv,"PRNTUTIL",11,false);
+   WriteString(theEnv,STDERR,"The fact ");
+   gensprintf(tempBuffer,"f-%lld",theFact->factIndex);
+   WriteString(theEnv,STDERR,tempBuffer);
+   WriteString(theEnv,STDERR," has been retracted.\n");
+  }
+
+/****************************************************/
+/* FactVarSlotErrorMessage1: Generic error message  */
+/*   when a var/slot reference accesses a fact that */
+/*   has been retracted.                            */
+/****************************************************/
+void FactVarSlotErrorMessage1(
+  Environment *theEnv,
+  Fact *theFact,
+  const char *varSlot)
+  {
+   char tempBuffer[20];
+   
+   PrintErrorID(theEnv,"PRNTUTIL",12,false);
+   
+   WriteString(theEnv,STDERR,"The variable/slot reference ?");
+   WriteString(theEnv,STDERR,varSlot);
+   WriteString(theEnv,STDERR," cannot be resolved because the referenced fact ");
+   gensprintf(tempBuffer,"f-%lld",theFact->factIndex);
+   WriteString(theEnv,STDERR,tempBuffer);
+   WriteString(theEnv,STDERR," has been retracted.\n");
+  }
+
+/****************************************************/
+/* FactVarSlotErrorMessage2: Generic error message  */
+/*   when a var/slot reference accesses an invalid  */
+/*   slot.                                          */
+/****************************************************/
+void FactVarSlotErrorMessage2(
+  Environment *theEnv,
+  Fact *theFact,
+  const char *varSlot)
+  {
+   char tempBuffer[20];
+   
+   PrintErrorID(theEnv,"PRNTUTIL",13,false);
+   
+   WriteString(theEnv,STDERR,"The variable/slot reference ?");
+   WriteString(theEnv,STDERR,varSlot);
+   WriteString(theEnv,STDERR," is invalid because the referenced fact ");
+   gensprintf(tempBuffer,"f-%lld",theFact->factIndex);
+   WriteString(theEnv,STDERR,tempBuffer);
+   WriteString(theEnv,STDERR," does not contain the specified slot.\n");
+  }
+
+/******************************************************/
+/* InvalidVarSlotErrorMessage: Generic error message  */
+/*   when a var/slot reference accesses an invalid    */
+/*   slot.                                            */
+/******************************************************/
+void InvalidVarSlotErrorMessage(
+  Environment *theEnv,
+  const char *varSlot)
+  {
+   PrintErrorID(theEnv,"PRNTUTIL",14,false);
+   
+   WriteString(theEnv,STDERR,"The variable/slot reference ?");
+   WriteString(theEnv,STDERR,varSlot);
+   WriteString(theEnv,STDERR," is invalid because slot names must be symbols.\n");
+  }
+
+/*******************************************************/
+/* InstanceVarSlotErrorMessage1: Generic error message */
+/*   when a var/slot reference accesses an instance    */
+/*   that has been deleted.                            */
+/*******************************************************/
+void InstanceVarSlotErrorMessage1(
+  Environment *theEnv,
+  Instance *theInstance,
+  const char *varSlot)
+  {
+   PrintErrorID(theEnv,"PRNTUTIL",15,false);
+   
+   WriteString(theEnv,STDERR,"The variable/slot reference ?");
+   WriteString(theEnv,STDERR,varSlot);
+   WriteString(theEnv,STDERR," cannot be resolved because the referenced instance [");
+   WriteString(theEnv,STDERR,theInstance->name->contents);
+   WriteString(theEnv,STDERR,"] has been deleted.\n");
+  }
+  
+/************************************************/
+/* InstanceVarSlotErrorMessage2: Generic error  */
+/*   message when a var/slot reference accesses */
+/*   an invalid slot.                           */
+/************************************************/
+void InstanceVarSlotErrorMessage2(
+  Environment *theEnv,
+  Instance *theInstance,
+  const char *varSlot)
+  {
+   PrintErrorID(theEnv,"PRNTUTIL",16,false);
+   
+   WriteString(theEnv,STDERR,"The variable/slot reference ?");
+   WriteString(theEnv,STDERR,varSlot);
+   WriteString(theEnv,STDERR," is invalid because the referenced instance [");
+   WriteString(theEnv,STDERR,theInstance->name->contents);
+   WriteString(theEnv,STDERR,"] does not contain the specified slot.\n");
+  }
+
+/****************************************************/
+/* FactVarSlotErrorMessage3: Generic error message  */
+/*   when a var/slot reference accesses an invalid  */
+/*   slot.                                          */
+/****************************************************/
+void FactVarSlotErrorMessage3(
+  Environment *theEnv,
+  const char *deftemplateName,
+  const char *varSlot)
+  {
+   PrintErrorID(theEnv,"PRNTUTIL",17,false);
+   
+   WriteString(theEnv,STDERR,"The variable/slot reference ?");
+   WriteString(theEnv,STDERR,varSlot);
+   WriteString(theEnv,STDERR," is invalid because the deftemplate '");
+   WriteString(theEnv,STDERR,deftemplateName);
+   WriteString(theEnv,STDERR,"' does not contain the specified slot.\n");
+  }
+
+/***************************************************/
+/* FactVarSlotErrorMessage4: Generic error message */
+/*   when a var/slot reference accesses a value    */
+/*   that is not a fact.                           */
+/***************************************************/
+void FactVarSlotErrorMessage4(
+  Environment *theEnv,
+  const char *varSlot)
+  {
+   PrintErrorID(theEnv,"PRNTUTIL",18,false);
+   
+   WriteString(theEnv,STDERR,"The variable/slot reference ?");
+   WriteString(theEnv,STDERR,varSlot);
+   WriteString(theEnv,STDERR," can not be resolved because the variable value is not a fact address.\n");
   }
 
 /***************************************************/
