@@ -544,4 +544,184 @@ FALSE
 CLIPS> (do-for-all-facts ((?f point)) TRUE (+ ?f:x ?f:78))
 [PRNTUTIL14] The variable/slot reference ?f:78 is invalid because slot names must be symbols.
 CLIPS> (clear)
+CLIPS> (deftemplate a (slot x))
+CLIPS> (deftemplate b (slot y))
+CLIPS> (deftemplate c (slot z))
+CLIPS> 
+(deffacts init
+   (a (x 1)) 
+   (a (x 2)) 
+   (b (y 3)) 
+   (b (y 4)) 
+   (c (z 5)) 
+   (c (z 6))
+   (c (z 7)))
+CLIPS> (reset)
+CLIPS> 
+(do-for-all-facts ((?a a) (?b b) (?c c)) TRUE 
+  (printout t (if (fact-existp ?a) then ?a:x else "?") " " 
+              (if (fact-existp ?b) then ?b:y else "?") " " 
+              (if (fact-existp ?c) then ?c:z else "?") crlf))
+1 3 5
+1 3 6
+1 3 7
+1 4 5
+1 4 6
+1 4 7
+2 3 5
+2 3 6
+2 3 7
+2 4 5
+2 4 6
+2 4 7
+CLIPS> (reset)
+CLIPS> 
+(do-for-all-facts ((?a a) (?b b) (?c c)) TRUE 
+  (printout t (if (fact-existp ?a) then ?a:x else "?") " " 
+              (if (fact-existp ?b) then ?b:y else "?") " " 
+              (if (fact-existp ?c) then ?c:z else "?") crlf)
+  (retract ?a))
+1 3 5
+? 3 6
+? 3 7
+? 4 5
+? 4 6
+? 4 7
+2 3 5
+? 3 6
+? 3 7
+? 4 5
+? 4 6
+? 4 7
+CLIPS> (reset)
+CLIPS> 
+(do-for-all-facts ((?a a) (?b b) (?c c)) TRUE 
+  (printout t (if (fact-existp ?a) then ?a:x else "?") " " 
+              (if (fact-existp ?b) then ?b:y else "?") " " 
+              (if (fact-existp ?c) then ?c:z else "?") crlf)
+  (retract ?b))
+1 3 5
+1 ? 6
+1 ? 7
+1 4 5
+1 ? 6
+1 ? 7
+CLIPS> (reset)
+CLIPS> 
+(do-for-all-facts ((?a a) (?b b) (?c c)) TRUE 
+  (printout t (if (fact-existp ?a) then ?a:x else "?") " " 
+              (if (fact-existp ?b) then ?b:y else "?") " " 
+              (if (fact-existp ?c) then ?c:z else "?") crlf)
+  (retract ?c))
+1 3 5
+1 3 6
+1 3 7
+CLIPS> (reset)
+CLIPS> 
+(do-for-all-facts ((?a a) (?b b) (?c c)) TRUE 
+  (printout t (if (fact-existp ?a) then ?a:x else "?") " " 
+              (if (fact-existp ?b) then ?b:y else "?") " " 
+              (if (fact-existp ?c) then ?c:z else "?") crlf)
+  (retract ?a ?b))
+1 3 5
+? ? 6
+? ? 7
+? 4 5
+? ? 6
+? ? 7
+CLIPS> (reset)
+CLIPS> 
+(do-for-all-facts ((?a a) (?b b) (?c c)) TRUE 
+  (printout t (if (fact-existp ?a) then ?a:x else "?") " " 
+              (if (fact-existp ?b) then ?b:y else "?") " " 
+              (if (fact-existp ?c) then ?c:z else "?") crlf)
+  (retract ?b ?c))
+1 3 5
+1 ? 6
+1 ? 7
+CLIPS> (reset)
+CLIPS> 
+(do-for-all-facts ((?a a) (?b b) (?c c)) TRUE 
+  (printout t (if (fact-existp ?a) then ?a:x else "?") " " 
+              (if (fact-existp ?b) then ?b:y else "?") " " 
+              (if (fact-existp ?c) then ?c:z else "?") crlf)
+  (retract ?a ?c))
+1 3 5
+? 3 6
+? 3 7
+CLIPS> (reset)
+CLIPS> 
+(do-for-all-facts ((?a a) (?b b) (?c c)) TRUE 
+  (printout t (if (fact-existp ?a) then ?a:x else "?") " " 
+              (if (fact-existp ?b) then ?b:y else "?") " " 
+              (if (fact-existp ?c) then ?c:z else "?") crlf)
+  (retract ?a ?b ?c))
+1 3 5
+? ? 6
+? ? 7
+CLIPS> (reset)
+CLIPS> 
+(delayed-do-for-all-facts ((?a a) (?b b) (?c c)) TRUE 
+  (printout t (if (fact-existp ?a) then ?a:x else "?") " " 
+              (if (fact-existp ?b) then ?b:y else "?") " " 
+              (if (fact-existp ?c) then ?c:z else "?") crlf))
+1 3 5
+1 3 6
+1 3 7
+1 4 5
+1 4 6
+1 4 7
+2 3 5
+2 3 6
+2 3 7
+2 4 5
+2 4 6
+2 4 7
+CLIPS> (reset)
+CLIPS> 
+(delayed-do-for-all-facts ((?a a) (?b b) (?c c)) TRUE 
+  (printout t (if (fact-existp ?a) then ?a:x else "?") " " 
+              (if (fact-existp ?b) then ?b:y else "?") " " 
+              (if (fact-existp ?c) then ?c:z else "?") crlf)
+  (retract ?a ?b ?c))
+1 3 5
+? ? 6
+? ? 7
+? 4 ?
+? ? ?
+? ? ?
+2 ? ?
+? ? ?
+? ? ?
+? ? ?
+? ? ?
+? ? ?
+CLIPS> (clear)
+CLIPS> (watch facts)
+CLIPS> (deftemplate foo (multislot list))
+CLIPS> (assert (foo (list 1 2)))
+==> f-1     (foo (list 1 2))
+<Fact-1>
+CLIPS> 
+(do-for-fact ((?f foo)) TRUE
+   (retract ?f)
+   (bind ?x ?f:list)
+   (assert (foo (list ?x 3))))
+<== f-1     (foo (list 1 2))
+[PRNTUTIL12] The variable/slot reference ?f:list cannot be resolved because the referenced fact f-1 has been retracted.
+FALSE
+CLIPS> (assert (foo (list 3 4)) (foo (list 5 6)))   
+==> f-2     (foo (list 3 4))
+==> f-3     (foo (list 5 6))
+<Fact-3>
+CLIPS> 
+(do-for-all-facts ((?f foo)) TRUE
+   (retract ?f)
+   (bind ?x ?f:list)
+   (assert (foo (list ?x 3)))) 
+<== f-2     (foo (list 3 4))
+[PRNTUTIL12] The variable/slot reference ?f:list cannot be resolved because the referenced fact f-2 has been retracted.
+FALSE
+CLIPS> (unwatch facts)
+CLIPS> (clear)
 CLIPS> (dribble-off)

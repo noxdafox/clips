@@ -188,3 +188,111 @@
 (do-for-all-instances ((?f POINT)) TRUE (+ ?f:x ?f:z))
 (do-for-all-instances ((?f POINT)) TRUE (+ ?f:x ?f:78))
 (clear)
+(defclass A (is-a USER) (slot x))
+(defclass B (is-a USER) (slot y))
+(defclass C (is-a USER) (slot z))
+
+(definstances init
+   (a1 of A (x 1)) 
+   (a2 of A (x 2)) 
+   (b1 of B (y 3)) 
+   (b2 of B (y 4)) 
+   (c1 of C (z 5)) 
+   (c2 of C (z 6))
+   (c3 of C (z 7)))
+(reset)
+
+(do-for-all-instances ((?a A) (?b B) (?c C)) TRUE 
+  (printout t (if (instance-existp ?a) then ?a:x else "?") " " 
+              (if (instance-existp ?b) then ?b:y else "?") " " 
+              (if (instance-existp ?c) then ?c:z else "?") crlf))
+(reset)
+
+(do-for-all-instances ((?a A) (?b B) (?c C)) TRUE 
+  (printout t (if (instance-existp ?a) then ?a:x else "?") " " 
+              (if (instance-existp ?b) then ?b:y else "?") " " 
+              (if (instance-existp ?c) then ?c:z else "?") crlf)
+  (if (instance-existp ?a) then (send ?a delete)))
+(reset)
+
+(do-for-all-instances ((?a A) (?b B) (?c C)) TRUE 
+  (printout t (if (instance-existp ?a) then ?a:x else "?") " " 
+              (if (instance-existp ?b) then ?b:y else "?") " " 
+              (if (instance-existp ?c) then ?c:z else "?") crlf)
+  (if (instance-existp ?b) then (send ?b delete)))
+(reset)
+
+(do-for-all-instances ((?a A) (?b B) (?c C)) TRUE 
+  (printout t (if (instance-existp ?a) then ?a:x else "?") " " 
+              (if (instance-existp ?b) then ?b:y else "?") " " 
+              (if (instance-existp ?c) then ?c:z else "?") crlf)
+  (if (instance-existp ?c) then (send ?c delete)))
+(reset)
+
+(do-for-all-instances ((?a A) (?b B) (?c C)) TRUE 
+  (printout t (if (instance-existp ?a) then ?a:x else "?") " " 
+              (if (instance-existp ?b) then ?b:y else "?") " " 
+              (if (instance-existp ?c) then ?c:z else "?") crlf)
+  (if (instance-existp ?a) then (send ?a delete))
+  (if (instance-existp ?b) then (send ?b delete)))
+(reset)
+
+(do-for-all-instances ((?a A) (?b B) (?c C)) TRUE 
+  (printout t (if (instance-existp ?a) then ?a:x else "?") " " 
+              (if (instance-existp ?b) then ?b:y else "?") " " 
+              (if (instance-existp ?c) then ?c:z else "?") crlf)
+  (if (instance-existp ?b) then (send ?b delete))
+  (if (instance-existp ?c) then (send ?c delete)))
+(reset)
+
+(do-for-all-instances ((?a A) (?b B) (?c C)) TRUE 
+  (printout t (if (instance-existp ?a) then ?a:x else "?") " " 
+              (if (instance-existp ?b) then ?b:y else "?") " " 
+              (if (instance-existp ?c) then ?c:z else "?") crlf)
+  (if (instance-existp ?a) then (send ?a delete))
+  (if (instance-existp ?c) then (send ?c delete)))
+(reset)
+
+(do-for-all-instances ((?a A) (?b B) (?c C)) TRUE 
+  (printout t (if (instance-existp ?a) then ?a:x else "?") " " 
+              (if (instance-existp ?b) then ?b:y else "?") " " 
+              (if (instance-existp ?c) then ?c:z else "?") crlf)
+  (if (instance-existp ?a) then (send ?a delete))
+  (if (instance-existp ?b) then (send ?b delete))
+  (if (instance-existp ?c) then (send ?c delete)))
+(reset)
+
+(delayed-do-for-all-instances ((?a A) (?b B) (?c C)) TRUE 
+  (printout t (if (instance-existp ?a) then ?a:x else "?") " " 
+              (if (instance-existp ?b) then ?b:y else "?") " " 
+              (if (instance-existp ?c) then ?c:z else "?") crlf))
+(reset)
+
+(delayed-do-for-all-instances ((?a A) (?b B) (?c C)) TRUE 
+  (printout t (if (instance-existp ?a) then ?a:x else "?") " " 
+              (if (instance-existp ?b) then ?b:y else "?") " " 
+              (if (instance-existp ?c) then ?c:z else "?") crlf)
+  (if (instance-existp ?a) then (send ?a delete))
+  (if (instance-existp ?b) then (send ?b delete))
+  (if (instance-existp ?c) then (send ?c delete)))
+(clear)
+(watch instances)
+(watch slots)
+(defclass FOO (is-a USER) (multislot list))
+(make-instance f1 of FOO (list 1 2))
+
+(do-for-instance ((?f FOO)) TRUE
+   (send ?f delete)
+   (bind ?x ?f:list)
+   (make-instance of FOO (list ?x 3)))
+
+(make-instance f2 of FOO (list 3 4))
+(make-instance f3 of FOO (list 5 6))   
+
+(do-for-all-instances ((?f FOO)) TRUE
+   (send ?f delete)
+   (bind ?x ?f:list)
+   (make-instance of FOO (list ?x 3)))
+(unwatch instances)
+(unwatch slots)
+(clear)

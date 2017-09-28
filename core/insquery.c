@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  09/22/17             */
+   /*            CLIPS Version 6.40  09/27/17             */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -13,7 +13,7 @@
 /*      Brian L. Dantes                                      */
 /*                                                           */
 /* Contributing Programmer(s):                               */
-/*                                                           */
+/*      Gary D. Riley                                        */
 /*                                                           */
 /* Revision History:                                         */
 /*                                                           */
@@ -34,6 +34,16 @@
 /*      6.31: Retrieval for instance query slot function     */
 /*            generates an error if the instance has been    */
 /*            deleted.                                       */
+/*                                                           */
+/*            Function delayed-do-for-all-instances          */
+/*            increments the busy count of all matching      */
+/*            instance sets so that actions can still access */
+/*            deleted instances.                             */
+/*                                                           */
+/*            Functions delayed-do-for-all-instances and     */
+/*            do-for-instance increment the busy count of    */
+/*            matching instance sets so that actions can     */
+/*            detect deleted instances.                      */
 /*                                                           */
 /*      6.40: Added Env prefix to GetEvaluationError and     */
 /*            SetEvaluationError functions.                  */
@@ -450,7 +460,7 @@ void QueryDoForInstance(
   UDFValue *returnValue)
   {
    QUERY_CLASS *qclasses;
-   unsigned rcnt;
+   unsigned i, rcnt;
 
    returnValue->lexemeValue = FalseSymbol(theEnv);
    qclasses = DetermineQueryClasses(theEnv,GetFirstArgument()->nextArg->nextArg,
@@ -462,8 +472,18 @@ void QueryDoForInstance(
    InstanceQueryData(theEnv)->QueryCore->solns = (Instance **) gm2(theEnv,(sizeof(Instance *) * rcnt));
    InstanceQueryData(theEnv)->QueryCore->query = GetFirstArgument();
    InstanceQueryData(theEnv)->QueryCore->action = GetFirstArgument()->nextArg;
+   
    if (TestForFirstInChain(theEnv,qclasses,0) == true)
-     EvaluateExpression(theEnv,InstanceQueryData(theEnv)->QueryCore->action,returnValue);
+     {
+      for (i = 0; i < rcnt; i++)
+        { InstanceQueryData(theEnv)->QueryCore->solns[i]->busy++; }
+
+      EvaluateExpression(theEnv,InstanceQueryData(theEnv)->QueryCore->action,returnValue);
+      
+      for (i = 0; i < rcnt; i++)
+        { InstanceQueryData(theEnv)->QueryCore->solns[i]->busy--; }
+     }
+     
    InstanceQueryData(theEnv)->AbortQuery = false;
    ProcedureFunctionData(theEnv)->BreakFlag = false;
    rm(theEnv,InstanceQueryData(theEnv)->QueryCore->solns,(sizeof(Instance *) * rcnt));
@@ -543,6 +563,7 @@ void DelayedQueryDoForAllInstances(
    unsigned rcnt;
    unsigned i;
    GCBlock gcb;
+   QUERY_SOLN *theSet;
 
    returnValue->lexemeValue = FalseSymbol(theEnv);
    qclasses = DetermineQueryClasses(theEnv,GetFirstArgument()->nextArg->nextArg,
@@ -562,28 +583,61 @@ void DelayedQueryDoForAllInstances(
    InstanceQueryData(theEnv)->AbortQuery = false;
    InstanceQueryData(theEnv)->QueryCore->action = GetFirstArgument()->nextArg;
 
+   /*==================================================================*/
+   /* Increment the busy count for all instances in the solution sets. */
+   /*==================================================================*/
+
    GCBlockStart(theEnv,&gcb);
 
-   while (InstanceQueryData(theEnv)->QueryCore->soln_set != NULL)
+   for (theSet = InstanceQueryData(theEnv)->QueryCore->soln_set;
+        theSet != NULL;
+        theSet = theSet->nxt)
+     {
+      for (i = 0; i < rcnt; i++)
+        { theSet->soln[i]->busy++; }
+     }
+
+   /*=====================*/
+   /* Perform the action. */
+   /*=====================*/
+
+   for (theSet = InstanceQueryData(theEnv)->QueryCore->soln_set;
+        theSet != NULL;
+        theSet = theSet->nxt)
      {
       for (i = 0 ; i < rcnt ; i++)
-        InstanceQueryData(theEnv)->QueryCore->solns[i] = InstanceQueryData(theEnv)->QueryCore->soln_set->soln[i];
-      PopQuerySoln(theEnv);
+        { InstanceQueryData(theEnv)->QueryCore->solns[i] = theSet->soln[i]; }
+
       EvaluateExpression(theEnv,InstanceQueryData(theEnv)->QueryCore->action,returnValue);
 
       if (EvaluationData(theEnv)->HaltExecution || ProcedureFunctionData(theEnv)->BreakFlag || ProcedureFunctionData(theEnv)->ReturnFlag)
-        {
-         while (InstanceQueryData(theEnv)->QueryCore->soln_set != NULL)
-           PopQuerySoln(theEnv);
-         break;
-        }
+        { break; }
 
       CleanCurrentGarbageFrame(theEnv,NULL);
       CallPeriodicTasks(theEnv);
      }
 
+   /*==================================================================*/
+   /* Decrement the busy count for all instances in the solution sets. */
+   /*==================================================================*/
+
+   for (theSet = InstanceQueryData(theEnv)->QueryCore->soln_set;
+        theSet != NULL;
+        theSet = theSet->nxt)
+     {
+      for (i = 0; i < rcnt; i++)
+        { theSet->soln[i]->busy--; }
+     }
+
    GCBlockEndUDF(theEnv,&gcb,returnValue);
    CallPeriodicTasks(theEnv);
+
+   /*==================================*/
+   /* Deallocate the query structures. */
+   /*==================================*/
+   
+   while (InstanceQueryData(theEnv)->QueryCore->soln_set != NULL)
+     { PopQuerySoln(theEnv); }
 
    ProcedureFunctionData(theEnv)->BreakFlag = false;
    rm(theEnv,InstanceQueryData(theEnv)->QueryCore->solns,(sizeof(Instance *) * rcnt));
