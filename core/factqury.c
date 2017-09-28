@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*               CLIPS Version 6.31  09/22/17          */
+   /*               CLIPS Version 6.31  09/27/17          */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -33,6 +33,11 @@
 /*      6.31: Retrieval for fact query slot function         */
 /*            generates an error if the fact has been        */
 /*            retracted.                                     */
+/*                                                           */
+/*            Functions delayed-do-for-all-facts and         */
+/*            do-for-fact increment the busy count of        */
+/*            matching fact sets so that actions can         */
+/*            detect retracted facts.                        */
 /*                                                           */
 /*************************************************************/
 
@@ -455,7 +460,7 @@ globle void QueryDoForFact(
   DATA_OBJECT *result)
   {
    QUERY_TEMPLATE *qtemplates;
-   unsigned rcnt;
+   unsigned i, rcnt;
 
    result->type = SYMBOL;
    result->value = EnvFalseSymbol(theEnv);
@@ -468,8 +473,18 @@ globle void QueryDoForFact(
    FactQueryData(theEnv)->QueryCore->solns = (struct fact **) gm2(theEnv,(sizeof(struct fact *) * rcnt));
    FactQueryData(theEnv)->QueryCore->query = GetFirstArgument();
    FactQueryData(theEnv)->QueryCore->action = GetFirstArgument()->nextArg;
+   
    if (TestForFirstInChain(theEnv,qtemplates,0) == TRUE)
-     EvaluateExpression(theEnv,FactQueryData(theEnv)->QueryCore->action,result);
+     {
+      for (i = 0; i < rcnt; i++)
+        { FactQueryData(theEnv)->QueryCore->solns[i]->factHeader.busyCount++; }
+      
+      EvaluateExpression(theEnv,FactQueryData(theEnv)->QueryCore->action,result);
+
+      for (i = 0; i < rcnt; i++)
+        { FactQueryData(theEnv)->QueryCore->solns[i]->factHeader.busyCount--; }
+     }
+     
    FactQueryData(theEnv)->AbortQuery = FALSE;
    ProcedureFunctionData(theEnv)->BreakFlag = FALSE;
    rm(theEnv,(void *) FactQueryData(theEnv)->QueryCore->solns,(sizeof(struct fact *) * rcnt));
@@ -549,6 +564,7 @@ globle void DelayedQueryDoForAllFacts(
    unsigned rcnt;
    register unsigned i;
    struct garbageFrame newGarbageFrame, *oldGarbageFrame;
+   QUERY_SOLN *theSet;
 
    result->type = SYMBOL;
    result->value = EnvFalseSymbol(theEnv);
@@ -569,32 +585,64 @@ globle void DelayedQueryDoForAllFacts(
    FactQueryData(theEnv)->AbortQuery = FALSE;
    FactQueryData(theEnv)->QueryCore->action = GetFirstArgument()->nextArg;
 
+   /*==============================================================*/
+   /* Increment the busy count for all facts in the solution sets. */
+   /*==============================================================*/
+
    oldGarbageFrame = UtilityData(theEnv)->CurrentGarbageFrame;
    memset(&newGarbageFrame,0,sizeof(struct garbageFrame));
    newGarbageFrame.priorFrame = oldGarbageFrame;
    UtilityData(theEnv)->CurrentGarbageFrame = &newGarbageFrame;
 
-   while (FactQueryData(theEnv)->QueryCore->soln_set != NULL)
+   for (theSet = FactQueryData(theEnv)->QueryCore->soln_set;
+        theSet != NULL;
+        theSet = theSet->nxt)
+     {
+      for (i = 0; i < rcnt; i++)
+        { theSet->soln[i]->factHeader.busyCount++; }
+     }
+
+   /*=====================*/
+   /* Perform the action. */
+   /*=====================*/
+
+   for (theSet = FactQueryData(theEnv)->QueryCore->soln_set;
+        theSet != NULL;
+        theSet = theSet->nxt)
      {
       for (i = 0 ; i < rcnt ; i++)
-        FactQueryData(theEnv)->QueryCore->solns[i] = FactQueryData(theEnv)->QueryCore->soln_set->soln[i];
-      PopQuerySoln(theEnv);
+        { FactQueryData(theEnv)->QueryCore->solns[i] = theSet->soln[i]; }
  
       EvaluateExpression(theEnv,FactQueryData(theEnv)->QueryCore->action,result);
          
       if (EvaluationData(theEnv)->HaltExecution || ProcedureFunctionData(theEnv)->BreakFlag || ProcedureFunctionData(theEnv)->ReturnFlag)
-        {
-         while (FactQueryData(theEnv)->QueryCore->soln_set != NULL)
-           PopQuerySoln(theEnv);
-         break;
-        }
-      
+        { break; }
+
       CleanCurrentGarbageFrame(theEnv,NULL);
       CallPeriodicTasks(theEnv);
      }
+
+   /*==============================================================*/
+   /* Decrement the busy count for all facts in the solution sets. */
+   /*==============================================================*/
    
+   for (theSet = FactQueryData(theEnv)->QueryCore->soln_set;
+        theSet != NULL;
+        theSet = theSet->nxt)
+     {
+      for (i = 0; i < rcnt; i++)
+        { theSet->soln[i]->factHeader.busyCount--; }
+     }
+
    RestorePriorGarbageFrame(theEnv,&newGarbageFrame,oldGarbageFrame,result);
    CallPeriodicTasks(theEnv);
+
+   /*==================================*/
+   /* Deallocate the query structures. */
+   /*==================================*/
+   
+   while (FactQueryData(theEnv)->QueryCore->soln_set != NULL)
+     { PopQuerySoln(theEnv); }
 
    ProcedureFunctionData(theEnv)->BreakFlag = FALSE;
    rm(theEnv,(void *) FactQueryData(theEnv)->QueryCore->solns,(sizeof(struct fact *) * rcnt));

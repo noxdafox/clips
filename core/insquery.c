@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*               CLIPS Version 6.31  09/22/17          */
+   /*               CLIPS Version 6.31  09/27/17          */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -13,7 +13,7 @@
 /*      Brian L. Dantes                                      */
 /*                                                           */
 /* Contributing Programmer(s):                               */
-/*                                                           */
+/*      Gary D. Riley                                        */
 /*                                                           */
 /* Revision History:                                         */
 /*                                                           */
@@ -34,6 +34,11 @@
 /*      6.31: Retrieval for instance query slot function     */
 /*            generates an error if the instance has been    */
 /*            deleted.                                       */
+/*                                                           */
+/*            Functions delayed-do-for-all-instances and     */
+/*            do-for-instance increment the busy count of    */
+/*            matching instance sets so that actions can     */
+/*            detect deleted instances.                      */
 /*                                                           */
 /*************************************************************/
 
@@ -433,7 +438,7 @@ globle void QueryDoForInstance(
   DATA_OBJECT *result)
   {
    QUERY_CLASS *qclasses;
-   unsigned rcnt;
+   unsigned i, rcnt;
 
    result->type = SYMBOL;
    result->value = EnvFalseSymbol(theEnv);
@@ -446,8 +451,18 @@ globle void QueryDoForInstance(
    InstanceQueryData(theEnv)->QueryCore->solns = (INSTANCE_TYPE **) gm2(theEnv,(sizeof(INSTANCE_TYPE *) * rcnt));
    InstanceQueryData(theEnv)->QueryCore->query = GetFirstArgument();
    InstanceQueryData(theEnv)->QueryCore->action = GetFirstArgument()->nextArg;
+
    if (TestForFirstInChain(theEnv,qclasses,0) == TRUE)
-     EvaluateExpression(theEnv,InstanceQueryData(theEnv)->QueryCore->action,result);
+     {
+      for (i = 0; i < rcnt; i++)
+        { InstanceQueryData(theEnv)->QueryCore->solns[i]->busy++; }
+
+      EvaluateExpression(theEnv,InstanceQueryData(theEnv)->QueryCore->action,result);
+      
+      for (i = 0; i < rcnt; i++)
+        { InstanceQueryData(theEnv)->QueryCore->solns[i]->busy--; }
+     }
+     
    InstanceQueryData(theEnv)->AbortQuery = FALSE;
    ProcedureFunctionData(theEnv)->BreakFlag = FALSE;
    rm(theEnv,(void *) InstanceQueryData(theEnv)->QueryCore->solns,(sizeof(INSTANCE_TYPE *) * rcnt));
@@ -527,6 +542,7 @@ globle void DelayedQueryDoForAllInstances(
    register unsigned i;
    struct garbageFrame newGarbageFrame;
    struct garbageFrame *oldGarbageFrame;
+   QUERY_SOLN *theSet;
 
    result->type = SYMBOL;
    result->value = EnvFalseSymbol(theEnv);
@@ -547,31 +563,64 @@ globle void DelayedQueryDoForAllInstances(
    InstanceQueryData(theEnv)->AbortQuery = FALSE;
    InstanceQueryData(theEnv)->QueryCore->action = GetFirstArgument()->nextArg;
    
+   /*==================================================================*/
+   /* Increment the busy count for all instances in the solution sets. */
+   /*==================================================================*/
+
    oldGarbageFrame = UtilityData(theEnv)->CurrentGarbageFrame;
    memset(&newGarbageFrame,0,sizeof(struct garbageFrame));
    newGarbageFrame.priorFrame = oldGarbageFrame;
    UtilityData(theEnv)->CurrentGarbageFrame = &newGarbageFrame;
 
-   while (InstanceQueryData(theEnv)->QueryCore->soln_set != NULL)
+   for (theSet = InstanceQueryData(theEnv)->QueryCore->soln_set;
+        theSet != NULL;
+        theSet = theSet->nxt)
+     {
+      for (i = 0; i < rcnt; i++)
+        { theSet->soln[i]->busy++; }
+     }
+
+   /*=====================*/
+   /* Perform the action. */
+   /*=====================*/
+
+   for (theSet = InstanceQueryData(theEnv)->QueryCore->soln_set;
+        theSet != NULL;
+        theSet = theSet->nxt)
      {
       for (i = 0 ; i < rcnt ; i++)
-        InstanceQueryData(theEnv)->QueryCore->solns[i] = InstanceQueryData(theEnv)->QueryCore->soln_set->soln[i];
-      PopQuerySoln(theEnv);
+        { InstanceQueryData(theEnv)->QueryCore->solns[i] = theSet->soln[i]; }
+        
       EvaluateExpression(theEnv,InstanceQueryData(theEnv)->QueryCore->action,result);
       
       if (EvaluationData(theEnv)->HaltExecution || ProcedureFunctionData(theEnv)->BreakFlag || ProcedureFunctionData(theEnv)->ReturnFlag)
-        {
-         while (InstanceQueryData(theEnv)->QueryCore->soln_set != NULL)
-           PopQuerySoln(theEnv);
-         break;
-        }
+        { break; }
 
       CleanCurrentGarbageFrame(theEnv,NULL);
       CallPeriodicTasks(theEnv);
      }
       
+   /*==================================================================*/
+   /* Decrement the busy count for all instances in the solution sets. */
+   /*==================================================================*/
+
+   for (theSet = InstanceQueryData(theEnv)->QueryCore->soln_set;
+        theSet != NULL;
+        theSet = theSet->nxt)
+     {
+      for (i = 0; i < rcnt; i++)
+        { theSet->soln[i]->busy--; }
+     }
+
    RestorePriorGarbageFrame(theEnv,&newGarbageFrame,oldGarbageFrame,result);
    CallPeriodicTasks(theEnv);
+
+   /*==================================*/
+   /* Deallocate the query structures. */
+   /*==================================*/
+
+   while (InstanceQueryData(theEnv)->QueryCore->soln_set != NULL)
+     { PopQuerySoln(theEnv); }
 
    ProcedureFunctionData(theEnv)->BreakFlag = FALSE;
    rm(theEnv,(void *) InstanceQueryData(theEnv)->QueryCore->solns,(sizeof(INSTANCE_TYPE *) * rcnt));
