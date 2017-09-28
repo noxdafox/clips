@@ -608,4 +608,207 @@ FALSE
 CLIPS> (do-for-all-instances ((?f POINT)) TRUE (+ ?f:x ?f:78))
 [PRNTUTIL14] The variable/slot reference ?f:78 is invalid because slot names must be symbols.
 CLIPS> (clear)
+CLIPS> (defclass A (is-a USER) (slot x))
+CLIPS> (defclass B (is-a USER) (slot y))
+CLIPS> (defclass C (is-a USER) (slot z))
+CLIPS> 
+(definstances init
+   (a1 of A (x 1)) 
+   (a2 of A (x 2)) 
+   (b1 of B (y 3)) 
+   (b2 of B (y 4)) 
+   (c1 of C (z 5)) 
+   (c2 of C (z 6))
+   (c3 of C (z 7)))
+CLIPS> (reset)
+CLIPS> 
+(do-for-all-instances ((?a A) (?b B) (?c C)) TRUE 
+  (printout t (if (instance-existp ?a) then ?a:x else "?") " " 
+              (if (instance-existp ?b) then ?b:y else "?") " " 
+              (if (instance-existp ?c) then ?c:z else "?") crlf))
+1 3 5
+1 3 6
+1 3 7
+1 4 5
+1 4 6
+1 4 7
+2 3 5
+2 3 6
+2 3 7
+2 4 5
+2 4 6
+2 4 7
+CLIPS> (reset)
+CLIPS> 
+(do-for-all-instances ((?a A) (?b B) (?c C)) TRUE 
+  (printout t (if (instance-existp ?a) then ?a:x else "?") " " 
+              (if (instance-existp ?b) then ?b:y else "?") " " 
+              (if (instance-existp ?c) then ?c:z else "?") crlf)
+  (if (instance-existp ?a) then (send ?a delete)))
+1 3 5
+? 3 6
+? 3 7
+? 4 5
+? 4 6
+? 4 7
+2 3 5
+? 3 6
+? 3 7
+? 4 5
+? 4 6
+? 4 7
+FALSE
+CLIPS> (reset)
+CLIPS> 
+(do-for-all-instances ((?a A) (?b B) (?c C)) TRUE 
+  (printout t (if (instance-existp ?a) then ?a:x else "?") " " 
+              (if (instance-existp ?b) then ?b:y else "?") " " 
+              (if (instance-existp ?c) then ?c:z else "?") crlf)
+  (if (instance-existp ?b) then (send ?b delete)))
+1 3 5
+1 ? 6
+1 ? 7
+1 4 5
+1 ? 6
+1 ? 7
+FALSE
+CLIPS> (reset)
+CLIPS> 
+(do-for-all-instances ((?a A) (?b B) (?c C)) TRUE 
+  (printout t (if (instance-existp ?a) then ?a:x else "?") " " 
+              (if (instance-existp ?b) then ?b:y else "?") " " 
+              (if (instance-existp ?c) then ?c:z else "?") crlf)
+  (if (instance-existp ?c) then (send ?c delete)))
+1 3 5
+1 3 6
+1 3 7
+TRUE
+CLIPS> (reset)
+CLIPS> 
+(do-for-all-instances ((?a A) (?b B) (?c C)) TRUE 
+  (printout t (if (instance-existp ?a) then ?a:x else "?") " " 
+              (if (instance-existp ?b) then ?b:y else "?") " " 
+              (if (instance-existp ?c) then ?c:z else "?") crlf)
+  (if (instance-existp ?a) then (send ?a delete))
+  (if (instance-existp ?b) then (send ?b delete)))
+1 3 5
+? ? 6
+? ? 7
+? 4 5
+? ? 6
+? ? 7
+FALSE
+CLIPS> (reset)
+CLIPS> 
+(do-for-all-instances ((?a A) (?b B) (?c C)) TRUE 
+  (printout t (if (instance-existp ?a) then ?a:x else "?") " " 
+              (if (instance-existp ?b) then ?b:y else "?") " " 
+              (if (instance-existp ?c) then ?c:z else "?") crlf)
+  (if (instance-existp ?b) then (send ?b delete))
+  (if (instance-existp ?c) then (send ?c delete)))
+1 3 5
+1 ? 6
+1 ? 7
+TRUE
+CLIPS> (reset)
+CLIPS> 
+(do-for-all-instances ((?a A) (?b B) (?c C)) TRUE 
+  (printout t (if (instance-existp ?a) then ?a:x else "?") " " 
+              (if (instance-existp ?b) then ?b:y else "?") " " 
+              (if (instance-existp ?c) then ?c:z else "?") crlf)
+  (if (instance-existp ?a) then (send ?a delete))
+  (if (instance-existp ?c) then (send ?c delete)))
+1 3 5
+? 3 6
+? 3 7
+TRUE
+CLIPS> (reset)
+CLIPS> 
+(do-for-all-instances ((?a A) (?b B) (?c C)) TRUE 
+  (printout t (if (instance-existp ?a) then ?a:x else "?") " " 
+              (if (instance-existp ?b) then ?b:y else "?") " " 
+              (if (instance-existp ?c) then ?c:z else "?") crlf)
+  (if (instance-existp ?a) then (send ?a delete))
+  (if (instance-existp ?b) then (send ?b delete))
+  (if (instance-existp ?c) then (send ?c delete)))
+1 3 5
+? ? 6
+? ? 7
+TRUE
+CLIPS> (reset)
+CLIPS> 
+(delayed-do-for-all-instances ((?a A) (?b B) (?c C)) TRUE 
+  (printout t (if (instance-existp ?a) then ?a:x else "?") " " 
+              (if (instance-existp ?b) then ?b:y else "?") " " 
+              (if (instance-existp ?c) then ?c:z else "?") crlf))
+1 3 5
+1 3 6
+1 3 7
+1 4 5
+1 4 6
+1 4 7
+2 3 5
+2 3 6
+2 3 7
+2 4 5
+2 4 6
+2 4 7
+CLIPS> (reset)
+CLIPS> 
+(delayed-do-for-all-instances ((?a A) (?b B) (?c C)) TRUE 
+  (printout t (if (instance-existp ?a) then ?a:x else "?") " " 
+              (if (instance-existp ?b) then ?b:y else "?") " " 
+              (if (instance-existp ?c) then ?c:z else "?") crlf)
+  (if (instance-existp ?a) then (send ?a delete))
+  (if (instance-existp ?b) then (send ?b delete))
+  (if (instance-existp ?c) then (send ?c delete)))
+1 3 5
+? ? 6
+? ? 7
+? 4 ?
+? ? ?
+? ? ?
+2 ? ?
+? ? ?
+? ? ?
+? ? ?
+? ? ?
+? ? ?
+FALSE
+CLIPS> (clear)
+CLIPS> (watch instances)
+CLIPS> (watch slots)
+CLIPS> (defclass FOO (is-a USER) (multislot list))
+CLIPS> (make-instance f1 of FOO (list 1 2))
+==> instance [f1] of FOO
+::= local slot list in instance f1 <- (1 2)
+[f1]
+CLIPS> 
+(do-for-instance ((?f FOO)) TRUE
+   (send ?f delete)
+   (bind ?x ?f:list)
+   (make-instance of FOO (list ?x 3)))
+<== instance [f1] of FOO
+[PRNTUTIL15] The variable/slot reference ?f:list cannot be resolved because the referenced instance [f1] has been deleted.
+FALSE
+CLIPS> 
+(make-instance f2 of FOO (list 3 4))
+==> instance [f2] of FOO
+::= local slot list in instance f2 <- (3 4)
+[f2]
+CLIPS> (make-instance f3 of FOO (list 5 6))   
+==> instance [f3] of FOO
+::= local slot list in instance f3 <- (5 6)
+[f3]
+CLIPS> 
+(do-for-all-instances ((?f FOO)) TRUE
+   (send ?f delete)
+   (bind ?x ?f:list)
+   (make-instance of FOO (list ?x 3)))
+<== instance [f2] of FOO
+[PRNTUTIL15] The variable/slot reference ?f:list cannot be resolved because the referenced instance [f2] has been deleted.
+FALSE
+CLIPS> (unwatch instances)
+CLIPS> (unwatch slots)
+CLIPS> (clear)
 CLIPS> (dribble-off)
