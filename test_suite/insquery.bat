@@ -275,6 +275,41 @@
   (if (instance-existp ?a) then (send ?a delete))
   (if (instance-existp ?b) then (send ?b delete))
   (if (instance-existp ?c) then (send ?c delete)))
+(reset)
+
+(find-all-instances ((?a A) (?b B) (?c C)) 
+  (progn (send ?a delete) (send ?b delete) (send ?c delete) FALSE))
+(instances)
+(reset)
+
+(find-instance ((?a A) (?b B) (?c C)) 
+  (progn (send ?a delete) (send ?b delete) (send ?c delete) FALSE))
+(instances)
+(reset)
+
+(find-all-instances ((?a A) (?b B) (?c C)) 
+  (progn (if (eq ?b:y 3) then (send ?b delete)) FALSE))
+(instances)
+(reset)
+
+(find-instance ((?a A) (?b B) (?c C)) 
+  (progn (if (eq ?b:y 3) then (send ?b delete)) FALSE))
+(instances)
+(reset)
+
+(find-all-instances ((?a A) (?b B) (?c C)) 
+  (progn (if (eq ?b:y 3) then (send ?b delete)) 
+         (if (eq ?c:z 5) then (send ?c delete))
+         (if (eq ?a:x 2) then TRUE else FALSE)))
+(instances)
+(reset)
+
+(find-instance ((?a A) (?b B) (?c C)) 
+  (progn (if (eq ?b:y 3) then (send ?b delete)) 
+         (if (eq ?c:z 5) then (send ?c delete))
+         (if (eq ?a:x 2) then TRUE else FALSE)))
+(instances)
+
 (clear)
 (watch instances)
 (watch slots)

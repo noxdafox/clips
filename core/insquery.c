@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*               CLIPS Version 6.31  09/27/17          */
+   /*               CLIPS Version 6.31  09/28/17          */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -39,6 +39,9 @@
 /*            do-for-instance increment the busy count of    */
 /*            matching instance sets so that actions can     */
 /*            detect deleted instances.                      */
+/*                                                           */
+/*            Matching instance sets containing deleted      */
+/*            instances are pruned.                          */
 /*                                                           */
 /*************************************************************/
 
@@ -79,10 +82,10 @@ static QUERY_CORE *FindQueryCore(void *,int);
 static QUERY_CLASS *DetermineQueryClasses(void *,EXPRESSION *,const char *,unsigned *);
 static QUERY_CLASS *FormChain(void *,const char *,DATA_OBJECT *);
 static void DeleteQueryClasses(void *,QUERY_CLASS *);
-static int TestForFirstInChain(void *,QUERY_CLASS *,int);
-static int TestForFirstInstanceInClass(void *,struct defmodule *,int,DEFCLASS *,QUERY_CLASS *,int);
-static void TestEntireChain(void *,QUERY_CLASS *,int);
-static void TestEntireClass(void *,struct defmodule *,int,DEFCLASS *,QUERY_CLASS *,int);
+static int TestForFirstInChain(void *,QUERY_CLASS *,unsigned);
+static int TestForFirstInstanceInClass(void *,struct defmodule *,int,DEFCLASS *,QUERY_CLASS *,unsigned);
+static void TestEntireChain(void *,QUERY_CLASS *,unsigned);
+static void TestEntireClass(void *,struct defmodule *,int,DEFCLASS *,QUERY_CLASS *,unsigned);
 static void AddSolution(void *);
 static void PopQuerySoln(void *);
 
@@ -585,11 +588,14 @@ globle void DelayedQueryDoForAllInstances(
    /*=====================*/
 
    for (theSet = InstanceQueryData(theEnv)->QueryCore->soln_set;
-        theSet != NULL;
-        theSet = theSet->nxt)
+        theSet != NULL; )
      {
       for (i = 0 ; i < rcnt ; i++)
-        { InstanceQueryData(theEnv)->QueryCore->solns[i] = theSet->soln[i]; }
+        { 
+         if (theSet->soln[i]->garbage)
+           { goto nextSet; }
+         InstanceQueryData(theEnv)->QueryCore->solns[i] = theSet->soln[i]; 
+        }
         
       EvaluateExpression(theEnv,InstanceQueryData(theEnv)->QueryCore->action,result);
       
@@ -598,6 +604,8 @@ globle void DelayedQueryDoForAllInstances(
 
       CleanCurrentGarbageFrame(theEnv,NULL);
       CallPeriodicTasks(theEnv);
+      
+      nextSet: theSet = theSet->nxt;
      }
       
    /*==================================================================*/
@@ -924,7 +932,7 @@ static void DeleteQueryClasses(
 static int TestForFirstInChain(
   void *theEnv,
   QUERY_CLASS *qchain,
-  int indx)
+  unsigned indx)
   {
    QUERY_CLASS *qptr;
    int id;
@@ -967,13 +975,14 @@ static int TestForFirstInstanceInClass(
   int id,
   DEFCLASS *cls,
   QUERY_CLASS *qchain,
-  int indx)
+  unsigned indx)
   {
    long i;
    INSTANCE_TYPE *ins;
    DATA_OBJECT temp;
    struct garbageFrame newGarbageFrame;
    struct garbageFrame *oldGarbageFrame;
+   unsigned j;
 
    if (TestTraversalID(cls->traversalRecord,id))
      return(FALSE);
@@ -1004,6 +1013,15 @@ static int TestForFirstInstanceInClass(
         }
       else
         {
+         for (j = 0; j < indx; j++)
+           {
+            if (InstanceQueryData(theEnv)->QueryCore->solns[j]->garbage)
+              {
+               ins = NULL;
+               goto endTest;
+              }
+           }
+           
          ins->busy++;
          EvaluateExpression(theEnv,InstanceQueryData(theEnv)->QueryCore->query,&temp);
          ins->busy--;
@@ -1021,6 +1039,8 @@ static int TestForFirstInstanceInClass(
       while ((ins != NULL) ? (ins->garbage == 1) : FALSE)
         ins = ins->nxtClass;
      }
+
+   endTest:
 
    RestorePriorGarbageFrame(theEnv,&newGarbageFrame, oldGarbageFrame,NULL);
    CallPeriodicTasks(theEnv);
@@ -1055,7 +1075,7 @@ static int TestForFirstInstanceInClass(
 static void TestEntireChain(
   void *theEnv,
   QUERY_CLASS *qchain,
-  int indx)
+  unsigned indx)
   {
    QUERY_CLASS *qptr;
    int id;
@@ -1094,13 +1114,14 @@ static void TestEntireClass(
   int id,
   DEFCLASS *cls,
   QUERY_CLASS *qchain,
-  int indx)
+  unsigned indx)
   {
    long i;
    INSTANCE_TYPE *ins;
    DATA_OBJECT temp;
    struct garbageFrame newGarbageFrame;
    struct garbageFrame *oldGarbageFrame;
+   unsigned j;
 
    if (TestTraversalID(cls->traversalRecord,id))
      return;
@@ -1127,6 +1148,12 @@ static void TestEntireClass(
         }
       else
         {
+         for (j = 0; j < indx; j++)
+           {
+            if (InstanceQueryData(theEnv)->QueryCore->solns[j]->garbage)
+              { goto endTest; }
+           }
+           
          ins->busy++;
 
          EvaluateExpression(theEnv,InstanceQueryData(theEnv)->QueryCore->query,&temp);
@@ -1167,6 +1194,8 @@ static void TestEntireClass(
       CallPeriodicTasks(theEnv);
      }
    
+   endTest:
+
    RestorePriorGarbageFrame(theEnv,&newGarbageFrame, oldGarbageFrame,NULL);
    CallPeriodicTasks(theEnv);
 

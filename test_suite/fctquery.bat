@@ -228,6 +228,40 @@
               (if (fact-existp ?b) then ?b:y else "?") " " 
               (if (fact-existp ?c) then ?c:z else "?") crlf)
   (retract ?a ?b ?c))
+(reset)
+
+(find-all-facts ((?a a) (?b b) (?c c)) 
+  (progn (retract ?a ?b ?c) FALSE))
+(facts)
+(reset)
+
+(find-fact ((?a a) (?b b) (?c c)) 
+  (progn (retract ?a ?b ?c) FALSE))
+(facts)
+(reset)
+
+(find-all-facts ((?a a) (?b b) (?c c)) 
+  (progn (if (eq ?b:y 3) then (retract ?b)) FALSE))
+(facts)
+(reset)
+
+(find-fact ((?a a) (?b b) (?c c)) 
+  (progn (if (eq ?b:y 3) then (retract ?b)) FALSE))
+(facts)
+(reset)
+
+(find-all-facts ((?a a) (?b b) (?c c)) 
+  (progn (if (eq ?b:y 3) then (retract ?b)) 
+         (if (eq ?c:z 5) then (retract ?c))
+         (if (eq ?a:x 2) then TRUE else FALSE)))
+(facts)
+(reset)
+
+(find-fact ((?a a) (?b b) (?c c)) 
+  (progn (if (eq ?b:y 3) then (retract ?b)) 
+         (if (eq ?c:z 5) then (retract ?c))
+         (if (eq ?a:x 2) then TRUE else FALSE)))
+(facts)
 (clear)
 (watch facts)
 (deftemplate foo (multislot list))

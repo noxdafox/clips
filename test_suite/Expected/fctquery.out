@@ -580,17 +580,7 @@ CLIPS>
               (if (fact-existp ?c) then ?c:z else "?") crlf)
   (retract ?a))
 1 3 5
-? 3 6
-? 3 7
-? 4 5
-? 4 6
-? 4 7
 2 3 5
-? 3 6
-? 3 7
-? 4 5
-? 4 6
-? 4 7
 CLIPS> (reset)
 CLIPS> 
 (do-for-all-facts ((?a a) (?b b) (?c c)) TRUE 
@@ -599,11 +589,7 @@ CLIPS>
               (if (fact-existp ?c) then ?c:z else "?") crlf)
   (retract ?b))
 1 3 5
-1 ? 6
-1 ? 7
 1 4 5
-1 ? 6
-1 ? 7
 CLIPS> (reset)
 CLIPS> 
 (do-for-all-facts ((?a a) (?b b) (?c c)) TRUE 
@@ -622,11 +608,7 @@ CLIPS>
               (if (fact-existp ?c) then ?c:z else "?") crlf)
   (retract ?a ?b))
 1 3 5
-? ? 6
-? ? 7
-? 4 5
-? ? 6
-? ? 7
+2 4 5
 CLIPS> (reset)
 CLIPS> 
 (do-for-all-facts ((?a a) (?b b) (?c c)) TRUE 
@@ -635,8 +617,7 @@ CLIPS>
               (if (fact-existp ?c) then ?c:z else "?") crlf)
   (retract ?b ?c))
 1 3 5
-1 ? 6
-1 ? 7
+1 4 6
 CLIPS> (reset)
 CLIPS> 
 (do-for-all-facts ((?a a) (?b b) (?c c)) TRUE 
@@ -645,8 +626,7 @@ CLIPS>
               (if (fact-existp ?c) then ?c:z else "?") crlf)
   (retract ?a ?c))
 1 3 5
-? 3 6
-? 3 7
+2 3 6
 CLIPS> (reset)
 CLIPS> 
 (do-for-all-facts ((?a a) (?b b) (?c c)) TRUE 
@@ -655,8 +635,7 @@ CLIPS>
               (if (fact-existp ?c) then ?c:z else "?") crlf)
   (retract ?a ?b ?c))
 1 3 5
-? ? 6
-? ? 7
+2 4 6
 CLIPS> (reset)
 CLIPS> 
 (delayed-do-for-all-facts ((?a a) (?b b) (?c c)) TRUE 
@@ -683,17 +662,83 @@ CLIPS>
               (if (fact-existp ?c) then ?c:z else "?") crlf)
   (retract ?a ?b ?c))
 1 3 5
-? ? 6
-? ? 7
-? 4 ?
-? ? ?
-? ? ?
-2 ? ?
-? ? ?
-? ? ?
-? ? ?
-? ? ?
-? ? ?
+2 4 6
+CLIPS> (reset)
+CLIPS> 
+(find-all-facts ((?a a) (?b b) (?c c)) 
+  (progn (retract ?a ?b ?c) FALSE))
+()
+CLIPS> (facts)
+f-0     (initial-fact)
+f-7     (c (z 7))
+For a total of 2 facts.
+CLIPS> (reset)
+CLIPS> 
+(find-fact ((?a a) (?b b) (?c c)) 
+  (progn (retract ?a ?b ?c) FALSE))
+()
+CLIPS> (facts)
+f-0     (initial-fact)
+f-7     (c (z 7))
+For a total of 2 facts.
+CLIPS> (reset)
+CLIPS> 
+(find-all-facts ((?a a) (?b b) (?c c)) 
+  (progn (if (eq ?b:y 3) then (retract ?b)) FALSE))
+()
+CLIPS> (facts)
+f-0     (initial-fact)
+f-1     (a (x 1))
+f-2     (a (x 2))
+f-4     (b (y 4))
+f-5     (c (z 5))
+f-6     (c (z 6))
+f-7     (c (z 7))
+For a total of 7 facts.
+CLIPS> (reset)
+CLIPS> 
+(find-fact ((?a a) (?b b) (?c c)) 
+  (progn (if (eq ?b:y 3) then (retract ?b)) FALSE))
+()
+CLIPS> (facts)
+f-0     (initial-fact)
+f-1     (a (x 1))
+f-2     (a (x 2))
+f-4     (b (y 4))
+f-5     (c (z 5))
+f-6     (c (z 6))
+f-7     (c (z 7))
+For a total of 7 facts.
+CLIPS> (reset)
+CLIPS> 
+(find-all-facts ((?a a) (?b b) (?c c)) 
+  (progn (if (eq ?b:y 3) then (retract ?b)) 
+         (if (eq ?c:z 5) then (retract ?c))
+         (if (eq ?a:x 2) then TRUE else FALSE)))
+(<Fact-2> <Fact-4> <Fact-6> <Fact-2> <Fact-4> <Fact-7>)
+CLIPS> (facts)
+f-0     (initial-fact)
+f-1     (a (x 1))
+f-2     (a (x 2))
+f-4     (b (y 4))
+f-6     (c (z 6))
+f-7     (c (z 7))
+For a total of 6 facts.
+CLIPS> (reset)
+CLIPS> 
+(find-fact ((?a a) (?b b) (?c c)) 
+  (progn (if (eq ?b:y 3) then (retract ?b)) 
+         (if (eq ?c:z 5) then (retract ?c))
+         (if (eq ?a:x 2) then TRUE else FALSE)))
+(<Fact-2> <Fact-4> <Fact-6>)
+CLIPS> (facts)
+f-0     (initial-fact)
+f-1     (a (x 1))
+f-2     (a (x 2))
+f-4     (b (y 4))
+f-6     (c (z 6))
+f-7     (c (z 7))
+For a total of 6 facts.
 CLIPS> (clear)
 CLIPS> (watch facts)
 CLIPS> (deftemplate foo (multislot list))

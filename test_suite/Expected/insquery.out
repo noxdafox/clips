@@ -648,18 +648,8 @@ CLIPS>
               (if (instance-existp ?c) then ?c:z else "?") crlf)
   (if (instance-existp ?a) then (send ?a delete)))
 1 3 5
-? 3 6
-? 3 7
-? 4 5
-? 4 6
-? 4 7
 2 3 5
-? 3 6
-? 3 7
-? 4 5
-? 4 6
-? 4 7
-FALSE
+TRUE
 CLIPS> (reset)
 CLIPS> 
 (do-for-all-instances ((?a A) (?b B) (?c C)) TRUE 
@@ -668,12 +658,8 @@ CLIPS>
               (if (instance-existp ?c) then ?c:z else "?") crlf)
   (if (instance-existp ?b) then (send ?b delete)))
 1 3 5
-1 ? 6
-1 ? 7
 1 4 5
-1 ? 6
-1 ? 7
-FALSE
+TRUE
 CLIPS> (reset)
 CLIPS> 
 (do-for-all-instances ((?a A) (?b B) (?c C)) TRUE 
@@ -694,12 +680,8 @@ CLIPS>
   (if (instance-existp ?a) then (send ?a delete))
   (if (instance-existp ?b) then (send ?b delete)))
 1 3 5
-? ? 6
-? ? 7
-? 4 5
-? ? 6
-? ? 7
-FALSE
+2 4 5
+TRUE
 CLIPS> (reset)
 CLIPS> 
 (do-for-all-instances ((?a A) (?b B) (?c C)) TRUE 
@@ -709,8 +691,7 @@ CLIPS>
   (if (instance-existp ?b) then (send ?b delete))
   (if (instance-existp ?c) then (send ?c delete)))
 1 3 5
-1 ? 6
-1 ? 7
+1 4 6
 TRUE
 CLIPS> (reset)
 CLIPS> 
@@ -721,8 +702,7 @@ CLIPS>
   (if (instance-existp ?a) then (send ?a delete))
   (if (instance-existp ?c) then (send ?c delete)))
 1 3 5
-? 3 6
-? 3 7
+2 3 6
 TRUE
 CLIPS> (reset)
 CLIPS> 
@@ -734,8 +714,7 @@ CLIPS>
   (if (instance-existp ?b) then (send ?b delete))
   (if (instance-existp ?c) then (send ?c delete)))
 1 3 5
-? ? 6
-? ? 7
+2 4 6
 TRUE
 CLIPS> (reset)
 CLIPS> 
@@ -765,19 +744,86 @@ CLIPS>
   (if (instance-existp ?b) then (send ?b delete))
   (if (instance-existp ?c) then (send ?c delete)))
 1 3 5
-? ? 6
-? ? 7
-? 4 ?
-? ? ?
-? ? ?
-2 ? ?
-? ? ?
-? ? ?
-? ? ?
-? ? ?
-? ? ?
-FALSE
-CLIPS> (clear)
+2 4 6
+TRUE
+CLIPS> (reset)
+CLIPS> 
+(find-all-instances ((?a A) (?b B) (?c C)) 
+  (progn (send ?a delete) (send ?b delete) (send ?c delete) FALSE))
+()
+CLIPS> (instances)
+[initial-object] of INITIAL-OBJECT
+[c3] of C
+For a total of 2 instances.
+CLIPS> (reset)
+CLIPS> 
+(find-instance ((?a A) (?b B) (?c C)) 
+  (progn (send ?a delete) (send ?b delete) (send ?c delete) FALSE))
+()
+CLIPS> (instances)
+[initial-object] of INITIAL-OBJECT
+[c3] of C
+For a total of 2 instances.
+CLIPS> (reset)
+CLIPS> 
+(find-all-instances ((?a A) (?b B) (?c C)) 
+  (progn (if (eq ?b:y 3) then (send ?b delete)) FALSE))
+()
+CLIPS> (instances)
+[initial-object] of INITIAL-OBJECT
+[a1] of A
+[a2] of A
+[b2] of B
+[c1] of C
+[c2] of C
+[c3] of C
+For a total of 7 instances.
+CLIPS> (reset)
+CLIPS> 
+(find-instance ((?a A) (?b B) (?c C)) 
+  (progn (if (eq ?b:y 3) then (send ?b delete)) FALSE))
+()
+CLIPS> (instances)
+[initial-object] of INITIAL-OBJECT
+[a1] of A
+[a2] of A
+[b2] of B
+[c1] of C
+[c2] of C
+[c3] of C
+For a total of 7 instances.
+CLIPS> (reset)
+CLIPS> 
+(find-all-instances ((?a A) (?b B) (?c C)) 
+  (progn (if (eq ?b:y 3) then (send ?b delete)) 
+         (if (eq ?c:z 5) then (send ?c delete))
+         (if (eq ?a:x 2) then TRUE else FALSE)))
+([a2] [b2] [c2] [a2] [b2] [c3])
+CLIPS> (instances)
+[initial-object] of INITIAL-OBJECT
+[a1] of A
+[a2] of A
+[b2] of B
+[c2] of C
+[c3] of C
+For a total of 6 instances.
+CLIPS> (reset)
+CLIPS> 
+(find-instance ((?a A) (?b B) (?c C)) 
+  (progn (if (eq ?b:y 3) then (send ?b delete)) 
+         (if (eq ?c:z 5) then (send ?c delete))
+         (if (eq ?a:x 2) then TRUE else FALSE)))
+([a2] [b2] [c2])
+CLIPS> (instances)
+[initial-object] of INITIAL-OBJECT
+[a1] of A
+[a2] of A
+[b2] of B
+[c2] of C
+[c3] of C
+For a total of 6 instances.
+CLIPS> 
+(clear)
 CLIPS> (watch instances)
 CLIPS> (watch slots)
 CLIPS> (defclass FOO (is-a USER) (multislot list))
