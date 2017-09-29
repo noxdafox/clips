@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  09/27/17             */
+   /*            CLIPS Version 6.40  09/28/17             */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -35,15 +35,13 @@
 /*            generates an error if the instance has been    */
 /*            deleted.                                       */
 /*                                                           */
-/*            Function delayed-do-for-all-instances          */
-/*            increments the busy count of all matching      */
-/*            instance sets so that actions can still access */
-/*            deleted instances.                             */
-/*                                                           */
 /*            Functions delayed-do-for-all-instances and     */
 /*            do-for-instance increment the busy count of    */
 /*            matching instance sets so that actions can     */
 /*            detect deleted instances.                      */
+/*                                                           */
+/*            Matching instance sets containing deleted      */
+/*            instances are pruned.                          */
 /*                                                           */
 /*      6.40: Added Env prefix to GetEvaluationError and     */
 /*            SetEvaluationError functions.                  */
@@ -99,10 +97,10 @@
    static QUERY_CLASS            *DetermineQueryClasses(Environment *,Expression *,const char *,unsigned *);
    static QUERY_CLASS            *FormChain(Environment *,const char *,Defclass *,UDFValue *);
    static void                    DeleteQueryClasses(Environment *,QUERY_CLASS *);
-   static bool                    TestForFirstInChain(Environment *,QUERY_CLASS *,int);
-   static bool                    TestForFirstInstanceInClass(Environment *,Defmodule *,int,Defclass *,QUERY_CLASS *,int);
-   static void                    TestEntireChain(Environment *,QUERY_CLASS *,int);
-   static void                    TestEntireClass(Environment *,Defmodule *,int,Defclass *,QUERY_CLASS *,int);
+   static bool                    TestForFirstInChain(Environment *,QUERY_CLASS *,unsigned);
+   static bool                    TestForFirstInstanceInClass(Environment *,Defmodule *,int,Defclass *,QUERY_CLASS *,unsigned);
+   static void                    TestEntireChain(Environment *,QUERY_CLASS *,unsigned);
+   static void                    TestEntireClass(Environment *,Defmodule *,int,Defclass *,QUERY_CLASS *,unsigned);
    static void                    AddSolution(Environment *);
    static void                    PopQuerySoln(Environment *);
 
@@ -602,11 +600,14 @@ void DelayedQueryDoForAllInstances(
    /*=====================*/
 
    for (theSet = InstanceQueryData(theEnv)->QueryCore->soln_set;
-        theSet != NULL;
-        theSet = theSet->nxt)
+        theSet != NULL; )
      {
       for (i = 0 ; i < rcnt ; i++)
-        { InstanceQueryData(theEnv)->QueryCore->solns[i] = theSet->soln[i]; }
+        {
+         if (theSet->soln[i]->garbage)
+           { goto nextSet; }
+         InstanceQueryData(theEnv)->QueryCore->solns[i] = theSet->soln[i];
+        }
 
       EvaluateExpression(theEnv,InstanceQueryData(theEnv)->QueryCore->action,returnValue);
 
@@ -615,6 +616,8 @@ void DelayedQueryDoForAllInstances(
 
       CleanCurrentGarbageFrame(theEnv,NULL);
       CallPeriodicTasks(theEnv);
+      
+      nextSet: theSet = theSet->nxt;
      }
 
    /*==================================================================*/
@@ -952,7 +955,7 @@ static void DeleteQueryClasses(
 static bool TestForFirstInChain(
   Environment *theEnv,
   QUERY_CLASS *qchain,
-  int indx)
+  unsigned indx)
   {
    QUERY_CLASS *qptr;
    int id;
@@ -995,12 +998,13 @@ static bool TestForFirstInstanceInClass(
   int id,
   Defclass *cls,
   QUERY_CLASS *qchain,
-  int indx)
+  unsigned indx)
   {
    unsigned long i;
    Instance *ins;
    UDFValue temp;
    GCBlock gcb;
+   unsigned j;
 
    if (TestTraversalID(cls->traversalRecord,id))
      return false;
@@ -1028,6 +1032,15 @@ static bool TestForFirstInstanceInClass(
         }
       else
         {
+         for (j = 0; j < indx; j++)
+           {
+            if (InstanceQueryData(theEnv)->QueryCore->solns[j]->garbage)
+              {
+               ins = NULL;
+               goto endTest;
+              }
+           }
+           
          ins->busy++;
          EvaluateExpression(theEnv,InstanceQueryData(theEnv)->QueryCore->query,&temp);
          ins->busy--;
@@ -1044,6 +1057,8 @@ static bool TestForFirstInstanceInClass(
       while ((ins != NULL) ? (ins->garbage == 1) : false)
         ins = ins->nxtClass;
      }
+     
+   endTest:
 
    GCBlockEnd(theEnv,&gcb);
    CallPeriodicTasks(theEnv);
@@ -1078,7 +1093,7 @@ static bool TestForFirstInstanceInClass(
 static void TestEntireChain(
   Environment *theEnv,
   QUERY_CLASS *qchain,
-  int indx)
+  unsigned indx)
   {
    QUERY_CLASS *qptr;
    int id;
@@ -1117,13 +1132,14 @@ static void TestEntireClass(
   int id,
   Defclass *cls,
   QUERY_CLASS *qchain,
-  int indx)
+  unsigned indx)
   {
    unsigned long i;
    Instance *ins;
    UDFValue temp;
    GCBlock gcb;
-
+   unsigned j;
+   
    if (TestTraversalID(cls->traversalRecord,id))
      return;
    SetTraversalID(cls->traversalRecord,id);
@@ -1146,6 +1162,12 @@ static void TestEntireClass(
         }
       else
         {
+         for (j = 0; j < indx; j++)
+           {
+            if (InstanceQueryData(theEnv)->QueryCore->solns[j]->garbage)
+              { goto endTest; }
+           }
+
          ins->busy++;
 
          EvaluateExpression(theEnv,InstanceQueryData(theEnv)->QueryCore->query,&temp);
@@ -1184,7 +1206,9 @@ static void TestEntireClass(
       CleanCurrentGarbageFrame(theEnv,NULL);
       CallPeriodicTasks(theEnv);
      }
-
+     
+   endTest:
+   
    GCBlockEnd(theEnv,&gcb);
    CallPeriodicTasks(theEnv);
 

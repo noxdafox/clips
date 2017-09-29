@@ -1,9 +1,9 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  09/27/17             */
+   /*            CLIPS Version 6.40  09/28/17             */
    /*                                                     */
-   /*                                                     */
+   /*                  FACT QUERY MODULE                  */
    /*******************************************************/
 
 /*************************************************************/
@@ -38,6 +38,9 @@
 /*            do-for-fact increment the busy count of        */
 /*            matching fact sets so that actions can         */
 /*            detect retracted facts.                        */
+/*                                                           */
+/*            Matching fact sets containing retracted facts  */
+/*            are pruned.                                    */
 /*                                                           */
 /*      6.40: Added Env prefix to GetEvaluationError and     */
 /*            SetEvaluationError functions.                  */
@@ -92,10 +95,10 @@
    static QUERY_TEMPLATE         *DetermineQueryTemplates(Environment *,Expression *,const char *,unsigned *);
    static QUERY_TEMPLATE         *FormChain(Environment *,const char *,Deftemplate *,UDFValue *);
    static void                    DeleteQueryTemplates(Environment *,QUERY_TEMPLATE *);
-   static bool                    TestForFirstInChain(Environment *,QUERY_TEMPLATE *,int);
-   static bool                    TestForFirstFactInTemplate(Environment *,Deftemplate *,QUERY_TEMPLATE *,int);
-   static void                    TestEntireChain(Environment *,QUERY_TEMPLATE *,int);
-   static void                    TestEntireTemplate(Environment *,Deftemplate *,QUERY_TEMPLATE *,int);
+   static bool                    TestForFirstInChain(Environment *,QUERY_TEMPLATE *,unsigned);
+   static bool                    TestForFirstFactInTemplate(Environment *,Deftemplate *,QUERY_TEMPLATE *,unsigned);
+   static void                    TestEntireChain(Environment *,QUERY_TEMPLATE *,unsigned);
+   static void                    TestEntireTemplate(Environment *,Deftemplate *,QUERY_TEMPLATE *,unsigned);
    static void                    AddSolution(Environment *);
    static void                    PopQuerySoln(Environment *);
 
@@ -615,11 +618,14 @@ void DelayedQueryDoForAllFacts(
    /*=====================*/
 
    for (theSet = FactQueryData(theEnv)->QueryCore->soln_set;
-        theSet != NULL;
-        theSet = theSet->nxt)
+        theSet != NULL; )
      {
       for (i = 0 ; i < rcnt ; i++)
-        { FactQueryData(theEnv)->QueryCore->solns[i] = theSet->soln[i]; }
+        {
+         if (theSet->soln[i]->garbage)
+           { goto nextSet; }
+         FactQueryData(theEnv)->QueryCore->solns[i] = theSet->soln[i];
+        }
         
       EvaluateExpression(theEnv,FactQueryData(theEnv)->QueryCore->action,returnValue);
 
@@ -628,6 +634,8 @@ void DelayedQueryDoForAllFacts(
 
       CleanCurrentGarbageFrame(theEnv,NULL);
       CallPeriodicTasks(theEnv);
+      
+      nextSet: theSet = theSet->nxt;
      }
 
    /*==============================================================*/
@@ -972,7 +980,7 @@ static void DeleteQueryTemplates(
 static bool TestForFirstInChain(
   Environment *theEnv,
   QUERY_TEMPLATE *qchain,
-  int indx)
+  unsigned indx)
   {
    QUERY_TEMPLATE *qptr;
 
@@ -1005,11 +1013,12 @@ static bool TestForFirstFactInTemplate(
   Environment *theEnv,
   Deftemplate *templatePtr,
   QUERY_TEMPLATE *qchain,
-  int indx)
+  unsigned indx)
   {
    Fact *theFact;
    UDFValue temp;
    GCBlock gcb;
+   unsigned j;
 
    GCBlockStart(theEnv,&gcb);
 
@@ -1031,6 +1040,15 @@ static bool TestForFirstFactInTemplate(
         }
       else
         {
+         for (j = 0; j < indx; j++)
+           {
+            if (FactQueryData(theEnv)->QueryCore->solns[j]->garbage)
+              {
+               theFact = NULL;
+               goto endTest;
+              }
+           }
+           
          theFact->patternHeader.busyCount++;
          
          EvaluateExpression(theEnv,FactQueryData(theEnv)->QueryCore->query,&temp);
@@ -1055,7 +1073,9 @@ static bool TestForFirstFactInTemplate(
       while ((theFact != NULL) ? (theFact->garbage == 1) : false)
         { theFact = theFact->nextTemplateFact; }
      }
-
+     
+   endTest:
+   
    GCBlockEnd(theEnv,&gcb);
    CallPeriodicTasks(theEnv);
 
@@ -1082,7 +1102,7 @@ static bool TestForFirstFactInTemplate(
 static void TestEntireChain(
   Environment *theEnv,
   QUERY_TEMPLATE *qchain,
-  int indx)
+  unsigned indx)
   {
    QUERY_TEMPLATE *qptr;
 
@@ -1115,11 +1135,12 @@ static void TestEntireTemplate(
   Environment *theEnv,
   Deftemplate *templatePtr,
   QUERY_TEMPLATE *qchain,
-  int indx)
+  unsigned indx)
   {
    Fact *theFact;
    UDFValue temp;
    GCBlock gcb;
+   unsigned j;
 
    GCBlockStart(theEnv,&gcb);
 
@@ -1137,6 +1158,12 @@ static void TestEntireTemplate(
         }
       else
         {
+         for (j = 0; j < indx; j++)
+           {
+            if (FactQueryData(theEnv)->QueryCore->solns[j]->garbage)
+              { goto endTest; }
+           }
+           
          theFact->patternHeader.busyCount++;
 
          EvaluateExpression(theEnv,FactQueryData(theEnv)->QueryCore->query,&temp);
@@ -1169,12 +1196,14 @@ static void TestEntireTemplate(
 
       theFact = theFact->nextTemplateFact;
       while ((theFact != NULL) ? (theFact->garbage == 1) : false)
-        theFact = theFact->nextTemplateFact;
+       { theFact = theFact->nextTemplateFact; }
 
       CleanCurrentGarbageFrame(theEnv,NULL);
       CallPeriodicTasks(theEnv);
      }
 
+   endTest:
+   
    GCBlockEnd(theEnv,&gcb);
    CallPeriodicTasks(theEnv);
   }
