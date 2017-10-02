@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  08/06/16            */
+   /*             CLIPS Version 6.40  10/02/17            */
    /*                                                     */
    /*            MEMORY ALLOCATION HEADER FILE            */
    /*******************************************************/
@@ -62,8 +62,6 @@
 
 #include <string.h>
 
-struct chunkInfo;
-struct blockInfo;
 struct memoryPtr;
 
 typedef bool OutOfMemoryFunction(Environment *,size_t);
@@ -71,22 +69,6 @@ typedef bool OutOfMemoryFunction(Environment *,size_t);
 #ifndef MEM_TABLE_SIZE
 #define MEM_TABLE_SIZE 500
 #endif
-
-struct chunkInfo
-  {
-   struct chunkInfo *prevChunk;
-   struct chunkInfo *nextFree;
-   struct chunkInfo *lastFree;
-   long size;
-  };
-
-struct blockInfo
-  {
-   struct blockInfo *nextBlock;
-   struct blockInfo *prevBlock;
-   struct chunkInfo *nextFree;
-   long size;
-  };
 
 struct memoryPtr
   {
@@ -202,8 +184,6 @@ struct memoryData
    void                           rm(Environment *,void *,size_t);
    unsigned long                  PoolSize(Environment *);
    unsigned long                  ActualPoolSize(Environment *);
-   void                          *RequestChunk(Environment *,size_t);
-   int                            ReturnChunk(Environment *,void *,size_t);
    bool                           SetConserveMemory(Environment *,bool);
    bool                           GetConserveMemory(Environment *);
    void                           genmemcpy(char *,char *,unsigned long);
