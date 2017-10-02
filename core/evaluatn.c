@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  02/04/15            */
+   /*             CLIPS Version 6.31  10/02/17            */
    /*                                                     */
    /*                  EVALUATION MODULE                  */
    /*******************************************************/
@@ -41,6 +41,9 @@
 /*            deprecation warnings.                          */
 /*                                                           */
 /*            Converted API macros to function calls.        */
+/*                                                           */
+/*      6.31: EnvFunctionCall checks for the correct number  */
+/*            of deffunction arguments.                      */
 /*                                                           */
 /*************************************************************/
 
@@ -805,7 +808,7 @@ globle int EnvFunctionCall(
   }
 
 /********************************************/
-/* FunctionCall2: Allows Deffunctions and    */
+/* FunctionCall2: Allows Deffunctions and   */
 /*   Generic Functions to be called from C. */
 /*   Allows only constants as arguments.    */
 /********************************************/
@@ -850,12 +853,32 @@ globle int FunctionCall2(
 
    argexps = ParseConstantArguments(theEnv,args,&error);
    if (error == TRUE) return(TRUE);
+   theReference->argList = argexps;
+
+   /*===========================================================*/
+   /* Verify a deffunction has the correct number of arguments. */
+   /*===========================================================*/
+
+#if DEFFUNCTION_CONSTRUCT
+   if (theReference->type == PCALL)
+     {
+      if (CheckDeffunctionCall(theEnv,theReference->value,CountArguments(theReference->argList)) == FALSE)
+        {
+         PrintErrorID(theEnv,"MISCFUN",4,FALSE);
+         EnvPrintRouter(theEnv,WERROR,"EnvFunctionCall called with the wrong number of arguments for deffunction ");
+         EnvPrintRouter(theEnv,WERROR,EnvGetDeffunctionName(theEnv,theReference->value));
+         EnvPrintRouter(theEnv,WERROR,"\n");
+         ReturnExpression(theEnv,argexps);
+         theReference->argList = NULL;
+         return TRUE;
+        }
+     }
+#endif
 
    /*====================*/
    /* Call the function. */
    /*====================*/
 
-   theReference->argList = argexps;
    error = EvaluateExpression(theEnv,theReference,result);
 
    /*========================*/
