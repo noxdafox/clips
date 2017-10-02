@@ -104,26 +104,6 @@ globle void PrintInChunks(
    /*=====================================================*/
    
    EnvPrintRouter(theEnv,logicalName,bigString);
-
-/*
-   char tc, *subString;
-
-   subString = bigString;
-
-   if (subString == NULL) return;
-
-   while (((int) strlen(subString)) > 500)
-     {
-      if (EvaluationData(theEnv)->HaltExecution) return;
-      tc = subString[500];
-      subString[500] = EOS;
-      EnvPrintRouter(theEnv,logicalName,subString);
-      subString[500] = tc;
-      subString += 500;
-     }
-
-   EnvPrintRouter(theEnv,logicalName,subString);
-*/
   }
 
 /************************************************************/

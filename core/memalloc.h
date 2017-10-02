@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.31  06/23/15            */
+   /*             CLIPS Version 6.31  10/02/17            */
    /*                                                     */
    /*            MEMORY ALLOCATION HEADER FILE            */
    /*******************************************************/
@@ -49,8 +49,6 @@
 
 #define _H_memalloc
 
-struct chunkInfo;
-struct blockInfo;
 struct memoryPtr;
 
 #ifndef MEM_TABLE_SIZE
@@ -66,22 +64,6 @@ struct memoryPtr;
 #else
 #define LOCALE extern
 #endif
-
-struct chunkInfo
-  {
-   struct chunkInfo *prevChunk;
-   struct chunkInfo *nextFree;
-   struct chunkInfo *lastFree;
-   long int size;
-  };
-
-struct blockInfo
-  {
-   struct blockInfo *nextBlock;
-   struct blockInfo *prevBlock;
-   struct chunkInfo *nextFree;
-   long int size;
-  };
 
 struct memoryPtr
   {
@@ -199,8 +181,6 @@ struct memoryData
    LOCALE int                            rm3(void *,void *,size_t);
    LOCALE unsigned long                  PoolSize(void *);
    LOCALE unsigned long                  ActualPoolSize(void *);
-   LOCALE void                          *RequestChunk(void *,size_t);
-   LOCALE int                            ReturnChunk(void *,void *,size_t);
    LOCALE intBool                        EnvSetConserveMemory(void *,intBool);
    LOCALE intBool                        EnvGetConserveMemory(void *);
    LOCALE void                           genmemcpy(char *,char *,unsigned long);

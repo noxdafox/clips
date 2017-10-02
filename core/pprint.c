@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*             CLIPS Version 6.31  10/02/17            */
    /*                                                     */
    /*                 PRETTY PRINT MODULE                 */
    /*******************************************************/
@@ -29,6 +29,8 @@
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
 /*                                                           */
+/*      6.31: Fix for pretty print buffer overflow.          */
+/*                                                           */
 /*************************************************************/
 
 #define _PPRINT_SOURCE_
@@ -47,6 +49,8 @@
 #include "utility.h"
 
 #include "pprint.h"
+
+#define PP_CR_FIXED_BUFFER_SIZE 120
 
 /***************************************/
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
@@ -211,12 +215,18 @@ globle void PPCRAndIndent(
   void *theEnv)
   {
    int i;
-   char buffer[120];
+   char *buffer;
+   char fixedBuffer[PP_CR_FIXED_BUFFER_SIZE];
 
    if ((PrettyPrintData(theEnv)->PPBufferStatus == OFF) || 
        (! PrettyPrintData(theEnv)->PPBufferEnabled))
      { return; }
 
+   if ((PrettyPrintData(theEnv)->IndentationDepth + 2) > PP_CR_FIXED_BUFFER_SIZE)
+     { buffer = genalloc(theEnv,PrettyPrintData(theEnv)->IndentationDepth + 2);}
+   else
+     { buffer = fixedBuffer; }
+   
    buffer[0] = '\n';
 
    for (i = 1 ; i <= PrettyPrintData(theEnv)->IndentationDepth ; i++)
@@ -224,6 +234,9 @@ globle void PPCRAndIndent(
    buffer[i] = EOS;
 
    SavePPBuffer(theEnv,buffer);
+
+   if ((PrettyPrintData(theEnv)->IndentationDepth + 2) > PP_CR_FIXED_BUFFER_SIZE)
+     { genfree(theEnv,buffer,PrettyPrintData(theEnv)->IndentationDepth + 2);}
   }
 
 /************************************************/
