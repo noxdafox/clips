@@ -59,7 +59,7 @@
 /*                                                           */
 /*            Converted API macros to function calls.        */
 /*                                                           */
-/*            Fixed dangling construct issue.                */
+/*      6.31: Fixed dangling construct issue.                */
 /*                                                           */
 /*      6.40: Added Env prefix to GetEvaluationError and     */
 /*            SetEvaluationError functions.                  */

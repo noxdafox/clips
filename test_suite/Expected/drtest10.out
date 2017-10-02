@@ -960,5 +960,21 @@ CLIPS>
 [f1] [PRNTUTIL15] The variable/slot reference ?f:x cannot be resolved because the referenced instance [f1] has been deleted.
 FALSE
 CLIPS> (unwatch all)
+CLIPS> (clear) ; Indentation depth overflow
+CLIPS> (defrule foo
+   =>
+   (if (eq 3 3)
+      then
+      (if (eq 3 3) then (if (eq 3 3) then (if (eq 3 3) then (if (eq 3 3) then
+      (if (eq 3 3) then (if (eq 3 3) then (if (eq 3 3) then (if (eq 3 3) then
+      (if (eq 3 3) then (if (eq 3 3) then (if (eq 3 3) then (if (eq 3 3) then
+      (if (eq 3 3) then (if (eq 3 3) then (if (eq 3 3) then (if (eq 3 3) then
+      (if (eq 3 3) then (if (eq 3 3) then (if (eq 3 3) then (if (eq 3 3) then
+      (if (eq 3 3) then (if (eq 3 3) then (if (eq 3 3) then (if (eq 3 3) then
+      (if (eq 3 3) then (if (eq 3 3) then (if (eq 3 3) then (if (eq 3 3) then
+      (if (eq 3 3) then (if (eq 3 3) then (if (eq 3 3) then (if (eq 3 3) then
+      (if (eq 3 3) then (if (eq 3 3) then (if (eq 3 3) then (if (eq 3 3) then
+      (if (eq 3 3) then (if (eq 3 3) then (if (eq 3 3) then (if (eq 3 3) then
+      (if (eq 3 3) then 3)))))))))))))))))))))))))))))))))))))))))))
 CLIPS> (clear)
 CLIPS> (dribble-off)
