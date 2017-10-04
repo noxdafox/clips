@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/30/16            */
+   /*             CLIPS Version 6.40  10/02/17            */
    /*                                                     */
    /*               PRETTY PRINT HEADER FILE              */
    /*******************************************************/
@@ -47,7 +47,7 @@ struct prettyPrintData
   {
    bool PPBufferStatus;
    bool PPBufferEnabled;
-   int IndentationDepth;
+   size_t IndentationDepth;
    size_t PPBufferPos;
    size_t PPBufferMax;
    size_t PPBackupOnce;
@@ -65,9 +65,9 @@ struct prettyPrintData
    char                          *CopyPPBuffer(Environment *);
    char                          *GetPPBuffer(Environment *);
    void                           PPCRAndIndent(Environment *);
-   void                           IncrementIndentDepth(Environment *,int);
-   void                           DecrementIndentDepth(Environment *,int);
-   void                           SetIndentDepth(Environment *,int);
+   void                           IncrementIndentDepth(Environment *,size_t);
+   void                           DecrementIndentDepth(Environment *,size_t);
+   void                           SetIndentDepth(Environment *,size_t);
    void                           SetPPBufferStatus(Environment *,bool);
    bool                           GetPPBufferStatus(Environment *);
    bool                           SetPPBufferEnabled(Environment *,bool);

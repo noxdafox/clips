@@ -224,7 +224,7 @@ char *GetPPBuffer(
 void PPCRAndIndent(
   Environment *theEnv)
   {
-   int i;
+   size_t i;
    char *buffer;
    char fixedBuffer[PP_CR_FIXED_BUFFER_SIZE];
    
@@ -255,7 +255,7 @@ void PPCRAndIndent(
 /************************************************/
 void IncrementIndentDepth(
   Environment *theEnv,
-  int value)
+  size_t value)
   {
    PrettyPrintData(theEnv)->IndentationDepth += value;
   }
@@ -266,7 +266,7 @@ void IncrementIndentDepth(
 /************************************************/
 void DecrementIndentDepth(
   Environment *theEnv,
-  int value)
+  size_t value)
   {
    PrettyPrintData(theEnv)->IndentationDepth -= value;
   }
@@ -277,7 +277,7 @@ void DecrementIndentDepth(
 /************************************/
 void SetIndentDepth(
   Environment *theEnv,
-  int value)
+  size_t value)
   {
    PrettyPrintData(theEnv)->IndentationDepth = value;
   }

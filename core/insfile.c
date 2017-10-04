@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/25/16             */
+   /*            CLIPS Version 6.40  10/02/17             */
    /*                                                     */
    /*         INSTANCE LOAD/SAVE (ASCII/BINARY) MODULE    */
    /*******************************************************/
@@ -38,6 +38,11 @@
 /*            bload-instances, the class name does not       */
 /*            have to be in scope if the module name is      */
 /*            specified.                                     */
+/*                                                           */
+/*      6.31: Prior error flags are cleared before           */
+/*            EnvLoadInstances, EnvRestoreInstances,         */
+/*            EnvLoadInstancesFromString, and                */
+/*            EnvRestoreInstancesFromString are processed.   */
 /*                                                           */
 /*      6.40: Added Env prefix to GetEvaluationError and     */
 /*            SetEvaluationError functions.                  */
@@ -1313,6 +1318,13 @@ static long LoadOrRestoreInstances(
    GetToken(theEnv,ilog,&DefclassData(theEnv)->ObjectParseToken);
    svoverride = InstanceData(theEnv)->MkInsMsgPass;
    InstanceData(theEnv)->MkInsMsgPass = usemsgs;
+   
+   if (EvaluationData(theEnv)->CurrentExpression == NULL)
+     {
+      SetEvaluationError(theEnv,false);
+      SetHaltExecution(theEnv,false);
+     }
+
    while ((DefclassData(theEnv)->ObjectParseToken.tknType != STOP_TOKEN) && (EvaluationData(theEnv)->HaltExecution != true))
      {
       if (DefclassData(theEnv)->ObjectParseToken.tknType != LEFT_PARENTHESIS_TOKEN)
