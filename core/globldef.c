@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/25/16             */
+   /*            CLIPS Version 6.40  10/04/17             */
    /*                                                     */
    /*                  DEFGLOBAL MODULE                   */
    /*******************************************************/
@@ -493,9 +493,7 @@ void QSetDefglobalValue(
 
    DefglobalData(theEnv)->ChangeToGlobals = true;
 
-   if ((UtilityData(theEnv)->CurrentGarbageFrame->topLevel) &&
-       (! CommandLineData(theEnv)->EvaluatingTopLevelCommand) &&
-       (EvaluationData(theEnv)->CurrentExpression == NULL))
+   if (EvaluationData(theEnv)->CurrentExpression == NULL)
      {
       CleanCurrentGarbageFrame(theEnv,NULL);
       CallPeriodicTasks(theEnv);
@@ -666,7 +664,14 @@ void DefglobalSetValue(
    UDFValue temp;
    GCBlock gcb;
    Environment *theEnv = theDefglobal->header.env;
-  
+   
+   /*=====================================*/
+   /* If embedded, clear the error flags. */
+   /*=====================================*/
+   
+   if (EvaluationData(theEnv)->CurrentExpression == NULL)
+     { ResetErrorFlags(theEnv); }
+
    GCBlockStart(theEnv,&gcb);
    CLIPSToUDFValue(vPtr,&temp);
    QSetDefglobalValue(theEnv,theDefglobal,&temp,false);

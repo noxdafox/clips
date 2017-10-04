@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  09/20/17             */
+   /*            CLIPS Version 6.40  10/04/17             */
    /*                                                     */
    /*                FACT COMMANDS MODULE                 */
    /*******************************************************/
@@ -1141,6 +1141,13 @@ bool LoadFacts(
    struct token theToken;
    struct expr *testPtr;
    UDFValue rv;
+   
+   /*=====================================*/
+   /* If embedded, clear the error flags. */
+   /*=====================================*/
+   
+   if (EvaluationData(theEnv)->CurrentExpression == NULL)
+     { ResetErrorFlags(theEnv); }
 
    /*======================================================*/
    /* Open the file. Use either "fast save" or I/O Router. */
@@ -1195,6 +1202,13 @@ bool LoadFactsFromString(
    struct token theToken;
    struct expr *testPtr;
    UDFValue rv;
+   
+   /*=====================================*/
+   /* If embedded, clear the error flags. */
+   /*=====================================*/
+   
+   if (EvaluationData(theEnv)->CurrentExpression == NULL)
+     { ResetErrorFlags(theEnv); }
 
    /*==========================*/
    /* Initialize string router */

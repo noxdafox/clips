@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  10/01/16            */
+   /*             CLIPS Version 6.40  10/04/17            */
    /*                                                     */
    /*                 UTILITY HEADER FILE                 */
    /*******************************************************/
@@ -122,7 +122,6 @@ struct trackedMemory
 struct garbageFrame
   {
    bool dirty;
-   bool topLevel;
    struct garbageFrame *priorFrame;
    struct ephemeron *ephemeralSymbolList;
    struct ephemeron *ephemeralFloatList;

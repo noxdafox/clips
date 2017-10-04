@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  10/01/16             */
+   /*            CLIPS Version 6.40  10/04/17             */
    /*                                                     */
    /*                  EVALUATION MODULE                  */
    /*******************************************************/
@@ -319,6 +319,16 @@ int InstallExternalAddressType(
    EvaluationData(theEnv)->ExternalAddressTypes[EvaluationData(theEnv)->numberOfAddressTypes++] = copyEAT;
 
    return rv;
+  }
+
+/*******************/
+/* ResetErrorFlags */
+/*******************/
+void ResetErrorFlags(
+  Environment *theEnv)
+  {
+   EvaluationData(theEnv)->EvaluationError = false;
+   EvaluationData(theEnv)->HaltExecution = false;
   }
 
 /******************************************************/

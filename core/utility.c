@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  12/09/16             */
+   /*            CLIPS Version 6.40  10/04/17             */
    /*                                                     */
    /*                   UTILITY MODULE                    */
    /*******************************************************/
@@ -109,7 +109,6 @@ void InitializeUtilityData(
    AllocateEnvironmentData(theEnv,UTILITY_DATA,sizeof(struct utilityData),DeallocateUtilityData);
 
    UtilityData(theEnv)->CurrentGarbageFrame = &UtilityData(theEnv)->MasterGarbageFrame;
-   UtilityData(theEnv)->CurrentGarbageFrame->topLevel = true;
 
    UtilityData(theEnv)->PeriodicFunctionsEnabled = true;
    UtilityData(theEnv)->YieldFunctionEnabled = true;

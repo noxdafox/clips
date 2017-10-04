@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  10/01/16             */
+   /*            CLIPS Version 6.40  10/04/17             */
    /*                                                     */
    /*              CONSTRUCT PARSER MODULE                */
    /*******************************************************/
@@ -284,13 +284,12 @@ int LoadConstructsFromLogicalName(
    oldLineCountRouter = RouterData(theEnv)->LineCountRouter;
    RouterData(theEnv)->LineCountRouter = readSource;
 
-   /*=========================================*/
-   /* Reset the halt execution and evaluation */
-   /* error flags in preparation for parsing. */
-   /*=========================================*/
-
-   if (UtilityData(theEnv)->CurrentGarbageFrame->topLevel) SetHaltExecution(theEnv,false);
-   SetEvaluationError(theEnv,false);
+   /*=====================================*/
+   /* If embedded, clear the error flags. */
+   /*=====================================*/
+   
+   if (EvaluationData(theEnv)->CurrentExpression == NULL)
+     { ResetErrorFlags(theEnv); }
 
    /*==========================================*/
    /* Set up the frame for garbage collection. */

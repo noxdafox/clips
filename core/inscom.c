@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  10/18/16             */
+   /*            CLIPS Version 6.40  10/04/17             */
    /*                                                     */
    /*               INSTANCE COMMAND MODULE               */
    /*******************************************************/
@@ -327,11 +327,18 @@ bool DeleteInstance(
   {
    GCBlock gcb;
    bool success;
-   
+
    if (theInstance != NULL)
      {
       Environment *theEnv = theInstance->cls->header.env;
       
+      /*=====================================*/
+      /* If embedded, clear the error flags. */
+      /*=====================================*/
+   
+      if (EvaluationData(theEnv)->CurrentExpression == NULL)
+        { ResetErrorFlags(theEnv); }
+
       GCBlockStart(theEnv,&gcb);
       success = QuashInstance(theEnv,theInstance);
       GCBlockEnd(theEnv,&gcb);
@@ -358,6 +365,13 @@ bool DeleteAllInstances(
    GCBlock gcb;
    bool success = true;
    
+   /*=====================================*/
+   /* If embedded, clear the error flags. */
+   /*=====================================*/
+   
+   if (EvaluationData(theEnv)->CurrentExpression == NULL)
+     { ResetErrorFlags(theEnv); }
+
    GCBlockStart(theEnv,&gcb);
 
    ins = InstanceData(theEnv)->InstanceList;
@@ -399,6 +413,13 @@ bool UnmakeAllInstances(
    GCBlock gcb;
    Instance *theInstance;
    
+   /*=====================================*/
+   /* If embedded, clear the error flags. */
+   /*=====================================*/
+   
+   if (EvaluationData(theEnv)->CurrentExpression == NULL)
+     { ResetErrorFlags(theEnv); }
+
    GCBlockStart(theEnv,&gcb);
    
    svmaintain = InstanceData(theEnv)->MaintainGarbageInstances;
@@ -440,6 +461,13 @@ bool UnmakeInstance(
    GCBlock gcb;
    Environment *theEnv = theInstance->cls->header.env;
    
+   /*=====================================*/
+   /* If embedded, clear the error flags. */
+   /*=====================================*/
+   
+   if (EvaluationData(theEnv)->CurrentExpression == NULL)
+     { ResetErrorFlags(theEnv); }
+
    GCBlockStart(theEnv,&gcb);
   
    svmaintain = InstanceData(theEnv)->MaintainGarbageInstances;
@@ -652,6 +680,13 @@ Instance *MakeInstance(
    UDFValue returnValue;
    Instance *rv;
 
+   /*=====================================*/
+   /* If embedded, clear the error flags. */
+   /*=====================================*/
+   
+   if (EvaluationData(theEnv)->CurrentExpression == NULL)
+     { ResetErrorFlags(theEnv); }
+
    returnValue.value = FalseSymbol(theEnv);
    if (OpenStringSource(theEnv,router,mkstr,0) == 0)
      return NULL;
@@ -769,6 +804,13 @@ bool DirectGetSlot(
    InstanceSlot *sp;
    Environment *theEnv = theInstance->cls->header.env;
    
+   /*=====================================*/
+   /* If embedded, clear the error flags. */
+   /*=====================================*/
+   
+   if (EvaluationData(theEnv)->CurrentExpression == NULL)
+     { ResetErrorFlags(theEnv); }
+
    if (theInstance->garbage == 1)
      {
       SetEvaluationError(theEnv,true);

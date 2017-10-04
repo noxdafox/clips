@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  10/01/16             */
+   /*            CLIPS Version 6.40  10/04/17             */
    /*                                                     */
    /*                     BSAVE MODULE                    */
    /*******************************************************/
@@ -151,6 +151,13 @@ bool Bsave(
    struct BinaryItem *biPtr;
    char constructBuffer[CONSTRUCT_HEADER_SIZE];
    unsigned long saveExpressionCount;
+   
+   /*=====================================*/
+   /* If embedded, clear the error flags. */
+   /*=====================================*/
+   
+   if (EvaluationData(theEnv)->CurrentExpression == NULL)
+     { ResetErrorFlags(theEnv); }
 
    /*===================================*/
    /* A bsave can't occur when a binary */

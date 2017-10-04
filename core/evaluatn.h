@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  11/01/16            */
+   /*             CLIPS Version 6.40  10/04/17            */
    /*                                                     */
    /*               EVALUATION HEADER FILE                */
    /*******************************************************/
@@ -151,6 +151,7 @@ struct evaluationData
    bool                           GetFunctionReference(Environment *,const char *,Expression *);
    bool                           DOsEqual(UDFValue *,UDFValue *);
    bool                           EvaluateAndStoreInDataObject(Environment *,bool,Expression *,UDFValue *,bool);
+   void                           ResetErrorFlags(Environment *);
 
 #define CVIsType(cv,cvType) (((1 << (((TypeHeader *) (cv)->value)->type)) & (cvType)) ? true : false)
 

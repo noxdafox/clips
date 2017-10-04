@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  10/01/16             */
+   /*            CLIPS Version 6.40  10/04/17             */
    /*                                                     */
    /*             OBJECT MESSAGE DISPATCH CODE            */
    /*******************************************************/
@@ -172,15 +172,18 @@ void Send(
    // TBD GCBlock gcb;
    UDFValue result;
 
-   if ((UtilityData(theEnv)->CurrentGarbageFrame->topLevel) &&
-       (! CommandLineData(theEnv)->EvaluatingTopLevelCommand) &&
-       (EvaluationData(theEnv)->CurrentExpression == NULL))
+   /*=====================================*/
+   /* If embedded, clear the error flags. */
+   /*=====================================*/
+   
+   if (EvaluationData(theEnv)->CurrentExpression == NULL)
+     { ResetErrorFlags(theEnv); }
+
+   if (EvaluationData(theEnv)->CurrentExpression == NULL)
      {
       CleanCurrentGarbageFrame(theEnv,NULL);
       CallPeriodicTasks(theEnv);
      }
-
-   SetEvaluationError(theEnv,false);
 
    if (returnValue != NULL)
      { returnValue->value = FalseSymbol(theEnv); }
