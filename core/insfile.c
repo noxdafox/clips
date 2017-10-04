@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*              CLIPS Version 6.30  02/04/15           */
+   /*              CLIPS Version 6.30  10/02/17           */
    /*                                                     */
    /*         INSTANCE LOAD/SAVE (ASCII/BINARY) MODULE    */
    /*******************************************************/
@@ -38,6 +38,11 @@
 /*            bload-instances, the class name does not       */
 /*            have to be in scope if the module name is      */
 /*            specified.                                     */
+/*                                                           */
+/*      6.31: Prior error flags are cleared before           */
+/*            EnvLoadInstances, EnvRestoreInstances,         */
+/*            EnvLoadInstancesFromString, and                */
+/*            EnvRestoreInstancesFromString are processed.   */
 /*                                                           */
 /*************************************************************/
 
@@ -1266,6 +1271,13 @@ static long LoadOrRestoreInstances(
    GetToken(theEnv,ilog,&DefclassData(theEnv)->ObjectParseToken);
    svoverride = InstanceData(theEnv)->MkInsMsgPass;
    InstanceData(theEnv)->MkInsMsgPass = usemsgs;
+   
+   if (EvaluationData(theEnv)->CurrentExpression == NULL)
+     {
+      SetEvaluationError(theEnv,FALSE);
+      SetHaltExecution(theEnv,FALSE);
+     }
+   
    while ((GetType(DefclassData(theEnv)->ObjectParseToken) != STOP) && (EvaluationData(theEnv)->HaltExecution != TRUE))
      {
       if (GetType(DefclassData(theEnv)->ObjectParseToken) != LPAREN)
