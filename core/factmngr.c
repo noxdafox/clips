@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  09/04/17             */
+   /*            CLIPS Version 6.40  10/04/17             */
    /*                                                     */
    /*                 FACT MANAGER MODULE                 */
    /*******************************************************/
@@ -732,6 +732,13 @@ bool Retract(
    bool rv;
    Environment *theEnv = theFact->whichDeftemplate->header.env;
    
+   /*=====================================*/
+   /* If embedded, clear the error flags. */
+   /*=====================================*/
+   
+   if (EvaluationData(theEnv)->CurrentExpression == NULL)
+     { ResetErrorFlags(theEnv); }
+
    GCBlockStart(theEnv,&gcb);
    rv = RetractDriver(theEnv,theFact,false,NULL);
    GCBlockEnd(theEnv,&gcb);
@@ -1036,15 +1043,13 @@ Fact *Assert(
 bool RetractAllFacts(
   Environment *theEnv)
   {
-   bool rv = true;
-   
    while (FactData(theEnv)->FactList != NULL)
      {
       if (! Retract(FactData(theEnv)->FactList))
-        { rv = false; }
+        { return false; }
      }
      
-   return rv;
+   return true;
   }
 
 /*********************************************/
@@ -1712,7 +1717,15 @@ Fact *AssertString(
    Fact *theFact, *rv;
    GCBlock gcb;
    int danglingConstructs;
+   
    danglingConstructs = ConstructData(theEnv)->DanglingConstructs;
+   
+   /*=====================================*/
+   /* If embedded, clear the error flags. */
+   /*=====================================*/
+   
+   if (EvaluationData(theEnv)->CurrentExpression == NULL)
+     { ResetErrorFlags(theEnv); }
 
    GCBlockStart(theEnv,&gcb);
 
@@ -1722,8 +1735,7 @@ Fact *AssertString(
       return NULL;
      }
 
-   if ((! CommandLineData(theEnv)->EvaluatingTopLevelCommand) &&
-       (EvaluationData(theEnv)->CurrentExpression == NULL))
+   if (EvaluationData(theEnv)->CurrentExpression == NULL)
      { ConstructData(theEnv)->DanglingConstructs = danglingConstructs; }
 
    rv = Assert(theFact);

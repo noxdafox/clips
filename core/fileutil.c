@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  11/01/16            */
+   /*             CLIPS Version 6.40  10/04/17            */
    /*                                                     */
    /*                 FILE UTILITY MODULE                 */
    /*******************************************************/
@@ -915,12 +915,12 @@ bool BatchStar(
    oldLineCountValue = SetLineCount(theEnv,1);
 #endif
 
-   /*========================*/
-   /* Reset the error state. */
-   /*========================*/
-
-   SetHaltExecution(theEnv,false);
-   SetEvaluationError(theEnv,false);
+   /*=====================================*/
+   /* If embedded, clear the error flags. */
+   /*=====================================*/
+   
+   if (EvaluationData(theEnv)->CurrentExpression == NULL)
+     { ResetErrorFlags(theEnv); }
 
    /*=============================================*/
    /* Evaluate commands from the file one by one. */

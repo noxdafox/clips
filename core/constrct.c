@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  03/29/17             */
+   /*            CLIPS Version 6.40  10/04/17             */
    /*                                                     */
    /*                  CONSTRUCT MODULE                   */
    /*******************************************************/
@@ -249,6 +249,13 @@ bool Save(
    bool updated = false;
    bool unvisited = true;
 
+   /*=====================================*/
+   /* If embedded, clear the error flags. */
+   /*=====================================*/
+   
+   if (EvaluationData(theEnv)->CurrentExpression == NULL)
+     { ResetErrorFlags(theEnv); }
+
    /*=====================*/
    /* Open the save file. */
    /*=====================*/
@@ -491,13 +498,18 @@ void Reset(
 
    ConstructData(theEnv)->ResetInProgress = true;
    ConstructData(theEnv)->ResetReadyInProgress = true;
+   
+   /*=====================================*/
+   /* If embedded, clear the error flags. */
+   /*=====================================*/
+   
+   if (EvaluationData(theEnv)->CurrentExpression == NULL)
+     { ResetErrorFlags(theEnv); }
 
-   /*================================================*/
-   /* If the reset is performed from the top level   */
-   /* command prompt, reset the halt execution flag. */
-   /*================================================*/
+   /*========================================*/
+   /* Set up the frame for tracking garbage. */
+   /*========================================*/
 
-   if (UtilityData(theEnv)->CurrentGarbageFrame->topLevel) SetHaltExecution(theEnv,false);
    GCBlockStart(theEnv,&gcb);
 
    /*=======================================================*/
@@ -628,12 +640,8 @@ bool Clear(
    /* If embedded, clear the error flags. */
    /*=====================================*/
 
-   if ((! CommandLineData(theEnv)->EvaluatingTopLevelCommand) &&
-       (EvaluationData(theEnv)->CurrentExpression == NULL))
-     {
-      SetEvaluationError(theEnv,false);
-      SetHaltExecution(theEnv,false);
-     }
+   if (EvaluationData(theEnv)->CurrentExpression == NULL)
+     { ResetErrorFlags(theEnv); }
 
    /*===================================*/
    /* Determine if a clear is possible. */

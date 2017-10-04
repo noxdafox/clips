@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/25/16             */
+   /*            CLIPS Version 6.40  10/04/17             */
    /*                                                     */
    /*                    AGENDA MODULE                    */
    /*******************************************************/
@@ -1057,6 +1057,13 @@ void RefreshAgenda(
    
    if (theModule == NULL) return;
    theEnv = theModule->header.env;
+   
+   /*=====================================*/
+   /* If embedded, clear the error flags. */
+   /*=====================================*/
+   
+   if (EvaluationData(theEnv)->CurrentExpression == NULL)
+     { ResetErrorFlags(theEnv); }
 
    /*==========================*/
    /* Save the current module. */

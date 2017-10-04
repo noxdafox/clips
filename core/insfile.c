@@ -416,6 +416,13 @@ long BinaryLoadInstances(
   {
    long i,instanceCount;
    GCBlock gcb;
+   
+   /*=====================================*/
+   /* If embedded, clear the error flags. */
+   /*=====================================*/
+   
+   if (EvaluationData(theEnv)->CurrentExpression == NULL)
+     { ResetErrorFlags(theEnv); }
 
    if (GenOpenReadBinary(theEnv,"bload-instances",theFile) == 0)
      {
@@ -516,6 +523,13 @@ long SaveInstancesDriver(
    bool oldPEC, oldATS, oldIAN;
    struct classItem *classList;
    long instanceCount;
+   
+   /*=====================================*/
+   /* If embedded, clear the error flags. */
+   /*=====================================*/
+
+   if (EvaluationData(theEnv)->CurrentExpression == NULL)
+     { ResetErrorFlags(theEnv); }
 
    classList = ProcessSaveClassList(theEnv,"save-instances",classExpressionList,
                                     saveCode,inheritFlag);
@@ -621,6 +635,13 @@ long BinarySaveInstancesDriver(
    struct classItem *classList;
    FILE *bsaveFP;
    long instanceCount;
+   
+   /*=====================================*/
+   /* If embedded, clear the error flags. */
+   /*=====================================*/
+
+   if (EvaluationData(theEnv)->CurrentExpression == NULL)
+     { ResetErrorFlags(theEnv); }
 
    classList = ProcessSaveClassList(theEnv,"bsave-instances",classExpressionList,
                                     saveCode,inheritFlag);
@@ -1301,29 +1322,32 @@ static long LoadOrRestoreInstances(
    Expression *top;
    bool svoverride;
    long instanceCount = 0L;
+   
+   /*=====================================*/
+   /* If embedded, clear the error flags. */
+   /*=====================================*/
 
-   if (isFileName) {
-     if ((sfile = GenOpen(theEnv,file,"r")) == NULL)
-       {
-        SetEvaluationError(theEnv,true);
-        return(-1L);
-       }
-     svload = GetFastLoad(theEnv);
-     ilog = (char *) sfile;
-     SetFastLoad(theEnv,sfile);
-   } else {
-     ilog = file;
-   }
+   if (EvaluationData(theEnv)->CurrentExpression == NULL)
+     { ResetErrorFlags(theEnv); }
+
+   if (isFileName)
+     {
+      if ((sfile = GenOpen(theEnv,file,"r")) == NULL)
+        {
+         SetEvaluationError(theEnv,true);
+         return -1L;
+        }
+      svload = GetFastLoad(theEnv);
+      ilog = (char *) sfile;
+      SetFastLoad(theEnv,sfile);
+     }
+   else
+     { ilog = file; }
+     
    top = GenConstant(theEnv,FCALL,FindFunction(theEnv,"make-instance"));
    GetToken(theEnv,ilog,&DefclassData(theEnv)->ObjectParseToken);
    svoverride = InstanceData(theEnv)->MkInsMsgPass;
    InstanceData(theEnv)->MkInsMsgPass = usemsgs;
-   
-   if (EvaluationData(theEnv)->CurrentExpression == NULL)
-     {
-      SetEvaluationError(theEnv,false);
-      SetHaltExecution(theEnv,false);
-     }
 
    while ((DefclassData(theEnv)->ObjectParseToken.tknType != STOP_TOKEN) && (EvaluationData(theEnv)->HaltExecution != true))
      {
@@ -1331,40 +1355,45 @@ static long LoadOrRestoreInstances(
         {
          SyntaxErrorMessage(theEnv,"instance definition");
          rtn_struct(theEnv,expr,top);
-         if (isFileName) {
-           GenClose(theEnv,sfile);
-           SetFastLoad(theEnv,svload);
-         }
+         if (isFileName)
+           {
+            GenClose(theEnv,sfile);
+            SetFastLoad(theEnv,svload);
+           }
          SetEvaluationError(theEnv,true);
          InstanceData(theEnv)->MkInsMsgPass = svoverride;
-         return(instanceCount);
+         return instanceCount;
         }
+        
       if (ParseSimpleInstance(theEnv,top,ilog) == NULL)
         {
-         if (isFileName) {
-           GenClose(theEnv,sfile);
-           SetFastLoad(theEnv,svload);
-         }
+         if (isFileName)
+           {
+            GenClose(theEnv,sfile);
+            SetFastLoad(theEnv,svload);
+           }
          InstanceData(theEnv)->MkInsMsgPass = svoverride;
          SetEvaluationError(theEnv,true);
-         return(instanceCount);
+         return instanceCount;
         }
       ExpressionInstall(theEnv,top);
       EvaluateExpression(theEnv,top,&temp);
       ExpressionDeinstall(theEnv,top);
       if (! EvaluationData(theEnv)->EvaluationError)
-        instanceCount++;
+        { instanceCount++; }
       ReturnExpression(theEnv,top->argList);
       top->argList = NULL;
       GetToken(theEnv,ilog,&DefclassData(theEnv)->ObjectParseToken);
      }
+     
    rtn_struct(theEnv,expr,top);
-   if (isFileName) {
-     GenClose(theEnv,sfile);
-     SetFastLoad(theEnv,svload);
-   }
+   if (isFileName)
+     {
+      GenClose(theEnv,sfile);
+      SetFastLoad(theEnv,svload);
+     }
    InstanceData(theEnv)->MkInsMsgPass = svoverride;
-   return(instanceCount);
+   return instanceCount;
   }
 
 /***************************************************

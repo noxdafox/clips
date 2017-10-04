@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  10/01/16             */
+   /*            CLIPS Version 6.40  10/04/17             */
    /*                                                     */
    /*                    ENGINE MODULE                    */
    /*******************************************************/
@@ -232,11 +232,17 @@ long long Run(
      }
 #endif
 
+   /*=====================================*/
+   /* If embedded, clear the error flags. */
+   /*=====================================*/
+   
+   if (EvaluationData(theEnv)->CurrentExpression == NULL)
+     { ResetErrorFlags(theEnv); }
+
    /*=============================*/
    /* Set up execution variables. */
    /*=============================*/
 
-   if (UtilityData(theEnv)->CurrentGarbageFrame->topLevel) SetHaltExecution(theEnv,false);
    EngineData(theEnv)->HaltRules = false;
 
 #if DEVELOPER
@@ -385,8 +391,7 @@ long long Run(
       EngineData(theEnv)->ExecutingRule->executing = false;
       SetEvaluationError(theEnv,false);
       EvaluationData(theEnv)->CurrentEvaluationDepth--;
-      if ((! CommandLineData(theEnv)->EvaluatingTopLevelCommand) &&
-          (EvaluationData(theEnv)->CurrentExpression == NULL))
+      if (EvaluationData(theEnv)->CurrentExpression == NULL)
         { ConstructData(theEnv)->DanglingConstructs = danglingConstructs; }
         
       /*========================================*/

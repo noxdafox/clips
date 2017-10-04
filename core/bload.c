@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.50  10/01/16             */
+   /*            CLIPS Version 6.50  10/04/17             */
    /*                                                     */
    /*                    BLOAD MODULE                     */
    /*******************************************************/
@@ -131,6 +131,13 @@ bool Bload(
    char constructBuffer[CONSTRUCT_HEADER_SIZE];
    struct BinaryItem *biPtr;
    struct voidCallFunctionItem *bfPtr;
+   
+   /*=====================================*/
+   /* If embedded, clear the error flags. */
+   /*=====================================*/
+   
+   if (EvaluationData(theEnv)->CurrentExpression == NULL)
+     { ResetErrorFlags(theEnv); }
 
    /*================*/
    /* Open the file. */

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/15/17             */
+   /*            CLIPS Version 6.40  10/04/17             */
    /*                                                     */
    /*            STRING_TYPE FUNCTIONS MODULE             */
    /*******************************************************/
@@ -731,13 +731,9 @@ bool Eval(
    /*=====================================*/
    /* If embedded, clear the error flags. */
    /*=====================================*/
-
-   if ((! CommandLineData(theEnv)->EvaluatingTopLevelCommand) &&
-       (EvaluationData(theEnv)->CurrentExpression == NULL))
-     {
-      SetEvaluationError(theEnv,false);
-      SetHaltExecution(theEnv,false);
-     }
+   
+   if (EvaluationData(theEnv)->CurrentExpression == NULL)
+     { ResetErrorFlags(theEnv); }
 
    /*======================================================*/
    /* Evaluate the string. Create a different logical name */
@@ -839,8 +835,7 @@ bool Eval(
    /* If embedded, reset dangling construct count. */
    /*==============================================*/
 
-   if ((! CommandLineData(theEnv)->EvaluatingTopLevelCommand) &&
-       (EvaluationData(theEnv)->CurrentExpression == NULL))
+   if (EvaluationData(theEnv)->CurrentExpression == NULL)
      { ConstructData(theEnv)->DanglingConstructs = danglingConstructs; }
 
    /*================================*/
@@ -857,9 +852,7 @@ bool Eval(
    /* issued from an embedded controller.      */
    /*==========================================*/
 
-   if ((UtilityData(theEnv)->CurrentGarbageFrame->topLevel) &&
-       (! CommandLineData(theEnv)->EvaluatingTopLevelCommand) &&
-       (EvaluationData(theEnv)->CurrentExpression == NULL))
+   if (EvaluationData(theEnv)->CurrentExpression == NULL)
      {
       if (returnValue != NULL)
         { CleanCurrentGarbageFrame(theEnv,&evalResult); }
@@ -917,13 +910,9 @@ bool Build(
    /*=====================================*/
    /* If embedded, clear the error flags. */
    /*=====================================*/
-
-   if ((! CommandLineData(theEnv)->EvaluatingTopLevelCommand) &&
-       (EvaluationData(theEnv)->CurrentExpression == NULL))
-     {
-      SetEvaluationError(theEnv,false); // TBD WTD
-      SetHaltExecution(theEnv,false);
-     }
+   
+   if (EvaluationData(theEnv)->CurrentExpression == NULL)
+     { ResetErrorFlags(theEnv); }
 
    /*====================================================*/
    /* No additions during defrule join network activity. */
