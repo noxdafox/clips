@@ -233,7 +233,7 @@ void PPCRAndIndent(
      { return; }
 
    if ((PrettyPrintData(theEnv)->IndentationDepth + 2) > PP_CR_FIXED_BUFFER_SIZE)
-     { buffer = genalloc(theEnv,PrettyPrintData(theEnv)->IndentationDepth + 2);}
+     { buffer = (char *) genalloc(theEnv,PrettyPrintData(theEnv)->IndentationDepth + 2);}
    else
      { buffer = fixedBuffer; }
    
