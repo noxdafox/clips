@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  10/04/17             */
+   /*            CLIPS Version 6.40  10/11/17             */
    /*                                                     */
    /*              CONSTRUCT PARSER MODULE                */
    /*******************************************************/
@@ -85,6 +85,7 @@
 #include "modulpsr.h"
 #include "pprint.h"
 #include "prntutil.h"
+#include "strngrtr.h"
 #include "sysdep.h"
 #include "utility.h"
 
@@ -156,6 +157,40 @@ int Load(
      { return 1; }
 
    return -1;
+  }
+
+/*******************/
+/* LoadFromString: */
+/*******************/
+bool LoadFromString(
+  Environment *theEnv,
+  const char *theString,
+  size_t theMax)
+  {
+   bool rv;
+   const char *theStrRouter = "*** load-from-string ***";
+
+   /*==========================*/
+   /* Initialize string router */
+   /*==========================*/
+
+   if ((theMax == SIZE_MAX) ? (! OpenStringSource(theEnv,theStrRouter,theString,0)) :
+                              (! OpenTextSource(theEnv,theStrRouter,theString,0,theMax)))
+     return false;
+     
+   /*======================*/
+   /* Load the constructs. */
+   /*======================*/
+
+   rv = LoadConstructsFromLogicalName(theEnv,theStrRouter);
+      
+   /*=================*/
+   /* Close router.   */
+   /*=================*/
+
+   CloseStringSource(theEnv,theStrRouter);
+
+   return rv;
   }
 
 /****************************************************/
@@ -258,7 +293,7 @@ char *GetWarningFileName(
 /* LoadConstructsFromLogicalName: Loads a set of constructs into */
 /*   the current environment from a specified logical name.      */
 /*****************************************************************/
-int LoadConstructsFromLogicalName(
+bool LoadConstructsFromLogicalName(
   Environment *theEnv,
   const char *readSource)
   {
@@ -418,7 +453,7 @@ int LoadConstructsFromLogicalName(
    /* were encountered while loading the constructs.           */
    /*==========================================================*/
 
-   return(noErrors);
+   return noErrors;
   }
 
 /********************************************************************/

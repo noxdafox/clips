@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  10/02/17            */
+   /*             CLIPS Version 6.40  10/11/17            */
    /*                                                     */
    /*            MEMORY ALLOCATION HEADER FILE            */
    /*******************************************************/
@@ -178,7 +178,7 @@ struct memoryData
    long long                      MemRequests(Environment *);
    long long                      UpdateMemoryUsed(Environment *,long long);
    long long                      UpdateMemoryRequests(Environment *,long long);
-   long                           ReleaseMem(Environment *,long);
+   long long                      ReleaseMem(Environment *,long long);
    void                          *gm1(Environment *,size_t);
    void                          *gm2(Environment *,size_t);
    void                           rm(Environment *,void *,size_t);
