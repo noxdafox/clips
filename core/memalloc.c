@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/06/16             */
+   /*            CLIPS Version 6.40  10/11/17             */
    /*                                                     */
    /*                    MEMORY MODULE                    */
    /*******************************************************/
@@ -117,11 +117,11 @@ void *genalloc(
 
    if (memPtr == NULL)
      {
-      ReleaseMem(theEnv,(long) ((size * 5 > 4096) ? size * 5 : 4096));
+      ReleaseMem(theEnv,(long long) ((size * 5 > 4096) ? size * 5 : 4096));
       memPtr = malloc(size);
       if (memPtr == NULL)
         {
-         ReleaseMem(theEnv,-1L);
+         ReleaseMem(theEnv,-1);
          memPtr = malloc(size);
          while (memPtr == NULL)
            {
@@ -261,14 +261,14 @@ long long UpdateMemoryRequests(
 /* ReleaseMem: C access routine   */
 /*   for the release-mem command. */
 /**********************************/
-long ReleaseMem(
+long long ReleaseMem(
   Environment *theEnv,
-  long maximum)
+  long long maximum)
   {
    struct memoryPtr *tmpPtr, *memPtr;
    unsigned int i;
-   long returns = 0;
-   long amount = 0;
+   long long returns = 0;
+   long long amount = 0;
 
    for (i = (MEM_TABLE_SIZE - 1) ; i >= sizeof(char *) ; i--)
      {

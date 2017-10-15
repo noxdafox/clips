@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  08/06/16            */
+   /*             CLIPS Version 6.40  10/11/17            */
    /*                                                     */
    /*              CONSTRUCT PARSER MODULE                */
    /*******************************************************/
@@ -62,7 +62,8 @@
 
 #if (! RUN_TIME) && (! BLOAD_ONLY)
    int                            Load(Environment *,const char *);
-   int                            LoadConstructsFromLogicalName(Environment *,const char *);
+   bool                           LoadConstructsFromLogicalName(Environment *,const char *);
+   bool                           LoadFromString(Environment *,const char *,size_t);
    int                            ParseConstruct(Environment *,const char *,const char *);
    void                           ImportExportConflictMessage(Environment *,const char *,const char *,
                                                               const char *,const char *);

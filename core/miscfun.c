@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  09/15/17             */
+   /*            CLIPS Version 6.40  10/11/17             */
    /*                                                     */
    /*            MISCELLANEOUS FUNCTIONS MODULE           */
    /*******************************************************/
@@ -482,7 +482,7 @@ void ReleaseMemCommand(
    /* and return the amount of memory freed. */
    /*========================================*/
 
-   returnValue->integerValue = CreateInteger(theEnv,ReleaseMem(theEnv,-1L));
+   returnValue->integerValue = CreateInteger(theEnv,ReleaseMem(theEnv,-1));
   }
 
 /******************************************/

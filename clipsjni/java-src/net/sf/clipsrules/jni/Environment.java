@@ -201,7 +201,9 @@ public class Environment
         { throw new NullPointerException("resourceFile"); }
         
       InputStream input = getClass().getResourceAsStream(resourceFile);
-      if (input == null) return;
+      if (input == null) 
+        { throw new CLIPSLoadException("No resource named '" + resourceFile + "' found."); }
+        
       String oldName = getParsingFileName();
       setParsingFileName(resourceFile);
       CaptureRouter loadCapture = captureStart();
