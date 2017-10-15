@@ -6,6 +6,8 @@ import javax.swing.table.*;
 import java.awt.*; 
 import java.awt.event.*; 
 
+import java.io.FileNotFoundException;
+
 import java.text.BreakIterator;
 
 import java.util.Locale;
@@ -167,8 +169,20 @@ class AnimalDemo implements ActionListener
         {
          clips.loadFromResource("/net/sf/clipsrules/jni/examples/animal/resources/bcengine.clp");
          clips.loadFromResource("/net/sf/clipsrules/jni/examples/animal/resources/animal.clp");
-         clips.loadFromResource("/net/sf/clipsrules/jni/examples/animal/resources/animal_" + 
-                                Locale.getDefault().getLanguage() + ".clp");
+         
+         try 
+           {
+            clips.loadFromResource("/net/sf/clipsrules/jni/examples/animal/resources/animal_" + 
+                                   Locale.getDefault().getLanguage() + ".clp");
+           }
+         catch (FileNotFoundException fnfe)
+           {
+            if (Locale.getDefault().getLanguage().equals("en"))
+              { throw fnfe; }
+            else
+              { clips.loadFromResource("/net/sf/clipsrules/jni/examples/animal/resources/animal_en.clp"); }
+           }
+            
          processRules();
         }
       catch (Exception e)

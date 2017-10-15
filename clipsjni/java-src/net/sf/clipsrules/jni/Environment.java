@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.lang.NullPointerException;
+import java.io.FileNotFoundException;
 
 public class Environment
   {
@@ -195,14 +196,14 @@ public class Environment
    /*********************/
    /* loadFromResource: */
    /*********************/
-   public void loadFromResource(String resourceFile) throws CLIPSLoadException
+   public void loadFromResource(String resourceFile) throws CLIPSLoadException, FileNotFoundException
      {
       if (resourceFile == null)
         { throw new NullPointerException("resourceFile"); }
         
       InputStream input = getClass().getResourceAsStream(resourceFile);
       if (input == null) 
-        { throw new CLIPSLoadException("No resource named '" + resourceFile + "' found."); }
+        { throw new FileNotFoundException(resourceFile + " (no such file)"); }
         
       String oldName = getParsingFileName();
       setParsingFileName(resourceFile);
