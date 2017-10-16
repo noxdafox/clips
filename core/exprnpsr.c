@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  09/02/17             */
+   /*            CLIPS Version 6.40  10/16/17             */
    /*                                                     */
    /*              EXPRESSION PARSER MODULE               */
    /*******************************************************/
@@ -185,9 +185,9 @@ struct expr *Function2Parse(
    Deffunction *dptr;
 #endif
 
-   /*=========================================================*/
-   /* Module specification cannot be used in a function call. */
-   /*=========================================================*/
+   /*==============================*/
+   /* Look for a module specifier. */
+   /*==============================*/
 
    if ((position = FindModuleSeparator(name)) != 0)
      {

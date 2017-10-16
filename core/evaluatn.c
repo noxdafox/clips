@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  10/04/17             */
+   /*            CLIPS Version 6.40  10/16/17             */
    /*                                                     */
    /*                  EVALUATION MODULE                  */
    /*******************************************************/
@@ -63,6 +63,9 @@
 /*                                                           */
 /*            Removed DATA_OBJECT_ARRAY primitive type.      */
 /*                                                           */
+/*            Modified GetFunctionReference to handle module */
+/*            specifier for funcall.                         */
+/*                                                           */
 /*************************************************************/
 
 #include <stdio.h>
@@ -79,6 +82,7 @@
 #include "envrnmnt.h"
 #include "factmngr.h"
 #include "memalloc.h"
+#include "modulutl.h"
 #include "router.h"
 #include "prcdrfun.h"
 #include "multifld.h"
@@ -953,35 +957,81 @@ bool GetFunctionReference(
    Deffunction *dptr;
 #endif
    struct functionDefinition *fptr;
+   bool moduleSpecified = false;
+   unsigned position;
+   CLIPSLexeme *moduleName = NULL, *constructName = NULL;
 
    theReference->nextArg = NULL;
    theReference->argList = NULL;
    theReference->type = VOID_TYPE;
    theReference->value = NULL;
+   
+   /*==============================*/
+   /* Look for a module specifier. */
+   /*==============================*/
 
-   /*=====================================================*/
-   /* Check to see if the function call is a deffunction. */
-   /*=====================================================*/
-
-#if DEFFUNCTION_CONSTRUCT
-   if ((dptr = LookupDeffunctionInScope(theEnv,name)) != NULL)
+   if ((position = FindModuleSeparator(name)) != 0)
      {
-      theReference->type = PCALL;
-      theReference->value = dptr;
-      return true;
+      moduleName = ExtractModuleName(theEnv,position,name);
+      constructName = ExtractConstructName(theEnv,position,name,SYMBOL_TYPE);
+      moduleSpecified = true;
      }
-#endif
 
    /*====================================================*/
    /* Check to see if the function call is a defgeneric. */
    /*====================================================*/
 
 #if DEFGENERIC_CONSTRUCT
-   if ((gfunc = LookupDefgenericInScope(theEnv,name)) != NULL)
+   if (moduleSpecified)
      {
-      theReference->type = GCALL;
-      theReference->value = gfunc;
-      return true;
+      if (ConstructExported(theEnv,"defgeneric",moduleName,constructName) ||
+          GetCurrentModule(theEnv) == FindDefmodule(theEnv,moduleName->contents))
+        {
+         if ((gfunc = FindDefgenericInModule(theEnv,name)) != NULL)
+           {
+            theReference->type = GCALL;
+            theReference->value = gfunc;
+            return true;
+           }
+        }
+     }
+   else
+     {
+      if ((gfunc = LookupDefgenericInScope(theEnv,name)) != NULL)
+        {
+         theReference->type = GCALL;
+         theReference->value = gfunc;
+         return true;
+        }
+     }
+#endif
+
+   /*=====================================================*/
+   /* Check to see if the function call is a deffunction. */
+   /*=====================================================*/
+
+#if DEFFUNCTION_CONSTRUCT
+   if (moduleSpecified)
+     {
+      if (ConstructExported(theEnv,"deffunction",moduleName,constructName) ||
+          GetCurrentModule(theEnv) == FindDefmodule(theEnv,moduleName->contents))
+        {
+         if ((dptr = FindDeffunctionInModule(theEnv,name)) != NULL)
+           {
+            theReference->type = PCALL;
+            theReference->value = dptr;
+            return true;
+           }
+        }
+     }
+   else
+     {
+      if ((dptr = LookupDeffunctionInScope(theEnv,name)) != NULL)
+        {
+         theReference->type = PCALL;
+         theReference->value = dptr;
+         return true;
+        }
      }
 #endif
 
