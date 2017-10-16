@@ -976,5 +976,47 @@ CLIPS> (defrule foo
       (if (eq 3 3) then (if (eq 3 3) then (if (eq 3 3) then (if (eq 3 3) then
       (if (eq 3 3) then (if (eq 3 3) then (if (eq 3 3) then (if (eq 3 3) then
       (if (eq 3 3) then 3)))))))))))))))))))))))))))))))))))))))))))
+CLIPS> (clear) ; Funcall module specifier #1
+CLIPS> 
+(defmodule M
+  (export deffunction ?ALL))
+CLIPS> (deffunction foo (?x) (printout t ?x " in M" crlf))
+CLIPS> (defmodule MAIN)
+CLIPS> (deffunction foo (?x) (printout t ?x " in MAIN" crlf))
+CLIPS> (funcall foo bar)
+bar in MAIN
+CLIPS> (funcall M::foo baz)
+baz in M
+CLIPS> (funcall MAIN::foo baz)
+baz in MAIN
+CLIPS> (clear) ; Funcall module specifier #2
+CLIPS> 
+(defmodule M
+  (export deffunction ?ALL))
+CLIPS> (deffunction foo (?x) (funcall ?x))
+CLIPS> (deffunction bar () (printout t "bar in M" crlf))
+CLIPS> (defmodule MAIN (export deffunction ?ALL))
+CLIPS> (deffunction bar () (printout t "bar in MAIN" crlf))
+CLIPS> (M::foo bar)
+bar in M
+CLIPS> (M::foo MAIN::bar)
+bar in MAIN
+CLIPS> (M::foo M::bar)
+bar in M
+CLIPS> (clear) ; Funcall module specifier #3
+CLIPS> 
+(defmodule M
+  (export deffunction ?ALL))
+CLIPS> (deffunction foo (?x) (funcall ?x))
+CLIPS> (deffunction bar () (printout t "bar in M" crlf))
+CLIPS> (defmodule MAIN)
+CLIPS> (deffunction bar () (printout t "bar in MAIN" crlf))
+CLIPS> (M::foo bar)
+bar in M
+CLIPS> (M::foo MAIN::bar)
+[ARGACCES2] Function 'funcall' expected argument #1 to be of type function, deffunction, or generic function name.
+FALSE
+CLIPS> (M::foo M::bar)
+bar in M
 CLIPS> (clear)
 CLIPS> (dribble-off)
