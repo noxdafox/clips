@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  11/01/16             */
+   /*            CLIPS Version 6.40  10/17/17             */
    /*                                                     */
    /*               EXTERNAL FUNCTION MODULE              */
    /*******************************************************/
@@ -667,6 +667,12 @@ bool UDFNextArgument(
       case SYMBOL_TYPE:
         returnValue->value = argPtr->value;
         if (expectedType & SYMBOL_BIT) return true;
+        if (expectedType & BOOLEAN_BIT)
+          {
+           if ((returnValue->lexemeValue == FalseSymbol(theEnv)) ||
+               (returnValue->lexemeValue == TrueSymbol(theEnv)))
+             { return true; }
+          }
         ExpectedTypeError0(theEnv,UDFContextFunctionName(context),argumentPosition);
         PrintTypesString(theEnv,STDERR,expectedType,true);
         SetHaltExecution(theEnv,true);
@@ -930,6 +936,7 @@ void PrintTypesString(
    typeCount = 0;
    if (expectedType & INTEGER_BIT) typeCount++;
    if (expectedType & FLOAT_BIT) typeCount++;
+   if (expectedType & BOOLEAN_BIT) typeCount++;
    if (expectedType & SYMBOL_BIT) typeCount++;
    if (expectedType & STRING_BIT) typeCount++;
    if (expectedType & INSTANCE_NAME_BIT) typeCount++;
@@ -944,6 +951,9 @@ void PrintTypesString(
 
     if (expectedType & FLOAT_BIT)
      { PrintType(theEnv,logicalName,typeCount,&typesPrinted,"float"); }
+
+   if (expectedType & BOOLEAN_BIT)
+     { PrintType(theEnv,logicalName,typeCount,&typesPrinted,"boolean"); }
 
    if (expectedType & SYMBOL_BIT)
      { PrintType(theEnv,logicalName,typeCount,&typesPrinted,"symbol"); }
