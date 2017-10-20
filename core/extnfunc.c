@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  10/17/17             */
+   /*            CLIPS Version 6.40  10/20/17             */
    /*                                                     */
    /*               EXTERNAL FUNCTION MODULE              */
    /*******************************************************/
@@ -754,6 +754,19 @@ bool UDFNextArgument(
              }
            else return true;
           }
+          
+        if (expectedType & BOOLEAN_BIT)
+          {
+           if (EvaluationData(theEnv)->EvaluationError)
+             {
+              AssignErrorValue(context);
+              return false;
+             }
+           else if ((returnValue->lexemeValue == FalseSymbol(theEnv)) ||
+                    (returnValue->lexemeValue == TrueSymbol(theEnv)))
+             { return true; }
+          }
+
         break;
 
       case STRING_TYPE:
