@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  09/16/17             */
+   /*            CLIPS Version 6.40  10/19/17             */
    /*                                                     */
    /*            SYSTEM DEPENDENT HEADER FILE             */
    /*******************************************************/
@@ -92,6 +92,8 @@
 /*                                                           */
 /*            Completion code now returned by gensystem.     */
 /*                                                           */
+/*            Added flush, rewind, tell, and seek functions. */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_sysdep
@@ -113,6 +115,10 @@
    void                        GenReadBinary(Environment *,void *,size_t);
    FILE                       *GenOpen(Environment *,const char *,const char *);
    int                         GenClose(Environment *,FILE *);
+   int                         GenFlush(Environment *,FILE *);
+   void                        GenRewind(Environment *,FILE *);
+   long long                   GenTell(Environment *,FILE *);
+   int                         GenSeek(Environment *,FILE *,long,int);
    void                        genexit(Environment *,int);
    int                         genrand(void);
    void                        genseed(unsigned int);

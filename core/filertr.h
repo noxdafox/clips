@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/30/16            */
+   /*             CLIPS Version 6.40  10/19/17            */
    /*                                                     */
    /*             FILE I/O ROUTER HEADER FILE             */
    /*******************************************************/
@@ -45,6 +45,8 @@
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
 /*                                                           */
+/*            Added flush, rewind, tell, and seek functions. */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_filertr
@@ -77,6 +79,11 @@ struct fileRouterData
    bool                           CloseAllFiles(Environment *);
    bool                           CloseFile(Environment *,const char *);
    bool                           FindFile(Environment *,const char *,void *);
+   bool                           FlushAllFiles(Environment *);
+   bool                           FlushFile(Environment *,const char *);
+   bool                           RewindFile(Environment *,const char *);
+   long long                      TellFile(Environment *,const char *);
+   bool                           SeekFile(Environment *,const char *,long,int);
 
 #endif /* _H_filertr */
 

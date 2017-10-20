@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  08/25/16            */
+   /*             CLIPS Version 6.40  10/19/17            */
    /*                                                     */
    /*               I/O FUNCTIONS HEADER FILE             */
    /*******************************************************/
@@ -69,6 +69,10 @@
 /*                                                           */
 /*            Added print and println functions.             */
 /*                                                           */
+/*            Added unget-char function.                     */
+/*                                                           */
+/*            Added flush, rewind, tell, and seek functions. */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_iofun
@@ -86,6 +90,10 @@
    void                           ReadFunction(Environment *,UDFContext *,UDFValue *);
    void                           OpenFunction(Environment *,UDFContext *,UDFValue *);
    void                           CloseFunction(Environment *,UDFContext *,UDFValue *);
+   void                           FlushFunction(Environment *,UDFContext *,UDFValue *);
+   void                           RewindFunction(Environment *,UDFContext *,UDFValue *);
+   void                           TellFunction(Environment *,UDFContext *,UDFValue *);
+   void                           SeekFunction(Environment *,UDFContext *,UDFValue *);
    void                           GetCharFunction(Environment *,UDFContext *,UDFValue *);
    void                           UngetCharFunction(Environment *,UDFContext *,UDFValue *);
    void                           PutCharFunction(Environment *,UDFContext *,UDFValue *);

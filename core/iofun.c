@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  09/11/17             */
+   /*            CLIPS Version 6.40  10/19/17             */
    /*                                                     */
    /*                I/O FUNCTIONS MODULE                 */
    /*******************************************************/
@@ -92,6 +92,11 @@
 /*                                                           */
 /*            Added unget-char function.                     */
 /*                                                           */
+/*            Added r+, w+, a+, rb+, wb+, and ab+ file       */
+/*            access modes for the open function.            */
+/*                                                           */
+/*            Added flush, rewind, tell, and seek functions. */
+/*                                                           */
 /*************************************************************/
 
 #include "setup.h"
@@ -173,21 +178,25 @@ void IOFunctionDefinitions(
 
 #if ! RUN_TIME
 #if IO_FUNCTIONS
-   AddUDF(theEnv,"printout","v",1,UNBOUNDED,NULL,PrintoutFunction,"PrintoutFunction",NULL);
+   AddUDF(theEnv,"printout","v",1,UNBOUNDED,"*;ldsyn",PrintoutFunction,"PrintoutFunction",NULL);
    AddUDF(theEnv,"print","v",0,UNBOUNDED,NULL,PrintFunction,"PrintFunction",NULL);
    AddUDF(theEnv,"println","v",0,UNBOUNDED,NULL,PrintlnFunction,"PrintlnFunction",NULL);
-   AddUDF(theEnv,"read","synldfie",0,1,NULL,ReadFunction,"ReadFunction",NULL);
-   AddUDF(theEnv,"open","b",2,3,"*;sy",OpenFunction,"OpenFunction",NULL);
-   AddUDF(theEnv,"close","b",0,1,NULL,CloseFunction,"CloseFunction",NULL);
-   AddUDF(theEnv,"get-char","l",0,1,NULL,GetCharFunction,"GetCharFunction",NULL);
-   AddUDF(theEnv,"unget-char","l",1,2,NULL,UngetCharFunction,"UngetCharFunction",NULL);
-   AddUDF(theEnv,"put-char","v",1,2,NULL,PutCharFunction,"PutCharFunction",NULL);
+   AddUDF(theEnv,"read","synldfie",0,1,";ldsyn",ReadFunction,"ReadFunction",NULL);
+   AddUDF(theEnv,"open","b",2,3,"*;sy;ldsyn;s",OpenFunction,"OpenFunction",NULL);
+   AddUDF(theEnv,"close","b",0,1,"ldsyn",CloseFunction,"CloseFunction",NULL);
+   AddUDF(theEnv,"flush","b",0,1,"ldsyn",FlushFunction,"FlushFunction",NULL);
+   AddUDF(theEnv,"rewind","b",1,1,";ldsyn",RewindFunction,"RewindFunction",NULL);
+   AddUDF(theEnv,"tell","lb",1,1,";ldsyn",TellFunction,"TellFunction",NULL);
+   AddUDF(theEnv,"seek","b",3,3,";ldsyn;l;y",SeekFunction,"SeekFunction",NULL);
+   AddUDF(theEnv,"get-char","l",0,1,";ldsyn",GetCharFunction,"GetCharFunction",NULL);
+   AddUDF(theEnv,"unget-char","l",1,2,";ldsyn;l",UngetCharFunction,"UngetCharFunction",NULL);
+   AddUDF(theEnv,"put-char","v",1,2,";ldsyn;l",PutCharFunction,"PutCharFunction",NULL);
    AddUDF(theEnv,"remove","b",1,1,"sy",RemoveFunction,"RemoveFunction",NULL);
    AddUDF(theEnv,"rename","b",2,2,"sy",RenameFunction,"RenameFunction",NULL);
-   AddUDF(theEnv,"format","s",2,UNBOUNDED,"*;*;s",FormatFunction,"FormatFunction",NULL);
-   AddUDF(theEnv,"readline","sy",0,1,NULL,ReadlineFunction,"ReadlineFunction",NULL);
-   AddUDF(theEnv,"set-locale","sy",0,1,NULL,SetLocaleFunction,"SetLocaleFunction",NULL);
-   AddUDF(theEnv,"read-number","syld",0,1,NULL,ReadNumberFunction,"ReadNumberFunction",NULL);
+   AddUDF(theEnv,"format","s",2,UNBOUNDED,"*;ldsyn;s",FormatFunction,"FormatFunction",NULL);
+   AddUDF(theEnv,"readline","sy",0,1,";ldsyn",ReadlineFunction,"ReadlineFunction",NULL);
+   AddUDF(theEnv,"set-locale","sy",0,1,";s",SetLocaleFunction,"SetLocaleFunction",NULL);
+   AddUDF(theEnv,"read-number","syld",0,1,";ldsyn",ReadNumberFunction,"ReadNumberFunction",NULL);
 #endif
 #else
 #if MAC_XCD
@@ -584,15 +593,24 @@ void OpenFunction(
    /*=====================================*/
 
    if ((strcmp(accessMode,"r") != 0) &&
+       (strcmp(accessMode,"r+") != 0) &&
        (strcmp(accessMode,"w") != 0) &&
+       (strcmp(accessMode,"w+") != 0) &&
        (strcmp(accessMode,"a") != 0) &&
+       (strcmp(accessMode,"a+") != 0) &&
        (strcmp(accessMode,"rb") != 0) &&
+       (strcmp(accessMode,"r+b") != 0) &&
+       (strcmp(accessMode,"rb+") != 0) &&
        (strcmp(accessMode,"wb") != 0) &&
-       (strcmp(accessMode,"ab") != 0))
+       (strcmp(accessMode,"w+b") != 0) &&
+       (strcmp(accessMode,"wb+") != 0) &&
+       (strcmp(accessMode,"ab") != 0) &&
+       (strcmp(accessMode,"a+b") != 0) &&
+       (strcmp(accessMode,"ab+")))
      {
       SetHaltExecution(theEnv,true);
       SetEvaluationError(theEnv,true);
-      ExpectedTypeError1(theEnv,"open",3,"string with value \"r\", \"w\", \"a\", \"rb\", \"wb\", or \"ab\"");
+      ExpectedTypeError1(theEnv,"open",3,"'file access mode string'");
       returnValue->lexemeValue = FalseSymbol(theEnv);
       return;
      }
@@ -606,9 +624,9 @@ void OpenFunction(
    returnValue->lexemeValue = CreateBoolean(theEnv,OpenAFile(theEnv,fileName,accessMode,logicalName));
   }
 
-/***************************************************************/
-/* CloseFunction: H/L access routine for the close function.   */
-/***************************************************************/
+/*************************************************************/
+/* CloseFunction: H/L access routine for the close function. */
+/*************************************************************/
 void CloseFunction(
   Environment *theEnv,
   UDFContext *context,
@@ -651,6 +669,226 @@ void CloseFunction(
    returnValue->lexemeValue = CreateBoolean(theEnv,CloseFile(theEnv,logicalName));
   }
 
+/*************************************************************/
+/* FlushFunction: H/L access routine for the flush function. */
+/*************************************************************/
+void FlushFunction(
+  Environment *theEnv,
+  UDFContext *context,
+  UDFValue *returnValue)
+  {
+   const char *logicalName;
+
+   /*=====================================================*/
+   /* If no arguments are specified, then flush all files */
+   /* opened with the open command. Return true if all    */
+   /* files were flushed successfully, otherwise false.   */
+   /*=====================================================*/
+
+   if (! UDFHasNextArgument(context))
+     {
+      returnValue->lexemeValue = CreateBoolean(theEnv,FlushAllFiles(theEnv));
+      return;
+     }
+
+   /*================================*/
+   /* Get the logical name argument. */
+   /*================================*/
+
+   logicalName = GetLogicalName(context,NULL);
+   if (logicalName == NULL)
+     {
+      IllegalLogicalNameMessage(theEnv,"flush");
+      SetHaltExecution(theEnv,true);
+      SetEvaluationError(theEnv,true);
+      returnValue->lexemeValue = FalseSymbol(theEnv);
+      return;
+     }
+
+   /*=========================================================*/
+   /* Flush the file associated with the specified logical    */
+   /* name. Return true if the file was flushed successfully, */
+   /* otherwise false.                                        */
+   /*=========================================================*/
+
+   returnValue->lexemeValue = CreateBoolean(theEnv,FlushFile(theEnv,logicalName));
+  }
+
+/***************************************************************/
+/* RewindFunction: H/L access routine for the rewind function. */
+/***************************************************************/
+void RewindFunction(
+  Environment *theEnv,
+  UDFContext *context,
+  UDFValue *returnValue)
+  {
+   const char *logicalName;
+
+   /*================================*/
+   /* Get the logical name argument. */
+   /*================================*/
+
+   logicalName = GetLogicalName(context,NULL);
+   if (logicalName == NULL)
+     {
+      IllegalLogicalNameMessage(theEnv,"flush");
+      SetHaltExecution(theEnv,true);
+      SetEvaluationError(theEnv,true);
+      returnValue->lexemeValue = FalseSymbol(theEnv);
+      return;
+     }
+     
+   /*============================================*/
+   /* Check to see that the logical name exists. */
+   /*============================================*/
+
+   if (QueryRouters(theEnv,logicalName) == false)
+     {
+      UnrecognizedRouterMessage(theEnv,logicalName);
+      SetHaltExecution(theEnv,true);
+      SetEvaluationError(theEnv,true);
+      returnValue->lexemeValue = FalseSymbol(theEnv);
+      return;
+     }
+
+   /*=========================================================*/
+   /* Rewind the file associated with the specified logical   */
+   /* name. Return true if the file was rewound successfully, */
+   /* otherwise false.                                        */
+   /*=========================================================*/
+
+   returnValue->lexemeValue = CreateBoolean(theEnv,RewindFile(theEnv,logicalName));
+  }
+
+/***********************************************************/
+/* TellFunction: H/L access routine for the tell function. */
+/***********************************************************/
+void TellFunction(
+  Environment *theEnv,
+  UDFContext *context,
+  UDFValue *returnValue)
+  {
+   const char *logicalName;
+   long long rv;
+
+   /*================================*/
+   /* Get the logical name argument. */
+   /*================================*/
+
+   logicalName = GetLogicalName(context,NULL);
+   if (logicalName == NULL)
+     {
+      IllegalLogicalNameMessage(theEnv,"tell");
+      SetHaltExecution(theEnv,true);
+      SetEvaluationError(theEnv,true);
+      returnValue->lexemeValue = FalseSymbol(theEnv);
+      return;
+     }
+     
+   /*============================================*/
+   /* Check to see that the logical name exists. */
+   /*============================================*/
+
+   if (QueryRouters(theEnv,logicalName) == false)
+     {
+      UnrecognizedRouterMessage(theEnv,logicalName);
+      SetHaltExecution(theEnv,true);
+      SetEvaluationError(theEnv,true);
+      returnValue->lexemeValue = FalseSymbol(theEnv);
+      return;
+     }
+
+   /*===========================*/
+   /* Return the file position. */
+   /*===========================*/
+
+   rv = TellFile(theEnv,logicalName);
+
+   if (rv == LONG_LONG_MIN)
+     { returnValue->lexemeValue = FalseSymbol(theEnv); }
+   else
+     { returnValue->integerValue = CreateInteger(theEnv,rv); }
+  }
+
+/***********************************************************/
+/* SeekFunction: H/L access routine for the seek function. */
+/***********************************************************/
+void SeekFunction(
+  Environment *theEnv,
+  UDFContext *context,
+  UDFValue *returnValue)
+  {
+   const char *logicalName;
+   UDFValue theArg;
+   long offset;
+   const char *seekCode;
+
+   /*================================*/
+   /* Get the logical name argument. */
+   /*================================*/
+
+   logicalName = GetLogicalName(context,NULL);
+   if (logicalName == NULL)
+     {
+      IllegalLogicalNameMessage(theEnv,"seek");
+      SetHaltExecution(theEnv,true);
+      SetEvaluationError(theEnv,true);
+      returnValue->lexemeValue = FalseSymbol(theEnv);
+      return;
+     }
+     
+   /*============================================*/
+   /* Check to see that the logical name exists. */
+   /*============================================*/
+
+   if (QueryRouters(theEnv,logicalName) == false)
+     {
+      UnrecognizedRouterMessage(theEnv,logicalName);
+      SetHaltExecution(theEnv,true);
+      SetEvaluationError(theEnv,true);
+      returnValue->lexemeValue = FalseSymbol(theEnv);
+      return;
+     }
+     
+   /*=================*/
+   /* Get the offset. */
+   /*=================*/
+
+   if (! UDFNextArgument(context,INTEGER_BIT,&theArg))
+     {
+      returnValue->lexemeValue = FalseSymbol(theEnv);
+      return;
+     }
+     
+   offset = (long) theArg.integerValue->contents;
+
+   /*====================*/
+   /* Get the seek code. */
+   /*====================*/
+
+   if (! UDFNextArgument(context,SYMBOL_BIT,&theArg))
+     {
+      returnValue->lexemeValue = FalseSymbol(theEnv);
+      return;
+     }
+     
+   seekCode = theArg.lexemeValue->contents;
+
+   if (strcmp(seekCode,"seek-set") == 0)
+     { returnValue->lexemeValue = CreateBoolean(theEnv,SeekFile(theEnv,logicalName,offset,SEEK_SET)); }
+   else if (strcmp(seekCode,"seek-cur") == 0)
+     { returnValue->lexemeValue = CreateBoolean(theEnv,SeekFile(theEnv,logicalName,offset,SEEK_CUR)); }
+   else if (strcmp(seekCode,"seek-end") == 0)
+     { returnValue->lexemeValue = CreateBoolean(theEnv,SeekFile(theEnv,logicalName,offset,SEEK_END)); }
+   else
+     {
+      UDFInvalidArgumentMessage(context,
+         "symbol with value seek-set, seek-cur, or seek-end");
+      returnValue->lexemeValue = FalseSymbol(theEnv);
+      return;
+     }
+  }
+
 /***************************************/
 /* GetCharFunction: H/L access routine */
 /*   for the get-char function.        */
@@ -661,6 +899,10 @@ void GetCharFunction(
   UDFValue *returnValue)
   {
    const char *logicalName;
+   
+   /*================================*/
+   /* Get the logical name argument. */
+   /*================================*/
 
    if (! UDFHasNextArgument(context))
      { logicalName = STDIN; }
@@ -676,6 +918,10 @@ void GetCharFunction(
          return;
         }
      }
+     
+   /*============================================*/
+   /* Check to see that the logical name exists. */
+   /*============================================*/
 
    if (QueryRouters(theEnv,logicalName) == false)
      {
