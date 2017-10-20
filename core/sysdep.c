@@ -640,7 +640,7 @@ long long GenTell(
    if (rv == -1)
      {
       if (errno > 0)
-        { return LONG_LONG_MIN; }
+        { return LLONG_MIN; }
      }
    
    return rv;

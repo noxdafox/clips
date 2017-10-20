@@ -448,7 +448,7 @@ long long TellFile(
         { return GenTell(theEnv,fptr->stream); }
      }
 
-   return LONG_LONG_MIN;
+   return LLONG_MIN;
   }
 
 /***********************************************/

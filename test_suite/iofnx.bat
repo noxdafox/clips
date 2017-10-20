@@ -218,7 +218,7 @@ ab cd ef
 (close temp)
 (open "Temp/seek.dat" temp "w+") ; w+, seek, tell
 (printout temp "Jack Smith" crlf)
-(bind ?pos (tell temp))
+(progn (bind ?pos (tell temp)) TRUE)
 (printout temp "John Jones" crlf)
 (printout temp "Sally Walker" crlf)
 (seek temp ?pos seek-set)
