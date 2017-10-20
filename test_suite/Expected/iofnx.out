@@ -427,8 +427,8 @@ TRUE
 CLIPS> (open "Temp/seek.dat" temp "w+") ; w+, seek, tell
 TRUE
 CLIPS> (printout temp "Jack Smith" crlf)
-CLIPS> (bind ?pos (tell temp))
-11
+CLIPS> (progn (bind ?pos (tell temp)) TRUE)
+TRUE
 CLIPS> (printout temp "John Jones" crlf)
 CLIPS> (printout temp "Sally Walker" crlf)
 CLIPS> (seek temp ?pos seek-set)

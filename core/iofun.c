@@ -804,7 +804,7 @@ void TellFunction(
 
    rv = TellFile(theEnv,logicalName);
 
-   if (rv == LONG_LONG_MIN)
+   if (rv == LLONG_MIN)
      { returnValue->lexemeValue = FalseSymbol(theEnv); }
    else
      { returnValue->integerValue = CreateInteger(theEnv,rv); }
