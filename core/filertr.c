@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  09/04/17             */
+   /*            CLIPS Version 6.40  10/19/17             */
    /*                                                     */
    /*               FILE I/O ROUTER MODULE                */
    /*******************************************************/
@@ -51,6 +51,8 @@
 /*                                                           */
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
+/*                                                           */
+/*            Added flush, rewind, tell, and seek functions. */
 /*                                                           */
 /*************************************************************/
 
@@ -358,5 +360,122 @@ bool CloseAllFiles(
    return true;
   }
 
+/*************************************************************/
+/* FlushFile: Flushes the file associated with the specified  */
+/*   logical name. Returns true if the file was successfully */
+/*   closed, otherwise false.                                */
+/*************************************************************/
+bool FlushFile(
+  Environment *theEnv,
+  const char *fid)
+  {
+   struct fileRouter *fptr;
 
+   for (fptr = FileRouterData(theEnv)->ListOfFileRouters;
+        fptr != NULL;
+        fptr = fptr->next)
+     {
+      if (strcmp(fptr->logicalName,fid) == 0)
+        {
+         GenFlush(theEnv,fptr->stream);
+         return true;
+        }
+     }
+
+   return false;
+  }
+
+/**********************************************/
+/* FlushAllFiles: Closes all files associated */
+/*   with a file I/O router. Returns true if  */
+/*   any file was closed, otherwise false.    */
+/**********************************************/
+bool FlushAllFiles(
+  Environment *theEnv)
+  {
+   struct fileRouter *fptr;
+
+   if (FileRouterData(theEnv)->ListOfFileRouters == NULL) return false;
+
+   for (fptr = FileRouterData(theEnv)->ListOfFileRouters;
+        fptr != NULL;
+        fptr = fptr->next)
+     { GenFlush(theEnv,fptr->stream); }
+
+   return true;
+  }
+
+/*****************************************************/
+/* RewindFile: Rewinds the file associated with the  */
+/*   specified logical name. Returns true if the     */
+/*   file was successfully rewound, otherwise false. */
+/*****************************************************/
+bool RewindFile(
+  Environment *theEnv,
+  const char *fid)
+  {
+   struct fileRouter *fptr;
+
+   for (fptr = FileRouterData(theEnv)->ListOfFileRouters;
+        fptr != NULL;
+        fptr = fptr->next)
+     {
+      if (strcmp(fptr->logicalName,fid) == 0)
+        {
+         GenRewind(theEnv,fptr->stream);
+         return true;
+        }
+     }
+
+   return false;
+  }
+
+/**************************************************/
+/* TellFile: Returns the file position associated */
+/*   with the specified logical name.             */
+/**************************************************/
+long long TellFile(
+  Environment *theEnv,
+  const char *fid)
+  {
+   struct fileRouter *fptr;
+
+   for (fptr = FileRouterData(theEnv)->ListOfFileRouters;
+        fptr != NULL;
+        fptr = fptr->next)
+     {
+      if (strcmp(fptr->logicalName,fid) == 0)
+        { return GenTell(theEnv,fptr->stream); }
+     }
+
+   return LONG_LONG_MIN;
+  }
+
+/***********************************************/
+/* SeekFile: Sets the file position associated */
+/*   with the specified logical name.          */
+/***********************************************/
+bool SeekFile(
+  Environment *theEnv,
+  const char *fid,
+  long offset,
+  int whereFrom)
+  {
+   struct fileRouter *fptr;
+
+   for (fptr = FileRouterData(theEnv)->ListOfFileRouters;
+        fptr != NULL;
+        fptr = fptr->next)
+     {
+      if (strcmp(fptr->logicalName,fid) == 0)
+        {
+         if (GenSeek(theEnv,fptr->stream,offset,whereFrom))
+           { return false; }
+         else
+           { return true; }
+        }
+     }
+
+   return false;
+  }
 

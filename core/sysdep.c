@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  09/16/17             */
+   /*            CLIPS Version 6.40  10/19/17             */
    /*                                                     */
    /*               SYSTEM DEPENDENT MODULE               */
    /*******************************************************/
@@ -100,6 +100,8 @@
 /*                                                           */
 /*            Completion code now returned by gensystem.     */
 /*                                                           */
+/*            Added flush, rewind, tell, and seek functions. */
+/*                                                           */
 /*************************************************************/
 
 #include "setup.h"
@@ -110,6 +112,8 @@
 #include <stdlib.h>
 #include <time.h>
 #include <stdarg.h>
+#include <errno.h>
+#include <limits.h>
 
 #if MAC_XCD
 #include <sys/time.h>
@@ -593,15 +597,65 @@ int GenClose(
   {
    int rv;
 
-   if (SystemDependentData(theEnv)->BeforeOpenFunction != NULL)
-     { (*SystemDependentData(theEnv)->BeforeOpenFunction)(theEnv); }
-
    rv = fclose(theFile);
 
-   if (SystemDependentData(theEnv)->AfterOpenFunction != NULL)
-     { (*SystemDependentData(theEnv)->AfterOpenFunction)(theEnv); }
+   return rv;
+  }
+
+/***********************************************/
+/* GenFlush: Trap routine for flushing a file. */
+/***********************************************/
+int GenFlush(
+  Environment *theEnv,
+  FILE *theFile)
+  {
+   int rv;
+
+   rv = fflush(theFile);
 
    return rv;
+  }
+
+/*************************************************/
+/* GenRewind: Trap routine for rewinding a file. */
+/*************************************************/
+void GenRewind(
+  Environment *theEnv,
+  FILE *theFile)
+  {
+   rewind(theFile);
+  }
+
+/*************************************************/
+/* GenTell: Trap routine for the ftell function. */
+/*************************************************/
+long long GenTell(
+  Environment *theEnv,
+  FILE *theFile)
+  {
+   long long rv;
+   
+   rv = ftell(theFile);
+   
+   if (rv == -1)
+     {
+      if (errno > 0)
+        { return LONG_LONG_MIN; }
+     }
+   
+   return rv;
+  }
+
+/*************************************************/
+/* GenSeek: Trap routine for the fseek function. */
+/*************************************************/
+int GenSeek(
+  Environment *theEnv,
+  FILE *theFile,
+  long offset,
+  int whereFrom)
+  {
+   return fseek(theFile,offset,whereFrom);
   }
 
 /************************************************************/

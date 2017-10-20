@@ -13,33 +13,28 @@ CLIPS> (open 10 blah3 "r")                ; 10.5.2.1
 CLIPS> (open [blah2.dat] blah4 "r")       ; 10.5.2.1
 [ARGACCES2] Function 'open' expected argument #1 to be of type symbol or string.
 CLIPS> (open "blah4.dat" (create$) "r")   ; 10.5.2.1
-[IOFUN1] Illegal logical name used for 'open' function.
-FALSE
+[ARGACCES2] Function 'open' expected argument #2 to be of type integer, float, symbol, string, or instance name.
 CLIPS> (open blah5.dat blah5 r)           ; 10.5.2.1
 [ARGACCES2] Function 'open' expected argument #3 to be of type string.
-FALSE
 CLIPS> (open blah6.dat blah6 "x")         ; 10.5.2.1
-[ARGACCES2] Function 'open' expected argument #3 to be of type string with value "r", "w", "a", "rb", "wb", or "ab".
+[ARGACCES2] Function 'open' expected argument #3 to be of type 'file access mode string'.
 FALSE
 CLIPS> (open blah7.dat blah7 8)           ; 10.5.2.1
 [ARGACCES2] Function 'open' expected argument #3 to be of type string.
-FALSE
 CLIPS> (open blah8.dat blah8 "r")         ; 10.5.2.1
 FALSE
 CLIPS> (close blah6 89)                   ; 10.5.2.2
 [ARGACCES1] Function 'close' expected no more than 1 argument.
 CLIPS> (close (create$))                  ; 10.5.2.2
-[IOFUN1] Illegal logical name used for 'close' function.
-FALSE
+[ARGACCES2] Function 'close' expected argument #1 to be of type integer, float, symbol, string, or instance name.
 CLIPS> (close [blah8])                    ; 10.5.2.2
 FALSE
 CLIPS> (printout)                         ; 10.5.2.3
 [ARGACCES1] Function 'printout' expected at least 1 argument.
 CLIPS> (printout (create$))               ; 10.5.2.3
-[IOFUN1] Illegal logical name used for 'printout' function.
+[ARGACCES2] Function 'printout' expected argument #1 to be of type integer, float, symbol, string, or instance name.
 CLIPS> (read (create$))                   ; 10.5.2.4
-[IOFUN1] Illegal logical name used for 'read' function.
-"*** READ ERROR ***"
+[ARGACCES2] Function 'read' expected argument #1 to be of type integer, float, symbol, string, or instance name.
 CLIPS> (read bogus)                       ; 10.5.2.4
 [ROUTER1] Logical name 'bogus' was not recognized by any routers.
 "*** READ ERROR ***"
@@ -75,8 +70,7 @@ EOF
 CLIPS> (close mydata)                     ; 10.5.2.4
 TRUE
 CLIPS> (readline (create$))               ; 10.5.2.5
-[IOFUN1] Illegal logical name used for 'readline' function.
-"*** READ ERROR ***"
+[ARGACCES2] Function 'readline' expected argument #1 to be of type integer, float, symbol, string, or instance name.
 CLIPS> (readline bogus)                   ; 10.5.2.5
 [ROUTER1] Logical name 'bogus' was not recognized by any routers.
 "*** READ ERROR ***"
@@ -153,7 +147,7 @@ CLIPS> (format t "%o" 9.8)                ; 10.5.2.6
 CLIPS> (remove "Temp/iofun.dat")          ; Open function modes
 FALSE
 CLIPS> (open "Temp/iofun.dat" temp "bogus")
-[ARGACCES2] Function 'open' expected argument #3 to be of type string with value "r", "w", "a", "rb", "wb", or "ab".
+[ARGACCES2] Function 'open' expected argument #3 to be of type 'file access mode string'.
 FALSE
 CLIPS> (close temp)
 FALSE
@@ -338,4 +332,118 @@ TRUE
 CLIPS> (while (not (member$ (get-char) (create$ 10 13))) do)
 ab cd ef
 FALSE
+CLIPS> (open "Temp/plus.dat" temp "w") ; seek, tell, rewind, flush args
+TRUE
+CLIPS> (seek)
+[ARGACCES1] Function 'seek' expected exactly 3 arguments.
+CLIPS> (seek temp)
+[ARGACCES1] Function 'seek' expected exactly 3 arguments.
+CLIPS> (seek temp 0)
+[ARGACCES1] Function 'seek' expected exactly 3 arguments.
+CLIPS> (seek temp 0 seek-cur)
+TRUE
+CLIPS> (seek temp 0 seek-set)
+TRUE
+CLIPS> (seek temp 0 seek-end)
+TRUE
+CLIPS> (seek temp 0 bogus)
+[ARGACCES2] Function 'seek' expected argument #3 to be of type symbol with value seek-set, seek-cur, or seek-end.
+FALSE
+CLIPS> (seek temp 0 seek-set extra)
+[ARGACCES1] Function 'seek' expected exactly 3 arguments.
+CLIPS> (seek bogus 0 seek-set)
+[ROUTER1] Logical name 'bogus' was not recognized by any routers.
+FALSE
+CLIPS> (tell)
+[ARGACCES1] Function 'tell' expected exactly 1 argument.
+CLIPS> (tell temp extra)
+[ARGACCES1] Function 'tell' expected exactly 1 argument.
+CLIPS> (tell bogus)
+[ROUTER1] Logical name 'bogus' was not recognized by any routers.
+FALSE
+CLIPS> (rewind)
+[ARGACCES1] Function 'rewind' expected exactly 1 argument.
+CLIPS> (rewind temp extra)
+[ARGACCES1] Function 'rewind' expected exactly 1 argument.
+CLIPS> (rewind bogus)
+[ROUTER1] Logical name 'bogus' was not recognized by any routers.
+FALSE
+CLIPS> (flush temp extra)
+[ARGACCES1] Function 'flush' expected no more than 1 argument.
+CLIPS> (flush temp)
+TRUE
+CLIPS> (flush)
+TRUE
+CLIPS> (flush bogus)
+FALSE
+CLIPS> (close temp)
+TRUE
+CLIPS> (open "Temp/plus.dat" temp "w") ; rewind
+TRUE
+CLIPS> (printout temp "Jack Smith" crlf)
+CLIPS> (printout temp "John Jones" crlf)
+CLIPS> (close temp)
+TRUE
+CLIPS> (open "Temp/plus.dat" temp "r") 
+TRUE
+CLIPS> (readline temp)
+"Jack Smith"
+CLIPS> (readline temp)
+"John Jones"
+CLIPS> (readline temp)
+EOF
+CLIPS> (printout temp "Sally Walker" crlf)
+CLIPS> (rewind temp)
+TRUE
+CLIPS> (readline temp)
+"Jack Smith"
+CLIPS> (readline temp)
+"John Jones"
+CLIPS> (readline temp)
+EOF
+CLIPS> (close temp)
+TRUE
+CLIPS> (open "Temp/plus.dat" temp "r+") ; r+ mode
+TRUE
+CLIPS> (readline temp)
+"Jack Smith"
+CLIPS> (readline temp)
+"John Jones"
+CLIPS> (readline temp)
+EOF
+CLIPS> (printout temp "Sally Walker" crlf)
+CLIPS> (rewind temp)
+TRUE
+CLIPS> (readline temp)
+"Jack Smith"
+CLIPS> (readline temp)
+"John Jones"
+CLIPS> (readline temp)
+"Sally Walker"
+CLIPS> (readline temp)
+EOF
+CLIPS> (close temp)
+TRUE
+CLIPS> (open "Temp/seek.dat" temp "w+") ; w+, seek, tell
+TRUE
+CLIPS> (printout temp "Jack Smith" crlf)
+CLIPS> (bind ?pos (tell temp))
+11
+CLIPS> (printout temp "John Jones" crlf)
+CLIPS> (printout temp "Sally Walker" crlf)
+CLIPS> (seek temp ?pos seek-set)
+TRUE
+CLIPS> (readline temp)
+"John Jones"
+CLIPS> (readline temp)
+"Sally Walker"
+CLIPS> (readline temp)
+EOF
+CLIPS> (seek temp 0 seek-set)
+TRUE
+CLIPS> (readline temp)
+"Jack Smith"
+CLIPS> (close temp)
+TRUE
+CLIPS> (clear)
 CLIPS> (dribble-off)
