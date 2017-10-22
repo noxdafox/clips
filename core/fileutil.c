@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  10/04/17            */
+   /*             CLIPS Version 6.40  10/21/17            */
    /*                                                     */
    /*                 FILE UTILITY MODULE                 */
    /*******************************************************/
@@ -21,6 +21,9 @@
 /* Revision History:                                         */
 /*                                                           */
 /*      6.40: Split from filecom.c                           */
+/*                                                           */
+/*            Fix for the batch* command so that the last    */
+/*            command will execute if there is not a crlf.   */
 /*                                                           */
 /*************************************************************/
 
@@ -882,6 +885,7 @@ bool BatchStar(
   const char *fileName)
   {
    int inchar;
+   bool done = false;
    FILE *theFile;
    char *theString = NULL;
    size_t position = 0;
@@ -926,8 +930,15 @@ bool BatchStar(
    /* Evaluate commands from the file one by one. */
    /*=============================================*/
 
-   while ((inchar = getc(theFile)) != EOF)
+   while (! done)
      {
+      inchar = getc(theFile);
+      if (inchar == EOF)
+        {
+         inchar = '\n';
+         done = true;
+        }
+        
       theString = ExpandStringWithChar(theEnv,inchar,theString,&position,
                                        &maxChars,maxChars+80);
 

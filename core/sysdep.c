@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  10/19/17             */
+   /*            CLIPS Version 6.40  10/21/17             */
    /*                                                     */
    /*               SYSTEM DEPENDENT MODULE               */
    /*******************************************************/
@@ -101,6 +101,8 @@
 /*            Completion code now returned by gensystem.     */
 /*                                                           */
 /*            Added flush, rewind, tell, and seek functions. */
+/*                                                           */
+/*            Removed fflush calls after printing.           */
 /*                                                           */
 /*************************************************************/
 
@@ -223,34 +225,7 @@ int gensystem(
 int gengetchar(
   Environment *theEnv)
   {
-/*
-#if WIN_MVC
-   if (SystemDependentData(theEnv)->getcLength ==
-       SystemDependentData(theEnv)->getcPosition)
-     {
-      TCHAR tBuffer = 0;
-      DWORD count = 0;
-      WCHAR wBuffer = 0;
-
-      ReadConsole(GetStdHandle(STD_INPUT_HANDLE),&tBuffer,1,&count,NULL);
-
-      wBuffer = tBuffer;
-
-      SystemDependentData(theEnv)->getcLength =
-         WideCharToMultiByte(CP_UTF8,0,&wBuffer,1,
-                             (char *) SystemDependentData(theEnv)->getcBuffer,
-                             7,NULL,NULL);
-
-      SystemDependentData(theEnv)->getcPosition = 0;
-     }
-
-   return SystemDependentData(theEnv)->getcBuffer[SystemDependentData(theEnv)->getcPosition++];
-#else
-*/
    return(getc(stdin));
-/*
-#endif
-*/
   }
 
 /***********************************************/
@@ -261,21 +236,7 @@ int genungetchar(
   Environment *theEnv,
   int theChar)
   {
-  /*
-#if WIN_MVC
-   if (SystemDependentData(theEnv)->getcPosition > 0)
-     {
-      SystemDependentData(theEnv)->getcPosition--;
-      return theChar;
-     }
-   else
-     { return EOF; }
-#else
-*/
    return(ungetc(theChar,stdin));
-/*
-#endif
-*/
   }
 
 /****************************************************/
@@ -287,33 +248,7 @@ void genprintfile(
   FILE *fptr,
   const char *str)
   {
-   if (fptr != stdout)
-     {
-      fprintf(fptr,"%s",str);
-      fflush(fptr);
-     }
-   else
-     {
-#if WIN_MVC
-/*
-      int rv;
-      wchar_t *wbuffer;
-      size_t len = strlen(str);
-
-      wbuffer = genalloc(theEnv,sizeof(wchar_t) * (len + 1));
-      rv = MultiByteToWideChar(CP_UTF8,MB_ERR_INVALID_CHARS,str,-1,wbuffer,len+1);
-
-      fwprintf(fptr,L"%ls",wbuffer);
-      fflush(fptr);
-      genfree(theEnv,wbuffer,sizeof(wchar_t) * (len + 1));
-*/
-      fprintf(fptr,"%s",str);
-      fflush(fptr);
-#else
-      fprintf(fptr,"%s",str);
-      fflush(fptr);
-#endif
-     }
+   fprintf(fptr,"%s",str);
   }
 
 /***********************************************************/

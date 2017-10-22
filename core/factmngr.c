@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  10/04/17             */
+   /*            CLIPS Version 6.40  10/21/17             */
    /*                                                     */
    /*                 FACT MANAGER MODULE                 */
    /*******************************************************/
@@ -2924,7 +2924,11 @@ Fact *FMModify(
    FMAbort(theFM);
    
    if ((rv != NULL) && (rv != theFM->fmOldFact))
-     { theFM->fmOldFact = rv; }
+     {
+      ReleaseFact(theFM->fmOldFact);
+      theFM->fmOldFact = rv;
+      RetainFact(theFM->fmOldFact);
+     }
    
    return rv;
   }

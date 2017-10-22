@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  10/18/16             */
+   /*            CLIPS Version 6.40  10/21/17             */
    /*                                                     */
    /*                COMMAND LINE MODULE                  */
    /*******************************************************/
@@ -79,6 +79,8 @@
 /*            UDF redesign.                                  */
 /*                                                           */
 /*            Eval support for run time and bload only.      */
+/*                                                           */
+/*            Removed fflush of stdin.                       */
 /*                                                           */
 /*************************************************************/
 
@@ -680,9 +682,6 @@ void CommandLoop(
          SetHaltExecution(theEnv,false);
          SetEvaluationError(theEnv,false);
          FlushCommandString(theEnv);
-#if ! WINDOW_INTERFACE
-         fflush(stdin);
-#endif
          WriteString(theEnv,STDOUT,"\n");
          PrintPrompt(theEnv);
         }
@@ -776,9 +775,6 @@ void CommandLoopBatchDriver(
          SetHaltExecution(theEnv,false);
          SetEvaluationError(theEnv,false);
          FlushCommandString(theEnv);
-#if ! WINDOW_INTERFACE
-         fflush(stdin);
-#endif
          WriteString(theEnv,STDOUT,"\n");
          PrintPrompt(theEnv);
         }

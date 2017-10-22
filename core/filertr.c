@@ -361,9 +361,9 @@ bool CloseAllFiles(
   }
 
 /*************************************************************/
-/* FlushFile: Flushes the file associated with the specified  */
+/* FlushFile: Flushes the file associated with the specified */
 /*   logical name. Returns true if the file was successfully */
-/*   closed, otherwise false.                                */
+/*   flushed, otherwise false.                               */
 /*************************************************************/
 bool FlushFile(
   Environment *theEnv,
@@ -385,11 +385,11 @@ bool FlushFile(
    return false;
   }
 
-/**********************************************/
-/* FlushAllFiles: Closes all files associated */
-/*   with a file I/O router. Returns true if  */
-/*   any file was closed, otherwise false.    */
-/**********************************************/
+/***********************************************/
+/* FlushAllFiles: Flushes all files associated */
+/*   with a file I/O router. Returns true if   */
+/*   any file was flushed, otherwise false.    */
+/***********************************************/
 bool FlushAllFiles(
   Environment *theEnv)
   {
