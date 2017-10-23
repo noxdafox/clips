@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  10/04/17             */
+   /*            CLIPS Version 6.40  10/22/17             */
    /*                                                     */
    /*                   UTILITY MODULE                    */
    /*******************************************************/
@@ -1390,6 +1390,81 @@ void SBAppend(
   StringBuilder *theSB,
   const char *appendString)
   {
+   theSB->contents = AppendToString(theSB->sbEnv,appendString,
+                                    theSB->contents,&theSB->length,&theSB->bufferMaximum);
+  }
+
+/****************/
+/* SBAppendInt: */
+/****************/
+void SBAppendInt(
+  StringBuilder *theSB,
+  int value)
+  {
+   const char *appendString;
+
+   appendString = LongIntegerToString(theSB->sbEnv,value);
+
+   theSB->contents = AppendToString(theSB->sbEnv,appendString,
+                                    theSB->contents,&theSB->length,&theSB->bufferMaximum);
+  }
+
+/*****************/
+/* SBAppendLong: */
+/*****************/
+void SBAppendLong(
+  StringBuilder *theSB,
+  long value)
+  {
+   const char *appendString;
+
+   appendString = LongIntegerToString(theSB->sbEnv,value);
+
+   theSB->contents = AppendToString(theSB->sbEnv,appendString,
+                                    theSB->contents,&theSB->length,&theSB->bufferMaximum);
+  }
+
+/*********************/
+/* SBAppendLongLong: */
+/*********************/
+void SBAppendLongLong(
+  StringBuilder *theSB,
+  long long value)
+  {
+   const char *appendString;
+
+   appendString = LongIntegerToString(theSB->sbEnv,value);
+
+   theSB->contents = AppendToString(theSB->sbEnv,appendString,
+                                    theSB->contents,&theSB->length,&theSB->bufferMaximum);
+  }
+
+/******************/
+/* SBAppendFloat: */
+/******************/
+void SBAppendFloat(
+  StringBuilder *theSB,
+  float value)
+  {
+   const char *appendString;
+
+   appendString = FloatToString(theSB->sbEnv,value);
+
+   theSB->contents = AppendToString(theSB->sbEnv,appendString,
+                                    theSB->contents,&theSB->length,&theSB->bufferMaximum);
+  }
+
+/*******************/
+/* SBAppendDouble: */
+/*******************/
+void SBAppendDouble(
+  StringBuilder *theSB,
+  double value)
+  {
+   const char *appendString;
+
+   appendString = FloatToString(theSB->sbEnv,value);
+
    theSB->contents = AppendToString(theSB->sbEnv,appendString,
                                     theSB->contents,&theSB->length,&theSB->bufferMaximum);
   }
