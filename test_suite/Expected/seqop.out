@@ -22,8 +22,7 @@ CLIPS> (if $?a then 1)
 [EVALUATN1] Variable ?a is unbound.
 FALSE
 CLIPS> (eval "$?*x*")
-[MISCFUN1] Sequence expansion must be used in the argument list of a function call.
-FALSE
+(1 2 3)
 CLIPS> (defrule foo
   ?f<-(foo $?b)
 =>
@@ -85,8 +84,7 @@ CLIPS> (while $?a do)
 CLIPS> (if $?a then 1)
 [EXPRNPSR4] $ Sequence operator not a valid argument for function 'if'.
 CLIPS> (eval "$?*x*")
-[MISCFUN1] Sequence expansion must be used in the argument list of a function call.
-FALSE
+(1 2 3)
 CLIPS> (defrule foo
   ?f<-(foo $?b)
 =>
@@ -214,4 +212,85 @@ MTH << +:#2  ED:1 ("abc" "def" "ghi")
 GNC << +  ED:1 ("abc" "def" "ghi")
 "abcdefghi"
 CLIPS> (unwatch all)
+CLIPS> (bind ?a (create$ 1 2 3))
+(1 2 3)
+CLIPS> (defglobal ?*b* = (create$ 4 5 6))
+CLIPS> ?a
+(1 2 3)
+CLIPS> ?*b*
+(4 5 6)
+CLIPS> $?a
+(1 2 3)
+CLIPS> $?*b*
+(4 5 6)
+CLIPS> (+ ?a)
+[GENRCEXE1] No applicable methods for '+'.
+FALSE
+CLIPS> (+ ?*b*)
+[GENRCEXE1] No applicable methods for '+'.
+FALSE
+CLIPS> (+ $?a)
+6
+CLIPS> (+ $?*b*)
+15
+CLIPS> (eval "?a")
+(1 2 3)
+CLIPS> (eval "?*b*")
+(4 5 6)
+CLIPS> (eval "$?a")
+(1 2 3)
+CLIPS> (eval "$?*b*")
+(4 5 6)
+CLIPS> (eval "(+ ?a)")
+[GENRCEXE1] No applicable methods for '+'.
+FALSE
+CLIPS> (eval "(+ ?*b*)")
+[GENRCEXE1] No applicable methods for '+'.
+FALSE
+CLIPS> (eval "(+ $?a)")
+6
+CLIPS> (eval "(+ $?*b*)")
+15
+CLIPS> (set-sequence-operator-recognition FALSE)
+TRUE
+CLIPS> ?a
+(1 2 3)
+CLIPS> ?*b*
+(4 5 6)
+CLIPS> $?a
+(1 2 3)
+CLIPS> $?*b*
+(4 5 6)
+CLIPS> (+ ?a)
+[GENRCEXE1] No applicable methods for '+'.
+FALSE
+CLIPS> (+ ?*b*)
+[GENRCEXE1] No applicable methods for '+'.
+FALSE
+CLIPS> (+ $?a)
+[GENRCEXE1] No applicable methods for '+'.
+FALSE
+CLIPS> (+ $?*b*)
+[GENRCEXE1] No applicable methods for '+'.
+FALSE
+CLIPS> (eval "?a")
+(1 2 3)
+CLIPS> (eval "?*b*")
+(4 5 6)
+CLIPS> (eval "$?a")
+(1 2 3)
+CLIPS> (eval "$?*b*")
+(4 5 6)
+CLIPS> (eval "(+ ?a)")
+[GENRCEXE1] No applicable methods for '+'.
+FALSE
+CLIPS> (eval "(+ ?*b*)")
+[GENRCEXE1] No applicable methods for '+'.
+FALSE
+CLIPS> (eval "(+ $?a)")
+[GENRCEXE1] No applicable methods for '+'.
+FALSE
+CLIPS> (eval "(+ $?*b*)")
+[GENRCEXE1] No applicable methods for '+'.
+FALSE
 CLIPS> (dribble-off)

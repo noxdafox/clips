@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  10/04/17             */
+   /*            CLIPS Version 6.40  11/07/17             */
    /*                                                     */
    /*             OBJECT MESSAGE DISPATCH CODE            */
    /*******************************************************/
@@ -841,7 +841,7 @@ bool HandlerSlotPutFunction(
       theSetVal.range = 0;
       theSetVal.value = ProceduralPrimitiveData(theEnv)->NoParamValue;
      }
-   if (PutSlotValue(theEnv,theInstance,sp,&theSetVal,theResult,NULL) == false)
+   if (PutSlotValue(theEnv,theInstance,sp,&theSetVal,theResult,NULL) != PSE_NO_ERROR)
       goto HandlerPutError2;
    return true;
 

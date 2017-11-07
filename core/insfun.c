@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/25/16             */
+   /*            CLIPS Version 6.40  11/07/17             */
    /*                                                     */
    /*               INSTANCE FUNCTIONS MODULE             */
    /*******************************************************/
@@ -576,7 +576,7 @@ int FindInstanceTemplateSlot(
                  New value symbols installed
   NOTES        : None
  *******************************************************/
-bool PutSlotValue(
+PutSlotError PutSlotValue(
   Environment *theEnv,
   Instance *ins,
   InstanceSlot *sp,
@@ -584,10 +584,11 @@ bool PutSlotValue(
   UDFValue *setVal,
   const char *theCommand)
   {
-   if (ValidSlotValue(theEnv,val,sp->desc,ins,theCommand) == false)
+   PutSlotError rv;
+   if ((rv = ValidSlotValue(theEnv,val,sp->desc,ins,theCommand)) != PSE_NO_ERROR)
      {
       setVal->value = FalseSymbol(theEnv);
-      return false;
+      return rv;
      }
    return DirectPutSlotValue(theEnv,ins,sp,val,setVal);
   }
@@ -609,7 +610,7 @@ bool PutSlotValue(
                  New value symbols installed
   NOTES        : None
  *******************************************************/
-bool DirectPutSlotValue(
+PutSlotError DirectPutSlotValue(
   Environment *theEnv,
   Instance *ins,
   InstanceSlot *sp,
@@ -636,7 +637,7 @@ bool DirectPutSlotValue(
          val = &tmpVal;
          if (!EvaluateAndStoreInDataObject(theEnv,sp->desc->multiple,
                                            (Expression *) sp->desc->defaultValue,val,true))
-           return false;
+           return PSE_EVALUATION_ERROR;
         }
       else if (sp->desc->defaultValue != NULL)
         { val = (UDFValue *) sp->desc->defaultValue; }
@@ -649,7 +650,7 @@ bool DirectPutSlotValue(
          WriteString(theEnv,STDERR,ins->name->contents);
          WriteString(theEnv,STDERR,"].\n");
          SetEvaluationError(theEnv,true);
-         return false;
+         return PSE_EVALUATION_ERROR;
         }
      }
 #if DEFRULE_CONSTRUCT
@@ -660,7 +661,7 @@ bool DirectPutSlotValue(
       WriteString(theEnv,STDERR,"Cannot modify reactive instance slots while ");
       WriteString(theEnv,STDERR,"pattern-matching is in process.\n");
       SetEvaluationError(theEnv,true);
-      return false;
+      return PSE_RULE_NETWORK_ERROR;
      }
 
    /* =============================================
@@ -784,6 +785,7 @@ bool DirectPutSlotValue(
             WriteString(theEnv,STDERR,"' in class '");
             WriteString(theEnv,STDERR,DefclassName(sp->desc->cls));
             WriteString(theEnv,STDERR,"'.\n");
+            return PSE_RULE_NETWORK_ERROR;
            }
         }
       else
@@ -791,7 +793,7 @@ bool DirectPutSlotValue(
      }
 #endif
 
-   return true;
+   return PSE_NO_ERROR;
   }
 
 /*******************************************************************
@@ -809,7 +811,7 @@ bool DirectPutSlotValue(
   SIDE EFFECTS : Sets EvaluationError if slot is not OK
   NOTES        : Examines all fields of a multi-field
  *******************************************************************/
-bool ValidSlotValue(
+PutSlotError ValidSlotValue(
   Environment *theEnv,
   UDFValue *val,
   SlotDescriptor *sd,
@@ -823,7 +825,7 @@ bool ValidSlotValue(
       slot to default value
       =================================== */
    if (val->value == ProceduralPrimitiveData(theEnv)->NoParamValue)
-     return true;
+     return PSE_NO_ERROR;
    if ((sd->multiple == 0) && (val->header->type == MULTIFIELD_TYPE) &&
                               (val->range != 1))
      {
@@ -834,7 +836,7 @@ bool ValidSlotValue(
       PrintSlot(theEnv,STDERR,sd,ins,theCommand);
       WriteString(theEnv,STDERR,".\n");
       SetEvaluationError(theEnv,true);
-      return false;
+      return PSE_CARDINALITY_ERROR;
      }
    if (val->header->type == VOID_TYPE)
      {
@@ -843,7 +845,7 @@ bool ValidSlotValue(
       PrintSlot(theEnv,STDERR,sd,ins,theCommand);
       WriteString(theEnv,STDERR,".\n");
       SetEvaluationError(theEnv,true);
-      return false;
+      return PSE_CARDINALITY_ERROR;
      }
    if (GetDynamicConstraintChecking(theEnv))
      {
@@ -862,10 +864,33 @@ bool ValidSlotValue(
          ConstraintViolationErrorMessage(theEnv,NULL,NULL,0,0,NULL,0,
                                          violationCode,sd->constraint,false);
          SetEvaluationError(theEnv,true);
-         return false;
+
+         switch(violationCode)
+           {
+            case NO_VIOLATION:
+              SystemError(theEnv,"FACTMNGR",2);
+              ExitRouter(theEnv,EXIT_FAILURE);
+              break;
+        
+            case FUNCTION_RETURN_TYPE_VIOLATION:
+            case TYPE_VIOLATION:
+              return PSE_TYPE_ERROR;
+              
+            case RANGE_VIOLATION:
+              return PSE_RANGE_ERROR;
+              
+            case ALLOWED_VALUES_VIOLATION:
+              return PSE_ALLOWED_VALUES_ERROR;
+              
+            case CARDINALITY_VIOLATION:
+              return PSE_CARDINALITY_ERROR;
+            
+            case ALLOWED_CLASSES_VIOLATION:
+              return PSE_ALLOWED_CLASSES_ERROR;
+           }
         }
      }
-   return true;
+   return PSE_NO_ERROR;
   }
 
 /********************************************************

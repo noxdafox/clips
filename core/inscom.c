@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  10/04/17             */
+   /*            CLIPS Version 6.40  11/07/17             */
    /*                                                     */
    /*               INSTANCE COMMAND MODULE               */
    /*******************************************************/
@@ -322,11 +322,11 @@ static void DeallocateInstanceData(
   SIDE EFFECTS : Instance is deallocated
   NOTES        : C interface for deleting instances
  *******************************************************************/
-bool DeleteInstance(
+UnmakeInstanceError DeleteInstance(
   Instance *theInstance)
   {
    GCBlock gcb;
-   bool success;
+   UnmakeInstanceError success;
 
    if (theInstance != NULL)
      {
@@ -346,7 +346,7 @@ bool DeleteInstance(
       return success;
      }
      
-   return false;
+   return UIE_NULL_POINTER_ERROR;
   }
 
 /*******************************************************************
@@ -358,12 +358,12 @@ bool DeleteInstance(
   SIDE EFFECTS : Instance is deallocated
   NOTES        : C interface for deleting instances
  *******************************************************************/
-bool DeleteAllInstances(
+UnmakeInstanceError DeleteAllInstances(
   Environment *theEnv)
   {
    Instance *ins, *itmp;
    GCBlock gcb;
-   bool success = true;
+   UnmakeInstanceError success = UIE_NO_ERROR, rv;
    
    /*=====================================*/
    /* If embedded, clear the error flags. */
@@ -379,12 +379,13 @@ bool DeleteAllInstances(
      {
       itmp = ins;
       ins = ins->nxtList;
-      if (QuashInstance(theEnv,itmp) == 0)
-        { success = false; }
+      if ((rv = QuashInstance(theEnv,itmp)) != UIE_NO_ERROR)
+        { success = rv; }
      }
 
    GCBlockEnd(theEnv,&gcb);
 
+   InstanceData(theEnv)->unmakeInstanceError = success;
    return success;
   }
 
@@ -395,7 +396,7 @@ bool UnmakeInstanceCallback(
   Instance *theInstance,
   Environment *theEnv)
   {
-   return UnmakeInstance(theInstance);
+   return (UnmakeInstance(theInstance) == UIE_NO_ERROR);
   }
 
 /*******************************************************************
@@ -406,10 +407,11 @@ bool UnmakeInstanceCallback(
   SIDE EFFECTS : Instance is deallocated
   NOTES        : C interface for deleting instances
  *******************************************************************/
-bool UnmakeAllInstances(
+UnmakeInstanceError UnmakeAllInstances(
   Environment *theEnv)
   {
-   bool success = true, svmaintain;
+   UnmakeInstanceError success = UIE_NO_ERROR;
+   bool svmaintain;
    GCBlock gcb;
    Instance *theInstance;
    
@@ -431,7 +433,7 @@ bool UnmakeAllInstances(
       DirectMessage(theEnv,MessageHandlerData(theEnv)->DELETE_SYMBOL,theInstance,NULL,NULL);
 
       if (theInstance->garbage == 0)
-        { success = false; }
+        { success = UIE_DELETED_ERROR; }
 
       theInstance = theInstance->nxtList;
       while ((theInstance != NULL) ? theInstance->garbage : false)
@@ -443,6 +445,7 @@ bool UnmakeAllInstances(
 
    GCBlockEnd(theEnv,&gcb);
 
+   InstanceData(theEnv)->unmakeInstanceError = success;
    return success;
   }
 
@@ -450,17 +453,24 @@ bool UnmakeAllInstances(
   NAME         : UnmakeInstance
   DESCRIPTION  : Removes a named instance via message-passing
   INPUTS       : The instance address (NULL to delete all instances)
-  RETURNS      : 1 if successful, 0 otherwise
+  RETURNS      : Error code (UE_NO_ERROR if successful)
   SIDE EFFECTS : Instance is deallocated
   NOTES        : C interface for deleting instances
  *******************************************************************/
-bool UnmakeInstance(
+UnmakeInstanceError UnmakeInstance(
   Instance *theInstance)
   {
-   bool success = true, svmaintain;
+   UnmakeInstanceError success = UIE_NO_ERROR;
+   bool svmaintain;
    GCBlock gcb;
    Environment *theEnv = theInstance->cls->header.env;
    
+   if (theInstance == NULL)
+     {
+      InstanceData(theEnv)->unmakeInstanceError = UIE_NULL_POINTER_ERROR;
+      return UIE_NULL_POINTER_ERROR;
+     }
+     
    /*=====================================*/
    /* If embedded, clear the error flags. */
    /*=====================================*/
@@ -474,12 +484,12 @@ bool UnmakeInstance(
    InstanceData(theEnv)->MaintainGarbageInstances = true;
 
    if (theInstance->garbage)
-     { success = false; }
+     { success = UIE_DELETED_ERROR; }
    else
      {
       DirectMessage(theEnv,MessageHandlerData(theEnv)->DELETE_SYMBOL,theInstance,NULL,NULL);
       if (theInstance->garbage == 0)
-        { success = false; }
+        { success = UIE_COULD_NOT_DELETE_ERROR; }
      }
 
    InstanceData(theEnv)->MaintainGarbageInstances = svmaintain;
@@ -487,6 +497,10 @@ bool UnmakeInstance(
 
    GCBlockEnd(theEnv,&gcb);
 
+   if (EvaluationData(theEnv)->EvaluationError)
+     { success = UIE_RULE_NETWORK_ERROR; }
+   
+   InstanceData(theEnv)->unmakeInstanceError = success;
    return success;
   }
 
@@ -679,6 +693,14 @@ Instance *MakeInstance(
    Expression *top;
    UDFValue returnValue;
    Instance *rv;
+   
+   InstanceData(theEnv)->makeInstanceError = MIE_NO_ERROR;
+   
+   if (mkstr == NULL)
+     {
+      InstanceData(theEnv)->makeInstanceError = MIE_NULL_POINTER_ERROR;
+      return NULL;
+     }
 
    /*=====================================*/
    /* If embedded, clear the error flags. */
@@ -689,7 +711,10 @@ Instance *MakeInstance(
 
    returnValue.value = FalseSymbol(theEnv);
    if (OpenStringSource(theEnv,router,mkstr,0) == 0)
-     return NULL;
+     {
+      InstanceData(theEnv)->makeInstanceError = MIE_PARSING_ERROR;
+      return NULL;
+     }
      
    GCBlockStart(theEnv,&gcb);
    
@@ -707,12 +732,21 @@ Instance *MakeInstance(
             ExpressionDeinstall(theEnv,top);
            }
          else
-           SyntaxErrorMessage(theEnv,"instance definition");
+           {
+            InstanceData(theEnv)->makeInstanceError = MIE_PARSING_ERROR;
+            SyntaxErrorMessage(theEnv,"instance definition");
+           }
          ReturnExpression(theEnv,top);
         }
+      else
+        { InstanceData(theEnv)->makeInstanceError = MIE_PARSING_ERROR; }
      }
    else
-     SyntaxErrorMessage(theEnv,"instance definition");
+     {
+      InstanceData(theEnv)->makeInstanceError = MIE_PARSING_ERROR;
+      SyntaxErrorMessage(theEnv,"instance definition");
+     }
+     
    CloseStringSource(theEnv,router);
 
    if (returnValue.value == FalseSymbol(theEnv))
@@ -723,6 +757,15 @@ Instance *MakeInstance(
    GCBlockEnd(theEnv,&gcb);
    
    return rv;
+  }
+
+/************************/
+/* GetMakeInstanceError */
+/************************/
+MakeInstanceError GetMakeInstanceError(
+  Environment *theEnv)
+  {
+   return InstanceData(theEnv)->makeInstanceError;
   }
 
 /***************************************************************
@@ -796,7 +839,7 @@ bool ValidInstanceAddress(
   SIDE EFFECTS : None
   NOTES        : None
  ***************************************************/
-bool DirectGetSlot(
+GetSlotError DirectGetSlot(
   Instance *theInstance,
   const char *sname,
   CLIPSValue *returnValue)
@@ -804,6 +847,9 @@ bool DirectGetSlot(
    InstanceSlot *sp;
    Environment *theEnv = theInstance->cls->header.env;
    
+   if ((theInstance == NULL) || (sname == NULL) || (returnValue == NULL))
+     { return GSE_NULL_POINTER_ERROR; }
+     
    /*=====================================*/
    /* If embedded, clear the error flags. */
    /*=====================================*/
@@ -815,7 +861,7 @@ bool DirectGetSlot(
      {
       SetEvaluationError(theEnv,true);
       returnValue->value = FalseSymbol(theEnv);
-      return false;
+      return GSE_INVALID_TARGET_ERROR;
      }
      
    sp = FindISlotByName(theEnv,theInstance,sname);
@@ -823,12 +869,12 @@ bool DirectGetSlot(
      {
       SetEvaluationError(theEnv,true);
       returnValue->value = FalseSymbol(theEnv);
-      return false;
+      return GSE_SLOT_NOT_FOUND_ERROR;
      }
 
    returnValue->value = sp->value;
      
-   return true;
+   return GSE_NO_ERROR;
   }
 
 /*********************************************************
@@ -841,7 +887,7 @@ bool DirectGetSlot(
   SIDE EFFECTS : None
   NOTES        : None
  *********************************************************/
-bool DirectPutSlot(
+PutSlotError DirectPutSlot(
   Instance *theInstance,
   const char *sname,
   CLIPSValue *val)
@@ -849,13 +895,19 @@ bool DirectPutSlot(
    InstanceSlot *sp;
    UDFValue junk, temp;
    GCBlock gcb;
-   bool rv;
+   PutSlotError rv;
    Environment *theEnv = theInstance->cls->header.env;
    
-   if ((theInstance->garbage == 1) || (val == NULL))
+   if ((theInstance == NULL) || (sname == NULL) || (val == NULL))
      {
       SetEvaluationError(theEnv,true);
-      return false;
+      return PSE_NULL_POINTER_ERROR;
+     }
+     
+   if (theInstance->garbage == 1)
+     {
+      SetEvaluationError(theEnv,true);
+      return PSE_INVALID_TARGET_ERROR;
      }
      
    sp = FindISlotByName(theEnv,theInstance,sname);
@@ -1191,7 +1243,10 @@ void DeleteInstanceCommand(
   UDFValue *returnValue)
   {
    if (CheckCurrentMessage(theEnv,"delete-instance",true))
-     { returnValue->lexemeValue = CreateBoolean(theEnv,QuashInstance(theEnv,GetActiveInstance(theEnv))); }
+     {
+      UnmakeInstanceError rv = QuashInstance(theEnv,GetActiveInstance(theEnv));
+      returnValue->lexemeValue = CreateBoolean(theEnv,(rv == UIE_NO_ERROR));
+     }
    else
      { returnValue->lexemeValue = FalseSymbol(theEnv); }
   }
@@ -1251,12 +1306,12 @@ void UnmakeInstanceCommand(
         
       if (ins != NULL)
         {
-         if (UnmakeInstance(ins) == false)
+         if (UnmakeInstance(ins) != UIE_NO_ERROR)
            rtn = false;
         }
        else
          {
-          if (UnmakeAllInstances(theEnv) == false)
+          if (UnmakeAllInstances(theEnv) != UIE_NO_ERROR)
             rtn = false;
           returnValue->lexemeValue = CreateBoolean(theEnv,rtn);
           return;

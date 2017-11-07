@@ -14,3 +14,38 @@
 (send [s1] seqop-test abc def ghi)
 (+ "abc" "def" "ghi")
 (unwatch all)
+(bind ?a (create$ 1 2 3))
+(defglobal ?*b* = (create$ 4 5 6))
+?a
+?*b*
+$?a
+$?*b*
+(+ ?a)
+(+ ?*b*)
+(+ $?a)
+(+ $?*b*)
+(eval "?a")
+(eval "?*b*")
+(eval "$?a")
+(eval "$?*b*")
+(eval "(+ ?a)")
+(eval "(+ ?*b*)")
+(eval "(+ $?a)")
+(eval "(+ $?*b*)")
+(set-sequence-operator-recognition FALSE)
+?a
+?*b*
+$?a
+$?*b*
+(+ ?a)
+(+ ?*b*)
+(+ $?a)
+(+ $?*b*)
+(eval "?a")
+(eval "?*b*")
+(eval "$?a")
+(eval "$?*b*")
+(eval "(+ ?a)")
+(eval "(+ ?*b*)")
+(eval "(+ $?a)")
+(eval "(+ $?*b*)")

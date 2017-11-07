@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  11/01/16            */
+   /*             CLIPS Version 6.40  11/07/17            */
    /*                                                     */
    /*               INSTANCE FUNCTIONS MODULE             */
    /*******************************************************/
@@ -102,9 +102,9 @@ typedef struct igarbage
                                                        Defmodule *,bool);
    InstanceSlot                  *FindInstanceSlot(Environment *,Instance *,CLIPSLexeme *);
    int                            FindInstanceTemplateSlot(Environment *,Defclass *,CLIPSLexeme *);
-   bool                           PutSlotValue(Environment *,Instance *,InstanceSlot *,UDFValue *,UDFValue *,const char *);
-   bool                           DirectPutSlotValue(Environment *,Instance *,InstanceSlot *,UDFValue *,UDFValue *);
-   bool                           ValidSlotValue(Environment *,UDFValue *,SlotDescriptor *,Instance *,const char *);
+   PutSlotError                   PutSlotValue(Environment *,Instance *,InstanceSlot *,UDFValue *,UDFValue *,const char *);
+   PutSlotError                   DirectPutSlotValue(Environment *,Instance *,InstanceSlot *,UDFValue *,UDFValue *);
+   PutSlotError                   ValidSlotValue(Environment *,UDFValue *,SlotDescriptor *,Instance *,const char *);
    Instance                      *CheckInstance(UDFContext *);
    void                           NoInstanceError(Environment *,const char *,const char *);
    void                           StaleInstanceAddress(Environment *,const char *,int);

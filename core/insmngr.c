@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/27/17             */
+   /*            CLIPS Version 6.40  11/07/17             */
    /*                                                     */
    /*          INSTANCE PRIMITIVE SUPPORT MODULE          */
    /*******************************************************/
@@ -76,6 +76,7 @@
 
 #include "classcom.h"
 #include "classfun.h"
+#include "cstrnchk.h"
 #include "engine.h"
 #include "envrnmnt.h"
 #include "extnfunc.h"
@@ -190,6 +191,7 @@ void MakeInstanceCommand(
       PrintErrorID(theEnv,"INSMNGR",1,false);
       WriteString(theEnv,STDERR,"Expected a valid name for new instance.\n");
       SetEvaluationError(theEnv,true);
+      InstanceData(theEnv)->makeInstanceError = MIE_COULD_NOT_CREATE_ERROR;
       return;
      }
 
@@ -203,6 +205,7 @@ void MakeInstanceCommand(
          PrintErrorID(theEnv,"INSMNGR",2,false);
          WriteString(theEnv,STDERR,"Expected a valid class name for new instance.\n");
          SetEvaluationError(theEnv,true);
+         InstanceData(theEnv)->makeInstanceError = MIE_COULD_NOT_CREATE_ERROR;
          return;
         }
 
@@ -213,13 +216,13 @@ void MakeInstanceCommand(
          ClassExistError(theEnv,ExpressionFunctionCallName(EvaluationData(theEnv)->CurrentExpression)->contents,
                          temp.lexemeValue->contents);
          SetEvaluationError(theEnv,true);
+         InstanceData(theEnv)->makeInstanceError = MIE_COULD_NOT_CREATE_ERROR;
          return;
         }
      }
 
    ins = BuildInstance(theEnv,iname,cls,true);
-   if (ins == NULL)
-     return;
+   if (ins == NULL) return;
 
    if (CoreInitializeInstance(theEnv,ins,GetFirstArgument()->nextArg->nextArg) == true)
      { returnValue->value = GetFullInstanceName(theEnv,ins); }
@@ -296,6 +299,7 @@ Instance *BuildInstance(
       WriteString(theEnv,STDERR,"Cannot create instances of reactive classes while ");
       WriteString(theEnv,STDERR,"pattern-matching is in process.\n");
       SetEvaluationError(theEnv,true);
+      InstanceData(theEnv)->makeInstanceError = MIE_COULD_NOT_CREATE_ERROR;
       return NULL;
      }
 #endif
@@ -306,6 +310,7 @@ Instance *BuildInstance(
       WriteString(theEnv,STDERR,DefclassName(cls));
       WriteString(theEnv,STDERR,"'.\n");
       SetEvaluationError(theEnv,true);
+      InstanceData(theEnv)->makeInstanceError = MIE_COULD_NOT_CREATE_ERROR;
       return NULL;
      }
    modulePosition = FindModuleSeparator(iname->contents);
@@ -318,6 +323,7 @@ Instance *BuildInstance(
          PrintErrorID(theEnv,"INSMNGR",11,true);
          WriteString(theEnv,STDERR,"Invalid module specifier in new instance name.\n");
          SetEvaluationError(theEnv,true);
+         InstanceData(theEnv)->makeInstanceError = MIE_COULD_NOT_CREATE_ERROR;
          return NULL;
         }
       iname = ExtractConstructName(theEnv,modulePosition,iname->contents,INSTANCE_NAME_TYPE);
@@ -335,6 +341,7 @@ Instance *BuildInstance(
          WriteString(theEnv,STDERR,ins->cls->header.name->contents);
          WriteString(theEnv,STDERR,"'.\n");
          SetEvaluationError(theEnv,true);
+         InstanceData(theEnv)->makeInstanceError = MIE_COULD_NOT_CREATE_ERROR;
          return NULL;
         }
 
@@ -345,6 +352,7 @@ Instance *BuildInstance(
          WriteString(theEnv,STDERR,iname->contents);
          WriteString(theEnv,STDERR,"] has a slot-value which depends on the instance definition.\n");
          SetEvaluationError(theEnv,true);
+         InstanceData(theEnv)->makeInstanceError = MIE_COULD_NOT_CREATE_ERROR;
          return NULL;
         }
       ins->busy++;
@@ -365,6 +373,7 @@ Instance *BuildInstance(
          WriteString(theEnv,STDERR,iname->contents);
          WriteString(theEnv,STDERR,"].\n");
          SetEvaluationError(theEnv,true);
+         InstanceData(theEnv)->makeInstanceError = MIE_COULD_NOT_CREATE_ERROR;
          return NULL;
         }
      }
@@ -450,7 +459,12 @@ Instance *BuildInstance(
      ObjectNetworkAction(theEnv,OBJECT_ASSERT,ins,-1);
 #endif
 
-   return(ins);
+   if (EvaluationData(theEnv)->EvaluationError)
+     { InstanceData(theEnv)->makeInstanceError = MIE_RULE_NETWORK_ERROR; }
+   else
+     { InstanceData(theEnv)->makeInstanceError = MIE_NO_ERROR; }
+
+   return ins;
   }
 
 /*****************************************************************************
@@ -505,7 +519,7 @@ void InitSlotsCommand(
                    node in the list is (assuming the
                    instance was garbage collected).
  ******************************************************/
-bool QuashInstance(
+UnmakeInstanceError QuashInstance(
   Environment *theEnv,
   Instance *ins)
   {
@@ -519,11 +533,17 @@ bool QuashInstance(
       WriteString(theEnv,STDERR,"Cannot delete instances of reactive classes while ");
       WriteString(theEnv,STDERR,"pattern-matching is in process.\n");
       SetEvaluationError(theEnv,true);
-      return false;
+      InstanceData(theEnv)->unmakeInstanceError = UIE_COULD_NOT_DELETE_ERROR;
+      return UIE_COULD_NOT_DELETE_ERROR;
      }
 #endif
+
    if (ins->garbage == 1)
-     return false;
+     {
+      InstanceData(theEnv)->unmakeInstanceError = UIE_COULD_NOT_DELETE_ERROR;
+      return UIE_DELETED_ERROR;
+     }
+ 
    if (ins->installed == 0)
      {
       PrintErrorID(theEnv,"INSMNGR",6,false);
@@ -531,8 +551,10 @@ bool QuashInstance(
       WriteString(theEnv,STDERR,ins->name->contents);
       WriteString(theEnv,STDERR,"] during initialization.\n");
       SetEvaluationError(theEnv,true);
-      return false;
+      InstanceData(theEnv)->unmakeInstanceError = UIE_COULD_NOT_DELETE_ERROR;
+      return UIE_COULD_NOT_DELETE_ERROR;
      }
+     
 #if DEBUGGING_FUNCTIONS
    if (ins->cls->traceInstances)
      PrintInstanceWatch(theEnv,UNMAKE_TRACE,ins);
@@ -609,8 +631,17 @@ bool QuashInstance(
       InstanceData(theEnv)->InstanceGarbageList = gptr;
       UtilityData(theEnv)->CurrentGarbageFrame->dirty = true;
      }
+     
    InstanceData(theEnv)->ChangesToInstances = true;
-   return true;
+
+   if (EvaluationData(theEnv)->EvaluationError)
+     {
+      InstanceData(theEnv)->unmakeInstanceError = UIE_RULE_NETWORK_ERROR;
+      return UIE_RULE_NETWORK_ERROR;
+     }
+     
+   InstanceData(theEnv)->unmakeInstanceError = UIE_NO_ERROR;
+   return UIE_NO_ERROR;
   }
 
 
@@ -1275,19 +1306,35 @@ InstanceBuilder *CreateInstanceBuilder(
    Defclass *theDefclass;
    unsigned int i;
    
-   theDefclass = FindDefclass(theEnv,defclassName);
-   if (theDefclass == NULL) return NULL;
+   if (theEnv == NULL) return NULL;
       
+   if (defclassName != NULL)
+     {
+      theDefclass = FindDefclass(theEnv,defclassName);
+      if (theDefclass == NULL)
+        {
+         InstanceData(theEnv)->instanceBuilderError = IBE_DEFCLASS_NOT_FOUND_ERROR;
+         return NULL;
+        }
+     }
+   else
+     { theDefclass = NULL; }
+     
    theIB = get_struct(theEnv,instanceBuilder);
-   if (theIB == NULL) return NULL;
-   
    theIB->ibEnv = theEnv;
    theIB->ibDefclass = theDefclass;
       
-   theIB->ibValueArray = (CLIPSValue *) gm2(theEnv,sizeof(CLIPSValue) * theDefclass->slotCount);
+   if ((theDefclass == NULL) || (theDefclass->slotCount == 0))
+     { theIB->ibValueArray = NULL; }
+   else
+     {
+      theIB->ibValueArray = (CLIPSValue *) gm2(theEnv,sizeof(CLIPSValue) * theDefclass->slotCount);
+      
+      for (i = 0; i < theDefclass->slotCount; i++)
+        { theIB->ibValueArray[i].voidValue = VoidConstant(theEnv); }
+     }
 
-   for (i = 0; i < theDefclass->slotCount; i++)
-     { theIB->ibValueArray[i].voidValue = VoidConstant(theEnv); }
+   InstanceData(theEnv)->instanceBuilderError = IBE_NO_ERROR;
 
    return theIB;
   }
@@ -1295,7 +1342,7 @@ InstanceBuilder *CreateInstanceBuilder(
 /*************************/
 /* IBPutSlotCLIPSInteger */
 /*************************/
-bool IBPutSlotCLIPSInteger(
+PutSlotError IBPutSlotCLIPSInteger(
   InstanceBuilder *theIB,
   const char *slotName,
   CLIPSInteger *slotValue)
@@ -1309,52 +1356,58 @@ bool IBPutSlotCLIPSInteger(
 /****************/
 /* IBPutSlotInt */
 /****************/
-bool IBPutSlotInt(
+PutSlotError IBPutSlotInt(
   InstanceBuilder *theIB,
   const char *slotName,
   int intValue)
   {
    CLIPSValue theValue;
-   CLIPSInteger *slotValue = CreateInteger(theIB->ibEnv,intValue);
    
-   theValue.integerValue = slotValue;
+   if (theIB == NULL)
+     { return PSE_NULL_POINTER_ERROR; }
+
+   theValue.integerValue = CreateInteger(theIB->ibEnv,intValue);
    return IBPutSlot(theIB,slotName,&theValue);
   }
 
 /*****************/
 /* IBPutSlotLong */
 /*****************/
-bool IBPutSlotLong(
+PutSlotError IBPutSlotLong(
   InstanceBuilder *theIB,
   const char *slotName,
   long longValue)
   {
    CLIPSValue theValue;
-   CLIPSInteger *slotValue = CreateInteger(theIB->ibEnv,longValue);
    
-   theValue.integerValue = slotValue;
+   if (theIB == NULL)
+     { return PSE_NULL_POINTER_ERROR; }
+
+   theValue.integerValue = CreateInteger(theIB->ibEnv,longValue);
    return IBPutSlot(theIB,slotName,&theValue);
   }
 
 /*********************/
 /* IBPutSlotLongLong */
 /*********************/
-bool IBPutSlotLongLong(
+PutSlotError IBPutSlotLongLong(
   InstanceBuilder *theIB,
   const char *slotName,
   long long longLongValue)
   {
    CLIPSValue theValue;
-   CLIPSInteger *slotValue = CreateInteger(theIB->ibEnv,longLongValue);
    
-   theValue.integerValue = slotValue;
+   if (theIB == NULL)
+     { return PSE_NULL_POINTER_ERROR; }
+
+   theValue.integerValue = CreateInteger(theIB->ibEnv,longLongValue);
    return IBPutSlot(theIB,slotName,&theValue);
   }
 
 /************************/
 /* IBPutSlotCLIPSLexeme */
 /************************/
-bool IBPutSlotCLIPSLexeme(
+PutSlotError IBPutSlotCLIPSLexeme(
   InstanceBuilder *theIB,
   const char *slotName,
   CLIPSLexeme *slotValue)
@@ -1368,52 +1421,58 @@ bool IBPutSlotCLIPSLexeme(
 /*******************/
 /* IBPutSlotSymbol */
 /*******************/
-bool IBPutSlotSymbol(
+PutSlotError IBPutSlotSymbol(
   InstanceBuilder *theIB,
   const char *slotName,
   const char *stringValue)
   {
    CLIPSValue theValue;
-   CLIPSLexeme *slotValue = CreateSymbol(theIB->ibEnv,stringValue);
    
-   theValue.lexemeValue = slotValue;
+   if (theIB == NULL)
+     { return PSE_NULL_POINTER_ERROR; }
+
+   theValue.lexemeValue = CreateSymbol(theIB->ibEnv,stringValue);
    return IBPutSlot(theIB,slotName,&theValue);
   }
 
 /*******************/
 /* IBPutSlotString */
 /*******************/
-bool IBPutSlotString(
+PutSlotError IBPutSlotString(
   InstanceBuilder *theIB,
   const char *slotName,
   const char *stringValue)
   {
    CLIPSValue theValue;
-   CLIPSLexeme *slotValue = CreateString(theIB->ibEnv,stringValue);
    
-   theValue.lexemeValue = slotValue;
+   if (theIB == NULL)
+     { return PSE_NULL_POINTER_ERROR; }
+
+   theValue.lexemeValue = CreateString(theIB->ibEnv,stringValue);
    return IBPutSlot(theIB,slotName,&theValue);
   }
 
 /*************************/
 /* IBPutSlotInstanceName */
 /*************************/
-bool IBPutSlotInstanceName(
+PutSlotError IBPutSlotInstanceName(
   InstanceBuilder *theIB,
   const char *slotName,
   const char *stringValue)
   {
    CLIPSValue theValue;
-   CLIPSLexeme *slotValue = CreateInstanceName(theIB->ibEnv,stringValue);
    
-   theValue.lexemeValue = slotValue;
+   if (theIB == NULL)
+     { return PSE_NULL_POINTER_ERROR; }
+
+   theValue.lexemeValue = CreateInstanceName(theIB->ibEnv,stringValue);
    return IBPutSlot(theIB,slotName,&theValue);
   }
 
 /***********************/
 /* IBPutSlotCLIPSFloat */
 /***********************/
-bool IBPutSlotCLIPSFloat(
+PutSlotError IBPutSlotCLIPSFloat(
   InstanceBuilder *theIB,
   const char *slotName,
   CLIPSFloat *slotValue)
@@ -1427,37 +1486,41 @@ bool IBPutSlotCLIPSFloat(
 /******************/
 /* IBPutSlotFloat */
 /******************/
-bool IBPutSlotFloat(
+PutSlotError IBPutSlotFloat(
   InstanceBuilder *theIB,
   const char *slotName,
   float floatValue)
   {
    CLIPSValue theValue;
-   CLIPSFloat *slotValue = CreateFloat(theIB->ibEnv,floatValue);
    
-   theValue.floatValue = slotValue;
+    if (theIB == NULL)
+     { return PSE_NULL_POINTER_ERROR; }
+
+  theValue.floatValue = CreateFloat(theIB->ibEnv,floatValue);
    return IBPutSlot(theIB,slotName,&theValue);
   }
 
 /*******************/
 /* IBPutSlotDouble */
 /*******************/
-bool IBPutSlotDouble(
+PutSlotError IBPutSlotDouble(
   InstanceBuilder *theIB,
   const char *slotName,
   double doubleValue)
   {
    CLIPSValue theValue;
-   CLIPSFloat *slotValue = CreateFloat(theIB->ibEnv,doubleValue);
    
-   theValue.floatValue = slotValue;
+    if (theIB == NULL)
+     { return PSE_NULL_POINTER_ERROR; }
+
+  theValue.floatValue = CreateFloat(theIB->ibEnv,doubleValue);
    return IBPutSlot(theIB,slotName,&theValue);
   }
 
 /*****************/
 /* IBPutSlotFact */
 /*****************/
-bool IBPutSlotFact(
+PutSlotError IBPutSlotFact(
   InstanceBuilder *theIB,
   const char *slotName,
   Fact *slotValue)
@@ -1471,7 +1534,7 @@ bool IBPutSlotFact(
 /*********************/
 /* IBPutSlotInstance */
 /*********************/
-bool IBPutSlotInstance(
+PutSlotError IBPutSlotInstance(
   InstanceBuilder *theIB,
   const char *slotName,
   Instance *slotValue)
@@ -1485,7 +1548,7 @@ bool IBPutSlotInstance(
 /****************************/
 /* IBPutSlotExternalAddress */
 /****************************/
-bool IBPutSlotExternalAddress(
+PutSlotError IBPutSlotExternalAddress(
   InstanceBuilder *theIB,
   const char *slotName,
   CLIPSExternalAddress *slotValue)
@@ -1499,7 +1562,7 @@ bool IBPutSlotExternalAddress(
 /***********************/
 /* IBPutSlotMultifield */
 /***********************/
-bool IBPutSlotMultifield(
+PutSlotError IBPutSlotMultifield(
   InstanceBuilder *theIB,
   const char *slotName,
   Multifield *slotValue)
@@ -1513,16 +1576,30 @@ bool IBPutSlotMultifield(
 /**************/
 /* IBPutSlot: */
 /**************/
-bool IBPutSlot(
+PutSlotError IBPutSlot(
   InstanceBuilder *theIB,
   const char *slotName,
   CLIPSValue *slotValue)
   {
-   Environment *theEnv = theIB->ibEnv;
+   Environment *theEnv;
    int whichSlot;
    CLIPSValue oldValue;
    unsigned int i;
-      
+   SlotDescriptor *theSlot;
+   ConstraintViolationType cvType;
+   
+   /*==========================*/
+   /* Check for NULL pointers. */
+   /*==========================*/
+   
+   if ((theIB == NULL) || (slotName == NULL) || (slotValue == NULL))
+     { return PSE_NULL_POINTER_ERROR; }
+     
+   if ((theIB->ibDefclass == NULL) || (slotValue->value == NULL))
+     { return PSE_NULL_POINTER_ERROR; }
+   
+   theEnv = theIB->ibEnv;
+     
    /*===================================*/
    /* Make sure the slot name requested */
    /* corresponds to a valid slot name. */
@@ -1530,8 +1607,52 @@ bool IBPutSlot(
 
    whichSlot = FindInstanceTemplateSlot(theEnv,theIB->ibDefclass,CreateSymbol(theIB->ibEnv,slotName));
    if (whichSlot == -1)
-     { return false; }
+     { return PSE_SLOT_NOT_FOUND_ERROR; }
+   theSlot = theIB->ibDefclass->instanceTemplate[whichSlot];
+   
+   /*=============================================*/
+   /* Make sure a single field value is not being */
+   /* stored in a multifield slot or vice versa.  */
+   /*=============================================*/
+
+   if (((theSlot->multiple == 0) && (slotValue->header->type == MULTIFIELD_TYPE)) ||
+       ((theSlot->multiple == 1) && (slotValue->header->type != MULTIFIELD_TYPE)))
+     { return PSE_CARDINALITY_ERROR; }
      
+   /*=================================*/
+   /* Check constraints for the slot. */
+   /*=================================*/
+
+   if (theSlot->constraint != NULL)
+     {
+      if ((cvType = ConstraintCheckValue(theEnv,slotValue->header->type,slotValue->value,theSlot->constraint)) != NO_VIOLATION)
+        {
+         switch(cvType)
+           {
+            case NO_VIOLATION:
+            case FUNCTION_RETURN_TYPE_VIOLATION:
+              SystemError(theEnv,"INSMNGR",1);
+              ExitRouter(theEnv,EXIT_FAILURE);
+              break;
+              
+            case TYPE_VIOLATION:
+              return PSE_TYPE_ERROR;
+              
+            case RANGE_VIOLATION:
+              return PSE_RANGE_ERROR;
+              
+            case ALLOWED_VALUES_VIOLATION:
+              return PSE_ALLOWED_VALUES_ERROR;
+              
+            case CARDINALITY_VIOLATION:
+              return PSE_CARDINALITY_ERROR;
+            
+            case ALLOWED_CLASSES_VIOLATION:
+              return PSE_ALLOWED_CLASSES_ERROR;
+           }
+        }
+     }
+
    /*===================================*/
    /* Create the value array if needed. */
    /*===================================*/
@@ -1552,12 +1673,12 @@ bool IBPutSlot(
    if (oldValue.header->type == MULTIFIELD_TYPE)
      {
       if (MultifieldsEqual(oldValue.multifieldValue,slotValue->multifieldValue))
-        { return true; }
+        { return PSE_NO_ERROR; }
      }
    else
      {
       if (oldValue.value == slotValue->value)
-        { return true; }
+        { return PSE_NO_ERROR; }
      }
    
    Release(theEnv,oldValue.header);
@@ -1572,7 +1693,7 @@ bool IBPutSlot(
       
    Retain(theEnv,theIB->ibValueArray[whichSlot].header);
    
-   return true;
+   return PSE_NO_ERROR;
   }
 
 /***********/
@@ -1582,29 +1703,69 @@ Instance *IBMake(
   InstanceBuilder *theIB,
   const char *instanceName)
   {
-   Environment *theEnv = theIB->ibEnv;
+   Environment *theEnv;
    Instance *theInstance;
    CLIPSLexeme *instanceLexeme;
    UDFValue rv;
    unsigned int i;
-
+   bool ov;
+   
+   if (theIB == NULL) return NULL;
+   theEnv = theIB->ibEnv;
+   
+   if (theIB->ibDefclass == NULL)
+     {
+      InstanceData(theEnv)->instanceBuilderError = IBE_NULL_POINTER_ERROR;
+      return NULL;
+     }
+     
    if (instanceName == NULL)
      {
-      GensymStar(theIB->ibEnv,&rv);
-      instanceLexeme = rv.lexemeValue;
+      GensymStar(theEnv,&rv);
+      instanceLexeme = CreateInstanceName(theEnv,rv.lexemeValue->contents);
      }
    else
      { instanceLexeme = CreateInstanceName(theEnv,instanceName); }
    
+#if DEFRULE_CONSTRUCT
+   ov = SetDelayObjectPatternMatching(theEnv,true);
+#endif
+
    theInstance = BuildInstance(theEnv,instanceLexeme,theIB->ibDefclass,true);
-   if (theInstance == NULL) return NULL;
+   
+   if (theInstance == NULL)
+     {
+      if (InstanceData(theEnv)->makeInstanceError == MIE_COULD_NOT_CREATE_ERROR)
+        { InstanceData(theEnv)->instanceBuilderError = IBE_COULD_NOT_CREATE_ERROR; }
+      else if (InstanceData(theEnv)->makeInstanceError == MIE_RULE_NETWORK_ERROR)
+        { InstanceData(theEnv)->instanceBuilderError = IBE_RULE_NETWORK_ERROR; }
+      else
+        {
+         SystemError(theEnv,"INSMNGR",3);
+         ExitRouter(theEnv,EXIT_FAILURE);
+        }
+        
+#if DEFRULE_CONSTRUCT
+      SetDelayObjectPatternMatching(theEnv,ov);
+#endif
+
+      return NULL;
+     }
    
    if (CoreInitializeInstanceCV(theIB->ibEnv,theInstance,theIB->ibValueArray) == false)
      {
+      InstanceData(theEnv)->instanceBuilderError = IBE_COULD_NOT_CREATE_ERROR;
       QuashInstance(theIB->ibEnv,theInstance);
+#if DEFRULE_CONSTRUCT
+      SetDelayObjectPatternMatching(theEnv,ov);
+#endif
       return NULL;
      }
- 
+   
+#if DEFRULE_CONSTRUCT
+   SetDelayObjectPatternMatching(theEnv,ov);
+#endif
+
    for (i = 0; i < theIB->ibDefclass->slotCount; i++)
      {
       if (theIB->ibValueArray[i].voidValue != VoidConstant(theEnv))
@@ -1617,7 +1778,9 @@ Instance *IBMake(
          theIB->ibValueArray[i].voidValue = VoidConstant(theEnv);
         }
      }
-
+     
+   InstanceData(theEnv)->instanceBuilderError = IBE_NO_ERROR;
+   
    return theInstance;
   }
 
@@ -1627,8 +1790,12 @@ Instance *IBMake(
 void IBDispose(
   InstanceBuilder *theIB)
   {
-   Environment *theEnv = theIB->ibEnv;
+   Environment *theEnv;
+   
+   if (theIB == NULL) return;
 
+   theEnv = theIB->ibEnv;
+   
    IBAbort(theIB);
    
    if (theIB->ibValueArray != NULL)
@@ -1646,6 +1813,12 @@ void IBAbort(
    Environment *theEnv = theIB->ibEnv;
    unsigned int i;
    
+   if (theIB == NULL) return;
+   
+   if (theIB->ibDefclass == NULL) return;
+   
+   theEnv = theIB->ibEnv;
+
    for (i = 0; i < theIB->ibDefclass->slotCount; i++)
      {
       Release(theEnv,theIB->ibValueArray[i].header);
@@ -1660,31 +1833,60 @@ void IBAbort(
 /*****************/
 /* IBSetDefclass */
 /*****************/
-bool IBSetDefclass(
+InstanceBuilderError IBSetDefclass(
   InstanceBuilder *theIB,
   const char *defclassName)
   {
    Defclass *theDefclass;
-   Environment *theEnv = theIB->ibEnv;
+   Environment *theEnv;
    unsigned int i;
    
+   if (theIB == NULL)
+     { return IBE_NULL_POINTER_ERROR; }
+      
+   theEnv = theIB->ibEnv;
+
    IBAbort(theIB);
    
-   theDefclass = FindDefclass(theIB->ibEnv,defclassName);
+   if (defclassName != NULL)
+     {
+      theDefclass = FindDefclass(theIB->ibEnv,defclassName);
    
-   if (theDefclass == NULL) return false;
+      if (theDefclass == NULL)
+        {
+         InstanceData(theEnv)->instanceBuilderError = IBE_DEFCLASS_NOT_FOUND_ERROR;
+         return IBE_DEFCLASS_NOT_FOUND_ERROR;
+        }
+     }
+   else
+     { theDefclass = NULL; }
 
    if (theIB->ibValueArray != NULL)
      { rm(theEnv,theIB->ibValueArray,sizeof(CLIPSValue) * theIB->ibDefclass->slotCount); }
 
    theIB->ibDefclass = theDefclass;
    
-   theIB->ibValueArray = (CLIPSValue *) gm2(theEnv,sizeof(CLIPSValue) * theDefclass->slotCount);
+   if ((theDefclass == NULL) || (theDefclass->slotCount == 0))
+     { theIB->ibValueArray = NULL; }
+   else
+     {
+      theIB->ibValueArray = (CLIPSValue *) gm2(theEnv,sizeof(CLIPSValue) * theDefclass->slotCount);
 
-   for (i = 0; i < theDefclass->slotCount; i++)
-     { theIB->ibValueArray[i].voidValue = VoidConstant(theEnv); }
+      for (i = 0; i < theDefclass->slotCount; i++)
+        { theIB->ibValueArray[i].voidValue = VoidConstant(theEnv); }
+     }
 
-   return true;
+   InstanceData(theEnv)->instanceBuilderError = IBE_NO_ERROR;
+   return IBE_NO_ERROR;
+  }
+
+/************/
+/* IBError: */
+/************/
+InstanceBuilderError IBError(
+  Environment *theEnv)
+  {
+   return InstanceData(theEnv)->instanceBuilderError;
   }
 
 /***************************/
@@ -1696,33 +1898,48 @@ InstanceModifier *CreateInstanceModifier(
   {
    InstanceModifier *theIM;
    unsigned int i;
-
-   if (oldInstance->garbage) return NULL;
-   if (oldInstance->cls->slotCount == 0) return NULL;
+   
+   if (theEnv == NULL) return NULL;
+   
+   if (oldInstance != NULL)
+     {
+      if (oldInstance->garbage)
+        {
+         InstanceData(theEnv)->instanceModifierError = IME_DELETED_ERROR;
+         return NULL;
+        }
+        
+      RetainInstance(oldInstance);
+     }
 
    theIM = get_struct(theEnv,instanceModifier);
-   if (theIM == NULL) return NULL;
-
    theIM->imEnv = theEnv;
    theIM->imOldInstance = oldInstance;
 
-   RetainInstance(oldInstance);
+   if ((oldInstance == NULL) || (oldInstance->cls->slotCount == 0))
+     {
+      theIM->imValueArray = NULL;
+      theIM->changeMap = NULL;
+     }
+   else
+     {
+      theIM->imValueArray = (CLIPSValue *) gm2(theEnv,sizeof(CLIPSValue) * oldInstance->cls->slotCount);
+      
+      for (i = 0; i < oldInstance->cls->slotCount; i++)
+        { theIM->imValueArray[i].voidValue = VoidConstant(theEnv); }
 
-   theIM->imValueArray = (CLIPSValue *) gm2(theEnv,sizeof(CLIPSValue) * oldInstance->cls->slotCount);
+      theIM->changeMap = (char *) gm2(theEnv,CountToBitMapSize(oldInstance->cls->slotCount));
+      ClearBitString((void *) theIM->changeMap,CountToBitMapSize(oldInstance->cls->slotCount));
+     }
 
-   for (i = 0; i < oldInstance->cls->slotCount; i++)
-     { theIM->imValueArray[i].voidValue = VoidConstant(theEnv); }
-
-   theIM->changeMap = (char *) gm2(theEnv,CountToBitMapSize(oldInstance->cls->slotCount));
-   ClearBitString((void *) theIM->changeMap,CountToBitMapSize(oldInstance->cls->slotCount));
-
+   InstanceData(theEnv)->instanceModifierError = IME_NO_ERROR;
    return theIM;
   }
 
 /*************************/
 /* IMPutSlotCLIPSInteger */
 /*************************/
-bool IMPutSlotCLIPSInteger(
+PutSlotError IMPutSlotCLIPSInteger(
   InstanceModifier *theFM,
   const char *slotName,
   CLIPSInteger *slotValue)
@@ -1736,52 +1953,58 @@ bool IMPutSlotCLIPSInteger(
 /****************/
 /* IMPutSlotInt */
 /****************/
-bool IMPutSlotInt(
+PutSlotError IMPutSlotInt(
   InstanceModifier *theIM,
   const char *slotName,
   int intValue)
   {
    CLIPSValue theValue;
-   CLIPSInteger *slotValue = CreateInteger(theIM->imEnv,intValue);
    
-   theValue.integerValue = slotValue;
+   if (theIM == NULL)
+     { return PSE_NULL_POINTER_ERROR; }
+     
+   theValue.integerValue = CreateInteger(theIM->imEnv,intValue);
    return IMPutSlot(theIM,slotName,&theValue);
   }
 
 /*****************/
 /* IMPutSlotLong */
 /*****************/
-bool IMPutSlotLong(
+PutSlotError IMPutSlotLong(
   InstanceModifier *theIM,
   const char *slotName,
   long longValue)
   {
    CLIPSValue theValue;
-   CLIPSInteger *slotValue = CreateInteger(theIM->imEnv,longValue);
    
-   theValue.integerValue = slotValue;
+   if (theIM == NULL)
+     { return PSE_NULL_POINTER_ERROR; }
+     
+   theValue.integerValue = CreateInteger(theIM->imEnv,longValue);
    return IMPutSlot(theIM,slotName,&theValue);
   }
 
 /*********************/
 /* IMPutSlotLongLong */
 /*********************/
-bool IMPutSlotLongLong(
+PutSlotError IMPutSlotLongLong(
   InstanceModifier *theIM,
   const char *slotName,
   long long longLongValue)
   {
    CLIPSValue theValue;
-   CLIPSInteger *slotValue = CreateInteger(theIM->imEnv,longLongValue);
    
-   theValue.integerValue = slotValue;
+   if (theIM == NULL)
+     { return PSE_NULL_POINTER_ERROR; }
+     
+   theValue.integerValue = CreateInteger(theIM->imEnv,longLongValue);
    return IMPutSlot(theIM,slotName,&theValue);
   }
 
 /************************/
 /* IMPutSlotCLIPSLexeme */
 /************************/
-bool IMPutSlotCLIPSLexeme(
+PutSlotError IMPutSlotCLIPSLexeme(
   InstanceModifier *theFM,
   const char *slotName,
   CLIPSLexeme *slotValue)
@@ -1795,52 +2018,58 @@ bool IMPutSlotCLIPSLexeme(
 /*******************/
 /* IMPutSlotSymbol */
 /*******************/
-bool IMPutSlotSymbol(
+PutSlotError IMPutSlotSymbol(
   InstanceModifier *theIM,
   const char *slotName,
   const char *stringValue)
   {
    CLIPSValue theValue;
-   CLIPSLexeme *slotValue = CreateSymbol(theIM->imEnv,stringValue);
    
-   theValue.lexemeValue = slotValue;
+   if (theIM == NULL)
+     { return PSE_NULL_POINTER_ERROR; }
+     
+   theValue.lexemeValue = CreateSymbol(theIM->imEnv,stringValue);
    return IMPutSlot(theIM,slotName,&theValue);
   }
 
 /*******************/
 /* IMPutSlotString */
 /*******************/
-bool IMPutSlotString(
+PutSlotError IMPutSlotString(
   InstanceModifier *theIM,
   const char *slotName,
   const char *stringValue)
   {
    CLIPSValue theValue;
-   CLIPSLexeme *slotValue = CreateString(theIM->imEnv,stringValue);
    
-   theValue.lexemeValue = slotValue;
+   if (theIM == NULL)
+     { return PSE_NULL_POINTER_ERROR; }
+     
+   theValue.lexemeValue = CreateString(theIM->imEnv,stringValue);
    return IMPutSlot(theIM,slotName,&theValue);
   }
 
 /*************************/
 /* IMPutSlotInstanceName */
 /*************************/
-bool IMPutSlotInstanceName(
+PutSlotError IMPutSlotInstanceName(
   InstanceModifier *theIM,
   const char *slotName,
   const char *stringValue)
   {
    CLIPSValue theValue;
-   CLIPSLexeme *slotValue = CreateInstanceName(theIM->imEnv,stringValue);
    
-   theValue.lexemeValue = slotValue;
+   if (theIM == NULL)
+     { return PSE_NULL_POINTER_ERROR; }
+     
+   theValue.lexemeValue = CreateInstanceName(theIM->imEnv,stringValue);
    return IMPutSlot(theIM,slotName,&theValue);
   }
 
 /***********************/
 /* IMPutSlotCLIPSFloat */
 /***********************/
-bool IMPutSlotCLIPSFloat(
+PutSlotError IMPutSlotCLIPSFloat(
   InstanceModifier *theFM,
   const char *slotName,
   CLIPSFloat *slotValue)
@@ -1854,37 +2083,41 @@ bool IMPutSlotCLIPSFloat(
 /******************/
 /* IMPutSlotFloat */
 /******************/
-bool IMPutSlotFloat(
+PutSlotError IMPutSlotFloat(
   InstanceModifier *theIM,
   const char *slotName,
   float floatValue)
   {
    CLIPSValue theValue;
-   CLIPSFloat *slotValue = CreateFloat(theIM->imEnv,floatValue);
    
-   theValue.floatValue = slotValue;
+   if (theIM == NULL)
+     { return PSE_NULL_POINTER_ERROR; }
+     
+   theValue.floatValue = CreateFloat(theIM->imEnv,floatValue);
    return IMPutSlot(theIM,slotName,&theValue);
   }
 
 /*******************/
 /* IMPutSlotDouble */
 /*******************/
-bool IMPutSlotDouble(
+PutSlotError IMPutSlotDouble(
   InstanceModifier *theIM,
   const char *slotName,
   double doubleValue)
   {
    CLIPSValue theValue;
-   CLIPSFloat *slotValue = CreateFloat(theIM->imEnv,doubleValue);
    
-   theValue.floatValue = slotValue;
+   if (theIM == NULL)
+     { return PSE_NULL_POINTER_ERROR; }
+     
+   theValue.floatValue = CreateFloat(theIM->imEnv,doubleValue);
    return IMPutSlot(theIM,slotName,&theValue);
   }
 
 /*****************/
 /* IMPutSlotFact */
 /*****************/
-bool IMPutSlotFact(
+PutSlotError IMPutSlotFact(
   InstanceModifier *theFM,
   const char *slotName,
   Fact *slotValue)
@@ -1898,7 +2131,7 @@ bool IMPutSlotFact(
 /*********************/
 /* IMPutSlotInstance */
 /*********************/
-bool IMPutSlotInstance(
+PutSlotError IMPutSlotInstance(
   InstanceModifier *theFM,
   const char *slotName,
   Instance *slotValue)
@@ -1912,7 +2145,7 @@ bool IMPutSlotInstance(
 /****************************/
 /* IMPutSlotExternalAddress */
 /****************************/
-bool IMPutSlotExternalAddress(
+PutSlotError IMPutSlotExternalAddress(
   InstanceModifier *theFM,
   const char *slotName,
   CLIPSExternalAddress *slotValue)
@@ -1926,7 +2159,7 @@ bool IMPutSlotExternalAddress(
 /***********************/
 /* IMPutSlotMultifield */
 /***********************/
-bool IMPutSlotMultifield(
+PutSlotError IMPutSlotMultifield(
   InstanceModifier *theFM,
   const char *slotName,
   Multifield *slotValue)
@@ -1940,16 +2173,37 @@ bool IMPutSlotMultifield(
 /**************/
 /* IMPutSlot: */
 /**************/
-bool IMPutSlot(
+PutSlotError IMPutSlot(
   InstanceModifier *theIM,
   const char *slotName,
   CLIPSValue *slotValue)
   {
-   Environment *theEnv = theIM->imEnv;
+   Environment *theEnv;
    int whichSlot;
    CLIPSValue oldValue;
    CLIPSValue oldInstanceValue;
    unsigned int i;
+   SlotDescriptor *theSlot;
+   ConstraintViolationType cvType;
+   
+   /*==========================*/
+   /* Check for NULL pointers. */
+   /*==========================*/
+
+   if ((theIM == NULL) || (slotName == NULL) || (slotValue == NULL))
+     { return PSE_NULL_POINTER_ERROR; }
+     
+   if ((theIM->imOldInstance == NULL) || (slotValue->value == NULL))
+     { return PSE_NULL_POINTER_ERROR; }
+   
+   theEnv = theIM->imEnv;
+
+   /*======================================*/
+   /* Deleted instances can't be modified. */
+   /*======================================*/
+   
+   if (theIM->imOldInstance->garbage)
+     { return PSE_INVALID_TARGET_ERROR; }
 
    /*===================================*/
    /* Make sure the slot name requested */
@@ -1958,17 +2212,56 @@ bool IMPutSlot(
 
    whichSlot = FindInstanceTemplateSlot(theEnv,theIM->imOldInstance->cls,CreateSymbol(theIM->imEnv,slotName));
    if (whichSlot == -1)
-     { return false; }
+     { return PSE_SLOT_NOT_FOUND_ERROR; }
+   theSlot = theIM->imOldInstance->cls->instanceTemplate[whichSlot];
 
    /*=============================================*/
    /* Make sure a single field value is not being */
    /* stored in a multifield slot or vice versa.  */
    /*=============================================*/
-/*
-   if (((theSlot->multislot == 0) && (slotValue->header->type == MULTIFIELD_TYPE)) ||
-       ((theSlot->multislot == 1) && (slotValue->header->type != MULTIFIELD_TYPE)))
-     { return false; }
-*/
+
+   if (((theSlot->multiple == 0) && (slotValue->header->type == MULTIFIELD_TYPE)) ||
+       ((theSlot->multiple == 1) && (slotValue->header->type != MULTIFIELD_TYPE)))
+     { return PSE_CARDINALITY_ERROR; }
+     
+   /*=================================*/
+   /* Check constraints for the slot. */
+   /*=================================*/
+
+   if (theSlot->constraint != NULL)
+     {
+      if ((cvType = ConstraintCheckValue(theEnv,slotValue->header->type,slotValue->value,theSlot->constraint)) != NO_VIOLATION)
+        {
+         switch(cvType)
+           {
+            case NO_VIOLATION:
+            case FUNCTION_RETURN_TYPE_VIOLATION:
+              SystemError(theEnv,"INSMNGR",2);
+              ExitRouter(theEnv,EXIT_FAILURE);
+              break;
+              
+            case TYPE_VIOLATION:
+              return PSE_TYPE_ERROR;
+              
+            case RANGE_VIOLATION:
+              return PSE_RANGE_ERROR;
+              
+            case ALLOWED_VALUES_VIOLATION:
+              return PSE_ALLOWED_VALUES_ERROR;
+              
+            case CARDINALITY_VIOLATION:
+              return PSE_CARDINALITY_ERROR;
+            
+            case ALLOWED_CLASSES_VIOLATION:
+              return PSE_ALLOWED_CLASSES_ERROR;
+           }
+        }
+     }
+
+   /*===========================*/
+   /* Set up the change arrays. */
+   /*===========================*/
+
    if (theIM->imValueArray == NULL)
      {
       theIM->imValueArray = (CLIPSValue *) gm2(theIM->imEnv,sizeof(CLIPSValue) * theIM->imOldInstance->cls->slotCount);
@@ -1998,11 +2291,11 @@ bool IMPutSlot(
            { ReturnMultifield(theIM->imEnv,oldValue.multifieldValue); }
          theIM->imValueArray[whichSlot].voidValue = theIM->imEnv->VoidConstant;
          ClearBitMap(theIM->changeMap,whichSlot);
-         return true;
+         return PSE_NO_ERROR;
         }
 
       if (MultifieldsEqual(oldValue.multifieldValue,slotValue->multifieldValue))
-        { return true; }
+        { return PSE_NO_ERROR; }
      }
    else
      {
@@ -2011,11 +2304,11 @@ bool IMPutSlot(
          Release(theIM->imEnv,oldValue.header);
          theIM->imValueArray[whichSlot].voidValue = theIM->imEnv->VoidConstant;
          ClearBitMap(theIM->changeMap,whichSlot);
-         return true;
+         return PSE_NO_ERROR;
         }
         
       if (oldValue.value == slotValue->value)
-        { return true; }
+        { return PSE_NO_ERROR; }
      }
 
    SetBitMap(theIM->changeMap,whichSlot);
@@ -2032,7 +2325,7 @@ bool IMPutSlot(
 
    Retain(theIM->imEnv,theIM->imValueArray[whichSlot].header);
 
-   return true;
+   return PSE_NO_ERROR;
   }
 
 /*************/
@@ -2041,25 +2334,56 @@ bool IMPutSlot(
 Instance *IMModify(
   InstanceModifier *theIM)
   {
-   Instance *rv = theIM->imOldInstance;
+   Environment *theEnv;
 #if DEFRULE_CONSTRUCT
    bool ov;
 #endif
 
+   if (theIM == NULL)
+     { return NULL; }
+     
+   theEnv = theIM->imEnv;
+   
+   if (theIM->imOldInstance == NULL)
+     {
+      InstanceData(theEnv)->instanceModifierError = IME_NULL_POINTER_ERROR;
+      return NULL;
+     }
+
+   if (theIM->imOldInstance->garbage)
+     {
+      InstanceData(theEnv)->instanceModifierError = IME_DELETED_ERROR;
+      return NULL;
+     }
+
+   if (theIM->changeMap == NULL)
+     { return theIM->imOldInstance; }
+     
    if (! BitStringHasBitsSet(theIM->changeMap,CountToBitMapSize(theIM->imOldInstance->cls->slotCount)))
      { return theIM->imOldInstance; }
 
 #if DEFRULE_CONSTRUCT
    ov = SetDelayObjectPatternMatching(theIM->imEnv,true);
 #endif
+
    IMModifySlots(theIM->imEnv,theIM->imOldInstance,theIM->imValueArray);
+
+   if ((InstanceData(theEnv)->makeInstanceError == MIE_RULE_NETWORK_ERROR) ||
+       (InstanceData(theEnv)->unmakeInstanceError == UIE_RULE_NETWORK_ERROR))
+     { InstanceData(theEnv)->instanceModifierError = IME_RULE_NETWORK_ERROR; }
+   else if ((InstanceData(theEnv)->unmakeInstanceError == UIE_COULD_NOT_DELETE_ERROR) ||
+            (InstanceData(theEnv)->makeInstanceError == MIE_COULD_NOT_CREATE_ERROR))
+     { InstanceData(theEnv)->instanceModifierError = IME_COULD_NOT_MODIFY_ERROR; }
+   else
+     { InstanceData(theEnv)->instanceModifierError = IME_NO_ERROR; }
+
 #if DEFRULE_CONSTRUCT
    SetDelayObjectPatternMatching(theIM->imEnv,ov);
 #endif
 
    IMAbort(theIM);
    
-   return rv;
+   return theIM->imOldInstance;
   }
 
 /*****************/
@@ -2091,7 +2415,7 @@ static bool IMModifySlots(
       else
         { CLIPSToUDFValue(&overrides[i],&temp); }
         
-      if (PutSlotValue(theEnv,theInstance,insSlot,&temp,&junk,"InstanceModifier call") == false)
+      if (PutSlotValue(theEnv,theInstance,insSlot,&temp,&junk,"InstanceModifier call") != PSE_NO_ERROR)
         { return false; }
      }
      
@@ -2111,14 +2435,17 @@ void IMDispose(
    /* Clear the value array. */
    /*========================*/
    
-   for (i = 0; i < theIM->imOldInstance->cls->slotCount; i++)
+   if (theIM->imOldInstance != NULL)
      {
-      Release(theEnv,theIM->imValueArray[i].header);
+      for (i = 0; i < theIM->imOldInstance->cls->slotCount; i++)
+        {
+         Release(theEnv,theIM->imValueArray[i].header);
 
-      if (theIM->imValueArray[i].header->type == MULTIFIELD_TYPE)
-        { ReturnMultifield(theEnv,theIM->imValueArray[i].multifieldValue); }
+         if (theIM->imValueArray[i].header->type == MULTIFIELD_TYPE)
+           { ReturnMultifield(theEnv,theIM->imValueArray[i].multifieldValue); }
+        }
      }
-   
+
    /*=====================================*/
    /* Return the value and change arrays. */
    /*=====================================*/
@@ -2144,9 +2471,18 @@ void IMDispose(
 void IMAbort(
   InstanceModifier *theIM)
   {
-   Environment *theEnv = theIM->imEnv;
+   GCBlock gcb;
+   Environment *theEnv;
    unsigned int i;
    
+   if (theIM == NULL) return;
+   
+   if (theIM->imOldInstance == NULL) return;
+   
+   theEnv = theIM->imEnv;
+   
+   GCBlockStart(theEnv,&gcb);
+
    for (i = 0; i < theIM->imOldInstance->cls->slotCount; i++)
      {
       Release(theEnv,theIM->imValueArray[i].header);
@@ -2156,64 +2492,99 @@ void IMAbort(
         
       theIM->imValueArray[i].voidValue = theIM->imEnv->VoidConstant;
      }
+        
+   if (theIM->changeMap != NULL)
+     { ClearBitString((void *) theIM->changeMap,CountToBitMapSize(theIM->imOldInstance->cls->slotCount)); }
      
-   ClearBitString((void *) theIM->changeMap,CountToBitMapSize(theIM->imOldInstance->cls->slotCount));
+   GCBlockEnd(theEnv,&gcb);
   }
 
 /******************/
 /* IMSetInstance: */
 /******************/
-bool IMSetInstance(
+InstanceModifierError IMSetInstance(
   InstanceModifier *theIM,
   Instance *oldInstance)
   {
-   Environment *theEnv = theIM->imEnv;
-   unsigned int currentSlotCount = theIM->imOldInstance->cls->slotCount;
+   Environment *theEnv;
+   unsigned int currentSlotCount, newSlotCount;
    unsigned int i;
+      
+   if (theIM == NULL)
+     { return IME_NULL_POINTER_ERROR; }
+     
+   theEnv = theIM->imEnv;
+
+   /*=============================================*/
+   /* Modifiers can only be created for instances */
+   /* that have not been deleted.                 */
+   /*=============================================*/
    
-   /*=================================================*/
-   /* Modifiers can only be created for non-retracted */
-   /* deftemplate facts with at least one slot.       */
-   /*=================================================*/
-   
-   if (oldInstance->garbage) return false;
-   if (oldInstance->cls->slotCount == 0) return false;
+   if (oldInstance != NULL)
+     {
+      if (oldInstance->garbage)
+        {
+         InstanceData(theEnv)->instanceModifierError = IME_DELETED_ERROR;
+         return IME_DELETED_ERROR;
+        }
+     }
 
    /*========================*/
    /* Clear the value array. */
    /*========================*/
    
-   for (i = 0; i < theIM->imOldInstance->cls->slotCount; i++)
+   if (theIM->imValueArray != NULL)
      {
-      Release(theEnv,theIM->imValueArray[i].header);
+      for (i = 0; i < theIM->imOldInstance->cls->slotCount; i++)
+        {
+         Release(theEnv,theIM->imValueArray[i].header);
 
-      if (theIM->imValueArray[i].header->type == MULTIFIELD_TYPE)
-        { ReturnMultifield(theEnv,theIM->imValueArray[i].multifieldValue); }
+         if (theIM->imValueArray[i].header->type == MULTIFIELD_TYPE)
+           { ReturnMultifield(theEnv,theIM->imValueArray[i].multifieldValue); }
+        }
      }
 
    /*==================================================*/
    /* Resize the value and change arrays if necessary. */
    /*==================================================*/
    
-   if (oldInstance->cls->slotCount != currentSlotCount)
+   if (theIM->imOldInstance == NULL)
+     { currentSlotCount = 0; }
+   else
+     { currentSlotCount = theIM->imOldInstance->cls->slotCount; }
+
+   if (oldInstance == NULL)
+     { newSlotCount = 0; }
+   else
+     { newSlotCount = oldInstance->cls->slotCount; }
+
+   if (newSlotCount != currentSlotCount)
      {
       if (theIM->imValueArray != NULL)
         { rm(theEnv,theIM->imValueArray,sizeof(CLIPSValue) * currentSlotCount); }
       
       if (theIM->changeMap != NULL)
         { rm(theEnv,(void *) theIM->changeMap,currentSlotCount); }
-        
-      theIM->imValueArray = (CLIPSValue *) gm2(theEnv,sizeof(CLIPSValue) * oldInstance->cls->slotCount);
-      theIM->changeMap = (char *) gm2(theEnv,CountToBitMapSize(oldInstance->cls->slotCount));
+      
+      if (oldInstance->cls->slotCount == 0)
+        {
+         theIM->imValueArray = NULL;
+         theIM->changeMap = NULL;
+        }
+      else
+        {
+         theIM->imValueArray = (CLIPSValue *) gm2(theEnv,sizeof(CLIPSValue) * newSlotCount);
+         theIM->changeMap = (char *) gm2(theEnv,CountToBitMapSize(newSlotCount));
+        }
      }
    
    /*=================================*/
    /* Update the fact being modified. */
    /*=================================*/
    
+   RetainInstance(oldInstance);
    ReleaseInstance(theIM->imOldInstance);
    theIM->imOldInstance = oldInstance;
-   RetainInstance(theIM->imOldInstance);
    
    /*=========================================*/
    /* Initialize the value and change arrays. */
@@ -2222,13 +2593,24 @@ bool IMSetInstance(
    for (i = 0; i < theIM->imOldInstance->cls->slotCount; i++)
      { theIM->imValueArray[i].voidValue = theIM->imEnv->VoidConstant; }
    
-   ClearBitString((void *) theIM->changeMap,CountToBitMapSize(theIM->imOldInstance->cls->slotCount));
+   if (newSlotCount != 0)
+     { ClearBitString((void *) theIM->changeMap,CountToBitMapSize(theIM->imOldInstance->cls->slotCount)); }
 
    /*================================================================*/
    /* Return true to indicate the modifier was successfully created. */
    /*================================================================*/
    
-   return true;
+   InstanceData(theEnv)->instanceModifierError = IME_NO_ERROR;
+   return IME_NO_ERROR;
+  }
+
+/************/
+/* IMError: */
+/************/
+InstanceModifierError IMError(
+  Environment *theEnv)
+  {
+   return InstanceData(theEnv)->instanceModifierError;
   }
 
 #endif

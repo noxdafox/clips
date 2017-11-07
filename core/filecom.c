@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  03/29/17            */
+   /*             CLIPS Version 6.40  10/24/17            */
    /*                                                     */
    /*                 FILE COMMANDS MODULE                */
    /*******************************************************/
@@ -256,7 +256,7 @@ void LoadCommand(
   {
 #if (! BLOAD_ONLY) && (! RUN_TIME)
    const char *theFileName;
-   int rv;
+   LoadError rv;
 
    if ((theFileName = GetFileName(context)) == NULL)
      {
@@ -267,7 +267,7 @@ void LoadCommand(
    if (CommandLineData(theEnv)->EvaluatingTopLevelCommand)
      { SetPrintWhileLoading(theEnv,true); }
 
-   if ((rv = Load(theEnv,theFileName)) == 0)
+   if ((rv = Load(theEnv,theFileName)) == LE_OPEN_FILE_ERROR)
      {
       SetPrintWhileLoading(theEnv,false);
       OpenErrorMessage(theEnv,"load",theFileName);
@@ -278,7 +278,7 @@ void LoadCommand(
    if (CommandLineData(theEnv)->EvaluatingTopLevelCommand)
      { SetPrintWhileLoading(theEnv,false); }
 
-   if (rv == -1) returnValue->lexemeValue = FalseSymbol(theEnv);
+   if (rv == LE_PARSING_ERROR) returnValue->lexemeValue = FalseSymbol(theEnv);
    else returnValue->lexemeValue = TrueSymbol(theEnv);
 #else
    WriteString(theEnv,STDOUT,"Load is not available in this environment\n");
@@ -296,7 +296,7 @@ void LoadStarCommand(
   {
 #if (! BLOAD_ONLY) && (! RUN_TIME)
    const char *theFileName;
-   int rv;
+   LoadError rv;
 
    if ((theFileName = GetFileName(context)) == NULL)
      {
@@ -304,14 +304,14 @@ void LoadStarCommand(
       return;
      }
 
-   if ((rv = Load(theEnv,theFileName)) == 0)
+   if ((rv = Load(theEnv,theFileName)) == LE_OPEN_FILE_ERROR)
      {
       OpenErrorMessage(theEnv,"load*",theFileName);
       returnValue->lexemeValue = FalseSymbol(theEnv);
       return;
      }
 
-   if (rv == -1) returnValue->lexemeValue = FalseSymbol(theEnv);
+   if (rv == LE_PARSING_ERROR) returnValue->lexemeValue = FalseSymbol(theEnv);
    else returnValue->lexemeValue = TrueSymbol(theEnv);
 #else
    WriteString(theEnv,STDOUT,"Load* is not available in this environment\n");

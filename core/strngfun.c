@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  10/04/17             */
+   /*            CLIPS Version 6.40  10/26/17             */
    /*                                                     */
    /*            STRING_TYPE FUNCTIONS MODULE             */
    /*******************************************************/
@@ -708,7 +708,7 @@ void EvalFunction(
 /* Eval: C access routine   */
 /*   for the eval function. */
 /****************************/
-bool Eval(
+EvalError Eval(
   Environment *theEnv,
   const char *theString,
   CLIPSValue *returnValue)
@@ -744,11 +744,8 @@ bool Eval(
    gensprintf(logicalNameBuffer,"Eval-%d",depth);
    if (OpenStringSource(theEnv,logicalNameBuffer,theString,0) == 0)
      {
-      GCBlockEnd(theEnv,&gcb);
-      if (returnValue != NULL)
-        { returnValue->lexemeValue = FalseSymbol(theEnv); }
-      depth--;
-      return false;
+      SystemError(theEnv,"STRNGFUN",1);
+      ExitRouter(theEnv,EXIT_FAILURE);
      }
 
    /*================================================*/
@@ -789,27 +786,7 @@ bool Eval(
         { returnValue->lexemeValue = FalseSymbol(theEnv); }
       depth--;
       ConstructData(theEnv)->DanglingConstructs = danglingConstructs;
-      return false;
-     }
-
-   /*==============================================*/
-   /* The sequence expansion operator must be used */
-   /* within the argument list of a function call. */
-   /*==============================================*/
-
-   if ((top->type == MF_GBL_VARIABLE) || (top->type == MF_VARIABLE))
-     {
-      PrintErrorID(theEnv,"MISCFUN",1,false);
-      WriteString(theEnv,STDERR,"Sequence expansion must be used in the argument list of a function call.\n");
-      SetEvaluationError(theEnv,true);
-      CloseStringSource(theEnv,logicalNameBuffer);
-      GCBlockEnd(theEnv,&gcb);
-      if (returnValue != NULL)
-        { returnValue->lexemeValue = FalseSymbol(theEnv); }
-      ReturnExpression(theEnv,top);
-      depth--;
-      ConstructData(theEnv)->DanglingConstructs = danglingConstructs;
-      return false;
+      return EE_PARSING_ERROR;
      }
 
    /*====================================*/
@@ -864,8 +841,9 @@ bool Eval(
    if (returnValue != NULL)
      { returnValue->value = evalResult.value; }
    
-   if (GetEvaluationError(theEnv)) return false;
-   return true;
+   if (GetEvaluationError(theEnv)) return EE_PROCESSING_ERROR;
+   
+   return EE_NO_ERROR;
   }
 
 #if (! RUN_TIME) && (! BLOAD_ONLY)
@@ -879,6 +857,7 @@ void BuildFunction(
   UDFValue *returnValue)
   {
    UDFValue theArg;
+   BuildError rv;
 
    /*==================================================*/
    /* The argument should be of type SYMBOL or STRING. */
@@ -891,14 +870,15 @@ void BuildFunction(
    /* Build the construct. */
    /*======================*/
 
-   returnValue->lexemeValue = CreateBoolean(theEnv,(Build(theEnv,theArg.lexemeValue->contents)));
+   rv = Build(theEnv,theArg.lexemeValue->contents);
+   returnValue->lexemeValue = CreateBoolean(theEnv,(rv == BE_NO_ERROR));
   }
 
 /*****************************/
 /* Build: C access routine   */
 /*   for the build function. */
 /*****************************/
-bool Build(
+BuildError Build(
   Environment *theEnv,
   const char *theString)
   {
@@ -919,7 +899,7 @@ bool Build(
    /*====================================================*/
 
 #if DEFRULE_CONSTRUCT
-   if (EngineData(theEnv)->JoinOperationInProgress) return false;
+   if (EngineData(theEnv)->JoinOperationInProgress) return BE_COULD_NOT_BUILD_ERROR;
 #endif
 
    /*===========================================*/
@@ -928,7 +908,7 @@ bool Build(
    /*===========================================*/
 
    if (OpenStringSource(theEnv,"build",theString,0) == 0)
-     { return false; }
+     { return BE_COULD_NOT_BUILD_ERROR; }
 
    /*===================================*/
    /* Start a garbage collection block. */
@@ -947,7 +927,7 @@ bool Build(
      {
       CloseStringSource(theEnv,"build");
       GCBlockEnd(theEnv,&gcb);
-      return false;
+      return BE_PARSING_ERROR;
      }
 
    /*==============================================*/
@@ -959,7 +939,7 @@ bool Build(
      {
       CloseStringSource(theEnv,"build");
       GCBlockEnd(theEnv,&gcb);
-      return false;
+      return BE_PARSING_ERROR;
      }
 
    constructType = theToken.lexemeValue->contents;
@@ -996,14 +976,14 @@ bool Build(
    
    GCBlockEnd(theEnv,&gcb);
 
-   /*===============================================*/
-   /* Return true if the construct was successfully */
-   /* parsed, otherwise return false.               */
-   /*===============================================*/
+   /*===================================================*/
+   /* Return the error code from parsing the construct. */
+   /*===================================================*/
 
-   if (errorFlag == 0) return true;
+   if (errorFlag == 1) return BE_PARSING_ERROR;
+   else if (errorFlag == -1) return BE_CONSTRUCT_NOT_FOUND_ERROR;
 
-   return false;
+   return BE_NO_ERROR;
   }
 #else
 /**************************************************/

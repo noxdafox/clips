@@ -228,13 +228,16 @@ CLIPS> (defrule blah                      ; DR0630
 CLIPS> (assert (i-f))                     ; DR0630
 
 [FACTMNGR1] Facts may not be retracted during pattern-matching.
+
+[DRIVE1] This error occurred in the join network.
+   Problem resides in associated join
+      Of pattern #1 in rule blah
+
 <Fact-1>
 CLIPS> (facts)                            ; DR0630
 f-1     (i-f)
 For a total of 1 fact.
 CLIPS> (agenda)                           ; DR0630
-0      blah: f-1
-For a total of 1 activation.
 CLIPS> (clear)                            ; DR0630
 CLIPS> (assert (i-f))                     ; DR0630
 <Fact-1>
@@ -244,12 +247,15 @@ CLIPS> (defrule blah                      ; DR0630
    =>)
 
 [FACTMNGR1] Facts may not be retracted during pattern-matching.
+
+[DRIVE1] This error occurred in the join network.
+   Problem resides in associated join
+      Of pattern #1 in rule blah
+
 CLIPS> (facts)                            ; DR0630
 f-1     (i-f)
 For a total of 1 fact.
 CLIPS> (agenda)                           ; DR0630
-0      blah: f-1
-For a total of 1 activation.
 CLIPS> (clear)                            ; DR0634
 CLIPS> (deffunction foo ()                ; DR0634
    (bind ?i 1000)                  ; DR0634

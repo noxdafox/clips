@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  10/18/16             */
+   /*            CLIPS Version 6.40  11/07/17             */
    /*                                                     */
    /*        INSTANCE MODIFY AND DUPLICATE MODULE         */
    /*******************************************************/
@@ -837,7 +837,7 @@ static void ModifyMsgHandlerSupport(
            }
          else
            newval = slotOverrides;
-         if (PutSlotValue(theEnv,ins,insSlot,newval,&junk,"modify-instance") == false)
+         if (PutSlotValue(theEnv,ins,insSlot,newval,&junk,"modify-instance") != PSE_NO_ERROR)
            return;
         }
 
@@ -961,7 +961,7 @@ static void DuplicateMsgHandlerSupport(
            }
          else
            newval = slotOverrides;
-         if (PutSlotValue(theEnv,dstins,dstInsSlot,newval,&junk,"duplicate-instance") == false)
+         if (PutSlotValue(theEnv,dstins,dstInsSlot,newval,&junk,"duplicate-instance") != PSE_NO_ERROR)
            goto DuplicateError;
         }
       dstInsSlot->override = true;
@@ -1000,7 +1000,7 @@ static void DuplicateMsgHandlerSupport(
                temp.range = srcins->slots[i].multifieldValue->length;
               }
             if (PutSlotValue(theEnv,dstins,&dstins->slots[i],&temp,&junk,"duplicate-instance")
-                 == false)
+                 != PSE_NO_ERROR)
               goto DuplicateError;
            }
         }

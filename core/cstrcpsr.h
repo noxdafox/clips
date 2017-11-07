@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  10/11/17            */
+   /*             CLIPS Version 6.40  10/26/17            */
    /*                                                     */
    /*              CONSTRUCT PARSER MODULE                */
    /*******************************************************/
@@ -60,8 +60,15 @@
 
 #define _H_cstrcpsr
 
+typedef enum
+  {
+   LE_NO_ERROR = 0,
+   LE_OPEN_FILE_ERROR,
+   LE_PARSING_ERROR,
+  } LoadError;
+
 #if (! RUN_TIME) && (! BLOAD_ONLY)
-   int                            Load(Environment *,const char *);
+   LoadError                      Load(Environment *,const char *);
    bool                           LoadConstructsFromLogicalName(Environment *,const char *);
    bool                           LoadFromString(Environment *,const char *,size_t);
    int                            ParseConstruct(Environment *,const char *,const char *);

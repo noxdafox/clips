@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  10/20/17             */
+   /*            CLIPS Version 6.40  10/24/17             */
    /*                                                     */
    /*               EXTERNAL FUNCTION MODULE              */
    /*******************************************************/
@@ -81,7 +81,7 @@
    static void                    DeallocateExternalFunctionData(Environment *);
 #if (! RUN_TIME)
    static bool                    RemoveHashFunction(Environment *,struct functionDefinition *);
-   static bool                    DefineFunction(Environment *,const char *,unsigned,void (*)(Environment *,UDFContext *,UDFValue *),
+   static AddUDFError             DefineFunction(Environment *,const char *,unsigned,void (*)(Environment *,UDFContext *,UDFValue *),
                                                  const char *,unsigned short,unsigned short,const char *,void *);
 #endif
    static void                    PrintType(Environment *,const char *,int,int *,const char *);
@@ -143,7 +143,7 @@ static void DeallocateExternalFunctionData(
 /* AddUDF: Used to define a system or user external */
 /*   function so that the KB can access it.         */
 /****************************************************/
-bool AddUDF(
+AddUDFError AddUDF(
   Environment *theEnv,
   const char *clipsFunctionName,
   const char *returnTypes,
@@ -155,9 +155,30 @@ bool AddUDF(
   void *context)
   {
    unsigned returnTypeBits;
+   size_t i;
 
+   if ((minArgs != UNBOUNDED) && (minArgs > maxArgs))
+     { return AUE_MIN_EXCEEDS_MAX_ERROR; }
+
+   if (argumentTypes != NULL)
+     {
+      for (i = 0; argumentTypes[i] != EOS; i++)
+        {
+         if (strchr("bdefilmnsyv*;",argumentTypes[i]) == NULL)
+           { return AUE_INVALID_ARGUMENT_TYPE_ERROR; }
+        }
+     }
+     
    if (returnTypes != NULL)
-     { PopulateRestriction(theEnv,&returnTypeBits,ANY_TYPE_BITS,returnTypes,0); }
+     {
+      for (i = 0; returnTypes[i] != EOS; i++)
+        {
+         if (strchr("bdefilmnsyv*;",returnTypes[i]) == NULL)
+           { return AUE_INVALID_RETURN_TYPE_ERROR; }
+        }
+
+      PopulateRestriction(theEnv,&returnTypeBits,ANY_TYPE_BITS,returnTypes,0);
+     }
    else
      { returnTypeBits = ANY_TYPE_BITS; }
 
@@ -170,7 +191,7 @@ bool AddUDF(
 /*   function so that the KB can access it. Allows argument  */
 /*   restrictions to be attached to the function.            */
 /*************************************************************/
-static bool DefineFunction(
+static AddUDFError DefineFunction(
   Environment *theEnv,
   const char *name,
   unsigned returnTypeBits,
@@ -184,7 +205,8 @@ static bool DefineFunction(
    struct functionDefinition *newFunction;
 
    newFunction = FindFunction(theEnv,name);
-   if (newFunction != NULL) return false;
+   if (newFunction != NULL)
+     { return AUE_FUNCTION_NAME_IN_USE_ERROR; }
 
    newFunction = get_struct(theEnv,functionDefinition);
    newFunction->callFunctionName = CreateSymbol(theEnv,name);
@@ -214,7 +236,7 @@ static bool DefineFunction(
    newFunction->usrData = NULL;
    newFunction->context = context;
 
-   return true;
+   return AUE_NO_ERROR;
   }
 
 /********************************************/

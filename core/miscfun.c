@@ -195,7 +195,7 @@ void MiscFunctionDefinitions(
    AddUDF(theEnv,"call","*",1,UNBOUNDED,"*",CallFunction,"CallFunction",NULL);
    AddUDF(theEnv,"timer","d",0,UNBOUNDED,NULL,TimerFunction,"TimerFunction",NULL);
 #if DEFTEMPLATE_CONSTRUCT
-   AddUDF(theEnv,"(slot-value)","*",3,3,"y;z",SlotValueFunction,"SlotValueFunction",NULL);
+   AddUDF(theEnv,"(slot-value)","*",3,3,"y;f",SlotValueFunction,"SlotValueFunction",NULL);
 #endif
 #endif
   }
