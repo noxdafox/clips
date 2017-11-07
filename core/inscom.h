@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  08/25/16            */
+   /*             CLIPS Version 6.40  11/07/17            */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -65,6 +65,42 @@
 
 #define _H_inscom
 
+typedef enum
+  {
+   UIE_NO_ERROR = 0,
+   UIE_NULL_POINTER_ERROR,
+   UIE_COULD_NOT_DELETE_ERROR,
+   UIE_DELETED_ERROR,
+   UIE_RULE_NETWORK_ERROR
+  } UnmakeInstanceError;
+
+typedef enum
+  {
+   MIE_NO_ERROR = 0,
+   MIE_NULL_POINTER_ERROR,
+   MIE_PARSING_ERROR,
+   MIE_COULD_NOT_CREATE_ERROR,
+   MIE_RULE_NETWORK_ERROR
+  } MakeInstanceError;
+
+typedef enum
+  {
+   IBE_NO_ERROR = 0,
+   IBE_NULL_POINTER_ERROR,
+   IBE_DEFCLASS_NOT_FOUND_ERROR,
+   IBE_COULD_NOT_CREATE_ERROR,
+   IBE_RULE_NETWORK_ERROR
+  } InstanceBuilderError;
+
+typedef enum
+  {
+   IME_NO_ERROR = 0,
+   IME_NULL_POINTER_ERROR,
+   IME_DELETED_ERROR,
+   IME_COULD_NOT_MODIFY_ERROR,
+   IME_RULE_NETWORK_ERROR
+  } InstanceModifierError;
+
 #include "insfun.h"
 #include "object.h"
 
@@ -84,27 +120,32 @@ struct instanceData
    Instance *CurrentInstance;
    Instance *InstanceListBottom;
    bool ObjectModDupMsgValid;
+   UnmakeInstanceError unmakeInstanceError;
+   MakeInstanceError makeInstanceError;
+   InstanceModifierError instanceModifierError;
+   InstanceBuilderError instanceBuilderError;
   };
 
 #define InstanceData(theEnv) ((struct instanceData *) GetEnvironmentData(theEnv,INSTANCE_DATA))
 
    void                           SetupInstances(Environment *);
-   bool                           DeleteInstance(Instance *);
-   bool                           DeleteAllInstances(Environment *);
-   bool                           UnmakeInstance(Instance *);
+   UnmakeInstanceError            DeleteInstance(Instance *);
+   UnmakeInstanceError            DeleteAllInstances(Environment *);
+   UnmakeInstanceError            UnmakeInstance(Instance *);
    bool                           UnmakeInstanceCallback(Instance *,Environment *);
-   bool                           UnmakeAllInstances(Environment *);
+   UnmakeInstanceError            UnmakeAllInstances(Environment *);
 #if DEBUGGING_FUNCTIONS
    void                           InstancesCommand(Environment *,UDFContext *,UDFValue *);
    void                           PPInstanceCommand(Environment *,UDFContext *,UDFValue *);
    void                           Instances(Environment *,const char *,Defmodule *,const char *,bool);
 #endif
    Instance                      *MakeInstance(Environment *,const char *);
+   MakeInstanceError              GetMakeInstanceError(Environment *);
    Instance                      *CreateRawInstance(Environment *,Defclass *,const char *);
    Instance                      *FindInstance(Environment *,Defmodule *,const char *,bool);
    bool                           ValidInstanceAddress(Instance *);
-   bool                           DirectGetSlot(Instance *,const char *,CLIPSValue *);
-   bool                           DirectPutSlot(Instance *,const char *,CLIPSValue *);
+   GetSlotError                   DirectGetSlot(Instance *,const char *,CLIPSValue *);
+   PutSlotError                   DirectPutSlot(Instance *,const char *,CLIPSValue *);
    const char                    *InstanceName(Instance *);
    Defclass                      *InstanceClass(Instance *);
    unsigned long                  GetGlobalNumberOfInstances(Environment *);
@@ -127,8 +168,3 @@ struct instanceData
    void                           CreateInstanceHandler(Environment *,UDFContext *,UDFValue *);
 
 #endif /* _H_inscom */
-
-
-
-
-

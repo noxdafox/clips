@@ -604,13 +604,13 @@ public class Environment
    /******************************************/
    /* addUserFunction: Adds a user function. */
    /******************************************/
-   private native boolean addUserFunction(long env,
-                                          String functionName,
-                                          String returnTypes,
-                                          int minArgs,
-                                          int maxArgs,
-                                          String restrictions,
-                                          UserFunction callback);
+   private native int addUserFunction(long env,
+                                      String functionName,
+                                      String returnTypes,
+                                      int minArgs,
+                                      int maxArgs,
+                                      String restrictions,
+                                      UserFunction callback);
      
    /*******************/
    /* addUserFunction */
@@ -633,7 +633,7 @@ public class Environment
      String restrictions,
      UserFunction callback)
      {
-      boolean rv;
+      int rv;
       
       if (functionName == null)
         { throw new NullPointerException("functionName"); }
@@ -644,9 +644,24 @@ public class Environment
       rv = addUserFunction(theEnvironment,functionName,returnTypes,
                            minArgs,maxArgs,restrictions,callback);
                                                       
-      if (! rv)
-        { throw new IllegalArgumentException("Function '" + functionName + "' already exists."); }
-     } 
+      switch (rv)
+        {
+         case 0:
+           break;
+           
+         case 1:
+           throw new IllegalArgumentException("Function '" + functionName + "' minArgs exceeds maxArgs."); 
+           
+         case 2:
+           throw new IllegalArgumentException("Function '" + functionName + "' already exists."); 
+           
+         case 3:
+           throw new IllegalArgumentException("Function '" + functionName + "' invalid argument type."); 
+           
+         case 4:
+           throw new IllegalArgumentException("Function '" + functionName + "' invalid return type."); 
+        }
+      } 
 
    /************************************************/
    /* removeUserFunction: Removes a user function. */

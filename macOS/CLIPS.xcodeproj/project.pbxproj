@@ -635,7 +635,7 @@
 		B549628F09BA9D6100697F33 /* CogDown.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = CogDown.tiff; path = Resources/CogDown.tiff; sourceTree = "<group>"; };
 		B549629009BA9D6100697F33 /* CogGreyed.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = CogGreyed.tiff; path = Resources/CogGreyed.tiff; sourceTree = "<group>"; };
 		B549629109BA9D6100697F33 /* CogUp.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = CogUp.tiff; path = Resources/CogUp.tiff; sourceTree = "<group>"; };
-		B54DCD581EE1D72400014CEC /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = "Interface_Source/Images.xcassets"; sourceTree = "<group>"; };
+		B54DCD581EE1D72400014CEC /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = Interface_Source/Images.xcassets; sourceTree = "<group>"; };
 		B571D71909D5E026003FCD41 /* CLIPSTerminalGlue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CLIPSTerminalGlue.h; path = Interface_Source/CLIPSTerminalGlue.h; sourceTree = "<group>"; };
 		B571D72409D5E0D4003FCD41 /* CLIPSTerminalGlue.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = CLIPSTerminalGlue.m; path = Interface_Source/CLIPSTerminalGlue.m; sourceTree = "<group>"; };
 		B57AFA0A0BA9F90F002491B9 /* CLIPSModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CLIPSModule.h; path = Interface_Source/CLIPSModule.h; sourceTree = "<group>"; };
@@ -1756,7 +1756,7 @@
 		2A37F4A9FDCFA73011CA2CEA /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0800;
+				LastUpgradeCheck = 0900;
 			};
 			buildConfigurationList = C05733CB08A9546B00998B17 /* Build configuration list for PBXProject "CLIPS" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -2289,12 +2289,18 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
@@ -2510,12 +2516,18 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;

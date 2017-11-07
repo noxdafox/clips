@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/25/16             */
+   /*            CLIPS Version 6.40  11/07/17             */
    /*                                                     */
    /*                 CLASS PARSER MODULE                 */
    /*******************************************************/
@@ -868,7 +868,7 @@ static bool EvaluateSlotDefaultValue(
          vPass = EvaluateAndStoreInDataObject(theEnv,sd->multiple,
                   (Expression *) sd->defaultValue,&temp,true);
          if (vPass != false)
-           vPass = ValidSlotValue(theEnv,&temp,sd,NULL,"the 'default' facet");
+           vPass = (ValidSlotValue(theEnv,&temp,sd,NULL,"the 'default' facet") == PSE_NO_ERROR);
          SetDynamicConstraintChecking(theEnv,olddcc);
          SetExecutingConstruct(theEnv,oldce);
          if (vPass)

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  08/25/16            */
+   /*             CLIPS Version 6.40  10/24/17            */
    /*                                                     */
    /*          INSTANCE PRIMITIVE SUPPORT MODULE          */
    /*******************************************************/
@@ -51,13 +51,14 @@
 #define _H_insmngr
 
 #include "object.h"
+#include "inscom.h"
 
    void                           InitializeInstanceCommand(Environment *,UDFContext *,UDFValue *);
    void                           MakeInstanceCommand(Environment *,UDFContext *,UDFValue *);
    CLIPSLexeme                   *GetFullInstanceName(Environment *,Instance *);
    Instance                      *BuildInstance(Environment *,CLIPSLexeme *,Defclass *,bool);
    void                           InitSlotsCommand(Environment *,UDFContext *,UDFValue *);
-   bool                           QuashInstance(Environment *,Instance *);
+   UnmakeInstanceError            QuashInstance(Environment *,Instance *);
 
 #if DEFRULE_CONSTRUCT && OBJECT_SYSTEM
    void                           InactiveInitializeInstance(Environment *,UDFContext *,UDFValue *);
@@ -65,58 +66,60 @@
 #endif
 
    InstanceBuilder               *CreateInstanceBuilder(Environment *,const char *);
-   bool                           IBPutSlot(InstanceBuilder *,const char *,CLIPSValue *);
+   PutSlotError                   IBPutSlot(InstanceBuilder *,const char *,CLIPSValue *);
 
    Instance                      *IBMake(InstanceBuilder *,const char *);
 
    void                           IBDispose(InstanceBuilder *);
    void                           IBAbort(InstanceBuilder *);
-   bool                           IBSetDefclass(InstanceBuilder *,const char *);
+   InstanceBuilderError           IBSetDefclass(InstanceBuilder *,const char *);
 
-   bool                           IBPutSlotCLIPSInteger(InstanceBuilder *,const char *,CLIPSInteger *);
-   bool                           IBPutSlotInt(InstanceBuilder *,const char *,int);
-   bool                           IBPutSlotLong(InstanceBuilder *,const char *,long);
-   bool                           IBPutSlotLongLong(InstanceBuilder *,const char *,long long);
+   PutSlotError                   IBPutSlotCLIPSInteger(InstanceBuilder *,const char *,CLIPSInteger *);
+   PutSlotError                   IBPutSlotInt(InstanceBuilder *,const char *,int);
+   PutSlotError                   IBPutSlotLong(InstanceBuilder *,const char *,long);
+   PutSlotError                   IBPutSlotLongLong(InstanceBuilder *,const char *,long long);
 
-   bool                           IBPutSlotCLIPSFloat(InstanceBuilder *,const char *,CLIPSFloat *);
-   bool                           IBPutSlotFloat(InstanceBuilder *,const char *,float);
-   bool                           IBPutSlotDouble(InstanceBuilder *,const char *,double);
+   PutSlotError                   IBPutSlotCLIPSFloat(InstanceBuilder *,const char *,CLIPSFloat *);
+   PutSlotError                   IBPutSlotFloat(InstanceBuilder *,const char *,float);
+   PutSlotError                   IBPutSlotDouble(InstanceBuilder *,const char *,double);
 
-   bool                           IBPutSlotCLIPSLexeme(InstanceBuilder *,const char *,CLIPSLexeme *);
-   bool                           IBPutSlotSymbol(InstanceBuilder *,const char *,const char *);
-   bool                           IBPutSlotString(InstanceBuilder *,const char *,const char *);
-   bool                           IBPutSlotInstanceName(InstanceBuilder *,const char *,const char *);
+   PutSlotError                   IBPutSlotCLIPSLexeme(InstanceBuilder *,const char *,CLIPSLexeme *);
+   PutSlotError                   IBPutSlotSymbol(InstanceBuilder *,const char *,const char *);
+   PutSlotError                   IBPutSlotString(InstanceBuilder *,const char *,const char *);
+   PutSlotError                   IBPutSlotInstanceName(InstanceBuilder *,const char *,const char *);
 
-   bool                           IBPutSlotFact(InstanceBuilder *,const char *,Fact *);
-   bool                           IBPutSlotInstance(InstanceBuilder *,const char *,Instance *);
-   bool                           IBPutSlotExternalAddress(InstanceBuilder *,const char *,CLIPSExternalAddress *);
-   bool                           IBPutSlotMultifield(InstanceBuilder *,const char *,Multifield *);
+   PutSlotError                   IBPutSlotFact(InstanceBuilder *,const char *,Fact *);
+   PutSlotError                   IBPutSlotInstance(InstanceBuilder *,const char *,Instance *);
+   PutSlotError                   IBPutSlotExternalAddress(InstanceBuilder *,const char *,CLIPSExternalAddress *);
+   PutSlotError                   IBPutSlotMultifield(InstanceBuilder *,const char *,Multifield *);
+   InstanceBuilderError           IBError(Environment *);
 
    InstanceModifier              *CreateInstanceModifier(Environment *,Instance *);
-   bool                           IMPutSlot(InstanceModifier *,const char *,CLIPSValue *);
+   PutSlotError                   IMPutSlot(InstanceModifier *,const char *,CLIPSValue *);
    void                           IMDispose(InstanceModifier *);
    void                           IMAbort(InstanceModifier *);
-   bool                           IMSetInstance(InstanceModifier *,Instance *);
+   InstanceModifierError          IMSetInstance(InstanceModifier *,Instance *);
    Instance                      *IMModify(InstanceModifier *);
 
-   bool                           IMPutSlotCLIPSInteger(InstanceModifier *,const char *,CLIPSInteger *);
-   bool                           IMPutSlotInt(InstanceModifier *,const char *,int);
-   bool                           IMPutSlotLong(InstanceModifier *,const char *,long);
-   bool                           IMPutSlotLongLong(InstanceModifier *,const char *,long long);
+   PutSlotError                   IMPutSlotCLIPSInteger(InstanceModifier *,const char *,CLIPSInteger *);
+   PutSlotError                   IMPutSlotInt(InstanceModifier *,const char *,int);
+   PutSlotError                   IMPutSlotLong(InstanceModifier *,const char *,long);
+   PutSlotError                   IMPutSlotLongLong(InstanceModifier *,const char *,long long);
 
-   bool                           IMPutSlotCLIPSFloat(InstanceModifier *,const char *,CLIPSFloat *);
-   bool                           IMPutSlotFloat(InstanceModifier *,const char *,float);
-   bool                           IMPutSlotDouble(InstanceModifier *,const char *,double);
+   PutSlotError                   IMPutSlotCLIPSFloat(InstanceModifier *,const char *,CLIPSFloat *);
+   PutSlotError                   IMPutSlotFloat(InstanceModifier *,const char *,float);
+   PutSlotError                   IMPutSlotDouble(InstanceModifier *,const char *,double);
 
-   bool                           IMPutSlotCLIPSLexeme(InstanceModifier *,const char *,CLIPSLexeme *);
-   bool                           IMPutSlotSymbol(InstanceModifier *,const char *,const char *);
-   bool                           IMPutSlotString(InstanceModifier *,const char *,const char *);
-   bool                           IMPutSlotInstanceName(InstanceModifier *,const char *,const char *);
+   PutSlotError                   IMPutSlotCLIPSLexeme(InstanceModifier *,const char *,CLIPSLexeme *);
+   PutSlotError                   IMPutSlotSymbol(InstanceModifier *,const char *,const char *);
+   PutSlotError                   IMPutSlotString(InstanceModifier *,const char *,const char *);
+   PutSlotError                   IMPutSlotInstanceName(InstanceModifier *,const char *,const char *);
 
-   bool                           IMPutSlotFact(InstanceModifier *,const char *,Fact *);
-   bool                           IMPutSlotInstance(InstanceModifier *,const char *,Instance *);
-   bool                           IMPutSlotExternalAddress(InstanceModifier *,const char *,CLIPSExternalAddress *);
-   bool                           IMPutSlotMultifield(InstanceModifier *,const char *,Multifield *);
+   PutSlotError                   IMPutSlotFact(InstanceModifier *,const char *,Fact *);
+   PutSlotError                   IMPutSlotInstance(InstanceModifier *,const char *,Instance *);
+   PutSlotError                   IMPutSlotExternalAddress(InstanceModifier *,const char *,CLIPSExternalAddress *);
+   PutSlotError                   IMPutSlotMultifield(InstanceModifier *,const char *,Multifield *);
+   InstanceModifierError          IMError(Environment *);
 
 #endif /* _H_insmngr */
 

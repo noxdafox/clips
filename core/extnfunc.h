@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  10/01/16            */
+   /*             CLIPS Version 6.40  10/24/17            */
    /*                                                     */
    /*            EXTERNAL FUNCTIONS HEADER FILE           */
    /*******************************************************/
@@ -106,6 +106,15 @@ struct externalFunctionData
 
 #define ExternalFunctionData(theEnv) ((struct externalFunctionData *) GetEnvironmentData(theEnv,EXTERNAL_FUNCTION_DATA))
 
+typedef enum
+  {
+   AUE_NO_ERROR = 0,
+   AUE_MIN_EXCEEDS_MAX_ERROR,
+   AUE_FUNCTION_NAME_IN_USE_ERROR,
+   AUE_INVALID_ARGUMENT_TYPE_ERROR,
+   AUE_INVALID_RETURN_TYPE_ERROR
+  } AddUDFError;
+
 struct FunctionHash
   {
    struct functionDefinition *fdPtr;
@@ -115,7 +124,7 @@ struct FunctionHash
 #define SIZE_FUNCTION_HASH 517
 
    void                           InitializeExternalFunctionData(Environment *);
-   bool                           AddUDF(Environment *,const char *,const char *,
+   AddUDFError                    AddUDF(Environment *,const char *,const char *,
                                          unsigned short,unsigned short,const char *,
                                          UserDefinedFunction *,
                                          const char *,void *);

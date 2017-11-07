@@ -1,9 +1,9 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  08/25/16            */
+   /*             CLIPS Version 6.40  10/26/17            */
    /*                                                     */
-   /*             STRING_TYPE FUNCTIONS HEADER FILE            */
+   /*          STRING_TYPE FUNCTIONS HEADER FILE          */
    /*******************************************************/
 
 /*************************************************************/
@@ -59,8 +59,23 @@
 
 #include "entities.h"
 
-   bool                           Build(Environment *,const char *);
-   bool                           Eval(Environment *,const char *,CLIPSValue *);
+typedef enum
+  {
+   EE_NO_ERROR = 0,
+   EE_PARSING_ERROR,
+   EE_PROCESSING_ERROR
+  } EvalError;
+
+typedef enum
+  {
+   BE_NO_ERROR = 0,
+   BE_COULD_NOT_BUILD_ERROR,
+   BE_CONSTRUCT_NOT_FOUND_ERROR,
+   BE_PARSING_ERROR,
+  } BuildError;
+
+   BuildError                     Build(Environment *,const char *);
+   EvalError                      Eval(Environment *,const char *,CLIPSValue *);
    void                           StringFunctionDefinitions(Environment *);
    void                           StrCatFunction(Environment *,UDFContext *,UDFValue *);
    void                           SymCatFunction(Environment *,UDFContext *,UDFValue *);

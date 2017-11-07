@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  10/21/17             */
+   /*            CLIPS Version 6.40  11/05/17             */
    /*                                                     */
    /*                COMMAND LINE MODULE                  */
    /*******************************************************/
@@ -81,6 +81,11 @@
 /*            Eval support for run time and bload only.      */
 /*                                                           */
 /*            Removed fflush of stdin.                       */
+/*                                                           */
+/*            Use of ?<var>, $?<var>, ?*<var>, and  $?*var*  */
+/*            by itself at the command prompt and within     */
+/*            the eval function now consistently returns the */
+/*            value of  the variable.                        */
 /*                                                           */
 /*************************************************************/
 
@@ -934,6 +939,7 @@ bool RouteCommand(
    /*=====================*/
 
    if ((theToken.tknType == GBL_VARIABLE_TOKEN) ||
+       (theToken.tknType == MF_GBL_VARIABLE_TOKEN) ||
        (theToken.tknType == SF_VARIABLE_TOKEN) ||
        (theToken.tknType == MF_VARIABLE_TOKEN))
      {

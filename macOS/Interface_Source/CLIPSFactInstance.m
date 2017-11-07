@@ -171,7 +171,7 @@
       
       [self setValue: tempArray forKey: @"attributeValues"];
 
-      /* IncrementInstanceReferenceCount(theInstance); */
+      /* RetainInstance(theInstance); */
      }
      
    return self;

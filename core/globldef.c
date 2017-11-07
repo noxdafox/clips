@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  10/04/17             */
+   /*            CLIPS Version 6.40  11/05/17             */
    /*                                                     */
    /*                  DEFGLOBAL MODULE                   */
    /*******************************************************/
@@ -56,6 +56,11 @@
 /*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
 /*            UDF redesign.                                  */
+/*                                                           */
+/*            Use of ?<var>, $?<var>, ?*<var>, and  $?*var*  */
+/*            by itself at the command prompt and within     */
+/*            the eval function now consistently returns the */
+/*            value of  the variable.                        */
 /*                                                           */
 /*************************************************************/
 
@@ -139,6 +144,7 @@ void InitializeDefglobals(
    DefglobalData(theEnv)->LastModuleIndex = -1;
 
    InstallPrimitive(theEnv,&DefglobalData(theEnv)->GlobalInfo,GBL_VARIABLE);
+   InstallPrimitive(theEnv,&DefglobalData(theEnv)->GlobalInfo,MF_GBL_VARIABLE);
    InstallPrimitive(theEnv,&DefglobalData(theEnv)->DefglobalPtrRecord,DEFGLOBAL_PTR);
 
    InitializeDefglobalModules(theEnv);

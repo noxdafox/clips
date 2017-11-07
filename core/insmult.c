@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  10/18/16             */
+   /*            CLIPS Version 6.40  11/07/17             */
    /*                                                     */
    /*           INSTANCE MULTIFIELD_TYPE SLOT MODULE      */
    /*******************************************************/
@@ -482,7 +482,7 @@ void DirectMVReplaceCommand(
       newseg.multifieldValue->contents[j++].value = oldseg.multifieldValue->contents[i].value;
      }
 
-   if (PutSlotValue(theEnv,ins,sp,&newseg,&newval,"function direct-slot-replace$"))
+   if (PutSlotValue(theEnv,ins,sp,&newseg,&newval,"function direct-slot-replace$") == PSE_NO_ERROR)
      { returnValue->lexemeValue = TrueSymbol(theEnv); }
    else
      { returnValue->lexemeValue = FalseSymbol(theEnv); }
@@ -539,7 +539,7 @@ void DirectMVInsertCommand(
       return; 
      }
 
-   if (PutSlotValue(theEnv,ins,sp,&newseg,&newval,"function direct-slot-insert$"))
+   if (PutSlotValue(theEnv,ins,sp,&newseg,&newval,"function direct-slot-insert$") == PSE_NO_ERROR)
      { returnValue->lexemeValue = TrueSymbol(theEnv); }
    else
      { returnValue->lexemeValue = FalseSymbol(theEnv); }
@@ -633,7 +633,7 @@ void DirectMVDeleteCommand(
       newseg.multifieldValue->contents[j++].value = oldseg.multifieldValue->contents[i].value;
      }
  
-   if (PutSlotValue(theEnv,ins,sp,&newseg,&oldseg,"function direct-slot-delete$"))
+   if (PutSlotValue(theEnv,ins,sp,&newseg,&oldseg,"function direct-slot-delete$") == PSE_NO_ERROR)
      { returnValue->lexemeValue = TrueSymbol(theEnv); }
    else
      { returnValue->lexemeValue = FalseSymbol(theEnv); }

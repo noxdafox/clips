@@ -44,6 +44,7 @@ struct priorCommand
    BOOL scrollToEnd;
    BOOL exit;
    BOOL clearWindow;
+   NSMutableArray *ungetBuffer;
 @public
    struct priorCommand *topCommand;
 @public
@@ -105,6 +106,11 @@ struct priorCommand
 
 - (void) SwitchCommandFrom: (struct priorCommand *) oldCommand
                         To: (struct priorCommand *) newCommand;
+
+- (NSUInteger) ungetCount;
+- (void) ungetClear;
+- (void) pushUngetChar: (NSInteger) theChar;
+- (NSInteger) popUngetChar;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%*/
 /* Window Delegate Methods */

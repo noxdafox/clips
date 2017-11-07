@@ -12,6 +12,7 @@
    bool                    QueryInterfaceCallback(Environment *,const char *,void *);
    void                    WriteInterfaceCallback(Environment *,const char *,const char *,void *);
    int                     ReadInterfaceCallback(Environment *,const char *,void *);
+   int                     UnreadInterfaceCallback(Environment *,const char *,int,void *);
    void                    ExitInterfaceCallback(Environment *,int,void *);
    void                    MacPeriodicFunction(Environment *,void *);
    void                    ClearEnvironmentWindowCommand(Environment *,UDFContext *,UDFValue *);

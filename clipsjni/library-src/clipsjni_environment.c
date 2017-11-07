@@ -647,9 +647,9 @@ JNIEXPORT jboolean JNICALL Java_net_sf_clipsrules_jni_Environment_removePeriodic
 /* Method:    addUserFunction                                     */
 /* Signature: (J                                                  */
 /*             Ljava/lang/String;Ljava/lang/String;               */
-/*             Lnet/sf/clipsrules/jni/UserFunction;)Z             */
+/*             Lnet/sf/clipsrules/jni/UserFunction;)I             */
 /******************************************************************/
-JNIEXPORT jboolean JNICALL Java_net_sf_clipsrules_jni_Environment_addUserFunction(
+JNIEXPORT jint JNICALL Java_net_sf_clipsrules_jni_Environment_addUserFunction(
   JNIEnv *env, 
   jobject obj, 
   jlong clipsEnv, 

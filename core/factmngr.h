@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  11/01/16            */
+   /*             CLIPS Version 6.40  11/07/17            */
    /*                                                     */
    /*              FACTS MANAGER HEADER FILE              */
    /*******************************************************/
@@ -89,6 +89,52 @@ typedef struct factModifier FactModifier;
 typedef void ModifyCallFunction(Environment *,Fact *,Fact *,void *);
 typedef struct modifyCallFunctionItem ModifyCallFunctionItem;
 
+typedef enum
+  {
+   RE_NO_ERROR = 0,
+   RE_NULL_POINTER_ERROR,
+   RE_COULD_NOT_RETRACT_ERROR,
+   RE_RULE_NETWORK_ERROR
+  } RetractError;
+
+typedef enum
+  {
+   AE_NO_ERROR = 0,
+   AE_NULL_POINTER_ERROR,
+   AE_RETRACTED_ERROR,
+   AE_COULD_NOT_ASSERT_ERROR,
+   AE_RULE_NETWORK_ERROR
+  } AssertError;
+
+typedef enum
+  {
+   ASE_NO_ERROR = 0,
+   ASE_NULL_POINTER_ERROR,
+   ASE_PARSING_ERROR,
+   ASE_COULD_NOT_ASSERT_ERROR,
+   ASE_RULE_NETWORK_ERROR
+  } AssertStringError;
+
+typedef enum
+  {
+   FBE_NO_ERROR = 0,
+   FBE_NULL_POINTER_ERROR,
+   FBE_DEFTEMPLATE_NOT_FOUND_ERROR,
+   FBE_IMPLIED_DEFTEMPLATE_ERROR,
+   FBE_COULD_NOT_ASSERT_ERROR,
+   FBE_RULE_NETWORK_ERROR
+  } FactBuilderError;
+
+typedef enum
+  {
+   FME_NO_ERROR = 0,
+   FME_NULL_POINTER_ERROR,
+   FME_RETRACTED_ERROR,
+   FME_IMPLIED_DEFTEMPLATE_ERROR,
+   FME_COULD_NOT_MODIFY_ERROR,
+   FME_RULE_NETWORK_ERROR
+  } FactModifierError;
+
 struct modifyCallFunctionItem
   {
    const char *name;
@@ -167,24 +213,30 @@ struct factsData
    struct multifieldMarker *CurrentPatternMarks;
 #endif
    long LastModuleIndex;
+   RetractError retractError;
+   AssertError assertError;
+   AssertStringError assertStringError;
+   FactModifierError factModifierError;
+   FactBuilderError factBuilderError;
   };
 
 #define FactData(theEnv) ((struct factsData *) GetEnvironmentData(theEnv,FACTS_DATA))
 
    Fact                          *Assert(Fact *);
+   AssertStringError              GetAssertStringError(Environment *);
    Fact                          *AssertDriver(Fact *,long long,Fact *,Fact *,char *);
    Fact                          *AssertString(Environment *,const char *);
    Fact                          *CreateFact(Deftemplate *);
    void                           ReleaseFact(Fact *);
    void                           DecrementFactCallback(Environment *,Fact *);
    long long                      FactIndex(Fact *);
-   bool                           GetFactSlot(Fact *,const char *,CLIPSValue *);
+   GetSlotError                   GetFactSlot(Fact *,const char *,CLIPSValue *);
    void                           PrintFactWithIdentifier(Environment *,const char *,Fact *,const char *);
    void                           PrintFact(Environment *,const char *,Fact *,bool,bool,const char *);
    void                           PrintFactIdentifierInLongForm(Environment *,const char *,Fact *);
-   bool                           Retract(Fact *);
-   bool                           RetractDriver(Environment *,Fact *,bool,char *);
-   bool                           RetractAllFacts(Environment *);
+   RetractError                   Retract(Fact *);
+   RetractError                   RetractDriver(Environment *,Fact *,bool,char *);
+   RetractError                   RetractAllFacts(Environment *);
    Fact                          *CreateFactBySize(Environment *,size_t);
    void                           FactInstall(Environment *,Fact *);
    void                           FactDeinstall(Environment *,Fact *);
@@ -216,48 +268,49 @@ struct factsData
                                                      VoidCallFunctionWithArg *,int,void *);
    bool                           RemoveRetractFunction(Environment *,const char *);
    FactBuilder                   *CreateFactBuilder(Environment *,const char *);
-   bool                           FBPutSlot(FactBuilder *,const char *,CLIPSValue *);
+   PutSlotError                   FBPutSlot(FactBuilder *,const char *,CLIPSValue *);
    Fact                          *FBAssert(FactBuilder *);
    void                           FBDispose(FactBuilder *);
    void                           FBAbort(FactBuilder *);
-   bool                           FBSetDeftemplate(FactBuilder *,const char *);
-   bool                           FBPutSlotCLIPSInteger(FactBuilder *,const char *,CLIPSInteger *);
-   bool                           FBPutSlotInt(FactBuilder *,const char *,int);
-   bool                           FBPutSlotLong(FactBuilder *,const char *,long);
-   bool                           FBPutSlotLongLong(FactBuilder *,const char *,long long);
-   bool                           FBPutSlotCLIPSFloat(FactBuilder *,const char *,CLIPSFloat *);
-   bool                           FBPutSlotFloat(FactBuilder *,const char *,float);
-   bool                           FBPutSlotDouble(FactBuilder *,const char *,double);
-   bool                           FBPutSlotCLIPSLexeme(FactBuilder *,const char *,CLIPSLexeme *);
-   bool                           FBPutSlotSymbol(FactBuilder *,const char *,const char *);
-   bool                           FBPutSlotString(FactBuilder *,const char *,const char *);
-   bool                           FBPutSlotInstanceName(FactBuilder *,const char *,const char *);
-   bool                           FBPutSlotFact(FactBuilder *,const char *,Fact *);
-   bool                           FBPutSlotInstance(FactBuilder *,const char *,Instance *);
-   bool                           FBPutSlotCLIPSExternalAddress(FactBuilder *,const char *,CLIPSExternalAddress *);
-   bool                           FBPutSlotMultifield(FactBuilder *,const char *,Multifield *);
-
+   FactBuilderError               FBSetDeftemplate(FactBuilder *,const char *);
+   PutSlotError                   FBPutSlotCLIPSInteger(FactBuilder *,const char *,CLIPSInteger *);
+   PutSlotError                   FBPutSlotInt(FactBuilder *,const char *,int);
+   PutSlotError                   FBPutSlotLong(FactBuilder *,const char *,long);
+   PutSlotError                   FBPutSlotLongLong(FactBuilder *,const char *,long long);
+   PutSlotError                   FBPutSlotCLIPSFloat(FactBuilder *,const char *,CLIPSFloat *);
+   PutSlotError                   FBPutSlotFloat(FactBuilder *,const char *,float);
+   PutSlotError                   FBPutSlotDouble(FactBuilder *,const char *,double);
+   PutSlotError                   FBPutSlotCLIPSLexeme(FactBuilder *,const char *,CLIPSLexeme *);
+   PutSlotError                   FBPutSlotSymbol(FactBuilder *,const char *,const char *);
+   PutSlotError                   FBPutSlotString(FactBuilder *,const char *,const char *);
+   PutSlotError                   FBPutSlotInstanceName(FactBuilder *,const char *,const char *);
+   PutSlotError                   FBPutSlotFact(FactBuilder *,const char *,Fact *);
+   PutSlotError                   FBPutSlotInstance(FactBuilder *,const char *,Instance *);
+   PutSlotError                   FBPutSlotCLIPSExternalAddress(FactBuilder *,const char *,CLIPSExternalAddress *);
+   PutSlotError                   FBPutSlotMultifield(FactBuilder *,const char *,Multifield *);
+   FactBuilderError               FBError(Environment *);
    FactModifier                  *CreateFactModifier(Environment *,Fact *);
-   bool                           FMPutSlot(FactModifier *,const char *,CLIPSValue *);
+   PutSlotError                   FMPutSlot(FactModifier *,const char *,CLIPSValue *);
    Fact                          *FMModify(FactModifier *);
    void                           FMDispose(FactModifier *);
    void                           FMAbort(FactModifier *);
-   bool                           FMSetFact(FactModifier *,Fact *);
-   bool                           FMPutSlotCLIPSInteger(FactModifier *,const char *,CLIPSInteger *);
-   bool                           FMPutSlotInt(FactModifier *,const char *,int);
-   bool                           FMPutSlotLong(FactModifier *,const char *,long);
-   bool                           FMPutSlotLongLong(FactModifier *,const char *,long long);
-   bool                           FMPutSlotCLIPSFloat(FactModifier *,const char *,CLIPSFloat *);
-   bool                           FMPutSlotFloat(FactModifier *,const char *,float);
-   bool                           FMPutSlotDouble(FactModifier *,const char *,double);
-   bool                           FMPutSlotCLIPSLexeme(FactModifier *,const char *,CLIPSLexeme *);
-   bool                           FMPutSlotSymbol(FactModifier *,const char *,const char *);
-   bool                           FMPutSlotString(FactModifier *,const char *,const char *);
-   bool                           FMPutSlotInstanceName(FactModifier *,const char *,const char *);
-   bool                           FMPutSlotFact(FactModifier *,const char *,Fact *);
-   bool                           FMPutSlotInstance(FactModifier *,const char *,Instance *);
-   bool                           FMPutSlotExternalAddress(FactModifier *,const char *,CLIPSExternalAddress *);
-   bool                           FMPutSlotMultifield(FactModifier *,const char *,Multifield *);
+   FactModifierError              FMSetFact(FactModifier *,Fact *);
+   PutSlotError                   FMPutSlotCLIPSInteger(FactModifier *,const char *,CLIPSInteger *);
+   PutSlotError                   FMPutSlotInt(FactModifier *,const char *,int);
+   PutSlotError                   FMPutSlotLong(FactModifier *,const char *,long);
+   PutSlotError                   FMPutSlotLongLong(FactModifier *,const char *,long long);
+   PutSlotError                   FMPutSlotCLIPSFloat(FactModifier *,const char *,CLIPSFloat *);
+   PutSlotError                   FMPutSlotFloat(FactModifier *,const char *,float);
+   PutSlotError                   FMPutSlotDouble(FactModifier *,const char *,double);
+   PutSlotError                   FMPutSlotCLIPSLexeme(FactModifier *,const char *,CLIPSLexeme *);
+   PutSlotError                   FMPutSlotSymbol(FactModifier *,const char *,const char *);
+   PutSlotError                   FMPutSlotString(FactModifier *,const char *,const char *);
+   PutSlotError                   FMPutSlotInstanceName(FactModifier *,const char *,const char *);
+   PutSlotError                   FMPutSlotFact(FactModifier *,const char *,Fact *);
+   PutSlotError                   FMPutSlotInstance(FactModifier *,const char *,Instance *);
+   PutSlotError                   FMPutSlotExternalAddress(FactModifier *,const char *,CLIPSExternalAddress *);
+   PutSlotError                   FMPutSlotMultifield(FactModifier *,const char *,Multifield *);
+   FactModifierError              FMError(Environment *);
 
    bool                           AddModifyFunction(Environment *,const char *,ModifyCallFunction *,int,void *);
    bool                           RemoveModifyFunction(Environment *,const char *);

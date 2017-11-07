@@ -50,6 +50,8 @@
       
       outputBufferLock = [[NSConditionLock alloc] initWithCondition: BUFFER_IS_EMPTY];
       
+      ungetBuffer = [NSMutableArray array];
+
       lineCount = 1;
       lastDumpPosition = 0;
       
@@ -208,7 +210,7 @@
    
    AddRouter(theEnvironment,"CLIPSTerminalController",10,
              QueryInterfaceCallback,WriteInterfaceCallback,
-             ReadInterfaceCallback,NULL,ExitInterfaceCallback,
+             ReadInterfaceCallback,UnreadInterfaceCallback,ExitInterfaceCallback,
              (__bridge void *)(self));
         
    SetBeforeOpenFunction(theEnvironment,MacBeforeOpenFunction);
@@ -256,6 +258,7 @@
    PrintBanner(theEnvironment);
    PrintPrompt(theEnvironment);
    RouterData(theEnvironment)->CommandBufferInputCount = 0;
+   RouterData(theEnvironment)->InputUngets = 0;
   }
 
 /*************************/
@@ -1447,6 +1450,46 @@
    /*===================================*/
    
    return YES;
+  }
+
+/**************/
+/* ungetCount */
+/**************/
+- (NSUInteger) ungetCount
+  {
+   return [ungetBuffer count];
+  }
+
+/**************/
+/* ungetClear */
+/**************/
+- (void) ungetClear
+  {
+   [ungetBuffer removeAllObjects];
+  }
+
+/*****************/
+/* pushUngetChar */
+/*****************/
+- (void) pushUngetChar: (NSInteger) theChar
+  {
+   if (theChar < 0) return;
+   
+   [ungetBuffer addObject: [NSNumber numberWithInteger: theChar]];
+  }
+
+/****************/
+/* popUngetChar */
+/****************/
+- (NSInteger) popUngetChar
+  {
+   NSNumber *theNumber;
+   
+   theNumber = [ungetBuffer lastObject];
+   
+   [ungetBuffer removeLastObject];
+   
+   return [theNumber integerValue];
   }
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%*/

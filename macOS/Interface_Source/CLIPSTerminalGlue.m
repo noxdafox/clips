@@ -65,7 +65,10 @@ void WriteInterfaceCallback(
 
    fptr = FindFptr(theEnv,logicalName);
    if ((fptr == stdout) || (fptr == stderr))
-     { [theObject printC: str]; }
+     {
+      [theObject ungetClear];
+      [theObject printC: str];
+     }
    else
      { fprintf(fptr,"%s",str); } // TBD Is this necessary?
   }
@@ -83,11 +86,34 @@ int ReadInterfaceCallback(
    int theChar;
    CLIPSTerminalController *theObject = (__bridge CLIPSTerminalController *) context;
 
+   if ([theObject ungetCount] > 0)
+     { return (int) [theObject popUngetChar]; }
+     
    theChar = [theObject waitForChar];
    
-   return(theChar);
+   return theChar;
   }
-  
+
+/********************************************/
+/* UnreadInterfaceCallback: Router function */
+/*   to unget input from the display window */
+/*   and process other events.              */
+/********************************************/
+int UnreadInterfaceCallback(
+  Environment *theEnv,
+  const char *logicalName,
+  int theChar,
+  void *context)
+  {
+   CLIPSTerminalController *theObject = (__bridge CLIPSTerminalController *) context;
+
+   if (theChar == EOF) return EOF;
+   
+   [theObject pushUngetChar: theChar];
+   
+   return theChar;
+  }
+
 /**********************************************/
 /* ExitInterfaceCallback: Routine to check an */
 /*   exit from the dialog window to make sure */

@@ -362,15 +362,15 @@ JNIEXPORT jobject JNICALL Java_net_sf_clipsrules_jni_Environment_directGetSlot(
    CLIPSValue theDO;
    Environment *theCLIPSEnv = JLongToPointer(clipsEnv);
    const char *cSlotName = (*env)->GetStringUTFChars(env,slotName,NULL);
-   bool found;
+   GetSlotError error;
 
    void *oldContext = SetEnvironmentContext(theCLIPSEnv,(void *) env);
    
-   found = DirectGetSlot(JLongToPointer(clipsInstance),(char *) cSlotName,&theDO);
+   error = DirectGetSlot(JLongToPointer(clipsInstance),(char *) cSlotName,&theDO);
 
    (*env)->ReleaseStringUTFChars(env,slotName,cSlotName);
    
-   if (found)
+   if (error == GSE_NO_ERROR)
      { rv = ConvertDataObject(env,javaEnv,theCLIPSEnv,&theDO); }
    else
      { rv = NULL; }

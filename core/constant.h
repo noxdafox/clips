@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  10/21/17             */
+   /*            CLIPS Version 6.40  11/07/17             */
    /*                                                     */
    /*                CONSTANTS HEADER FILE                */
    /*******************************************************/
@@ -80,6 +80,29 @@ typedef enum
    STATIC_DEFAULT,
    DYNAMIC_DEFAULT
   } DefaultType;
+  
+typedef enum
+  {
+   PSE_NO_ERROR = 0,
+   PSE_NULL_POINTER_ERROR,
+   PSE_INVALID_TARGET_ERROR,
+   PSE_SLOT_NOT_FOUND_ERROR,
+   PSE_TYPE_ERROR,
+   PSE_RANGE_ERROR,
+   PSE_ALLOWED_VALUES_ERROR,
+   PSE_CARDINALITY_ERROR,
+   PSE_ALLOWED_CLASSES_ERROR,
+   PSE_EVALUATION_ERROR,
+   PSE_RULE_NETWORK_ERROR
+  } PutSlotError;
+
+typedef enum
+  {
+   GSE_NO_ERROR = 0,
+   GSE_NULL_POINTER_ERROR,
+   GSE_INVALID_TARGET_ERROR,
+   GSE_SLOT_NOT_FOUND_ERROR
+  } GetSlotError;
 
 #ifndef APPLICATION_NAME
 #define APPLICATION_NAME "CLIPS"
@@ -94,11 +117,11 @@ typedef enum
 #endif
 
 #ifndef CREATION_DATE_STRING
-#define CREATION_DATE_STRING "10/21/17"
+#define CREATION_DATE_STRING "11/7/17"
 #endif
 
 #ifndef BANNER_STRING
-#define BANNER_STRING "         CLIPS (Cypher Alpha 10/21/17)\n"
+#define BANNER_STRING "         CLIPS (Cypher Alpha 11/7/17)\n"
 #endif
 
 /*************************/

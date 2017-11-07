@@ -49,7 +49,7 @@ CLIPS>
 CLIPS> (unmake-instance (make-instance of A))
 [INSFUN4] Invalid instance-address in ?self slot reference.
 [PRCCODE4] Execution halted during the actions of message-handler 'delete' after in class 'A'
-TRUE
+FALSE
 CLIPS> (clear)                   ; DR0803
 CLIPS> 
 (defclass A

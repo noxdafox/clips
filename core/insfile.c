@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  10/02/17             */
+   /*            CLIPS Version 6.40  11/07/17             */
    /*                                                     */
    /*         INSTANCE LOAD/SAVE (ASCII/BINARY) MODULE    */
    /*******************************************************/
@@ -1566,7 +1566,7 @@ static bool LoadSingleBinaryInstance(
       CreateSlotValue(theEnv,&slotValue,(struct bsaveSlotValueAtom *) &bsaArray[j],
                       bsArray[i].valueCount);
 
-      if (PutSlotValue(theEnv,newInstance,sp,&slotValue,&junkValue,"bload-instances") == false)
+      if (PutSlotValue(theEnv,newInstance,sp,&slotValue,&junkValue,"bload-instances") != PSE_NO_ERROR)
         goto LoadError;
 
       j += (unsigned long) bsArray[i].valueCount;
