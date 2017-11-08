@@ -299,7 +299,7 @@ int UnreadJNICallback(
 
    str = (*env)->NewStringUTF(env,logicalName);
 
-   theChar = (*env)->CallIntMethod(env,context,mid,(jint) ch,str);
+   theChar = (*env)->CallIntMethod(env,context,mid,str,(jint) ch);
 
    (*env)->DeleteLocalRef(env,str);
 

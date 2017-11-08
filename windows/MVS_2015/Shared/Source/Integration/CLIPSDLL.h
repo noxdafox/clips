@@ -7,6 +7,7 @@
 #include "moduldef.h"
 #include "object.h"
 #include "router.h"
+#include "strngfun.h"
 #include "tmpltdef.h"
 #include "tmpltfun.h"
 
@@ -22,7 +23,7 @@ int DECLSPEC __Load(Environment *,const char *);
 bool DECLSPEC __OpenStringSource(Environment *,const char *,const char *,size_t);
 bool DECLSPEC __CloseStringSource(Environment *,const char *);
 void DECLSPEC __LoadConstructsFromLogicalName(Environment *,const char *);
-bool DECLSPEC __Build(Environment *,const char *);
+BuildError DECLSPEC __Build(Environment *,const char *);
 
 void DECLSPEC __Reset(Environment *);
 long long DECLSPEC __Run(Environment *,long long);
@@ -38,8 +39,8 @@ bool DECLSPEC __ActivateRouter(Environment *, const char *);
 bool DECLSPEC __DeactivateRouter(Environment *, const char *);
 bool DECLSPEC __CommandCompleteAndNotEmpty(Environment *);
 void DECLSPEC __AppendDribble(Environment *,const char *);
-bool DECLSPEC __Eval(Environment *,const char *,CLIPSValue *);
-bool DECLSPEC __GetFactSlot(Fact *,const char *,CLIPSValue *);
+EvalError DECLSPEC __Eval(Environment *,const char *,CLIPSValue *);
+GetSlotError DECLSPEC __GetFactSlot(Fact *,const char *,CLIPSValue *);
 bool DECLSPEC __WatchString(Environment *,const char *);
 bool DECLSPEC __UnwatchString(Environment *,const char *);
 bool DECLSPEC __GetWatchItem(Environment *,const char *);
@@ -61,7 +62,7 @@ void DECLSPEC __RetainFact(Fact *);
 void DECLSPEC __ReleaseFact(Fact *);
 void DECLSPEC __RetainInstance(Instance *);
 void DECLSPEC __ReleaseInstance(Instance *);
-bool DECLSPEC __DirectGetSlot(Instance *,const char *,CLIPSValue *);  
+GetSlotError DECLSPEC __DirectGetSlot(Instance *,const char *,CLIPSValue *);  
 void DECLSPEC __SetHaltExecution(Environment *,bool);
 void DECLSPEC __SetHaltCommandLoopBatch(Environment *,bool);
 void DECLSPEC __SetHaltRules(Environment *,bool);
@@ -128,7 +129,7 @@ void DECLSPEC __ClassSlots(Defclass *,CLIPSValue *,bool);
 int DECLSPEC __SlotDefaultP(Environment *,Defclass *,const char *);
 bool DECLSPEC __SlotDefaultValue(Defclass *,const char *,CLIPSValue *);
 
-bool DECLSPEC __AddUDF(Environment *,const char *,const char *,
+AddUDFError DECLSPEC __AddUDF(Environment *,const char *,const char *,
                        unsigned short,unsigned short,const char *,
                        UserDefinedFunction *,const char *,void *);
 bool DECLSPEC __RemoveUDF(Environment *,const char *);

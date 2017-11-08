@@ -135,12 +135,12 @@ bool CLIPSCPPEnv::Build(
   char *buildString)
   {   
 #ifndef CLIPS_DLL_WRAPPER
-   if (::Build(theEnv,buildString))
+   if (::Build(theEnv,buildString) == BE_NO_ERROR)
      { return true; }
    else
      { return false; }
 #else
-   if (__Build(theEnv,buildString))
+   if (__Build(theEnv,buildString) == BE_NO_ERROR)
      { return true; }
    else
      { return false; }
@@ -232,7 +232,7 @@ InstanceAddressValue *CLIPSCPPEnv::FindInstanceByName(
 DataObject CLIPSCPPEnv::Eval(
   char *evalString)
   {
-   int rc;
+   EvalError rc;
    CLIPSValue rv;
    
 #ifndef CLIPS_DLL_WRAPPER
@@ -241,7 +241,7 @@ DataObject CLIPSCPPEnv::Eval(
    rc = __Eval(theEnv,evalString,&rv);
 #endif
 
-   if (rc == 0)
+   if (rc != EE_NO_ERROR)
      {
       std::string excStr = "Eval: Invalid expression ";
       excStr.append(evalString);
@@ -1874,7 +1874,7 @@ FactAddressValue *FactAddressValue::clone() const
 DataObject FactAddressValue::GetFactSlot(char *slotName) const
   {  
    CLIPSValue theCV;
-   bool rv;
+   GetSlotError rv;
    
 #ifndef CLIPS_DLL_WRAPPER
    rv = ::GetFactSlot(theFactAddress,slotName,&theCV);
@@ -1882,11 +1882,11 @@ DataObject FactAddressValue::GetFactSlot(char *slotName) const
    rv = __GetFactSlot(theFactAddress,slotName,&theCV);
 #endif
    
-   if (! rv)
+   if (rv != GSE_NO_ERROR)
       {
        std::string excStr = "Slot ";
        excStr.append(slotName);
-       excStr.append(" is invalid");
+       excStr.append(" could not be retrieved.");
        
        throw std::logic_error(excStr); 
       }
@@ -1992,7 +1992,7 @@ const char *InstanceAddressValue::GetInstanceName() const
 DataObject InstanceAddressValue::DirectGetSlot(char *slotName) const
   {  
    CLIPSValue theCV;
-   bool rv;
+   GetSlotError rv;
    
 #ifndef CLIPS_DLL_WRAPPER
    rv = ::DirectGetSlot(theInstanceAddress,slotName,&theCV);
@@ -2000,11 +2000,11 @@ DataObject InstanceAddressValue::DirectGetSlot(char *slotName) const
    rv = __DirectGetSlot(theInstanceAddress,slotName,&theCV);
 #endif
 
-   if (! rv)
+   if (rv != GSE_NO_ERROR)
       {
        std::string excStr = "Slot ";
        excStr.append(slotName);
-       excStr.append(" is invalid");
+       excStr.append(" could not be retrieved.");
        
        throw std::logic_error(excStr); 
       }
@@ -3399,11 +3399,11 @@ bool CLIPSCPPEnv::AddUserFunction(
   CLIPSCPPUserFunction *udf)
   {
 #ifndef CLIPS_DLL_WRAPPER
-   return ::AddUDF(theEnv,functionName,returnTypes,minArgs,maxArgs,restrictions,
-                   CLIPSCPPUserFunctionCallback,"CLIPSCPPUserFunctionCallback",udf);
+   return (::AddUDF(theEnv,functionName,returnTypes,minArgs,maxArgs,restrictions,
+                   CLIPSCPPUserFunctionCallback,"CLIPSCPPUserFunctionCallback",udf) == AUE_NO_ERROR);
 #else
-   return __AddUDF(theEnv,functionName,returnTypes,minArgs,maxArgs,restrictions,
-                   CLIPSCPPUserFunctionCallback,"CLIPSCPPUserFunctionCallback",udf);
+   return (__AddUDF(theEnv,functionName,returnTypes,minArgs,maxArgs,restrictions,
+                   CLIPSCPPUserFunctionCallback,"CLIPSCPPUserFunctionCallback",udf) == AUE_NO_ERROR);
 #endif
   }
 

@@ -86,7 +86,7 @@ void __declspec(dllexport) __LoadConstructsFromLogicalName(
 /***********/
 /* __Build */
 /***********/
-bool __declspec(dllexport) __Build(
+BuildError __declspec(dllexport) __Build(
   Environment *theEnv,
   const char *buildString)
   {
@@ -232,7 +232,7 @@ void __declspec(dllexport) __CommandLoopOnceThenBatch(
    CommandLoopOnceThenBatch(theEnv);
   }
   
-bool __declspec(dllexport) __Eval(
+EvalError __declspec(dllexport) __Eval(
   Environment *theEnv,
   const char *evalString,
   CLIPSValue *rv)
@@ -270,7 +270,7 @@ long long __declspec(dllexport) __FactIndex(
    return FactIndex(theFact);
   }
 
-bool __declspec(dllexport) __GetFactSlot(
+GetSlotError __declspec(dllexport) __GetFactSlot(
   Fact *theFact,
   const char *slotName,
   CLIPSValue *returnValue)
@@ -284,7 +284,7 @@ const char __declspec(dllexport) * __InstanceName(
    return InstanceName(theInstance);  
   } 
   
-bool __declspec(dllexport) __DirectGetSlot(
+GetSlotError __declspec(dllexport) __DirectGetSlot(
   Instance *theInstance,
   const char *slotName,
   CLIPSValue *returnValue)
@@ -665,7 +665,7 @@ bool __declspec(dllexport) __SlotDefaultValue(
    return SlotDefaultValue(theDefclass,slotName,theValue);
   }
 
-bool __declspec(dllexport) __AddUDF(
+AddUDFError __declspec(dllexport) __AddUDF(
   Environment *theEnv,
   const char *clipsFunctionName,
   const char *returnTypes,
