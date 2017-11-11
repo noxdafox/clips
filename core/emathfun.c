@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  10/01/16             */
+   /*            CLIPS Version 6.40  11/10/17             */
    /*                                                     */
    /*            EXTENDED MATH FUNCTIONS MODULE           */
    /*******************************************************/
@@ -47,12 +47,16 @@
 /*                                                           */
 /*            UDF redesign.                                  */
 /*                                                           */
+/*            Added error codes for get-error and            */
+/*            clear-error functions.                         */
+/*                                                           */
 /*************************************************************/
 
 #include "setup.h"
 #include "argacces.h"
 #include "envrnmnt.h"
 #include "extnfunc.h"
+#include "miscfun.h"
 #include "prntutil.h"
 #include "router.h"
 
@@ -190,6 +194,7 @@ static void DomainErrorMessage(
   {
    Environment *theEnv = context->environment;
 
+   SetErrorValue(theEnv,&CreateSymbol(theEnv,"DOMAIN_ERROR")->header);
    PrintErrorID(theEnv,"EMATHFUN",1,false);
    WriteString(theEnv,STDERR,"Domain error for '");
    WriteString(theEnv,STDERR,UDFContextFunctionName(context));
@@ -210,6 +215,7 @@ static void ArgumentOverflowErrorMessage(
   {
    Environment *theEnv = context->environment;
 
+   SetErrorValue(theEnv,&CreateSymbol(theEnv,"ARGUMENT_OVERFLOW")->header);
    PrintErrorID(theEnv,"EMATHFUN",2,false);
    WriteString(theEnv,STDERR,"Argument overflow for '");
    WriteString(theEnv,STDERR,UDFContextFunctionName(context));
@@ -230,6 +236,7 @@ static void SingularityErrorMessage(
   {
    Environment *theEnv = context->environment;
 
+   SetErrorValue(theEnv,&CreateSymbol(theEnv,"SINGULARITY_AT_ASYMPTOTE")->header);
    PrintErrorID(theEnv,"EMATHFUN",3,false);
    WriteString(theEnv,STDERR,"Singularity at asymptote in '");
    WriteString(theEnv,STDERR,UDFContextFunctionName(context));

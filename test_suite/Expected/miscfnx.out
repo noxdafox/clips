@@ -358,4 +358,31 @@ CLIPS> (timetag ?v)
 [PRNTUTIL11] The fact f-1 has been retracted.
 -1
 CLIPS> (clear)
+CLIPS> (acos 3)
+[EMATHFUN1] Domain error for 'acos' function.
+0.0
+CLIPS> (get-error)
+DOMAIN_ERROR
+CLIPS> (clear-error)
+DOMAIN_ERROR
+CLIPS> (get-error)
+FALSE
+CLIPS> (acos 3)
+[EMATHFUN1] Domain error for 'acos' function.
+0.0
+CLIPS> (clear-error)
+DOMAIN_ERROR
+CLIPS> (get-error)
+FALSE
+CLIPS> (set-error 3)
+CLIPS> (clear-error)
+3
+CLIPS> (get-error 3)
+[ARGACCES1] Function 'get-error' expected exactly 0 arguments.
+CLIPS> (clear-error 3)
+[ARGACCES1] Function 'clear-error' expected exactly 0 arguments.
+CLIPS> (set-error)
+[ARGACCES1] Function 'set-error' expected exactly 1 argument.
+CLIPS> (set-error 3 4)
+[ARGACCES1] Function 'set-error' expected exactly 1 argument.
 CLIPS> (dribble-off)

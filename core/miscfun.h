@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  08/25/16            */
+   /*             CLIPS Version 6.40  11/10/17            */
    /*                                                     */
    /*          MISCELLANEOUS FUNCTIONS HEADER FILE        */
    /*******************************************************/
@@ -73,6 +73,9 @@
 /*                                                           */
 /*            UDF redesign.                                  */
 /*                                                           */
+/*            Added get-error, set-error, and clear-error    */
+/*            functions.                                     */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_miscfun
@@ -113,6 +116,10 @@
    void                           SystemCommand(Environment *,UDFContext *,UDFValue *);
    void                           LocalTimeFunction(Environment *,UDFContext *,UDFValue *);
    void                           GMTimeFunction(Environment *,UDFContext *,UDFValue *);
+   void                           GetErrorFunction(Environment *,UDFContext *,UDFValue *);
+   void                           ClearErrorFunction(Environment *,UDFContext *,UDFValue *);
+   void                           SetErrorFunction(Environment *,UDFContext *,UDFValue *);
+   void                           SetErrorValue(Environment *,TypeHeader *);
 
 #endif /* _H_miscfun */
 
