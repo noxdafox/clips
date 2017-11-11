@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.50  08/25/16            */
+   /*             CLIPS Version 6.50  11/10/17            */
    /*                                                     */
    /*          MISCELLANEOUS FUNCTIONS HEADER FILE        */
    /*******************************************************/
@@ -73,6 +73,9 @@
 /*                                                           */
 /*            UDF redesign.                                  */
 /*                                                           */
+/*            Added get-error, set-error, and clear-error    */
+/*            functions.                                     */
+/*                                                           */
 /*      6.50: Fact ?var:slot reference support.              */
 /*                                                           */
 /*************************************************************/
@@ -113,9 +116,13 @@
    void                           TimerFunction(Environment *,UDFContext *,UDFValue *);
    void                           TimeFunction(Environment *,UDFContext *,UDFValue *);
    void                           SystemCommand(Environment *,UDFContext *,UDFValue *);
-   void                           SlotValueFunction(Environment *,UDFContext *,UDFValue *);
    void                           LocalTimeFunction(Environment *,UDFContext *,UDFValue *);
    void                           GMTimeFunction(Environment *,UDFContext *,UDFValue *);
+   void                           GetErrorFunction(Environment *,UDFContext *,UDFValue *);
+   void                           ClearErrorFunction(Environment *,UDFContext *,UDFValue *);
+   void                           SetErrorFunction(Environment *,UDFContext *,UDFValue *);
+   void                           SetErrorValue(Environment *,TypeHeader *);
+   void                           SlotValueFunction(Environment *,UDFContext *,UDFValue *);
 
 #endif /* _H_miscfun */
 

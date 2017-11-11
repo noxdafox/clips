@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  10/04/17             */
+   /*            CLIPS Version 6.40  11/10/17             */
    /*                                                     */
    /*                  CONSTRUCT MODULE                   */
    /*******************************************************/
@@ -92,6 +92,7 @@
 #include "envrnmnt.h"
 #include "exprnpsr.h"
 #include "memalloc.h"
+#include "miscfun.h"
 #include "moduldef.h"
 #include "modulutl.h"
 #include "multifld.h"
@@ -505,7 +506,8 @@ void Reset(
    
    if (EvaluationData(theEnv)->CurrentExpression == NULL)
      { ResetErrorFlags(theEnv); }
-
+   SetErrorValue(theEnv,NULL);
+    
    /*========================================*/
    /* Set up the frame for tracking garbage. */
    /*========================================*/
@@ -642,7 +644,8 @@ bool Clear(
 
    if (EvaluationData(theEnv)->CurrentExpression == NULL)
      { ResetErrorFlags(theEnv); }
-
+   SetErrorValue(theEnv,NULL);
+   
    /*===================================*/
    /* Determine if a clear is possible. */
    /*===================================*/

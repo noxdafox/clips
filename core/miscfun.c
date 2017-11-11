@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.50  10/11/17             */
+   /*            CLIPS Version 6.50  11/09/17             */
    /*                                                     */
    /*            MISCELLANEOUS FUNCTIONS MODULE           */
    /*******************************************************/
@@ -97,6 +97,9 @@
 /*            passed, the return value indicates whether a   */
 /*            command processor is available.                */
 /*                                                           */
+/*            Added get-error, set-error, and clear-error    */
+/*            functions.                                     */
+/*                                                           */
 /*      6.50: Fact ?var:slot reference support.              */
 /*                                                           */
 /*************************************************************/
@@ -133,6 +136,7 @@
 struct miscFunctionData
   {
    long long GensymNumber;
+   CLIPSValue errorCode;
   };
 
 #define MiscFunctionData(theEnv) ((struct miscFunctionData *) GetEnvironmentData(theEnv,MISCFUN_DATA))
@@ -154,6 +158,8 @@ void MiscFunctionDefinitions(
   {
    AllocateEnvironmentData(theEnv,MISCFUN_DATA,sizeof(struct miscFunctionData),NULL);
    MiscFunctionData(theEnv)->GensymNumber = 1;
+   MiscFunctionData(theEnv)->errorCode.lexemeValue = FalseSymbol(theEnv);
+   Retain(theEnv,MiscFunctionData(theEnv)->errorCode.header);
 
 #if ! RUN_TIME
    AddUDF(theEnv,"exit","v",0,1,"l",ExitCommand,"ExitCommand",NULL);
@@ -194,6 +200,11 @@ void MiscFunctionDefinitions(
    AddUDF(theEnv,"new","*",1,UNBOUNDED,"*;y",NewFunction,"NewFunction",NULL);
    AddUDF(theEnv,"call","*",1,UNBOUNDED,"*",CallFunction,"CallFunction",NULL);
    AddUDF(theEnv,"timer","d",0,UNBOUNDED,NULL,TimerFunction,"TimerFunction",NULL);
+
+   AddUDF(theEnv,"get-error","*",0,0,NULL,GetErrorFunction,"GetErrorFunction",NULL);
+   AddUDF(theEnv,"clear-error","*",0,0,NULL,ClearErrorFunction,"ClearErrorFunction",NULL);
+   AddUDF(theEnv,"set-error","v",1,1,NULL,SetErrorFunction,"SetErrorFunction",NULL);
+
 #if DEFTEMPLATE_CONSTRUCT
    AddUDF(theEnv,"(slot-value)","*",3,3,"y;f",SlotValueFunction,"SlotValueFunction",NULL);
 #endif
@@ -1709,6 +1720,70 @@ void SystemCommand(
 
    if (commandBuffer != NULL)
      { rm(theEnv,commandBuffer,bufferMaximum); }
+  }
+
+/****************************************/
+/* GetErrorFunction: H/L access routine */
+/*   for the geterror function.         */
+/****************************************/
+void GetErrorFunction(
+  Environment *theEnv,
+  UDFContext *context,
+  UDFValue *returnValue)
+  {
+   CLIPSToUDFValue(&MiscFunctionData(theEnv)->errorCode,returnValue);
+  }
+
+/*****************/
+/* SetErrorValue */
+/*****************/
+void SetErrorValue(
+  Environment *theEnv,
+  TypeHeader *theValue)
+  {
+   Release(theEnv,MiscFunctionData(theEnv)->errorCode.header);
+   
+   if (theValue == NULL)
+     { MiscFunctionData(theEnv)->errorCode.lexemeValue = FalseSymbol(theEnv); }
+   else
+     { MiscFunctionData(theEnv)->errorCode.header = theValue; }
+     
+   Retain(theEnv,MiscFunctionData(theEnv)->errorCode.header);
+  }
+
+/******************************************/
+/* ClearErrorFunction: H/L access routine */
+/*   for the clear-error function.        */
+/******************************************/
+void ClearErrorFunction(
+  Environment *theEnv,
+  UDFContext *context,
+  UDFValue *returnValue)
+  {
+   CLIPSToUDFValue(&MiscFunctionData(theEnv)->errorCode,returnValue);
+   Release(theEnv,MiscFunctionData(theEnv)->errorCode.header);
+   MiscFunctionData(theEnv)->errorCode.lexemeValue = FalseSymbol(theEnv);
+   Retain(theEnv,MiscFunctionData(theEnv)->errorCode.header);
+  }
+
+/****************************************/
+/* SetErrorFunction: H/L access routine */
+/*   for the set-error function.        */
+/****************************************/
+void SetErrorFunction(
+  Environment *theEnv,
+  UDFContext *context,
+  UDFValue *returnValue)
+  {
+   CLIPSValue cv;
+   UDFValue theArg;
+   
+   if (! UDFFirstArgument(context,ANY_TYPE_BITS,&theArg))
+     { return; }
+     
+   NormalizeMultifield(theEnv,&theArg);
+   cv.value = theArg.value;
+   SetErrorValue(theEnv,cv.header);
   }
 
 /*****************************************/

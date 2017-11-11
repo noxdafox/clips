@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  10/01/16             */
+   /*            CLIPS Version 6.40  11/10/17             */
    /*                                                     */
    /*                    SYMBOL MODULE                    */
    /*******************************************************/
@@ -173,9 +173,9 @@ void InitializeAtomTables(
    /* Predefine some values. */
    /*========================*/
 
-   TrueSymbol(theEnv) = AddSymbol(theEnv,TRUE_STRING,SYMBOL_TYPE);
+   theEnv->TrueSymbol = AddSymbol(theEnv,TRUE_STRING,SYMBOL_TYPE);
    IncrementLexemeCount(TrueSymbol(theEnv));
-   FalseSymbol(theEnv) = AddSymbol(theEnv,FALSE_STRING,SYMBOL_TYPE);
+   theEnv->FalseSymbol = AddSymbol(theEnv,FALSE_STRING,SYMBOL_TYPE);
    IncrementLexemeCount(FalseSymbol(theEnv));
    SymbolData(theEnv)->PositiveInfinity = AddSymbol(theEnv,POSITIVE_INFINITY_STRING,SYMBOL_TYPE);
    IncrementLexemeCount(SymbolData(theEnv)->PositiveInfinity);
