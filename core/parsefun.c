@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/25/16             */
+   /*            CLIPS Version 6.40  11/13/17             */
    /*                                                     */
    /*               PARSING FUNCTIONS MODULE              */
    /*******************************************************/
@@ -208,7 +208,7 @@ bool CheckSyntax(
      {
       ConstructData(theEnv)->CheckSyntaxMode = true;
       
-      if (ParseConstruct(theEnv,name,"check-syntax") == 1)
+      if (ParseConstruct(theEnv,name,"check-syntax") == BE_PARSING_ERROR)
         { rv = true; }
        else
         { rv = false; }
