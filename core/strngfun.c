@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  10/26/17             */
+   /*            CLIPS Version 6.40  11/13/17             */
    /*                                                     */
    /*            STRING_TYPE FUNCTIONS MODULE             */
    /*******************************************************/
@@ -72,6 +72,9 @@
 /*                                                           */
 /*            The str-index function now returns 1 if the    */
 /*            search string is "".                           */
+/*                                                           */
+/*            The eval and build functions generate an       */
+/*            error if extraneous input is encountered.      */
 /*                                                           */
 /*************************************************************/
 
@@ -721,6 +724,7 @@ EvalError Eval(
    int danglingConstructs;
    UDFValue evalResult;
    GCBlock gcb;
+   struct token theToken;
 
    /*========================================*/
    /* Set up the frame for tracking garbage. */
@@ -780,6 +784,26 @@ EvalError Eval(
    if (top == NULL)
      {
       SetEvaluationError(theEnv,true);
+      CloseStringSource(theEnv,logicalNameBuffer);
+      GCBlockEnd(theEnv,&gcb);
+      if (returnValue != NULL)
+        { returnValue->lexemeValue = FalseSymbol(theEnv); }
+      depth--;
+      ConstructData(theEnv)->DanglingConstructs = danglingConstructs;
+      return EE_PARSING_ERROR;
+     }
+     
+   /*======================================*/
+   /* Return if there is extraneous input. */
+   /*======================================*/
+
+   GetToken(theEnv,logicalNameBuffer,&theToken);
+   if (theToken.tknType != STOP_TOKEN)
+     {
+      PrintErrorID(theEnv,"STRNGFUN",2,false);
+      WriteString(theEnv,STDERR,"Function 'eval' encountered extraneous input.\n");
+      SetEvaluationError(theEnv,true);
+      ReturnExpression(theEnv,top);
       CloseStringSource(theEnv,logicalNameBuffer);
       GCBlockEnd(theEnv,&gcb);
       if (returnValue != NULL)
@@ -950,6 +974,12 @@ BuildError Build(
 
    errorFlag = ParseConstruct(theEnv,constructType,"build");
 
+   /*=============================*/
+   /* Grab any extraneous token. */
+   /*============================*/
+   
+   GetToken(theEnv,"build",&theToken);
+
    /*=================================*/
    /* Close the string source router. */
    /*=================================*/
@@ -961,7 +991,7 @@ BuildError Build(
    /* construct, then print an error message. */
    /*=========================================*/
 
-   if (errorFlag == 1)
+   if (errorFlag == BE_PARSING_ERROR)
      {
       WriteString(theEnv,STDERR,"\nERROR:\n");
       WriteString(theEnv,STDERR,GetPPBuffer(theEnv));
@@ -976,14 +1006,23 @@ BuildError Build(
    
    GCBlockEnd(theEnv,&gcb);
 
+   /*===================================*/
+   /* Throw error for extraneous input. */
+   /*===================================*/
+   
+   if ((errorFlag == BE_NO_ERROR) && (theToken.tknType != STOP_TOKEN))
+     {
+      PrintErrorID(theEnv,"STRNGFUN",2,false);
+      WriteString(theEnv,STDERR,"Function 'build' encountered extraneous input.\n");
+      SetEvaluationError(theEnv,true);
+      errorFlag = BE_PARSING_ERROR;
+     }
+
    /*===================================================*/
    /* Return the error code from parsing the construct. */
    /*===================================================*/
 
-   if (errorFlag == 1) return BE_PARSING_ERROR;
-   else if (errorFlag == -1) return BE_CONSTRUCT_NOT_FOUND_ERROR;
-
-   return BE_NO_ERROR;
+   return errorFlag;
   }
 #else
 /**************************************************/
@@ -1004,13 +1043,13 @@ void BuildFunction(
 /* Build: This is the non-functional stub provided */
 /*   for use with a run-time version.              */
 /***************************************************/
-bool Build(
+BuildError Build(
   Environment *theEnv,
   const char *theString)
   {
    PrintErrorID(theEnv,"STRNGFUN",1,false);
    WriteString(theEnv,STDERR,"Function 'build' does not work in run time modules.\n");
-   return false;
+   return BE_COULD_NOT_BUILD_ERROR;
   }
 #endif /* (! RUN_TIME) && (! BLOAD_ONLY) */
 

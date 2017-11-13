@@ -79,6 +79,8 @@
 (eval "(defrule foo =>)")          ; 10.4.5
 (eval "(+ 3 4)")                   ; 10.4.5
 (eval "(create$ a b c)")           ; 10.4.5
+(eval "(+ 3 4) (+ 8 9)")           ; 10.4.5
+(eval "3 4")                       ; 10.4.5
 (build)                            ; 10.4.6
 (build "(defrule foo =>)" "dog")   ; 10.4.6
 (build 7.8)                        ; 10.4.6
@@ -90,6 +92,7 @@
 (build "(defrule blah)")           ; 10.4.6
 (build "(+ 3 4)")                  ; 10.4.6
 (build "defrule foo =>)")          ; 10.4.6
+(build "(defrule bar =>) 3")       ; 10.4.6
 (rules)                            ; 10.4.6
 (clear)                            ; 10.4.6
 (upcase)                           ; 10.4.7

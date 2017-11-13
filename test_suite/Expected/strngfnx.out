@@ -164,6 +164,12 @@ CLIPS> (eval "(+ 3 4)")                   ; 10.4.5
 7
 CLIPS> (eval "(create$ a b c)")           ; 10.4.5
 (a b c)
+CLIPS> (eval "(+ 3 4) (+ 8 9)")           ; 10.4.5
+[STRNGFUN2] Function 'eval' encountered extraneous input.
+FALSE
+CLIPS> (eval "3 4")                       ; 10.4.5
+[STRNGFUN2] Function 'eval' encountered extraneous input.
+FALSE
 CLIPS> (build)                            ; 10.4.6
 [ARGACCES1] Function 'build' expected exactly 1 argument.
 CLIPS> (build "(defrule foo =>)" "dog")   ; 10.4.6
@@ -191,9 +197,13 @@ CLIPS> (build "(+ 3 4)")                  ; 10.4.6
 FALSE
 CLIPS> (build "defrule foo =>)")          ; 10.4.6
 FALSE
+CLIPS> (build "(defrule bar =>) 3")       ; 10.4.6
+[STRNGFUN2] Function 'build' encountered extraneous input.
+FALSE
 CLIPS> (rules)                            ; 10.4.6
 foo
-For a total of 1 defrule.
+bar
+For a total of 2 defrules.
 CLIPS> (clear)                            ; 10.4.6
 CLIPS> (upcase)                           ; 10.4.7
 [ARGACCES1] Function 'upcase' expected exactly 1 argument.
