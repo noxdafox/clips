@@ -732,7 +732,7 @@ BuildError ParseConstruct(
   const char *logicalName)
   {
    Construct *currentPtr;
-   int rv;
+   BuildError rv;
    bool ov;
    GCBlock gcb;
 

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  11/07/17             */
+   /*            CLIPS Version 6.40  11/15/17             */
    /*                                                     */
    /*          INSTANCE PRIMITIVE SUPPORT MODULE          */
    /*******************************************************/
@@ -1353,44 +1353,10 @@ PutSlotError IBPutSlotCLIPSInteger(
    return IBPutSlot(theIB,slotName,&theValue);
   }
 
-/****************/
-/* IBPutSlotInt */
-/****************/
-PutSlotError IBPutSlotInt(
-  InstanceBuilder *theIB,
-  const char *slotName,
-  int intValue)
-  {
-   CLIPSValue theValue;
-   
-   if (theIB == NULL)
-     { return PSE_NULL_POINTER_ERROR; }
-
-   theValue.integerValue = CreateInteger(theIB->ibEnv,intValue);
-   return IBPutSlot(theIB,slotName,&theValue);
-  }
-
-/*****************/
-/* IBPutSlotLong */
-/*****************/
-PutSlotError IBPutSlotLong(
-  InstanceBuilder *theIB,
-  const char *slotName,
-  long longValue)
-  {
-   CLIPSValue theValue;
-   
-   if (theIB == NULL)
-     { return PSE_NULL_POINTER_ERROR; }
-
-   theValue.integerValue = CreateInteger(theIB->ibEnv,longValue);
-   return IBPutSlot(theIB,slotName,&theValue);
-  }
-
-/*********************/
-/* IBPutSlotLongLong */
-/*********************/
-PutSlotError IBPutSlotLongLong(
+/********************/
+/* IBPutSlotInteger */
+/********************/
+PutSlotError IBPutSlotInteger(
   InstanceBuilder *theIB,
   const char *slotName,
   long long longLongValue)
@@ -1487,23 +1453,6 @@ PutSlotError IBPutSlotCLIPSFloat(
 /* IBPutSlotFloat */
 /******************/
 PutSlotError IBPutSlotFloat(
-  InstanceBuilder *theIB,
-  const char *slotName,
-  float floatValue)
-  {
-   CLIPSValue theValue;
-   
-    if (theIB == NULL)
-     { return PSE_NULL_POINTER_ERROR; }
-
-  theValue.floatValue = CreateFloat(theIB->ibEnv,floatValue);
-   return IBPutSlot(theIB,slotName,&theValue);
-  }
-
-/*******************/
-/* IBPutSlotDouble */
-/*******************/
-PutSlotError IBPutSlotDouble(
   InstanceBuilder *theIB,
   const char *slotName,
   double doubleValue)
@@ -1950,44 +1899,10 @@ PutSlotError IMPutSlotCLIPSInteger(
    return IMPutSlot(theFM,slotName,&theValue);
   }
 
-/****************/
-/* IMPutSlotInt */
-/****************/
-PutSlotError IMPutSlotInt(
-  InstanceModifier *theIM,
-  const char *slotName,
-  int intValue)
-  {
-   CLIPSValue theValue;
-   
-   if (theIM == NULL)
-     { return PSE_NULL_POINTER_ERROR; }
-     
-   theValue.integerValue = CreateInteger(theIM->imEnv,intValue);
-   return IMPutSlot(theIM,slotName,&theValue);
-  }
-
-/*****************/
-/* IMPutSlotLong */
-/*****************/
-PutSlotError IMPutSlotLong(
-  InstanceModifier *theIM,
-  const char *slotName,
-  long longValue)
-  {
-   CLIPSValue theValue;
-   
-   if (theIM == NULL)
-     { return PSE_NULL_POINTER_ERROR; }
-     
-   theValue.integerValue = CreateInteger(theIM->imEnv,longValue);
-   return IMPutSlot(theIM,slotName,&theValue);
-  }
-
-/*********************/
-/* IMPutSlotLongLong */
-/*********************/
-PutSlotError IMPutSlotLongLong(
+/********************/
+/* IMPutSlotInteger */
+/********************/
+PutSlotError IMPutSlotInteger(
   InstanceModifier *theIM,
   const char *slotName,
   long long longLongValue)
@@ -2084,23 +1999,6 @@ PutSlotError IMPutSlotCLIPSFloat(
 /* IMPutSlotFloat */
 /******************/
 PutSlotError IMPutSlotFloat(
-  InstanceModifier *theIM,
-  const char *slotName,
-  float floatValue)
-  {
-   CLIPSValue theValue;
-   
-   if (theIM == NULL)
-     { return PSE_NULL_POINTER_ERROR; }
-     
-   theValue.floatValue = CreateFloat(theIM->imEnv,floatValue);
-   return IMPutSlot(theIM,slotName,&theValue);
-  }
-
-/*******************/
-/* IMPutSlotDouble */
-/*******************/
-PutSlotError IMPutSlotDouble(
   InstanceModifier *theIM,
   const char *slotName,
   double doubleValue)

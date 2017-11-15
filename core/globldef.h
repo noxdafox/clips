@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  08/25/16            */
+   /*             CLIPS Version 6.40  11/13/17            */
    /*                                                     */
    /*                DEFGLOBAL HEADER FILE                */
    /*******************************************************/
@@ -124,6 +124,18 @@ struct defglobalModule
    void                           SetGlobalsChanged(Environment *,bool);
    void                           DefglobalGetValue(Defglobal *,CLIPSValue *);
    void                           DefglobalSetValue(Defglobal *,CLIPSValue *);
+   void                           DefglobalSetInteger(Defglobal *,long long);
+   void                           DefglobalSetFloat(Defglobal *,double);
+   void                           DefglobalSetSymbol(Defglobal *,const char *);
+   void                           DefglobalSetString(Defglobal *,const char *);
+   void                           DefglobalSetInstanceName(Defglobal *,const char *);
+   void                           DefglobalSetCLIPSInteger(Defglobal *,CLIPSInteger *);
+   void                           DefglobalSetCLIPSFloat(Defglobal *,CLIPSFloat *);
+   void                           DefglobalSetCLIPSLexeme(Defglobal *,CLIPSLexeme *);
+   void                           DefglobalSetFact(Defglobal *,Fact *);
+   void                           DefglobalSetInstance(Defglobal *,Instance *);
+   void                           DefglobalSetMultifield(Defglobal *,Multifield *);
+   void                           DefglobalSetCLIPSExternalAddress(Defglobal *,CLIPSExternalAddress *);
    void                           UpdateDefglobalScope(Environment *);
    Defglobal                     *GetNextDefglobalInScope(Environment *,Defglobal *);
    bool                           QGetDefglobalUDFValue(Environment *,Defglobal *,UDFValue *);

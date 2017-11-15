@@ -1,9 +1,9 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  11/07/17            */
+   /*             CLIPS Version 6.40  11/14/17            */
    /*                                                     */
-   /*                                                     */
+   /*            INSTANCE COMMAND HEADER MODULE           */
    /*******************************************************/
 
 /*************************************************************/
@@ -146,6 +146,18 @@ struct instanceData
    bool                           ValidInstanceAddress(Instance *);
    GetSlotError                   DirectGetSlot(Instance *,const char *,CLIPSValue *);
    PutSlotError                   DirectPutSlot(Instance *,const char *,CLIPSValue *);
+   PutSlotError                   DirectPutSlotInteger(Instance *,const char *,long long);
+   PutSlotError                   DirectPutSlotFloat(Instance *,const char *,double);
+   PutSlotError                   DirectPutSlotSymbol(Instance *,const char *,const char *);
+   PutSlotError                   DirectPutSlotString(Instance *,const char *,const char *);
+   PutSlotError                   DirectPutSlotInstanceName(Instance *,const char *,const char *);
+   PutSlotError                   DirectPutSlotCLIPSInteger(Instance *,const char *,CLIPSInteger *);
+   PutSlotError                   DirectPutSlotCLIPSFloat(Instance *,const char *,CLIPSFloat *);
+   PutSlotError                   DirectPutSlotCLIPSLexeme(Instance *,const char *,CLIPSLexeme *);
+   PutSlotError                   DirectPutSlotFact(Instance *,const char *,Fact *);
+   PutSlotError                   DirectPutSlotInstance(Instance *,const char *,Instance *);
+   PutSlotError                   DirectPutSlotMultifield(Instance *,const char *,Multifield *);
+   PutSlotError                   DirectPutSlotCLIPSExternalAddress(Instance *,const char *,CLIPSExternalAddress *);
    const char                    *InstanceName(Instance *);
    Defclass                      *InstanceClass(Instance *);
    unsigned long                  GetGlobalNumberOfInstances(Environment *);

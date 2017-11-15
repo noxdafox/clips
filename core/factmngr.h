@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  11/07/17            */
+   /*             CLIPS Version 6.40  11/15/17            */
    /*                                                     */
    /*              FACTS MANAGER HEADER FILE              */
    /*******************************************************/
@@ -274,12 +274,9 @@ struct factsData
    void                           FBAbort(FactBuilder *);
    FactBuilderError               FBSetDeftemplate(FactBuilder *,const char *);
    PutSlotError                   FBPutSlotCLIPSInteger(FactBuilder *,const char *,CLIPSInteger *);
-   PutSlotError                   FBPutSlotInt(FactBuilder *,const char *,int);
-   PutSlotError                   FBPutSlotLong(FactBuilder *,const char *,long);
-   PutSlotError                   FBPutSlotLongLong(FactBuilder *,const char *,long long);
+   PutSlotError                   FBPutSlotInteger(FactBuilder *,const char *,long long);
    PutSlotError                   FBPutSlotCLIPSFloat(FactBuilder *,const char *,CLIPSFloat *);
-   PutSlotError                   FBPutSlotFloat(FactBuilder *,const char *,float);
-   PutSlotError                   FBPutSlotDouble(FactBuilder *,const char *,double);
+   PutSlotError                   FBPutSlotFloat(FactBuilder *,const char *,double);
    PutSlotError                   FBPutSlotCLIPSLexeme(FactBuilder *,const char *,CLIPSLexeme *);
    PutSlotError                   FBPutSlotSymbol(FactBuilder *,const char *,const char *);
    PutSlotError                   FBPutSlotString(FactBuilder *,const char *,const char *);
@@ -296,12 +293,9 @@ struct factsData
    void                           FMAbort(FactModifier *);
    FactModifierError              FMSetFact(FactModifier *,Fact *);
    PutSlotError                   FMPutSlotCLIPSInteger(FactModifier *,const char *,CLIPSInteger *);
-   PutSlotError                   FMPutSlotInt(FactModifier *,const char *,int);
-   PutSlotError                   FMPutSlotLong(FactModifier *,const char *,long);
-   PutSlotError                   FMPutSlotLongLong(FactModifier *,const char *,long long);
+   PutSlotError                   FMPutSlotInteger(FactModifier *,const char *,long long);
    PutSlotError                   FMPutSlotCLIPSFloat(FactModifier *,const char *,CLIPSFloat *);
-   PutSlotError                   FMPutSlotFloat(FactModifier *,const char *,float);
-   PutSlotError                   FMPutSlotDouble(FactModifier *,const char *,double);
+   PutSlotError                   FMPutSlotFloat(FactModifier *,const char *,double);
    PutSlotError                   FMPutSlotCLIPSLexeme(FactModifier *,const char *,CLIPSLexeme *);
    PutSlotError                   FMPutSlotSymbol(FactModifier *,const char *,const char *);
    PutSlotError                   FMPutSlotString(FactModifier *,const char *,const char *);
