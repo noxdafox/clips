@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  10/24/17            */
+   /*             CLIPS Version 6.40  11/13/17            */
    /*                                                     */
    /*          INSTANCE PRIMITIVE SUPPORT MODULE          */
    /*******************************************************/
@@ -75,13 +75,10 @@
    InstanceBuilderError           IBSetDefclass(InstanceBuilder *,const char *);
 
    PutSlotError                   IBPutSlotCLIPSInteger(InstanceBuilder *,const char *,CLIPSInteger *);
-   PutSlotError                   IBPutSlotInt(InstanceBuilder *,const char *,int);
-   PutSlotError                   IBPutSlotLong(InstanceBuilder *,const char *,long);
-   PutSlotError                   IBPutSlotLongLong(InstanceBuilder *,const char *,long long);
+   PutSlotError                   IBPutSlotInteger(InstanceBuilder *,const char *,long long);
 
    PutSlotError                   IBPutSlotCLIPSFloat(InstanceBuilder *,const char *,CLIPSFloat *);
-   PutSlotError                   IBPutSlotFloat(InstanceBuilder *,const char *,float);
-   PutSlotError                   IBPutSlotDouble(InstanceBuilder *,const char *,double);
+   PutSlotError                   IBPutSlotFloat(InstanceBuilder *,const char *,double);
 
    PutSlotError                   IBPutSlotCLIPSLexeme(InstanceBuilder *,const char *,CLIPSLexeme *);
    PutSlotError                   IBPutSlotSymbol(InstanceBuilder *,const char *,const char *);
@@ -102,13 +99,10 @@
    Instance                      *IMModify(InstanceModifier *);
 
    PutSlotError                   IMPutSlotCLIPSInteger(InstanceModifier *,const char *,CLIPSInteger *);
-   PutSlotError                   IMPutSlotInt(InstanceModifier *,const char *,int);
-   PutSlotError                   IMPutSlotLong(InstanceModifier *,const char *,long);
-   PutSlotError                   IMPutSlotLongLong(InstanceModifier *,const char *,long long);
+   PutSlotError                   IMPutSlotInteger(InstanceModifier *,const char *,long long);
 
    PutSlotError                   IMPutSlotCLIPSFloat(InstanceModifier *,const char *,CLIPSFloat *);
-   PutSlotError                   IMPutSlotFloat(InstanceModifier *,const char *,float);
-   PutSlotError                   IMPutSlotDouble(InstanceModifier *,const char *,double);
+   PutSlotError                   IMPutSlotFloat(InstanceModifier *,const char *,double);
 
    PutSlotError                   IMPutSlotCLIPSLexeme(InstanceModifier *,const char *,CLIPSLexeme *);
    PutSlotError                   IMPutSlotSymbol(InstanceModifier *,const char *,const char *);

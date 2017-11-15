@@ -1,9 +1,9 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  11/01/16            */
+   /*             CLIPS Version 6.40  11/15/17            */
    /*                                                     */
-   /*                MULTIFIELD_TYPE HEADER FILE               */
+   /*             MULTIFIELD_TYPE HEADER FILE             */
    /*******************************************************/
 
 /*************************************************************/
@@ -109,12 +109,9 @@ struct multifieldBuilder
    Multifield                    *MBCreate(MultifieldBuilder *);
    Multifield                    *EmptyMultifield(Environment *);
    void                           MBAppendCLIPSInteger(MultifieldBuilder *,CLIPSInteger *);
-   void                           MBAppendInt(MultifieldBuilder *,int);
-   void                           MBAppendLong(MultifieldBuilder *,long);
-   void                           MBAppendLongLong(MultifieldBuilder *,long long);
+   void                           MBAppendInteger(MultifieldBuilder *,long long);
    void                           MBAppendCLIPSFloat(MultifieldBuilder *,CLIPSFloat *);
-   void                           MBAppendFloat(MultifieldBuilder *,float);
-   void                           MBAppendDouble(MultifieldBuilder *,double);
+   void                           MBAppendFloat(MultifieldBuilder *,double);
    void                           MBAppendCLIPSLexeme(MultifieldBuilder *,CLIPSLexeme *);
    void                           MBAppendSymbol(MultifieldBuilder *,const char *);
    void                           MBAppendString(MultifieldBuilder *,const char *);

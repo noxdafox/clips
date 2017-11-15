@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  11/05/17             */
+   /*            CLIPS Version 6.40  11/13/17             */
    /*                                                     */
    /*                  DEFGLOBAL MODULE                   */
    /*******************************************************/
@@ -682,6 +682,174 @@ void DefglobalSetValue(
    CLIPSToUDFValue(vPtr,&temp);
    QSetDefglobalValue(theEnv,theDefglobal,&temp,false);
    GCBlockEnd(theEnv,&gcb);
+  }
+
+/************************/
+/* DefglobalSetInteger: */
+/************************/
+void DefglobalSetInteger(
+  Defglobal *theDefglobal,
+  long long value)
+  {
+   CLIPSValue cv;
+   
+   cv.integerValue = CreateInteger(theDefglobal->header.env,value);
+   
+   DefglobalSetValue(theDefglobal,&cv);
+  }
+
+/**********************/
+/* DefglobalSetFloat: */
+/**********************/
+void DefglobalSetFloat(
+  Defglobal *theDefglobal,
+  double value)
+  {
+   CLIPSValue cv;
+   
+   cv.floatValue = CreateFloat(theDefglobal->header.env,value);
+   
+   DefglobalSetValue(theDefglobal,&cv);
+  }
+
+/***********************/
+/* DefglobalSetSymbol: */
+/***********************/
+void DefglobalSetSymbol(
+  Defglobal *theDefglobal,
+  const char *value)
+  {
+   CLIPSValue cv;
+   
+   cv.lexemeValue = CreateSymbol(theDefglobal->header.env,value);
+   
+   DefglobalSetValue(theDefglobal,&cv);
+  }
+
+/***********************/
+/* DefglobalSetString: */
+/***********************/
+void DefglobalSetString(
+  Defglobal *theDefglobal,
+  const char *value)
+  {
+   CLIPSValue cv;
+   
+   cv.lexemeValue = CreateString(theDefglobal->header.env,value);
+   
+   DefglobalSetValue(theDefglobal,&cv);
+  }
+
+/*****************************/
+/* DefglobalSetInstanceName: */
+/*****************************/
+void DefglobalSetInstanceName(
+  Defglobal *theDefglobal,
+  const char *value)
+  {
+   CLIPSValue cv;
+   
+   cv.lexemeValue = CreateInstanceName(theDefglobal->header.env,value);
+   
+   DefglobalSetValue(theDefglobal,&cv);
+  }
+
+/*****************************/
+/* DefglobalSetCLIPSInteger: */
+/*****************************/
+void DefglobalSetCLIPSInteger(
+  Defglobal *theDefglobal,
+  CLIPSInteger *value)
+  {
+   CLIPSValue cv;
+   
+   cv.integerValue = value;
+   
+   DefglobalSetValue(theDefglobal,&cv);
+  }
+
+/***************************/
+/* DefglobalSetCLIPSFloat: */
+/***************************/
+void DefglobalSetCLIPSFloat(
+  Defglobal *theDefglobal,
+  CLIPSFloat *value)
+  {
+   CLIPSValue cv;
+   
+   cv.floatValue = value;
+   
+   DefglobalSetValue(theDefglobal,&cv);
+  }
+
+/****************************/
+/* DefglobalSetCLIPSLexeme: */
+/****************************/
+void DefglobalSetCLIPSLexeme(
+  Defglobal *theDefglobal,
+  CLIPSLexeme *value)
+  {
+   CLIPSValue cv;
+   
+   cv.lexemeValue = value;
+   
+   DefglobalSetValue(theDefglobal,&cv);
+  }
+
+/*********************/
+/* DefglobalSetFact: */
+/*********************/
+void DefglobalSetFact(
+  Defglobal *theDefglobal,
+  Fact *value)
+  {
+   CLIPSValue cv;
+   
+   cv.factValue = value;
+   
+   DefglobalSetValue(theDefglobal,&cv);
+  }
+
+/*************************/
+/* DefglobalSetInstance: */
+/*************************/
+void DefglobalSetInstance(
+  Defglobal *theDefglobal,
+  Instance *value)
+  {
+   CLIPSValue cv;
+   
+   cv.instanceValue = value;
+   
+   DefglobalSetValue(theDefglobal,&cv);
+  }
+
+/***************************/
+/* DefglobalSetMultifield: */
+/***************************/
+void DefglobalSetMultifield(
+  Defglobal *theDefglobal,
+  Multifield *value)
+  {
+   CLIPSValue cv;
+   
+   cv.multifieldValue = value;
+   
+   DefglobalSetValue(theDefglobal,&cv);
+  }
+
+/*************************************/
+/* DefglobalSetCLIPSExternalAddress: */
+/*************************************/
+void DefglobalSetCLIPSExternalAddress(
+  Defglobal *theDefglobal,
+  CLIPSExternalAddress *value)
+  {
+   CLIPSValue cv;
+   
+   cv.externalAddressValue = value;
+   
+   DefglobalSetValue(theDefglobal,&cv);
   }
 
 /**********************************************************/

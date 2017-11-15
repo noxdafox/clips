@@ -908,7 +908,7 @@ BuildError Build(
   {
    const char *constructType;
    struct token theToken;
-   int errorFlag;
+   BuildError errorFlag;
    GCBlock gcb;
    
    /*=====================================*/

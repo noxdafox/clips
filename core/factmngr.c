@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  11/07/17             */
+   /*            CLIPS Version 6.40  11/15/17             */
    /*                                                     */
    /*                 FACT MANAGER MODULE                 */
    /*******************************************************/
@@ -2217,44 +2217,10 @@ PutSlotError FBPutSlotCLIPSInteger(
    return FBPutSlot(theFB,slotName,&theValue);
   }
 
-/****************/
-/* FBPutSlotInt */
-/****************/
-PutSlotError FBPutSlotInt(
-  FactBuilder *theFB,
-  const char *slotName,
-  int intValue)
-  {
-   CLIPSValue theValue;
-
-   if (theFB == NULL)
-     { return PSE_NULL_POINTER_ERROR; }
-     
-   theValue.integerValue = CreateInteger(theFB->fbEnv,intValue);
-   return FBPutSlot(theFB,slotName,&theValue);
-  }
-
-/*****************/
-/* FBPutSlotLong */
-/*****************/
-PutSlotError FBPutSlotLong(
-  FactBuilder *theFB,
-  const char *slotName,
-  long longValue)
-  {
-   CLIPSValue theValue;
-   
-   if (theFB == NULL)
-     { return PSE_NULL_POINTER_ERROR; }
-
-   theValue.integerValue = CreateInteger(theFB->fbEnv,longValue);
-   return FBPutSlot(theFB,slotName,&theValue);
-  }
-
-/*********************/
-/* FBPutSlotLongLong */
-/*********************/
-PutSlotError FBPutSlotLongLong(
+/********************/
+/* FBPutSlotInteger */
+/********************/
+PutSlotError FBPutSlotInteger(
   FactBuilder *theFB,
   const char *slotName,
   long long longLongValue)
@@ -2351,23 +2317,6 @@ PutSlotError FBPutSlotCLIPSFloat(
 /* FBPutSlotFloat */
 /******************/
 PutSlotError FBPutSlotFloat(
-  FactBuilder *theFB,
-  const char *slotName,
-  float floatValue)
-  {
-   CLIPSValue theValue;
-   
-   if (theFB == NULL)
-     { return PSE_NULL_POINTER_ERROR; }
-
-   theValue.floatValue = CreateFloat(theFB->fbEnv,floatValue);
-   return FBPutSlot(theFB,slotName,&theValue);
-  }
-
-/*******************/
-/* FBPutSlotDouble */
-/*******************/
-PutSlotError FBPutSlotDouble(
   FactBuilder *theFB,
   const char *slotName,
   double floatValue)
@@ -2799,44 +2748,10 @@ PutSlotError FMPutSlotCLIPSInteger(
    return FMPutSlot(theFM,slotName,&theValue);
   }
 
-/****************/
-/* FMPutSlotInt */
-/****************/
-PutSlotError FMPutSlotInt(
-  FactModifier *theFM,
-  const char *slotName,
-  int intValue)
-  {
-   CLIPSValue theValue;
-   
-   if (theFM == NULL)
-     { return PSE_NULL_POINTER_ERROR; }
-     
-   theValue.integerValue = CreateInteger(theFM->fmEnv,intValue);
-   return FMPutSlot(theFM,slotName,&theValue);
-  }
-
-/*****************/
-/* FMPutSlotLong */
-/*****************/
-PutSlotError FMPutSlotLong(
-  FactModifier *theFM,
-  const char *slotName,
-  long longValue)
-  {
-   CLIPSValue theValue;
-      
-   if (theFM == NULL)
-     { return PSE_NULL_POINTER_ERROR; }
-
-   theValue.integerValue = CreateInteger(theFM->fmEnv,longValue);
-   return FMPutSlot(theFM,slotName,&theValue);
-  }
-
-/*********************/
-/* FMPutSlotLongLong */
-/*********************/
-PutSlotError FMPutSlotLongLong(
+/********************/
+/* FMPutSlotInteger */
+/********************/
+PutSlotError FMPutSlotInteger(
   FactModifier *theFM,
   const char *slotName,
   long long longLongValue)
@@ -2933,23 +2848,6 @@ PutSlotError FMPutSlotCLIPSFloat(
 /* FMPutSlotFloat */
 /******************/
 PutSlotError FMPutSlotFloat(
-  FactModifier *theFM,
-  const char *slotName,
-  float floatValue)
-  {
-   CLIPSValue theValue;
-      
-   if (theFM == NULL)
-     { return PSE_NULL_POINTER_ERROR; }
-
-   theValue.floatValue = CreateFloat(theFM->fmEnv,floatValue);
-   return FMPutSlot(theFM,slotName,&theValue);
-  }
-
-/*******************/
-/* FMPutSlotDouble */
-/*******************/
-PutSlotError FMPutSlotDouble(
   FactModifier *theFM,
   const char *slotName,
   double floatValue)

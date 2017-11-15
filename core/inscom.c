@@ -896,9 +896,14 @@ PutSlotError DirectPutSlot(
    UDFValue junk, temp;
    GCBlock gcb;
    PutSlotError rv;
-   Environment *theEnv = theInstance->cls->header.env;
+   Environment *theEnv;
    
-   if ((theInstance == NULL) || (sname == NULL) || (val == NULL))
+   if (theInstance == NULL)
+     { return PSE_NULL_POINTER_ERROR; }
+
+   theEnv = theInstance->cls->header.env;
+   
+   if ((sname == NULL) || (val == NULL))
      {
       SetEvaluationError(theEnv,true);
       return PSE_NULL_POINTER_ERROR;
@@ -923,6 +928,222 @@ PutSlotError DirectPutSlot(
    GCBlockEnd(theEnv,&gcb);
    
    return rv;
+  }
+
+/*************************/
+/* DirectPutSlotInteger: */
+/*************************/
+PutSlotError DirectPutSlotInteger(
+  Instance *theInstance,
+  const char *sname,
+  long long val)
+  {
+   CLIPSValue cv;
+   
+   if (theInstance == NULL)
+     { return PSE_NULL_POINTER_ERROR; }
+     
+   cv.integerValue = CreateInteger(theInstance->cls->header.env,val);
+   
+   return DirectPutSlot(theInstance,sname,&cv);
+  }
+
+/***********************/
+/* DirectPutSlotFloat: */
+/***********************/
+PutSlotError DirectPutSlotFloat(
+  Instance *theInstance,
+  const char *sname,
+  double val)
+  {
+   CLIPSValue cv;
+   
+   if (theInstance == NULL)
+     { return PSE_NULL_POINTER_ERROR; }
+     
+   cv.floatValue = CreateFloat(theInstance->cls->header.env,val);
+   
+   return DirectPutSlot(theInstance,sname,&cv);
+  }
+
+/************************/
+/* DirectPutSlotSymbol: */
+/************************/
+PutSlotError DirectPutSlotSymbol(
+  Instance *theInstance,
+  const char *sname,
+  const char *val)
+  {
+   CLIPSValue cv;
+   
+   if (theInstance == NULL)
+     { return PSE_NULL_POINTER_ERROR; }
+     
+   cv.lexemeValue = CreateSymbol(theInstance->cls->header.env,val);
+   
+   return DirectPutSlot(theInstance,sname,&cv);
+  }
+
+/************************/
+/* DirectPutSlotString: */
+/************************/
+PutSlotError DirectPutSlotString(
+  Instance *theInstance,
+  const char *sname,
+  const char *val)
+  {
+   CLIPSValue cv;
+   
+   if (theInstance == NULL)
+     { return PSE_NULL_POINTER_ERROR; }
+     
+   cv.lexemeValue = CreateString(theInstance->cls->header.env,val);
+   
+   return DirectPutSlot(theInstance,sname,&cv);
+  }
+
+/******************************/
+/* DirectPutSlotInstanceName: */
+/******************************/
+PutSlotError DirectPutSlotInstanceName(
+  Instance *theInstance,
+  const char *sname,
+  const char *val)
+  {
+   CLIPSValue cv;
+   
+   if (theInstance == NULL)
+     { return PSE_NULL_POINTER_ERROR; }
+     
+   cv.lexemeValue = CreateInstanceName(theInstance->cls->header.env,val);
+   
+   return DirectPutSlot(theInstance,sname,&cv);
+  }
+
+/******************************/
+/* DirectPutSlotCLIPSInteger: */
+/******************************/
+PutSlotError DirectPutSlotCLIPSInteger(
+  Instance *theInstance,
+  const char *sname,
+  CLIPSInteger *val)
+  {
+   CLIPSValue cv;
+   
+   if (theInstance == NULL)
+     { return PSE_NULL_POINTER_ERROR; }
+     
+   cv.integerValue = val;
+   
+   return DirectPutSlot(theInstance,sname,&cv);
+  }
+
+/****************************/
+/* DirectPutSlotCLIPSFloat: */
+/****************************/
+PutSlotError DirectPutSlotCLIPSFloat(
+  Instance *theInstance,
+  const char *sname,
+  CLIPSFloat *val)
+  {
+   CLIPSValue cv;
+   
+   if (theInstance == NULL)
+     { return PSE_NULL_POINTER_ERROR; }
+     
+   cv.floatValue = val;
+   
+   return DirectPutSlot(theInstance,sname,&cv);
+  }
+
+/*****************************/
+/* DirectPutSlotCLIPSLexeme: */
+/*****************************/
+PutSlotError DirectPutSlotCLIPSLexeme(
+  Instance *theInstance,
+  const char *sname,
+  CLIPSLexeme *val)
+  {
+   CLIPSValue cv;
+   
+   if (theInstance == NULL)
+     { return PSE_NULL_POINTER_ERROR; }
+     
+   cv.lexemeValue = val;
+   
+   return DirectPutSlot(theInstance,sname,&cv);
+  }
+
+/**********************/
+/* DirectPutSlotFact: */
+/**********************/
+PutSlotError DirectPutSlotFact(
+  Instance *theInstance,
+  const char *sname,
+  Fact *val)
+  {
+   CLIPSValue cv;
+   
+   if (theInstance == NULL)
+     { return PSE_NULL_POINTER_ERROR; }
+     
+   cv.factValue = val;
+   
+   return DirectPutSlot(theInstance,sname,&cv);
+  }
+
+/**************************/
+/* DirectPutSlotInstance: */
+/**************************/
+PutSlotError DirectPutSlotInstance(
+  Instance *theInstance,
+  const char *sname,
+  Instance *val)
+  {
+   CLIPSValue cv;
+   
+   if (theInstance == NULL)
+     { return PSE_NULL_POINTER_ERROR; }
+     
+   cv.instanceValue = val;
+   
+   return DirectPutSlot(theInstance,sname,&cv);
+  }
+
+/****************************/
+/* DirectPutSlotMultifield: */
+/****************************/
+PutSlotError DirectPutSlotMultifield(
+  Instance *theInstance,
+  const char *sname,
+  Multifield *val)
+  {
+   CLIPSValue cv;
+   
+   if (theInstance == NULL)
+     { return PSE_NULL_POINTER_ERROR; }
+     
+   cv.multifieldValue = val;
+   
+   return DirectPutSlot(theInstance,sname,&cv);
+  }
+
+/**************************************/
+/* DirectPutSlotCLIPSExternalAddress: */
+/**************************************/
+PutSlotError DirectPutSlotCLIPSExternalAddress(
+  Instance *theInstance,
+  const char *sname,
+  CLIPSExternalAddress *val)
+  {
+   CLIPSValue cv;
+   
+   if (theInstance == NULL)
+     { return PSE_NULL_POINTER_ERROR; }
+     
+   cv.externalAddressValue = val;
+   
+   return DirectPutSlot(theInstance,sname,&cv);
   }
 
 /***************************************************
