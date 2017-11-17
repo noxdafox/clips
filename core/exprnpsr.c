@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  10/16/17             */
+   /*            CLIPS Version 6.40  11/17/17             */
    /*                                                     */
    /*              EXPRESSION PARSER MODULE               */
    /*******************************************************/
@@ -498,7 +498,7 @@ bool RestrictionExists(
 /*   determine if any incompatibilities exist. If so, the value  */
 /*   true is returned, otherwise false is returned.              */
 /*****************************************************************/
-bool CheckExpressionAgainstRestrictions(
+FunctionArgumentsError CheckExpressionAgainstRestrictions(
   Environment *theEnv,
   struct expr *theExpression,
   struct functionDefinition *theFunction,
@@ -545,25 +545,25 @@ bool CheckExpressionAgainstRestrictions(
       if (argCount != number1)
         {
          ExpectedCountError(theEnv,functionName,EXACTLY,number1);
-         return true;
+         return FAE_COUNT_ERROR;
         }
      }
    else if (argCount < number1)
      {
       ExpectedCountError(theEnv,functionName,AT_LEAST,number1);
-      return true;
+      return FAE_COUNT_ERROR;
      }
    else if ((number2 != UNBOUNDED) && (argCount > number2))
      {
       ExpectedCountError(theEnv,functionName,NO_MORE_THAN,number2);
-      return true;
+      return FAE_COUNT_ERROR;
      }
 
    /*===============================================*/
    /* Return if there are no argument restrictions. */
    /*===============================================*/
 
-   if (restrictions == NULL) return false;
+   if (restrictions == NULL) return FAE_NO_ERROR;
 
    /*=======================================*/
    /* Check for the default argument types. */
@@ -585,13 +585,13 @@ bool CheckExpressionAgainstRestrictions(
         {
          ExpectedTypeError0(theEnv,functionName,j);
          PrintTypesString(theEnv,STDERR,argRestriction2,true);
-         return true;
+         return FAE_TYPE_ERROR;
         }
 
       j++;
      }
 
-   return false;
+   return FAE_NO_ERROR;
   }
 
 /*******************************************************/
