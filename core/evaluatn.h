@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  10/04/17            */
+   /*             CLIPS Version 6.40  11/17/17            */
    /*                                                     */
    /*               EVALUATION HEADER FILE                */
    /*******************************************************/
@@ -72,6 +72,28 @@
 
 #include "constant.h"
 #include "entities.h"
+
+typedef struct functionCallBuilder FunctionCallBuilder;
+
+struct functionCallBuilder
+  {
+   Environment *fcbEnv;
+   CLIPSValue *contents;
+   size_t bufferReset;
+   size_t length;
+   size_t bufferMaximum;
+  };
+
+typedef enum
+  {
+   FCBE_NO_ERROR = 0,
+   FCBE_NULL_POINTER_ERROR,
+   FCBE_FUNCTION_NOT_FOUND_ERROR,
+   FCBE_INVALID_FUNCTION_ERROR,
+   FCBE_ARGUMENT_COUNT_ERROR,
+   FCBE_ARGUMENT_TYPE_ERROR,
+   FCBE_PROCESSING_ERROR
+  } FunctionCallBuilderError;
 
 #define PARAMETERS_UNBOUNDED USHRT_MAX
 
@@ -152,7 +174,25 @@ struct evaluationData
    bool                           DOsEqual(UDFValue *,UDFValue *);
    bool                           EvaluateAndStoreInDataObject(Environment *,bool,Expression *,UDFValue *,bool);
    void                           ResetErrorFlags(Environment *);
-
+   FunctionCallBuilder           *CreateFunctionCallBuilder(Environment *,size_t);
+   void                           FCBAppendUDFValue(FunctionCallBuilder *,UDFValue *);
+   void                           FCBAppend(FunctionCallBuilder *,CLIPSValue *);
+   void                           FCBAppendCLIPSInteger(FunctionCallBuilder *,CLIPSInteger *);
+   void                           FCBAppendInteger(FunctionCallBuilder *,long long);
+   void                           FCBAppendCLIPSFloat(FunctionCallBuilder *,CLIPSFloat *);
+   void                           FCBAppendFloat(FunctionCallBuilder *,double);
+   void                           FCBAppendCLIPSLexeme(FunctionCallBuilder *,CLIPSLexeme *);
+   void                           FCBAppendSymbol(FunctionCallBuilder *,const char *);
+   void                           FCBAppendString(FunctionCallBuilder *,const char *);
+   void                           FCBAppendInstanceName(FunctionCallBuilder *,const char *);
+   void                           FCBAppendCLIPSExternalAddress(FunctionCallBuilder *,CLIPSExternalAddress *);
+   void                           FCBAppendFact(FunctionCallBuilder *,Fact *);
+   void                           FCBAppendInstance(FunctionCallBuilder *,Instance *);
+   void                           FCBAppendMultifield(FunctionCallBuilder *,Multifield *);
+   void                           FCBDispose(FunctionCallBuilder *);
+   void                           FCBReset(FunctionCallBuilder *);
+   FunctionCallBuilderError       FCBCall(FunctionCallBuilder *,const char *,CLIPSValue *);
+   
 #define CVIsType(cv,cvType) (((1 << (((TypeHeader *) (cv)->value)->type)) & (cvType)) ? true : false)
 
 #define ValueIsType(value,vType) ((1 << (((TypeHeader *) value)->type)) & (vType))

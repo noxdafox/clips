@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  10/16/17             */
+   /*            CLIPS Version 6.40  11/17/17             */
    /*                                                     */
    /*                  EVALUATION MODULE                  */
    /*******************************************************/
@@ -1155,6 +1155,553 @@ static void NewCAddress(
      }
 
    rv->value = CreateExternalAddress(theEnv,NULL,0);
+  }
+
+/******************************/
+/* CreateFunctionCallBuilder: */
+/******************************/
+FunctionCallBuilder *CreateFunctionCallBuilder(
+  Environment *theEnv,
+  size_t theSize)
+  {
+   FunctionCallBuilder *theFC;
+
+   if (theEnv == NULL) return NULL;
+   
+   theFC = get_struct(theEnv,functionCallBuilder);
+   
+   theFC->fcbEnv = theEnv;
+   theFC->bufferReset = theSize;
+   theFC->bufferMaximum = theSize;
+   theFC->length = 0;
+   
+   if (theSize == 0)
+     { theFC->contents = NULL; }
+   else
+     { theFC->contents = (CLIPSValue *) gm2(theEnv,sizeof(CLIPSValue) * theSize); }
+     
+   return theFC;
+  }
+
+/**********************/
+/* FCBAppendUDFValue: */
+/**********************/
+void FCBAppendUDFValue(
+  FunctionCallBuilder *theFCB,
+  UDFValue *theValue)
+  {
+   Environment *theEnv = theFCB->fcbEnv;
+   size_t i, neededSize, newSize;
+   CLIPSValue *newArray;
+
+   /*==============================================*/
+   /* A void value can't be added to a multifield. */
+   /*==============================================*/
+   
+   if (theValue->header->type == VOID_TYPE)
+     { return; }
+
+   /*=======================================*/
+   /* Determine the amount of space needed. */
+   /*=======================================*/
+   
+   neededSize = theFCB->length + 1;
+
+   /*============================================*/
+   /* Increase the size of the buffer if needed. */
+   /*============================================*/
+   
+   if (neededSize > theFCB->bufferMaximum)
+     {
+      newSize = neededSize * 2;
+      
+      newArray = (CLIPSValue *) gm2(theEnv,sizeof(CLIPSValue) * newSize);
+      
+      for (i = 0; i < theFCB->length; i++)
+        { newArray[i] = theFCB->contents[i]; }
+        
+      if (theFCB->bufferMaximum != 0)
+        { rm(theFCB->fcbEnv,theFCB->contents,sizeof(CLIPSValue) * theFCB->bufferMaximum); }
+        
+      theFCB->bufferMaximum = newSize;
+      theFCB->contents = newArray;
+     }
+     
+   /*==================================*/
+   /* Copy the new value to the array. */
+   /*==================================*/
+    
+   if (theValue->header->type == MULTIFIELD_TYPE)
+     {
+      CLIPSValue newValue;
+      
+      UDFToCLIPSValue(theEnv,theValue,&newValue);
+      theFCB->contents[theFCB->length].value = newValue.value;
+     }
+   else
+     { theFCB->contents[theFCB->length].value = theValue->value; }
+     
+   Retain(theEnv,theFCB->contents[theFCB->length].header);
+   theFCB->length++;
+  }
+
+/**************/
+/* FCBAppend: */
+/**************/
+void FCBAppend(
+  FunctionCallBuilder *theFCB,
+  CLIPSValue *theValue)
+  {
+   Environment *theEnv = theFCB->fcbEnv;
+   size_t i, neededSize, newSize;
+   CLIPSValue *newArray;
+
+   /*==============================================*/
+   /* A void value can't be added to a multifield. */
+   /*==============================================*/
+   
+   if (theValue->header->type == VOID_TYPE)
+     { return; }
+
+   /*=======================================*/
+   /* Determine the amount of space needed. */
+   /*=======================================*/
+   
+   neededSize = theFCB->length + 1;
+
+   /*============================================*/
+   /* Increase the size of the buffer if needed. */
+   /*============================================*/
+   
+   if (neededSize > theFCB->bufferMaximum)
+     {
+      newSize = neededSize * 2;
+      
+      newArray = (CLIPSValue *) gm2(theEnv,sizeof(CLIPSValue) * newSize);
+      
+      for (i = 0; i < theFCB->length; i++)
+        { newArray[i] = theFCB->contents[i]; }
+        
+      if (theFCB->bufferMaximum != 0)
+        { rm(theFCB->fcbEnv,theFCB->contents,sizeof(CLIPSValue) * theFCB->bufferMaximum); }
+        
+      theFCB->bufferMaximum = newSize;
+      theFCB->contents = newArray;
+     }
+     
+   /*===================================*/
+   /* Copy the new values to the array. */
+   /*===================================*/
+
+   theFCB->contents[theFCB->length].value = theValue->value;
+   Retain(theEnv,theFCB->contents[theFCB->length].header);
+   theFCB->length++;
+  }
+
+/**************************/
+/* FCBAppendCLIPSInteger: */
+/**************************/
+void FCBAppendCLIPSInteger(
+  FunctionCallBuilder *theFCB,
+  CLIPSInteger *pv)
+  {
+   CLIPSValue theValue;
+   
+   theValue.integerValue = pv;
+   FCBAppend(theFCB,&theValue);
+  }
+
+/*********************/
+/* FCBAppendInteger: */
+/*********************/
+void FCBAppendInteger(
+  FunctionCallBuilder *theFCB,
+  long long intValue)
+  {
+   CLIPSValue theValue;
+   CLIPSInteger *pv = CreateInteger(theFCB->fcbEnv,intValue);
+   
+   theValue.integerValue = pv;
+   FCBAppend(theFCB,&theValue);
+  }
+
+/************************/
+/* FCBAppendCLIPSFloat: */
+/************************/
+void FCBAppendCLIPSFloat(
+  FunctionCallBuilder *theFCB,
+  CLIPSFloat *pv)
+  {
+   CLIPSValue theValue;
+   
+   theValue.floatValue = pv;
+   FCBAppend(theFCB,&theValue);
+  }
+
+/*******************/
+/* FCBAppendFloat: */
+/*******************/
+void FCBAppendFloat(
+  FunctionCallBuilder *theFCB,
+  double floatValue)
+  {
+   CLIPSValue theValue;
+   CLIPSFloat *pv = CreateFloat(theFCB->fcbEnv,floatValue);
+   
+   theValue.floatValue = pv;
+   FCBAppend(theFCB,&theValue);
+  }
+
+/*************************/
+/* FCBAppendCLIPSLexeme: */
+/*************************/
+void FCBAppendCLIPSLexeme(
+  FunctionCallBuilder *theFCB,
+  CLIPSLexeme *pv)
+  {
+   CLIPSValue theValue;
+   
+   theValue.lexemeValue = pv;
+   FCBAppend(theFCB,&theValue);
+  }
+
+/********************/
+/* FCBAppendSymbol: */
+/********************/
+void FCBAppendSymbol(
+  FunctionCallBuilder *theFCB,
+  const char *strValue)
+  {
+   CLIPSValue theValue;
+   CLIPSLexeme *pv = CreateSymbol(theFCB->fcbEnv,strValue);
+   
+   theValue.lexemeValue = pv;
+   FCBAppend(theFCB,&theValue);
+  }
+
+/********************/
+/* FCBAppendString: */
+/********************/
+void FCBAppendString(
+  FunctionCallBuilder *theFCB,
+  const char *strValue)
+  {
+   CLIPSValue theValue;
+   CLIPSLexeme *pv = CreateString(theFCB->fcbEnv,strValue);
+   
+   theValue.lexemeValue = pv;
+   FCBAppend(theFCB,&theValue);
+  }
+
+/**************************/
+/* FCBAppendInstanceName: */
+/**************************/
+void FCBAppendInstanceName(
+  FunctionCallBuilder *theFCB,
+  const char *strValue)
+  {
+   CLIPSValue theValue;
+   CLIPSLexeme *pv = CreateInstanceName(theFCB->fcbEnv,strValue);
+   
+   theValue.lexemeValue = pv;
+   FCBAppend(theFCB,&theValue);
+  }
+
+/**********************************/
+/* FCBAppendCLIPSExternalAddress: */
+/**********************************/
+void FCBAppendCLIPSExternalAddress(
+  FunctionCallBuilder *theFCB,
+  CLIPSExternalAddress *pv)
+  {
+   CLIPSValue theValue;
+   
+   theValue.externalAddressValue = pv;
+   FCBAppend(theFCB,&theValue);
+  }
+
+/******************/
+/* FCBAppendFact: */
+/******************/
+void FCBAppendFact(
+  FunctionCallBuilder *theFCB,
+  Fact *pv)
+  {
+   CLIPSValue theValue;
+   
+   theValue.factValue = pv;
+   FCBAppend(theFCB,&theValue);
+  }
+
+/**********************/
+/* FCBAppendInstance: */
+/**********************/
+void FCBAppendInstance(
+  FunctionCallBuilder *theFCB,
+  Instance *pv)
+  {
+   CLIPSValue theValue;
+   
+   theValue.instanceValue = pv;
+   FCBAppend(theFCB,&theValue);
+  }
+
+/************************/
+/* FCBAppendMultifield: */
+/************************/
+void FCBAppendMultifield(
+  FunctionCallBuilder *theFCB,
+  Multifield *pv)
+  {
+   CLIPSValue theValue;
+   
+   theValue.multifieldValue = pv;
+   FCBAppend(theFCB,&theValue);
+  }
+
+/***********/
+/* FCBCall */
+/***********/
+FunctionCallBuilderError FCBCall(
+  FunctionCallBuilder *theFCB,
+  const char *functionName,
+  CLIPSValue *returnValue)
+  {
+   Environment *theEnv;
+   Expression theReference, *lastAdd = NULL, *nextAdd, *multiAdd;
+   struct functionDefinition *theFunction = NULL;
+   size_t i, j;
+   UDFValue udfReturnValue;
+   GCBlock gcb;
+
+   /*==========================*/
+   /* Check for NULL pointers. */
+   /*==========================*/
+   
+   if ((theFCB == NULL) || (functionName == NULL))
+     { return FCBE_NULL_POINTER_ERROR; }
+   
+   /*======================================*/
+   /* Check to see if the function exists. */
+   /*======================================*/
+   
+   if (! GetFunctionReference(theFCB->fcbEnv,functionName,&theReference))
+     { return FCBE_FUNCTION_NOT_FOUND_ERROR; }
+     
+   /*============================================*/
+   /* Functions with specialized parsers  cannot */
+   /* be used with a FunctionCallBuilder.        */
+   /*============================================*/
+   
+   if (theReference.type == FCALL)
+     {
+      theFunction = FindFunction(theFCB->fcbEnv,functionName);
+      if (theFunction->parser != NULL)
+        { return FCBE_INVALID_FUNCTION_ERROR; }
+     }
+   
+   /*=======================================*/
+   /* Append the arguments for the function */
+   /* call to the expression.               */
+   /*=======================================*/
+   
+   theEnv = theFCB->fcbEnv;
+   
+   for (i = 0; i < theFCB->length; i++)
+     {
+      /*====================================================*/
+      /* Multifield values have to be dynamically recreated */
+      /* through a create$ expression call.                 */
+      /*====================================================*/
+      
+      if (theFCB->contents[i].header->type == MULTIFIELD_TYPE)
+        {
+         nextAdd = GenConstant(theEnv,FCALL,FindFunction(theEnv,"create$"));
+         
+         if (lastAdd == NULL)
+           { theReference.argList = nextAdd; }
+         else
+           { lastAdd->nextArg = nextAdd; }
+           
+         lastAdd = nextAdd;
+         
+         multiAdd = NULL;
+         for (j = 0; j < theFCB->contents[i].multifieldValue->length; j++)
+           {
+            nextAdd = GenConstant(theEnv,theFCB->contents[i].multifieldValue->contents[j].header->type,
+                                         theFCB->contents[i].multifieldValue->contents[j].value);
+               
+            if (multiAdd == NULL)
+              { lastAdd->argList = nextAdd; }
+            else
+               { multiAdd->nextArg = nextAdd; }
+            multiAdd = nextAdd;
+           }
+        }
+        
+      /*================================================================*/
+      /* Single field values can just be appended to the argument list. */
+      /*================================================================*/
+      
+      else
+        {
+         nextAdd = GenConstant(theEnv,theFCB->contents[i].header->type,theFCB->contents[i].value);
+         
+         if (lastAdd == NULL)
+           { theReference.argList = nextAdd; }
+         else
+           { lastAdd->nextArg = nextAdd; }
+         lastAdd = nextAdd;
+        }
+     }
+      
+   ExpressionInstall(theEnv,&theReference);
+   
+   /*===========================================================*/
+   /* Verify a deffunction has the correct number of arguments. */
+   /*===========================================================*/
+
+#if DEFFUNCTION_CONSTRUCT
+   if (theReference.type == PCALL)
+     {
+      if (CheckDeffunctionCall(theEnv,(Deffunction *) theReference.value,CountArguments(theReference.argList)) == false)
+        {
+         ExpressionDeinstall(theEnv,&theReference);
+         ReturnExpression(theEnv,theReference.argList);
+         return FCBE_ARGUMENT_COUNT_ERROR;
+        }
+     }
+#endif
+
+   /*=========================================*/
+   /* Verify the correct number of arguments. */
+   /*=========================================*/
+
+// TBD Support run time check of arguments
+#if ! RUN_TIME
+   if (theReference.type == FCALL)
+     {
+      FunctionArgumentsError theError;
+      if ((theError = CheckExpressionAgainstRestrictions(theEnv,&theReference,theFunction,functionName)) != FAE_NO_ERROR)
+        {
+         ExpressionDeinstall(theEnv,&theReference);
+         ReturnExpression(theEnv,theReference.argList);
+         if (theError == FAE_TYPE_ERROR) return FCBE_ARGUMENT_TYPE_ERROR;
+         else if (theError == FAE_COUNT_ERROR) return FCBE_ARGUMENT_COUNT_ERROR;
+         else
+           {
+            SystemError(theEnv,"EVALUATN",9);
+            ExitRouter(theEnv,EXIT_FAILURE);
+           }
+        }
+     }
+#endif
+   /*========================================*/
+   /* Set up the frame for tracking garbage. */
+   /*========================================*/
+   
+   GCBlockStart(theEnv,&gcb);
+
+   /*=====================================*/
+   /* If embedded, clear the error flags. */
+   /*=====================================*/
+   
+   if (EvaluationData(theEnv)->CurrentExpression == NULL)
+     { ResetErrorFlags(theEnv); }
+
+   /*======================*/
+   /* Call the expression. */
+   /*======================*/
+
+   EvaluateExpression(theEnv,&theReference,&udfReturnValue);
+
+   /*====================================================*/
+   /* Convert a partial multifield to a full multifield. */
+   /*====================================================*/
+   
+   NormalizeMultifield(theEnv,&udfReturnValue);
+   
+   /*========================================*/
+   /* Return the expression data structures. */
+   /*========================================*/
+
+   ExpressionDeinstall(theEnv,&theReference);
+   ReturnExpression(theEnv,theReference.argList);
+
+   /*================================*/
+   /* Restore the old garbage frame. */
+   /*================================*/
+   
+   if (returnValue != NULL)
+     { GCBlockEndUDF(theEnv,&gcb,&udfReturnValue); }
+   else
+     { GCBlockEnd(theEnv,&gcb); }
+     
+   /*==========================================*/
+   /* Perform periodic cleanup if the eval was */
+   /* issued from an embedded controller.      */
+   /*==========================================*/
+
+   if (EvaluationData(theEnv)->CurrentExpression == NULL)
+     {
+      if (returnValue != NULL)
+        { CleanCurrentGarbageFrame(theEnv,&udfReturnValue); }
+      else
+        { CleanCurrentGarbageFrame(theEnv,NULL); }
+      CallPeriodicTasks(theEnv);
+     }
+     
+   if (returnValue != NULL)
+     { returnValue->value = udfReturnValue.value; }
+     
+   if (GetEvaluationError(theEnv)) return FCBE_PROCESSING_ERROR;
+
+   return FCBE_NO_ERROR;
+  }
+
+/*************/
+/* FCBReset: */
+/*************/
+void FCBReset(
+  FunctionCallBuilder *theFCB)
+  {
+   size_t i;
+   
+   for (i = 0; i < theFCB->length; i++)
+     { Release(theFCB->fcbEnv,theFCB->contents[i].header); }
+     
+   if (theFCB->bufferReset != theFCB->bufferMaximum)
+     {
+      if (theFCB->bufferMaximum != 0)
+        { rm(theFCB->fcbEnv,theFCB->contents,sizeof(CLIPSValue) * theFCB->bufferMaximum); }
+      
+      if (theFCB->bufferReset == 0)
+        { theFCB->contents = NULL; }
+      else
+        { theFCB->contents = (CLIPSValue *) gm2(theFCB->fcbEnv,sizeof(CLIPSValue) * theFCB->bufferReset); }
+      
+      theFCB->bufferMaximum = theFCB->bufferReset;
+     }
+     
+   theFCB->length = 0;
+  }
+
+/***************/
+/* FCBDispose: */
+/***************/
+void FCBDispose(
+  FunctionCallBuilder *theFCB)
+  {
+   Environment *theEnv = theFCB->fcbEnv;
+   size_t i;
+   
+   for (i = 0; i < theFCB->length; i++)
+     { Release(theFCB->fcbEnv,theFCB->contents[i].header); }
+   
+   if (theFCB->bufferMaximum != 0)
+     { rm(theFCB->fcbEnv,theFCB->contents,sizeof(CLIPSValue) * theFCB->bufferMaximum); }
+     
+   rtn_struct(theEnv,multifieldBuilder,theFCB);
   }
 
 /*******************************/

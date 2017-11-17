@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  11/01/16            */
+   /*             CLIPS Version 6.40  11/17/17            */
    /*                                                     */
    /*            EXPRESSION PARSER HEADER FILE            */
    /*******************************************************/
@@ -56,6 +56,13 @@
 
 #define _H_exprnpsr
 
+typedef enum
+  {
+   FAE_NO_ERROR = 0,
+   FAE_COUNT_ERROR,
+   FAE_TYPE_ERROR
+  } FunctionArgumentsError;
+
 #include "extnfunc.h"
 #include "scanner.h"
 
@@ -76,7 +83,7 @@
    void                           PopulateRestriction(Environment *,unsigned *,unsigned,const char *,unsigned int);
 
 
-   bool                           CheckExpressionAgainstRestrictions(Environment *,struct expr *,
+   FunctionArgumentsError         CheckExpressionAgainstRestrictions(Environment *,struct expr *,
                                                                      struct functionDefinition *,const char *);
 
 #if (! RUN_TIME)

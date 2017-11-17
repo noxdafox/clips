@@ -1,9 +1,9 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  11/15/17            */
+   /*             CLIPS Version 6.40  11/17/17            */
    /*                                                     */
-   /*             MULTIFIELD_TYPE HEADER FILE             */
+   /*                MULTIFIELD HEADER FILE               */
    /*******************************************************/
 
 /*************************************************************/
@@ -102,6 +102,7 @@ struct multifieldBuilder
    Multifield                    *ArrayToMultifield(Environment *,CLIPSValue *,unsigned long);
    void                           NormalizeMultifield(Environment *,UDFValue *);
    void                           CLIPSToUDFValue(CLIPSValue *,UDFValue *);
+   void                           UDFToCLIPSValue(Environment *,UDFValue *,CLIPSValue *);
    MultifieldBuilder             *CreateMultifieldBuilder(Environment *,size_t);
    void                           MBReset(MultifieldBuilder *);
    void                           MBDispose(MultifieldBuilder *);
