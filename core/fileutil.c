@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  10/21/17            */
+   /*             CLIPS Version 6.40  11/19/17            */
    /*                                                     */
    /*                 FILE UTILITY MODULE                 */
    /*******************************************************/
@@ -19,6 +19,10 @@
 /*      Bebe Ly                                              */
 /*                                                           */
 /* Revision History:                                         */
+/*                                                           */
+/*      6.31: Fixed error in AppendDribble for older         */
+/*            compilers not allowing variable definition     */
+/*            within for statement.                          */
 /*                                                           */
 /*      6.40: Split from filecom.c                           */
 /*                                                           */

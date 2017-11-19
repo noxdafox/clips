@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  11/07/17            */
+   /*             CLIPS Version 6.40  11/18/17            */
    /*                                                     */
    /*               INSTANCE FUNCTIONS MODULE             */
    /*******************************************************/
@@ -54,6 +54,8 @@
 /*            Converted API macros to function calls.        */
 /*                                                           */
 /*            Fixed slot override default ?NONE bug.         */
+/*                                                           */
+/*      6.31: Fix for compilation with -std=c89.             */
 /*                                                           */
 /*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
