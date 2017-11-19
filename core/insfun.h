@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*               CLIPS Version 6.30  08/16/14          */
+   /*               CLIPS Version 6.31  11/18/17          */
    /*                                                     */
    /*                INSTANCE FUNCTIONS MODULE            */
    /*******************************************************/
@@ -55,7 +55,9 @@
 /*                                                           */
 /*            Fixed slot override default ?NONE bug.         */
 /*                                                           */
-//*************************************************************/
+/*      6.31: Fix for compilation with -std=c89.             */
+/*                                                           */
+/*************************************************************/
 
 #ifndef _H_insfun
 #define _H_insfun

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.31  03/29/17            */
+   /*             CLIPS Version 6.31  11/19/17            */
    /*                                                     */
    /*                 FILE COMMANDS MODULE                */
    /*******************************************************/
@@ -46,6 +46,10 @@
 /*                                                           */
 /*      6.31: Unprocessed batch files did not deallocate     */
 /*            all memory on exit.                            */
+/*                                                           */
+/*            Fixed error in AppendDribble for older         */
+/*            compilers not allowing variable definition     */
+/*            within for statement.                          */
 /*                                                           */
 /*************************************************************/
 
@@ -246,9 +250,11 @@ void AppendDribble(
   void *theEnv,
   const char *str)
   {
+   int i;
+   
    if (! EnvDribbleActive(theEnv)) return;
    
-   for (int i = 0 ; str[i] != EOS ; i++)
+   for (i = 0 ; str[i] != EOS ; i++)
      { PutcDribbleBuffer(theEnv,str[i]); }
   }
 
