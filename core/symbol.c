@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  11/10/17             */
+   /*            CLIPS Version 6.40  11/20/17             */
    /*                                                     */
    /*                    SYMBOL MODULE                    */
    /*******************************************************/
@@ -193,6 +193,9 @@ void InitializeAtomTables(
                 gm2(theEnv,sizeof (CLIPSExternalAddress *) * EXTERNAL_ADDRESS_HASH_SIZE);
 
    for (i = 0; i < EXTERNAL_ADDRESS_HASH_SIZE; i++) SymbolData(theEnv)->ExternalAddressTable[i] = NULL;
+   
+   theEnv->TrueSymbol = FindSymbolHN(theEnv,TRUE_STRING,SYMBOL_BIT);
+   theEnv->FalseSymbol = FindSymbolHN(theEnv,FALSE_STRING,SYMBOL_BIT);
 #endif
 
    theEnv->VoidConstant = get_struct(theEnv,clipsVoid);
@@ -1536,8 +1539,6 @@ void SetExternalAddressTable(
 void RefreshSpecialSymbols(
   Environment *theEnv)
   {
-   TrueSymbol(theEnv) = FindSymbolHN(theEnv,TRUE_STRING,SYMBOL_BIT);
-   FalseSymbol(theEnv) = FindSymbolHN(theEnv,FALSE_STRING,SYMBOL_BIT);
    SymbolData(theEnv)->PositiveInfinity = FindSymbolHN(theEnv,POSITIVE_INFINITY_STRING,SYMBOL_BIT);
    SymbolData(theEnv)->NegativeInfinity = FindSymbolHN(theEnv,NEGATIVE_INFINITY_STRING,SYMBOL_BIT);
    SymbolData(theEnv)->Zero = FindLongHN(theEnv,0L);
