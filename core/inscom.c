@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  11/07/17             */
+   /*            CLIPS Version 6.40  11/20/17             */
    /*                                                     */
    /*               INSTANCE COMMAND MODULE               */
    /*******************************************************/
@@ -919,7 +919,7 @@ PutSlotError DirectPutSlot(
    if (sp == NULL)
      {
       SetEvaluationError(theEnv,true);
-      return false;
+      return PSE_SLOT_NOT_FOUND_ERROR;
      }
 
    GCBlockStart(theEnv,&gcb);
