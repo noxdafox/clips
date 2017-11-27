@@ -2,35 +2,29 @@
 # Linux CLIPSJNI library
 # Ubuntu 16.04 LTS with OpenJDK 1.8.0_131
 # Debian 9.1 with OpenJDK 1.8.0_141
-# Fedora 23 with OpenJDK 1.8.0_111
+# Fedora 26 with OpenJDK 1.8.0_141
 # CentOS 7 with OpenJDK 1.8.0_141
 # Mint 18 with OpenJDK 1.8.0_131
 
 # Notes:
 #    -fPIC option needed for 64-bit systems
 
-# set DISTRIBUTION to UBUNTU, DEBIAN, FEDORA, MINT, or CENTOS
-DISTRIBUTION = UBUNTU
+all: ubuntu
 
-ifeq ($(DISTRIBUTION),UBUNTU)
-JAVA_HOME = /usr/lib/jvm/default-java
-endif 
+ubuntu : JAVA_HOME = /usr/lib/jvm/default-java
+ubuntu : libCLIPSJNI.so
 
-ifeq ($(DISTRIBUTION),DEBIAN)
-JAVA_HOME = /usr/lib/jvm/default-java
-endif 
+debian : JAVA_HOME = /usr/lib/jvm/default-java
+debian : libCLIPSJNI.so
 
-ifeq ($(DISTRIBUTION),FEDORA)
-JAVA_HOME = /usr/lib/jvm/java
-endif 
+mint : JAVA_HOME = /usr/lib/jvm/default-java
+mint : libCLIPSJNI.so
 
-ifeq ($(DISTRIBUTION),MINT)
-JAVA_HOME = /usr/lib/jvm/default-java
-endif
+fedora : JAVA_HOME = /usr/lib/jvm/java
+fedora : libCLIPSJNI.so
 
-ifeq ($(DISTRIBUTION),CENTOS)
-JAVA_HOME = /usr/lib/jvm/java
-endif
+centos : JAVA_HOME = /usr/lib/jvm/java
+centos : libCLIPSJNI.so
 
 JAVA_INCLUDE = $(JAVA_HOME)/include
 JAVA_INCLUDE_OS = $(JAVA_INCLUDE)/linux
@@ -77,8 +71,6 @@ OBJS = agenda.o analysis.o argacces.o bload.o bmathfun.o bsave.o \
 	    -Wmissing-prototypes -Wnested-externs \
 	    -Wstrict-prototypes -Waggregate-return -Wno-implicit $<
 
-all: libCLIPSJNI.so
-
 libCLIPSJNI.so : $(OBJS) 
 	gcc -o libCLIPSJNI.so -fPIC -shared \
 		-lm $(OBJS) 
@@ -86,7 +78,7 @@ libCLIPSJNI.so : $(OBJS)
 clean : 
 	-rm -f libCLIPSJNI.so $(OBJS)
 	
-.PHONY : all clean
+.PHONY : all clean ubuntu debian mint fedora centos
 		
 clipsjni_environment.o: clipsjni_environment.c \
   net_sf_clipsrules_jni_Environment.h \
