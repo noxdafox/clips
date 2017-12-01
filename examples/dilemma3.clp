@@ -13,7 +13,7 @@
 ;;;        This example uses rules and object pattern  
 ;;;     matching to solve the problem.
 ;;;
-;;;     CLIPS Version 6.0 Example
+;;;     CLIPS Version 6.4 Example
 ;;;
 ;;;     To execute, merely load, reset and run.
 ;;;======================================================
@@ -214,16 +214,18 @@
                  (moves-list no-move $?m))
   =>
   (unmake-instance ?mv)
-  ;(printout t crlf "Solution found: " crlf crlf)
+  (println crlf "Solution found: " crlf)
   (bind ?length (length$ ?m))
   (bind ?i 1)
   (bind ?shore shore-2)
   (while (<= ?i ?length)
      (bind ?thing (nth$ ?i ?m))
      (if (eq ?thing alone)
-        then (printout t "Farmer moves alone to " ?shore "." crlf)
-        else (printout t "Farmer moves with " ?thing " to " ?shore "." crlf))
+        then (println "Farmer moves alone to " ?shore ".")
+        else (println "Farmer moves with " ?thing " to " ?shore "."))
      (if (eq ?shore shore-1)
         then (bind ?shore shore-2)
         else (bind ?shore shore-1))
-     (bind ?i (+ 1 ?i))))
+     (bind ?i (+ 1 ?i)))
+  (println))
+

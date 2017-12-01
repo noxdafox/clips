@@ -49,7 +49,7 @@
 ;;;     decision tree, and print out the simplified decision
 ;;;     tree.
 ;;;
-;;;     CLIPS Version 6.0 Example
+;;;     CLIPS Version 6.4 Example
 ;;; 
 ;;;     To execute, load this file, load one of the circuit
 ;;;     files (circuit1.clp, circuit2.clp, or circuit3.clp), 
@@ -365,14 +365,15 @@
    (declare (salience -10))
    =>
    (assert (print-results))
+   (println)
    (do-for-all-instances ((?x SOURCE)) TRUE (format t " %3s " (sym-cat ?x)))
-   (printout t " | ")
+   (print " | ")
    (do-for-all-instances ((?x LED)) TRUE (format t " %3s " (sym-cat ?x)))
-   (format t "%n")
-   (do-for-all-instances ((?x SOURCE)) TRUE (printout t "-----"))
-   (printout t "-+-")
-   (do-for-all-instances ((?x LED)) TRUE (printout t "-----"))
-   (format t "%n"))
+   (println)
+   (do-for-all-instances ((?x SOURCE)) TRUE (print "-----"))
+   (print "-+-")
+   (do-for-all-instances ((?x LED)) TRUE (print "-----"))
+   (println))
       
 (defrule print-result
    (print-results)
@@ -382,12 +383,18 @@
    (retract ?f)
    ;; Print the input from the sources.
    (while (neq ?input (create$)) do
-      (printout t "  " (nth$ 1 ?input) "  ")
+      (print "  " (nth$ 1 ?input) "  ")
       (bind ?input (rest$ ?input)))
    ;; Print the output from the LEDs.
-   (printout t " | ")
+   (print " | ")
    (bind ?response (explode$ ?response))
    (while (neq ?response (create$)) do
-      (printout t "  " (nth$ 1 ?response) "  ")
+      (print "  " (nth$ 1 ?response) "  ")
       (bind ?response (rest$ ?response)))
-   (printout t crlf))
+   (println))
+   
+(defrule print-done
+   (declare (salience -10))
+   (print-results)
+   =>
+   (println))

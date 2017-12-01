@@ -12,7 +12,7 @@
 ;;;        This example uses COOL classes and 
 ;;;     message-handlers to solve the problem.
 ;;;
-;;;     CLIPS Version 6.0 Example
+;;;     CLIPS Version 6.4 Example
 ;;; 
 ;;;     To execute, merely load and enter (solve-dilemma).
 ;;;======================================================
@@ -179,19 +179,18 @@
       (bind ?move-dest (dynamic-get ?self:last-move))
       (if (eq ?self:last-move farmer)
          then
-         (printout t "Farmer moves alone to " ?move-dest "." crlf)
+         (println "Farmer moves alone to " ?move-dest ".")
          else
-         (printout t "Farmer moves with " ?self:last-move " to " ?move-dest "." crlf))))
+         (println "Farmer moves with " ?self:last-move " to " ?move-dest "."))))
 
 (defmessage-handler status solution?
    ()
    (if (and (eq ?self:farmer shore-2) (eq ?self:fox shore-2) 
             (eq ?self:goat shore-2) (eq ?self:cabbage shore-2))
       then
-      (printout t crlf "Solution found:" crlf crlf)
+      (println crlf "Solution found:" crlf)
       (send ?self print-solution)
+      (println)
       TRUE
       else
       FALSE))
-
-

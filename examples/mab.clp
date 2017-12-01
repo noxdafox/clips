@@ -84,7 +84,7 @@
   =>
   (println "Monkey throws the " ?chest " off the " 
            ?on " onto the floor.")
-  (modify ?monkey (holding blank))
+  (modify ?monkey (holding nothing))
   (modify ?thing (location ?place) (on-top-of floor)))
 
 (defrule get-key-to-unlock "" 
@@ -150,7 +150,7 @@
   ?thing <- (thing (name ?name) (location ?place) 
                    (on-top-of ceiling) (weight light))
   (thing (name ladder) (location ?place))
-  ?monkey <- (monkey (location ?place) (on-top-of ladder) (holding blank))
+  ?monkey <- (monkey (location ?place) (on-top-of ladder) (holding nothing))
   =>
   (println "Monkey grabs the " ?name ".")
   (modify ?thing (location held) (on-top-of held))
@@ -176,16 +176,16 @@
 (defrule drop-to-hold ""
   (goal-is-to (action hold) (target ?obj))
   (thing (name ?obj) (location ?place) (on-top-of ?on) (weight light))
-  (monkey (location ?place) (on-top-of ?on) (holding ~blank))
-  (not (goal-is-to (action hold) (target blank)))
+  (monkey (location ?place) (on-top-of ?on) (holding ~nothing))
+  (not (goal-is-to (action hold) (target nothing)))
   =>
-  (assert (goal-is-to (action hold) (target blank))))
+  (assert (goal-is-to (action hold) (target nothing))))
 
 (defrule grab-object "" 
   ?goal <- (goal-is-to (action hold) (target ?name))
   ?thing <- (thing (name ?name) (location ?place) 
                      (on-top-of ?on) (weight light))
-  ?monkey <- (monkey (location ?place) (on-top-of ?on) (holding blank))
+  ?monkey <- (monkey (location ?place) (on-top-of ?on) (holding nothing))
   =>
   (println "Monkey grabs the " ?name ".")
   (modify ?thing (location held) (on-top-of held))
@@ -193,14 +193,14 @@
   (retract ?goal))
 
 (defrule drop-object ""  
-  ?goal <- (goal-is-to (action hold) (target blank))
+  ?goal <- (goal-is-to (action hold) (target nothing))
   ?monkey <- (monkey (location ?place) 
                      (on-top-of ?on) 
-                     (holding ?name&~blank))
+                     (holding ?name&~nothing))
   ?thing <- (thing (name ?name))
   =>
   (println "Monkey drops the " ?name ".")
-  (modify ?monkey (holding blank))
+  (modify ?monkey (holding nothing))
   (modify ?thing (location ?place) (on-top-of ?on))
   (retract ?goal))
 
@@ -236,7 +236,7 @@
   ?thing <- (thing (name ?name) (weight light))
   =>
   (println "Monkey drops the " ?name ".")
-  (modify ?monkey (holding blank))
+  (modify ?monkey (holding nothing))
   (modify ?thing (location ?place) (on-top-of floor))
   (retract ?goal))
 
@@ -265,7 +265,7 @@
 
 (defrule walk-holding-nothing ""
   ?goal <- (goal-is-to (action walk-to) (location ?place))
-  ?monkey <- (monkey (location ~?place) (on-top-of floor) (holding blank))
+  ?monkey <- (monkey (location ~?place) (on-top-of floor) (holding nothing))
   =>
   (println "Monkey walks to " ?place ".")
   (modify ?monkey (location ?place))
@@ -273,7 +273,7 @@
 
 (defrule walk-holding-object ""
   ?goal <- (goal-is-to (action walk-to) (location ?place))
-  ?monkey <- (monkey (location ~?place) (on-top-of floor) (holding ?obj&~blank))
+  ?monkey <- (monkey (location ~?place) (on-top-of floor) (holding ?obj&~nothing))
   =>
   (println "Monkey walks to " ?place " holding the " ?obj ".")
   (modify ?monkey (location ?place))
@@ -302,15 +302,15 @@
 (defrule drop-to-climb "" 
   (goal-is-to (action on) (target ?obj))
   (thing (name ?obj) (location ?place))
-  (monkey (location ?place) (holding ~blank))
-  (not (goal-is-to (action hold) (target blank)))
+  (monkey (location ?place) (holding ~nothing))
+  (not (goal-is-to (action hold) (target nothing)))
   =>
-  (assert (goal-is-to (action hold) (target blank))))
+  (assert (goal-is-to (action hold) (target nothing))))
 
 (defrule climb-indirectly "" 
   (goal-is-to (action on) (target ?obj))
   (thing (name ?obj) (location ?place) (on-top-of ?on))
-  (monkey (location ?place) (on-top-of ~?on&~?obj) (holding blank))
+  (monkey (location ?place) (on-top-of ~?on&~?obj) (holding nothing))
   (not (goal-is-to (action on) (target ?on)))
   =>
   (assert (goal-is-to (action on) (target ?on))))
@@ -318,7 +318,7 @@
 (defrule climb-directly ""  
   ?goal <- (goal-is-to (action on) (target ?obj))
   (thing (name ?obj) (location ?place) (on-top-of ?on))
-  ?monkey <- (monkey (location ?place) (on-top-of ?on) (holding blank))
+  ?monkey <- (monkey (location ?place) (on-top-of ?on) (holding nothing))
   =>
   (println "Monkey climbs onto the " ?obj ".")
   (modify ?monkey (on-top-of ?obj))
@@ -347,7 +347,7 @@
   ?thing <- (thing (name ?name))
   =>
   (println "Monkey eats the " ?name ".")
-  (modify ?monkey (holding blank))
+  (modify ?monkey (holding nothing))
   (retract ?goal ?thing))
  
 ;;;**********************
@@ -356,7 +356,7 @@
 
 (defrule startup ""
   =>
-  (assert (monkey (location t5-7) (on-top-of green-couch) (holding blank)))
+  (assert (monkey (location t5-7) (on-top-of green-couch) (holding nothing)))
   (assert (thing (name green-couch) (location t5-7) (weight heavy)))
   (assert (thing (name red-couch) (location t2-2) (weight heavy)))
   (assert (thing (name big-pillow) (location t2-2) (on-top-of red-couch)))

@@ -97,7 +97,7 @@
    (variable (name ?goal) (value ?value))
    (answer (prefix ?prefix) (postfix ?postfix) (variable ?goal))
    =>
-   (format t "%s%s%s%n" ?prefix ?value ?postfix))
+   (println ?prefix ?value ?postfix))
 
 ;;; ##################
 ;;; CHAIN MODULE RULES 
@@ -145,7 +145,7 @@
    =>
    (assert (activity))
    (retract ?f1)
-   (format t "%s " ?text)
+   (print ?text " ")
    (assert (variable (name ?variable) (value (read)))))
 
 (defrule ASK::ask-question-legalvalues ""
@@ -156,8 +156,8 @@
    =>
    (assert (activity))
    (retract ?f1)
-   (format t "%s " ?text)
-   (printout t ?answers " ")
+   (print ?text " ")
+   (print ?answers " ")
    (bind ?reply (read))
    (if (lexemep ?reply)
       then
@@ -199,48 +199,48 @@
                (if ?a ?c ?v ?connector&~and $?))
    =>
    (retract ?f)
-   (printout t "In rule " ?name ", if conditions must be connected using and:" crlf
-               "   " ?a " " ?c " " ?v " *" ?connector "*" crlf))
+   (println "In rule " ?name ", if conditions must be connected using and:" crlf
+            "   " ?a " " ?c " " ?v " *" ?connector "*"))
 
 (defrule VALIDATE::and-requires-additional-condition
    ?f <- (rule (name ?name) (validate yes)
                (if ?a ?c ?v and))
    =>
    (retract ?f)
-   (printout t "In rule " ?name ", an additional condition should follow the final and:" crlf
-               "   " ?a " " ?c " " ?v " and <missing condition>" crlf))
+   (println "In rule " ?name ", an additional condition should follow the final and:" crlf
+            "   " ?a " " ?c " " ?v " and <missing condition>"))
                
 (defrule VALIDATE::incorrect-number-of-then-terms          
    ?f <- (rule (name ?name) (validate yes)
                (then $?terms&:(<> (length$ ?terms) 3)))
    =>
    (retract ?f)
-   (printout t "In rule " ?name ", then portion should be of the form <variable> is <value>:" crlf
-               "   " (implode$ ?terms) crlf))
+   (println "In rule " ?name ", then portion should be of the form <variable> is <value>:" crlf
+            "   " (implode$ ?terms)))
 
 (defrule VALIDATE::incorrect-number-of-if-terms          
    ?f <- (rule (name ?name) (validate yes)
                (if $?terms&:(< (length$ ?terms) 3)))
    =>
    (retract ?f)
-   (printout t "In rule " ?name ", if portion contains an incomplete condition:" crlf
-               "   " (implode$ ?terms) crlf))
+   (println "In rule " ?name ", if portion contains an incomplete condition:" crlf
+            "   " (implode$ ?terms)))
 
 (defrule VALIDATE::incorrect-then-term-syntax          
    ?f <- (rule (name ?name) (validate yes)
                (then ?a ?c&~is ?v))
    =>
    (retract ?f)
-   (printout t "In rule " ?name ", then portion should be of the form <variable> is <value>:" crlf
-               "   " ?a " " ?c " " ?v " " crlf))
+   (println "In rule " ?name ", then portion should be of the form <variable> is <value>:" crlf
+            "   " ?a " " ?c " " ?v " "))
 
 (defrule VALIDATE::incorrect-if-term-syntax          
    ?f <- (rule (name ?name) (validate yes)
                (if ?a ?c&~is ?v $?))
    =>
    (retract ?f)
-   (printout t "In rule " ?name ", if portion comparator should be \"is\"" crlf
-               "   " ?a " " ?c " " ?v " " crlf))
+   (println "In rule " ?name ", if portion comparator should be \"is\"" crlf
+            "   " ?a " " ?c " " ?v " "))
                
 (defrule VALIDATE::illegal-variable-value
    ?f <- (rule (name ?name) (validate yes)
@@ -250,8 +250,8 @@
    (test (not (member$ ?v ?values)))
    =>
    (retract ?f)
-   (printout t "In rule " ?name ", the value " ?v " is not legal for variable " ?a ":" crlf
-               "   " ?a " " ?c " " ?v crlf))               
+   (println "In rule " ?name ", the value " ?v " is not legal for variable " ?a ":" crlf
+            "   " ?a " " ?c " " ?v))               
 
 (defrule VALIDATE::reachable
    (rule (name ?name) (validate yes)
@@ -259,9 +259,9 @@
    (not (question (variable ?a)))
    (not (rule (then ?a $?)))
    =>
-   (printout t "In rule " ?name " no question or rule could be found "
+   (println "In rule " ?name " no question or rule could be found "
                "that can supply a value for the variable " ?a ":" crlf
-               "   " ?a " " ?c " " ?v crlf))
+               "   " ?a " " ?c " " ?v))
 
 (defrule VALIDATE::used "TBD lower salience"
    ?f <- (rule (name ?name) (validate yes)
@@ -270,9 +270,9 @@
    (not (rule (if ?a ? ?v $?)))
    =>
    (retract ?f)
-   (printout t "In rule " ?name " the conclusion for variable " ?a 
-               " is neither referenced by any rules nor the primary goal" crlf
-               "   " ?a " is " ?v crlf))
+   (println "In rule " ?name " the conclusion for variable " ?a 
+            " is neither referenced by any rules nor the primary goal" crlf
+            "   " ?a " is " ?v))
                
 (defrule VALIDATE::variable-in-both-if-and-then
    ?f <- (rule (name ?name) (validate yes)
@@ -280,15 +280,15 @@
                (then ?a is ?v))
    =>
    (retract ?f)
-   (printout t "In rule " ?name " the variable " ?a 
-               " is used in both the if and then sections" crlf))
+   (println "In rule " ?name " the variable " ?a 
+            " is used in both the if and then sections"))
                               
 (defrule VALIDATE::question-variable-unreferenced
    (question (variable ?a) (query ?q))
    (not (rule (validate done) (if $? ?a is ?v $?)))
    =>
-   (printout t "The question \"" ?q "\", assigns a value to the variable " ?a 
-               " which is not referenced by any rules" crlf))
+   (println "The question \"" ?q "\", assigns a value to the variable " ?a 
+            " which is not referenced by any rules"))
 
 ;;;***************************
 ;;;* DEFFACTS KNOWLEDGE BASE *

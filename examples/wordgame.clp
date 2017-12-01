@@ -9,7 +9,7 @@
 ;;;          ------
 ;;;        = ROBERT
 ;;;
-;;;     CLIPS Version 6.0 Example
+;;;     CLIPS Version 6.4 Example
 ;;;
 ;;;     To execute, merely load, reset and run.
 ;;;     This example takes alot of memory to execute.
@@ -17,11 +17,11 @@
 
 (defrule startup
   =>
-  (printout t crlf "The problem is" crlf crlf)
-  (printout t "   GERALD" crlf)
-  (printout t " + DONALD" crlf)
-  (printout t "   ------" crlf)
-  (printout t " = ROBERT" crlf crlf)
+  (println crlf "The problem is" crlf)
+  (println "   GERALD")
+  (println " + DONALD")
+  (println "   ------")
+  (println " = ROBERT" crlf)
   (assert (number 0)
           (number 1)
           (number 2)
@@ -84,21 +84,21 @@
               (* 100000 ?g) (* 100000 ?d))
            (+ (* 100000 ?r) (* 10000 ?o) (* 1000 ?b) (* 100 ?e) (* 10 ?r) ?t)))
   =>
-  (printout t "A Solution is:" crlf crlf)
-  (printout t "  G = " ?g crlf)
-  (printout t "  E = " ?e crlf)
-  (printout t "  R = " ?r crlf)
-  (printout t "  A = " ?a crlf)
-  (printout t "  L = " ?l crlf)
-  (printout t "  D = " ?d crlf)
-  (printout t "  O = " ?o crlf)
-  (printout t "  N = " ?n crlf)
-  (printout t "  B = " ?b crlf)
-  (printout t "  T = " ?t crlf)
-  (printout t crlf)
-  (printout t "   " ?g ?e ?r ?a ?l ?d crlf)
-  (printout t " + " ?d ?o ?n ?a ?l ?d crlf) 
-  (printout t "   " "------" crlf)
-  (printout t " = " ?r ?o ?b ?e ?r ?t crlf crlf))  
+  (println "A Solution is:" crlf)
+  (println "  G = " ?g)
+  (println "  E = " ?e)
+  (println "  R = " ?r)
+  (println "  A = " ?a)
+  (println "  L = " ?l)
+  (println "  D = " ?d)
+  (println "  O = " ?o)
+  (println "  N = " ?n)
+  (println "  B = " ?b)
+  (println "  T = " ?t)
+  (println)
+  (println "   " ?g ?e ?r ?a ?l ?d)
+  (println " + " ?d ?o ?n ?a ?l ?d) 
+  (println "   " "------")
+  (println " = " ?r ?o ?b ?e ?r ?t crlf))  
   
  

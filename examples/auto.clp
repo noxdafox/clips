@@ -15,12 +15,12 @@
 ;;****************
 
 (deffunction ask-question (?question $?allowed-values)
-   (printout t ?question)
+   (print ?question)
    (bind ?answer (read))
    (if (lexemep ?answer) 
        then (bind ?answer (lowcase ?answer)))
    (while (not (member$ ?answer ?allowed-values)) do
-      (printout t ?question)
+      (print ?question)
       (bind ?answer (read))
       (if (lexemep ?answer) 
           then (bind ?answer (lowcase ?answer))))
@@ -190,16 +190,11 @@
 (defrule system-banner ""
   (declare (salience 10))
   =>
-  (printout t crlf crlf)
-  (printout t "The Engine Diagnosis Expert System")
-  (printout t crlf crlf))
+  (println crlf "The Engine Diagnosis Expert System" crlf))
 
 (defrule print-repair ""
   (declare (salience 10))
   (repair ?item)
   =>
-  (printout t crlf crlf)
-  (printout t "Suggested Repair:")
-  (printout t crlf crlf)
-  (format t " %s%n%n%n" ?item))
-
+  (println crlf "Suggested Repair:" crlf)
+  (println " " ?item crlf))
