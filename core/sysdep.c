@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  10/21/17             */
+   /*            CLIPS Version 6.40  12/07/17             */
    /*                                                     */
    /*               SYSTEM DEPENDENT MODULE               */
    /*******************************************************/
@@ -657,13 +657,7 @@ void GenReadBinary(
 #endif
 
 #if (! WIN_MVC)
-
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wunused-result" 
-
    fread(dataPtr,size,1,SystemDependentData(theEnv)->BinaryFP);
-
-#pragma GCC diagnostic pop 
 #endif
   }
 

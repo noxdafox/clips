@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  11/17/17             */
+   /*            CLIPS Version 6.40  12/07/17             */
    /*                                                     */
    /*                  EVALUATION MODULE                  */
    /*******************************************************/
@@ -881,8 +881,6 @@ unsigned long GetAtomicHashValue(
       default:
         tvalue = type;
      }
-
-   if (position < 0) return tvalue;
 
    return tvalue * (position + 29);
   }

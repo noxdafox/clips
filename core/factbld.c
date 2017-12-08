@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/30/16             */
+   /*            CLIPS Version 6.40  12/07/17             */
    /*                                                     */
    /*                   FACT BUILD MODULE                 */
    /*******************************************************/
@@ -618,7 +618,7 @@ static struct factPatternNode *CreateNewPatternNode(
      { newNode->whichField = thePattern->index; }
    else newNode->whichField = 0;
 
-   if ((thePattern->slotNumber >= 0) && (thePattern->slotNumber != UNSPECIFIED_SLOT))
+   if (thePattern->slotNumber != UNSPECIFIED_SLOT)
      { newNode->whichSlot = thePattern->slotNumber - 1; }
    else
      { newNode->whichSlot = newNode->whichField; }
