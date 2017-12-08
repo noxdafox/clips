@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  11/01/16             */
+   /*            CLIPS Version 6.40  12/07/17             */
    /*                                                     */
    /*          FACT RETE FUNCTION GENERATION MODULE       */
    /*******************************************************/
@@ -1167,7 +1167,7 @@ struct expr *FactJNVariableComparison(
 
       hack1.pattern2 = referringNode->joinDepth;
 
-      if (referringNode->index < 0) hack1.slot2 = 0;
+      if (referringNode->index == NO_INDEX) hack1.slot2 = 0;
       else hack1.slot2 = referringNode->slotNumber - 1;
 
       if (selfNode->negated) hack1.fail = 1;
