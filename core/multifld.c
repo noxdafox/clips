@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  11/17/17             */
+   /*            CLIPS Version 6.40  12/24/17             */
    /*                                                     */
    /*                  MULTIFIELD MODULE                  */
    /*******************************************************/
@@ -435,7 +435,10 @@ void UDFToCLIPSValue(
    
    if ((uv->begin == 0) &&
        (uv->range == uv->multifieldValue->length))
-     { return; }
+     {
+      cv->multifieldValue = uv->multifieldValue;
+      return;
+     }
      
    copy = CreateMultifield(theEnv,uv->range);
    GenCopyMemory(struct clipsValue,uv->range,&copy->contents[0],
