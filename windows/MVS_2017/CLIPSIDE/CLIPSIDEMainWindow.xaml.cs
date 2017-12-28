@@ -636,6 +636,8 @@ namespace CLIPSIDE
             OpenTabItem(theTabItem);
 
             EntityBrowser theBrowser = factBrowserManager.CreateBrowser();
+            theBrowser.entityDataGridView.Columns[0].Header = "Index";
+            theBrowser.entityDataGridView.Columns[1].Header = "Template";
             theTabItem.Content = theBrowser;
            }
          else
@@ -679,6 +681,8 @@ namespace CLIPSIDE
             OpenTabItem(theTabItem);
 
             EntityBrowser theBrowser = instanceBrowserManager.CreateBrowser();
+            theBrowser.entityDataGridView.Columns[0].Header = "Name";
+            theBrowser.entityDataGridView.Columns[1].Header = "Class";
             theTabItem.Content = theBrowser;
            }
          else

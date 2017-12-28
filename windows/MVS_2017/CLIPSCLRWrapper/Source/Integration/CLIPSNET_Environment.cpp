@@ -38,6 +38,15 @@ namespace CLIPSNET
       CallbackEvents();
      }
      */
+     
+   String ^ Environment::CharStarToString(
+     const char *theString)
+     {
+      if (theString == NULL)
+        { return nullptr; }
+
+      return gcnew String(theString,0, (int) strlen(theString), UTF8Encoding::UTF8);
+     }
 
    /***************************/
    /* LoadParserErrorCallback */
@@ -1305,14 +1314,14 @@ namespace CLIPSNET
             
             isDefault = theCPPSlots->at(j).IsDefault();
 
-            theSlots->Add(gcnew SlotValue(gcnew String(theCSlotName),
-                                          gcnew String(theCSlotValue),
+            theSlots->Add(gcnew SlotValue(CharStarToString(theCSlotName),
+                                          CharStarToString(theCSlotValue),
                                           isDefault));
            }
 
          theList->Add(gcnew FactInstance(theTypeAddress,
-                                         gcnew String(theCName),
-                                         gcnew String(theCRelationName),
+                                         CharStarToString(theCName),
+                                         CharStarToString(theCRelationName),
                                          theSlots));
         }
 
@@ -1387,14 +1396,14 @@ namespace CLIPSNET
             
             isDefault = theCPPSlots->at(j).IsDefault();
 
-            theSlots->Add(gcnew SlotValue(gcnew String(theCSlotName),
-                                          gcnew String(theCSlotValue),
+            theSlots->Add(gcnew SlotValue(CharStarToString(theCSlotName),
+                                          CharStarToString(theCSlotValue),
                                           isDefault));
            }
 
          theList->Add(gcnew FactInstance(theTypeAddress,
-                                         gcnew String(theCName),
-                                         gcnew String(theCRelationName),
+                                         CharStarToString(theCName),
+                                         CharStarToString(theCRelationName),
                                          theSlots));
         }
 
@@ -1418,7 +1427,7 @@ namespace CLIPSNET
       for (i = 0; i < v->size(); i++)
         {
          theCString = v->at(i).GetModuleName()->c_str();
-         theList->Add(gcnew Module(gcnew String(theCString)));
+         theList->Add(gcnew Module(CharStarToString(theCString)));
         }
 
       delete v;
@@ -1449,7 +1458,7 @@ namespace CLIPSNET
          theCPPFocus = v->at(i);
          theCPPString = theCPPFocus->GetModuleName();
    	     theCString = theCPPString->c_str();
-         theList->Add(gcnew Focus(gcnew String(theCString)));
+         theList->Add(gcnew Focus(CharStarToString(theCString)));
         }
 
       theStack = gcnew FocusStack(theList);
@@ -1492,7 +1501,7 @@ namespace CLIPSNET
 		 theCRuleName = theCPPRuleName->c_str();
          theCPPBasis = theCPPActivation->GetBasis();
 		 theCBasis = theCPPBasis->c_str();
-         theList->Add(gcnew Activation(gcnew String(theCRuleName),theCPPActivation->GetSalience(),gcnew String(theCBasis)));
+         theList->Add(gcnew Activation(CharStarToString(theCRuleName),theCPPActivation->GetSalience(),CharStarToString(theCBasis)));
         }
 
       theAgenda = gcnew Agenda(theList);

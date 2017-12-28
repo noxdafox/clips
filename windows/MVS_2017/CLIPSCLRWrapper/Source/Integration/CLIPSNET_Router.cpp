@@ -10,7 +10,7 @@ namespace CLIPSNET
    /*###################*/
    /* Utility functions */
    /*###################*/
-   
+   /*
    String ^ CharStarToString(
      const char *theString)
      {
@@ -19,7 +19,7 @@ namespace CLIPSNET
 
       return gcnew String(theString,0, (int) strlen(theString), UTF8Encoding::UTF8);
      }
-    
+    */
    /*####################################*/
    /* CLIPSCPPRouterBridge class methods */
    /*####################################*/
@@ -35,8 +35,8 @@ namespace CLIPSNET
      CLIPSCPPEnv *theCPPEnv,
      const char *logicalName)
      {
-      String ^ cliLogicalName = CharStarToString(logicalName);
-
+      String ^ cliLogicalName = Environment::CharStarToString(logicalName);
+      
       return m_Router->Query(cliLogicalName);
      }
 
@@ -45,8 +45,8 @@ namespace CLIPSNET
      const char *logicalName,
      const char *printString)
      {
-      String ^ cliLogicalName = CharStarToString(logicalName);
-      String ^ cliPrintString = CharStarToString(printString);
+      String ^ cliLogicalName = Environment::CharStarToString(logicalName);
+      String ^ cliPrintString = Environment::CharStarToString(printString);
 
       m_Router->Write(cliLogicalName,cliPrintString);
      }
@@ -55,7 +55,7 @@ namespace CLIPSNET
      CLIPSCPPEnv *theCPPEnv,
      const char *logicalName)
      {
-      String ^ cliLogicalName = CharStarToString(logicalName);
+      String ^ cliLogicalName = Environment::CharStarToString(logicalName);
 
       return m_Router->Read(cliLogicalName);
      }
@@ -65,7 +65,7 @@ namespace CLIPSNET
 	 int theChar,
      const char *logicalName)
      {
-      String ^ cliLogicalName = CharStarToString(logicalName);
+      String ^ cliLogicalName = Environment::CharStarToString(logicalName);
 
       return m_Router->Unread(cliLogicalName,theChar);
      }

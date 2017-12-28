@@ -75,6 +75,8 @@ namespace CLIPSNET
         //event PeriodicCallbackDelegate ^ PeriodicCallbackEvent;
         //event ParserErrorCallbackDelegate ^ ParserErrorCallbackEvent;
         
+        static String ^ CharStarToString(const char *);
+
         void Clear();
         void Load(String ^);
         void LoadFromString(String ^);
