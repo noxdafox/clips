@@ -31,7 +31,10 @@ namespace CLIPSIDE
       /****************/
       public int BrowserCount()
         {
-         return browsers.Count();
+         lock (browsers)
+           { 
+            return browsers.Count();
+           }
         }
 
       /*****************/  
@@ -41,16 +44,18 @@ namespace CLIPSIDE
         {
          AgendaBrowser theBrowser = new AgendaBrowser(ide);
 
-         browsers.Add(theBrowser);
-
-         if (! ide.dialog.GetExecuting())
+         lock(browsers)
            {
-            if (browsers.Count == 1)
-              { FetchData(); }
+            browsers.Add(theBrowser);
 
-             theBrowser.UpdateData(focusStack,agendaMap);
+            if (! ide.dialog.GetExecuting())
+              {
+               if (browsers.Count == 1)
+                 { FetchData(); }
+
+                theBrowser.UpdateData(focusStack,agendaMap);
+              }
            }
-
          return theBrowser;
         }
       
@@ -60,11 +65,14 @@ namespace CLIPSIDE
       public void RemoveBrowser(
         AgendaBrowser theBrowser)
         {
-         browsers.Remove(theBrowser);
-         if (browsers.Count == 0)
+         lock(browsers)
            {
-            focusStack = null;
-            agendaMap = null;
+            browsers.Remove(theBrowser);
+            if (browsers.Count == 0)
+              {
+               focusStack = null;
+               agendaMap = null;
+              }
            }
         }
     
@@ -74,13 +82,16 @@ namespace CLIPSIDE
      public bool ManagesBrowser(
        AgendaBrowser theBrowser)
        {
-        return browsers.Contains(theBrowser);
+        lock(browsers)
+          {
+           return browsers.Contains(theBrowser);
+          }
        }
 
       /*************/
       /* FetchData */
       /*************/
-      private void FetchData() // TBD Synchronized?
+      private void FetchData()
         {
          focusStack = ide.GetEnvironment().GetFocusStack();
          agendaMap = new Dictionary<Focus, Agenda>();
@@ -92,7 +103,7 @@ namespace CLIPSIDE
                Agenda theAgenda = ide.GetEnvironment().GetAgenda(theFocus);
                agendaMap.Add(theFocus,theAgenda);
               }
-           }
+           } 
         }
 
       /*****************/
@@ -109,12 +120,15 @@ namespace CLIPSIDE
       /*********************/
       public void UpdateAllBrowsers()
         {
-         if (browsers.Count == 0) return;
+         lock(browsers)
+           {
+            if (browsers.Count == 0) return;
 
-         FetchData();
+            FetchData();
 
-         foreach(AgendaBrowser theBrowser in browsers)
-           { UpdateBrowser(theBrowser); }
+            foreach(AgendaBrowser theBrowser in browsers)
+              { UpdateBrowser(theBrowser); }
+           }
         }
 
       /******************************/
@@ -123,10 +137,13 @@ namespace CLIPSIDE
       public void UpdateAgendaBrowserButtons(
         bool isExecuting)
         {
-         if (browsers.Count == 0) return;
+         lock(browsers)
+           {
+            if (browsers.Count == 0) return;
 
-         foreach(AgendaBrowser theBrowser in browsers)
-           { theBrowser.UpdateButtons(isExecuting); }
+            foreach(AgendaBrowser theBrowser in browsers)
+              { theBrowser.UpdateButtons(isExecuting); }
+           }
         }
 
       /*******/

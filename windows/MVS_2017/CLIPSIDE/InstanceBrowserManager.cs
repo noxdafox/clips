@@ -40,7 +40,10 @@ namespace CLIPSIDE
       /****************/
       public int BrowserCount()
         {
-         return browsers.Count();
+         lock(browsers)
+           {
+            return browsers.Count();
+           }
         }
 
       /*****************/  
@@ -50,14 +53,17 @@ namespace CLIPSIDE
         {
          EntityBrowser theBrowser = new EntityBrowser(ide);
 
-         browsers.Add(theBrowser);
-
-         if (! ide.dialog.GetExecuting())
+         lock(browsers)
            {
-            if (browsers.Count == 1)
-              { FetchData(); }
+            browsers.Add(theBrowser);
 
-             theBrowser.UpdateData(modules,entities,scopes);
+            if (! ide.dialog.GetExecuting())
+              {
+               if (browsers.Count == 1)
+                 { FetchData(); }
+
+                theBrowser.UpdateData(modules,entities,scopes);
+              }
            }
 
          return theBrowser;
@@ -69,12 +75,15 @@ namespace CLIPSIDE
       public void RemoveBrowser(
         EntityBrowser theBrowser)
         {
-         browsers.Remove(theBrowser);
-         if (browsers.Count == 0)
+         lock(browsers)
            {
-            modules = null;
-            entities = null;
-            scopes = null;
+            browsers.Remove(theBrowser);
+            if (browsers.Count == 0)
+              {
+               modules = null;
+               entities = null;
+               scopes = null;
+              }
            }
         }
      
@@ -84,13 +93,16 @@ namespace CLIPSIDE
      public bool ManagesBrowser(
        EntityBrowser theBrowser)
        {
-        return browsers.Contains(theBrowser);
+        lock(browsers)
+          {
+           return browsers.Contains(theBrowser);
+          }
        }
 
       /*************/
       /* FetchData */
       /*************/
-      private void FetchData() // TBD Synchronized?
+      private void FetchData()
         {
          modules = ide.GetEnvironment().GetModuleList();
          entities = ide.GetEnvironment().GetInstanceList();
@@ -111,12 +123,15 @@ namespace CLIPSIDE
       /*********************/
       public void UpdateAllBrowsers()
         {
-         if (browsers.Count == 0) return;
+         lock(browsers)
+           {
+            if (browsers.Count == 0) return;
 
-         FetchData();
+            FetchData();
 
-         foreach(EntityBrowser theBrowser in browsers)
-           { UpdateBrowser(theBrowser); }
+            foreach(EntityBrowser theBrowser in browsers)
+              { UpdateBrowser(theBrowser); }
+           }
         }
 
       /*******/

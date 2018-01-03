@@ -78,7 +78,7 @@ namespace CLIPSIDE
         List<FactInstance> theEntityList,
         Dictionary<ulong,BitArray> theScopes)
         {
-         Application.Current.Dispatcher.Invoke(DispatcherPriority.Normal,
+         Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                                                 new Action(delegate { AssignData(theModules,theEntityList,theScopes); }));
         }
        

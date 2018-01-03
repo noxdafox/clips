@@ -121,7 +121,7 @@ namespace CLIPSIDE
       public void UpdateButtons(
         bool isExecuting)
         {
-         Application.Current.Dispatcher.Invoke(DispatcherPriority.Normal,
+         Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                                                 new Action(delegate { UpdateButtonsDriver(isExecuting); }));
         }
 
@@ -132,7 +132,7 @@ namespace CLIPSIDE
         FocusStack theFocusStack,
         Dictionary<Focus,Agenda> theAgendaMap)
         {
-         Application.Current.Dispatcher.Invoke(DispatcherPriority.Normal,
+         Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                                                 new Action(delegate { AssignData(theFocusStack,theAgendaMap); }));
         }
 

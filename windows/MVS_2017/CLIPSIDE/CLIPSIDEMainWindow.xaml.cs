@@ -744,7 +744,7 @@ namespace CLIPSIDE
         {
          if (theTabItem.Content is AgendaBrowser)
            { 
-            agendaBrowserManager.RemoveBrowser((AgendaBrowser)  theTabItem.Content);
+            agendaBrowserManager.RemoveBrowser((AgendaBrowser) theTabItem.Content);
             ((AgendaBrowser) theTabItem.Content).DetachIDE(); 
            }
 
