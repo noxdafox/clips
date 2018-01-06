@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  12/24/17             */
+   /*            CLIPS Version 6.40  01/06/18             */
    /*                                                     */
    /*                  MULTIFIELD MODULE                  */
    /*******************************************************/
@@ -900,15 +900,6 @@ CLIPSLexeme *ImplodeMultifield(
             tmp_str++;
            }
         }
-#if OBJECT_SYSTEM
-      else if (theMultifield->contents[i].header->type == INSTANCE_NAME_TYPE)
-        { strsize += strlen(theMultifield->contents[i].lexemeValue->contents) + 3; }
-      else if (theMultifield->contents[i].header->type == INSTANCE_ADDRESS_TYPE)
-        {
-         strsize += strlen(theMultifield->contents[i].instanceValue->name->contents) + 3;
-        }
-#endif
-
       else
         {
          tempDO.value = theMultifield->contents[i].value;
@@ -980,32 +971,6 @@ CLIPSLexeme *ImplodeMultifield(
          *(ret_str+j) = '"';
          j++;
         }
-#if OBJECT_SYSTEM
-      else if (theMultifield->contents[i].header->type == INSTANCE_NAME_TYPE)
-        {
-         tmp_str = theMultifield->contents[i].lexemeValue->contents;
-         *(ret_str + j++) = '[';
-         while(*tmp_str)
-           {
-            *(ret_str+j) = *tmp_str;
-            j++;
-            tmp_str++;
-           }
-         *(ret_str + j++) = ']';
-        }
-      else if (theMultifield->contents[i].header->type == INSTANCE_ADDRESS_TYPE)
-        {
-         tmp_str = theMultifield->contents[i].instanceValue->name->contents;
-         *(ret_str + j++) = '[';
-         while(*tmp_str)
-           {
-            *(ret_str+j) = *tmp_str;
-            j++;
-            tmp_str++;
-           }
-         *(ret_str + j++) = ']';
-        }
-#endif
       else
         {
          tempDO.value = theMultifield->contents[i].value;
