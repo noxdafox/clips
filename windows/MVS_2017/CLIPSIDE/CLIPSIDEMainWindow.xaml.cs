@@ -213,7 +213,7 @@ namespace CLIPSIDE
          System.Windows.Threading.DispatcherTimer dispatcherTimer = new System.Windows.Threading.DispatcherTimer();
 
          dispatcherTimer.Tick += IDEPeriodicTimer;
-         dispatcherTimer.Interval = TimeSpan.FromMilliseconds(100);
+         dispatcherTimer.Interval = TimeSpan.FromMilliseconds(500);
          
          dispatcherTimer.Start();
         }
