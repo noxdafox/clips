@@ -513,4 +513,4 @@
 (printout testall "*** FEATURE TESTS COMPLETED ***" crlf)
 (printout testall "<<< End time: " (time) crlf)
 (close testall)
-;(exit)
+(exit 0)
