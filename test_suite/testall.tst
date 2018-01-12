@@ -509,4 +509,4 @@
 (printout testall "Memory use: " (mem-used) crlf)
 (printout testall "*** FEATURE TESTS COMPLETED ***" crlf)
 (close testall)
-;(exit)
+(exit 0)
