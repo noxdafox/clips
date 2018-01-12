@@ -1,6 +1,9 @@
 language: c
-before_script: cd core
+before_script:
+  - cp makefiles/ubuntu/makefile.gcc core/Makefile
+  - cd core
 script:
-  - make release
+  - make clips
+after_success:
   - cd ../test_suite
   - ../core/clips -f testall.tst
