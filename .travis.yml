@@ -5,8 +5,5 @@ before_script:
 script:
   - make clips
 after_success:
-before_script: cd core
-script:
-  - make release
   - cd ../test_suite
   - ../core/clips -f testall.tst
