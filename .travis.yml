@@ -1,6 +1,8 @@
 language: c
-before_script: cd core
+before_script:
+  - cd core
 script:
   - make release
+after_success:
   - cd ../test_suite
   - ../core/clips -f testall.tst
