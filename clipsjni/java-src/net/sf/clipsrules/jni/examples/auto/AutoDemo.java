@@ -6,6 +6,8 @@ import javax.swing.table.*;
 import java.awt.*; 
 import java.awt.event.*; 
 
+import java.io.FileNotFoundException;
+
 import java.text.BreakIterator;
 
 import java.util.Locale;
@@ -166,8 +168,20 @@ class AutoDemo implements ActionListener
       try
         {
          clips.loadFromResource("/net/sf/clipsrules/jni/examples/auto/resources/auto.clp");
-         clips.loadFromResource("/net/sf/clipsrules/jni/examples/auto/resources/auto_" + 
-                                Locale.getDefault().getLanguage() + ".clp");      
+
+         try 
+           {
+            clips.loadFromResource("/net/sf/clipsrules/jni/examples/auto/resources/auto_" + 
+                                   Locale.getDefault().getLanguage() + ".clp");
+           }
+         catch (FileNotFoundException fnfe)
+           {
+            if (Locale.getDefault().getLanguage().equals("en"))
+              { throw fnfe; }
+            else
+              { clips.loadFromResource("/net/sf/clipsrules/jni/examples/auto/resources/auto_en.clp"); }
+           }
+
          processRules();
         }
       catch (Exception e)
@@ -193,15 +207,13 @@ class AutoDemo implements ActionListener
       /* Get the current UI state. */
       /*===========================*/
       
-      String evalStr = "(find-fact ((?f UI-state)) TRUE)";
-      
-      FactAddressValue fv = (FactAddressValue) ((MultifieldValue) clips.eval(evalStr)).get(0);
+      FactAddressValue fv = clips.findFact("UI-state");
 
       /*========================================*/
       /* Determine the Next/Prev button states. */
       /*========================================*/
       
-      if (fv.getFactSlot("state").toString().equals("conclusion"))
+      if (fv.getSlotValue("state").toString().equals("conclusion"))
         { 
          interviewState = InterviewState.CONCLUSION;
          nextButton.setActionCommand("Restart");
@@ -209,7 +221,7 @@ class AutoDemo implements ActionListener
          prevButton.setVisible(true);
          choicesPanel.setVisible(false);
         }
-      else if (fv.getFactSlot("state").toString().equals("greeting"))
+      else if (fv.getSlotValue("state").toString().equals("greeting"))
         {
          interviewState = InterviewState.GREETING;
          nextButton.setActionCommand("Next");
@@ -233,10 +245,10 @@ class AutoDemo implements ActionListener
       choicesPanel.removeAll();
       choicesButtons = new ButtonGroup();
             
-      MultifieldValue damf = (MultifieldValue) fv.getFactSlot("display-answers");
-      MultifieldValue vamf = (MultifieldValue) fv.getFactSlot("valid-answers");
+      MultifieldValue damf = (MultifieldValue) fv.getSlotValue("display-answers");
+      MultifieldValue vamf = (MultifieldValue) fv.getSlotValue("valid-answers");
       
-      String selected = fv.getFactSlot("response").toString();
+      String selected = fv.getSlotValue("response").toString();
       JRadioButton firstButton = null;
       
       for (int i = 0; i < damf.size(); i++) 
@@ -246,9 +258,9 @@ class AutoDemo implements ActionListener
          JRadioButton rButton;
          String buttonName, buttonText, buttonAnswer;
          
-         buttonName = da.lexemeValue();
+         buttonName = da.getValue();
          buttonText = buttonName.substring(0,1).toUpperCase() + buttonName.substring(1);
-         buttonAnswer = va.lexemeValue();
+         buttonAnswer = va.getValue();
          
          if (((lastAnswer != null) && buttonAnswer.equals(lastAnswer)) ||                  
              ((lastAnswer == null) && buttonAnswer.equals(selected)))
@@ -273,13 +285,13 @@ class AutoDemo implements ActionListener
       /* Set the label to the display text. */
       /*====================================*/
 
-      relationAsserted = ((LexemeValue) fv.getFactSlot("relation-asserted")).lexemeValue();
+      relationAsserted = ((LexemeValue) fv.getSlotValue("relation-asserted")).getValue();
 
       /*====================================*/
       /* Set the label to the display text. */
       /*====================================*/
 
-      String theText = ((StringValue) fv.getFactSlot("display")).stringValue();
+      String theText = ((StringValue) fv.getSlotValue("display")).getValue();
             
       wrapLabelText(displayLabel,theText);
       

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  09/22/17             */
+   /*            CLIPS Version 6.40  01/06/18             */
    /*                                                     */
    /*                PRINT UTILITY MODULE                 */
    /*******************************************************/
@@ -84,6 +84,7 @@
 #include "multifun.h"
 #include "router.h"
 #include "scanner.h"
+#include "strngrtr.h"
 #include "symbol.h"
 #include "sysdep.h"
 #include "utility.h"
@@ -550,6 +551,8 @@ const char *DataObjectToString(
    const char *prefix, *postfix;
    size_t length;
    CLIPSExternalAddress *theAddress;
+   StringBuilder *theSB;
+   
    char buffer[30];
 
    switch (theDO->header->type)
@@ -607,9 +610,30 @@ const char *DataObjectToString(
 
       case EXTERNAL_ADDRESS_TYPE:
         theAddress = theDO->externalAddressValue;
-        /* TBD Need specific routine for creating name string. */
-        gensprintf(buffer,"<Pointer-%hu-%p>",theAddress->type,theDO->value);
-        thePtr = CreateString(theEnv,buffer);
+        
+        theSB = CreateStringBuilder(theEnv,30);
+
+        OpenStringBuilderDestination(theEnv,"DOTS",theSB);
+
+        if ((EvaluationData(theEnv)->ExternalAddressTypes[theAddress->type] != NULL) &&
+            (EvaluationData(theEnv)->ExternalAddressTypes[theAddress->type]->longPrintFunction != NULL))
+          { (*EvaluationData(theEnv)->ExternalAddressTypes[theAddress->type]->longPrintFunction)(theEnv,"DOTS",theAddress); }
+        else
+          {
+           WriteString(theEnv,"DOTS","<Pointer-");
+
+           gensprintf(buffer,"%d-",theAddress->type);
+           WriteString(theEnv,"DOTS",buffer);
+
+           gensprintf(buffer,"%p",theAddress->contents);
+           WriteString(theEnv,"DOTS",buffer);
+           WriteString(theEnv,"DOTS",">");
+          }
+
+        thePtr = CreateString(theEnv,theSB->contents);
+        SBDispose(theSB);
+
+        CloseStringBuilderDestination(theEnv,"DOTS");
         return thePtr->contents;
 
 #if DEFTEMPLATE_CONSTRUCT

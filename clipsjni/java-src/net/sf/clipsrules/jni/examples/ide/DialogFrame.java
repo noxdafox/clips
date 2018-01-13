@@ -240,7 +240,7 @@ public class DialogFrame extends JInternalFrame
    /*********************/
    /* updatePauseButton */
    /*********************/  
-   public void updatePauseButton(boolean value)
+   public void updatePauseButton(final boolean value)
      {
       if (EventQueue.isDispatchThread())
         { 
@@ -369,6 +369,14 @@ public class DialogFrame extends JInternalFrame
       commandTextArea.clear();
       clips.printPrompt();
       clips.print(clips.getInputBuffer());
+     }
+     
+   /****************/
+   /* executeBatch */
+   /****************/
+   public void executeBatch()
+     {
+      commandTextArea.executeBatch();
      }
      
    /****************/

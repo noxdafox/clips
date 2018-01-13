@@ -177,7 +177,6 @@ public class AgendaBrowserFrame extends JInternalFrame
       actionTarget = theActionTarget;
      }
 
-
    /***********************/
    /* updateButtonsDriver */
    /***********************/
@@ -204,7 +203,7 @@ public class AgendaBrowserFrame extends JInternalFrame
    /* updateButtons */
    /*****************/
    public void updateButtons(
-     boolean isExecuting)
+     final boolean isExecuting)
      {
       if (EventQueue.isDispatchThread())
         { 
@@ -293,7 +292,7 @@ public class AgendaBrowserFrame extends JInternalFrame
                { activationTable.setRowSelectionInterval(0,0); }
             }
          }
-         
+
       actionPerformed(new ActionEvent(this,AWTEvent.RESERVED_ID_MAX + 1,BROWSER_SELECTION_ACTION));
      }
    
@@ -314,6 +313,4 @@ public class AgendaBrowserFrame extends JInternalFrame
       catch (Exception e)
         { e.printStackTrace(); }
      }
-     
-
   }

@@ -95,7 +95,15 @@ public class RouterTextArea extends JTextArea
       this.setBorders(BorderFactory.createEmptyBorder(5,5,5,0),
                       BorderFactory.createEmptyBorder(5,5,5,0));
      }
-         
+     
+   /******************/
+   /* getEnvironment */
+   /******************/
+   public Environment getEnvironment()
+     {
+      return clips;
+     }
+     
    /*########################*/
    /* Router Support Methods */
    /*########################*/
@@ -283,14 +291,10 @@ public class RouterTextArea extends JTextArea
    public boolean query(
      String logName)
      {      
-      if (logName.equals("stdout") ||
-          logName.equals("stdin") ||
-          logName.equals("wwarning") ||
-          logName.equals("werror") ||
-          logName.equals("wtrace") ||
-          logName.equals("wdialog") ||
-          logName.equals("wclips") ||
-          logName.equals("wdisplay"))
+      if (logName.equals(STDOUT) ||
+          logName.equals(STDIN) ||
+          logName.equals(STDWRN) ||
+          logName.equals(STDERR))
       
         { return true; }
 
@@ -387,10 +391,10 @@ public class RouterTextArea extends JTextArea
      }
      
    /**********/
-   /* print: */
+   /* write: */
    /**********/
    @Override
-   public void print(
+   public void write(
      String logName,
      String printString)
      {
@@ -415,21 +419,21 @@ public class RouterTextArea extends JTextArea
         }
      }
 
-   /************/
-   /* getchar: */
-   /************/
+   /*********/
+   /* read: */
+   /*********/
    @Override
-   public int getchar(
+   public int read(
      String routerName)
      {
       return requestChar();
      }
 
-   /**************/
-   /* ungetchar: */
-   /**************/
+   /***********/
+   /* unread: */
+   /***********/
    @Override
-   public int ungetchar(
+   public int unread(
      String routerName,
      int theChar)
      {
@@ -440,10 +444,9 @@ public class RouterTextArea extends JTextArea
    /* exit: */
    /*********/
    @Override
-   public boolean exit(
-     int exitCode)
+   public void exit(
+     boolean failure)
      {      
-      return true;
      }
      
    /*#####################*/
@@ -765,7 +768,7 @@ public class RouterTextArea extends JTextArea
    /* caretUpdate */
    /***************/  
    public void caretUpdate(
-     CaretEvent ce) 
+     final CaretEvent ce) 
      {
       if (EventQueue.isDispatchThread())
         { 

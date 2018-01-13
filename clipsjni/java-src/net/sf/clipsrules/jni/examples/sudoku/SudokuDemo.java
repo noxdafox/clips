@@ -6,6 +6,7 @@ import javax.swing.*;
 import javax.swing.event.*; 
 import javax.swing.table.*; 
 
+import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.MissingResourceException;
@@ -458,24 +459,19 @@ class SudokuDemo implements ActionListener, FocusListener, KeyListener
         {
          String evalStr;
          String messageStr = "<html><p style=\"font-size:95%\">";
+                  
+         List<FactAddressValue> techniqueFacts = clips.findAllFacts("technique");
          
-         evalStr = "(find-all-facts ((?f technique)) TRUE)";
-         
-         MultifieldValue mv = (MultifieldValue) clips.eval(evalStr);
-         int tNum = mv.size();
+         int tNum = techniqueFacts.size();
          
          for (int i = 1; i <= tNum; i++)
            {
-            evalStr = "(find-fact ((?f technique-employed)) " +
-                           "(eq ?f:priority " + i + "))";
-                           
-            mv = (MultifieldValue) clips.eval(evalStr);
-            if (mv.size() == 0) continue;
+            FactAddressValue fv = clips.findFact("?f","technique-employed","(eq ?f:priority " + i + ")");
             
-            FactAddressValue fv = (FactAddressValue) mv.get(0);
-
-            messageStr = messageStr + ((NumberValue) fv.getFactSlot("priority")).intValue() + ". " +
-                                      ((LexemeValue) fv.getFactSlot("reason")).lexemeValue() + "<br>";
+            if (fv == null) continue;
+            
+            messageStr = messageStr + ((NumberValue) fv.getSlotValue("priority")).intValue() + ". " +
+                                      ((LexemeValue) fv.getSlotValue("reason")).getValue() + "<br>";
            }
         
          JOptionPane.showMessageDialog(jfrm,messageStr,sudokuResources.getString("SolutionTechniques"),JOptionPane.PLAIN_MESSAGE);
@@ -507,17 +503,16 @@ class SudokuDemo implements ActionListener, FocusListener, KeyListener
                    (! resetValues[i][r][c].equals("")))
                  { continue; }
                   
-               String evalStr = "(find-all-facts ((?f possible)) " +
-                                    "(and (eq ?f:row " + (r + (rowGroup * 3) + 1) + ") " +
-                                         "(eq ?f:column " + (c + (colGroup * 3) + 1) + ")))";
-                                        
-               MultifieldValue mv = (MultifieldValue) clips.eval(evalStr);
+               String condition = "(and (eq ?f:row " + (r + (rowGroup * 3) + 1) + ") " +
+                                       "(eq ?f:column " + (c + (colGroup * 3) + 1) + "))";
+                                         
+               List<FactAddressValue> possibleValues = clips.findAllFacts("?f","possible",condition);
+                                                          
+               if (possibleValues.size() != 1) continue;
                   
-               if (mv.size() != 1) continue;
+               FactAddressValue fv = possibleValues.get(0);
                   
-               FactAddressValue fv = (FactAddressValue) mv.get(0);
-                  
-               theTable.setValueAt(" " + fv.getFactSlot("value") + " ",r,c);
+               theTable.setValueAt(" " + fv.getSlotValue("value") + " ",r,c);
               }         
            }
         }

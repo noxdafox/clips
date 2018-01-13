@@ -1,3 +1,7 @@
+# CLIPS 6.40
+# CLIPSJNI jars
+# macOS 10.12.6 with Darwin 16.7.0 and Java 1.8.0_144
+
 JNI_CP = net/sf/clipsrules/jni
 JNI_CLASS = net.sf.clipsrules.jni.Environment
 JNI_BIN = bin/clipsjni
@@ -6,6 +10,7 @@ JNI_DST = $(JNI_BIN)/$(JNI_CP)
 JNI_FILES = \
 	$(JNI_SRC)/Activation.java \
 	$(JNI_SRC)/Agenda.java \
+	$(JNI_SRC)/BaseRouter.java \
 	$(JNI_SRC)/CaptureRouter.java \
 	$(JNI_SRC)/CLIPSException.java \
 	$(JNI_SRC)/Focus.java \
@@ -28,7 +33,6 @@ JNI_FILES = \
 	$(JNI_SRC)/LexemeValue.java \
 	$(JNI_SRC)/Module.java \
 	$(JNI_SRC)/MultifieldValue.java \
-	$(JNI_SRC)/NamedRouter.java \
 	$(JNI_SRC)/NumberValue.java \
 	$(JNI_SRC)/PeriodicCallback.java \
 	$(JNI_SRC)/PrimitiveValue.java \
@@ -86,6 +90,8 @@ IDE_CLASS = net.sf.clipsrules.jni.examples.ide.CLIPSIDE
 IDE_SRC = java-src/$(IDE_CP)
 IDE_BIN = bin/ide
 IDE_DST = $(IDE_BIN)/$(IDE_CP)
+IDE_RSRC_SRC = $(IDE_SRC)/resources
+IDE_RSRC_DST = $(IDE_BIN)/$(IDE_CP)/resources
 IDE_FILES = \
 	$(IDE_SRC)/CLIPSIDE.java \
 	$(IDE_SRC)/ActivationTableModel.java \
@@ -94,16 +100,21 @@ IDE_FILES = \
 	$(IDE_SRC)/BoundsDesktopManager.java \
 	$(IDE_SRC)/ConstructInspectorFrame.java \
 	$(IDE_SRC)/DialogFrame.java \
+	$(IDE_SRC)/EditMenu.java \
+	$(IDE_SRC)/EntityBrowserFrame.java \
 	$(IDE_SRC)/EnvironmentMenu.java \
-	$(IDE_SRC)/FactBrowserFrame.java \
 	$(IDE_SRC)/FactBrowserManager.java \
 	$(IDE_SRC)/FactInstanceTableModel.java \
+	$(IDE_SRC)/FileMenu.java \
 	$(IDE_SRC)/FocusStackTableModel.java \
 	$(IDE_SRC)/FramePlacer.java \
 	$(IDE_SRC)/HelpMenu.java \
 	$(IDE_SRC)/IDEPreferences.java \
+	$(IDE_SRC)/InstanceBrowserManager.java \
 	$(IDE_SRC)/ModuleTableModel.java \
 	$(IDE_SRC)/SlotValueTableModel.java \
+	$(IDE_SRC)/TextFrame.java \
+	$(IDE_SRC)/TextMenu.java \
 	$(IDE_SRC)/WatchMenu.java
 
 all: clipsjni animal auto sudoku wine router ide
@@ -154,8 +165,9 @@ router :
 	jar -uf RouterDemo.jar -C $(JNI_BIN) net
 
 ide :
-	mkdir -p $(IDE_DST)
+	mkdir -p $(IDE_RSRC_DST)
 	javac -d $(IDE_BIN) -cp CLIPSJNI.jar $(IDE_FILES)
+	cp $(IDE_RSRC_SRC)/*.png $(IDE_RSRC_DST)
 	jar -cfe CLIPSIDE.jar $(IDE_CLASS) $(IDE_BIN)/$(IDE_CP)/CLIPSIDE.class -C $(IDE_BIN) net 
 	jar -uf CLIPSIDE.jar -C $(JNI_BIN) net
 
@@ -184,5 +196,6 @@ clean :
 	rm -fr $(ROUTER_BIN)/net
 	rm -f RouterDemo.jar
 	rm -f $(IDE_DST)/*.class
+	rm -f $(IDE_RSRC_DST)/*.*
 	rm -fr $(IDE_BIN)/net
 	rm -f CLIPSIDE.jar

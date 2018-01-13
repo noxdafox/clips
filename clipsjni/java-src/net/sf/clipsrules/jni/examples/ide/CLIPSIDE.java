@@ -9,6 +9,8 @@ import java.awt.event.*;
 import java.util.List; 
 import java.util.Iterator;
 
+import java.io.File;
+
 import net.sf.clipsrules.jni.*;
 
 public class CLIPSIDE extends JFrame 
@@ -17,27 +19,15 @@ public class CLIPSIDE extends JFrame
   {  
    private static final String windowProperty = "windowProperty";
    private static final String menuItemProperty = "menuItemProperty";
-
-   static final String quitIDEAction = "QuitIDE";
-   
-   static EnvironmentMenu jmEnvironment;
-
-   static final String agendaBrowserAction = "AgendaBrowser";
-   static final String factBrowserAction = "FactBrowser";
-   static final String instanceBrowserAction = "InstanceBrowser";
-   static final String constructInspectorAction = "ConstructInspector";
-
    static final String selectWindowAction = "SelectWindow";
-
-   private IDEPreferences preferences;
    
+   private FileMenu jmFile;
+   private EditMenu jmEdit;
+   private TextMenu jmText;
+   private EnvironmentMenu jmEnvironment;
    private JMenu jmWindow;
 
-   private JMenuItem jmiQuitIDE;
-
-   private JMenuItem jmiCut;
-   private JMenuItem jmiCopy;
-   private JMenuItem jmiPaste;
+   private IDEPreferences preferences;
 
    private JMenuItem jmiAgendaBrowser;
    private JMenuItem jmiFactBrowser;
@@ -49,9 +39,10 @@ public class CLIPSIDE extends JFrame
    private FramePlacer placer;
    private AgendaBrowserManager agendaBrowserManager;
    private FactBrowserManager factBrowserManager;
+   private InstanceBrowserManager instanceBrowserManager;
    private DialogFrame dialogWindow;
    private JDesktopPane ideDesktopPane;
-
+   
    /************/
    /* CLIPSIDE */
    /************/
@@ -62,12 +53,12 @@ public class CLIPSIDE extends JFrame
       /*===================================*/
       /* Use cross platform look and feel. */
       /*===================================*/
-      
+
       try  
         { UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName()); }
       catch (Exception e)
         { e.printStackTrace(); }
-             
+     
       preferences = new IDEPreferences();
       
       clips = new Environment();
@@ -86,7 +77,10 @@ public class CLIPSIDE extends JFrame
       ideDesktopPane.setDesktopManager(new BoundsDesktopManager());
       add(ideDesktopPane);
       
-      setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+      setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+
+      createWindowClosingAdaptor();
+              
       setLocation(50,50);
       Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
       setSize((int) (screenSize.width * 0.80),(int) (screenSize.height * 0.80));
@@ -108,12 +102,13 @@ public class CLIPSIDE extends JFrame
       
       agendaBrowserManager = new AgendaBrowserManager(this);
       factBrowserManager = new FactBrowserManager(this);
+      instanceBrowserManager = new InstanceBrowserManager(this);
 
       /*========================================*/
       /* Create the clear-window user function. */
       /*========================================*/
       
-      clips.addUserFunction("clear-window","00",
+      clips.addUserFunction("clear-window","v",0,0,null,
             new UserFunction()
               {
                public PrimitiveValue evaluate(List<PrimitiveValue> arguments)
@@ -129,6 +124,75 @@ public class CLIPSIDE extends JFrame
 
       UserFunctionExamples.addUserFunctions(clips);
      }  
+
+   /******************************/
+   /* createWindowClosingAdaptor */
+   /******************************/  
+   private void createWindowClosingAdaptor()
+     {
+      addWindowListener(new WindowAdapter() 
+        {
+         public void windowClosing(WindowEvent we)
+           {
+            int i, count, changeCount = 0;
+                        
+            count = jmWindow.getItemCount();
+            for (i = 0; i < count; i++)
+              {
+               JCheckBoxMenuItem jmiWindow = (JCheckBoxMenuItem) jmWindow.getItem(i);
+               JInternalFrame theFrame = (JInternalFrame) jmiWindow.getClientProperty(windowProperty);
+
+               if (theFrame instanceof TextFrame)
+                 { 
+                  TextFrame theTextFrame = (TextFrame) theFrame;
+         
+                  if (theTextFrame.isChanged())
+                    { changeCount++; }
+                 }
+              }
+            
+            if (changeCount == 1)
+              {
+               int confirmResult = JOptionPane.showConfirmDialog(null,
+                  "You have a document with unsaved changes. Do you want to quit?",
+                  null,
+                  JOptionPane.YES_NO_OPTION);
+
+               if (confirmResult == JOptionPane.YES_OPTION)
+                 {
+                  dispose();
+                  System.exit(0);
+                 }
+              }
+            else if (changeCount > 1)
+              {
+               int confirmResult = JOptionPane.showConfirmDialog(null,
+                  "You have " + changeCount + " documents with unsaved changes. Do you want to quit?",
+                  null,
+                  JOptionPane.YES_NO_OPTION);
+                  
+               if (confirmResult == JOptionPane.YES_OPTION)
+                 {
+                  dispose();
+                  System.exit(0);
+                 }
+              }
+            else
+              { 
+               dispose();
+               System.exit(0);
+              }  
+           }
+        });
+     }
+
+   /******************/
+   /* getPreferences */
+   /******************/  
+   public IDEPreferences getPreferences()
+     {
+      return preferences;
+     }
 
    /******************/
    /* getEnvironment */
@@ -174,9 +238,9 @@ public class CLIPSIDE extends JFrame
    /* createDialogWindow */
    /**********************/  
    public void createDialogWindow(
-     Environment clips)
+     Environment theEnvironment)
      {
-      dialogWindow = new DialogFrame(clips,preferences.getCurrentDirectory());
+      dialogWindow = new DialogFrame(theEnvironment,preferences.getCurrentDirectory());
       dialogWindow.addInternalFrameListener(this);
       
       placer.placeInternalFrame(dialogWindow);
@@ -184,7 +248,18 @@ public class CLIPSIDE extends JFrame
       ideDesktopPane.add(dialogWindow);
       dialogWindow.setVisible(true);
      }
-          
+     
+   /**********************/
+   /* selectDialogWindow */
+   /**********************/  
+   public void selectDialogWindow()
+     {
+      try
+        { dialogWindow.setSelected(true); }
+      catch (Exception e) 
+        { e.printStackTrace(); }
+     }
+
    /********/
    /* main */
    /********/  
@@ -208,20 +283,36 @@ public class CLIPSIDE extends JFrame
       if (theEvent.getExecutionEvent().equals(CommandExecutionEvent.PERIODIC_EVENT) ||
           theEvent.getExecutionEvent().equals(CommandExecutionEvent.FINISH_EVENT))
         {
-         if (dialogWindow.getEnvironment().getAgendaChanged())
+         if (dialogWindow.getEnvironment().getAgendaChanged() ||
+             dialogWindow.getEnvironment().getFocusChanged())
            {
             dialogWindow.getEnvironment().setAgendaChanged(false);
-            agendaBrowserManager.updateAllAgendaBrowsers();
+            dialogWindow.getEnvironment().setFocusChanged(false);
+            agendaBrowserManager.updateAllBrowsers();
            } 
 
          if (dialogWindow.getEnvironment().getFactListChanged())
            {
             dialogWindow.getEnvironment().setFactListChanged(false);
-            factBrowserManager.updateAllFactBrowsers();
+            factBrowserManager.updateAllBrowsers();
+           } 
+
+         if (dialogWindow.getEnvironment().getInstancesChanged())
+           {
+            dialogWindow.getEnvironment().setInstancesChanged(false);
+            instanceBrowserManager.updateAllBrowsers();
            } 
         }
      }  
 
+   /****************/
+   /* executeBatch */
+   /****************/
+   public void executeBatch()
+     {
+      dialogWindow.executeBatch();
+     }
+     
    /*################*/
    /* Action Methods */
    /*################*/
@@ -232,74 +323,18 @@ public class CLIPSIDE extends JFrame
    public void onActionPerformed(
      ActionEvent ae) throws Exception 
      {     
-      JInternalFrame theFrame = ideDesktopPane.getSelectedFrame();
-
-      if (ae.getActionCommand().equals("Cut"))  
-        { 
-          if ((theFrame == null) || theFrame.isIcon())
-            { /* Do Nothing */ }
-          else if (theFrame instanceof DialogFrame)
-            {
-             DialogFrame theDialogFrame = (DialogFrame) theFrame;
-             theDialogFrame.cut(); 
-            }
-        }
-      else if (ae.getActionCommand().equals("Copy"))  
-        { 
-          if ((theFrame == null) || theFrame.isIcon())
-            { /* Do Nothing */ }
-          else if (theFrame instanceof DialogFrame)
-            {
-             DialogFrame theDialogFrame = (DialogFrame) theFrame;
-             theDialogFrame.copy(); 
-            }
-        }
-      else if (ae.getActionCommand().equals("Paste"))  
-        { 
-          if ((theFrame == null) || theFrame.isIcon())
-            { /* Do Nothing */ }
-          else if (theFrame instanceof DialogFrame)
-            {
-             DialogFrame theDialogFrame = (DialogFrame) theFrame;
-             theDialogFrame.paste(); 
-            }
-        }
-      else if (ae.getActionCommand().equals(quitIDEAction))  
-        { quitIDE(); }
-      else if (ae.getActionCommand().equals(agendaBrowserAction))  
-        { agendaBrowserManager.createAgendaBrowser(); }
-      else if (ae.getActionCommand().equals(factBrowserAction))  
-        { factBrowserManager.createFactBrowser(); }
-      else if (ae.getActionCommand().equals(instanceBrowserAction))  
-        { instanceBrowser(); }
-      else if (ae.getActionCommand().equals(constructInspectorAction))  
+      if (ae.getSource() == jmiAgendaBrowser)  
+        { agendaBrowserManager.createBrowser(); }
+      else if (ae.getSource() == jmiFactBrowser)  
+        { factBrowserManager.createBrowser(); }
+      else if (ae.getSource() == jmiInstanceBrowser)  
+        { instanceBrowserManager.createBrowser();  }
+      else if (ae.getSource() == jmiConstructInspector)  
         { constructInspector(); }
       else if (ae.getActionCommand().equals(selectWindowAction))  
         { selectWindow(ae.getSource()); }
      }
-
-   /***********/
-   /* quitIDE */
-   /***********/  
-   public void quitIDE()
-     {
-      System.exit(0);
-     }
-          
-   /***************/
-   /* factBrowser */
-   /***************/  
-   public void factBrowser()
-     {
-     }
-     
-   /*******************/
-   /* instanceBrowser */
-   /*******************/  
-   public void instanceBrowser()
-     {
-     }
-     
+               
    /**********************/
    /* constructInspector */
    /**********************/  
@@ -312,9 +347,16 @@ public class CLIPSIDE extends JFrame
       JInternalFrame selectedPane = ideDesktopPane.getSelectedFrame();
       
       if (selectedPane instanceof AgendaBrowserFrame)
-        { theText = agendaBrowserManager.agendaBrowserSelectionText((AgendaBrowserFrame) selectedPane); } 
-      else if (selectedPane instanceof FactBrowserFrame)
-        { theText = factBrowserManager.factBrowserSelectionText((FactBrowserFrame) selectedPane); } 
+        { theText = agendaBrowserManager.browserSelectionText((AgendaBrowserFrame) selectedPane); } 
+      else if (selectedPane instanceof EntityBrowserFrame)
+        {
+         EntityBrowserFrame theEntityFrame = (EntityBrowserFrame) selectedPane;
+      
+         if (theEntityFrame.getEntityName().equals(factBrowserManager.ENTITY_NAME))
+           { theText = factBrowserManager.browserSelectionText(theEntityFrame); }
+         else if (theEntityFrame.getEntityName().equals(instanceBrowserManager.ENTITY_NAME))
+           { theText = instanceBrowserManager.browserSelectionText(theEntityFrame); }
+        }
       
       constructInspector = new ConstructInspectorFrame();
 
@@ -390,37 +432,7 @@ public class CLIPSIDE extends JFrame
       JInternalFrame theFrame = ideDesktopPane.getSelectedFrame();
      
       if ((theFrame == null) || theFrame.isIcon())
-        {
-         jmiCut.setEnabled(false);
-         jmiCopy.setEnabled(false);
-         jmiPaste.setEnabled(false);
-         return;
-        }
-       
-      if (theFrame instanceof DialogFrame)
-        {
-         DialogFrame theDialogFrame = (DialogFrame) theFrame;
-         if (theDialogFrame.hasCuttableSelection())
-           { jmiCut.setEnabled(true); }
-         else
-           { jmiCut.setEnabled(false); }
-
-         if (theDialogFrame.hasSelection())
-           { jmiCopy.setEnabled(true); }
-         else
-           { jmiCopy.setEnabled(false); }
-
-         if (theDialogFrame.hasPasteableSelection())
-           { jmiPaste.setEnabled(true); }
-         else
-           { jmiPaste.setEnabled(false); }
-        }
-      else
-        {
-         jmiCut.setEnabled(false);
-         jmiCopy.setEnabled(false);
-         jmiPaste.setEnabled(false);
-        }
+        { return; }
      }
    
    /******************/
@@ -439,7 +451,15 @@ public class CLIPSIDE extends JFrame
    /************************/
    public void internalFrameClosing(
      InternalFrameEvent e)
-     {
+     {      
+      JInternalFrame theFrame = e.getInternalFrame();
+
+      if (theFrame instanceof TextFrame)
+        { 
+         TextFrame theTextFrame = (TextFrame) theFrame;
+         
+         theTextFrame.closeTextFrame(preferences);
+        }
      }
 
    /***********************/
@@ -457,10 +477,19 @@ public class CLIPSIDE extends JFrame
          return; 
         }
 
-      if (theFrame instanceof AgendaBrowserFrame)
-        { agendaBrowserManager.removeAgendaBrowser((AgendaBrowserFrame) theFrame); }
-      else if (theFrame instanceof FactBrowserFrame)
-        { factBrowserManager.removeFactBrowser((FactBrowserFrame) theFrame); }
+      if (theFrame instanceof TextFrame)
+        { jmText.setTextFrame(null); }
+      else if (theFrame instanceof AgendaBrowserFrame)
+        { agendaBrowserManager.removeBrowser((AgendaBrowserFrame) theFrame); }
+      else if (theFrame instanceof EntityBrowserFrame)
+        {
+         EntityBrowserFrame theEntityFrame = (EntityBrowserFrame) theFrame;
+         
+         if (theEntityFrame.getEntityName().equals(factBrowserManager.ENTITY_NAME))
+           { factBrowserManager.removeBrowser(theEntityFrame); }
+         else if (theEntityFrame.getEntityName().equals(instanceBrowserManager.ENTITY_NAME))
+           { instanceBrowserManager.removeBrowser(theEntityFrame); }
+        }
 
       JCheckBoxMenuItem jmiWindow = (JCheckBoxMenuItem) theFrame.getClientProperty(menuItemProperty);
       
@@ -480,7 +509,12 @@ public class CLIPSIDE extends JFrame
       
       if (theFrame instanceof ConstructInspectorFrame)
         { return; }
-
+        
+      if (theFrame instanceof TextFrame)
+        { jmText.setTextFrame((TextFrame) theFrame); }
+      else
+        { jmText.setTextFrame(null); }
+        
       JCheckBoxMenuItem jmiWindow = new JCheckBoxMenuItem(theFrame.getTitle());
       jmiWindow.setState(false);      
       jmiWindow.putClientProperty(windowProperty,theFrame);
@@ -500,6 +534,9 @@ public class CLIPSIDE extends JFrame
 
       if (theFrame instanceof ConstructInspectorFrame)
         { return; }
+        
+      if (theFrame instanceof TextFrame)
+        { jmText.setTextFrame(null); }
 
       JCheckBoxMenuItem jmiWindow = (JCheckBoxMenuItem) theFrame.getClientProperty(menuItemProperty);
       jmiWindow.setState(false);
@@ -515,6 +552,11 @@ public class CLIPSIDE extends JFrame
 
       if (theFrame instanceof ConstructInspectorFrame)
         { return; }
+        
+      if (theFrame instanceof TextFrame)
+        { jmText.setTextFrame((TextFrame) theFrame); }
+      else
+        { jmText.setTextFrame(null); }
 
       JCheckBoxMenuItem jmiWindow = (JCheckBoxMenuItem) theFrame.getClientProperty(menuItemProperty);
       jmiWindow.setState(true);
@@ -530,12 +572,34 @@ public class CLIPSIDE extends JFrame
       
       if (theFrame instanceof ConstructInspectorFrame)
         { return; }
+        
+      if (theFrame instanceof TextFrame)
+        { jmText.setTextFrame((TextFrame) theFrame); }
+      else
+        { jmText.setTextFrame(null); }
 
-      if ((constructInspector != null) && 
-          (theFrame instanceof AgendaBrowserFrame))
-        { 
-         String theText = agendaBrowserManager.agendaBrowserSelectionText((AgendaBrowserFrame) theFrame); 
-         constructInspector.setText(theText); 
+      if (constructInspector != null)
+        {
+         if (theFrame instanceof AgendaBrowserFrame)
+           { 
+            String theText = agendaBrowserManager.browserSelectionText((AgendaBrowserFrame) theFrame); 
+            constructInspector.setText(theText); 
+           }
+         else if (theFrame instanceof EntityBrowserFrame)
+           {
+            EntityBrowserFrame theEntityFrame = (EntityBrowserFrame) theFrame;
+         
+            if (theEntityFrame.getEntityName().equals(factBrowserManager.ENTITY_NAME))
+              { 
+               String theText = factBrowserManager.browserSelectionText(theEntityFrame); 
+               constructInspector.setText(theText); 
+              }
+            else if (theEntityFrame.getEntityName().equals(instanceBrowserManager.ENTITY_NAME))
+              { 
+               String theText = instanceBrowserManager.browserSelectionText(theEntityFrame); 
+               constructInspector.setText(theText); 
+              }
+           }
         } 
 
       JCheckBoxMenuItem jmiWindow = (JCheckBoxMenuItem) theFrame.getClientProperty(menuItemProperty);
@@ -553,6 +617,9 @@ public class CLIPSIDE extends JFrame
       if (theFrame instanceof ConstructInspectorFrame)
         { return; }
 
+      if (theFrame instanceof TextFrame)
+        { jmText.setTextFrame(null); }
+
       JCheckBoxMenuItem jmiWindow = (JCheckBoxMenuItem) theFrame.getClientProperty(menuItemProperty);
       jmiWindow.setState(false);
      }
@@ -565,17 +632,8 @@ public class CLIPSIDE extends JFrame
    /* createMenuBar */
    /*****************/
    private void createMenuBar(
-     Environment clips)
+     Environment theEnvironment)
      {
-      /*=================================================*/
-      /* Get KeyStroke for copy/paste keyboard commands. */
-      /*=================================================*/
-
-      KeyStroke quitIDE = KeyStroke.getKeyStroke(KeyEvent.VK_Q,KeyEvent.CTRL_MASK);
-      KeyStroke cut = KeyStroke.getKeyStroke(KeyEvent.VK_X,KeyEvent.CTRL_MASK);
-      KeyStroke copy = KeyStroke.getKeyStroke(KeyEvent.VK_C,KeyEvent.CTRL_MASK);
-      KeyStroke paste = KeyStroke.getKeyStroke(KeyEvent.VK_V,KeyEvent.CTRL_MASK);
-
       /*======================*/
       /* Create the menu bar. */
       /*======================*/
@@ -585,41 +643,23 @@ public class CLIPSIDE extends JFrame
       /*===========*/
       /* File menu */
       /*===========*/
-      
-      JMenu jmFile = new JMenu("File");
-      jmFile.addMenuListener(this);
-
-      jmiQuitIDE = new JMenuItem("Quit CLIPS IDE");
-      jmiQuitIDE.setActionCommand(quitIDEAction);
-      jmiQuitIDE.setAccelerator(quitIDE);
-      jmiQuitIDE.addActionListener(this);
-      jmFile.add(jmiQuitIDE);
-
+        
+      jmFile = new FileMenu(this);
       jmb.add(jmFile);
-
+      
       /*===========*/
       /* Edit menu */
       /*===========*/
-         
-      JMenu jmEdit = new JMenu("Edit");
-      jmEdit.addMenuListener(this);
       
-      jmiCut = new JMenuItem("Cut");
-      jmiCut.addActionListener(this);
-      jmiCut.setAccelerator(cut);
-      jmEdit.add(jmiCut);
-
-      jmiCopy = new JMenuItem("Copy");
-      jmiCopy.addActionListener(this);
-      jmiCopy.setAccelerator(copy);
-      jmEdit.add(jmiCopy);
-
-      jmiPaste = new JMenuItem("Paste");
-      jmiPaste.addActionListener(this);      
-      jmiPaste.setAccelerator(paste);      
-      jmEdit.add(jmiPaste);
-      
+      jmEdit = new EditMenu(this);
       jmb.add(jmEdit);
+            
+      /*===========*/
+      /* Text menu */
+      /*===========*/
+
+      jmText = new TextMenu(this);
+      jmb.add(jmText);
 
       /*==================*/
       /* Environment menu */
@@ -639,7 +679,7 @@ public class CLIPSIDE extends JFrame
       /* Watch submenu */
       /*===============*/
 
-      jmDebug.add(new WatchMenu(clips));
+      jmDebug.add(new WatchMenu(theEnvironment));
 
       /*==========*/
       /* Browsers */
@@ -648,22 +688,18 @@ public class CLIPSIDE extends JFrame
       jmDebug.addSeparator();
 
       jmiAgendaBrowser = new JMenuItem("Agenda Browser"); 
-      jmiAgendaBrowser.setActionCommand(agendaBrowserAction);
       jmiAgendaBrowser.addActionListener(this);
       jmDebug.add(jmiAgendaBrowser);
 
       jmiFactBrowser = new JMenuItem("Fact Browser"); 
-      jmiFactBrowser.setActionCommand(factBrowserAction);
       jmiFactBrowser.addActionListener(this);
       jmDebug.add(jmiFactBrowser);
 
       jmiInstanceBrowser = new JMenuItem("Instance Browser"); 
-      jmiInstanceBrowser.setActionCommand(instanceBrowserAction);
       jmiInstanceBrowser.addActionListener(this);
       jmDebug.add(jmiInstanceBrowser);
 
       jmiConstructInspector = new JMenuItem("Construct Inspector"); 
-      jmiConstructInspector.setActionCommand(constructInspectorAction);
       jmiConstructInspector.addActionListener(this);
       jmDebug.add(jmiConstructInspector);
 
@@ -681,7 +717,7 @@ public class CLIPSIDE extends JFrame
       /* Help menu */
       /*===========*/
 
-      jmb.add(new HelpMenu());
+      jmb.add(new HelpMenu(this));
 
       /*===================*/
       /* Add the menu bar. */

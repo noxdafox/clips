@@ -64,4 +64,27 @@ public class FactInstance
      {
       return slotValues;
      }
+     
+   /*******************/
+   /* searchForString */
+   /*******************/
+   public boolean searchForString(
+     String searchString)
+     {
+      if (relationName.toLowerCase().contains(searchString.toLowerCase()))
+        { return true; }
+        
+      if (name.toLowerCase().contains(searchString.toLowerCase()))
+        { return true; }
+        
+      for (SlotValue theSV : slotValues)
+        {
+         String svString = relationName + " " + theSV.getSlotName() + " " + theSV.getSlotValue();
+
+         if (svString.toLowerCase().contains(searchString.toLowerCase()))
+           { return true; }
+        }
+
+      return false;
+     }
   }

@@ -1,6 +1,7 @@
 package net.sf.clipsrules.jni.examples.ide;
 
 import java.awt.event.ActionListener;
+import javax.swing.JButton;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
@@ -8,6 +9,22 @@ import java.awt.event.ActionEvent;
 import java.net.URI;
 import java.net.URL;
 import java.awt.Desktop;
+
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+
+import java.awt.Component;
+import java.awt.Font;
+import java.awt.Dimension;
+
+import javax.swing.ImageIcon;
+import javax.imageio.ImageIO;
+import java.io.InputStream;
 
 public class HelpMenu extends JMenu 
                    implements ActionListener
@@ -18,6 +35,7 @@ public class HelpMenu extends JMenu
    private static final String clipsExpertSystemGroupAction = "CLIPSExpertSystemGroup";
    private static final String sourceForgeForumsAction = "SourceForgeForums";
    private static final String stackOverflowQAAction = "StackOverflowQ&A";
+   private static final String aboutCLIPSIDEAction = "AboutCLIPSIDE";
 
    private JMenuItem jmiCLIPSHomePage = null;
    private JMenuItem jmiOnlineDocumentation = null;   
@@ -25,15 +43,101 @@ public class HelpMenu extends JMenu
    private JMenuItem jmiCLIPSExpertSystemGroup = null;
    private JMenuItem jmiSourceForgeForums = null;
    private JMenuItem jmiStackOverflowQA = null;
+   private JMenuItem jmiAboutCLIPSIDE = null;
+   
+   private JFrame parentFrame;
+
+   class AboutCLIPSIDEDialog extends JDialog 
+     {
+      public AboutCLIPSIDEDialog(JFrame parent) 
+        {
+         super(parent,"About CLIPS IDE",true);
+
+         final String imageName = "/net/sf/clipsrules/jni/examples/ide/resources/CLIPS.png";
+         
+         setLayout(new BoxLayout(getContentPane(),BoxLayout.Y_AXIS));
+
+         getRootPane().setBorder(BorderFactory.createEmptyBorder(10,40,18,40));
+         
+         try
+           {
+            InputStream imageInput = getClass().getResourceAsStream(imageName);
+            JLabel label = new JLabel(new ImageIcon(ImageIO.read(imageInput)));
+            label.setAlignmentX(0.5f);
+            add(label);
+           }
+         catch (Exception e)
+           { e.printStackTrace(); }
+
+         JLabel name = new JLabel("CLIPS IDE");
+         name.setAlignmentX(0.5f);
+         Font font = name.getFont();
+         font = new Font(font.getFontName(),Font.BOLD,18);
+         name.setFont(font);
+         add(name);
+ 
+         name = new JLabel("Version 6.4");
+         name.setAlignmentX(0.5f);
+         font = new Font(font.getFontName(),Font.PLAIN,12);
+         name.setFont(font);
+         add(name);
+         
+         add(Box.createRigidArea(new Dimension(0,18)));
+
+         name = new JLabel("Design and Development");
+         name.setAlignmentX(0.5f);
+         font = new Font(font.getFontName(),Font.BOLD,14);
+         name.setFont(font);
+         add(name);
+         
+         name = new JLabel("Gary Riley");
+         name.setAlignmentX(0.5f);
+         font = new Font(font.getFontName(),Font.PLAIN,14);
+         name.setFont(font);
+         add(name);
+                  
+         add(Box.createRigidArea(new Dimension(0,18)));
+
+         name = new JLabel("Public Domain Release, November 2017");
+         name.setAlignmentX(0.5f);
+         font = new Font(font.getFontName(),Font.PLAIN,12);
+         name.setFont(font);
+         add(name);
+
+         add(Box.createRigidArea(new Dimension(0,18)));
+         
+         JButton ok = new JButton("OK");
+         
+         ok.addActionListener(
+            new ActionListener()
+              {
+               public void actionPerformed(ActionEvent evt) 
+                 { 
+                  setVisible(false); 
+                  dispose();
+                 }
+              });
+              
+         ok.setAlignmentX(Component.CENTER_ALIGNMENT);
+         add(ok);
+
+         setModalityType(ModalityType.APPLICATION_MODAL);
+         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+         
+         pack();
+         
+         setResizable(false);
+        }
+     }
 
    /************/
    /* HelpMenu */
    /************/
-   HelpMenu()
+   HelpMenu(JFrame theFrame)
      {  
       super("Help");
-        
-      //addMenuListener(this);
+      
+      parentFrame = theFrame;
       
       jmiCLIPSHomePage = new JMenuItem("CLIPS Home Page");
       jmiCLIPSHomePage.setActionCommand(clipsHomePageAction);
@@ -64,9 +168,14 @@ public class HelpMenu extends JMenu
       jmiStackOverflowQA.setActionCommand(stackOverflowQAAction);
       jmiStackOverflowQA.addActionListener(this);
       add(jmiStackOverflowQA);
+      
+      addSeparator();
+
+      jmiAboutCLIPSIDE = new JMenuItem("About CLIPS IDE");
+      jmiAboutCLIPSIDE.setActionCommand(aboutCLIPSIDEAction);
+      jmiAboutCLIPSIDE.addActionListener(this);
+      add(jmiAboutCLIPSIDE);
      }  
-
-
 
    /*################*/
    /* Action Methods */
@@ -90,6 +199,8 @@ public class HelpMenu extends JMenu
         { openSourceForgeForums(); }
       else if (ae.getActionCommand().equals(stackOverflowQAAction))  
         { openStackOverflowQA(); }
+      else if (ae.getActionCommand().equals(aboutCLIPSIDEAction))  
+        { aboutCLIPSIDE(); }
      }
      
    /*********************/
@@ -120,7 +231,7 @@ public class HelpMenu extends JMenu
    public void openOnlineExamples()
      {
       try
-        { openWebpage(new URL("https://sourceforge.net/p/clipsrules/code/HEAD/tree/examples/")); }
+        { openWebpage(new URL("https://sourceforge.net/p/clipsrules/code/HEAD/tree/branches/64x/examples/")); }
       catch (Exception e)
         { e.printStackTrace(); }
      }
@@ -175,6 +286,16 @@ public class HelpMenu extends JMenu
             { e.printStackTrace(); }
          }
       }
+
+   /*****************/
+   /* aboutCLIPSIDE */
+   /*****************/  
+   public void aboutCLIPSIDE()
+     {      
+      JDialog f = new AboutCLIPSIDEDialog(parentFrame);
+      f.setLocationRelativeTo(parentFrame);
+      f.setVisible(true);
+     }
 
    /*########################*/
    /* ActionListener Methods */

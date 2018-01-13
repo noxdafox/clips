@@ -7,6 +7,8 @@ import java.util.concurrent.Callable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.lang.NullPointerException;
+import java.io.FileNotFoundException;
 
 public class Environment
   {
@@ -26,13 +28,27 @@ public class Environment
    public static final String GLOBALS = "globals";
    public static final String MESSAGES = "messages";
    public static final String MESSAGE_HANDLERS = "message-handlers";
-      
-   private List<Router> routerList = new ArrayList<Router>(); 
+   public static final String NONE = "none";
+   public static final String ALL = "all";
+         
+   private HashMap<String,Router> routerMap = new HashMap<String,Router>();
    private List<CLIPSLineError> errorList = new ArrayList<CLIPSLineError>();
 
    static { System.loadLibrary("CLIPSJNI"); }
 
    private long theEnvironment;
+
+   /*********/
+   /* main: */
+   /*********/
+   public static void main(String args[])
+     {  
+      Environment clips;
+      
+      clips = new Environment();
+
+      clips.commandLoop();
+     }  
 
    /****************/
    /* Environment: */
@@ -42,87 +58,53 @@ public class Environment
       super();
       theEnvironment = createEnvironment();
      }
-
-   /*********************************************************/
-   /* getCLIPSJNIVersion: Gets the CLIPSJNI version number. */
-   /*********************************************************/
-   public static String getCLIPSJNIVersion() 
-     {
-      return CLIPSJNI_VERSION;
-     }
-
-   /***************************************************/
-   /* getCLIPSVersion: Gets the CLIPS version number. */
-   /***************************************************/
-   public static native String getCLIPSVersion();
-
-   /**************************************************************/
-   /* getVersion: Gets the JClips and the CLIPS version numbers. */
-   /**************************************************************/
-   public static String getVersion() 
-     {
-      return "CLIPSJNI version " + getCLIPSJNIVersion() + 
-              " (CLIPS version " + getCLIPSVersion() + ")";
-     }
-
-   /**************************/
-   /* getEnvironmentAddress: */
-   /**************************/
-   public long getEnvironmentAddress()
-     { return theEnvironment; }
      
    /***************************/
    /* createCLIPSEnvironment: */
    /***************************/
    private native long createEnvironment();
 
-   /***********************/
-   /* voidCommandWrapper: */
-   /***********************/
-   private void voidCommandWrapper(Callable<Void> callable) throws CLIPSException
+   /****************/
+   /* captureStart */
+   /****************/
+   public CaptureRouter captureStart()
      {
-      CaptureRouter commandCapture = new CaptureRouter(this,new String [] { Router.ERROR } );
+      setErrorCallback(true);
       
-      try
-        { callable.call(); }
-      catch(Exception e)
-        {
-         this.deleteRouter(commandCapture);
-         throw new CLIPSException(e.getMessage(),e.getCause()); 
-        }
-      
-      String error = commandCapture.getOutput();
-      this.deleteRouter(commandCapture);
-      
-      if (! error.isEmpty())
-        { throw new CLIPSException(error); }
-     }
-     
-   /***********************/
-   /* longCommandWrapper: */
-   /***********************/
-   private long longCommandWrapper(Callable<Long> callable) throws CLIPSException
-     {
-      CaptureRouter commandCapture = new CaptureRouter(this,new String [] { Router.ERROR } );
-      Long rv;
-      
-      try
-        { rv = callable.call(); }
-      catch(Exception e)
-        {
-         this.deleteRouter(commandCapture);
-         throw new CLIPSException(e.getMessage(),e.getCause()); 
-        }
-      
-      String error = commandCapture.getOutput();
-      this.deleteRouter(commandCapture);
-      
-      if (! error.isEmpty())
-        { throw new CLIPSException(error); }
-        
-      return rv;
+      errorList.clear();
+
+      return new CaptureRouter(this,new String [] { Router.STDERR } );
      }
 
+   /**************/
+   /* captureEnd */
+   /**************/
+   public void captureEnd(
+     CaptureRouter commandCapture) throws CLIPSException
+     {
+      String error = commandCapture.getOutput();
+      
+      setErrorCallback(false);
+      
+      this.deleteRouter(commandCapture);
+            
+      if (! error.isEmpty())
+        { throw new CLIPSException(error); }
+     }
+
+   /**************************/
+   /* captureEndWithoutCheck */
+   /**************************/
+   public void captureEndWithoutCheck(
+     CaptureRouter commandCapture)
+     {
+      String error = commandCapture.getOutput();
+      
+      setErrorCallback(false);
+      
+      this.deleteRouter(commandCapture);
+     }
+     
    /****************************************/
    /* clear: Clears the CLIPS environment. */
    /****************************************/
@@ -142,6 +124,114 @@ public class Environment
                    return null;
                   }
                });
+     }
+
+   /*********/
+   /* load: */
+   /*********/
+   private native void load(long env,String filename);
+
+   /*********/
+   /* load: */
+   /*********/
+   public void load(String fileName) throws CLIPSLoadException
+     {
+      if (fileName == null)
+        { throw new NullPointerException("fileName"); }
+        
+      CaptureRouter loadCapture = captureStart();
+      load(theEnvironment,fileName);
+      captureEndWithoutCheck(loadCapture);
+      
+      checkForErrors("Load");
+     }
+
+   /*******************/
+   /* loadFromString: */
+   /*******************/
+   private native void loadFromString(long env,String loadString);
+
+   /*******************/
+   /* loadFromString: */
+   /*******************/
+   public void loadFromString(String loadString) throws CLIPSLoadException
+     {
+      if (loadString == null)
+        { throw new NullPointerException("loadString"); }
+        
+      String oldName = getParsingFileName();
+      setParsingFileName("<String>");
+      CaptureRouter loadCapture = captureStart();
+      loadFromString(theEnvironment,loadString);
+      captureEndWithoutCheck(loadCapture);
+      setParsingFileName(oldName);
+      checkForErrors("LoadFromString");
+     }
+      
+   /*****************************/
+   /* loadFromStringWithOutput: */
+   /*****************************/
+   private native void loadFromStringWithOutput(long env,String loadString);
+
+   /*****************************/
+   /* loadFromStringWithOutput: */
+   /*****************************/
+   public void loadFromStringWithOutput(String loadString)
+     {
+      String oldName = getParsingFileName();
+      setParsingFileName("<String>");
+      loadFromStringWithOutput(theEnvironment,loadString);
+      setParsingFileName(oldName);
+     }
+
+   /**************************/
+   /* convertStreamToString: */
+   /**************************/  
+    private static String convertStreamToString(java.io.InputStream is) 
+      {
+       java.util.Scanner s = new java.util.Scanner(is,"UTF-8").useDelimiter("\\A");
+       return s.hasNext() ? s.next() : "";
+      }
+
+   /*********************/
+   /* loadFromResource: */
+   /*********************/
+   public void loadFromResource(String resourceFile) throws CLIPSLoadException, FileNotFoundException
+     {
+      if (resourceFile == null)
+        { throw new NullPointerException("resourceFile"); }
+        
+      InputStream input = getClass().getResourceAsStream(resourceFile);
+      if (input == null) 
+        { throw new FileNotFoundException(resourceFile + " (no such file)"); }
+        
+      String oldName = getParsingFileName();
+      setParsingFileName(resourceFile);
+      CaptureRouter loadCapture = captureStart();
+      loadFromString(theEnvironment,convertStreamToString(input));
+      captureEndWithoutCheck(loadCapture);
+      setParsingFileName(oldName);
+      checkForErrors("LoadFromResource");
+     }
+
+   /**********/
+   /* build: */
+   /**********/
+   private native boolean build(long env,String buildStr);
+
+   /**********/
+   /* build: */
+   /**********/
+   public void build(String buildString) throws CLIPSException
+     {
+      if (buildString == null)
+        { throw new NullPointerException("buildString"); }
+        
+      CaptureRouter buildCapture = captureStart();
+
+      build(theEnvironment,buildString);
+      
+      captureEnd(buildCapture);
      }
 
    /****************************************/
@@ -164,7 +254,415 @@ public class Environment
                   }
                });
      }
+
+   /********/
+   /* run: */
+   /********/
+   private native long run(long env,long runLimit);
+
+   /********/
+   /* run: */
+   /********/
+   public long run(
+     final long runLimit) throws CLIPSException
+     {
+      return longCommandWrapper(
+         new Callable<Long>() 
+               {
+                public Long call() throws Exception 
+                  { 
+                   return run(theEnvironment,runLimit);
+                  }
+               });
+     }
+
+   /********/
+   /* run: */
+   /********/
+   public long run() throws CLIPSException
+     {
+      return run(-1);
+     }
+
+   /*****************/
+   /* assertString: */
+   /*****************/
+   private native FactAddressValue assertString(long env,String factStr);
+
+   /*****************/
+   /* assertString: */
+   /*****************/
+   public FactAddressValue assertString(String factString) throws CLIPSException
+     {
+      if (factString == null)
+        { throw new NullPointerException("factString"); }
         
+      CaptureRouter assertCapture = captureStart();
+
+      FactAddressValue fav = assertString(theEnvironment,factString);
+      
+      captureEnd(assertCapture);
+
+      return fav;
+     }
+
+   /*****************/
+   /* makeInstance: */
+   /*****************/
+   private native InstanceAddressValue makeInstance(long env,String instanceStr);
+
+   /*****************/
+   /* makeInstance: */
+   /*****************/
+   public InstanceAddressValue makeInstance(String instanceString) throws CLIPSException
+     {
+      if (instanceString == null)
+        { throw new NullPointerException("instanceString"); }
+        
+      CaptureRouter miCapture = captureStart();
+
+      InstanceAddressValue iav = makeInstance(theEnvironment,instanceString);
+      
+      captureEnd(miCapture);
+
+      return iav;
+     }
+
+   /************/
+   /* findFact */
+   /************/ 
+   public FactAddressValue findFact(
+     String deftemplate) throws CLIPSException
+     {
+      return findFact("?f",deftemplate,"TRUE");
+     }
+     
+   /************/
+   /* findFact */
+   /************/ 
+   public FactAddressValue findFact(
+     String variable,
+     String deftemplate,
+     String condition) throws CLIPSException
+     {
+      if (variable == null)
+        { throw new NullPointerException("variable"); }
+        
+      if (deftemplate == null)
+        { throw new NullPointerException("deftemplate"); }
+        
+      if (condition == null)
+        { throw new NullPointerException("condition"); }
+        
+      String query = "(find-fact " + 
+                        "((" + variable + " " + deftemplate + ")) " + condition + ")";
+                        
+      PrimitiveValue pv = eval(query);
+      
+      if (! pv.isMultifield())
+        { return null; }
+      
+      MultifieldValue mv = (MultifieldValue) pv;
+     
+      if (mv.size() == 0)
+        { return null; }
+        
+      return (FactAddressValue) mv.get(0);
+     }
+     
+   /****************/
+   /* findAllFacts */
+   /****************/ 
+   public List<FactAddressValue> findAllFacts(
+     String deftemplate) throws CLIPSException
+     {
+      return findAllFacts("?f",deftemplate,"TRUE");
+     }
+     
+   /****************/
+   /* findAllFacts */
+   /****************/ 
+   public List<FactAddressValue> findAllFacts(
+     String variable,
+     String deftemplate,
+     String condition) throws CLIPSException
+     {
+      if (variable == null)
+        { throw new NullPointerException("variable"); }
+        
+      if (deftemplate == null)
+        { throw new NullPointerException("deftemplate"); }
+        
+      if (condition == null)
+        { throw new NullPointerException("condition"); }
+        
+      String query = "(find-all-facts " + 
+                        "((" + variable + " " + deftemplate + ")) " + condition + ")";
+                        
+      PrimitiveValue pv = eval(query);
+      
+      if (! pv.isMultifield())
+        { return null; }
+      
+      MultifieldValue mv = (MultifieldValue) pv;
+      
+      List<FactAddressValue> rv = new ArrayList<FactAddressValue>(mv.size());
+      
+      for (PrimitiveValue theValue : mv)
+        { rv.add((FactAddressValue) theValue); }
+
+      return rv;
+     }
+     
+   /****************/
+   /* findInstance */
+   /****************/ 
+   public InstanceAddressValue findInstance(
+     String defclass) throws CLIPSException
+     {
+      return findInstance("?i",defclass,"TRUE");
+     }
+     
+   /****************/
+   /* findInstance */
+   /****************/ 
+   public InstanceAddressValue findInstance(
+     String variable,
+     String defclass,
+     String condition) throws CLIPSException
+     {
+      if (variable == null)
+        { throw new NullPointerException("variable"); }
+        
+      if (defclass == null)
+        { throw new NullPointerException("defclass"); }
+        
+      if (condition == null)
+        { throw new NullPointerException("condition"); }
+        
+      String query = "(find-instance " + 
+                        "((" + variable + " " + defclass + ")) " + condition + ")";
+                        
+      PrimitiveValue pv = eval(query);
+      
+      if (! pv.isMultifield())
+        { return null; }
+      
+      MultifieldValue mv = (MultifieldValue) pv;
+     
+      if (mv.size() == 0)
+        { return null; }
+        
+      return ((InstanceNameValue) mv.get(0)).getInstance(this);
+     }
+     
+   /********************/
+   /* findAllInstances */
+   /********************/ 
+   public List<InstanceAddressValue> findAllInstances(
+     String defclass) throws CLIPSException
+     {
+      return findAllInstances("?i",defclass,"TRUE");
+     }
+     
+   /********************/
+   /* findAllInstances */
+   /********************/ 
+   public List<InstanceAddressValue> findAllInstances(
+     String variable,
+     String defclass,
+     String condition) throws CLIPSException
+     {
+      if (variable == null)
+        { throw new NullPointerException("variable"); }
+        
+      if (defclass == null)
+        { throw new NullPointerException("defclass"); }
+        
+      if (condition == null)
+        { throw new NullPointerException("condition"); }
+        
+      String query = "(find-all-instances " + 
+                        "((" + variable + " " + defclass + ")) " + condition + ")";
+                        
+      PrimitiveValue pv = eval(query);
+      
+      if (! pv.isMultifield())
+        { return null; }
+      
+      MultifieldValue mv = (MultifieldValue) pv;
+
+      List<InstanceAddressValue> rv = new ArrayList<InstanceAddressValue>(mv.size());
+      
+      for (PrimitiveValue theValue : mv)
+        { rv.add(((InstanceNameValue) theValue).getInstance(this)); }
+
+      return rv;
+     }
+
+   /*********/
+   /* eval: */
+   /*********/
+   private native PrimitiveValue eval(long env,String evalStr);
+
+   /*********/
+   /* eval: */
+   /*********/
+   public PrimitiveValue eval(String evalString) throws CLIPSException
+     {
+      if (evalString == null)
+        { throw new NullPointerException("evalString"); }
+        
+      CaptureRouter evalCapture = captureStart();
+
+      PrimitiveValue pv = eval(theEnvironment,evalString);
+      
+      captureEnd(evalCapture);
+      
+      return pv;
+     }
+
+   /**********/
+   /* watch: */
+   /**********/
+   private native boolean watch(long env,String watchItem);
+
+   /**********/
+   /* watch: */
+   /**********/
+   public void watch(String watchItem)
+     {
+      if (watchItem == null)
+        { throw new NullPointerException("watchItem"); }
+        
+      if (! validWatchItem(theEnvironment,watchItem))
+        { throw new IllegalArgumentException("watchItem '"+ watchItem + "' is invalid."); }
+        
+      watch(theEnvironment,watchItem);
+     }
+
+   /************/
+   /* unwatch: */
+   /************/
+   private native boolean unwatch(long env,String watchItem);
+
+   /************/
+   /* unwatch: */
+   /************/
+   public void unwatch(String watchItem)
+     {
+      if (watchItem == null)
+        { throw new NullPointerException("watchItem"); }
+
+      if (! validWatchItem(theEnvironment,watchItem))
+        { throw new IllegalArgumentException("watchItem '"+ watchItem + "' is invalid."); }
+        
+      unwatch(theEnvironment,watchItem);
+     }
+
+   /*******************/
+   /* validWatchItem: */
+   /*******************/
+   private native boolean validWatchItem(long env,String watchItem);
+     
+   /*****************/
+   /* getWatchItem: */
+   /*****************/
+   private native boolean getWatchItem(long env,String watchItem);
+
+   /*****************/
+   /* getWatchItem: */
+   /*****************/
+   public boolean getWatchItem(String watchItem)
+     {
+      if (watchItem == null)
+        { throw new NullPointerException("watchItem"); }
+        
+      if (! validWatchItem(theEnvironment,watchItem))
+        { throw new IllegalArgumentException("watchItem '"+ watchItem + "' is invalid."); }
+        
+      return getWatchItem(theEnvironment,watchItem);
+     }
+
+   /*****************/
+   /* setWatchItem: */
+   /*****************/
+   public void setWatchItem(String watchItem,boolean newValue)
+     {
+      if (watchItem == null)
+        { throw new NullPointerException("watchItem"); }
+      
+      if (! validWatchItem(theEnvironment,watchItem))
+        { throw new IllegalArgumentException("watchItem '"+ watchItem + "' is invalid."); }
+
+      if (newValue)
+        { watch(watchItem); }
+      else
+        { unwatch(watchItem); }
+     }
+     
+   /******************************************/
+   /* addUserFunction: Adds a user function. */
+   /******************************************/
+   private native int addUserFunction(long env,
+                                      String functionName,
+                                      String returnTypes,
+                                      int minArgs,
+                                      int maxArgs,
+                                      String restrictions,
+                                      UserFunction callback);
+     
+   /*******************/
+   /* addUserFunction */
+   /*******************/
+   public void addUserFunction(
+     String functionName,
+     UserFunction callback)
+     {
+      addUserFunction(functionName,"*",0,UserFunction.UNBOUNDED,null,callback);
+     } 
+
+   /*******************/
+   /* addUserFunction */
+   /*******************/
+   public void addUserFunction(
+     String functionName,
+     String returnTypes,
+     int minArgs,
+     int maxArgs,
+     String restrictions,
+     UserFunction callback)
+     {
+      int rv;
+      
+      if (functionName == null)
+        { throw new NullPointerException("functionName"); }
+        
+      if (callback == null)
+        { throw new NullPointerException("callback"); }
+        
+      rv = addUserFunction(theEnvironment,functionName,returnTypes,
+                           minArgs,maxArgs,restrictions,callback);
+                                                      
+      switch (rv)
+        {
+         case 0:
+           break;
+           
+         case 1:
+           throw new IllegalArgumentException("Function '" + functionName + "' minArgs exceeds maxArgs."); 
+           
+         case 2:
+           throw new IllegalArgumentException("Function '" + functionName + "' already exists."); 
+           
+         case 3:
+           throw new IllegalArgumentException("Function '" + functionName + "' invalid argument type."); 
+           
+         case 4:
+           throw new IllegalArgumentException("Function '" + functionName + "' invalid return type."); 
+        }
+      } 
+
    /************************************************/
    /* removeUserFunction: Removes a user function. */
    /************************************************/
@@ -174,64 +672,184 @@ public class Environment
    /**********************/
    /* removeUserFunction */
    /**********************/
-   public boolean removeUserFunction(
+   public void removeUserFunction(
      String functionName)
      {
-      return removeUserFunction(theEnvironment,functionName);
+      boolean rv;
+      
+      if (functionName == null)
+        { throw new NullPointerException("functionName"); }
+
+      rv = removeUserFunction(theEnvironment,functionName);
+      
+      if (! rv)
+        { throw new IllegalArgumentException("Function '" + functionName + "' does not exist."); }
      } 
 
-   /******************************************/
-   /* addUserFunction: Adds a user function. */
-   /******************************************/
-   private native boolean addUserFunction(long env,
-                                          String functionName,
-                                          String restrictions,
-                                          UserFunction callback);
+   /**************/
+   /* addRouter: */
+   /**************/
+   private native boolean addRouter(long env,String routerName,int priority,Router theRouter);
+    
+   /**************/
+   /* addRouter: */
+   /**************/
+   public void addRouter(
+     Router theRouter)
+     {
+      if (theRouter == null)
+        { throw new NullPointerException("theRouter"); }
+        
+      if (routerMap.containsKey(theRouter.getName()))
+        { throw new IllegalArgumentException("Router named '" + theRouter.getName() +"' already exists."); }
+         
+      boolean rv = addRouter(theEnvironment,theRouter.getName(),theRouter.getPriority(),theRouter);
+      
+      if (rv)
+        { routerMap.put(theRouter.getName(),theRouter); }
+      else
+        { throw new IllegalArgumentException("Router named '" + theRouter.getName() +"' already exists."); }
+     }
+
+   /*****************/
+   /* deleteRouter: */
+   /*****************/
+   private native boolean deleteRouter(long env,String routerName);
+    
+   /*****************/
+   /* deleteRouter: */
+   /*****************/
+   public void deleteRouter(
+     Router theRouter)
+     {
+      if (theRouter == null)
+        { throw new NullPointerException("theRouter"); }
+                
+      if (deleteRouter(theEnvironment,theRouter.getName()))
+        { routerMap.remove(theRouter); }
+      else
+        { throw new IllegalArgumentException("Router named '" + theRouter.getName() +"' does not exist."); }
+     }
+
+   /*******************/
+   /* activateRouter: */
+   /*******************/
+   private native boolean activateRouter(long env,String routerName);
+
+   /*******************/
+   /* activateRouter: */
+   /*******************/
+   public void activateRouter(
+     Router theRouter)
+     {
+      if (theRouter == null)
+        { throw new NullPointerException("theRouter"); }
+                
+      if (! activateRouter(theEnvironment,theRouter.getName()))
+        { throw new IllegalArgumentException("Router named '" + theRouter.getName() + "' does not exist."); }
+     }
+
+   /*********************/
+   /* deactivateRouter: */
+   /*********************/
+   private native boolean deactivateRouter(long env,String routerName);
+
+   /*********************/
+   /* deactivateRouter: */
+   /*********************/
+   public void deactivateRouter(
+     Router theRouter)
+     {
+      if (theRouter == null)
+        { throw new NullPointerException("theRouter"); }
+        
+      if (! deactivateRouter(theEnvironment,theRouter.getName()))
+        { throw new IllegalArgumentException("Router named '" + theRouter.getName() + "' does not exist."); }
+     }
+
+   /****************/
+   /* printString: */
+   /****************/
+   private native void printString(long env,String logName,String printString);
+
+   /**********************/
+   /* printRouterExists: */
+   /**********************/
+   private native boolean printRouterExists(long env,String logName);
+
+   /**********/
+   /* print: */
+   /**********/
+   public void print(
+     String logicalName,
+     String printString)
+     {
+      if (logicalName == null)
+        { throw new NullPointerException("logicalName"); }
+        
+      if (printString == null)
+        { throw new NullPointerException("printString"); }
+        
+      if (! printRouterExists(theEnvironment,logicalName))
+        { throw new IllegalArgumentException("No print router for logicalName '" + logicalName +"' exists."); }
+
+      printString(theEnvironment,logicalName,printString);
+     }
      
-   /*******************/
-   /* addUserFunction */
-   /*******************/
-   public boolean addUserFunction(
-     String functionName,
-     UserFunction callback)
+   /**********/
+   /* print: */
+   /**********/
+   public void print(
+     String printString)
      {
-      return addUserFunction(theEnvironment,functionName,null,callback);
-     } 
+      if (printString == null)
+        { throw new NullPointerException("printString"); }
+        
+      printString(theEnvironment,Router.STDOUT,printString);
+     }
 
-   /*******************/
-   /* addUserFunction */
-   /*******************/
-   public boolean addUserFunction(
-     String functionName,
-     String restrictions,
-     UserFunction callback)
+   /************/
+   /* println: */
+   /************/
+   public void println(
+     String logicalName,
+     String printString)
      {
-      return addUserFunction(theEnvironment,functionName,restrictions,callback);
-     } 
+      if (logicalName == null)
+        { throw new NullPointerException("logicalName"); }
+        
+      if (printString == null)
+        { throw new NullPointerException("printString"); }
+        
+      if (! printRouterExists(theEnvironment,logicalName))
+        { throw new IllegalArgumentException("No print router for logicalName '" + logicalName +"' exists."); }
+        
+      printString(theEnvironment,logicalName,printString + "\n");
+     }
 
-   /**************************/
-   /* convertStreamToString: */
-   /**************************/  
-    private static String convertStreamToString(java.io.InputStream is) 
-      {
-       java.util.Scanner s = new java.util.Scanner(is,"UTF-8").useDelimiter("\\A");
-       return s.hasNext() ? s.next() : "";
-      }
-
-   /*********************/
-   /* loadFromResource: */
-   /*********************/
-   public void loadFromResource(String resourceFile) throws CLIPSLoadException
+   /************/
+   /* println: */
+   /************/
+   public void println(
+     String printString)
      {
-      InputStream input = getClass().getResourceAsStream(resourceFile);
-      if (input == null) return;
-      String oldName = getParsingFileName();
-      setParsingFileName(resourceFile);
-      CaptureRouter loadCapture = new CaptureRouter(this,new String [] { Router.ERROR } );
-      loadFromString(theEnvironment,convertStreamToString(input));
-      this.deleteRouter(loadCapture);
-      setParsingFileName(oldName);
-      checkForErrors("LoadFromResource");
+      if (printString == null)
+        { throw new NullPointerException("printString"); }
+        
+      printString(theEnvironment,Router.STDOUT,printString + "\n");
+     }
+
+   /****************/
+   /* commandLoop: */
+   /****************/
+   private native void commandLoop(long env);
+    
+   /****************/
+   /* commandLoop: */
+   /****************/
+   public void commandLoop()
+     {
+      commandLoop(theEnvironment);
      }
 
    /********************/
@@ -245,42 +863,6 @@ public class Environment
    public int changeDirectory(String directory)
      {
       return changeDirectory(theEnvironment,directory);
-     }
-
-   /*******************/
-   /* loadFromString: */
-   /*******************/
-   private native void loadFromString(long env,String loadString);
-
-   /*******************/
-   /* loadFromString: */
-   /*******************/
-   public void loadFromString(String loadString) throws CLIPSLoadException
-     {
-      String oldName = getParsingFileName();
-      setParsingFileName("<String>");
-      CaptureRouter loadCapture = new CaptureRouter(this,new String [] { Router.ERROR } );
-      loadFromString(theEnvironment,loadString);
-      this.deleteRouter(loadCapture);
-      setParsingFileName(oldName);
-      checkForErrors("LoadFromString");
-     }
-     
-   /*********/
-   /* load: */
-   /*********/
-   private native void load(long env,String filename);
-
-   /*********/
-   /* load: */
-   /*********/
-   public void load(String filename) throws CLIPSLoadException
-     {
-      CaptureRouter loadCapture = new CaptureRouter(this,new String [] { Router.ERROR } );
-      load(theEnvironment,filename);
-      this.deleteRouter(loadCapture);
-      
-      checkForErrors("Load");
      }
      
    /*******************/
@@ -362,56 +944,6 @@ public class Environment
       return loadFacts(theEnvironment,filename);
      }
 
-   /*****************/
-   /* getWatchItem: */
-   /*****************/
-   private native boolean getWatchItem(long env,String watchItem);
-
-   /*****************/
-   /* getWatchItem: */
-   /*****************/
-   public boolean getWatchItem(String watchItem)
-     {
-      return getWatchItem(theEnvironment,watchItem);
-     }
-
-   /*****************/
-   /* setWatchItem: */
-   /*****************/
-   public void setWatchItem(String watchItem,boolean newValue)
-     {
-      if (newValue)
-        { watch(watchItem); }
-      else
-        { unwatch(watchItem); }
-     }
-
-   /**********/
-   /* watch: */
-   /**********/
-   private native boolean watch(long env,String watchItem);
-
-   /**********/
-   /* watch: */
-   /**********/
-   public boolean watch(String watchItem)
-     {
-      return watch(theEnvironment,watchItem);
-     }
-
-   /************/
-   /* unwatch: */
-   /************/
-   private native boolean unwatch(long env,String watchItem);
-
-   /************/
-   /* unwatch: */
-   /************/
-   public boolean unwatch(String watchItem)
-     {
-      return unwatch(theEnvironment,watchItem);
-     }
-
    /*********************/
    /* setHaltExecution: */
    /*********************/
@@ -439,74 +971,7 @@ public class Environment
      {
       setHaltRules(theEnvironment,value);
      }
-          
-   /********/
-   /* run: */
-   /********/
-   private native long run(long env,long runLimit);
-
-   /********/
-   /* run: */
-   /********/
-   public long run(
-     long runLimit) throws CLIPSException
-     {
-      return longCommandWrapper(
-         new Callable<Long>() 
-               {
-                public Long call() throws Exception 
-                  { 
-                   return run(theEnvironment,runLimit);
-                  }
-               });
-     }
-
-   /********/
-   /* run: */
-   /********/
-   public long run() throws CLIPSException
-     {
-      return run(-1);
-     }
-
-   /*********/
-   /* eval: */
-   /*********/
-   private native PrimitiveValue eval(long env,String evalStr);
-
-   /*********/
-   /* eval: */
-   /*********/
-   public PrimitiveValue eval(String evalStr) throws CLIPSException
-     {
-      PrimitiveValue pv;
-      CaptureRouter evalCapture = new CaptureRouter(this,new String [] { Router.ERROR } );
-
-      pv = eval(theEnvironment,evalStr);
-      String error = evalCapture.getOutput();
-      this.deleteRouter(evalCapture);
-      
-      if (! error.isEmpty())
-        { 
-         throw new CLIPSException(error);
-        }
-      
-      return pv;
-     }
-
-   /**********/
-   /* build: */
-   /**********/
-   private native boolean build(long env,String buildStr);
-
-   /**********/
-   /* build: */
-   /**********/
-   public boolean build(String buildStr)
-     {
-      return build(theEnvironment,buildStr);
-     }
-
+        
    /******************/
    /* getModuleList: */
    /******************/
@@ -546,6 +1011,19 @@ public class Environment
       return getFactScopes(theEnvironment);
      }
      
+   /**********************/
+   /* getInstanceScopes: */
+   /**********************/
+   private native HashMap<Long,BitSet> getInstanceScopes(long env);
+
+   /*********************/
+   /* getInstanceScopes */
+   /*********************/
+   public HashMap<Long,BitSet> getInstanceScopes()
+     {
+      return getInstanceScopes(theEnvironment);
+     }
+     
    /****************/
    /* getFactList: */
    /****************/
@@ -557,6 +1035,19 @@ public class Environment
    public List<FactInstance> getFactList()
      {
       return getFactList(theEnvironment);
+     }
+
+   /********************/
+   /* getInstanceList: */
+   /********************/
+   private native List<FactInstance> getInstanceList(long env);
+
+   /********************/
+   /* getInstanceList: */
+   /********************/
+   public List<FactInstance> getInstanceList()
+     {
+      return getInstanceList(theEnvironment);
      }
 
    /**************/
@@ -581,19 +1072,6 @@ public class Environment
       return getAgenda(theEnvironment,theFocus.getModuleName());
      }
 
-   /*****************/
-   /* assertString: */
-   /*****************/
-   private native FactAddressValue assertString(long env,String factStr);
-
-   /*****************/
-   /* assertString: */
-   /*****************/
-   public FactAddressValue assertString(String factStr)
-     {
-      return assertString(theEnvironment,factStr);
-     }
-
    /***********************/
    /* getDeftemplateText: */
    /***********************/
@@ -605,6 +1083,19 @@ public class Environment
    public String getDeftemplateText(long templatePtr)
      {
       return getDeftemplateText(theEnvironment,templatePtr);
+     }
+
+   /********************/
+   /* getDefclassText: */
+   /********************/
+   private native String getDefclassText(long env,long classPtr);
+
+   /********************/
+   /* getDefclassText: */
+   /********************/
+   public String getDefclassText(long classPtr)
+     {
+      return getDefclassText(theEnvironment,classPtr);
      }
 
    /*******************/
@@ -648,22 +1139,19 @@ public class Environment
      FactAddressValue theFact,
      String slotName)
      {
-      return getFactSlot(theFact.getEnvironment(),
-                         theFact.getEnvironment().getEnvironmentAddress(),
-                         theFact.getFactAddress(),slotName);
-     }
+      PrimitiveValue theValue;
+      
+      if (slotName == null)
+        { throw new NullPointerException("slotName"); }
+        
+      theValue = getFactSlot(theFact.getEnvironment(),
+                             theFact.getEnvironment().getEnvironmentAddress(),
+                             theFact.getFactAddress(),slotName);
+                             
+      if (theValue == null)
+        { throw new IllegalArgumentException("Slot name '" + slotName + "' is invalid."); }
 
-   /*****************/
-   /* makeInstance: */
-   /*****************/
-   private native InstanceAddressValue makeInstance(long env,String instanceStr);
-
-   /*****************/
-   /* makeInstance: */
-   /*****************/
-   public InstanceAddressValue makeInstance(String instanceStr)
-     {
-      return makeInstance(theEnvironment,instanceStr);
+      return theValue;
      }
 
    /********************/
@@ -694,9 +1182,19 @@ public class Environment
      InstanceAddressValue theInstance,
      String slotName)
      {
-      return directGetSlot(theInstance.getEnvironment(),
-                           theInstance.getEnvironment().getEnvironmentAddress(),
-                           theInstance.getInstanceAddress(),slotName);
+      PrimitiveValue theValue;
+      
+      if (slotName == null)
+        { throw new NullPointerException("slotName"); }
+        
+      theValue = directGetSlot(theInstance.getEnvironment(),
+                               theInstance.getEnvironment().getEnvironmentAddress(),
+                               theInstance.getInstanceAddress(),slotName);
+                           
+      if (theValue == null)
+        { throw new IllegalArgumentException("Slot name '" + slotName + "' is invalid."); }
+        
+      return theValue;
      }
 
    /***********************/
@@ -704,17 +1202,17 @@ public class Environment
    /***********************/
    private native void destroyEnvironment(long env);
 
-   /****************/
-   /* commandLoop: */
-   /****************/
-   private native void commandLoop(long env);
-    
-   /****************/
-   /* commandLoop: */
-   /****************/
-   public void commandLoop()
+   /*********************/
+   /* flushInputBuffer: */
+   /*********************/
+   private native void flushInputBuffer(long env);
+
+   /*********************/
+   /* flushInputBuffer: */
+   /*********************/
+   public void flushInputBuffer()
      {
-      commandLoop(theEnvironment);
+      flushInputBuffer(theEnvironment);
      }
 
    /*******************/
@@ -799,6 +1297,20 @@ public class Environment
       appendInputBuffer(theEnvironment,theString);
      }
 
+   /******************/
+   /* appendDribble: */
+   /******************/
+   private native void appendDribble(long env,String theString);
+
+   /******************/
+   /* appendDribble: */
+   /******************/
+   public void appendDribble(
+     String theString)
+     {
+      appendDribble(theEnvironment,theString);
+     }
+
    /*******************************/
    /* inputBufferContainsCommand: */
    /*******************************/
@@ -823,6 +1335,35 @@ public class Environment
    public void commandLoopOnceThenBatch()
      {
       commandLoopOnceThenBatch(theEnvironment);
+     }
+
+   /***************************/
+   /* commandLoopBatchDriver: */
+   /***************************/
+   private native void commandLoopBatchDriver(long env);
+    
+   /***************************/
+   /* commandLoopBatchDriver: */
+   /***************************/
+   public void commandLoopBatchDriver()
+     {
+      commandLoopBatchDriver(theEnvironment);
+     }
+
+   /********************/
+   /* openStringBatch: */
+   /********************/
+   private native boolean openStringBatch(long env,String stringName,String data,boolean placeAtEnd);
+    
+   /********************/
+   /* openStringBatch: */
+   /********************/
+   public boolean openStringBatch(
+     String stringName,
+     String data,
+     boolean placeAtEnd)
+     {
+      return openStringBatch(theEnvironment,stringName,data,placeAtEnd);
      }
 
    /*******************************/
@@ -895,100 +1436,6 @@ public class Environment
       printPrompt(theEnvironment);
      }
 
-   /**************/
-   /* addRouter: */
-   /**************/
-   private native boolean addRouter(long env,String routerName,int priority,Router theRouter);
-    
-   /**************/
-   /* addRouter: */
-   /**************/
-   public boolean addRouter(
-     Router theRouter)
-     {
-      boolean rv = addRouter(theEnvironment,theRouter.getName(),theRouter.getPriority(),theRouter);
-      
-      if (rv)
-        { routerList.add(theRouter); }
-      return rv;
-     }
-
-   /*****************/
-   /* deleteRouter: */
-   /*****************/
-   private native boolean deleteRouter(long env,String routerName);
-    
-   /*****************/
-   /* deleteRouter: */
-   /*****************/
-   public boolean deleteRouter(
-     Router theRouter)
-     {
-      routerList.remove(theRouter);
-      return deleteRouter(theEnvironment,theRouter.getName());
-     }
-
-   /****************/
-   /* printRouter: */
-   /****************/
-   private native void printRouter(long env,String logName,String printString);
-
-   /****************/
-   /* printRouter: */
-   /****************/
-   public void printRouter(
-     String logName,
-     String printString)
-     {
-      printRouter(theEnvironment,logName,printString);
-     }
-     
-   /**********/
-   /* print: */
-   /**********/
-   public void print(
-     String printString)
-     {
-      printRouter(theEnvironment,Router.STANDARD_OUTPUT,printString);
-     }
-
-   /************/
-   /* println: */
-   /************/
-   public void println(
-     String printString)
-     {
-      printRouter(theEnvironment,Router.STANDARD_OUTPUT,printString + "\n");
-     }
-
-   /*******************/
-   /* activateRouter: */
-   /*******************/
-   private native boolean activateRouter(long env,String routerName);
-
-   /*******************/
-   /* activateRouter: */
-   /*******************/
-   public boolean activateRouter(
-     Router theRouter)
-     {
-      return activateRouter(theEnvironment,theRouter.getName());
-     }
-
-   /*********************/
-   /* deactivateRouter: */
-   /*********************/
-   private native boolean deactivateRouter(long env,String routerName);
-
-   /*********************/
-   /* deactivateRouter: */
-   /*********************/
-   public boolean deactivateRouter(
-     Router theRouter)
-     {
-      return deactivateRouter(theEnvironment,theRouter.getName());
-     }
-
    /************************/
    /* callNextPrintRouter: */
    /************************/
@@ -998,7 +1445,7 @@ public class Environment
      String printString)
      {
       deactivateRouter(theRouter);
-      printRouter(logName,printString);
+      print(logName,printString);
       activateRouter(theRouter);
      }
 
@@ -1029,6 +1476,33 @@ public class Environment
       setAgendaChanged(theEnvironment,value);
      }
 
+   /********************/
+   /* getFocusChanged: */
+   /********************/
+   private native boolean getFocusChanged(long env);
+
+   /********************/
+   /* getFocusChanged: */
+   /********************/
+   public boolean getFocusChanged()
+     {
+      return getFocusChanged(theEnvironment);
+     }
+
+   /********************/
+   /* setFocusChanged: */
+   /********************/
+   private native void setFocusChanged(long env,boolean value);
+
+   /********************/
+   /* setFocusChanged: */
+   /********************/
+   public void setFocusChanged(
+     boolean value)
+     {
+      setFocusChanged(theEnvironment,value);
+     }
+
    /***********************/
    /* getFactListChanged: */
    /***********************/
@@ -1056,70 +1530,108 @@ public class Environment
       setFactListChanged(theEnvironment,value);
      }
 
-   /***********************/
-   /* incrementFactCount: */
-   /***********************/
-   private native void incrementFactCount(Environment javaEnv,long env,long fact);
+   /************************/
+   /* getInstancesChanged: */
+   /************************/
+   private native boolean getInstancesChanged(long env);
 
-   /***********************/
-   /* decrementFactCount: */
-   /***********************/
-   private native void decrementFactCount(Environment javaEnv,long env,long fact);
+   /************************/
+   /* getInstancesChanged: */
+   /************************/
+   public boolean getInstancesChanged()
+     {
+      return getInstancesChanged(theEnvironment);
+     }
 
-   /***********************/
-   /* incrementFactCount: */
-   /***********************/
-   public void incrementFactCount(
+   /************************/
+   /* setInstancesChanged: */
+   /************************/
+   private native void setInstancesChanged(long env,boolean value);
+
+   /************************/
+   /* setInstancesChanged: */
+   /************************/
+   public void setInstancesChanged(
+     boolean value)
+     {
+      setInstancesChanged(theEnvironment,value);
+     }
+
+   /***************/
+   /* retainFact: */
+   /***************/
+   private native void retainFact(Environment javaEnv,long env,long fact);
+
+   /****************/
+   /* releaseFact: */
+   /****************/
+   private native void releaseFact(Environment javaEnv,long env,long fact);
+
+   /***************/
+   /* retainFact: */
+   /***************/
+   public void retainFact(
      FactAddressValue theFact)
      {
-      incrementFactCount(theFact.getEnvironment(),
-                         theFact.getEnvironment().getEnvironmentAddress(),
-                         theFact.getFactAddress());
+      retainFact(theFact.getEnvironment(),
+                 theFact.getEnvironment().getEnvironmentAddress(),
+                 theFact.getFactAddress());
      }
 
-   /***********************/
-   /* decrementFactCount: */
-   /***********************/
-   public void decrementFactCount(
+   /****************/
+   /* releaseFact: */
+   /****************/
+   public void releaseFact(
      FactAddressValue theFact)
      {
-      decrementFactCount(theFact.getEnvironment(),
-                         theFact.getEnvironment().getEnvironmentAddress(),
-                         theFact.getFactAddress());
+      releaseFact(theFact.getEnvironment(),
+                  theFact.getEnvironment().getEnvironmentAddress(),
+                  theFact.getFactAddress());
      }
 
-   /***************************/
-   /* incrementInstanceCount: */
-   /***************************/
-   private native void incrementInstanceCount(Environment javaEnv,long env,long instance);
+   /*******************/
+   /* retainInstance: */
+   /*******************/
+   private native void retainInstance(Environment javaEnv,long env,long instance);
 
-   /***************************/
-   /* decrementInstanceCount: */
-   /***************************/
-   private native void decrementInstanceCount(Environment javaEnv,long env,long instance);
+   /********************/
+   /* releaseInstance: */
+   /********************/
+   private native void releaseInstance(Environment javaEnv,long env,long instance);
 
-   /***************************/
-   /* incrementInstanceCount: */
-   /***************************/
-   public void incrementInstanceCount(
+   /*******************/
+   /* retainInstance: */
+   /*******************/
+   public void retainInstance(
      InstanceAddressValue theInstance)
      {
-      incrementInstanceCount(theInstance.getEnvironment(),
-                             theInstance.getEnvironment().getEnvironmentAddress(),
-                             theInstance.getInstanceAddress());
+      retainInstance(theInstance.getEnvironment(),
+                     theInstance.getEnvironment().getEnvironmentAddress(),
+                     theInstance.getInstanceAddress());
      }
 
-   /***************************/
-   /* decrementInstanceCount: */
-   /***************************/
-   public void decrementInstanceCount(
+   /********************/
+   /* releaseInstance: */
+   /********************/
+   public void releaseInstance(
      InstanceAddressValue theInstance)
      {
-      decrementInstanceCount(theInstance.getEnvironment(),
-                             theInstance.getEnvironment().getEnvironmentAddress(),
-                             theInstance.getInstanceAddress());
+      releaseInstance(theInstance.getEnvironment(),
+                      theInstance.getEnvironment().getEnvironmentAddress(),
+                      theInstance.getInstanceAddress());
      }
 
+   /***********************/
+   /* findInstanceByName: */
+   /***********************/   
+   private native InstanceAddressValue findInstanceByName(long env,String instanceName);
+
+   public InstanceAddressValue findInstanceByName(
+     String instanceName)
+     {
+      return findInstanceByName(theEnvironment,instanceName);
+     }
+  
    /**************************/
    /* incrementAddressCount: */
    /**************************/
@@ -1160,26 +1672,95 @@ public class Environment
       return new ExternalAddressValue(externalAddress,this);
      }
 
+   /*********************/
+   /* setErrorCallback: */
+   /*********************/
+   private native void setErrorCallback(long env,boolean value);
+
+   /*********************/
+   /* setErrorCallback: */
+   /*********************/
+   public void setErrorCallback(
+     boolean value)
+     {
+      setErrorCallback(theEnvironment,value);
+     }
+     
    /************/
    /* destroy: */
    /************/
    public void destroy()
      {
-      for (Router router : routerList)
-        { deleteRouter(router); }
+      for (String key : routerMap.keySet())
+        { deleteRouter(routerMap.get(key)); }
 
       destroyEnvironment(theEnvironment);
      }
      
-   /*********/
-   /* main: */
-   /*********/
-   public static void main(String args[])
-     {  
-      Environment clips;
+   /*********************************************************/
+   /* getCLIPSJNIVersion: Gets the CLIPSJNI version number. */
+   /*********************************************************/
+   public static String getCLIPSJNIVersion() 
+     {
+      return CLIPSJNI_VERSION;
+     }
 
-      clips = new Environment();
+   /***************************************************/
+   /* getCLIPSVersion: Gets the CLIPS version number. */
+   /***************************************************/
+   public static native String getCLIPSVersion();
+
+   /**************************************************************/
+   /* getVersion: Gets the JClips and the CLIPS version numbers. */
+   /**************************************************************/
+   public static String getVersion() 
+     {
+      return "CLIPSJNI version " + getCLIPSJNIVersion() + 
+              " (CLIPS version " + getCLIPSVersion() + ")";
+     }
+
+   /**************************/
+   /* getEnvironmentAddress: */
+   /**************************/
+   public long getEnvironmentAddress()
+     { return theEnvironment; }
+     
+   /***********************/
+   /* voidCommandWrapper: */
+   /***********************/
+   private void voidCommandWrapper(Callable<Void> callable) throws CLIPSException
+     {
+      CaptureRouter commandCapture = captureStart();
       
-      clips.commandLoop();
-     }  
+      try
+        { callable.call(); }
+      catch (Exception e)
+        {
+         captureEndWithoutCheck(commandCapture);
+         throw new CLIPSException(e.getMessage(),e.getCause()); 
+        }
+      
+      captureEnd(commandCapture);
+     }
+     
+   /***********************/
+   /* longCommandWrapper: */
+   /***********************/
+   private long longCommandWrapper(Callable<Long> callable) throws CLIPSException
+     {
+      CaptureRouter commandCapture = captureStart();
+      Long rv;
+      
+      try
+        { rv = callable.call(); }
+      catch (Exception e)
+        {
+         captureEndWithoutCheck(commandCapture);
+         throw new CLIPSException(e.getMessage(),e.getCause()); 
+        }
+      
+      captureEnd(commandCapture);
+        
+      return rv;
+     }
   }

@@ -1,0 +1,205 @@
+# CLIPS 6.40
+# Linux CLIPSJNI jars
+# Ubuntu 16.04 LTS with OpenJDK 1.8.0_131
+# Debian 9.1 with OpenJDK 1.8.0_141
+# Fedora 26 with OpenJDK 1.8.0_141
+# CentOS 7 with OpenJDK 1.8.0_141
+# Mint 18 with OpenJDK 1.8.0_131
+
+JNI_CP = net/sf/clipsrules/jni
+JNI_CLASS = net.sf.clipsrules.jni.Environment
+JNI_BIN = bin/clipsjni
+JNI_SRC = java-src/$(JNI_CP)
+JNI_DST = $(JNI_BIN)/$(JNI_CP)
+JNI_FILES = \
+	$(JNI_SRC)/Activation.java \
+	$(JNI_SRC)/Agenda.java \
+	$(JNI_SRC)/BaseRouter.java \
+	$(JNI_SRC)/CaptureRouter.java \
+	$(JNI_SRC)/CLIPSException.java \
+	$(JNI_SRC)/Focus.java \
+	$(JNI_SRC)/CLIPSLineError.java \
+	$(JNI_SRC)/CLIPSLoadException.java \
+	$(JNI_SRC)/CLIPSType.java \
+	$(JNI_SRC)/CommandExecutionEvent.java \
+	$(JNI_SRC)/CommandExecutionListener.java \
+	$(JNI_SRC)/CommandPromptTextArea.java \
+	$(JNI_SRC)/Environment.java \
+	$(JNI_SRC)/ExternalAddressValue.java \
+	$(JNI_SRC)/FactInstance.java \
+	$(JNI_SRC)/FactAddressValue.java \
+	$(JNI_SRC)/FloatValue.java \
+	$(JNI_SRC)/Focus.java \
+	$(JNI_SRC)/FocusStack.java \
+	$(JNI_SRC)/InstanceAddressValue.java \
+	$(JNI_SRC)/InstanceNameValue.java \
+	$(JNI_SRC)/IntegerValue.java \
+	$(JNI_SRC)/LexemeValue.java \
+	$(JNI_SRC)/Module.java \
+	$(JNI_SRC)/MultifieldValue.java \
+	$(JNI_SRC)/NumberValue.java \
+	$(JNI_SRC)/PeriodicCallback.java \
+	$(JNI_SRC)/PrimitiveValue.java \
+	$(JNI_SRC)/Router.java \
+	$(JNI_SRC)/RouterTextArea.java \
+	$(JNI_SRC)/SlotValue.java \
+	$(JNI_SRC)/StringValue.java \
+	$(JNI_SRC)/SymbolValue.java \
+	$(JNI_SRC)/UserFunction.java \
+	$(JNI_SRC)/UserFunctionExamples.java \
+	$(JNI_SRC)/VoidValue.java
+
+ANIMAL_CP = net/sf/clipsrules/jni/examples/animal
+ANIMAL_CLASS = net.sf.clipsrules.jni.examples.animal.AnimalDemo
+ANIMAL_SRC = java-src/$(ANIMAL_CP)
+ANIMAL_BIN = bin/animal
+ANIMAL_DST = $(ANIMAL_BIN)/$(ANIMAL_CP)
+ANIMAL_RSRC_SRC = $(ANIMAL_SRC)/resources
+ANIMAL_RSRC_DST = $(ANIMAL_BIN)/$(ANIMAL_CP)/resources
+
+AUTO_CP = net/sf/clipsrules/jni/examples/auto
+AUTO_CLASS = net.sf.clipsrules.jni.examples.auto.AutoDemo
+AUTO_SRC = java-src/$(AUTO_CP)
+AUTO_BIN = bin/auto
+AUTO_DST = $(AUTO_BIN)/$(AUTO_CP)
+AUTO_RSRC_SRC = $(AUTO_SRC)/resources
+AUTO_RSRC_DST = $(AUTO_BIN)/$(AUTO_CP)/resources
+
+SUDOKU_CP = net/sf/clipsrules/jni/examples/sudoku
+SUDOKU_CLASS = net.sf.clipsrules.jni.examples.sudoku.SudokuDemo
+SUDOKU_SRC = java-src/$(SUDOKU_CP)
+SUDOKU_BIN = bin/sudoku
+SUDOKU_DST = $(SUDOKU_BIN)/$(SUDOKU_CP)
+SUDOKU_RSRC_SRC = $(SUDOKU_SRC)/resources
+SUDOKU_RSRC_DST = $(SUDOKU_BIN)/$(SUDOKU_CP)/resources
+
+WINE_CP = net/sf/clipsrules/jni/examples/wine
+WINE_CLASS = net.sf.clipsrules.jni.examples.wine.WineDemo
+WINE_SRC = java-src/$(WINE_CP)
+WINE_BIN = bin/wine
+WINE_DST = $(WINE_BIN)/$(WINE_CP)
+WINE_RSRC_SRC = $(WINE_SRC)/resources
+WINE_RSRC_DST = $(WINE_BIN)/$(WINE_CP)/resources
+
+ROUTER_CP = net/sf/clipsrules/jni/examples/router
+ROUTER_CLASS = net.sf.clipsrules.jni.examples.router.RouterDemo
+ROUTER_SRC = java-src/$(ROUTER_CP)
+ROUTER_BIN = bin/router
+ROUTER_DST = $(ROUTER_BIN)/$(ROUTER_CP)
+ROUTER_RSRC_SRC = $(ROUTER_SRC)/resources
+ROUTER_RSRC_DST = $(ROUTER_BIN)/$(ROUTER_CP)/resources
+
+IDE_CP = net/sf/clipsrules/jni/examples/ide
+IDE_CLASS = net.sf.clipsrules.jni.examples.ide.CLIPSIDE
+IDE_SRC = java-src/$(IDE_CP)
+IDE_BIN = bin/ide
+IDE_DST = $(IDE_BIN)/$(IDE_CP)
+IDE_RSRC_SRC = $(IDE_SRC)/resources
+IDE_RSRC_DST = $(IDE_BIN)/$(IDE_CP)/resources
+IDE_FILES = \
+	$(IDE_SRC)/CLIPSIDE.java \
+	$(IDE_SRC)/ActivationTableModel.java \
+	$(IDE_SRC)/AgendaBrowserFrame.java \
+	$(IDE_SRC)/AgendaBrowserManager.java \
+	$(IDE_SRC)/BoundsDesktopManager.java \
+	$(IDE_SRC)/ConstructInspectorFrame.java \
+	$(IDE_SRC)/DialogFrame.java \
+	$(IDE_SRC)/EditMenu.java \
+	$(IDE_SRC)/EntityBrowserFrame.java \
+	$(IDE_SRC)/EnvironmentMenu.java \
+	$(IDE_SRC)/FactBrowserManager.java \
+	$(IDE_SRC)/FactInstanceTableModel.java \
+	$(IDE_SRC)/FileMenu.java \
+	$(IDE_SRC)/FocusStackTableModel.java \
+	$(IDE_SRC)/FramePlacer.java \
+	$(IDE_SRC)/HelpMenu.java \
+	$(IDE_SRC)/IDEPreferences.java \
+	$(IDE_SRC)/InstanceBrowserManager.java \
+	$(IDE_SRC)/ModuleTableModel.java \
+	$(IDE_SRC)/SlotValueTableModel.java \
+	$(IDE_SRC)/TextFrame.java \
+	$(IDE_SRC)/TextMenu.java \
+	$(IDE_SRC)/WatchMenu.java
+
+all: clipsjni animal auto sudoku wine router ide
+
+clipsjni :
+	mkdir -p $(JNI_BIN)
+	javac -d $(JNI_BIN) $(JNI_FILES)
+	jar -cfe CLIPSJNI.jar $(JNI_CLASS) $(JNI_BIN)/$(JNI_CP)/Environment.class -C $(JNI_BIN) net
+
+animal :
+	mkdir -p $(ANIMAL_RSRC_DST)
+	javac -d $(ANIMAL_BIN) -cp CLIPSJNI.jar $(ANIMAL_SRC)/AnimalDemo.java
+	cp $(ANIMAL_RSRC_SRC)/*.properties $(ANIMAL_RSRC_DST)
+	cp $(ANIMAL_RSRC_SRC)/*.clp $(ANIMAL_RSRC_DST)
+	jar -cfe AnimalDemo.jar $(ANIMAL_CLASS) $(ANIMAL_BIN)/$(ANIMAL_CP)/AnimalDemo.class -C $(ANIMAL_BIN) net 
+	jar -uf AnimalDemo.jar -C $(JNI_BIN) net
+
+auto :
+	mkdir -p $(AUTO_RSRC_DST)
+	javac -d $(AUTO_BIN) -cp CLIPSJNI.jar $(AUTO_SRC)/AutoDemo.java
+	cp $(AUTO_RSRC_SRC)/*.properties $(AUTO_RSRC_DST)
+	cp $(AUTO_RSRC_SRC)/*.clp $(AUTO_RSRC_DST)
+	jar -cfe AutoDemo.jar $(AUTO_CLASS) $(AUTO_BIN)/$(AUTO_CP)/AutoDemo.class -C $(AUTO_BIN) net 
+	jar -uf AutoDemo.jar -C $(JNI_BIN) net
+
+sudoku :
+	mkdir -p $(SUDOKU_RSRC_DST)
+	javac -d $(SUDOKU_BIN) -cp CLIPSJNI.jar $(SUDOKU_SRC)/SudokuDemo.java
+	cp $(SUDOKU_RSRC_SRC)/*.properties $(SUDOKU_RSRC_DST)
+	cp $(SUDOKU_RSRC_SRC)/*.clp $(SUDOKU_RSRC_DST)
+	jar -cfe SudokuDemo.jar $(SUDOKU_CLASS) $(SUDOKU_BIN)/$(SUDOKU_CP)/SudokuDemo.class -C $(SUDOKU_BIN) net 
+	jar -uf SudokuDemo.jar -C $(JNI_BIN) net
+
+wine :
+	mkdir -p $(WINE_RSRC_DST)
+	javac -d $(WINE_BIN) -cp CLIPSJNI.jar $(WINE_SRC)/WineDemo.java
+	cp $(WINE_RSRC_SRC)/*.properties $(WINE_RSRC_DST)
+	cp $(WINE_RSRC_SRC)/*.clp $(WINE_RSRC_DST)
+	jar -cfe WineDemo.jar $(WINE_CLASS) $(WINE_BIN)/$(WINE_CP)/WineDemo.class -C $(WINE_BIN) net 
+	jar -uf WineDemo.jar -C $(JNI_BIN) net
+
+router :
+	mkdir -p $(ROUTER_RSRC_DST)
+	javac -d $(ROUTER_BIN) -cp CLIPSJNI.jar $(ROUTER_SRC)/RouterDemo.java
+	cp $(ROUTER_RSRC_SRC)/*.properties $(ROUTER_RSRC_DST)
+	cp $(ROUTER_RSRC_SRC)/*.clp $(ROUTER_RSRC_DST)
+	jar -cfe RouterDemo.jar $(ROUTER_CLASS) $(ROUTER_BIN)/$(ROUTER_CP)/RouterDemo.class -C $(ROUTER_BIN) net 
+	jar -uf RouterDemo.jar -C $(JNI_BIN) net
+
+ide :
+	mkdir -p $(IDE_RSRC_DST)
+	javac -d $(IDE_BIN) -cp CLIPSJNI.jar $(IDE_FILES)
+	cp $(IDE_RSRC_SRC)/*.png $(IDE_RSRC_DST)
+	jar -cfe CLIPSIDE.jar $(IDE_CLASS) $(IDE_BIN)/$(IDE_CP)/CLIPSIDE.class -C $(IDE_BIN) net 
+	jar -uf CLIPSIDE.jar -C $(JNI_BIN) net
+
+clean :
+	rm -f $(JNI_DST)/*.class
+	rm -fr $(JNI_BIN)/net
+	rm -f CLIPSJNI.jar
+	rm -f $(ANIMAL_DST)/*.class
+	rm -f $(ANIMAL_RSRC_DST)/*.*
+	rm -fr $(ANIMAL_BIN)/net
+	rm -f AnimalDemo.jar
+	rm -f $(AUTO_DST)/*.class
+	rm -f $(AUTO_RSRC_DST)/*.*
+	rm -fr $(AUTO_BIN)/net
+	rm -f AutoDemo.jar
+	rm -f $(SUDOKU_DST)/*.class
+	rm -f $(SUDOKU_RSRC_DST)/*.*
+	rm -fr $(SUDOKU_BIN)/net
+	rm -f SudokuDemo.jar
+	rm -f $(WINE_DST)/*.class
+	rm -f $(WINE_RSRC_DST)/*.*
+	rm -fr $(WINE_BIN)/net
+	rm -f WineDemo.jar
+	rm -f $(ROUTER_DST)/*.class
+	rm -f $(ROUTER_RSRC_DST)/*.*
+	rm -fr $(ROUTER_BIN)/net
+	rm -f RouterDemo.jar
+	rm -f $(IDE_DST)/*.class
+	rm -f $(IDE_RSRC_DST)/*.*
+	rm -fr $(IDE_BIN)/net
+	rm -f CLIPSIDE.jar

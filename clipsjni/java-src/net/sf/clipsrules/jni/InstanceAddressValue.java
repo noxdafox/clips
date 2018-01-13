@@ -41,10 +41,10 @@ public class InstanceAddressValue extends PrimitiveValue
    public long getInstanceAddress()
      { return getValue().longValue(); }
 
-   /******************/
-   /* directGetSlot: */
-   /******************/     
-   public PrimitiveValue directGetSlot(
+   /*****************/
+   /* getSlotValue: */
+   /*****************/     
+   public PrimitiveValue getSlotValue(
      String slotName)
      { return Environment.directGetSlot(this,slotName); }
 
@@ -69,7 +69,7 @@ public class InstanceAddressValue extends PrimitiveValue
    @Override
    public void retain()
      {
-      owner.incrementInstanceCount(this);
+      owner.retainInstance(this);
      }
 
    /************/
@@ -78,7 +78,7 @@ public class InstanceAddressValue extends PrimitiveValue
    @Override
    public void release()
      {
-      owner.decrementInstanceCount(this);
+      owner.releaseInstance(this);
      }
    
    @Override

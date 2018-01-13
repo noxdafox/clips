@@ -41,8 +41,16 @@ class RouterDemo implements ActionListener
          workEnv.clear();
          if (loadFiles != null)
            {
-            for (String fileName : loadFiles)
-              { workEnv.loadFromResource(resourcePath + fileName); }
+            try
+              {
+               for (String fileName : loadFiles)
+                { workEnv.loadFromResource(resourcePath + fileName); }
+              }
+            catch (CLIPSLoadException e)
+              {
+               e.printStackTrace();
+               return 0;
+              }
            }
           
          workEnv.reset();

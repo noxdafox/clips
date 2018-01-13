@@ -18,14 +18,6 @@ public class StringValue extends LexemeValue
      {
       super(value);
      }
-     
-   /****************/
-   /* stringValue: */
-   /****************/
-   public String stringValue()
-     {
-      return (String) getValue();
-     }
 
    /*************/
    /* toString: */

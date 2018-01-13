@@ -41,11 +41,11 @@ public class FactAddressValue extends PrimitiveValue
    public long getFactAddress()
      { return getValue().longValue(); }
 
-   /****************/
-   /* getFactSlot: */
-   /****************/     
-   public PrimitiveValue getFactSlot(
-     String slotName) throws Exception
+   /*****************/
+   /* getSlotValue: */
+   /*****************/     
+   public PrimitiveValue getSlotValue(
+     String slotName)
      { return Environment.getFactSlot(this,slotName); }
 
    /*****************/
@@ -60,7 +60,7 @@ public class FactAddressValue extends PrimitiveValue
    @Override
    public void retain()
      {
-      owner.incrementFactCount(this);
+      owner.retainFact(this);
      }
 
    /************/
@@ -69,7 +69,7 @@ public class FactAddressValue extends PrimitiveValue
    @Override
    public void release()
      {
-      owner.decrementFactCount(this);
+      owner.releaseFact(this);
      }
      
    /*************/
