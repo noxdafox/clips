@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*              CLIPS Version 6.30  08/22/14           */
+   /*              CLIPS Version 6.31  01/15/18           */
    /*                                                     */
    /*                INSTANCE COMMAND MODULE              */
    /*******************************************************/
@@ -43,6 +43,8 @@
 /*            deprecation warnings.                          */
 /*                                                           */
 /*            Converted API macros to function calls.        */
+/*                                                           */
+/*      6.31: Fast router used for ParseConstantArguments.   */
 /*                                                           */
 /*************************************************************/
 
@@ -580,11 +582,26 @@ globle void *EnvMakeInstance(
    struct token tkn;
    EXPRESSION *top;
    DATA_OBJECT result;
+   const char *oldRouter;
+   const char *oldString;
+   long oldIndex;
+
 
    result.type = SYMBOL;
    result.value = EnvFalseSymbol(theEnv);
-   if (OpenStringSource(theEnv,router,mkstr,0) == 0)
-     return(NULL);
+
+   /*=============================*/
+   /* Use the fast router bypass. */
+   /*=============================*/
+
+   oldRouter = RouterData(theEnv)->FastCharGetRouter;
+   oldString = RouterData(theEnv)->FastCharGetString;
+   oldIndex  = RouterData(theEnv)->FastCharGetIndex;
+
+   RouterData(theEnv)->FastCharGetRouter = router;
+   RouterData(theEnv)->FastCharGetString = mkstr;
+   RouterData(theEnv)->FastCharGetIndex  = 0;
+
    GetToken(theEnv,router,&tkn);
    if (tkn.type == LPAREN)
      {
@@ -605,7 +622,14 @@ globle void *EnvMakeInstance(
      }
    else
      SyntaxErrorMessage(theEnv,"instance definition");
-   CloseStringSource(theEnv,router);
+
+   /*===========================================*/
+   /* Restore the old state of the fast router. */
+   /*===========================================*/
+
+   RouterData(theEnv)->FastCharGetRouter = oldRouter;
+   RouterData(theEnv)->FastCharGetString = oldString;
+   RouterData(theEnv)->FastCharGetIndex  = oldIndex;
 
    if ((UtilityData(theEnv)->CurrentGarbageFrame->topLevel) && (! CommandLineData(theEnv)->EvaluatingTopLevelCommand) &&
        (EvaluationData(theEnv)->CurrentExpression == NULL) && (UtilityData(theEnv)->GarbageCollectionLocks == 0))

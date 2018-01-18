@@ -336,7 +336,7 @@ globle void CreateGetAndPutHandlers(
    const char *handlerRouter = "*** Default Public Handlers ***";
    int oldPWL,oldCM;
    const char *oldRouter;
-   char *oldString;
+   const char *oldString;
    long oldIndex;
 
    if ((sd->createReadAccessor == 0) && (sd->createWriteAccessor == 0))

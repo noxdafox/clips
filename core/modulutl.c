@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*             CLIPS Version 6.30  01/14/18            */
    /*                                                     */
    /*              DEFMODULE UTILITY MODULE               */
    /*******************************************************/
@@ -24,9 +24,13 @@
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
 /*                                                           */
+/*      6.31: Used strstr function to find module separator. */
+/*                                                           */
 /*************************************************************/
 
 #define _MODULUTL_SOURCE_
+
+#include <string.h>
 
 #include "setup.h"
 
@@ -56,20 +60,14 @@
 globle unsigned FindModuleSeparator(
   const char *theString)
   {
-   unsigned i, foundColon;
+   char *sep;
 
-   for (i = 0, foundColon = FALSE; theString[i] != EOS; i++)
-     {
-      if (theString[i] == ':')
-        {
-         if (foundColon) return(i);
-         foundColon = TRUE;
-        }
-      else
-        { foundColon = FALSE; }
-     }
+   sep = strstr(theString,"::");
 
-   return(FALSE);
+   if (sep == NULL)
+     { return 0; }
+   
+   return ((unsigned) (sep - theString) + 1);
   }
 
 /*******************************************************************/

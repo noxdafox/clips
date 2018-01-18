@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  01/26/15            */
+   /*             CLIPS Version 6.31  01/15/18            */
    /*                                                     */
    /*                 ROUTER HEADER FILE                  */
    /*******************************************************/
@@ -83,7 +83,7 @@ struct routerData
    int AwaitingInput;
    const char *LineCountRouter;
    const char *FastCharGetRouter;
-   char *FastCharGetString;
+   const char *FastCharGetString;
    long FastCharGetIndex;
    struct router *ListOfRouters;
    FILE *FastLoadFilePtr;
