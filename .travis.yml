@@ -1,6 +1,5 @@
 language: c
 before_script:
-  - cp makefiles/ubuntu/makefile.gcc core/Makefile
   - cd core
 script:
   - make clips
