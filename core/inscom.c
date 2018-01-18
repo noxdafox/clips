@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  11/20/17             */
+   /*            CLIPS Version 6.40  01/15/18             */
    /*                                                     */
    /*               INSTANCE COMMAND MODULE               */
    /*******************************************************/
@@ -44,6 +44,8 @@
 /*            deprecation warnings.                          */
 /*                                                           */
 /*            Converted API macros to function calls.        */
+/*                                                           */
+/*      6.31: Fast router used for ParseConstantArguments.   */
 /*                                                           */
 /*      6.40: Added Env prefix to GetEvaluationError and     */
 /*            SetEvaluationError functions.                  */
@@ -693,6 +695,9 @@ Instance *MakeInstance(
    Expression *top;
    UDFValue returnValue;
    Instance *rv;
+   const char *oldRouter;
+   const char *oldString;
+   long oldIndex;
    
    InstanceData(theEnv)->makeInstanceError = MIE_NO_ERROR;
    
@@ -710,11 +715,18 @@ Instance *MakeInstance(
      { ResetErrorFlags(theEnv); }
 
    returnValue.value = FalseSymbol(theEnv);
-   if (OpenStringSource(theEnv,router,mkstr,0) == 0)
-     {
-      InstanceData(theEnv)->makeInstanceError = MIE_PARSING_ERROR;
-      return NULL;
-     }
+   
+   /*=============================*/
+   /* Use the fast router bypass. */
+   /*=============================*/
+
+   oldRouter = RouterData(theEnv)->FastCharGetRouter;
+   oldString = RouterData(theEnv)->FastCharGetString;
+   oldIndex  = RouterData(theEnv)->FastCharGetIndex;
+
+   RouterData(theEnv)->FastCharGetRouter = router;
+   RouterData(theEnv)->FastCharGetString = mkstr;
+   RouterData(theEnv)->FastCharGetIndex  = 0;
      
    GCBlockStart(theEnv,&gcb);
    
@@ -747,7 +759,13 @@ Instance *MakeInstance(
       SyntaxErrorMessage(theEnv,"instance definition");
      }
      
-   CloseStringSource(theEnv,router);
+   /*===========================================*/
+   /* Restore the old state of the fast router. */
+   /*===========================================*/
+
+   RouterData(theEnv)->FastCharGetRouter = oldRouter;
+   RouterData(theEnv)->FastCharGetString = oldString;
+   RouterData(theEnv)->FastCharGetIndex  = oldIndex;
 
    if (returnValue.value == FalseSymbol(theEnv))
      { rv = NULL; }

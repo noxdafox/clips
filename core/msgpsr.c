@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  10/01/16             */
+   /*            CLIPS Version 6.40  01/15/18             */
    /*                                                     */
    /*           MESSAGE-HANDLER PARSER FUNCTIONS          */
    /*******************************************************/
@@ -346,7 +346,7 @@ void CreateGetAndPutHandlers(
    const char *handlerRouter = "*** Default Public Handlers ***";
    bool oldPWL,oldCM;
    const char *oldRouter;
-   char *oldString;
+   const char *oldString;
    long oldIndex;
 
    if ((sd->createReadAccessor == 0) && (sd->createWriteAccessor == 0))
