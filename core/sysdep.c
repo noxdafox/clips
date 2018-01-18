@@ -167,6 +167,7 @@ extern int LIB$SPAWN();
 #include "textpro.h"
 #include "utility.h"
 #include "watch.h"
+#include "tmprl.h"
 
 #include "sysdep.h"
 
@@ -685,9 +686,13 @@ static void SystemFunctionDefinitions(
    ConstructProfilingFunctionDefinitions(theEnv);
 #endif
 
+#if TEMPORAL_FUNCTIONS
+   TimeFunctionDefinitions(theEnv);
+#endif
+
    ParseFunctionDefinitions(theEnv);
   }
-  
+
 /*********************************************************/
 /* gentime: A function to return a floating point number */
 /*   which indicates the present time. Used internally   */

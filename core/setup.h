@@ -448,6 +448,14 @@
 #define ALLOW_ENVIRONMENT_GLOBALS 0
 #endif
 
+/***********************/
+/* TODO: Document this */
+/***********************/
+
+#ifndef TEMPORAL_FUNCTIONS
+#define TEMPORAL_FUNCTIONS 1
+#endif
+
 /********************************************/
 /* DEVELOPER: Enables code for debugging a  */
 /*   development version of the executable. */

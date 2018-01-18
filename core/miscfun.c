@@ -84,6 +84,7 @@
 #include "router.h"
 #include "sysdep.h"
 #include "utility.h"
+#include "tmprl.h"
 
 #if DEFFUNCTION_CONSTRUCT
 #include "dffnxfun.h"
@@ -1461,7 +1462,7 @@ globle double TimeFunction(
    /* Return the time. */
    /*==================*/
 
-   return(gentime());
+   return(EnvTime(theEnv));
   }
 
 /****************************************/
