@@ -1,0 +1,11 @@
+*.so
+*.o
+GPATH
+GRTAGS
+GTAGS
+.coverage
+.cache
+*build*
+*eggs*
+*.egg-info/
+dist/
