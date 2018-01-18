@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/30/16             */
+   /*            CLIPS Version 6.40  01/14/18             */
    /*                                                     */
    /*              DEFMODULE UTILITY MODULE               */
    /*******************************************************/
@@ -23,6 +23,8 @@
 /*                                                           */
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
+/*                                                           */
+/*      6.31: Used strstr function to find module separator. */
 /*                                                           */
 /*      6.40: Added Env prefix to GetHaltExecution and       */
 /*            SetHaltExecution functions.                    */
@@ -67,21 +69,14 @@
 unsigned FindModuleSeparator(
   const char *theString)
   {
-   unsigned i;
-   bool foundColon;
+   char *sep;
 
-   for (i = 0, foundColon = false; theString[i] != EOS; i++)
-     {
-      if (theString[i] == ':')
-        {
-         if (foundColon) return(i);
-         foundColon = true;
-        }
-      else
-        { foundColon = false; }
-     }
+   sep = strstr(theString,"::");
 
-   return 0;
+   if (sep == NULL)
+     { return 0; }
+   
+   return ((unsigned) (sep - theString) + 1);
   }
 
 /*******************************************************************/

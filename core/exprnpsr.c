@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  11/17/17             */
+   /*            CLIPS Version 6.40  01/15/18             */
    /*                                                     */
    /*              EXPRESSION PARSER MODULE               */
    /*******************************************************/
@@ -40,6 +40,8 @@
 /*                                                           */
 /*      6.31: Fixed bug where sequence expansion was always  */
 /*            occurring when using $ with global variables.  */
+/*                                                           */
+/*            Fast router used for ParseConstantArguments.   */
 /*                                                           */
 /*      6.40: Changed restrictions from char * to            */
 /*            CLIPSLexeme * to support strings               */
@@ -1001,22 +1003,25 @@ Expression *ParseConstantArguments(
    Expression *top = NULL,*bot = NULL,*tmp;
    const char *router = "***FNXARGS***";
    struct token tkn;
+   const char *oldRouter;
+   const char *oldString;
+   long oldIndex;
 
    *error = false;
 
    if (argstr == NULL) return NULL;
 
-   /*=====================================*/
-   /* Open the string as an input source. */
-   /*=====================================*/
+   /*=============================*/
+   /* Use the fast router bypass. */
+   /*=============================*/
 
-   if (OpenStringSource(theEnv,router,argstr,0) == 0)
-     {
-      PrintErrorID(theEnv,"EXPRNPSR",5,false);
-      WriteString(theEnv,STDERR,"Cannot read arguments for external function call.\n");
-      *error = true;
-      return NULL;
-     }
+   oldRouter = RouterData(theEnv)->FastCharGetRouter;
+   oldString = RouterData(theEnv)->FastCharGetString;
+   oldIndex  = RouterData(theEnv)->FastCharGetIndex;
+
+   RouterData(theEnv)->FastCharGetRouter = router;
+   RouterData(theEnv)->FastCharGetString = argstr;
+   RouterData(theEnv)->FastCharGetIndex  = 0;
 
    /*======================*/
    /* Parse the constants. */
@@ -1045,11 +1050,13 @@ Expression *ParseConstantArguments(
       GetToken(theEnv,router,&tkn);
      }
 
-   /*================================*/
-   /* Close the string input source. */
-   /*================================*/
+   /*===========================================*/
+   /* Restore the old state of the fast router. */
+   /*===========================================*/
 
-   CloseStringSource(theEnv,router);
+   RouterData(theEnv)->FastCharGetRouter = oldRouter;
+   RouterData(theEnv)->FastCharGetString = oldString;
+   RouterData(theEnv)->FastCharGetIndex  = oldIndex;
 
    /*=======================*/
    /* Return the arguments. */
