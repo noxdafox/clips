@@ -44,7 +44,7 @@
 /*                                                           */
 /*            Converted API macros to function calls.        */
 /*                                                           */
-/*      6.31: Fast router used for ParseConstantArguments.   */
+/*      6.31: Fast router used for MakeInstance.             */
 /*                                                           */
 /*************************************************************/
 
