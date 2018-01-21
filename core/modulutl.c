@@ -69,7 +69,7 @@
 unsigned FindModuleSeparator(
   const char *theString)
   {
-   char *sep;
+   const char *sep;
 
    sep = strstr(theString,"::");
 
