@@ -26,3 +26,9 @@ Olá Mundo                          ; UTF-8 Support
 ?여러분                              ; UTF-8 Support
 $?Привет                           ; UTF-8 Support
 $?여러분                             ; UTF-8 Support
+(open "Temp/Назад.txt" temp "w")
+(close temp)
+(rename "Temp/Назад.txt" "Temp/НазадНазад.txt")
+(remove "Temp/НазадНазад.txt")
+(open "Temp/Назад.txt" temp "r")
+(open "Temp/НазадНазад.txt" temp "r")

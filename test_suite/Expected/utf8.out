@@ -60,4 +60,16 @@ FALSE
 CLIPS> $?여러분                             ; UTF-8 Support
 [EVALUATN1] Variable $?여러분 is unbound.
 FALSE
+CLIPS> (open "Temp/Назад.txt" temp "w")
+TRUE
+CLIPS> (close temp)
+TRUE
+CLIPS> (rename "Temp/Назад.txt" "Temp/НазадНазад.txt")
+TRUE
+CLIPS> (remove "Temp/НазадНазад.txt")
+TRUE
+CLIPS> (open "Temp/Назад.txt" temp "r")
+FALSE
+CLIPS> (open "Temp/НазадНазад.txt" temp "r")
+FALSE
 CLIPS> (dribble-off)
