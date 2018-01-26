@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  10/19/17             */
+   /*            CLIPS Version 6.40  01/25/18             */
    /*                                                     */
    /*            SYSTEM DEPENDENT HEADER FILE             */
    /*******************************************************/
@@ -122,8 +122,8 @@
    void                        genexit(Environment *,int);
    int                         genrand(void);
    void                        genseed(unsigned int);
-   bool                        genremove(const char *);
-   bool                        genrename(const char *,const char *);
+   bool                        genremove(Environment *,const char *);
+   bool                        genrename(Environment *,const char *,const char *);
    char                       *gengetcwd(char *,int);
    void                        GenWrite(void *,size_t,FILE *);
    int                       (*SetBeforeOpenFunction(Environment *,int (*)(Environment *)))(Environment *);
@@ -133,7 +133,7 @@
    char                       *genstrncpy(char *,const char *,size_t);
    char                       *genstrcat(char *,const char *);
    char                       *genstrncat(char *,const char *,size_t);
-   int                         genchdir(const char *);
+   int                         genchdir(Environment *,const char *);
    void                        SetJmpBuffer(Environment *,jmp_buf *);
    void                        genprintfile(Environment *,FILE *,const char *);
    int                         gengetchar(Environment *);

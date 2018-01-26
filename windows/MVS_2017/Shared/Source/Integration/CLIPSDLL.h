@@ -31,7 +31,7 @@ long long DECLSPEC __Run(Environment *,long long);
 Fact DECLSPEC * __AssertString(Environment *,const char *);
 Instance DECLSPEC * __MakeInstance(Environment *,const char *);
 
-int DECLSPEC __genchdir(const char *);
+int DECLSPEC __genchdir(Environment *,const char *);
 
 bool DECLSPEC __DestroyEnvironment(Environment *);
 bool DECLSPEC __DeleteRouter(Environment *,const char *);

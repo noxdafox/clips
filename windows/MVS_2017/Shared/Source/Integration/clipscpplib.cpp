@@ -470,9 +470,9 @@ int CLIPSCPPEnv::ChangeDirectory(
    int rc;
    
 #ifndef CLIPS_DLL_WRAPPER
-   rc = genchdir(directory);
+   rc = genchdir(theEnv,directory);
 #else
-   rc = __genchdir(directory);
+   rc = __genchdir(theEnv,directory);
 #endif
 
    return rc;

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  12/07/17             */
+   /*            CLIPS Version 6.40  01/25/18             */
    /*                                                     */
    /*               SYSTEM DEPENDENT MODULE               */
    /*******************************************************/
@@ -104,6 +104,11 @@
 /*                                                           */
 /*            Removed fflush calls after printing.           */
 /*                                                           */
+/*            GenOpen, genchdir, genremove, and genrename    */
+/*            use wide character functions on Windows to     */
+/*            work properly with file and directory names    */
+/*            containing unicode characters.                 */
+/*                                                           */
 /*************************************************************/
 
 #include "setup.h"
@@ -143,7 +148,7 @@
 #endif
 
 #include "envrnmnt.h"
-
+#include "memalloc.h"
 #include "sysdep.h"
 
 /********************/
@@ -389,13 +394,28 @@ char *gengetcwd(
 /*   the current directory.               */
 /******************************************/
 int genchdir(
+  Environment *theEnv,
   const char *directory)
   {
 #if MAC_XCD || DARWIN || LINUX
    return chdir(directory);
 #endif
-#if WIN_MVC
-   return _chdir(directory);
+#if WIN_MVC 
+   wchar_t *wdirectory;
+   int wlength;
+   int rv;
+
+   wlength = MultiByteToWideChar(CP_UTF8,0,directory,-1,NULL,0);
+
+   wdirectory = (wchar_t *) genalloc(theEnv,wlength * sizeof(wchar_t)); 
+
+   MultiByteToWideChar(CP_UTF8,0,directory,-1,wdirectory,wlength);
+
+   rv = _wchdir(wdirectory);
+
+   genfree(theEnv,wdirectory,wlength * sizeof(wchar_t));
+
+   return rv;
 #endif
 
    return -1;
@@ -405,9 +425,31 @@ int genchdir(
 /* genremove: Generic function for removing a file. */
 /****************************************************/
 bool genremove(
+  Environment *theEnv,
   const char *fileName)
   {
+#if WIN_MVC
+   wchar_t *wfileName;
+   int wfnlength;
+#endif
+
+#if WIN_MVC
+   wfnlength = MultiByteToWideChar(CP_UTF8,0,fileName,-1,NULL,0);
+
+   wfileName = (wchar_t *) genalloc(theEnv,wfnlength * sizeof(wchar_t)); 
+
+   MultiByteToWideChar(CP_UTF8,0,fileName,-1,wfileName,wfnlength);
+
+   if (_wremove(wfileName))
+     { 
+      genfree(theEnv,wfileName,wfnlength * sizeof(wchar_t));
+      return false;
+     }
+
+   genfree(theEnv,wfileName,wfnlength * sizeof(wchar_t));
+#else
    if (remove(fileName)) return false;
+#endif
 
    return true;
   }
@@ -416,10 +458,37 @@ bool genremove(
 /* genrename: Generic function for renaming a file. */
 /****************************************************/
 bool genrename(
+  Environment *theEnv,
   const char *oldFileName,
   const char *newFileName)
   {
+#if WIN_MVC
+   wchar_t *woldFileName, *wnewFileName;
+   int wofnlength, wnfnlength;
+#endif
+
+#if WIN_MVC
+   wofnlength = MultiByteToWideChar(CP_UTF8,0,oldFileName,-1,NULL,0);
+   wnfnlength = MultiByteToWideChar(CP_UTF8,0,newFileName,-1,NULL,0);
+
+   woldFileName = (wchar_t *) genalloc(theEnv,wofnlength * sizeof(wchar_t)); 
+   wnewFileName = (wchar_t *) genalloc(theEnv,wnfnlength * sizeof(wchar_t)); 
+
+   MultiByteToWideChar(CP_UTF8,0,oldFileName,-1,woldFileName,wofnlength);
+   MultiByteToWideChar(CP_UTF8,0,newFileName,-1,wnewFileName,wnfnlength);
+
+   if (_wrename(woldFileName,wnewFileName))
+     { 
+      genfree(theEnv,woldFileName,wofnlength * sizeof(wchar_t));
+      genfree(theEnv,wnewFileName,wnfnlength * sizeof(wchar_t));
+      return false;
+     }
+
+   genfree(theEnv,woldFileName,wofnlength * sizeof(wchar_t));
+   genfree(theEnv,wnewFileName,wnfnlength * sizeof(wchar_t));
+#else
    if (rename(oldFileName,newFileName)) return false;
+#endif
 
    return true;
   }
@@ -461,7 +530,11 @@ FILE *GenOpen(
   const char *accessType)
   {
    FILE *theFile;
-
+#if WIN_MVC
+   wchar_t *wfileName;
+   wchar_t *waccessType;
+   int wfnlength, watlength;
+#endif
    /*==================================*/
    /* Invoke the before open function. */
    /*==================================*/
@@ -474,11 +547,19 @@ FILE *GenOpen(
    /*================*/
 
 #if WIN_MVC
-#if _MSC_VER >= 1400
-   fopen_s(&theFile,fileName,accessType);
-#else
-   theFile = fopen(fileName,accessType);
-#endif
+   wfnlength = MultiByteToWideChar(CP_UTF8,0,fileName,-1,NULL,0);
+   watlength = MultiByteToWideChar(CP_UTF8,0,accessType,-1,NULL,0);
+
+   wfileName = (wchar_t *) genalloc(theEnv,wfnlength * sizeof(wchar_t)); 
+   waccessType = (wchar_t *) genalloc(theEnv,watlength * sizeof(wchar_t)); 
+
+   MultiByteToWideChar(CP_UTF8,0,fileName,-1,wfileName,wfnlength);
+   MultiByteToWideChar(CP_UTF8,0,accessType,-1,waccessType,watlength);
+
+   _wfopen_s(&theFile,wfileName,waccessType);
+
+   genfree(theEnv,wfileName,wfnlength * sizeof(wchar_t));
+   genfree(theEnv,waccessType,watlength * sizeof(wchar_t));
 #else
    theFile = fopen(fileName,accessType);
 #endif

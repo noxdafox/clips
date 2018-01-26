@@ -221,9 +221,10 @@ void __declspec(dllexport) __PrintLn(
   }
 
 int __declspec(dllexport) __genchdir(
+  Environment *theEnv,
   const char *directory)
   {
-   return genchdir(directory);
+   return genchdir(theEnv,directory);
   }
 
 void __declspec(dllexport) __CommandLoopOnceThenBatch(

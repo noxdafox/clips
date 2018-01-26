@@ -114,9 +114,10 @@ JNIEXPORT jint JNICALL Java_net_sf_clipsrules_jni_Environment_changeDirectory(
   jstring directory)
   {
    int rv;
+   Environment *theCLIPSEnv = JLongToPointer(clipsEnv);
    const char *cDirectory = (*env)->GetStringUTFChars(env,directory,NULL);
    
-   rv = genchdir(cDirectory);
+   rv = genchdir(theCLIPSEnv,cDirectory);
    
    (*env)->ReleaseStringUTFChars(env,directory,cDirectory);
    

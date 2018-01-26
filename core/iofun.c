@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  10/19/17             */
+   /*            CLIPS Version 6.40  01/25/18             */
    /*                                                     */
    /*                I/O FUNCTIONS MODULE                 */
    /*******************************************************/
@@ -1122,7 +1122,7 @@ void RemoveFunction(
    /* sucessfully removed, otherwise false.        */
    /*==============================================*/
 
-   returnValue->lexemeValue = CreateBoolean(theEnv,genremove(theFileName));
+   returnValue->lexemeValue = CreateBoolean(theEnv,genremove(theEnv,theFileName));
   }
 
 /****************************************/
@@ -1157,7 +1157,7 @@ void RenameFunction(
    /* sucessfully renamed, otherwise false.        */
    /*==============================================*/
 
-   returnValue->lexemeValue = CreateBoolean(theEnv,genrename(oldFileName,newFileName));
+   returnValue->lexemeValue = CreateBoolean(theEnv,genrename(theEnv,oldFileName,newFileName));
   }
 
 /****************************************/
