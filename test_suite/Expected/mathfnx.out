@@ -839,5 +839,13 @@ CLIPS> (mod 5 2)                          ; 10.6.2.13 : 1
 1
 CLIPS> (format nil "%0.6f" (mod 3.7 1.2)) ; 10.6.2.13 : 0.1
 "0.100000"
+CLIPS> (div -9223372036854775808 -1)      ; Error
+[PRNTUTIL17] Over or underflow of long long integer in 'div' function.
+1
+CLIPS> (mod -9223372036854775808 -1)      ; Error
+[PRNTUTIL17] Over or underflow of long long integer in 'mod' function.
+0
+CLIPS> (/ -9223372036854775808 -1)        ; Error in 6.3
+9.22337203685478e+18
 CLIPS> (clear)
 CLIPS> (dribble-off)

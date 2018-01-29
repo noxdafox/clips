@@ -573,4 +573,9 @@
 (M::foo bar)
 (M::foo MAIN::bar)
 (M::foo M::bar)
+(clear) ; Foreach bug
+(foreach ?a (create$ a b c)
+            (foreach ?b (create$ x y) (printout t ?a " " ?b crlf)))
+(progn$ (?a (create$ a b c)) 
+            (progn$ (?b (create$ x y)) (printout t ?a " " ?b crlf)))
 (clear)
