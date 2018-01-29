@@ -1018,5 +1018,22 @@ CLIPS> (M::foo MAIN::bar)
 FALSE
 CLIPS> (M::foo M::bar)
 bar in M
+CLIPS> (clear) ; Foreach bug
+CLIPS> (foreach ?a (create$ a b c)
+            (foreach ?b (create$ x y) (printout t ?a " " ?b crlf)))
+a x
+a y
+b x
+b y
+c x
+c y
+CLIPS> (progn$ (?a (create$ a b c)) 
+            (progn$ (?b (create$ x y)) (printout t ?a " " ?b crlf)))
+a x
+a y
+b x
+b y
+c x
+c y
 CLIPS> (clear)
 CLIPS> (dribble-off)

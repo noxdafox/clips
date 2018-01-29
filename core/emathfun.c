@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  11/10/17             */
+   /*            CLIPS Version 6.40  01/29/18             */
    /*                                                     */
    /*            EXTENDED MATH FUNCTIONS MODULE           */
    /*******************************************************/
@@ -33,6 +33,8 @@
 /*                                                           */
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
+/*                                                           */
+/*      6.31: Fix for overflow error in div function.        */
 /*                                                           */
 /*      6.40: Added Env prefix to GetEvaluationError and     */
 /*            SetEvaluationError functions.                  */
@@ -954,6 +956,15 @@ void ModFunction(
      {
       lnum1 = item1.integerValue->contents;
       lnum2 = item2.integerValue->contents;
+      
+      if ((lnum1 == LLONG_MIN) && (lnum2 == -1))
+        {
+         ArgumentOverUnderflowErrorMessage(theEnv,"mod",true);
+         SetEvaluationError(theEnv,true);
+         returnValue->integerValue = CreateInteger(theEnv,0);
+         return;
+        }
+
       returnValue->integerValue = CreateInteger(theEnv,lnum1 - (lnum1 / lnum2) * lnum2);
      }
   }

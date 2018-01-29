@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  01/06/18             */
+   /*            CLIPS Version 6.40  01/29/18             */
    /*                                                     */
    /*                PRINT UTILITY MODULE                 */
    /*******************************************************/
@@ -47,6 +47,8 @@
 /*                                                           */
 /*      6.31: Added additional error messages for retracted  */
 /*            facts, deleted instances, and invalid slots.   */
+/*                                                           */
+/*            Added under/overflow error message.            */
 /*                                                           */
 /*      6.40: Added Env prefix to GetEvaluationError and     */
 /*            SetEvaluationError functions.                  */
@@ -491,6 +493,31 @@ void DivideByZeroErrorMessage(
    WriteString(theEnv,STDERR,"Attempt to divide by zero in '");
    WriteString(theEnv,STDERR,functionName);
    WriteString(theEnv,STDERR,"' function.\n");
+  }
+
+/********************************************************/
+/* ArgumentOverUnderflowErrorMessage: Generalized error */
+/*   message for an integer under or overflow.          */
+/********************************************************/
+void ArgumentOverUnderflowErrorMessage(
+  Environment *theEnv,
+  const char *functionName,
+  bool error)
+  {
+   if (error)
+     {
+      PrintErrorID(theEnv,"PRNTUTIL",17,false);
+      WriteString(theEnv,STDERR,"Over or underflow of long long integer in '");
+      WriteString(theEnv,STDERR,functionName);
+      WriteString(theEnv,STDERR,"' function.\n");
+     }
+   else
+     {
+      PrintWarningID(theEnv,"PRNTUTIL",17,false);
+      WriteString(theEnv,STDWRN,"Over or underflow of long long integer in '");
+      WriteString(theEnv,STDWRN,functionName);
+      WriteString(theEnv,STDWRN,"' function.\n");
+     }
   }
 
 /*******************************************************/

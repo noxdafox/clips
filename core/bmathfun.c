@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  10/01/16             */
+   /*            CLIPS Version 6.40  01/29/18             */
    /*                                                     */
    /*             BASIC MATH FUNCTIONS MODULE             */
    /*******************************************************/
@@ -26,6 +26,8 @@
 /*      6.30: Support for long long integers.                */
 /*                                                           */
 /*            Converted API macros to function calls.        */
+/*                                                           */
+/*      6.31: Fix for overflow error in div function.        */
 /*                                                           */
 /*      6.40: Added Env prefix to GetEvaluationError and     */
 /*            SetEvaluationError functions.                  */
@@ -355,6 +357,14 @@ void DivFunction(
          return;
         }
 
+      if ((total == LLONG_MIN) && (theNumber == -1))
+        {
+         ArgumentOverUnderflowErrorMessage(theEnv,"div",true);
+         SetEvaluationError(theEnv,true);
+         returnValue->integerValue = CreateInteger(theEnv,1L);
+         return;
+        }
+      
       total /= theNumber;
      }
 
