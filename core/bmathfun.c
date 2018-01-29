@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*             CLIPS Version 6.31  01/29/18            */
    /*                                                     */
    /*             BASIC MATH FUNCTIONS MODULE             */
    /*******************************************************/
@@ -26,12 +26,15 @@
 /*                                                           */
 /*            Converted API macros to function calls.        */
 /*                                                           */
+/*      6.31: Fix for overflow error in div and / functions. */
+/*                                                           */
 /*************************************************************/
 
 #define _BMATHFUN_SOURCE_
 
 #include <stdio.h>
 #define _STDIO_INCLUDED_
+#include <limits.h>
 
 #include "setup.h"
 
@@ -355,7 +358,18 @@ globle void DivisionFunction(
       else
         {
          if (theArgument.type == INTEGER)
-           { ltotal /= ValueToLong(theArgument.value); }
+           {
+            if ((ltotal == LLONG_MIN) && (ValueToLong(theArgument.value) == -1))
+              {
+               ArgumentOverUnderflowErrorMessage(theEnv,"/");
+               SetEvaluationError(theEnv,TRUE);
+               returnValue->type = INTEGER;
+               returnValue->value = (void *) EnvAddLong(theEnv,1);
+               return;
+              }
+
+            ltotal /= ValueToLong(theArgument.value);
+           }
          else
            {
             ftotal = (double) ltotal / ValueToDouble(theArgument.value);
@@ -438,10 +452,14 @@ globle long long DivFunction(
          return(1L);
         }
 
-      if (theArgument.type == INTEGER)
-        { total /= ValueToLong(theArgument.value); }
-      else
-        { total = total / (long long) ValueToDouble(theArgument.value); }
+      if ((total == LLONG_MIN) && (theNumber == -1))
+        {
+         ArgumentOverUnderflowErrorMessage(theEnv,"div");
+         SetEvaluationError(theEnv,FALSE);
+         return(1L);
+        }
+
+      total /= theNumber;
 
       pos++;
      }

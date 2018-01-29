@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.31  09/22/17            */
+   /*             CLIPS Version 6.31  01/29/18            */
    /*                                                     */
    /*              PRINT UTILITY HEADER FILE              */
    /*******************************************************/
@@ -46,6 +46,8 @@
 /*                                                           */
 /*      6.31: Added additional error messages for retracted  */
 /*            facts, deleted instances, and invalid slots.   */
+/*                                                           */
+/*            Added under/overflow error message.            */
 /*                                                           */
 /*************************************************************/
 
@@ -111,6 +113,7 @@ struct printUtilityData
    LOCALE void                           InvalidVarSlotErrorMessage(void *,const char *);
    LOCALE void                           InstanceVarSlotErrorMessage1(void *,void *,const char *);
    LOCALE void                           InstanceVarSlotErrorMessage2(void *,void *,const char *);
+   LOCALE void                           ArgumentOverUnderflowErrorMessage(void *,const char *);
 
 #endif /* _H_prntutil */
 

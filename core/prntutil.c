@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.31  09/22/17            */
+   /*             CLIPS Version 6.31  01/29/18            */
    /*                                                     */
    /*                PRINT UTILITY MODULE                 */
    /*******************************************************/
@@ -47,6 +47,8 @@
 /*                                                           */
 /*      6.31: Added additional error messages for retracted  */
 /*            facts, deleted instances, and invalid slots.   */
+/*                                                           */
+/*            Added under/overflow error message.            */
 /*                                                           */
 /*************************************************************/
 
@@ -435,6 +437,20 @@ globle void DivideByZeroErrorMessage(
    EnvPrintRouter(theEnv,WERROR,"Attempt to divide by zero in ");
    EnvPrintRouter(theEnv,WERROR,functionName);
    EnvPrintRouter(theEnv,WERROR," function.\n");
+  }
+
+/********************************************************/
+/* ArgumentOverUnderflowErrorMessage: Generalized error */
+/*   message for an integer under or overflow.          */
+/********************************************************/
+void ArgumentOverUnderflowErrorMessage(
+  void *theEnv,
+  const char *functionName)
+  {
+   PrintErrorID(theEnv,"PRNTUTIL",17,FALSE);
+   EnvPrintRouter(theEnv,WERROR,"Over or underflow of long long integer in '");
+   EnvPrintRouter(theEnv,WERROR,functionName);
+   EnvPrintRouter(theEnv,WERROR,"' function.\n");
   }
 
 /*******************************************************/

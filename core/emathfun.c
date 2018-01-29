@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*             CLIPS Version 6.31  01/29/18            */
    /*                                                     */
    /*            EXTENDED MATH FUNCTIONS MODULE           */
    /*******************************************************/
@@ -34,6 +34,8 @@
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
 /*                                                           */
+/*      6.31: Fix for overflow error in div function.        */
+/*                                                           */
 /*************************************************************/
 
 #include "setup.h"
@@ -47,6 +49,7 @@
 #if EXTENDED_MATH_FUNCTIONS
 
 #include <math.h>
+#include <limits.h>
 
 /***************/
 /* DEFINITIONS */
@@ -785,6 +788,18 @@ globle void ModFunction(
      {
       lnum1 = DOToLong(item1);
       lnum2 = DOToLong(item2);
+      
+      if ((lnum1 == LLONG_MIN) && (lnum2 == -1))
+        {
+         ArgumentOverUnderflowErrorMessage(theEnv,"mod");
+         SetEvaluationError(theEnv,TRUE);
+         result->type = INTEGER;
+         result->value = (void *) EnvAddLong(theEnv,0L);
+         return;
+        }
+
+
+
       result->type = INTEGER;
       result->value = (void *) EnvAddLong(theEnv,lnum1 - (lnum1 / lnum2) * lnum2);
      }
