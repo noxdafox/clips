@@ -19,7 +19,9 @@ JNIEXPORT void JNICALL Java_net_sf_clipsrules_jni_Environment_setHaltRules(
   jlong clipsEnv,
   jboolean value)
   {
-   SetHaltRules(JLongToPointer(clipsEnv),value);
+   Environment *theCLIPSEnv = JLongToPointer(clipsEnv);
+  
+   SetHaltRules(theCLIPSEnv,value);
   }
 
 /******************************************************/
@@ -37,11 +39,12 @@ JNIEXPORT jlong JNICALL Java_net_sf_clipsrules_jni_Environment_run(
   jlong runLimit)
   {
    jlong rv;
-   void *oldContext = SetEnvironmentContext(JLongToPointer(clipsEnv),(void *) env);
+   Environment *theCLIPSEnv = JLongToPointer(clipsEnv);
+   void *oldContext = SetEnvironmentContext(theCLIPSEnv,(void *) env);
 
-   rv = Run(JLongToPointer(clipsEnv),runLimit);
+   rv = Run(theCLIPSEnv,runLimit);
    
-   SetEnvironmentContext(JLongToPointer(clipsEnv),oldContext);
+   SetEnvironmentContext(theCLIPSEnv,oldContext);
 
    return rv;
   }
@@ -129,7 +132,7 @@ JNIEXPORT jobject JNICALL Java_net_sf_clipsrules_jni_Environment_getAgenda(
         }
      }
      
-   SetEnvironmentContext(JLongToPointer(clipsEnv),oldContext);
+   SetEnvironmentContext(theCLIPSEnv,oldContext);
 
    result = (*env)->NewObject(env,
                               CLIPSJNIData(clipsEnv)->agendaClass,
@@ -285,12 +288,10 @@ JNIEXPORT jstring JNICALL Java_net_sf_clipsrules_jni_Environment_getDefruleText(
   {
    const char *cDefruleName = (*env)->GetStringUTFChars(env,defruleName,NULL);
    Defrule *defrulePtr;
-   Environment *theEnv;
+   Environment *theCLIPSEnv = JLongToPointer(clipsEnv);
    const char *ruleText = NULL;
-   
-   theEnv = JLongToPointer(clipsEnv);
-   
-   defrulePtr = FindDefrule(theEnv,cDefruleName);
+      
+   defrulePtr = FindDefrule(theCLIPSEnv,cDefruleName);
 
    (*env)->ReleaseStringUTFChars(env,defruleName,cDefruleName);
 

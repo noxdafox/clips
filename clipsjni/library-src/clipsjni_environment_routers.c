@@ -23,19 +23,20 @@ JNIEXPORT jboolean JNICALL Java_net_sf_clipsrules_jni_Environment_addRouter(
   {
    int rv;
    jobject nobj;   
+   Environment *theCLIPSEnv = JLongToPointer(clipsEnv);
    const char *cRouterName = (*env)->GetStringUTFChars(env,routerName,NULL);
 
-   void *oldContext = SetEnvironmentContext(JLongToPointer(clipsEnv),(void *) env); 
+   void *oldContext = SetEnvironmentContext(theCLIPSEnv,(void *) env); 
       
    nobj = (*env)->NewGlobalRef(env,context);
    
-   rv = AddRouter(JLongToPointer(clipsEnv),(char *) cRouterName,(int) priority,
+   rv = AddRouter(theCLIPSEnv,(char *) cRouterName,(int) priority,
                   QueryJNICallback,WriteJNICallback,ReadJNICallback,
                   UnreadJNICallback,ExitJNICallback,(void *) nobj);
    
    (*env)->ReleaseStringUTFChars(env,routerName,cRouterName);
 
-   SetEnvironmentContext(JLongToPointer(clipsEnv),oldContext); 
+   SetEnvironmentContext(theCLIPSEnv,oldContext); 
 
    return rv;
   }
@@ -95,7 +96,7 @@ JNIEXPORT jboolean JNICALL Java_net_sf_clipsrules_jni_Environment_printRouterExi
    
    (*env)->ReleaseStringUTFChars(env,logName,cLogName);
    
-   SetEnvironmentContext(JLongToPointer(clipsEnv),oldContext);
+   SetEnvironmentContext(theCLIPSEnv,oldContext);
    
    return rv;
   }
@@ -126,7 +127,7 @@ JNIEXPORT void JNICALL Java_net_sf_clipsrules_jni_Environment_printString(
    (*env)->ReleaseStringUTFChars(env,logName,cLogName);
    (*env)->ReleaseStringUTFChars(env,printString,cPrintString);
    
-   SetEnvironmentContext(JLongToPointer(clipsEnv),oldContext);
+   SetEnvironmentContext(theCLIPSEnv,oldContext);
   }
 
 /*********************************************************/
@@ -152,7 +153,7 @@ JNIEXPORT jboolean JNICALL Java_net_sf_clipsrules_jni_Environment_activateRouter
 
    (*env)->ReleaseStringUTFChars(env,routerName,cRouterName);
    
-   SetEnvironmentContext(JLongToPointer(clipsEnv),oldContext);
+   SetEnvironmentContext(theCLIPSEnv,oldContext);
    
    return rv;
   }
@@ -180,7 +181,7 @@ JNIEXPORT jboolean JNICALL Java_net_sf_clipsrules_jni_Environment_deactivateRout
 
    (*env)->ReleaseStringUTFChars(env,routerName,cRouterName);
    
-   SetEnvironmentContext(JLongToPointer(clipsEnv),oldContext);
+   SetEnvironmentContext(theCLIPSEnv,oldContext);
    
    return rv;
   }
@@ -213,7 +214,7 @@ JNIEXPORT jboolean JNICALL Java_net_sf_clipsrules_jni_Environment_openStringBatc
    (*env)->ReleaseStringUTFChars(env,stringName,cStringName);
    (*env)->ReleaseStringUTFChars(env,data,cData);
    
-   SetEnvironmentContext(JLongToPointer(clipsEnv),oldContext);
+   SetEnvironmentContext(theCLIPSEnv,oldContext);
    
    return rv;
   }

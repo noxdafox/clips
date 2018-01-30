@@ -45,11 +45,12 @@ JNIEXPORT void JNICALL Java_net_sf_clipsrules_jni_Environment_clear(
   jobject obj,
   jlong clipsEnv)
   {
-   void *oldContext = SetEnvironmentContext(JLongToPointer(clipsEnv),(void *) env);
+   Environment *theCLIPSEnv = JLongToPointer(clipsEnv);
+   void *oldContext = SetEnvironmentContext(theCLIPSEnv,(void *) env);
    
-   Clear(JLongToPointer(clipsEnv));
+   Clear(theCLIPSEnv);
    
-   SetEnvironmentContext(JLongToPointer(clipsEnv),oldContext);
+   SetEnvironmentContext(theCLIPSEnv,oldContext);
   }
 
 /********************************************************/
@@ -65,11 +66,12 @@ JNIEXPORT void JNICALL Java_net_sf_clipsrules_jni_Environment_reset(
   jobject obj,
   jlong clipsEnv)
   {
-   void *oldContext = SetEnvironmentContext(JLongToPointer(clipsEnv),(void *) env);
+   Environment *theCLIPSEnv = JLongToPointer(clipsEnv);
+   void *oldContext = SetEnvironmentContext(theCLIPSEnv,(void *) env);
    
-   Reset(JLongToPointer(clipsEnv));
+   Reset(theCLIPSEnv);
    
-   SetEnvironmentContext(JLongToPointer(clipsEnv),oldContext);
+   SetEnvironmentContext(theCLIPSEnv,oldContext);
   }
 
 /*******************************************************/
@@ -87,16 +89,14 @@ JNIEXPORT void JNICALL Java_net_sf_clipsrules_jni_Environment_load(
   jstring fileName)
   {
    const char *cFileName = (*env)->GetStringUTFChars(env,fileName,NULL);
-   void *oldContext = SetEnvironmentContext(JLongToPointer(clipsEnv),(void *) env);
-   void *theEnv;
+   Environment *theCLIPSEnv = JLongToPointer(clipsEnv);
+   void *oldContext = SetEnvironmentContext(theCLIPSEnv,(void *) env);
    
-   theEnv = JLongToPointer(clipsEnv);
-   
-   Load(theEnv,(char *) cFileName);
+   Load(theCLIPSEnv,(char *) cFileName);
    
    (*env)->ReleaseStringUTFChars(env,fileName,cFileName);
    
-   SetEnvironmentContext(theEnv,oldContext);
+   SetEnvironmentContext(theCLIPSEnv,oldContext);
   }
 
 /******************************************************************/
@@ -139,18 +139,16 @@ JNIEXPORT void JNICALL Java_net_sf_clipsrules_jni_Environment_loadFromString(
   jstring loadString)
   {
    const char *cLoadString = (*env)->GetStringUTFChars(env,loadString,NULL);
-   void *oldContext = SetEnvironmentContext(JLongToPointer(clipsEnv),(void *) env);
-   void *theEnv;
-   
-   theEnv = JLongToPointer(clipsEnv);
+   Environment *theCLIPSEnv = JLongToPointer(clipsEnv);
+   void *oldContext = SetEnvironmentContext(theCLIPSEnv,(void *) env);
 
-   OpenStringSource(theEnv,"clipsjniloadfromstring",cLoadString,0); 
-   LoadConstructsFromLogicalName(theEnv,"clipsjniloadfromstring");
-   CloseStringSource(theEnv,"clipsjniloadfromstring");
+   OpenStringSource(theCLIPSEnv,"clipsjniloadfromstring",cLoadString,0); 
+   LoadConstructsFromLogicalName(theCLIPSEnv,"clipsjniloadfromstring");
+   CloseStringSource(theCLIPSEnv,"clipsjniloadfromstring");
    
    (*env)->ReleaseStringUTFChars(env,loadString,cLoadString);
    
-   SetEnvironmentContext(JLongToPointer(clipsEnv),oldContext);
+   SetEnvironmentContext(theCLIPSEnv,oldContext);
   }
 
 /***************************************************************************/
@@ -168,20 +166,18 @@ JNIEXPORT void JNICALL Java_net_sf_clipsrules_jni_Environment_loadFromStringWith
   jstring loadString)
   {
    const char *cLoadString = (*env)->GetStringUTFChars(env,loadString,NULL);
-   void *oldContext = SetEnvironmentContext(JLongToPointer(clipsEnv),(void *) env);
-   void *theEnv;
-   
-   theEnv = JLongToPointer(clipsEnv);
+   Environment *theCLIPSEnv = JLongToPointer(clipsEnv);
+   void *oldContext = SetEnvironmentContext(theCLIPSEnv,(void *) env);
 
-   OpenStringSource(theEnv,"clipsjniloadfromstringwo",cLoadString,0); 
-   SetPrintWhileLoading(theEnv,true);
-   LoadConstructsFromLogicalName(theEnv,"clipsjniloadfromstringwo");
-   SetPrintWhileLoading(theEnv,false);
-   CloseStringSource(theEnv,"clipsjniloadfromstringwo");
+   OpenStringSource(theCLIPSEnv,"clipsjniloadfromstringwo",cLoadString,0); 
+   SetPrintWhileLoading(theCLIPSEnv,true);
+   LoadConstructsFromLogicalName(theCLIPSEnv,"clipsjniloadfromstringwo");
+   SetPrintWhileLoading(theCLIPSEnv,false);
+   CloseStringSource(theCLIPSEnv,"clipsjniloadfromstringwo");
    
    (*env)->ReleaseStringUTFChars(env,loadString,cLoadString);
    
-   SetEnvironmentContext(JLongToPointer(clipsEnv),oldContext);
+   SetEnvironmentContext(theCLIPSEnv,oldContext);
   }
 
 /*********************************************************************/
@@ -198,23 +194,22 @@ JNIEXPORT jstring JNICALL Java_net_sf_clipsrules_jni_Environment_getParsingFileN
   jlong clipsEnv)
   {
    jstring rv;
-   
+   Environment *theCLIPSEnv = JLongToPointer(clipsEnv);
    char *fileName;
-   
-   void *oldContext = SetEnvironmentContext(JLongToPointer(clipsEnv),(void *) env);
+   void *oldContext = SetEnvironmentContext(theCLIPSEnv,(void *) env);
 
-   fileName = GetParsingFileName(JLongToPointer(clipsEnv));
+   fileName = GetParsingFileName(theCLIPSEnv);
    
    if (fileName == NULL)
      { 
       rv = (*env)->NewStringUTF(env,""); 
-      SetEnvironmentContext(JLongToPointer(clipsEnv),oldContext);
+      SetEnvironmentContext(theCLIPSEnv,oldContext);
       return rv;
      }
      
    rv = (*env)->NewStringUTF(env,fileName);
    
-   SetEnvironmentContext(JLongToPointer(clipsEnv),oldContext);
+   SetEnvironmentContext(theCLIPSEnv,oldContext);
    
    return rv;
   }
@@ -234,14 +229,14 @@ JNIEXPORT void JNICALL Java_net_sf_clipsrules_jni_Environment_setParsingFileName
   jstring fileName)
   {
    const char *cFileName = (*env)->GetStringUTFChars(env,fileName,NULL);
+   Environment *theCLIPSEnv = JLongToPointer(clipsEnv);
+   void *oldContext = SetEnvironmentContext(theCLIPSEnv,(void *) env);
 
-   void *oldContext = SetEnvironmentContext(JLongToPointer(clipsEnv),(void *) env);
-
-   SetParsingFileName(JLongToPointer(clipsEnv),(char *) cFileName);
+   SetParsingFileName(theCLIPSEnv,(char *) cFileName);
    
    (*env)->ReleaseStringUTFChars(env,fileName,cFileName);
    
-   SetEnvironmentContext(JLongToPointer(clipsEnv),oldContext);
+   SetEnvironmentContext(theCLIPSEnv,oldContext);
   }
 
 /**********************************************************/
@@ -260,15 +255,16 @@ JNIEXPORT jboolean JNICALL Java_net_sf_clipsrules_jni_Environment_validWatchItem
   jstring watchItem)
   {
    int rv;
+   Environment *theCLIPSEnv = JLongToPointer(clipsEnv);
    const char *cWatchItem = (*env)->GetStringUTFChars(env,watchItem,NULL);
    
-   void *oldContext = SetEnvironmentContext(JLongToPointer(clipsEnv),(void *) env);
+   void *oldContext = SetEnvironmentContext(theCLIPSEnv,(void *) env);
 
-   rv = GetWatchItem(JLongToPointer(clipsEnv),(char *) cWatchItem);
+   rv = GetWatchItem(theCLIPSEnv,(char *) cWatchItem);
    
    (*env)->ReleaseStringUTFChars(env,watchItem,cWatchItem);
    
-   SetEnvironmentContext(JLongToPointer(clipsEnv),oldContext);
+   SetEnvironmentContext(theCLIPSEnv,oldContext);
    
    if (rv == -1) return false;
    else return true;
@@ -289,15 +285,16 @@ JNIEXPORT jboolean JNICALL Java_net_sf_clipsrules_jni_Environment_getWatchItem(
   jstring watchItem)
   {
    int rv;
+   Environment *theCLIPSEnv = JLongToPointer(clipsEnv);
    const char *cWatchItem = (*env)->GetStringUTFChars(env,watchItem,NULL);
    
-   void *oldContext = SetEnvironmentContext(JLongToPointer(clipsEnv),(void *) env);
+   void *oldContext = SetEnvironmentContext(theCLIPSEnv,(void *) env);
 
-   rv = GetWatchItem(JLongToPointer(clipsEnv),(char *) cWatchItem);
+   rv = GetWatchItem(theCLIPSEnv,(char *) cWatchItem);
    
    (*env)->ReleaseStringUTFChars(env,watchItem,cWatchItem);
    
-   SetEnvironmentContext(JLongToPointer(clipsEnv),oldContext);
+   SetEnvironmentContext(theCLIPSEnv,oldContext);
    
    if (rv == 1) return true;
    else return false;
@@ -318,15 +315,16 @@ JNIEXPORT jboolean JNICALL Java_net_sf_clipsrules_jni_Environment_watch(
   jstring watchItem)
   {
    jboolean rv;
+   Environment *theCLIPSEnv = JLongToPointer(clipsEnv);
    const char *cWatchItem = (*env)->GetStringUTFChars(env,watchItem,NULL);
    
-   void *oldContext = SetEnvironmentContext(JLongToPointer(clipsEnv),(void *) env);
+   void *oldContext = SetEnvironmentContext(theCLIPSEnv,(void *) env);
 
-   rv = WatchString(JLongToPointer(clipsEnv),(char *) cWatchItem);
+   rv = WatchString(theCLIPSEnv,(char *) cWatchItem);
    
    (*env)->ReleaseStringUTFChars(env,watchItem,cWatchItem);
    
-   SetEnvironmentContext(JLongToPointer(clipsEnv),oldContext);
+   SetEnvironmentContext(theCLIPSEnv,oldContext);
    
    return rv;
   }
@@ -346,15 +344,16 @@ JNIEXPORT jboolean JNICALL Java_net_sf_clipsrules_jni_Environment_unwatch(
   jstring watchItem)
   {
    jboolean rv;
+   Environment *theCLIPSEnv = JLongToPointer(clipsEnv);
    const char *cWatchItem = (*env)->GetStringUTFChars(env,watchItem,NULL);
 
-   void *oldContext = SetEnvironmentContext(JLongToPointer(clipsEnv),(void *) env);
+   void *oldContext = SetEnvironmentContext(theCLIPSEnv,(void *) env);
 
-   rv = UnwatchString(JLongToPointer(clipsEnv),(char *) cWatchItem);
+   rv = UnwatchString(theCLIPSEnv,(char *) cWatchItem);
    
    (*env)->ReleaseStringUTFChars(env,watchItem,cWatchItem);
 
-   SetEnvironmentContext(JLongToPointer(clipsEnv),oldContext);
+   SetEnvironmentContext(theCLIPSEnv,oldContext);
 
    return rv;
   }
@@ -373,7 +372,9 @@ JNIEXPORT void JNICALL Java_net_sf_clipsrules_jni_Environment_setHaltExecution(
   jlong clipsEnv,
   jboolean value)
   {
-   SetHaltExecution(JLongToPointer(clipsEnv),value);
+   Environment *theCLIPSEnv = JLongToPointer(clipsEnv);
+
+   SetHaltExecution(theCLIPSEnv,value);
   }
 
 /**************************************************************************/
@@ -394,7 +395,7 @@ JNIEXPORT jobject JNICALL Java_net_sf_clipsrules_jni_Environment_eval(
    CLIPSValue theDO;
    jobject result = NULL;
    const char *cEvalStr;
-   void *theCLIPSEnv = JLongToPointer(clipsEnv);
+   Environment *theCLIPSEnv = JLongToPointer(clipsEnv);
 
    void *oldContext = SetEnvironmentContext(theCLIPSEnv,(void *) env);
    
@@ -426,7 +427,7 @@ JNIEXPORT jboolean JNICALL Java_net_sf_clipsrules_jni_Environment_build(
   jstring buildStr)
   {
    jboolean rv;
-   void *theCLIPSEnv = JLongToPointer(clipsEnv);
+   Environment *theCLIPSEnv = JLongToPointer(clipsEnv);
    const char *cBuildStr = (*env)->GetStringUTFChars(env,buildStr,NULL);
 
    void *oldContext = SetEnvironmentContext(theCLIPSEnv,(void *) env);
@@ -435,7 +436,7 @@ JNIEXPORT jboolean JNICALL Java_net_sf_clipsrules_jni_Environment_build(
 
    (*env)->ReleaseStringUTFChars(env,buildStr,cBuildStr);
 
-   SetEnvironmentContext(JLongToPointer(clipsEnv),oldContext);
+   SetEnvironmentContext(theCLIPSEnv,oldContext);
 
    return rv;
   }
@@ -457,7 +458,7 @@ JNIEXPORT jobject JNICALL Java_net_sf_clipsrules_jni_Environment_getModuleList(
    int moduleCount = 0;
    Defmodule *theModule;
    jobject arrayList, returnModule, moduleName;
-   void *theCLIPSEnv = JLongToPointer(clipsEnv);
+   Environment *theCLIPSEnv = JLongToPointer(clipsEnv);
 
    for (theModule = GetNextDefmodule(theCLIPSEnv,NULL);
         theModule != NULL;
@@ -510,11 +511,12 @@ JNIEXPORT void JNICALL Java_net_sf_clipsrules_jni_Environment_incrementAddressCo
   jlong clipsEnv, 
   jlong clipsExternalAddress)
   {
-   void *oldContext = SetEnvironmentContext(JLongToPointer(clipsEnv),(void *) env);
+   Environment *theCLIPSEnv = JLongToPointer(clipsEnv);
+   void *oldContext = SetEnvironmentContext(theCLIPSEnv,(void *) env);
 
-   RetainExternalAddress(JLongToPointer(clipsEnv),JLongToPointer(clipsExternalAddress));
+   RetainExternalAddress(theCLIPSEnv,JLongToPointer(clipsExternalAddress));
    
-   SetEnvironmentContext(JLongToPointer(clipsEnv),oldContext);
+   SetEnvironmentContext(theCLIPSEnv,oldContext);
   }
   
 /************************************************************************/
@@ -532,11 +534,12 @@ JNIEXPORT void JNICALL Java_net_sf_clipsrules_jni_Environment_decrementAddressCo
   jlong clipsEnv, 
   jlong clipsExternalAddress)
   {
-   void *oldContext = SetEnvironmentContext(JLongToPointer(clipsEnv),(void *) env);
+   Environment *theCLIPSEnv = JLongToPointer(clipsEnv);
+   void *oldContext = SetEnvironmentContext(theCLIPSEnv,(void *) env);
 
-   ReleaseExternalAddress(JLongToPointer(clipsEnv),JLongToPointer(clipsExternalAddress));
+   ReleaseExternalAddress(theCLIPSEnv,JLongToPointer(clipsExternalAddress));
    
-   SetEnvironmentContext(JLongToPointer(clipsEnv),oldContext);
+   SetEnvironmentContext(theCLIPSEnv,oldContext);
   }
    
 /*********************************************************************/
@@ -551,10 +554,11 @@ JNIEXPORT void JNICALL Java_net_sf_clipsrules_jni_Environment_destroyEnvironment
   JNIEnv *env,
   jobject obj,
   jlong clipsEnv)
-  {
-   SetEnvironmentContext(JLongToPointer(clipsEnv),(void *) env);
+  {   
+   Environment *theCLIPSEnv = JLongToPointer(clipsEnv);
+   SetEnvironmentContext(theCLIPSEnv,(void *) env);
 
-   DestroyEnvironment(JLongToPointer(clipsEnv));
+   DestroyEnvironment(theCLIPSEnv);
   }
 
 /*****************************************************************************/
@@ -570,8 +574,10 @@ JNIEXPORT void JNICALL Java_net_sf_clipsrules_jni_Environment_setPeriodicCallbac
   jobject obj, 
   jlong clipsEnv,
   jboolean value)
-  {
-   EnablePeriodicFunctions(JLongToPointer(clipsEnv),value);
+  {  
+   Environment *theCLIPSEnv = JLongToPointer(clipsEnv);
+
+   EnablePeriodicFunctions(theCLIPSEnv,value);
   }
 
 /******************************************************************************/
@@ -591,19 +597,20 @@ JNIEXPORT void JNICALL Java_net_sf_clipsrules_jni_Environment_addPeriodicCallbac
   jobject context)
   {
    jobject nobj;   
+   Environment *theCLIPSEnv = JLongToPointer(clipsEnv);
    const char *cListenerName = (*env)->GetStringUTFChars(env,listenerName,NULL);
 
-   void *oldContext = SetEnvironmentContext(JLongToPointer(clipsEnv),(void *) env); 
+   void *oldContext = SetEnvironmentContext(theCLIPSEnv,(void *) env); 
       
    nobj = (*env)->NewGlobalRef(env,context);
    
-   AddPeriodicFunction(JLongToPointer(clipsEnv),(char *) cListenerName,
+   AddPeriodicFunction(theCLIPSEnv,(char *) cListenerName,
                        JNIPeriodicCallback,
                        (int) priority,(void *) nobj);
    
    (*env)->ReleaseStringUTFChars(env,listenerName,cListenerName);
    
-   SetEnvironmentContext(JLongToPointer(clipsEnv),oldContext); 
+   SetEnvironmentContext(theCLIPSEnv,oldContext); 
   }
   
 /*************************************************************************/
@@ -622,20 +629,21 @@ JNIEXPORT jboolean JNICALL Java_net_sf_clipsrules_jni_Environment_removePeriodic
   {
    int rv;
    void *periodicContext;
+   Environment *theCLIPSEnv = JLongToPointer(clipsEnv);
    const char *cListenerName = (*env)->GetStringUTFChars(env,listenerName,NULL);
 
-   void *oldContext = SetEnvironmentContext(JLongToPointer(clipsEnv),(void *) env); 
+   void *oldContext = SetEnvironmentContext(theCLIPSEnv,(void *) env); 
 
-   periodicContext = GetPeriodicFunctionContext(JLongToPointer(clipsEnv),cListenerName);
+   periodicContext = GetPeriodicFunctionContext(theCLIPSEnv,cListenerName);
    
-   rv = RemovePeriodicFunction(JLongToPointer(clipsEnv),cListenerName);
+   rv = RemovePeriodicFunction(theCLIPSEnv,cListenerName);
    
    if (periodicContext != NULL)
      { (*env)->DeleteGlobalRef(env,periodicContext); }
        
    (*env)->ReleaseStringUTFChars(env,listenerName,cListenerName);
    
-   SetEnvironmentContext(JLongToPointer(clipsEnv),oldContext); 
+   SetEnvironmentContext(theCLIPSEnv,oldContext); 
 
    return rv;
   }
@@ -663,6 +671,7 @@ JNIEXPORT jint JNICALL Java_net_sf_clipsrules_jni_Environment_addUserFunction(
   {
    int rv;
    jobject nobj;   
+   Environment *theCLIPSEnv = JLongToPointer(clipsEnv);
 
    const char *cFunctionName = (*env)->GetStringUTFChars(env,functionName,NULL);
    const char *cRestrictions;
@@ -678,7 +687,7 @@ JNIEXPORT jint JNICALL Java_net_sf_clipsrules_jni_Environment_addUserFunction(
    else 
      { cReturnTypes = NULL; }
 
-   void *oldContext = SetEnvironmentContext(JLongToPointer(clipsEnv),(void *) env); 
+   void *oldContext = SetEnvironmentContext(theCLIPSEnv,(void *) env); 
 
    nobj = (*env)->NewGlobalRef(env,context);
  
@@ -688,7 +697,7 @@ JNIEXPORT jint JNICALL Java_net_sf_clipsrules_jni_Environment_addUserFunction(
    if (maxArgs < 0)
      { maxArgs = UNBOUNDED; }
      
-   rv = AddUDF(JLongToPointer(clipsEnv),cFunctionName,"*",(unsigned short) minArgs,(unsigned short) maxArgs,
+   rv = AddUDF(theCLIPSEnv,cFunctionName,"*",(unsigned short) minArgs,(unsigned short) maxArgs,
                   cRestrictions,JNIUserFunction,"JNIUserFunction",nobj);
 
    (*env)->ReleaseStringUTFChars(env,functionName,cFunctionName);
@@ -699,7 +708,7 @@ JNIEXPORT jint JNICALL Java_net_sf_clipsrules_jni_Environment_addUserFunction(
    if (returnTypes != NULL)
      { (*env)->ReleaseStringUTFChars(env,returnTypes,cReturnTypes); }
                                      
-   SetEnvironmentContext(JLongToPointer(clipsEnv),oldContext); 
+   SetEnvironmentContext(theCLIPSEnv,oldContext); 
 
    return rv;
   }
@@ -720,23 +729,21 @@ JNIEXPORT jboolean JNICALL Java_net_sf_clipsrules_jni_Environment_removeUserFunc
   {
    int rv;
    jobject context;
-   void *theEnv;
+   Environment *theCLIPSEnv = JLongToPointer(clipsEnv);
    
-   theEnv = JLongToPointer(clipsEnv);
-
    const char *cFunctionName = (*env)->GetStringUTFChars(env,functionName,NULL);
 
-   void *oldContext = SetEnvironmentContext(JLongToPointer(clipsEnv),(void *) env); 
+   void *oldContext = SetEnvironmentContext(theCLIPSEnv,(void *) env); 
 
-   context = GetUDFContext(theEnv,cFunctionName);
+   context = GetUDFContext(theCLIPSEnv,cFunctionName);
    if (context != NULL)
      {  (*env)->DeleteGlobalRef(env,context); }
 
-   rv = RemoveUDF(JLongToPointer(clipsEnv),cFunctionName);
+   rv = RemoveUDF(theCLIPSEnv,cFunctionName);
    
    (*env)->ReleaseStringUTFChars(env,functionName,cFunctionName);
                                      
-   SetEnvironmentContext(JLongToPointer(clipsEnv),oldContext); 
+   SetEnvironmentContext(theCLIPSEnv,oldContext); 
 
    return rv;
   }
