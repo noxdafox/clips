@@ -242,5 +242,12 @@ CLIPS> (make-instance a of A (foo (make-instance a of A)))
 [INSMNGR4] The instance [a] has a slot-value which depends on the instance definition.
 [PRCCODE6] This error occurred while evaluating arguments for the message 'put-foo'.
 FALSE
-CLIPS> 
-(dribble-off)
+CLIPS> (clear)
+CLIPS> (defclass A (is-a USER))
+CLIPS> (defrule no-class (object (is-a BOGUS)) =>)
+[OBJRTBLD5] Undefined class 'BOGUS' in object pattern.
+
+ERROR:
+(defrule MAIN::no-class
+   (object (is-a BOGUS)
+CLIPS> (dribble-off)
