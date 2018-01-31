@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  11/01/16            */
+   /*             CLIPS Version 6.40  01/21/18            */
    /*                                                     */
    /*             CLASS FUNCTIONS HEADER FILE             */
    /*******************************************************/
@@ -33,6 +33,9 @@
 /*                                                           */
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
+/*                                                           */
+/*      6.31: Optimization of slot ID creation previously    */
+/*            provided by NewSlotNameID function.            */
 /*                                                           */
 /*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
@@ -140,6 +143,7 @@ struct defclassData
    unsigned short CTID;
    struct token ObjectParseToken;
    ClassDefaultsMode ClassDefaultsModeValue;
+   int newSlotID;
   };
 
 #define DefclassData(theEnv) ((struct defclassData *) GetEnvironmentData(theEnv,DEFCLASS_DATA))
