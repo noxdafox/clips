@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*               CLIPS Version 6.30  01/13/15          */
+   /*               CLIPS Version 6.31  01/31/18          */
    /*                                                     */
    /*          OBJECT PATTERN MATCHER MODULE              */
    /*******************************************************/
@@ -38,6 +38,8 @@
 /*                                                           */
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
+/*                                                           */
+/*      6.31: Added class name to OBJRTBLD5 error message.   */
 /*                                                           */
 /*************************************************************/
 /* =========================================
@@ -1748,12 +1750,15 @@ static intBool ProcessClassRestriction(
      {
       if (chk->type == SYMBOL)
         {
-         //chk->value = (void *) LookupDefclassInScope(theEnv,ValueToString(chk->value));
-         chk->value = (void *) LookupDefclassByMdlOrScope(theEnv,ValueToString(chk->value));
+         const char *className = ValueToString(chk->value);
+
+         chk->value = (void *) LookupDefclassByMdlOrScope(theEnv,className);
          if (chk->value == NULL)
            {
             PrintErrorID(theEnv,"OBJRTBLD",5,FALSE);
-            EnvPrintRouter(theEnv,WERROR,"Undefined class in object pattern.\n");
+            EnvPrintRouter(theEnv,WERROR,"Undefined class '");
+            EnvPrintRouter(theEnv,WERROR,className);
+            EnvPrintRouter(theEnv,WERROR,"' in object pattern.\n");
             DeleteIntermediateClassBitMap(theEnv,tmpset1);
             DeleteIntermediateClassBitMap(theEnv,tmpset2);
             return(FALSE);

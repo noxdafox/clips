@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*               CLIPS Version 6.30  01/25/15          */
+   /*               CLIPS Version 6.31  01/21/18          */
    /*                                                     */
    /*               CLASS INITIALIZATION MODULE           */
    /*******************************************************/
@@ -41,6 +41,9 @@
 /*            imported modules are search when locating a     */
 /*            named construct.                                */
 /*                                                            */
+/*      6.31: Optimization of slot ID creation previously    */
+/*            provided by NewSlotNameID function.            */
+/*                                                           */
 /**************************************************************/
 
 /* =========================================
@@ -162,6 +165,8 @@ globle void SetupObjectSystem(
    AddEnvironmentCleanupFunction(theEnv,"defclasses",DeallocateDefclassData,-500);
 
    memcpy(&DefclassData(theEnv)->DefclassEntityRecord,&defclassEntityRecord,sizeof(struct entityRecord));   
+
+   DefclassData(theEnv)->newSlotID = 2; // IS_A and NAME assigned 0 and 1
 
 #if ! RUN_TIME
    DefclassData(theEnv)->ClassDefaultsMode = CONVENIENCE_MODE;
@@ -480,6 +485,8 @@ globle void CreateSystemClasses(
       =================================== */
    AddSlotName(theEnv,DefclassData(theEnv)->ISA_SYMBOL,ISA_ID,TRUE);
    AddSlotName(theEnv,DefclassData(theEnv)->NAME_SYMBOL,NAME_ID,TRUE);
+   
+   DefclassData(theEnv)->newSlotID = 2; // IS_A and NAME assigned 0 and 1
 
    /* =========================================================
       Bsave Indices for non-primitive classes start at 9

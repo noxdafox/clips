@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*             CLIPS Version 6.31  01/21/18            */
    /*                                                     */
    /*                CLASS FUNCTIONS MODULE               */
    /*******************************************************/
@@ -38,6 +38,9 @@
 /*                                                           */
 /*            Fixed linkage issue when BLOAD_AND_SAVE        */
 /*            compiler flag is set to 0.                     */
+/*                                                           */
+/*      6.31: Optimization of slot ID creation previously    */
+/*            provided by NewSlotNameID function.            */
 /*                                                           */
 /*************************************************************/
 
@@ -100,7 +103,6 @@
 static unsigned HashSlotName(SYMBOL_HN *);
 
 #if (! RUN_TIME)
-static int NewSlotNameID(void *);
 static void DeassignClassID(void *,unsigned);
 #endif
 
@@ -651,7 +653,7 @@ globle SLOT_NAME *AddSlotName(
       snp->name = slotName;
       snp->hashTableIndex = hashTableIndex;
       snp->use = 1;
-      snp->id = (short) (usenewid ? newid : NewSlotNameID(theEnv));
+      snp->id = (short) (usenewid ? newid : DefclassData(theEnv)->newSlotID++);
       snp->nxt = DefclassData(theEnv)->SlotNameTable[hashTableIndex];
       DefclassData(theEnv)->SlotNameTable[hashTableIndex] = snp;
       IncrementSymbolCount(slotName);
@@ -1255,40 +1257,6 @@ static unsigned HashSlotName(
   }
 
 #if (! RUN_TIME)
-
-/***********************************************
-  NAME         : NewSlotNameID
-  DESCRIPTION  : Returns  an unused slot name id
-                 as close to 1 as possible
-  INPUTS       : None
-  RETURNS      : The new unused id
-  SIDE EFFECTS : None
-  NOTES        : None
- ***********************************************/
-static int NewSlotNameID(
-  void *theEnv)
-  {
-   int newid = 0;
-   register unsigned i;
-   SLOT_NAME *snp;
-
-   while (TRUE)
-     {
-      for (i = 0 ; i < SLOT_NAME_TABLE_HASH_SIZE ; i++)
-        {
-         snp = DefclassData(theEnv)->SlotNameTable[i];
-         while ((snp != NULL) ? (snp->id != newid) : FALSE)
-           snp = snp->nxt;
-         if (snp != NULL)
-           break;
-        }
-      if (i < SLOT_NAME_TABLE_HASH_SIZE)
-        newid++;
-      else
-        break;
-     }
-   return(newid);
-  }
 
 /***************************************************
   NAME         : DeassignClassID

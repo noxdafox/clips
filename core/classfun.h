@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*               CLIPS Version 6.30  08/16/14          */
+   /*               CLIPS Version 6.31  01/21/18          */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -33,6 +33,9 @@
 /*                                                           */             
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
+/*                                                           */
+/*      6.31: Optimization of slot ID creation previously    */
+/*            provided by NewSlotNameID function.            */
 /*                                                           */
 /*************************************************************/
 
@@ -148,6 +151,7 @@ struct defclassData
    unsigned short CTID;
    struct token ObjectParseToken;
    unsigned short ClassDefaultsMode;
+   int newSlotID;
   };
 
 #define DefclassData(theEnv) ((struct defclassData *) GetEnvironmentData(theEnv,DEFCLASS_DATA))
