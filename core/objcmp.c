@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/25/16             */
+   /*            CLIPS Version 6.40  02/03/18             */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -32,6 +32,9 @@
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
 /*                                                           */
+/*      6.31: Optimization for marking relevant alpha nodes  */
+/*            in the object pattern network.                 */
+/*                                                           */
 /*      6.40: Pragma once and other inclusion changes.       */
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
@@ -60,6 +63,10 @@
 #include "envrnmnt.h"
 #include "objrtfnx.h"
 #include "sysdep.h"
+
+#if DEFRULE_CONSTRUCT
+#include "objrtcmp.h"
+#endif
 
 #include "objcmp.h"
 
@@ -964,7 +971,15 @@ static void SingleDefclassToCode(
    PrintClassReference(theEnv,theFile,theDefclass->nxtHash,imageID,maxIndices);
    fprintf(theFile,",");
    PrintBitMapReference(theEnv,theFile,theDefclass->scopeMap);
-   fprintf(theFile,",\"\"}");
+   
+#if DEFRULE_CONSTRUCT
+   fprintf(theFile,",");
+   ClassAlphaLinkReference(theEnv,theDefclass->relevant_terminal_alpha_nodes,theFile,imageID,maxIndices);
+#endif
+
+   fprintf(theFile,",\"\"");
+   
+   fprintf(theFile,"}");
   }
 
 /***********************************************************

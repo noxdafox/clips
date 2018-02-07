@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*               CLIPS Version 6.40  11/01/16          */
+   /*               CLIPS Version 6.40  02/03/18          */
    /*                                                     */
    /*                OBJECT SYSTEM DEFINITIONS            */
    /*******************************************************/
@@ -20,6 +20,9 @@
 /*      6.30: Changed integer type/precision.                */
 /*                                                           */
 /*            Changed garbage collection algorithm.          */
+/*                                                           */
+/*      6.31: Optimization for marking relevant alpha nodes  */
+/*            in the object pattern network.                 */
 /*                                                           */
 /*      6.40: Pragma once and other inclusion changes.       */
 /*                                                           */
@@ -67,6 +70,10 @@ typedef struct instanceModifier InstanceModifier;
 #include "symbol.h"
 #include "match.h"
 
+#if DEFRULE_CONSTRUCT
+#include "objrtmch.h"
+#endif
+
 struct packedClassLinks
   {
    unsigned long classCount;
@@ -107,6 +114,17 @@ struct defclass
    unsigned short handlerCount;
    Defclass *nxtHash;
    CLIPSBitMap *scopeMap;
+
+   /*
+    * Links this defclass to each of the terminal alpha nodes which could be
+    * affected by a modification to an instance of it. This saves having to
+    * iterate through every single terminal alpha for every single modification
+    * to an instance of a defclass.
+    */
+#if DEFRULE_CONSTRUCT
+   CLASS_ALPHA_LINK *relevant_terminal_alpha_nodes;
+#endif
+
    char traversalRecord[TRAVERSAL_BYTES];
   };
 

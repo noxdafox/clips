@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  11/01/16             */
+   /*            CLIPS Version 6.40  02/03/18             */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -30,6 +30,9 @@
 /*                                                           */
 /*            Added support for hashed alpha memories.       */
 /*                                                           */
+/*      6.31: Optimization for marking relevant alpha nodes  */
+/*            in the object pattern network.                 */
+/*                                                           */
 /*      6.40: Pragma once and other inclusion changes.       */
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
@@ -50,6 +53,7 @@
 
 #include "bload.h"
 #include "bsave.h"
+#include "classfun.h"
 #include "envrnmnt.h"
 #include "memalloc.h"
 #include "insfun.h"
@@ -93,8 +97,15 @@ typedef struct bsaveObjectAlphaNode
         nxtTerminal;
   } BSAVE_OBJECT_ALPHA_NODE;
 
+typedef struct bsaveClassAlphaLink
+  {
+   unsigned long alphaNode;
+   unsigned long next;
+  } BSAVE_CLASS_ALPHA_LINK;
+
 #define BsaveObjectPatternIndex(op) ((op != NULL) ? op->bsaveID : ULONG_MAX)
 #define BsaveObjectAlphaIndex(ap)   ((ap != NULL) ? ap->bsaveID : ULONG_MAX)
+#define BsaveClassAlphaIndex(cp)   ((cp != NULL) ? cp->bsaveID : ULONG_MAX)
 
 #define ObjectPatternPointer(i) ((i == ULONG_MAX) ? NULL : (OBJECT_PATTERN_NODE *) &ObjectReteBinaryData(theEnv)->PatternArray[i])
 #define ObjectAlphaPointer(i)   ((i == ULONG_MAX) ? NULL : (OBJECT_ALPHA_NODE *) &ObjectReteBinaryData(theEnv)->AlphaArray[i])
@@ -105,13 +116,16 @@ typedef struct bsaveObjectAlphaNode
 
 #if BLOAD_AND_BSAVE
    static void                    BsaveObjectPatternsFind(Environment *);
+   static void                    MarkDefclassItems(Environment *,struct constructHeader *,void *);
    static void                    BsaveStorageObjectPatterns(Environment *,FILE *);
    static void                    BsaveObjectPatterns(Environment *,FILE *);
+   static void                    BsaveAlphaLinks(Environment *,struct constructHeader *,void *);
 #endif
    static void                    BloadStorageObjectPatterns(Environment *);
    static void                    BloadObjectPatterns(Environment *);
    static void                    UpdateAlpha(Environment *,void *,unsigned long);
    static void                    UpdatePattern(Environment *,void *,unsigned long);
+   static void                    UpdateLink(Environment *,void *,unsigned long);
    static void                    ClearBloadObjectPatterns(Environment *);
    static void                    DeallocateObjectReteBinaryData(Environment *);
 
@@ -168,7 +182,9 @@ static void DeallocateObjectReteBinaryData(
 
    space = ObjectReteBinaryData(theEnv)->PatternNodeCount * sizeof(struct objectPatternNode);
    if (space != 0) genfree(theEnv,ObjectReteBinaryData(theEnv)->PatternArray,space);
-
+   
+   space = ObjectReteBinaryData(theEnv)->AlphaLinkCount * sizeof(struct classAlphaLink);
+   if (space != 0) genfree(theEnv,ObjectReteBinaryData(theEnv)->AlphaLinkArray,space);
 #endif
   }
 
@@ -200,6 +216,10 @@ static void BsaveObjectPatternsFind(
 
    SaveBloadCount(theEnv,ObjectReteBinaryData(theEnv)->AlphaNodeCount);
    SaveBloadCount(theEnv,ObjectReteBinaryData(theEnv)->PatternNodeCount);
+   SaveBloadCount(theEnv,ObjectReteBinaryData(theEnv)->AlphaLinkCount);
+
+   ObjectReteBinaryData(theEnv)->AlphaLinkCount = 0L;
+   DoForAllConstructs(theEnv,MarkDefclassItems,DefclassData(theEnv)->DefclassModuleIndex,false,NULL);
 
    ObjectReteBinaryData(theEnv)->AlphaNodeCount = 0L;
    alphaPtr = ObjectNetworkTerminalPointer(theEnv);
@@ -232,6 +252,33 @@ static void BsaveObjectPatternsFind(
      }
   }
 
+/***************************************************
+  NAME         : MarkDefclassItems
+  DESCRIPTION  : Marks needed items for a defclass
+                 using rules
+  INPUTS       : 1) The defclass
+                 2) User buffer (ignored)
+  RETURNS      : Nothing useful
+  SIDE EFFECTS : Bsave indices set
+  NOTES        : None
+ ***************************************************/
+static void MarkDefclassItems(
+  Environment *theEnv,
+  struct constructHeader *theDefclass,
+  void *buf)
+  {
+#if MAC_XCD
+#pragma unused(buf)
+#endif
+   Defclass *cls = (Defclass *) theDefclass;
+   CLASS_ALPHA_LINK *alphaLink;
+
+   for (alphaLink = cls->relevant_terminal_alpha_nodes;
+        alphaLink != NULL;
+        alphaLink = alphaLink->next)
+     { alphaLink->bsaveID = ObjectReteBinaryData(theEnv)->AlphaLinkCount++; }
+  }
+
 /****************************************************
   NAME         : BsaveStorageObjectPatterns
   DESCRIPTION  : Writes out the number of bytes
@@ -249,15 +296,16 @@ static void BsaveStorageObjectPatterns(
   {
    size_t space;
 
-   space = sizeof(long) * 2;
+   space = sizeof(long) * 3;
    GenWrite(&space,sizeof(size_t),fp);
    GenWrite(&ObjectReteBinaryData(theEnv)->AlphaNodeCount,sizeof(long),fp);
    GenWrite(&ObjectReteBinaryData(theEnv)->PatternNodeCount,sizeof(long),fp);
+   GenWrite(&ObjectReteBinaryData(theEnv)->AlphaLinkCount,sizeof(long),fp);
   }
 
 /***************************************************
   NAME         : BsaveObjectPatterns
-  DESCRIPTION  : Writes ouyt object pattern data
+  DESCRIPTION  : Writes out object pattern data
                  structures to binary save file
   INPUTS       : Bsave file stream pointer
   RETURNS      : Nothing useful
@@ -277,8 +325,11 @@ static void BsaveObjectPatterns(
    BSAVE_OBJECT_PATTERN_NODE dummyPattern;
 
    space = (sizeof(BSAVE_OBJECT_ALPHA_NODE) * ObjectReteBinaryData(theEnv)->AlphaNodeCount) +
-           (sizeof(BSAVE_OBJECT_PATTERN_NODE) * ObjectReteBinaryData(theEnv)->PatternNodeCount);
+           (sizeof(BSAVE_OBJECT_PATTERN_NODE) * ObjectReteBinaryData(theEnv)->PatternNodeCount) +
+           (sizeof(BSAVE_CLASS_ALPHA_LINK) * ObjectReteBinaryData(theEnv)->AlphaLinkCount);
    GenWrite(&space,sizeof(size_t),fp);
+
+   DoForAllConstructs(theEnv,BsaveAlphaLinks,DefclassData(theEnv)->DefclassModuleIndex,false,fp);
 
    /* ==========================================
       Write out the alpha terminal pattern nodes
@@ -328,6 +379,7 @@ static void BsaveObjectPatterns(
               {
                RestoreBloadCount(theEnv,&ObjectReteBinaryData(theEnv)->AlphaNodeCount);
                RestoreBloadCount(theEnv,&ObjectReteBinaryData(theEnv)->PatternNodeCount);
+               RestoreBloadCount(theEnv,&ObjectReteBinaryData(theEnv)->AlphaLinkCount);
                return;
               }
            }
@@ -339,6 +391,40 @@ static void BsaveObjectPatterns(
 
    RestoreBloadCount(theEnv,&ObjectReteBinaryData(theEnv)->AlphaNodeCount);
    RestoreBloadCount(theEnv,&ObjectReteBinaryData(theEnv)->PatternNodeCount);
+   RestoreBloadCount(theEnv,&ObjectReteBinaryData(theEnv)->AlphaLinkCount);
+  }
+
+/***************************************************
+  NAME         : BsaveAlphaLinks
+  DESCRIPTION  : Writes class alpha links binary data
+  INPUTS       : 1) The defclass
+                 2) The binary file pointer
+  RETURNS      : Nothing useful
+  SIDE EFFECTS : Defclass alpha links binary data written
+  NOTES        : None
+ ***************************************************/
+static void BsaveAlphaLinks(
+  Environment *theEnv,
+  struct constructHeader *theDefclass,
+  void *buf)
+  {
+   Defclass *cls = (Defclass *) theDefclass;
+   BSAVE_CLASS_ALPHA_LINK dummy_alpha_link;
+   CLASS_ALPHA_LINK *alphaLink;
+
+   for (alphaLink = cls->relevant_terminal_alpha_nodes;
+        alphaLink != NULL;
+        alphaLink = alphaLink->next)
+     {
+      dummy_alpha_link.alphaNode = alphaLink->alphaNode->bsaveID;
+      
+      if (alphaLink->next != NULL)
+       { dummy_alpha_link.next = alphaLink->next->bsaveID; }
+      else
+        { dummy_alpha_link.next = ULONG_MAX; }
+
+      GenWrite((void *) &dummy_alpha_link,sizeof(BSAVE_CLASS_ALPHA_LINK),buf);
+     }
   }
 
 #endif
@@ -357,12 +443,13 @@ static void BloadStorageObjectPatterns(
   Environment *theEnv)
   {
    size_t space;
-   unsigned long counts[2];
+   unsigned long counts[3];
 
    GenReadBinary(theEnv,&space,sizeof(size_t));
    GenReadBinary(theEnv,counts,space);
    ObjectReteBinaryData(theEnv)->AlphaNodeCount = counts[0];
    ObjectReteBinaryData(theEnv)->PatternNodeCount = counts[1];
+   ObjectReteBinaryData(theEnv)->AlphaLinkCount = counts[2];
 
    if (ObjectReteBinaryData(theEnv)->AlphaNodeCount == 0L)
      ObjectReteBinaryData(theEnv)->AlphaArray = NULL;
@@ -371,12 +458,21 @@ static void BloadStorageObjectPatterns(
       space = (ObjectReteBinaryData(theEnv)->AlphaNodeCount * sizeof(OBJECT_ALPHA_NODE));
       ObjectReteBinaryData(theEnv)->AlphaArray = (OBJECT_ALPHA_NODE *) genalloc(theEnv,space);
      }
+     
    if (ObjectReteBinaryData(theEnv)->PatternNodeCount == 0L)
      ObjectReteBinaryData(theEnv)->PatternArray = NULL;
    else
      {
       space = (ObjectReteBinaryData(theEnv)->PatternNodeCount * sizeof(OBJECT_PATTERN_NODE));
       ObjectReteBinaryData(theEnv)->PatternArray = (OBJECT_PATTERN_NODE *) genalloc(theEnv,space);
+     }
+
+   if (ObjectReteBinaryData(theEnv)->AlphaLinkCount == 0L)
+     ObjectReteBinaryData(theEnv)->AlphaLinkArray = NULL;
+   else
+     {
+      space = (ObjectReteBinaryData(theEnv)->AlphaLinkCount * sizeof(CLASS_ALPHA_LINK));
+      ObjectReteBinaryData(theEnv)->AlphaLinkArray = (CLASS_ALPHA_LINK *) genalloc(theEnv,space);
      }
   }
 
@@ -403,6 +499,8 @@ static void BloadObjectPatterns(
    /* ================================================
       Read in the alpha and intermediate pattern nodes
       ================================================ */
+
+   BloadandRefresh(theEnv,ObjectReteBinaryData(theEnv)->AlphaLinkCount,sizeof(BSAVE_CLASS_ALPHA_LINK),UpdateLink);
    BloadandRefresh(theEnv,ObjectReteBinaryData(theEnv)->AlphaNodeCount,sizeof(BSAVE_OBJECT_ALPHA_NODE),UpdateAlpha);
    BloadandRefresh(theEnv,ObjectReteBinaryData(theEnv)->PatternNodeCount,sizeof(BSAVE_OBJECT_PATTERN_NODE),UpdatePattern);
 
@@ -508,6 +606,35 @@ static void UpdatePattern(
   }
 
 /***************************************************
+  NAME         : UpdateLink
+  DESCRIPTION  : Updates all the pointers for a
+                 pattern node based on the binary
+                 image indices
+  INPUTS       : 1) A pointer to the binary
+                    image pattern node buffer
+                 2) The index of the actual
+                    pattern node in the array
+  RETURNS      : Nothing useful
+  SIDE EFFECTS : Pattern node updated
+  NOTES        : None
+ ***************************************************/
+static void UpdateLink(
+  Environment *theEnv,
+  void *buf,
+  unsigned long obji)
+  {
+   BSAVE_CLASS_ALPHA_LINK *bal;
+   CLASS_ALPHA_LINK *al;
+
+   bal = (BSAVE_CLASS_ALPHA_LINK *) buf;
+   al = (CLASS_ALPHA_LINK *) &ObjectReteBinaryData(theEnv)->AlphaLinkArray[obji];
+
+   al->alphaNode = ObjectAlphaPointer(bal->alphaNode);
+   al->next = ClassAlphaPointer(bal->next);
+   al->bsaveID = 0L;
+  }
+
+/***************************************************
   NAME         : ClearBloadObjectPatterns
   DESCRIPTION  : Releases all emmory associated
                  with binary image object patterns
@@ -557,6 +684,10 @@ static void ClearBloadObjectPatterns(
       genfree(theEnv,ObjectReteBinaryData(theEnv)->PatternArray,space);
       ObjectReteBinaryData(theEnv)->PatternArray = NULL;
       ObjectReteBinaryData(theEnv)->PatternNodeCount = 0;
+      space = (ObjectReteBinaryData(theEnv)->AlphaLinkCount * sizeof(CLASS_ALPHA_LINK));
+      genfree(theEnv,(void *) ObjectReteBinaryData(theEnv)->AlphaLinkArray,space);
+      ObjectReteBinaryData(theEnv)->AlphaLinkArray = NULL;
+      ObjectReteBinaryData(theEnv)->AlphaLinkCount = 0;
      }
 
    SetObjectNetworkTerminalPointer(theEnv,NULL);
