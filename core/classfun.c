@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  01/21/18             */
+   /*            CLIPS Version 6.40  02/03/18             */
    /*                                                     */
    /*                CLASS FUNCTIONS MODULE               */
    /*******************************************************/
@@ -41,6 +41,9 @@
 /*                                                           */
 /*      6.31: Optimization of slot ID creation previously    */
 /*            provided by NewSlotNameID function.            */
+/*                                                           */
+/*            Optimization for marking relevant alpha nodes  */
+/*            in the object pattern network.                 */
 /*                                                           */
 /*      6.40: Added Env prefix to GetEvaluationError and     */
 /*            SetEvaluationError functions.                  */
@@ -570,6 +573,7 @@ Defclass *NewClass(
    cls->nxtHash = NULL;
    cls->scopeMap = NULL;
    ClearBitString(cls->traversalRecord,TRAVERSAL_BYTES);
+   cls->relevant_terminal_alpha_nodes = NULL;
    return(cls);
   }
 
@@ -673,7 +677,7 @@ SLOT_NAME *AddSlotName(
       snp->name = slotName;
       snp->hashTableIndex = hashTableIndex;
       snp->use = 1;
-      snp->id = (short) (usenewid ? newid : DefclassData(theEnv)->newSlotID++);
+      snp->id = (unsigned short) (usenewid ? newid : DefclassData(theEnv)->newSlotID++);
       snp->nxt = DefclassData(theEnv)->SlotNameTable[hashTableIndex];
       DefclassData(theEnv)->SlotNameTable[hashTableIndex] = snp;
       IncrementLexemeCount(slotName);
@@ -748,6 +752,8 @@ void RemoveDefclass(
   {
    DefmessageHandler *hnd;
    unsigned long i;
+   CLASS_ALPHA_LINK *currentAlphaLink;
+   CLASS_ALPHA_LINK *nextAlphaLink;
 
    /* ====================================================
       Remove all of this class's superclasses' links to it
@@ -808,6 +814,15 @@ void RemoveDefclass(
       rm(theEnv,cls->handlerOrderMap,(sizeof(unsigned) * cls->handlerCount));
      }
 
+   currentAlphaLink = cls->relevant_terminal_alpha_nodes;
+   while (currentAlphaLink != NULL)
+     {
+      nextAlphaLink = currentAlphaLink->next;
+      rtn_struct(theEnv,classAlphaLink,currentAlphaLink);
+      currentAlphaLink = nextAlphaLink;
+     }
+   cls->relevant_terminal_alpha_nodes = NULL;
+
    SetDefclassPPForm(theEnv,cls,NULL);
    DeassignClassID(theEnv,cls->id);
    rtn_struct(theEnv,defclass,cls);
@@ -829,6 +844,9 @@ void DestroyDefclass(
   Defclass *cls)
   {
    long i;
+   CLASS_ALPHA_LINK *currentAlphaLink;
+   CLASS_ALPHA_LINK *nextAlphaLink;
+
 #if ! RUN_TIME
    DefmessageHandler *hnd;
    DeletePackedClassLinks(theEnv,&cls->directSuperclasses,false);
@@ -881,6 +899,15 @@ void DestroyDefclass(
       rm(theEnv,cls->handlers,(sizeof(DefmessageHandler) * cls->handlerCount));
       rm(theEnv,cls->handlerOrderMap,(sizeof(unsigned) * cls->handlerCount));
      }
+
+   currentAlphaLink = cls->relevant_terminal_alpha_nodes;
+   while (currentAlphaLink != NULL)
+     {
+      nextAlphaLink = currentAlphaLink->next;
+      rtn_struct(theEnv, classAlphaLink, currentAlphaLink);
+      currentAlphaLink = nextAlphaLink;
+     }
+   cls->relevant_terminal_alpha_nodes = NULL;
 
    DestroyConstructHeader(theEnv,&cls->header);
 

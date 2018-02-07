@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/30/16            */
+   /*             CLIPS Version 6.40  02/03/18            */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -29,6 +29,9 @@
 /*                                                           */
 /*            Added support for hashed alpha memories.       */
 /*                                                           */
+/*      6.31: Optimization for marking relevant alpha nodes  */
+/*            in the object pattern network.                 */
+/*                                                           */
 /*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
@@ -48,15 +51,23 @@
 
 #define OBJECTRETEBIN_DATA 34
 
+#ifndef _H_objrtmch
+#include "objrtmch.h"
+#endif
+
 struct objectReteBinaryData
   {
    unsigned long AlphaNodeCount;
    unsigned long PatternNodeCount;
+   unsigned long AlphaLinkCount;
    OBJECT_ALPHA_NODE *AlphaArray;
    OBJECT_PATTERN_NODE *PatternArray;
+   CLASS_ALPHA_LINK *AlphaLinkArray;
   };
 
 #define ObjectReteBinaryData(theEnv) ((struct objectReteBinaryData *) GetEnvironmentData(theEnv,OBJECTRETEBIN_DATA))
+
+#define ClassAlphaPointer(i)   ((i == ULONG_MAX) ? NULL : (CLASS_ALPHA_LINK *) &ObjectReteBinaryData(theEnv)->AlphaLinkArray[i])
 
    void                    SetupObjectPatternsBload(Environment *);
 

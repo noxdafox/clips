@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  10/01/16             */
+   /*            CLIPS Version 6.40  02/03/18             */
    /*                                                     */
    /*          OBJECT PATTERN MATCHER MODULE              */
    /*******************************************************/
@@ -41,6 +41,9 @@
 /*            Added support for hashed comparisons to         */
 /*            constants.                                      */
 /*                                                            */
+/*      6.31: Optimization for marking relevant alpha nodes  */
+/*            in the object pattern network.                 */
+/*                                                           */
 /*      6.40: Added Env prefix to GetEvaluationError and      */
 /*            SetEvaluationError functions.                   */
 /*                                                            */
@@ -661,15 +664,19 @@ static void MarkObjectPatternNetwork(
   {
    OBJECT_ALPHA_NODE *alphaPtr;
    OBJECT_PATTERN_NODE *upper;
-   CLASS_BITMAP *clsset;
-   unsigned id;
+   Defclass *cls;
+   CLASS_ALPHA_LINK *current_alpha_link;
+
+   cls = ObjectReteData(theEnv)->CurrentPatternObject->cls;
+   current_alpha_link = cls->relevant_terminal_alpha_nodes;
 
    ResetObjectMatchTimeTags(theEnv);
    ObjectReteData(theEnv)->CurrentObjectMatchTimeTag++;
-   alphaPtr = ObjectNetworkTerminalPointer(theEnv);
-   id = ObjectReteData(theEnv)->CurrentPatternObject->cls->id;
-   while (alphaPtr != NULL)
+
+   while (current_alpha_link != NULL)
      {
+      alphaPtr = current_alpha_link->alphaNode;
+      
       /* =============================================================
          If an incremental reset is in progress, make sure that the
          pattern has been marked for initialization before proceeding.
@@ -678,59 +685,56 @@ static void MarkObjectPatternNetwork(
       if (EngineData(theEnv)->IncrementalResetInProgress &&
           (alphaPtr->header.initialize == false))
         {
-         alphaPtr = alphaPtr->nxtTerminal;
+         current_alpha_link = current_alpha_link->next;
          continue;
         }
 #endif
 
-      /* ============================================
-         Check the class bitmap to see if the pattern
-         pattern is applicable to the object at all
-         ============================================ */
-      clsset = (CLASS_BITMAP *) alphaPtr->classbmp->contents;
-
-      if ((id > clsset->maxid) ? false : TestBitMap(clsset->map,id))
+      /* ===================================================
+         If we are doing an assert, then we need to
+         check all patterns which satsify the class bitmap
+         (The retraction has already been done in this case)
+         =================================================== */
+      if (slotNameIDs == NULL)
         {
-         /* ===================================================
-            If we are doing an assert, then we need to
-            check all patterns which satsify the class bitmap
-            (The retraction has already been done in this case)
-            =================================================== */
-         if (slotNameIDs == NULL)
+         alphaPtr->matchTimeTag = ObjectReteData(theEnv)->CurrentObjectMatchTimeTag;
+
+         for (upper = alphaPtr->patternNode;
+              upper != NULL;
+              upper = upper->lastLevel)
+           {
+            if (upper->matchTimeTag == ObjectReteData(theEnv)->CurrentObjectMatchTimeTag)
+              { break; }
+            else
+              { upper->matchTimeTag = ObjectReteData(theEnv)->CurrentObjectMatchTimeTag; }
+           }
+        }
+
+      /* ===================================================
+         If we are doing a slot modify, then we need to
+         check only the subset of patterns which satisfy the
+         class bitmap AND actually match on the slot in
+         question.
+         =================================================== */
+      else if (alphaPtr->slotbmp != NULL)
+        {
+         if (CompareSlotBitMaps(slotNameIDs,
+               (SLOT_BITMAP *) alphaPtr->slotbmp->contents))
            {
             alphaPtr->matchTimeTag = ObjectReteData(theEnv)->CurrentObjectMatchTimeTag;
-            for (upper = alphaPtr->patternNode ; upper != NULL ; upper = upper->lastLevel)
+            for (upper = alphaPtr->patternNode;
+                 upper != NULL;
+                 upper = upper->lastLevel)
               {
                if (upper->matchTimeTag == ObjectReteData(theEnv)->CurrentObjectMatchTimeTag)
-                 break;
+                 { break; }
                else
-                 upper->matchTimeTag = ObjectReteData(theEnv)->CurrentObjectMatchTimeTag;
-              }
-           }
-
-         /* ===================================================
-            If we are doing a slot modify, then we need to
-            check only the subset of patterns which satisfy the
-            class bitmap AND actually match on the slot in
-            question.
-            =================================================== */
-         else if (alphaPtr->slotbmp != NULL)
-           {
-           if (CompareSlotBitMaps(slotNameIDs,
-                  (SLOT_BITMAP *) alphaPtr->slotbmp->contents))
-              {
-               alphaPtr->matchTimeTag = ObjectReteData(theEnv)->CurrentObjectMatchTimeTag;
-               for (upper = alphaPtr->patternNode ; upper != NULL ; upper = upper->lastLevel)
-                 {
-                  if (upper->matchTimeTag == ObjectReteData(theEnv)->CurrentObjectMatchTimeTag)
-                    break;
-                  else
-                    upper->matchTimeTag = ObjectReteData(theEnv)->CurrentObjectMatchTimeTag;
-                 }
+                 { upper->matchTimeTag = ObjectReteData(theEnv)->CurrentObjectMatchTimeTag; }
               }
            }
         }
-      alphaPtr = alphaPtr->nxtTerminal;
+
+      current_alpha_link = current_alpha_link->next;
      }
   }
 
