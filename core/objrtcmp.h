@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*               CLIPS Version 6.30  08/16/14          */
+   /*               CLIPS Version 6.31  02/03/18          */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -30,6 +30,9 @@
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
 /*                                                           */
+/*      6.31: Optimization for marking relevant alpha nodes  */
+/*            in the object pattern network.                 */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_objrtcmp
@@ -54,7 +57,8 @@
 
    LOCALE void                    ObjectPatternsCompilerSetup(void *);
    LOCALE void                    ObjectPatternNodeReference(void *,void *,FILE *,int,int);
-
+   LOCALE void                    ClassAlphaLinkReference(void *,void *,FILE *,int,int);
+   
 #endif /* DEFRULE_CONSTRUCT && OBJECT_SYSTEM && (! RUN_TIME) && CONSTRUCT_COMPILER */
 
 #endif /* _H_objrtcmp */

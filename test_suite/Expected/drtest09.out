@@ -564,13 +564,13 @@ CLIPS> (load "Temp//bug.tmp")
 TRUE
 CLIPS> (clear)
 CLIPS> (load objfarm.clp)
-###@**********
++##@****+***+#***
 TRUE
 CLIPS> (save "Temp//bug.tmp")
 TRUE
 CLIPS> (clear)
 CLIPS> (load "Temp//bug.tmp")
-###@**********
++##@****+***+#***
 TRUE
 CLIPS> (clear)
 CLIPS> (load wrdgmobj.clp)

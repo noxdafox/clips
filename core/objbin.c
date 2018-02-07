@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*               CLIPS Version 6.30  08/16/14          */
+   /*               CLIPS Version 6.31  02/03/18          */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -25,6 +25,9 @@
 /*            Removed conditional code for unsupported       */
 /*            compilers/operating systems (IBM_MCW,          */
 /*            MAC_MCW, and IBM_TBC).                         */
+/*                                                           */
+/*      6.31: Optimization for marking relevant alpha nodes  */
+/*            in the object pattern network.                 */
 /*                                                           */
 /*************************************************************/
 
@@ -55,6 +58,10 @@
 #include "msgfun.h"
 #include "prntutil.h"
 #include "router.h"
+
+#if DEFRULE_CONSTRUCT
+#include "objrtbin.h"
+#endif
 
 #define _OBJBIN_SOURCE_
 #include "objbin.h"
@@ -105,6 +112,9 @@ typedef struct bsaveDefclass
         slotNameMap,
         handlers,
         scopeMap;
+#if DEFRULE_CONSTRUCT
+   long relevant_terminal_alpha_nodes;
+#endif
   } BSAVE_DEFCLASS;
 
 typedef struct bsaveSlotName
@@ -799,6 +809,14 @@ static void BsaveDefclass(
 #else
    dummy_class.scopeMap = -1L;
 #endif
+
+#if DEFRULE_CONSTRUCT
+   if (cls->relevant_terminal_alpha_nodes != NULL)
+     { dummy_class.relevant_terminal_alpha_nodes = cls->relevant_terminal_alpha_nodes->bsaveID; }
+   else
+     dummy_class.relevant_terminal_alpha_nodes = -1L;
+#endif
+
    GenWrite((void *) &dummy_class,sizeof(BSAVE_DEFCLASS),(FILE *) buf);
   }
 
@@ -1223,6 +1241,7 @@ static void UpdateDefclass(
    cls->busy = 0;
    cls->instanceList = NULL;
    cls->instanceListBottom = NULL;
+   cls->relevant_terminal_alpha_nodes = ClassAlphaPointer(bcls->relevant_terminal_alpha_nodes);
 #if DEFMODULE_CONSTRUCT
    cls->scopeMap = BitMapPointer(bcls->scopeMap);
    IncrementBitMapCount(cls->scopeMap);

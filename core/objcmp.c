@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*             CLIPS Version 6.31  02/03/18            */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -51,6 +51,10 @@
 #include "envrnmnt.h"
 #include "objrtfnx.h"
 #include "sysdep.h"
+
+#if DEFRULE_CONSTRUCT
+#include "objrtcmp.h"
+#endif
 
 #define _OBJCMP_SOURCE_
 #include "objcmp.h"
@@ -948,7 +952,15 @@ static void SingleDefclassToCode(
    PrintClassReference(theEnv,theFile,theDefclass->nxtHash,imageID,maxIndices);
    fprintf(theFile,",");
    PrintBitMapReference(theEnv,theFile,theDefclass->scopeMap);
-   fprintf(theFile,",\"\"}");
+
+#if DEFRULE_CONSTRUCT
+   fprintf(theFile,",");
+   ClassAlphaLinkReference(theEnv,theDefclass->relevant_terminal_alpha_nodes,theFile,imageID,maxIndices);
+#endif
+
+   fprintf(theFile,",\"\"");
+   
+   fprintf(theFile,"}");
   }
 
 /***********************************************************

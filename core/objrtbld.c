@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*               CLIPS Version 6.31  01/31/18          */
+   /*               CLIPS Version 6.31  02/03/18          */
    /*                                                     */
    /*          OBJECT PATTERN MATCHER MODULE              */
    /*******************************************************/
@@ -40,6 +40,9 @@
 /*            deprecation warnings.                          */
 /*                                                           */
 /*      6.31: Added class name to OBJRTBLD5 error message.   */
+/*                                                           */
+/*            Optimization for marking relevant alpha nodes  */
+/*            in the object pattern network.                 */
 /*                                                           */
 /*************************************************************/
 /* =========================================
@@ -671,6 +674,11 @@ static struct patternNodeHeader *PlaceObjectPattern(
    unsigned endSlot;
    BITMAP_HN *newClassBitMap,*newSlotBitMap;
    struct expr *rightHash;
+   unsigned int i;
+   CLASS_BITMAP *cbmp;
+   DEFCLASS *relevantDefclass;
+   CLASS_ALPHA_LINK *newAlphaLink;
+
 
    /*========================================================*/
    /* Get the top of the object pattern network and prepare  */
@@ -789,6 +797,26 @@ static struct patternNodeHeader *PlaceObjectPattern(
    lastLevel->alphaNode = newAlphaNode;
    newAlphaNode->nxtTerminal = ObjectNetworkTerminalPointer(theEnv);
    SetObjectNetworkTerminalPointer(theEnv,newAlphaNode);
+
+   /*
+    * A new terminal alpha node has just been created. For each defclass
+    * relevant to this alpha node, add it to that defclass'
+    * relevant_terminal_alpha_nodes list
+    */
+   cbmp = (CLASS_BITMAP *)ValueToBitMap(newClassBitMap);
+   for (i = 0; i <= cbmp->maxid; i++)
+     {
+      if (TestBitMap(cbmp->map,i))
+        {
+         relevantDefclass = DefclassData(theEnv)->ClassIDMap[i];
+
+         newAlphaLink = get_struct(theEnv, classAlphaLink);
+         newAlphaLink->alphaNode = newAlphaNode;
+         newAlphaLink->next = relevantDefclass->relevant_terminal_alpha_nodes;
+         relevantDefclass->relevant_terminal_alpha_nodes = newAlphaLink;
+        }
+     }
+
    return((struct patternNodeHeader *) newAlphaNode);
   }
 

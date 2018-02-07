@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.31  01/21/18            */
+   /*             CLIPS Version 6.31  02/03/18            */
    /*                                                     */
    /*                CLASS FUNCTIONS MODULE               */
    /*******************************************************/
@@ -41,6 +41,9 @@
 /*                                                           */
 /*      6.31: Optimization of slot ID creation previously    */
 /*            provided by NewSlotNameID function.            */
+/*                                                           */
+/*            Optimization for marking relevant alpha nodes  */
+/*            in the object pattern network.                 */
 /*                                                           */
 /*************************************************************/
 
@@ -551,6 +554,7 @@ globle DEFCLASS *NewClass(
    cls->nxtHash = NULL;
    cls->scopeMap = NULL;
    ClearBitString(cls->traversalRecord,TRAVERSAL_BYTES);
+   cls->relevant_terminal_alpha_nodes = NULL;
    return(cls);
   }
   
@@ -729,6 +733,8 @@ LOCALE void RemoveDefclass(
    DEFCLASS *cls = (DEFCLASS *) vcls;
    HANDLER *hnd;
    long i;
+   CLASS_ALPHA_LINK *currentAlphaLink;
+   CLASS_ALPHA_LINK *nextAlphaLink;
 
    /* ====================================================
       Remove all of this class's superclasses' links to it
@@ -788,7 +794,16 @@ LOCALE void RemoveDefclass(
       rm(theEnv,(void *) cls->handlers,(sizeof(HANDLER) * cls->handlerCount));
       rm(theEnv,(void *) cls->handlerOrderMap,(sizeof(unsigned) * cls->handlerCount));
      }
-     
+
+   currentAlphaLink = cls->relevant_terminal_alpha_nodes;
+   while (currentAlphaLink != NULL)
+     {
+      nextAlphaLink = currentAlphaLink->next;
+      rtn_struct(theEnv, classAlphaLink, currentAlphaLink);
+      currentAlphaLink = nextAlphaLink;
+     }
+   cls->relevant_terminal_alpha_nodes = NULL;
+
    EnvSetDefclassPPForm(theEnv,(void *) cls,NULL);
    DeassignClassID(theEnv,(unsigned) cls->id);
    rtn_struct(theEnv,defclass,cls);
@@ -811,6 +826,9 @@ LOCALE void DestroyDefclass(
   {
    DEFCLASS *cls = (DEFCLASS *) vcls;
    long i;
+   CLASS_ALPHA_LINK *currentAlphaLink;
+   CLASS_ALPHA_LINK *nextAlphaLink;
+
 #if ! RUN_TIME
    HANDLER *hnd;
    DeletePackedClassLinks(theEnv,&cls->directSuperclasses,FALSE);
@@ -863,7 +881,16 @@ LOCALE void DestroyDefclass(
       rm(theEnv,(void *) cls->handlers,(sizeof(HANDLER) * cls->handlerCount));
       rm(theEnv,(void *) cls->handlerOrderMap,(sizeof(unsigned) * cls->handlerCount));
      }
-     
+
+   currentAlphaLink = cls->relevant_terminal_alpha_nodes;
+   while (currentAlphaLink != NULL)
+     {
+       nextAlphaLink = currentAlphaLink->next;
+       rtn_struct(theEnv, classAlphaLink, currentAlphaLink);
+       currentAlphaLink = nextAlphaLink;
+     }
+   cls->relevant_terminal_alpha_nodes = NULL;
+
    DestroyConstructHeader(theEnv,&cls->header);
 
    rtn_struct(theEnv,defclass,cls);

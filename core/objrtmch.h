@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*               CLIPS Version 6.30  08/16/14          */
+   /*               CLIPS Version 6.31  02/03/18          */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -41,12 +41,18 @@
 /*            Added support for hashed comparisons to        */
 /*            constants.                                     */
 /*                                                           */
+/*      6.31: Optimization for marking relevant alpha nodes  */
+/*            in the object pattern network.                 */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_objrtmch
 #define _H_objrtmch
 
 #if DEFRULE_CONSTRUCT && OBJECT_SYSTEM
+
+typedef struct objectAlphaNode OBJECT_ALPHA_NODE;
+typedef struct classAlphaLink CLASS_ALPHA_LINK;
 
 #define OBJECT_ASSERT  1
 #define OBJECT_RETRACT 2
@@ -89,8 +95,6 @@ typedef struct slotBitMap
 #define SlotBitMapSize(bmp) ((sizeof(SLOT_BITMAP) + \
                                      (sizeof(char) * (bmp->maxid / BITS_PER_BYTE))))
 
-typedef struct objectAlphaNode OBJECT_ALPHA_NODE;
-
 typedef struct objectPatternNode
   {
    unsigned blocked        : 1;
@@ -118,6 +122,13 @@ struct objectAlphaNode
    OBJECT_PATTERN_NODE *patternNode;
    struct objectAlphaNode *nxtInGroup,
                           *nxtTerminal;
+   long bsaveID;
+  };
+
+struct classAlphaLink
+  {
+   OBJECT_ALPHA_NODE *alphaNode;
+   struct classAlphaLink *next;
    long bsaveID;
   };
 

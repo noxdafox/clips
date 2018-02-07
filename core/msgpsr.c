@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*               CLIPS Version 6.30  08/22/14          */
+   /*               CLIPS Version 6.31  02/03/18          */
    /*                                                     */
    /*              MESSAGE-HANDLER PARSER FUNCTIONS       */
    /*******************************************************/

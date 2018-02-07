@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*               CLIPS Version 6.30  08/16/14          */
+   /*               CLIPS Version 6.31  02/03/18          */
    /*                                                     */
    /*                OBJECT SYSTEM DEFINITIONS            */
    /*******************************************************/
@@ -20,6 +20,9 @@
 /*      6.30: Changed integer type/precision.                */
 /*                                                           */
 /*            Changed garbage collection algorithm.          */
+/*                                                           */
+/*      6.31: Optimization for marking relevant alpha nodes  */
+/*            in the object pattern network.                 */
 /*                                                           */
 /*************************************************************/
 
@@ -75,6 +78,10 @@ typedef struct instanceSlot INSTANCE_SLOT;
 #include "pattern.h"
 #endif
 
+#if DEFRULE_CONSTRUCT
+#include "objrtmch.h"
+#endif
+
 #define GetInstanceSlotLength(sp) GetMFLength(sp->value)
 
 struct packedClassLinks
@@ -117,6 +124,17 @@ struct defclass
    short handlerCount;
    DEFCLASS *nxtHash;
    BITMAP_HN *scopeMap;
+
+   /*
+    * Links this defclass to each of the terminal alpha nodes which could be
+    * affected by a modification to an instance of it. This saves having to
+    * iterate through every single terminal alpha for every single modification
+    * to an instance of a defclass.
+    */
+#if DEFRULE_CONSTRUCT
+   CLASS_ALPHA_LINK *relevant_terminal_alpha_nodes;
+#endif
+
    char traversalRecord[TRAVERSAL_BYTES];
   };
 
