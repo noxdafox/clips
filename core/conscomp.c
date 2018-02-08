@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  10/18/16            */
+   /*             CLIPS Version 6.40  02/08/18            */
    /*                                                     */
    /*              CONSTRUCT COMPILER MODULE              */
    /*******************************************************/
@@ -78,6 +78,8 @@
 
 #include "setup.h"
 
+#if CONSTRUCT_COMPILER && (! RUN_TIME)
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -122,8 +124,6 @@
 #endif
 
 #include "conscomp.h"
-
-#if CONSTRUCT_COMPILER && (! RUN_TIME)
 
 /***************/
 /* DEFINITIONS */

@@ -717,7 +717,7 @@ static CLASS_ALPHA_LINK *GetNextAlphaLink(
          *theModule = GetNextDefmodule(theEnv,*theModule);
          if (*theModule == NULL)
            { return NULL; }
-         SetCurrentModule(theEnv,(void *) *theModule);
+         SetCurrentModule(theEnv,*theModule);
          *theClass = GetNextDefclass(theEnv,*theClass);
          if (*theClass != NULL)
            {
