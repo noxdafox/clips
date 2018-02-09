@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*               CLIPS Version 6.31  02/03/18          */
+   /*               CLIPS Version 6.31  02/09/18          */
    /*                                                     */
    /*          OBJECT PATTERN MATCHER MODULE              */
    /*******************************************************/
@@ -1085,6 +1085,42 @@ static void DetachObjectPattern(
    
    alphaPtr = (OBJECT_ALPHA_NODE *) thePattern;
    ClearObjectPatternMatches(theEnv,alphaPtr);
+
+   /*==================================*/
+   /* Remove alpha links from classes. */
+   /*==================================*/
+   
+  if (! ConstructData(theEnv)->ClearInProgress)
+    {
+     CLASS_BITMAP *cbmp;
+     unsigned int i;
+     DEFCLASS *relevantDefclass;
+     CLASS_ALPHA_LINK *alphaLink, *lastAlpha;
+
+     cbmp = (CLASS_BITMAP *) alphaPtr->classbmp->contents;
+     for (i = 0; i <= cbmp->maxid; i++)
+        {
+         if (TestBitMap(cbmp->map,i))
+           {
+            relevantDefclass = DefclassData(theEnv)->ClassIDMap[i];
+         
+            for (lastAlpha = NULL, alphaLink = relevantDefclass->relevant_terminal_alpha_nodes;
+                 alphaLink != NULL;
+                 lastAlpha = alphaLink, alphaLink = alphaLink->next)
+              {
+               if (alphaLink->alphaNode == alphaPtr)
+                 {
+                  if (lastAlpha == NULL)
+                    { relevantDefclass->relevant_terminal_alpha_nodes = alphaLink->next; }
+                  else
+                    { lastAlpha->next = alphaLink->next; }
+                  rtn_struct(theEnv,classAlphaLink,alphaLink);
+                  break;
+                 }
+              }
+           }
+        }
+     }
 
    /*========================================================*/
    /* Unmark the classes to which the pattern is applicable  */

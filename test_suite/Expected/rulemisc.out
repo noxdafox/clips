@@ -893,5 +893,30 @@ CLIPS>
 CLIPS> (agenda)
 CLIPS> (reset)
 CLIPS> (agenda)
+CLIPS> (clear) ; Class to alpha link removal
+CLIPS> (watch activations)
+CLIPS> (defclass A (is-a USER))
+CLIPS> (defclass B (is-a USER))
+CLIPS> (defrule foo (object (is-a A)) =>)
+CLIPS> (make-instance a1 of A)
+==> Activation 0      foo: [a1]
+[a1]
+CLIPS> (agenda)
+0      foo: [a1]
+For a total of 1 activation.
+CLIPS> (undefrule foo)
+<== Activation 0      foo: [a1]
+CLIPS> (agenda)
+CLIPS> (defrule bar (object (is-a B)) =>)
+CLIPS> (agenda)
+CLIPS> (make-instance a2 of A)
+[a2]
+CLIPS> (make-instance b1 of B)
+==> Activation 0      bar: [b1]
+[b1]
+CLIPS> (agenda)
+0      bar: [b1]
+For a total of 1 activation.
+CLIPS> (unwatch activations)
 CLIPS> (clear)
 CLIPS> (dribble-off)
