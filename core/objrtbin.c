@@ -423,7 +423,7 @@ static void BsaveAlphaLinks(
       else
         { dummy_alpha_link.next = ULONG_MAX; }
 
-      GenWrite((void *) &dummy_alpha_link,sizeof(BSAVE_CLASS_ALPHA_LINK),buf);
+      GenWrite((void *) &dummy_alpha_link,sizeof(BSAVE_CLASS_ALPHA_LINK),(FILE *) buf);
      }
   }
 
