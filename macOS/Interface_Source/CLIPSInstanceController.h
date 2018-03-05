@@ -27,6 +27,10 @@
    CLIPSEnvironment *environment;
    int fontSize;
    int rowHeight;
+   NSString *lastModule;
+   NSInteger lastModuleRow;
+   NSString *lastInstance;
+   NSInteger lastInstanceRow;
   }
 
 /*%%%%%%%%%%%%%%%%*/

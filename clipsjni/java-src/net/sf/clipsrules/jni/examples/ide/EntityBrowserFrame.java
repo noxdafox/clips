@@ -35,6 +35,11 @@ public class EntityBrowserFrame extends JInternalFrame
    private HashMap<Long,BitSet> scopes;
    private String entityName;
    
+   private String lastModule;
+   private int lastModuleRow;
+   private String lastEntity;
+   private int lastEntityRow;
+   
    public static final String BROWSER_SELECTION_ACTION = "BrowserSelectionAction";
    private static final String DISPLAY_DEFAULTED_VALUES_ACTION = "DisplayDefaultedValues";
 
@@ -309,6 +314,8 @@ public class EntityBrowserFrame extends JInternalFrame
      List<FactInstance> theEntities,
      HashMap<Long,BitSet> theScopes)
      {
+      saveSelection();
+
       modules = theModules;
       entities = theEntities;
       scopes = theScopes;
@@ -328,14 +335,163 @@ public class EntityBrowserFrame extends JInternalFrame
            { slotsModel.setItem(entities.get(0)); }
         }
 
-      if (modules.size() != 0)
-        { 
-         modulesTable.setRowSelectionInterval(0,0); 
-         if (entityTable.getRowCount() != 0)
-           { entityTable.setRowSelectionInterval(0,0); }
-        }
+      restoreSelection();
      }
 
+   /*****************/
+   /* saveSelection */
+   /*****************/
+   private void saveSelection()
+     {
+      int theRow;
+   
+      theRow = modulesTable.getSelectedRow();
+      if (theRow != -1)
+        {
+         lastModuleRow = theRow;
+         
+         theRow = modulesTable.convertRowIndexToModel(theRow);
+         Module theModule = modules.get(theRow);
+         lastModule = theModule.getModuleName();
+        }
+      else
+        {
+         lastModule = null;
+         lastModuleRow = -1;
+        }
+
+      theRow = entityTable.getSelectedRow();
+      if (theRow != -1)
+        {
+         lastEntityRow = theRow;
+
+         theRow = entityTable.convertRowIndexToModel(theRow);
+         FactInstance theEntity = entities.get(theRow);
+         lastEntity = theEntity.getName();
+        }
+      else
+        {
+         lastEntity = null;
+         lastEntityRow = -1;
+        }
+     }
+     
+   /*********************/
+   /* restoreSelection: */
+   /*********************/
+   private void restoreSelection()
+     {
+      int i, count, theRow;
+      boolean found;
+    
+      if (lastModuleRow == -1)
+        {
+         if (modulesTable.getRowCount() > 0)
+           { modulesTable.setRowSelectionInterval(0,0);  }
+        }
+      else
+        {
+         count = modulesTable.getRowCount();
+         found = false;
+         
+         if (lastModuleRow < count)
+           {
+            theRow = modulesTable.convertRowIndexToModel(lastModuleRow);
+            Module theModule = modules.get(theRow);
+                 
+            if (theModule.getModuleName().equals(lastModule))       
+              {
+               modulesTable.setRowSelectionInterval(lastModuleRow,lastModuleRow);
+               found = true;
+              }
+           }
+           
+         if (! found)
+           {
+            for (i = 0; i < count; i++)
+              {
+               theRow = modulesTable.convertRowIndexToModel(i);
+               Module theModule = modules.get(theRow);
+
+               if (theModule.getModuleName().equals(lastModule))       
+                 {
+                  found = true;
+                  modulesTable.setRowSelectionInterval(i,i); 
+                  break;
+                 }
+              }
+           }
+           
+         if (! found)
+           { 
+            lastEntityRow = -1;
+            lastEntity = null;
+            if (count > 0)
+              {
+               if (lastModuleRow < count)
+                 { modulesTable.setRowSelectionInterval(lastModuleRow,lastModuleRow); }
+               else 
+                 { modulesTable.setRowSelectionInterval(count-1,count-1); }
+              }
+           }
+        }
+        
+      if (lastEntityRow == -1)
+        { 
+         if (entityTable.getRowCount() > 0)
+           { entityTable.setRowSelectionInterval(0,0); }
+        }
+      else
+        {
+         count = entityTable.getRowCount();
+         found = false;
+         
+         if (lastEntityRow < count)
+           {
+            theRow = entityTable.convertRowIndexToModel(lastEntityRow);
+            FactInstance theEntity = entities.get(theRow);
+                        
+            if (theEntity.getName().equals(lastEntity))
+              {
+               entityTable.setRowSelectionInterval(lastEntityRow,lastEntityRow);
+               found = true;
+              }
+           }
+           
+         if (! found)
+           {
+            for (i = 0; i < count; i++)
+              {
+               theRow = entityTable.convertRowIndexToModel(i);
+               FactInstance theEntity = entities.get(theRow);              
+
+               if (theEntity.getName().equals(lastEntity))
+                 {
+                  found = true;
+                  entityTable.setRowSelectionInterval(i,i);
+                  break;
+                 }
+              }
+           }
+           
+         if (! found)
+           {
+            if (count > 0)
+              {
+               if (lastEntityRow < count)
+                 { entityTable.setRowSelectionInterval(lastEntityRow,lastEntityRow); }
+               else 
+                 { entityTable.setRowSelectionInterval(count-1,count-1); }
+              }
+           }
+        }
+
+      lastModuleRow = -1;
+      lastModule = null;
+      lastEntity = null;
+      lastEntityRow = -1;
+     }
+          
    /***************************/
    /* selectedEntityConstruct */
    /***************************/

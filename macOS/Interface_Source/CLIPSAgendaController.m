@@ -119,33 +119,85 @@
   {
    if ([keyPath isEqual:@"agendaChanged"])
      {
-      [focusStack selectRowIndexes: [NSIndexSet indexSetWithIndex: 0] byExtendingSelection: NO];
-      [agendaList selectRowIndexes: [NSIndexSet indexSetWithIndex: 0] byExtendingSelection: NO];
-      [self updateAgendaInspectorText];
+      if ([NSThread isMainThread])
+        {
+         [focusStack selectRowIndexes: [NSIndexSet indexSetWithIndex: 0] byExtendingSelection: NO];
+         [agendaList selectRowIndexes: [NSIndexSet indexSetWithIndex: 0] byExtendingSelection: NO];
+         [self updateAgendaInspectorText];
+        }
+      else
+        {
+         dispatch_sync(dispatch_get_main_queue(),
+                    ^{
+                      [focusStack selectRowIndexes: [NSIndexSet indexSetWithIndex: 0] byExtendingSelection: NO];
+                      [agendaList selectRowIndexes: [NSIndexSet indexSetWithIndex: 0] byExtendingSelection: NO];
+                      [self updateAgendaInspectorText];
+                    });
+        }
      }
    else if ([keyPath isEqual:@"executing"])
      { 
       if ([[change valueForKey: NSKeyValueChangeKindKey] intValue] == NSKeyValueChangeSetting)
         {
          if ([[change valueForKey: NSKeyValueChangeNewKey] intValue])
-           { 
-            [runButton setEnabled: NO];
-            [resetButton setEnabled: NO];
-            [stepButton setEnabled: NO];
-            [haltButton setEnabled: YES];
-            [self startExecutionIndicator];
+           {
+            if ([NSThread isMainThread])
+              {
+               [runButton setEnabled: NO];
+               [resetButton setEnabled: NO];
+               [stepButton setEnabled: NO];
+               [haltButton setEnabled: YES];
+               [self startExecutionIndicator];
+               [self updateAgendaInspectorText];
+              }
+            else
+              {
+               dispatch_sync(dispatch_get_main_queue(),
+                    ^{
+                      [runButton setEnabled: NO];
+                      [resetButton setEnabled: NO];
+                      [stepButton setEnabled: NO];
+                      [haltButton setEnabled: YES];
+                      [self startExecutionIndicator];
+                      [self updateAgendaInspectorText];
+                    });
+              }
            }
          else
-           { 
-            [runButton setEnabled: YES];
-            [resetButton setEnabled: YES];
-            [stepButton setEnabled: YES];
-            [haltButton setEnabled: NO]; 
-            [self stopExecutionIndicator];
+           {
+            if ([NSThread isMainThread])
+              {
+               [runButton setEnabled: YES];
+               [resetButton setEnabled: YES];
+               [stepButton setEnabled: YES];
+               [haltButton setEnabled: NO];
+               [self stopExecutionIndicator];
+               [self updateAgendaInspectorText];
+              }
+            else
+              {
+               dispatch_sync(dispatch_get_main_queue(),
+                    ^{
+                      [runButton setEnabled: YES];
+                      [resetButton setEnabled: YES];
+                      [stepButton setEnabled: YES];
+                      [haltButton setEnabled: NO];
+                      [self stopExecutionIndicator];
+                      [self updateAgendaInspectorText];
+                    });
+              }
            }
         }
-        
-      [self updateAgendaInspectorText];
+      else
+        {
+         if ([NSThread isMainThread])
+           { [self updateAgendaInspectorText]; }
+         else
+           {
+            dispatch_sync(dispatch_get_main_queue(),
+                    ^{ [self updateAgendaInspectorText];  });
+           }
+        }
      }
   }
 

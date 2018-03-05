@@ -729,6 +729,8 @@
       return;
      }
 
+   [self setValue: [NSNumber numberWithLong: (factsChanged + 1)] forKey: @"factsSaveSelection"];
+
    [self setValue: runningFactModule forKey: @"factModule"];
 
    runningFactModule = NULL;
@@ -758,6 +760,8 @@
         { [instancesLock unlock]; }
       return;
      }
+
+   [self setValue: [NSNumber numberWithLong: (instancesChanged + 1)] forKey: @"instancesSaveSelection"];
 
    [self setValue: runningInstanceModule forKey: @"instanceModule"];
 
@@ -910,6 +914,22 @@
    return factsChanged;
   }
 
+/**************************/
+/* setFactsSaveSelection: */
+/**************************/
+- (void) setFactsSaveSelection: (long) theCount
+  {
+   factsSaveSelection = theCount;
+  }
+
+/***********************/
+/* factsSaveSelection: */
+/***********************/
+- (long) factsSaveSelection
+  {
+   return factsSaveSelection;
+  }
+
 /************************/
 /* setInstancesChanged: */
 /************************/
@@ -925,7 +945,23 @@
   {
    return instancesChanged;
   }
-      
+
+/******************************/
+/* setInstancesSaveSelection: */
+/******************************/
+- (void) setInstancesSaveSelection: (long) theCount
+  {
+   instancesSaveSelection = theCount;
+  }
+
+/***************************/
+/* instancesSaveSelection: */
+/***************************/
+- (long) instancesSaveSelection
+  {
+   return instancesSaveSelection;
+  }
+
 /******************/
 /* setFocusStack: */
 /******************/

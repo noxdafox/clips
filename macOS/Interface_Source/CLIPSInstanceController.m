@@ -11,6 +11,7 @@
 #import "CLIPSAgendaController.h"
 #import "CLIPSEnvironment.h"
 #import "CLIPSFactInstance.h"
+#import "CLIPSModule.h"
 #import "ModuleArrayController.h"
 
 #include <CLIPS/clips.h>
@@ -32,6 +33,10 @@
      {
       [self setValue: [NSNumber numberWithInt: 10] forKey: @"fontSize"]; 
       [self setValue: [NSNumber numberWithInt: 13] forKey: @"rowHeight"]; 
+      lastModuleRow = -1;
+      lastModule = NULL;
+      lastInstance = NULL;
+      lastInstanceRow = -1;
      }
 
    return self;
@@ -127,6 +132,162 @@
      }
   }
 
+/******************/
+/* saveSelection: */
+/******************/
+- (void) saveSelection
+  {
+   NSInteger theRow;
+   NSArray *theArray;
+   
+   theRow = [moduleList selectedRow];
+   if (theRow != -1)
+     {
+      theArray = [moduleListController arrangedObjects];
+      CLIPSModule *theModule;
+
+      theModule = [theArray objectAtIndex: (NSUInteger) theRow];
+      lastModule = [theModule moduleName];
+      lastModuleRow = theRow;
+     }
+   else
+     {
+      lastModule = NULL;
+      lastModuleRow = -1;
+     }
+
+   theRow = [instanceList selectedRow];
+   if (theRow != -1)
+     {
+      theArray = [instanceListController arrangedObjects];
+      CLIPSFactInstance *theInstance;
+
+      theInstance = [theArray objectAtIndex: (NSUInteger) theRow];
+      lastInstance = [theInstance name];
+      lastInstanceRow = theRow;
+     }
+   else
+     {
+      lastInstance = NULL;
+      lastInstanceRow = -1;
+     }
+  }
+
+/*********************/
+/* restoreSelection: */
+/*********************/
+- (void) restoreSelection
+  {
+   NSArray *theArray;
+   NSUInteger i, count;
+   BOOL found;
+   
+   if (lastModuleRow == -1)
+     { [moduleList selectRowIndexes: [NSIndexSet indexSetWithIndex: 0] byExtendingSelection: NO]; }
+   else
+     {
+      CLIPSModule *theModule;
+      theArray = [moduleListController arrangedObjects];
+      count = [theArray count];
+      found = NO;
+      
+      if (((NSUInteger) lastModuleRow) < count)
+        {
+
+         theModule = [theArray objectAtIndex: (NSUInteger) lastModuleRow];
+         
+         if ([[theModule moduleName] isEqualToString: lastModule])
+           {
+            [moduleList selectRowIndexes: [NSIndexSet indexSetWithIndex: (NSUInteger) lastModuleRow] byExtendingSelection: NO];
+            found = YES;
+           }
+        }
+        
+      if (found == NO)
+        {
+         for (i = 0; i < count; i++)
+           {
+            theModule = [theArray objectAtIndex: i];
+            if ([[theModule moduleName] isEqualToString: lastModule])
+              {
+               found = YES;
+               [moduleList selectRowIndexes: [NSIndexSet indexSetWithIndex: i] byExtendingSelection: NO];
+               break;
+              }
+           }
+        }
+        
+      if (found == NO)
+        {
+         lastInstance = NULL;
+         lastInstanceRow = -1;
+         if (count > 0)
+           {
+            if (lastModuleRow < (NSInteger) count)
+              { [moduleList selectRowIndexes: [NSIndexSet indexSetWithIndex: (NSUInteger) lastModuleRow] byExtendingSelection: NO]; }
+            else
+              { [moduleList selectRowIndexes: [NSIndexSet indexSetWithIndex: (NSUInteger) (count - 1)] byExtendingSelection: NO]; }
+           }
+         else
+           { [moduleList selectRowIndexes: [NSIndexSet indexSetWithIndex: 0] byExtendingSelection: NO]; }
+        }
+     }
+     
+   if (lastInstanceRow == -1)
+     { [instanceList selectRowIndexes: [NSIndexSet indexSetWithIndex: 0] byExtendingSelection: NO]; }
+   else
+     {
+      CLIPSFactInstance *theInstance;
+      theArray = [instanceListController arrangedObjects];
+      count = [theArray count];
+      found = NO;
+      
+      if (((NSUInteger) lastInstanceRow) < count)
+        {
+
+         theInstance = [theArray objectAtIndex: (NSUInteger) lastInstanceRow];
+         
+         if ([[theInstance name] isEqualToString: lastInstance])
+           {
+            [instanceList selectRowIndexes: [NSIndexSet indexSetWithIndex: (NSUInteger) lastInstanceRow] byExtendingSelection: NO];
+            found = YES;
+           }
+        }
+        
+      if (found == NO)
+        {
+         for (i = 0; i < count; i++)
+           {
+            theInstance = [theArray objectAtIndex: i];
+            if ([[theInstance name] isEqualToString: lastInstance])
+              {
+               found = YES;
+               [instanceList selectRowIndexes: [NSIndexSet indexSetWithIndex: i] byExtendingSelection: NO];
+               break;
+              }
+           }
+        }
+        
+      if (found == NO)
+        {
+         if (count > 0)
+           {
+            if (lastInstanceRow < (NSInteger) count)
+              { [instanceList selectRowIndexes: [NSIndexSet indexSetWithIndex: (NSUInteger) lastInstanceRow] byExtendingSelection: NO]; }
+            else
+              { [instanceList selectRowIndexes: [NSIndexSet indexSetWithIndex: (NSUInteger) (count - 1)] byExtendingSelection: NO]; }
+           }
+         else
+           { [instanceList selectRowIndexes: [NSIndexSet indexSetWithIndex: 0] byExtendingSelection: NO]; }
+        }
+     }
+     
+   lastModuleRow = -1;
+   lastModule = NULL;
+   lastInstance = NULL;
+   lastInstanceRow = -1;
+  }
+
 /***************************/
 /* observeValueForKeyPath: */
 /***************************/
@@ -135,11 +296,10 @@
                         change: (NSDictionary *) change 
                        context: (void *) context 
   {
-   if ([keyPath isEqual:@"instancesChanged"])
-     {
-      [moduleList selectRowIndexes: [NSIndexSet indexSetWithIndex: 0] byExtendingSelection: NO];
-      [instanceList selectRowIndexes: [NSIndexSet indexSetWithIndex: 0] byExtendingSelection: NO];
-     }
+   if ([keyPath isEqual:@"instancesSaveSelection"])
+     { [self saveSelection]; }
+   else if ([keyPath isEqual:@"instancesChanged"])
+     { [self restoreSelection]; }
    else if ([keyPath isEqual:@"executing"])
      { 
       if ([[change valueForKey: NSKeyValueChangeKindKey] intValue] == NSKeyValueChangeSetting)
@@ -345,8 +505,11 @@
           object: environment];
           
       [environment removeObserver: self 
-                       forKeyPath: @"instancesChanged"]; 
-
+                       forKeyPath: @"instancesChanged"];
+         
+      [environment removeObserver: self
+                       forKeyPath: @"instancesSaveSelection"];
+         
       [environment removeObserver: self 
                        forKeyPath: @"executing"]; 
                     
@@ -370,7 +533,13 @@
                                 NSKeyValueObservingOptionOld) 
                       context: nil]; 
 
-      [theEnvironment addObserver: self 
+     [theEnvironment addObserver: self
+                      forKeyPath: @"instancesSaveSelection"
+                      options: (NSKeyValueObservingOptionNew |
+                                NSKeyValueObservingOptionOld)
+                      context: nil];
+
+      [theEnvironment addObserver: self
                       forKeyPath: @"executing" 
                       options: (NSKeyValueObservingOptionNew | 
                                 NSKeyValueObservingOptionOld) 

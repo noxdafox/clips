@@ -46,10 +46,12 @@
 
    long factsChanged;
    long lastFactsFetch;
+   long factsSaveSelection;
 
    long instancesChanged;
    long lastInstancesFetch;
-   
+   long instancesSaveSelection;
+
    IBOutlet id delegate;
    NSLock *executionLock;
    NSLock *accessLock;
@@ -61,7 +63,7 @@
    int agendaListenerCount;
    int factsListenerCount;
    int instancesListenerCount;
-   
+    
    BOOL executing;
    BOOL exited;
    NSThread *executionThread;
@@ -125,8 +127,14 @@
 - (void)                         setFactsChanged: (long) theCount;
 - (long)                         factsChanged;
 
+- (void)                         setFactsSaveSelection: (long) theCount;
+- (long)                         factsSaveSelection;
+
 - (void)                         setInstancesChanged: (long) theCount;
 - (long)                         instancesChanged;
+
+- (void)                         setInstancesSaveSelection: (long) theCount;
+- (long)                         instancesSaveSelection;
 
 - (void)                         setExecuting: (BOOL) theValue;
 - (BOOL)                         executing;
