@@ -280,6 +280,11 @@ public class EntityBrowserFrame extends JInternalFrame
 
       this.getContentPane().add(contentPane); 
       
+	  lastModule = null;
+      lastModuleRow = -1;
+      lastEntity = null;
+      lastEntityRow = -1;
+
       assignData(theModules,theEntities,theScopes);
 
       /*====================*/
@@ -329,10 +334,7 @@ public class EntityBrowserFrame extends JInternalFrame
       else
         { 
          entityModel.setItems(entities); 
-         if (entities.size() == 0)
-           { slotsModel.setItem(null); }
-         else
-           { slotsModel.setItem(entities.get(0)); }
+		 slotsModel.setItem(null);
         }
 
       restoreSelection();
@@ -383,7 +385,8 @@ public class EntityBrowserFrame extends JInternalFrame
      {
       int i, count, theRow;
       boolean found;
-    
+      FactInstance theEntity;
+	
       if (lastModuleRow == -1)
         {
          if (modulesTable.getRowCount() > 0)
@@ -439,7 +442,11 @@ public class EntityBrowserFrame extends JInternalFrame
       if (lastEntityRow == -1)
         { 
          if (entityTable.getRowCount() > 0)
-           { entityTable.setRowSelectionInterval(0,0); }
+           { 
+		    theEntity = entities.get(0);
+		    entityTable.setRowSelectionInterval(0,0); 
+			slotsModel.setItem(theEntity);
+		   }
         }
       else
         {
@@ -449,11 +456,12 @@ public class EntityBrowserFrame extends JInternalFrame
          if (lastEntityRow < count)
            {
             theRow = entityTable.convertRowIndexToModel(lastEntityRow);
-            FactInstance theEntity = entities.get(theRow);
+            theEntity = entities.get(theRow);
                         
             if (theEntity.getName().equals(lastEntity))
               {
                entityTable.setRowSelectionInterval(lastEntityRow,lastEntityRow);
+			   slotsModel.setItem(theEntity);
                found = true;
               }
            }
@@ -463,12 +471,13 @@ public class EntityBrowserFrame extends JInternalFrame
             for (i = 0; i < count; i++)
               {
                theRow = entityTable.convertRowIndexToModel(i);
-               FactInstance theEntity = entities.get(theRow);              
+               theEntity = entities.get(theRow);              
 
                if (theEntity.getName().equals(lastEntity))
                  {
                   found = true;
                   entityTable.setRowSelectionInterval(i,i);
+				  slotsModel.setItem(theEntity);
                   break;
                  }
               }
@@ -479,13 +488,21 @@ public class EntityBrowserFrame extends JInternalFrame
             if (count > 0)
               {
                if (lastEntityRow < count)
-                 { entityTable.setRowSelectionInterval(lastEntityRow,lastEntityRow); }
+                 { 
+				  theEntity = entities.get(lastEntityRow);
+				  entityTable.setRowSelectionInterval(lastEntityRow,lastEntityRow); 
+				  slotsModel.setItem(theEntity);
+				 }
                else 
-                 { entityTable.setRowSelectionInterval(count-1,count-1); }
+                 { 
+				  theEntity = entities.get(count-1);
+				  entityTable.setRowSelectionInterval(count-1,count-1); 
+				  slotsModel.setItem(theEntity);
+				 }
               }
            }
         }
-
+   
       lastModuleRow = -1;
       lastModule = null;
       lastEntity = null;

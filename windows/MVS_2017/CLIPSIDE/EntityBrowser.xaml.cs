@@ -46,6 +46,10 @@ namespace CLIPSIDE
       private CollectionViewSource slotSourceList;
       private FactInstanceCollection entityCollection;
       private SlotValueCollection slotCollection;
+      private string lastModule;
+      private int lastModuleRow;
+      private string lastEntity;
+      private int lastEntityRow;
 
       /*****************/
       /* EntityBrowser */
@@ -60,6 +64,10 @@ namespace CLIPSIDE
          ide = theMW;
          if (ide != null)
            { 
+            lastModule = null;
+            lastModuleRow = -1;
+            lastEntity = null;
+            lastEntityRow = -1;
            }
         }
                 
@@ -112,11 +120,14 @@ namespace CLIPSIDE
       /**************/
       /* AssignData */
       /**************/
+ 
       private void AssignData(
         List<Module> theModules,
         List<FactInstance> theEntityList,
         Dictionary<ulong,BitArray> theScopes)
         {
+         SaveSelection();
+
          modules = theModules;
          entityList = theEntityList;
          scopes = theScopes;
@@ -125,16 +136,177 @@ namespace CLIPSIDE
 
          CreateEntitySource();
  
-         if (theModules.Count == 0)
-           { moduleDataGridView.SelectedItem = null; }
-         else
-           { moduleDataGridView.SelectedItem = theModules.First(); }
+         RestoreSelection();
+        }
 
-         if (entityDataGridView.Items.Count != 0)
+      /*****************/
+      /* SaveSelection */
+      /*****************/
+      private void SaveSelection()
+        {
+         int theRow;
+   
+         theRow = moduleDataGridView.SelectedIndex;
+         if (theRow != -1)
            {
-            FactInstance theEntity = entityDataGridView.Items[0] as FactInstance;
+            lastModuleRow = theRow;
+         
+            Module theModule = moduleDataGridView.Items[theRow] as Module;
+            lastModule = theModule.ModuleName;
+           }
+         else
+           {
+            lastModule = null;
+            lastModuleRow = -1;
+           }
 
-            entityDataGridView.SelectedItem = theEntity;
+         theRow = entityDataGridView.SelectedIndex;
+         if (theRow != -1)
+           {
+            lastEntityRow = theRow;
+
+            FactInstance theEntity = entityDataGridView.Items[theRow] as FactInstance;
+            lastEntity = theEntity.Name;
+           }
+         else
+           {
+            lastEntity = null;
+            lastEntityRow = -1;
+           }
+        }
+      
+      /********************/
+      /* RestoreSelection */
+      /********************/
+      private void RestoreSelection()
+        {
+         int i, count;
+         bool found;
+         Module theModule;
+         FactInstance theEntity;
+
+         moduleDataGridView.SelectedItem = null;
+         entityDataGridView.SelectedItem = null;
+
+         if (lastModuleRow == -1)
+           {
+            if (moduleDataGridView.Items.Count > 0)
+              {
+               theModule = moduleDataGridView.Items[0] as Module;
+               moduleDataGridView.SelectedItem = theModule; 
+              }
+           }
+         else
+           {
+            count = moduleDataGridView.Items.Count;
+            found = false;
+         
+            if (lastModuleRow < count)
+              {
+               theModule = moduleDataGridView.Items[lastModuleRow] as Module;
+
+               if (theModule.ModuleName.Equals(lastModule))
+                 {
+                  moduleDataGridView.SelectedItem = theModule;
+                  found = true;
+                 }
+              }
+           
+            if (! found)
+              {
+               for (i = 0; i < count; i++)
+                 {
+                  theModule = moduleDataGridView.Items[i] as Module;
+
+                  if (theModule.ModuleName.Equals(lastModule))       
+                    {
+                     found = true;
+                     moduleDataGridView.SelectedItem = theModule; 
+                     break;
+                    }
+                 }
+              }
+           
+            if (! found)
+              { 
+               lastEntityRow = -1;
+               lastEntity = null;
+               if (count > 0)
+                 {
+                  if (lastModuleRow < count)
+                    { 
+                     theModule = moduleDataGridView.Items[lastModuleRow] as Module;
+                     moduleDataGridView.SelectedItem = theModule;
+                    }
+                  else 
+                    { 
+                     theModule = moduleDataGridView.Items[count-1] as Module;
+                     moduleDataGridView.SelectedItem = theModule;
+                    }
+                 }
+              }
+           }
+        
+         if (lastEntityRow == -1)
+           { 
+            if (entityDataGridView.Items.Count > 0)
+              { 
+               theEntity = entityDataGridView.Items[0] as FactInstance;
+               entityDataGridView.SelectedItem = theEntity;  
+              }
+           }
+         else
+           {
+            count = entityDataGridView.Items.Count;
+            found = false;
+         
+            if (lastEntityRow < count)
+              {
+               theEntity = entityDataGridView.Items[lastEntityRow] as FactInstance;
+                
+               if (theEntity.Name.Equals(lastEntity))
+                 {
+                  entityDataGridView.SelectedItem = theEntity; 
+                  found = true;
+                 }
+              }
+           
+            if (! found)
+              {
+               for (i = 0; i < count; i++)
+                 {
+                  theEntity = entityDataGridView.Items[i] as FactInstance;             
+
+                  if (theEntity.Name.Equals(lastEntity))
+                    {
+                     found = true;
+                     entityDataGridView.SelectedItem = theEntity; 
+                     break;
+                    }
+                 }
+              }
+           
+            if (! found)
+              {
+               if (count > 0)
+                 {
+                  if (lastEntityRow < count)
+                    { 
+                     theEntity = entityDataGridView.Items[lastEntityRow] as FactInstance;             
+                     entityDataGridView.SelectedItem = theEntity;
+                    }
+                  else 
+                    { 
+                     theEntity = entityDataGridView.Items[count -1] as FactInstance;             
+                     entityDataGridView.SelectedItem = theEntity;
+                    }
+                 }
+              }
+           }
+
+         if (entityDataGridView.SelectedItem != null)
+           {
+            theEntity = entityDataGridView.SelectedItem as FactInstance;
 
             CreateSlotListSource(theEntity);
 
@@ -152,6 +324,11 @@ namespace CLIPSIDE
             entityCollection = null;
             slotCollection = null;
            }
+
+         lastModuleRow = -1;
+         lastModule = null;
+         lastEntity = null;
+         lastEntityRow = -1;
         }
 
       /*****************/

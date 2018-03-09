@@ -27,7 +27,7 @@ jlong PointerToJLong(
 jobject ConvertDataObject(
   JNIEnv *env,
   jobject javaEnv,
-  void *clipsEnv,
+  Environment *clipsEnv,
   CLIPSValue *theDO)
   {
    jobject result = NULL, tresult;
@@ -94,7 +94,7 @@ jobject ConvertDataObject(
 jobject ConvertSingleFieldValue(
   JNIEnv *env,
   jobject javaEnv,
-  void *clipsEnv,
+  Environment *clipsEnv,
   int type,
   void  *value)
   {
@@ -187,68 +187,68 @@ jobject ConvertSingleFieldValue(
 /* ConvertSingleFieldPrimitiveValue: */
 /*************************************/
 static void *ConvertSingleFieldPrimitiveValue(
-  Environment *theEnv,
+  Environment *theCLIPSEnv,
   int theType,
   jobject theValue)
   {
    void *rv = NULL;
    JNIEnv *env;
    
-   env = (JNIEnv *) GetEnvironmentContext(theEnv);
+   env = (JNIEnv *) GetEnvironmentContext(theCLIPSEnv);
    
    switch (theType)
      {
       case SYMBOL_TYPE:
         {
-         jstring theString = (*env)->CallObjectMethod(env,theValue,CLIPSJNIData(theEnv)->lexemeValueGetValueMethod);
+         jstring theString = (*env)->CallObjectMethod(env,theValue,CLIPSJNIData(theCLIPSEnv)->lexemeValueGetValueMethod);
          const char *cString = (*env)->GetStringUTFChars(env,theString,NULL);
-         rv = CreateSymbol(theEnv,cString);
+         rv = CreateSymbol(theCLIPSEnv,cString);
          (*env)->ReleaseStringUTFChars(env,theString,cString);
          break;
         }
 
       case STRING_TYPE:
         {
-         jstring theString = (*env)->CallObjectMethod(env,theValue,CLIPSJNIData(theEnv)->lexemeValueGetValueMethod);
+         jstring theString = (*env)->CallObjectMethod(env,theValue,CLIPSJNIData(theCLIPSEnv)->lexemeValueGetValueMethod);
          const char *cString = (*env)->GetStringUTFChars(env,theString,NULL);
-         rv = CreateString(theEnv,cString);
+         rv = CreateString(theCLIPSEnv,cString);
          (*env)->ReleaseStringUTFChars(env,theString,cString);
          break;
         }
       
       case INSTANCE_NAME_TYPE:
         {
-         jstring theString = (*env)->CallObjectMethod(env,theValue,CLIPSJNIData(theEnv)->lexemeValueGetValueMethod);
+         jstring theString = (*env)->CallObjectMethod(env,theValue,CLIPSJNIData(theCLIPSEnv)->lexemeValueGetValueMethod);
          const char *cString = (*env)->GetStringUTFChars(env,theString,NULL);
-         rv = CreateInstanceName(theEnv,cString);
+         rv = CreateInstanceName(theCLIPSEnv,cString);
          (*env)->ReleaseStringUTFChars(env,theString,cString);
          break;
         }
         
       case FLOAT_TYPE:
         {
-         jdouble theDouble = (*env)->CallDoubleMethod(env,theValue,CLIPSJNIData(theEnv)->floatValueDoubleValueMethod);
-         rv = CreateFloat(theEnv,theDouble);
+         jdouble theDouble = (*env)->CallDoubleMethod(env,theValue,CLIPSJNIData(theCLIPSEnv)->floatValueDoubleValueMethod);
+         rv = CreateFloat(theCLIPSEnv,theDouble);
          break;
         }
 
       case INTEGER_TYPE:
         {
-         jlong theLong = (*env)->CallLongMethod(env,theValue,CLIPSJNIData(theEnv)->integerValueLongValueMethod);
-         rv = CreateInteger(theEnv,theLong);
+         jlong theLong = (*env)->CallLongMethod(env,theValue,CLIPSJNIData(theCLIPSEnv)->integerValueLongValueMethod);
+         rv = CreateInteger(theCLIPSEnv,theLong);
          break;
         }
 
       case FACT_ADDRESS_TYPE:
         {
-         jlong theLong = (*env)->CallLongMethod(env,theValue,CLIPSJNIData(theEnv)->factAddressValueGetFactAddressMethod);
+         jlong theLong = (*env)->CallLongMethod(env,theValue,CLIPSJNIData(theCLIPSEnv)->factAddressValueGetFactAddressMethod);
          rv = JLongToPointer(theLong);
          break;
         }
 
       case INSTANCE_ADDRESS_TYPE:
         {
-         jlong theLong = (*env)->CallLongMethod(env,theValue,CLIPSJNIData(theEnv)->instanceAddressValueGetInstanceAddressMethod);
+         jlong theLong = (*env)->CallLongMethod(env,theValue,CLIPSJNIData(theCLIPSEnv)->instanceAddressValueGetInstanceAddressMethod);
          rv = JLongToPointer(theLong);
          break;
         }
@@ -261,34 +261,34 @@ static void *ConvertSingleFieldPrimitiveValue(
 /* ConvertPrimitiveValueToDataObject: */
 /**************************************/
 void ConvertPrimitiveValueToDataObject(
-  Environment *theEnv,
+  Environment *theCLIPSEnv,
   jobject theValue,
   UDFValue *theDO)
   { 
    unsigned short theType;
    Multifield *result = NULL;
-   JNIEnv *env = (JNIEnv *) GetEnvironmentContext(theEnv);
+   JNIEnv *env = (JNIEnv *) GetEnvironmentContext(theCLIPSEnv);
   
    if (theValue == NULL)
      {
-      theDO->voidValue = theEnv->VoidConstant;
+      theDO->voidValue = theCLIPSEnv->VoidConstant;
       return;
      }
    
-   theType = (int) (*env)->CallIntMethod(env,theValue,CLIPSJNIData(theEnv)->getCLIPSTypeValueMethod);
+   theType = (int) (*env)->CallIntMethod(env,theValue,CLIPSJNIData(theCLIPSEnv)->getCLIPSTypeValueMethod);
 
    switch(theType)
      {
       case MULTIFIELD_TYPE:
         {
          jint i;
-         jint theSize = (*env)->CallIntMethod(env,theValue,CLIPSJNIData(theEnv)->multifieldValueSizeMethod);
-         result = CreateMultifield(theEnv,theSize);
+         jint theSize = (*env)->CallIntMethod(env,theValue,CLIPSJNIData(theCLIPSEnv)->multifieldValueSizeMethod);
+         result = CreateMultifield(theCLIPSEnv,theSize);
          for (i = 0; i < theSize; i++)
            {         
-            jobject mfo = (*env)->CallObjectMethod(env,theValue,CLIPSJNIData(theEnv)->multifieldValueGetMethod,i);
-            int mft = (*env)->CallIntMethod(env,mfo,CLIPSJNIData(theEnv)->getCLIPSTypeValueMethod);
-            void *mfv = ConvertSingleFieldPrimitiveValue(theEnv,mft,mfo);  
+            jobject mfo = (*env)->CallObjectMethod(env,theValue,CLIPSJNIData(theCLIPSEnv)->multifieldValueGetMethod,i);
+            int mft = (*env)->CallIntMethod(env,mfo,CLIPSJNIData(theCLIPSEnv)->getCLIPSTypeValueMethod);
+            void *mfv = ConvertSingleFieldPrimitiveValue(theCLIPSEnv,mft,mfo);  
             result->contents[i].value = mfv;
            }
            
@@ -306,11 +306,11 @@ void ConvertPrimitiveValueToDataObject(
       case FLOAT_TYPE:
       case FACT_ADDRESS_TYPE:
       case INSTANCE_ADDRESS_TYPE:
-        theDO->value = ConvertSingleFieldPrimitiveValue(theEnv,theType,theValue);
+        theDO->value = ConvertSingleFieldPrimitiveValue(theCLIPSEnv,theType,theValue);
         break;
 
       default: 
-        theDO->voidValue = theEnv->VoidConstant;
+        theDO->voidValue = theCLIPSEnv->VoidConstant;
         break;
      }
   }
