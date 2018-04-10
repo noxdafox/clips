@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  11/15/17             */
+   /*            CLIPS Version 6.40  04/10/18             */
    /*                                                     */
    /*                 FACT MANAGER MODULE                 */
    /*******************************************************/
@@ -81,6 +81,9 @@
 /*                                                           */
 /*            Retracted and existing facts cannot be         */
 /*            asserted.                                      */
+/*                                                           */
+/*            Crash bug fix for modifying fact with invalid  */
+/*            slot name.                                     */
 /*                                                           */
 /*      6.40: Added Env prefix to GetEvaluationError and     */
 /*            SetEvaluationError functions.                  */
@@ -1552,10 +1555,13 @@ void ReturnFact(
       if (theSegment->contents[i].header->type == MULTIFIELD_TYPE)
         {
          subSegment = theSegment->contents[i].multifieldValue;
-         if (subSegment->busyCount == 0)
-           { ReturnMultifield(theEnv,subSegment); }
-         else
-           { AddToMultifieldList(theEnv,subSegment); }
+         if (subSegment != NULL)
+           {
+            if (subSegment->busyCount == 0)
+              { ReturnMultifield(theEnv,subSegment); }
+            else
+              { AddToMultifieldList(theEnv,subSegment); }
+           }
         }
      }
 
