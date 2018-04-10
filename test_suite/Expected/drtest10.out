@@ -979,5 +979,16 @@ CLIPS> (defrule foo
       (if (eq 3 3) then (if (eq 3 3) then (if (eq 3 3) then (if (eq 3 3) then
       (if (eq 3 3) then (if (eq 3 3) then (if (eq 3 3) then (if (eq 3 3) then
       (if (eq 3 3) then 3)))))))))))))))))))))))))))))))))))))))))))
+CLIPS> (clear) ; Crash bug
+CLIPS> 
+(deftemplate foobar
+  (slot foo)
+  (multislot bar))
+CLIPS> (assert (foobar)))
+<Fact-1>
+CLIPS> (modify 1 (dummy TRUE))
+
+[TMPLTDEF1] Invalid slot dummy not defined in corresponding deftemplate foobar.
+FALSE
 CLIPS> (clear)
 CLIPS> (dribble-off)

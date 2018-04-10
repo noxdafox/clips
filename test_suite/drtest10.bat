@@ -537,4 +537,11 @@
       (if (eq 3 3) then (if (eq 3 3) then (if (eq 3 3) then (if (eq 3 3) then
       (if (eq 3 3) then (if (eq 3 3) then (if (eq 3 3) then (if (eq 3 3) then
       (if (eq 3 3) then 3)))))))))))))))))))))))))))))))))))))))))))
+(clear) ; Crash bug
+
+(deftemplate foobar
+  (slot foo)
+  (multislot bar))
+(assert (foobar)))
+(modify 1 (dummy TRUE))
 (clear)

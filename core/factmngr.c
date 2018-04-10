@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.31  09/04/17            */
+   /*             CLIPS Version 6.31  04/10/18            */
    /*                                                     */
    /*                 FACT MANAGER MODULE                 */
    /*******************************************************/
@@ -81,6 +81,9 @@
 /*                                                           */
 /*            Retracted and existing facts cannot be         */
 /*            asserted.                                      */
+/*                                                           */
+/*            Crash bug fix for modifying fact with invalid  */
+/*            slot name.                                     */
 /*                                                           */
 /*************************************************************/
 
@@ -1399,10 +1402,13 @@ globle void ReturnFact(
       if (theSegment->theFields[i].type == MULTIFIELD)
         {
          subSegment = (struct multifield *) theSegment->theFields[i].value;
-         if (subSegment->busyCount == 0)
-           { ReturnMultifield(theEnv,subSegment); }
-         else
-           { AddToMultifieldList(theEnv,subSegment); }
+         if (subSegment != NULL)
+           {
+            if (subSegment->busyCount == 0)
+              { ReturnMultifield(theEnv,subSegment); }
+            else
+              { AddToMultifieldList(theEnv,subSegment); }
+           }
         }
      }
 
