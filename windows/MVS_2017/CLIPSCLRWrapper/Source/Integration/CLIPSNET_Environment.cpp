@@ -975,7 +975,7 @@ namespace CLIPSNET
          pin_ptr<Byte> pbLogicalName = &ebLogicalName[0];
          pin_ptr<Byte> pbPrintString = &ebPrintString[0];
 
-         if (m_Env->PrintRouterExists((char *) pbLogicalName))
+         if (! m_Env->PrintRouterExists((char *) pbLogicalName))
            {
             throw gcnew System::ArgumentException(
               "No print router for logicalName '" + logicalName +"' exists.");
@@ -1024,7 +1024,7 @@ namespace CLIPSNET
          pin_ptr<Byte> pbLogicalName = &ebLogicalName[0];
          pin_ptr<Byte> pbPrintString = &ebPrintString[0];
 
-         if (m_Env->PrintRouterExists((char *) pbLogicalName))
+         if (! m_Env->PrintRouterExists((char *) pbLogicalName))
            {
             throw gcnew System::ArgumentException(
               "No print router for logicalName '" + logicalName +"' exists.");
