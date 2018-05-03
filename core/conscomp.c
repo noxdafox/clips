@@ -148,8 +148,12 @@
 
 #define PRIMARY_CODES   "ADGHJKMNOQRTUVWXYZ"
 #define PRIMARY_LEN     18
-#define SECONDARY_CODES "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-#define SECONDARY_LEN   26
+
+const char *SecondaryCodes[] = { "A" , "B", "C", "D", "E" , "F" , "G" , "H", "I", "J" , "K",
+                                 "L" , "M", "N", "O", "P" , "Q" , "R" , "S", "T", "U" , "V",
+                                 "W" , "X", "Y", "Z", "AA", "BB", "CC", "DD", "EE" , "FF" };
+
+#define SECONDARY_LEN   32
 
 /***************************************/
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
@@ -1091,7 +1095,7 @@ struct CodeGeneratorItem *AddCodeGeneratorItem(
   {
    struct CodeGeneratorItem *newPtr, *currentPtr, *lastPtr = NULL;
    unsigned int i;
-   char theBuffer[3];
+   char theBuffer[4];
 
    /*======================================*/
    /* Create the code generator item data  */
@@ -1129,7 +1133,7 @@ struct CodeGeneratorItem *AddCodeGeneratorItem(
          if (ConstructCompilerData(theEnv)->CodeGeneratorCount < PRIMARY_LEN)
            { gensprintf(theBuffer,"%c",PRIMARY_CODES[ConstructCompilerData(theEnv)->CodeGeneratorCount]); }
          else
-           { gensprintf(theBuffer,"%c_",SECONDARY_CODES[ConstructCompilerData(theEnv)->CodeGeneratorCount - PRIMARY_LEN]); }
+           { gensprintf(theBuffer,"%s_",SecondaryCodes[ConstructCompilerData(theEnv)->CodeGeneratorCount - PRIMARY_LEN]); }
          ConstructCompilerData(theEnv)->CodeGeneratorCount++;
          newPtr->arrayNames[i] = (char *) gm2(theEnv,(strlen(theBuffer) + 1));
          genstrcpy(newPtr->arrayNames[i],theBuffer);

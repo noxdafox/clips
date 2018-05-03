@@ -1335,7 +1335,7 @@ void RuleComplexityCommand(
    rulePtr = FindDefrule(theEnv,ruleName);
    if (rulePtr == NULL)
      {
-      CantFindItemErrorMessage(theEnv,"defrule",ruleName);
+      CantFindItemErrorMessage(theEnv,"defrule",ruleName,true);
       returnValue->integerValue = CreateInteger(theEnv,-1);
       return;
      }
@@ -1361,7 +1361,7 @@ void ShowJoinsCommand(
    rulePtr = FindDefrule(theEnv,ruleName);
    if (rulePtr == NULL)
      {
-      CantFindItemErrorMessage(theEnv,"defrule",ruleName);
+      CantFindItemErrorMessage(theEnv,"defrule",ruleName,true);
       return;
      }
 
