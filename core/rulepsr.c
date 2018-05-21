@@ -840,7 +840,11 @@ static int LogicalAnalysis(
       /* Increment the count of logical CEs found. */
       /*===========================================*/
 
-      logicalJoin++;
+      if (patternList->pnType == PATTERN_CE_NODE)
+        { logicalJoin++; }
+      else if (logicalJoin == 1)
+        { logicalJoin++; }
+
       logicalsFound = true;
      }
 
