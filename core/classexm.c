@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/25/16             */
+   /*            CLIPS Version 6.40  06/22/18             */
    /*                                                     */
    /*                 CLASS EXAMINATION MODULE            */
    /*******************************************************/
@@ -984,9 +984,9 @@ static SlotDescriptor *CheckSlotExists(
    PrintErrorID(theEnv,"CLASSEXM",1,false);
    WriteString(theEnv,STDERR,"Inherited slot '");
    WriteString(theEnv,STDERR,ssym->contents);
-   WriteString(theEnv,STDERR,"' from class '");
+   WriteString(theEnv,STDERR,"' from class ");
    PrintClassName(theEnv,STDERR,sd->cls,true,false);
-   WriteString(theEnv,STDERR,"' is not valid for function '");
+   WriteString(theEnv,STDERR," is not valid for function '");
    WriteString(theEnv,STDERR,func);
    WriteString(theEnv,STDERR,"'.\n");
    SetEvaluationError(theEnv,true);

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  11/07/17             */
+   /*            CLIPS Version 6.40  06/22/18             */
    /*                                                     */
    /*        INSTANCE MODIFY AND DUPLICATE MODULE         */
    /*******************************************************/
@@ -899,7 +899,9 @@ static void DuplicateMsgHandlerSupport(
       SetEvaluationError(theEnv,true);
       return;
      }
-   if (newName == srcins->name)
+   if (((newName->header.type == srcins->name->header.type) &&
+        (newName == srcins->name)) ||
+       (strcmp(newName->contents,srcins->name->contents) == 0))
      {
       PrintErrorID(theEnv,"INSMODDP",3,false);
       WriteString(theEnv,STDERR,"Instance copy must have a different name in duplicate-instance.\n");

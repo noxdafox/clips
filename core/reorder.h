@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/30/16            */
+   /*             CLIPS Version 6.40  06/22/18            */
    /*                                                     */
    /*                 REORDER HEADER FILE                 */
    /*******************************************************/
@@ -86,6 +86,9 @@ typedef enum
    SYMBOL_NODE,
    STRING_NODE,
    INSTANCE_NAME_NODE,
+   FACT_STORE_MULTIFIELD_NODE,
+   DEFTEMPLATE_PTR_NODE,
+   DEFCLASS_PTR_NODE,
    UNKNOWN_NODE
   } ParseNodeType;
 

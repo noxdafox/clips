@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  11/09/17             */
+   /*            CLIPS Version 6.40  05/29/18             */
    /*                                                     */
    /*            MISCELLANEOUS FUNCTIONS MODULE           */
    /*******************************************************/
@@ -452,30 +452,14 @@ void LengthFunction(
    /* The length$ function expects exactly one argument. */
    /*====================================================*/
 
-   if (! UDFFirstArgument(context, LEXEME_BITS | MULTIFIELD_BIT, &theArg))
+   if (! UDFFirstArgument(context, MULTIFIELD_BIT, &theArg))
      { return; }
 
-   /*====================================================*/
-   /* If the argument is a string or symbol, then return */
-   /* the number of characters in the argument.          */
-   /*====================================================*/
+   /*==============================================*/
+   /* Return the number of fields in the argument. */
+   /*==============================================*/
 
-   if (CVIsType(&theArg,LEXEME_BITS))
-     {
-      returnValue->integerValue = CreateInteger(theEnv,(long long) strlen(theArg.lexemeValue->contents));
-      return;
-     }
-
-   /*====================================================*/
-   /* If the argument is a multifield value, then return */
-   /* the number of fields in the argument.              */
-   /*====================================================*/
-
-   else if (CVIsType(&theArg,MULTIFIELD_BIT))
-     {
-      returnValue->value = CreateInteger(theEnv,(long long) theArg.range);
-      return;
-     }
+   returnValue->value = CreateInteger(theEnv,(long long) theArg.range);
   }
 
 /*******************************************/
@@ -1745,6 +1729,17 @@ void SetErrorValue(
    Retain(theEnv,MiscFunctionData(theEnv)->errorCode.header);
   }
 
+/*******************/
+/* ClearErrorValue */
+/*******************/
+void ClearErrorValue(
+  Environment *theEnv)
+  {
+   Release(theEnv,MiscFunctionData(theEnv)->errorCode.header);
+   MiscFunctionData(theEnv)->errorCode.lexemeValue = FalseSymbol(theEnv);
+   Retain(theEnv,MiscFunctionData(theEnv)->errorCode.header);
+  }
+
 /******************************************/
 /* ClearErrorFunction: H/L access routine */
 /*   for the clear-error function.        */
@@ -1755,9 +1750,7 @@ void ClearErrorFunction(
   UDFValue *returnValue)
   {
    CLIPSToUDFValue(&MiscFunctionData(theEnv)->errorCode,returnValue);
-   Release(theEnv,MiscFunctionData(theEnv)->errorCode.header);
-   MiscFunctionData(theEnv)->errorCode.lexemeValue = FalseSymbol(theEnv);
-   Retain(theEnv,MiscFunctionData(theEnv)->errorCode.header);
+   ClearErrorValue(theEnv);
   }
 
 /****************************************/

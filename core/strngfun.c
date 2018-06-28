@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  11/13/17             */
+   /*            CLIPS Version 6.40  06/22/18             */
    /*                                                     */
    /*            STRING_TYPE FUNCTIONS MODULE             */
    /*******************************************************/
@@ -95,6 +95,7 @@
 #include "exprnpsr.h"
 #include "extnfunc.h"
 #include "memalloc.h"
+#include "miscfun.h"
 #include "multifld.h"
 #include "prcdrpsr.h"
 #include "pprint.h"
@@ -625,6 +626,8 @@ void StringToFieldFunction(
   UDFValue *returnValue)
   {
    UDFValue theArg;
+   
+   ClearErrorValue(theEnv);
 
    /*==================================================*/
    /* The argument should be of type symbol or string. */
@@ -632,7 +635,8 @@ void StringToFieldFunction(
 
    if (! UDFFirstArgument(context,LEXEME_BITS | INSTANCE_NAME_BIT,&theArg))
      {
-      returnValue->lexemeValue = CreateSymbol(theEnv,"*** ERROR ***");
+      SetErrorValue(theEnv,&CreateSymbol(theEnv,"INVALID_ARGUMENT")->header);
+      returnValue->lexemeValue = FalseSymbol(theEnv);
       return;
      }
 
@@ -673,7 +677,10 @@ void StringToField(
        (theToken.tknType == SYMBOL_TOKEN) || (theToken.tknType == INTEGER_TOKEN))
      { returnValue->value = theToken.value; }
    else if (theToken.tknType == STOP_TOKEN)
-     { returnValue->value = CreateSymbol(theEnv,"EOF"); }
+     {
+      SetErrorValue(theEnv,&CreateSymbol(theEnv,"EOF")->header);
+      returnValue->value = CreateSymbol(theEnv,"EOF");
+     }
    else if (theToken.tknType == UNKNOWN_VALUE_TOKEN)
      { returnValue->value = CreateString(theEnv,"*** ERROR ***"); }
    else

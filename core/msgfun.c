@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  10/01/16             */
+   /*            CLIPS Version 6.40  06/22/18             */
    /*                                                     */
    /*              OBJECT MESSAGE FUNCTIONS               */
    /*******************************************************/
@@ -200,9 +200,8 @@ void SlotAccessViolationError(
      }
    else
      {
-      WriteString(theEnv,STDERR,"class '");
+      WriteString(theEnv,STDERR,"class ");
       PrintClassName(theEnv,STDERR,theDefclass,true,false);
-      WriteString(theEnv,STDERR,"'");
      }
    WriteString(theEnv,STDERR,".\n");
   }

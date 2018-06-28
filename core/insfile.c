@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  11/07/17             */
+   /*            CLIPS Version 6.40  06/22/18             */
    /*                                                     */
    /*         INSTANCE LOAD/SAVE (ASCII/BINARY) MODULE    */
    /*******************************************************/
@@ -1605,7 +1605,7 @@ static void BinaryLoadInstanceError(
   Defclass *theDefclass)
   {
    PrintErrorID(theEnv,"INSFILE",4,false);
-   WriteString(theEnv,STDERR,"Function 'bload-instances' unable to load instance [");
+   WriteString(theEnv,STDERR,"Function 'bload-instances' is unable to load instance [");
    WriteString(theEnv,STDERR,instanceName->contents);
    WriteString(theEnv,STDERR,"] of class ");
    PrintClassName(theEnv,STDERR,theDefclass,true,true);

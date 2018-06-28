@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  11/07/17             */
+   /*            CLIPS Version 6.40  05/16/18             */
    /*                                                     */
    /*                 CLASS PARSER MODULE                 */
    /*******************************************************/
@@ -167,8 +167,7 @@ TEMP_SLOT_LINK *ParseSlot(
   const char *className,
   TEMP_SLOT_LINK *slist,
   PACKED_CLASS_LINKS *preclist,
-  bool multiSlot,
-  bool fieldSpecified)
+  bool multiSlot)
   {
    SlotDescriptor *slot;
    CONSTRAINT_PARSE_RECORD parsedConstraint;
@@ -212,9 +211,11 @@ TEMP_SLOT_LINK *ParseSlot(
    if (slist == NULL)
      return NULL;
    if (multiSlot)
-     slot->multiple = true;
-   if (fieldSpecified)
-     SetBitMap(specbits,FIELD_BIT);
+     {
+      slot->multiple = true;
+      SetBitMap(specbits,FIELD_BIT);
+     }
+      
    GetToken(theEnv,readSource,&DefclassData(theEnv)->ObjectParseToken);
    IncrementIndentDepth(theEnv,3);
    InitializeConstraintParseRecord(&parsedConstraint);

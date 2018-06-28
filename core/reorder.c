@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/25/16             */
+   /*            CLIPS Version 6.40  06/22/18             */
    /*                                                     */
    /*                    REORDER MODULE                   */
    /*******************************************************/
@@ -1410,7 +1410,13 @@ unsigned short NodeTypeToType(
         return PCALL;
       case GCALL_NODE:
         return GCALL;
-        
+      case FACT_STORE_MULTIFIELD_NODE:
+        return FACT_STORE_MULTIFIELD;
+      case DEFTEMPLATE_PTR_NODE:
+        return DEFTEMPLATE_PTR;
+      case DEFCLASS_PTR_NODE:
+        return DEFCLASS_PTR;
+
       default:
         return VOID_TYPE;
      }
@@ -1446,6 +1452,13 @@ ParseNodeType TypeToNodeType(
         return PCALL_NODE;
       case GCALL:
         return GCALL_NODE;
+      case FACT_STORE_MULTIFIELD:
+        return FACT_STORE_MULTIFIELD_NODE;
+      case DEFTEMPLATE_PTR:
+        return DEFTEMPLATE_PTR_NODE;
+      case DEFCLASS_PTR:
+        return DEFCLASS_PTR_NODE;
+
       default:
         return UNKNOWN_NODE;
      }

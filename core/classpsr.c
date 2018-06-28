@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  10/18/16             */
+   /*            CLIPS Version 6.40  05/16/18             */
    /*                                                     */
    /*                  CLASS PARSER MODULE                */
    /*******************************************************/
@@ -48,6 +48,9 @@
 /*                                                            */
 /*            Eval support for run time and bload only.       */
 /*                                                            */
+/*            Removed use of single-slot in class             */
+/*            definitions.                                    */
+/*                                                            */
 /**************************************************************/
 
 /* =========================================
@@ -90,7 +93,6 @@
 #define HANDLER_DECL         "message-handler"
 
 #define SLOT_RLN             "slot"
-#define SGL_SLOT_RLN         "single-slot"
 #define MLT_SLOT_RLN         "multislot"
 
 #define DIRECT               0
@@ -254,16 +256,7 @@ bool ParseDefclass(
 #endif
       else if (strcmp(DefclassData(theEnv)->ObjectParseToken.lexemeValue->contents,SLOT_RLN) == 0)
         {
-         slots = ParseSlot(theEnv,readSource,cname->contents,slots,preclist,false,false);
-         if (slots == NULL)
-           {
-            parseError = true;
-            break;
-           }
-        }
-      else if (strcmp(DefclassData(theEnv)->ObjectParseToken.lexemeValue->contents,SGL_SLOT_RLN) == 0)
-        {
-         slots = ParseSlot(theEnv,readSource,cname->contents,slots,preclist,false,true);
+         slots = ParseSlot(theEnv,readSource,cname->contents,slots,preclist,false);
          if (slots == NULL)
            {
             parseError = true;
@@ -272,7 +265,7 @@ bool ParseDefclass(
         }
       else if (strcmp(DefclassData(theEnv)->ObjectParseToken.lexemeValue->contents,MLT_SLOT_RLN) == 0)
         {
-         slots = ParseSlot(theEnv,readSource,cname->contents,slots,preclist,true,true);
+         slots = ParseSlot(theEnv,readSource,cname->contents,slots,preclist,true);
          if (slots == NULL)
            {
             parseError = true;

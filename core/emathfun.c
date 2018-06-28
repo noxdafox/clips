@@ -288,6 +288,8 @@ void TanFunction(
   UDFValue *returnValue)
   {
    double tv;
+   
+   ClearErrorValue(theEnv);
 
    if (! SingleNumberCheck(context,returnValue))
      { return; }
@@ -312,6 +314,8 @@ void SecFunction(
   UDFValue *returnValue)
   {
    double tv;
+   
+   ClearErrorValue(theEnv);
 
    if (! SingleNumberCheck(context,returnValue))
      { return; }
@@ -336,6 +340,8 @@ void CscFunction(
   UDFValue *returnValue)
   {
    double tv;
+   
+   ClearErrorValue(theEnv);
 
    if (! SingleNumberCheck(context,returnValue))
      { return; }
@@ -360,6 +366,8 @@ void CotFunction(
   UDFValue *returnValue)
   {
    double tv;
+   
+   ClearErrorValue(theEnv);
 
    if (! SingleNumberCheck(context,returnValue))
      { return; }
@@ -385,6 +393,8 @@ void AcosFunction(
   {
    double num;
 
+   ClearErrorValue(theEnv);
+   
    if (! SingleNumberCheck(context,returnValue))
      { return; }
 
@@ -409,6 +419,8 @@ void AsinFunction(
   UDFValue *returnValue)
   {
    double num;
+   
+   ClearErrorValue(theEnv);
 
    if (! SingleNumberCheck(context,returnValue))
      { return; }
@@ -448,6 +460,8 @@ void AsecFunction(
   UDFValue *returnValue)
   {
    double num;
+   
+   ClearErrorValue(theEnv);
 
    if (! SingleNumberCheck(context,returnValue))
      { return; }
@@ -473,6 +487,8 @@ void AcscFunction(
   UDFValue *returnValue)
   {
    double num;
+   
+   ClearErrorValue(theEnv);
 
    if (! SingleNumberCheck(context,returnValue))
      { return; }
@@ -583,6 +599,8 @@ void CschFunction(
   UDFValue *returnValue)
   {
    double num;
+   
+   ClearErrorValue(theEnv);
 
    if (! SingleNumberCheck(context,returnValue))
      { return; }
@@ -612,6 +630,8 @@ void CothFunction(
   UDFValue *returnValue)
   {
    double num;
+   
+   ClearErrorValue(theEnv);
 
    if (! SingleNumberCheck(context,returnValue))
      { return; }
@@ -641,6 +661,8 @@ void AcoshFunction(
   UDFValue *returnValue)
   {
    double num;
+   
+   ClearErrorValue(theEnv);
 
    if (! SingleNumberCheck(context,returnValue))
      { return; }
@@ -680,6 +702,8 @@ void AtanhFunction(
   UDFValue *returnValue)
   {
    double num;
+   
+   ClearErrorValue(theEnv);
 
    if (! SingleNumberCheck(context,returnValue))
      { return; }
@@ -704,6 +728,8 @@ void AsechFunction(
   UDFValue *returnValue)
   {
    double num;
+   
+   ClearErrorValue(theEnv);
 
    if (! SingleNumberCheck(context,returnValue))
      { return; }
@@ -728,6 +754,8 @@ void AcschFunction(
   UDFValue *returnValue)
   {
    double num;
+   
+   ClearErrorValue(theEnv);
 
    if (! SingleNumberCheck(context,returnValue))
      { return; }
@@ -752,6 +780,8 @@ void AcothFunction(
   UDFValue *returnValue)
   {
    double num;
+   
+   ClearErrorValue(theEnv);
 
    if (! SingleNumberCheck(context,returnValue))
      { return; }
@@ -791,6 +821,8 @@ void LogFunction(
   UDFValue *returnValue)
   {
    double num;
+   
+   ClearErrorValue(theEnv);
 
    if (! SingleNumberCheck(context,returnValue))
      { return; }
@@ -820,6 +852,8 @@ void Log10Function(
   UDFValue *returnValue)
   {
    double num;
+   
+   ClearErrorValue(theEnv);
 
    if (! SingleNumberCheck(context,returnValue))
      { return; }
@@ -849,6 +883,8 @@ void SqrtFunction(
   UDFValue *returnValue)
   {
    double num;
+   
+   ClearErrorValue(theEnv);
 
    if (! SingleNumberCheck(context,returnValue))
      { return; }
@@ -874,6 +910,8 @@ void PowFunction(
   {
    UDFValue value1, value2;
    double num1, num2;
+   
+   ClearErrorValue(theEnv);
 
    /*==================================*/
    /* Check for two numeric arguments. */
