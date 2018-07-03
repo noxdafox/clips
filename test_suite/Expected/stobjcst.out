@@ -294,12 +294,12 @@ Inheritance Precedence: DERIVE1 BASE USER OBJECT
 Direct Subclasses: DERIVE2
 --------------------------------------------------------------------------------
 SLOTS : FLD DEF PRP ACC STO MCH SRC VIS CRT OVRD-MSG SOURCE(S)
-foo   : SGL STC NIL RW  LCL RCT CMP PRV NIL put-foo  BASE DERIVE1
+foo   : MLT STC NIL RW  LCL RCT CMP PRV NIL put-foo  BASE DERIVE1
 
 Constraint information for slots:
 
 SLOTS : SYM STR INN INA EXA FTA INT FLT
-foo   :                          #      RNG:[-oo..+oo] 
+foo   :                          #      RNG:[-oo..+oo] CRD:[3..4]
 --------------------------------------------------------------------------------
 Recognized message-handlers:
 init primary in class USER

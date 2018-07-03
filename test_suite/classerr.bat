@@ -62,7 +62,7 @@
   (slot bad (default) (default-dynamic (time))))
 (defclass JUNK (is-a USER)
   (multislot bad)
-  (single-slot bad))
+  (slot bad))
 (defclass JUNK (is-a USER)
   (slot bad (storage shared) (storage local)))
 (defclass JUNK (is-a USER)

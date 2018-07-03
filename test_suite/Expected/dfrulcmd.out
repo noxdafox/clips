@@ -23,6 +23,15 @@ For a total of 7 defrules.
 CLIPS> (ppdefrule r1)
 (defrule MAIN::r1
    =>)
+CLIPS> (ppdefrule r1 stdout)
+(defrule MAIN::r1
+   =>)
+CLIPS> (ppdefrule r1 bogus)
+[ROUTER1] Logical name 'bogus' was not recognized by any routers.
+CLIPS> (ppdefrule r1 nil)
+"(defrule MAIN::r1
+   =>)
+"
 CLIPS> (ppdefrule r2)
 (defrule MAIN::r2
    (a)

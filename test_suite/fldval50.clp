@@ -768,13 +768,13 @@ cd))
  (assert (rule-4 ?x))
  (printout t "predicate-function-stringp should fire once" crlf))
 
-(defrule predicate-function-wordp                               ;DR0059
+(defrule predicate-function-symbolp                             ;DR0059
  (declare (salience 2)) ; Added by Gary Riley
  (begin predicate-functions)                                    ;DR0059
- (data ?x&:(wordp ?x))                                          ;DR0059
+ (data ?x&:(symbolp ?x))                                        ;DR0059
 =>                                                              ;DR0059
  (assert (rule-5 ?x))                                           ;DR0059
- (printout t "predicate-function-wordp should fire once" crlf));DR0059
+ (printout t "predicate-function-symbolp should fire once" crlf));DR0059
 
 (defrule predicate-function-integerp
  (declare (salience 1)) ; Added by Gary Riley

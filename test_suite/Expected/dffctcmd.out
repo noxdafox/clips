@@ -23,6 +23,13 @@ d6
 For a total of 7 deffacts.
 CLIPS> (ppdeffacts d1)
 (deffacts MAIN::d1)
+CLIPS> (ppdeffacts d1 stdout)
+(deffacts MAIN::d1)
+CLIPS> (ppdeffacts d1 bogus)
+[ROUTER1] Logical name 'bogus' was not recognized by any routers.
+CLIPS> (ppdeffacts d1 nil)
+"(deffacts MAIN::d1)
+"
 CLIPS> (ppdeffacts d2)
 (deffacts MAIN::d2
    (a))

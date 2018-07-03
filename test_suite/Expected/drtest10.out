@@ -1013,6 +1013,34 @@ CLIPS> (run 1)
 FIRE    1 infinite_rule: f-1,*,*
 ==> f-2     (D)
 CLIPS> (unwatch all)
+CLIPS> (clear)
+CLIPS> (deftemplate A (slot val))
+CLIPS> (deftemplate B)
+CLIPS> (deftemplate C)
+CLIPS> (deftemplate D)
+CLIPS> 
+(deffacts infinite_setup
+  (A (val 1)))
+CLIPS> 
+(defrule infinite_rule
+  (logical
+    (A (val ?val))
+    (not (and (B) (C)))
+    (test (eq ?val 1))
+    (not (D)))
+  =>
+  (assert (D)))
+CLIPS> 
+(reset)
+CLIPS> (watch rules)
+CLIPS> (watch facts)
+CLIPS> (watch activations)
+CLIPS> (run 1)
+FIRE    1 infinite_rule: f-1,*,*
+==> f-2     (D)
+<== f-2     (D)
+==> Activation 0      infinite_rule: f-1,*,*
+CLIPS> (unwatch all)
 CLIPS> (clear) ; Funcall module specifier #1
 CLIPS> 
 (defmodule M

@@ -289,7 +289,7 @@
      (allowed-integers 1 2 3) (create-accessor ?NONE)))
 
 (defclass DERIVE1 (is-a BASE)
-  (single-slot foo (source composite)
+  (slot foo (source composite)
             (propagation no-inherit) (create-accessor ?NONE)))
 
 (defclass DERIVE2 (is-a DERIVE1)

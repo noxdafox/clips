@@ -104,7 +104,7 @@ predicate-function-evenp should fire twice
 predicate-function-oddp should fire twice
 predicate-function-oddp should fire twice
 predicate-function-stringp should fire once
-predicate-function-wordp should fire once
+predicate-function-symbolp should fire once
 predicate-function-integerp should fire four times
 predicate-function-integerp should fire four times
 predicate-function-integerp should fire four times

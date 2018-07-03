@@ -15,7 +15,7 @@
 (defclass A3 (is-a USER) (role concrete)
   (multislot foo  (create-accessor read-write)
             (default abc def ghi))
-  (single-slot bar (create-accessor read-write)))
+  (slot bar (create-accessor read-write)))
 (defclass A4 (is-a USER) (role concrete))
 (defclass A4 (is-a USER) (role concrete))
 (defclass A4 (is-a USER) (role concrete))

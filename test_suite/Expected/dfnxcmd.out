@@ -8,12 +8,23 @@ CLIPS> (ppdeffunction bogus)
 (deffunction MAIN::bogus
    (?a ?b $?c)
    (printout t "Random action" crlf))
+CLIPS> (ppdeffunction bogus stdout)
+(deffunction MAIN::bogus
+   (?a ?b $?c)
+   (printout t "Random action" crlf))
+CLIPS> (ppdeffunction bogus bogus)
+[ROUTER1] Logical name 'bogus' was not recognized by any routers.
+CLIPS> (ppdeffunction bogus nil)
+"(deffunction MAIN::bogus
+   (?a ?b $?c)
+   (printout t "Random action" crlf))
+"
 CLIPS> (ppdeffunction bad)
 [PRNTUTIL1] Unable to find deffunction 'bad'.
 CLIPS> (ppdeffunction 1)
 [ARGACCES2] Function 'ppdeffunction' expected argument #1 to be of type symbol.
 CLIPS> (ppdeffunction)
-[ARGACCES1] Function 'ppdeffunction' expected exactly 1 argument.
+[ARGACCES1] Function 'ppdeffunction' expected at least 1 argument.
 CLIPS> (list-deffunctions)
 bogus
 bogus2

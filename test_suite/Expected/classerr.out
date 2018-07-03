@@ -291,14 +291,14 @@ ERROR:
       (default-dynamic
 CLIPS> (defclass JUNK (is-a USER)
   (multislot bad)
-  (single-slot bad))
+  (slot bad))
 [CLSLTPSR1] The 'bad' slot for class 'JUNK' is already specified.
 
 ERROR:
 (defclass MAIN::JUNK
    (is-a USER)
    (multislot bad)
-   (single-slot bad
+   (slot bad
 CLIPS> (defclass JUNK (is-a USER)
   (slot bad (storage shared) (storage local)))
 [CLSLTPSR2] The 'storage' facet for slot 'bad' is already specified.

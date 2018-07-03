@@ -27,10 +27,28 @@ CLIPS> (describe 3.0)
 "NUMBER"
 CLIPS> (ppdefgeneric describe)
 (defgeneric MAIN::describe)
+CLIPS> (ppdefgeneric describe stdout)
+(defgeneric MAIN::describe)
+CLIPS> (ppdefgeneric describe bogus)
+[ROUTER1] Logical name 'bogus' was not recognized by any routers.
+CLIPS> (ppdefgeneric describe nil)
+"(defgeneric MAIN::describe)
+"
 CLIPS> (ppdefmethod describe 2)
 (defmethod MAIN::describe
    ((?a NUMBER))
    "NUMBER")
+CLIPS> (ppdefmethod describe 2 stdout)
+(defmethod MAIN::describe
+   ((?a NUMBER))
+   "NUMBER")
+CLIPS> (ppdefmethod describe 2 bogus)
+[ROUTER1] Logical name 'bogus' was not recognized by any routers.
+CLIPS> (ppdefmethod describe 2 nil)
+"(defmethod MAIN::describe
+   ((?a NUMBER))
+   "NUMBER")
+"
 CLIPS> (preview-generic describe 34)
 describe #1  (INTEGER)
 describe #2  (NUMBER)

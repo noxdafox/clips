@@ -35,9 +35,15 @@ CLIPS> (printout (create$))               ; 10.5.2.3
 [ARGACCES2] Function 'printout' expected argument #1 to be of type integer, float, symbol, string, or instance name.
 CLIPS> (read (create$))                   ; 10.5.2.4
 [ARGACCES2] Function 'read' expected argument #1 to be of type integer, float, symbol, string, or instance name.
+CLIPS> (get-error)
+FALSE
 CLIPS> (read bogus)                       ; 10.5.2.4
 [ROUTER1] Logical name 'bogus' was not recognized by any routers.
-"*** READ ERROR ***"
+FALSE
+CLIPS> (get-error)
+LOGICAL_NAME_ERROR
+CLIPS> (clear-error)
+LOGICAL_NAME_ERROR
 CLIPS> (read stdin stdout)                ; 10.5.2.4
 [ARGACCES1] Function 'read' expected no more than 1 argument.
 CLIPS> (read)                             ; 10.5.2.4 - 7
@@ -73,7 +79,7 @@ CLIPS> (readline (create$))               ; 10.5.2.5
 [ARGACCES2] Function 'readline' expected argument #1 to be of type integer, float, symbol, string, or instance name.
 CLIPS> (readline bogus)                   ; 10.5.2.5
 [ROUTER1] Logical name 'bogus' was not recognized by any routers.
-"*** READ ERROR ***"
+FALSE
 CLIPS> (readline stdin stdout)            ; 10.5.2.5
 [ARGACCES1] Function 'readline' expected no more than 1 argument.
 CLIPS> (readline)                         ; 10.5.2.5 - "7"

@@ -15,7 +15,10 @@
 (printout)                         ; 10.5.2.3
 (printout (create$))               ; 10.5.2.3
 (read (create$))                   ; 10.5.2.4
+(get-error)
 (read bogus)                       ; 10.5.2.4
+(get-error)
+(clear-error)
 (read stdin stdout)                ; 10.5.2.4
 (read)                             ; 10.5.2.4 - 7
 7

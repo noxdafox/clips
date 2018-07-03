@@ -29,13 +29,22 @@ d6
 For a total of 8 defmodules.
 CLIPS> (ppdefmodule MAIN::d6)
 [PRNTUTIL1] Unable to find defmodule 'MAIN::d6'.
-CLIPS> (ppdefmodule d6 d5)
-[ARGACCES1] Function 'ppdefmodule' expected exactly 1 argument.
+CLIPS> (ppdefmodule)
+[ARGACCES1] Function 'ppdefmodule' expected at least 1 argument.
 CLIPS> (ppdefmodule *)
 (defmodule *)
 CLIPS> (ppdefmodule d1)
 (defmodule d1
    (export ?ALL))
+CLIPS> (ppdefmodule d1 stdout)
+(defmodule d1
+   (export ?ALL))
+CLIPS> (ppdefmodule d1 bogus)
+[ROUTER1] Logical name 'bogus' was not recognized by any routers.
+CLIPS> (ppdefmodule d1 nil)
+"(defmodule d1
+   (export ?ALL))
+"
 CLIPS> (ppdefmodule d2)
 (defmodule d2
    (import d1 ?ALL))

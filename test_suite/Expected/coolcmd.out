@@ -5,7 +5,7 @@ CLIPS> (defclass PP-TEST (is-a USER)
    (multislot x)
    (slot y))
 CLIPS> (ppdefclass)
-[ARGACCES1] Function 'ppdefclass' expected exactly 1 argument.
+[ARGACCES1] Function 'ppdefclass' expected at least 1 argument.
 CLIPS> (ppdefclass USER)
 CLIPS> (ppdefclass BOGUS)
 [PRNTUTIL1] Unable to find defclass 'BOGUS'.
@@ -14,6 +14,19 @@ CLIPS> (ppdefclass PP-TEST)
    (is-a USER)
    (multislot x)
    (slot y))
+CLIPS> (ppdefclass PP-TEST stdout)
+(defclass MAIN::PP-TEST
+   (is-a USER)
+   (multislot x)
+   (slot y))
+CLIPS> (ppdefclass PP-TEST bogus)
+[ROUTER1] Logical name 'bogus' was not recognized by any routers.
+CLIPS> (ppdefclass PP-TEST nil)
+"(defclass MAIN::PP-TEST
+   (is-a USER)
+   (multislot x)
+   (slot y))
+"
 CLIPS> (list-defclasses)
 FLOAT
 INTEGER
@@ -247,6 +260,17 @@ CLIPS> (ppdefmessage-handler BOY play primary)
 (defmessage-handler MAIN::BOY play
    ()
    (printout t "The boy is now playing..." crlf))
+CLIPS> (ppdefmessage-handler BOY play primary stdout)
+(defmessage-handler MAIN::BOY play
+   ()
+   (printout t "The boy is now playing..." crlf))
+CLIPS> (ppdefmessage-handler BOY play primary bogus)
+[ROUTER1] Logical name 'bogus' was not recognized by any routers.
+CLIPS> (ppdefmessage-handler BOY play primary nil)
+"(defmessage-handler MAIN::BOY play
+   ()
+   (printout t "The boy is now playing..." crlf))
+"
 CLIPS> (ppdefmessage-handler USER init around)
 [MSGCOM2] Unable to find message-handler 'init' around for class 'USER' in function 'ppdefmessage-handler'.
 CLIPS> (ppdefmessage-handler USER init before)
@@ -393,7 +417,7 @@ CLIPS> (definstances TEST-CASES "Random comment..."
    (t1 of TEST (x 100) (y a b c d e f))
    (t2 of TEST (y blah)))
 CLIPS> (ppdefinstances)
-[ARGACCES1] Function 'ppdefinstances' expected exactly 1 argument.
+[ARGACCES1] Function 'ppdefinstances' expected at least 1 argument.
 CLIPS> (ppdefinstances BOGUS)
 [PRNTUTIL1] Unable to find definstances 'BOGUS'.
 CLIPS> (ppdefinstances 34)
@@ -405,6 +429,23 @@ CLIPS> (ppdefinstances TEST-CASES)
       (y a b c d e f))
    (t2 of TEST
       (y blah)))
+CLIPS> (ppdefinstances TEST-CASES stdout)
+(definstances MAIN::TEST-CASES "Random comment..."
+   (t1 of TEST
+      (x 100)
+      (y a b c d e f))
+   (t2 of TEST
+      (y blah)))
+CLIPS> (ppdefinstances TEST-CASES bogus)
+[ROUTER1] Logical name 'bogus' was not recognized by any routers.
+CLIPS> (ppdefinstances TEST-CASES nil)
+"(definstances MAIN::TEST-CASES "Random comment..."
+   (t1 of TEST
+      (x 100)
+      (y a b c d e f))
+   (t2 of TEST
+      (y blah)))
+"
 CLIPS> (list-definstances)
 TEST-CASES
 For a total of 1 definstances.

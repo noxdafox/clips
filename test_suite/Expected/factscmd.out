@@ -207,17 +207,37 @@ CLIPS> (ppfact a)
 [ARGACCES2] Function 'ppfact' expected argument #1 to be of type integer or fact address.
 CLIPS> (ppfact 2)
 [PRNTUTIL1] Unable to find fact f-2.
-CLIPS> (assert (foo a b c d))
+CLIPS> (deftemplate person (slot name)(slot age (default 0)))
+CLIPS> (assert (person (name Me)))
 <Fact-1>
 CLIPS> (ppfact 1)
-(foo a b c d)
+(person 
+   (name Me) 
+   (age 0))
+CLIPS> (ppfact 1 bogus)
+[ROUTER1] Logical name 'bogus' was not recognized by any routers.
 CLIPS> (ppfact 1 nil)
+"(person 
+   (name Me) 
+   (age 0))"
 CLIPS> (ppfact 1 t)
-(foo a b c d)
+(person 
+   (name Me) 
+   (age 0))
 CLIPS> (ppfact 1 t FALSE)
-(foo a b c d)
+(person 
+   (name Me) 
+   (age 0))
 CLIPS> (ppfact 1 t TRUE)
-(foo a b c d)
+(person 
+   (name Me))
+CLIPS> (ppfact 1 nil FALSE)
+"(person 
+   (name Me) 
+   (age 0))"
+CLIPS> (ppfact 1 nil TRUE)
+"(person 
+   (name Me))"
 CLIPS> 
 (deftemplate bar
    (slot w)

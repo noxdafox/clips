@@ -30,6 +30,13 @@ d6
 For a total of 7 deftemplates.
 CLIPS> (ppdeftemplate d1)
 (deftemplate MAIN::d1)
+CLIPS> (ppdeftemplate d1 stdout)
+(deftemplate MAIN::d1)
+CLIPS> (ppdeftemplate d1 bogus)
+[ROUTER1] Logical name 'bogus' was not recognized by any routers.
+CLIPS> (ppdeftemplate d1 nil)
+"(deftemplate MAIN::d1)
+"
 CLIPS> (ppdeftemplate d2)
 (deftemplate MAIN::d2
    (field x))
