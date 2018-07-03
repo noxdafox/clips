@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/25/16             */
+   /*            CLIPS Version 6.40  07/02/16             */
    /*                                                     */
    /*          DEFRULE BASIC COMMANDS HEADER FILE         */
    /*******************************************************/
@@ -54,6 +54,9 @@
 /*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
 /*            UDF redesign.                                  */
+/*                                                           */
+/*            Pretty print functions accept optional logical */
+/*            name argument.                                 */
 /*                                                           */
 /*************************************************************/
 
@@ -122,7 +125,7 @@ void DefruleBasicCommands(
 #if DEBUGGING_FUNCTIONS
    AddUDF(theEnv,"rules","v",0,1,"y",ListDefrulesCommand,"ListDefrulesCommand",NULL);
    AddUDF(theEnv,"list-defrules","v",0,1,"y",ListDefrulesCommand,"ListDefrulesCommand",NULL);
-   AddUDF(theEnv,"ppdefrule","v",1,1,"y",PPDefruleCommand,"PPDefruleCommand",NULL);
+   AddUDF(theEnv,"ppdefrule","vs",1,2,";y;ldsyn",PPDefruleCommand,"PPDefruleCommand",NULL);
 #endif
 
 #if (BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE)
@@ -360,7 +363,7 @@ void PPDefruleCommand(
   UDFContext *context,
   UDFValue *returnValue)
   {
-   PPConstructCommand(context,"ppdefrule",DefruleData(theEnv)->DefruleConstruct);
+   PPConstructCommand(context,"ppdefrule",DefruleData(theEnv)->DefruleConstruct,returnValue);
   }
 
 /***********************************/

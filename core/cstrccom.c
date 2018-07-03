@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  11/01/16             */
+   /*            CLIPS Version 6.40  07/02/18             */
    /*                                                     */
    /*              CONSTRUCT COMMANDS MODULE              */
    /*******************************************************/
@@ -58,6 +58,9 @@
 /*            data structures.                               */
 /*                                                           */
 /*            UDF redesign.                                  */
+/*                                                           */
+/*            Pretty print functions accept optional logical */
+/*            name argument.                                 */
 /*                                                           */
 /*************************************************************/
 
@@ -377,10 +380,13 @@ void UndefconstructCommand(
 void PPConstructCommand(
   UDFContext *context,
   const char *command,
-  Construct *constructClass)
+  Construct *constructClass,
+  UDFValue *returnValue)
   {
    Environment *theEnv = context->environment;
    const char *constructName;
+   const char *logicalName;
+   const char *ppForm;
    char buffer[80];
 
    /*===============================*/
@@ -392,14 +398,75 @@ void PPConstructCommand(
 
    constructName = GetConstructName(context,command,buffer);
    if (constructName == NULL) return;
+   
+   if (UDFHasNextArgument(context))
+     {
+      logicalName = GetLogicalName(context,STDOUT);
+      if (logicalName == NULL)
+        {
+         IllegalLogicalNameMessage(theEnv,command);
+         SetHaltExecution(theEnv,true);
+         SetEvaluationError(theEnv,true);
+         return;
+        }
+     }
+   else
+     { logicalName = STDOUT; }
 
    /*================================*/
    /* Call the driver routine for    */
    /* pretty printing the construct. */
    /*================================*/
 
-   if (PPConstruct(theEnv,constructName,STDOUT,constructClass) == false)
+   if (strcmp(logicalName,"nil") == 0)
+     {
+      ppForm = PPConstructNil(theEnv,constructName,constructClass);
+      
+      if (ppForm == NULL)
+        { CantFindItemErrorMessage(theEnv,constructClass->constructName,constructName,true); }
+
+      returnValue->lexemeValue = CreateString(theEnv,ppForm);
+      
+      return;
+     }
+
+   if (PPConstruct(theEnv,constructName,logicalName,constructClass) == false)
      { CantFindItemErrorMessage(theEnv,constructClass->constructName,constructName,true); }
+  }
+
+/******************************************************/
+/* PPConstructNil: Driver routine for pretty printing */
+/*   a construct using the logical name nil.          */
+/******************************************************/
+const char *PPConstructNil(
+  Environment *theEnv,
+  const char *constructName,
+  Construct *constructClass)
+  {
+   ConstructHeader *constructPtr;
+
+   /*==================================*/
+   /* Use the construct's name to find */
+   /* a pointer to actual construct.   */
+   /*==================================*/
+
+   constructPtr = (*constructClass->findFunction)(theEnv,constructName);
+   if (constructPtr == NULL) return NULL;
+
+   /*==============================================*/
+   /* If the pretty print form is NULL (because of */
+   /* conserve-mem), return "" (which indicates    */
+   /* the construct was found).                    */
+   /*==============================================*/
+
+   if ((*constructClass->getPPFormFunction)(constructPtr) == NULL)
+     { return ""; }
+
+   /*=================================*/
+   /* Return the pretty print string. */
+   /*=================================*/
+
+   return (*constructClass->getPPFormFunction)(constructPtr);
   }
 
 /***********************************/

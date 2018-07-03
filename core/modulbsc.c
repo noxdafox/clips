@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/25/16             */
+   /*            CLIPS Version 6.40  07/02/18             */
    /*                                                     */
    /*         DEFMODULE BASIC COMMANDS HEADER FILE        */
    /*******************************************************/
@@ -38,6 +38,9 @@
 /*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
 /*            UDF redesign.                                  */
+/*                                                           */
+/*            Pretty print functions accept optional logical */
+/*            name argument.                                 */
 /*                                                           */
 /*************************************************************/
 
@@ -84,7 +87,7 @@ void DefmoduleBasicCommands(
 
 #if DEBUGGING_FUNCTIONS
    AddUDF(theEnv,"list-defmodules","v",0,0,NULL,ListDefmodulesCommand,"ListDefmodulesCommand",NULL);
-   AddUDF(theEnv,"ppdefmodule","v",1,1,"y",PPDefmoduleCommand,"PPDefmoduleCommand",NULL);
+   AddUDF(theEnv,"ppdefmodule","v",1,2,";y;ldsyn",PPDefmoduleCommand,"PPDefmoduleCommand",NULL);
 #endif
 #endif
 #endif
@@ -217,13 +220,63 @@ void PPDefmoduleCommand(
   UDFValue *returnValue)
   {
    const char *defmoduleName;
+   const char *logicalName;
+   const char *ppForm;
 
    defmoduleName = GetConstructName(context,"ppdefmodule","defmodule name");
    if (defmoduleName == NULL) return;
 
-   PPDefmodule(theEnv,defmoduleName,STDOUT);
+   if (UDFHasNextArgument(context))
+     {
+      logicalName = GetLogicalName(context,STDOUT);
+      if (logicalName == NULL)
+        {
+         IllegalLogicalNameMessage(theEnv,"ppdefmodule");
+         SetHaltExecution(theEnv,true);
+         SetEvaluationError(theEnv,true);
+         return;
+        }
+     }
+   else
+     { logicalName = STDOUT; }
+
+   if (strcmp(logicalName,"nil") == 0)
+     {
+      ppForm = PPDefmoduleNil(theEnv,defmoduleName);
+      
+      if (ppForm == NULL)
+        { CantFindItemErrorMessage(theEnv,"defmodule",defmoduleName,true); }
+
+      returnValue->lexemeValue = CreateString(theEnv,ppForm);
+      
+      return;
+     }
+
+   PPDefmodule(theEnv,defmoduleName,logicalName);
 
    return;
+  }
+
+/****************************************/
+/* PPDefmoduleNil: C access routine for */
+/*   the ppdefmodule command.           */
+/****************************************/
+const char *PPDefmoduleNil(
+  Environment *theEnv,
+  const char *defmoduleName)
+  {
+   Defmodule *defmodulePtr;
+
+   defmodulePtr = FindDefmodule(theEnv,defmoduleName);
+   if (defmodulePtr == NULL)
+     {
+      CantFindItemErrorMessage(theEnv,"defmodule",defmoduleName,true);
+      return NULL;
+     }
+
+   if (DefmodulePPForm(defmodulePtr) == NULL) return "";
+   
+   return DefmodulePPForm(defmodulePtr);
   }
 
 /*************************************/

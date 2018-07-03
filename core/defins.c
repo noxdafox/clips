@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  10/18/16             */
+   /*            CLIPS Version 6.40  07/02/18             */
    /*                                                     */
    /*                  DEFINSTANCES MODULE                */
    /*******************************************************/
@@ -59,6 +59,9 @@
 /*            UDF redesign.                                  */
 /*                                                           */
 /*            Removed initial-object support.                */
+/*                                                           */
+/*            Pretty print functions accept optional logical */
+/*            name argument.                                 */
 /*                                                           */
 /*************************************************************/
 
@@ -208,7 +211,7 @@ void SetupDefinstances(
 #endif
 
 #if DEBUGGING_FUNCTIONS
-   AddUDF(theEnv,"ppdefinstances","v",1,1,"y",PPDefinstancesCommand,"PPDefinstancesCommand",NULL);
+   AddUDF(theEnv,"ppdefinstances","vs",1,2,";y;ldsyn",PPDefinstancesCommand,"PPDefinstancesCommand",NULL);
    AddUDF(theEnv,"list-definstances","v",0,1,"y",ListDefinstancesCommand,"ListDefinstancesCommand",NULL);
 #endif
 
@@ -468,7 +471,7 @@ void PPDefinstancesCommand(
   UDFContext *context,
   UDFValue *returnValue)
   {
-   PPConstructCommand(context,"ppdefinstances",DefinstancesData(theEnv)->DefinstancesConstruct);
+   PPConstructCommand(context,"ppdefinstances",DefinstancesData(theEnv)->DefinstancesConstruct,returnValue);
   }
 
 /***************************************************

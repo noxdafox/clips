@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  11/01/16             */
+   /*            CLIPS Version 6.40  07/02/18             */
    /*                                                     */
    /*          DEFTEMPLATE BASIC COMMANDS MODULE          */
    /*******************************************************/
@@ -53,6 +53,9 @@
 /*            UDF redesign.                                  */
 /*                                                           */
 /*            Removed initial-fact support.                  */
+/*                                                           */
+/*            Pretty print functions accept optional logical */
+/*            name argument.                                 */
 /*                                                           */
 /*************************************************************/
 
@@ -107,7 +110,7 @@ void DeftemplateBasicCommands(
 
 #if DEBUGGING_FUNCTIONS
    AddUDF(theEnv,"list-deftemplates","v",0,1,"y",ListDeftemplatesCommand,"ListDeftemplatesCommand",NULL);
-   AddUDF(theEnv,"ppdeftemplate","v",1,1,"y",PPDeftemplateCommand,"PPDeftemplateCommand",NULL);
+   AddUDF(theEnv,"ppdeftemplate","vs",1,2,";y;ldsyn",PPDeftemplateCommand,"PPDeftemplateCommand",NULL);
 #endif
 
 #if (BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE)
@@ -219,7 +222,7 @@ void PPDeftemplateCommand(
   UDFContext *context,
   UDFValue *returnValue)
   {
-   PPConstructCommand(context,"ppdeftemplate",DeftemplateData(theEnv)->DeftemplateConstruct);
+   PPConstructCommand(context,"ppdeftemplate",DeftemplateData(theEnv)->DeftemplateConstruct,returnValue);
   }
 
 /***************************************/

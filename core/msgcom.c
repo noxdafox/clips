@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  11/01/16             */
+   /*            CLIPS Version 6.40  07/02/18             */
    /*                                                     */
    /*                OBJECT MESSAGE COMMANDS              */
    /*******************************************************/
@@ -53,6 +53,9 @@
 /*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
 /*            UDF redesign.                                  */
+/*                                                           */
+/*            Pretty print functions accept optional logical */
+/*            name argument.                                 */
 /*                                                           */
 /*************************************************************/
 
@@ -197,7 +200,7 @@ void SetupMessageHandlers(
 #if DEBUGGING_FUNCTIONS
    AddUDF(theEnv,"preview-send","v",2,2,"y",PreviewSendCommand,"PreviewSendCommand",NULL);
 
-   AddUDF(theEnv,"ppdefmessage-handler","v",2,3,"y",PPDefmessageHandlerCommand,"PPDefmessageHandlerCommand",NULL);
+   AddUDF(theEnv,"ppdefmessage-handler","v",2,4,"y",PPDefmessageHandlerCommand,"PPDefmessageHandlerCommand",NULL);
    AddUDF(theEnv,"list-defmessage-handlers","v",0,2,"y",ListDefmessageHandlersCommand,"ListDefmessageHandlersCommand",NULL);
 #endif
 
@@ -584,6 +587,7 @@ void PPDefmessageHandlerCommand(
    UDFValue theArg;
    CLIPSLexeme *csym, *msym;
    const char *tname;
+   const char *logicalName;
    Defclass *cls = NULL;
    unsigned mtype;
    DefmessageHandler *hnd;
@@ -606,12 +610,28 @@ void PPDefmessageHandlerCommand(
      }
    else
      tname = MessageHandlerData(theEnv)->hndquals[MPRIMARY];
+     
    mtype = HandlerType(theEnv,"ppdefmessage-handler",true,tname);
    if (mtype == MERROR)
      {
       SetEvaluationError(theEnv,true);
       return;
      }
+     
+   if (UDFHasNextArgument(context))
+     {
+      logicalName = GetLogicalName(context,STDOUT);
+      if (logicalName == NULL)
+        {
+         IllegalLogicalNameMessage(theEnv,"ppdefmessage-handler");
+         SetHaltExecution(theEnv,true);
+         SetEvaluationError(theEnv,true);
+         return;
+        }
+     }
+   else
+     { logicalName = STDOUT; }
+
    if (csym != NULL)
      cls = LookupDefclassByMdlOrScope(theEnv,csym->contents);
    if (((cls == NULL) || (msym == NULL)) ? true :
@@ -628,8 +648,19 @@ void PPDefmessageHandlerCommand(
       SetEvaluationError(theEnv,true);
       return;
      }
-   if (hnd->header.ppForm != NULL)
-     WriteString(theEnv,STDOUT,hnd->header.ppForm);
+     
+   if (strcmp(logicalName,"nil") == 0)
+     {
+      if (hnd->header.ppForm != NULL)
+        { returnValue->lexemeValue = CreateString(theEnv,hnd->header.ppForm); }
+      else
+        { returnValue->lexemeValue = CreateString(theEnv,""); }
+     }
+   else
+     {
+      if (hnd->header.ppForm != NULL)
+        WriteString(theEnv,logicalName,hnd->header.ppForm);
+     }
   }
 
 /*****************************************************************************

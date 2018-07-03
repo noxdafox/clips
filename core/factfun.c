@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  09/20/17             */
+   /*            CLIPS Version 6.40  07/02/18             */
    /*                                                     */
    /*               FACT FUNCTIONS MODULE                 */
    /*******************************************************/
@@ -91,6 +91,9 @@
 /*            Watch facts for modify command only prints     */
 /*            changed slots.                                 */
 /*                                                           */
+/*            Pretty print functions accept optional logical */
+/*            name argument.                                 */
+/*                                                           */
 /*************************************************************/
 
 #include <stdio.h>
@@ -123,7 +126,7 @@ void FactFunctionDefinitions(
    AddUDF(theEnv,"fact-slot-value","*",2,2,";lf;y",FactSlotValueFunction,"FactSlotValueFunction",NULL);
    AddUDF(theEnv,"fact-slot-names","*",1,1,"lf",FactSlotNamesFunction,"FactSlotNamesFunction",NULL);
    AddUDF(theEnv,"get-fact-list","m",0,1,"y",GetFactListFunction,"GetFactListFunction",NULL);
-   AddUDF(theEnv,"ppfact","v",1,3,"*;lf",PPFactFunction,"PPFactFunction",NULL);
+   AddUDF(theEnv,"ppfact","vs",1,3,"*;lf;ldsyn",PPFactFunction,"PPFactFunction",NULL);
 #else
 #if MAC_XCD
 #pragma unused(theEnv)
@@ -553,7 +556,18 @@ void PPFactFunction(
    /*============================================================*/
 
    if (strcmp(logicalName,"nil") == 0)
-     { return; }
+     {
+      StringBuilder *theSB;
+      
+      theSB = CreateStringBuilder(theEnv,256);
+      
+      FactPPForm(theFact,theSB,ignoreDefaults);
+      returnValue->lexemeValue = CreateString(theEnv,theSB->contents);
+      
+      SBDispose(theSB);
+
+      return;
+     }
    else if (QueryRouters(theEnv,logicalName) == false)
      {
       UnrecognizedRouterMessage(theEnv,logicalName);

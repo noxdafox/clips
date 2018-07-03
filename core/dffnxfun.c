@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  11/01/16             */
+   /*            CLIPS Version 6.40  07/02/18             */
    /*                                                     */
    /*                 DEFFUNCTION MODULE                  */
    /*******************************************************/
@@ -62,6 +62,9 @@
 /*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
 /*            UDF redesign.                                  */
+/*                                                           */
+/*            Pretty print functions accept optional logical */
+/*            name argument.                                 */
 /*                                                           */
 /*************************************************************/
 
@@ -233,7 +236,7 @@ void SetupDeffunctions(
 
 #if DEBUGGING_FUNCTIONS
    AddUDF(theEnv,"list-deffunctions","v",0,1,"y",ListDeffunctionsCommand,"ListDeffunctionsCommand",NULL);
-   AddUDF(theEnv,"ppdeffunction","v",1,1,"y",PPDeffunctionCommand,"PPDeffunctionCommand",NULL);
+   AddUDF(theEnv,"ppdeffunction","vs",1,2,";y;ldsyn",PPDeffunctionCommand,"PPDeffunctionCommand",NULL);
 #endif
 
    AddUDF(theEnv,"get-deffunction-list","m",0,1,"y",GetDeffunctionListFunction,"GetDeffunctionListFunction",NULL);
@@ -560,7 +563,7 @@ void PPDeffunctionCommand(
   UDFContext *context,
   UDFValue *returnValue)
   {
-   PPConstructCommand(context,"ppdeffunction",DeffunctionData(theEnv)->DeffunctionConstruct);
+   PPConstructCommand(context,"ppdeffunction",DeffunctionData(theEnv)->DeffunctionConstruct,returnValue);
   }
 
 /***************************************************

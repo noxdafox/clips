@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  08/25/16            */
+   /*             CLIPS Version 6.40  07/02/18            */
    /*                                                     */
    /*         DEFMODULE BASIC COMMANDS HEADER FILE        */
    /*******************************************************/
@@ -41,6 +41,9 @@
 /*                                                           */
 /*            UDF redesign.                                  */
 /*                                                           */
+/*            Pretty print functions accept optional logical */
+/*            name argument.                                 */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_modulbsc
@@ -56,6 +59,7 @@
    void                           GetDefmoduleList(Environment *,CLIPSValue *);
    void                           PPDefmoduleCommand(Environment *,UDFContext *,UDFValue *);
    bool                           PPDefmodule(Environment *,const char *,const char *);
+   const char                    *PPDefmoduleNil(Environment *,const char *);
    void                           ListDefmodulesCommand(Environment *,UDFContext *,UDFValue *);
    void                           ListDefmodules(Environment *,const char *);
 

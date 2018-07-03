@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  11/01/16             */
+   /*            CLIPS Version 6.40  07/02/18             */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -67,6 +67,9 @@
 /*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
 /*            UDF redesign.                                  */
+/*                                                           */
+/*            Pretty print functions accept optional logical */
+/*            name argument.                                 */
 /*                                                           */
 /*************************************************************/
 
@@ -274,9 +277,9 @@ void SetupGenericFunctions(
    AddUDF(theEnv,"(gnrc-current-arg)","*",0,UNBOUNDED,NULL,GetGenericCurrentArgument,"GetGenericCurrentArgument",NULL);
 
 #if DEBUGGING_FUNCTIONS
-   AddUDF(theEnv,"ppdefgeneric","v",1,1,"y",PPDefgenericCommand,"PPDefgenericCommand",NULL);
+   AddUDF(theEnv,"ppdefgeneric","vs",1,2,";y;ldsyn",PPDefgenericCommand,"PPDefgenericCommand",NULL);
    AddUDF(theEnv,"list-defgenerics","v",0,1,"y",ListDefgenericsCommand,"ListDefgenericsCommand",NULL);
-   AddUDF(theEnv,"ppdefmethod","v",2,2,"*;y;l",PPDefmethodCommand,"PPDefmethodCommand",NULL);
+   AddUDF(theEnv,"ppdefmethod","v",2,3,"*;y;l;ldsyn",PPDefmethodCommand,"PPDefmethodCommand",NULL);
    AddUDF(theEnv,"list-defmethods","v",0,1,"y",ListDefmethodsCommand,"ListDefmethodsCommand",NULL);
    AddUDF(theEnv,"preview-generic","v",1,UNBOUNDED,"*;y",PreviewGeneric,"PreviewGeneric",NULL);
 #endif
@@ -950,7 +953,7 @@ void PPDefgenericCommand(
   UDFContext *context,
   UDFValue *returnValue)
   {
-   PPConstructCommand(context,"ppdefgeneric",DefgenericData(theEnv)->DefgenericConstruct);
+   PPConstructCommand(context,"ppdefgeneric",DefgenericData(theEnv)->DefgenericConstruct,returnValue);
   }
 
 /**********************************************************
@@ -969,6 +972,7 @@ void PPDefmethodCommand(
   {
    UDFValue theArg;
    const char *gname;
+   const char *logicalName;
    Defgeneric *gfunc;
    unsigned short gi;
 
@@ -977,14 +981,40 @@ void PPDefmethodCommand(
 
    if (! UDFNextArgument(context,INTEGER_BIT,&theArg)) return;
 
+   if (UDFHasNextArgument(context))
+     {
+      logicalName = GetLogicalName(context,STDOUT);
+      if (logicalName == NULL)
+        {
+         IllegalLogicalNameMessage(theEnv,"ppdefmethod");
+         SetHaltExecution(theEnv,true);
+         SetEvaluationError(theEnv,true);
+         return;
+        }
+     }
+   else
+     { logicalName = STDOUT; }
+
    gfunc = CheckGenericExists(theEnv,"ppdefmethod",gname);
    if (gfunc == NULL)
      return;
+
    gi = CheckMethodExists(theEnv,"ppdefmethod",gfunc,(unsigned short) theArg.integerValue->contents);
    if (gi == METHOD_NOT_FOUND)
      return;
-   if (gfunc->methods[gi].header.ppForm != NULL)
-     WriteString(theEnv,STDOUT,gfunc->methods[gi].header.ppForm);
+     
+   if (strcmp(logicalName,"nil") == 0)
+     {
+      if (gfunc->methods[gi].header.ppForm != NULL)
+        { returnValue->lexemeValue = CreateString(theEnv,gfunc->methods[gi].header.ppForm); }
+      else
+        { returnValue->lexemeValue = CreateString(theEnv,""); }
+     }
+   else
+     {
+      if (gfunc->methods[gi].header.ppForm != NULL)
+        WriteString(theEnv,logicalName,gfunc->methods[gi].header.ppForm);
+     }
   }
 
 /******************************************************

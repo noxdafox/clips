@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/25/16             */
+   /*            CLIPS Version 6.40  07/02/18             */
    /*                                                     */
    /*         DEFGLOBAL BASIC COMMANDS HEADER FILE        */
    /*******************************************************/
@@ -52,6 +52,9 @@
 /*                                                           */
 /*            UDF redesign.                                  */
 /*                                                           */
+/*            Pretty print functions accept optional logical */
+/*            name argument.                                 */
+/*                                                           */
 /*************************************************************/
 
 #include "setup.h"
@@ -101,7 +104,7 @@ void DefglobalBasicCommands(
 
 #if DEBUGGING_FUNCTIONS
    AddUDF(theEnv,"list-defglobals","v",0,1,"y",ListDefglobalsCommand,"ListDefglobalsCommand",NULL);
-   AddUDF(theEnv,"ppdefglobal","v",1,1,"y",PPDefglobalCommand,"PPDefglobalCommand",NULL);
+   AddUDF(theEnv,"ppdefglobal","vs",1,2,";y;ldsyn",PPDefglobalCommand,"PPDefglobalCommand",NULL);
    AddWatchItem(theEnv,"globals",0,&DefglobalData(theEnv)->WatchGlobals,0,DefglobalWatchAccess,DefglobalWatchPrint);
 #endif
 
@@ -250,7 +253,7 @@ void PPDefglobalCommand(
   UDFContext *context,
   UDFValue *returnValue)
   {
-   PPConstructCommand(context,"ppdefglobal",DefglobalData(theEnv)->DefglobalConstruct);
+   PPConstructCommand(context,"ppdefglobal",DefglobalData(theEnv)->DefglobalConstruct,returnValue);
   }
 
 /*************************************/

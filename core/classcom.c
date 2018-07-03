@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  10/01/16             */
+   /*            CLIPS Version 6.40  07/02/18             */
    /*                                                     */
    /*                  CLASS COMMANDS MODULE              */
    /*******************************************************/
@@ -50,7 +50,10 @@
 /*                                                           */
 /*            UDF redesign.                                  */
 /*                                                           */
-/**************************************************************/
+/*            Pretty print functions accept optional logical */
+/*            name argument.                                 */
+/*                                                           */
+/*************************************************************/
 
 /* =========================================
    *****************************************
@@ -459,7 +462,7 @@ void PPDefclassCommand(
   UDFContext *context,
   UDFValue *returnValue)
   {
-   PPConstructCommand(context,"ppdefclass",DefclassData(theEnv)->DefclassConstruct);
+   PPConstructCommand(context,"ppdefclass",DefclassData(theEnv)->DefclassConstruct,returnValue);
   }
 
 /***************************************************

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  04/10/18             */
+   /*            CLIPS Version 6.40  07/02/18             */
    /*                                                     */
    /*                 FACT MANAGER MODULE                 */
    /*******************************************************/
@@ -110,6 +110,9 @@
 /*                                                           */
 /*            Assert returns duplicate fact. FALSE is now    */
 /*            returned only if an error occurs.              */
+/*                                                           */
+/*            Pretty print functions accept optional logical */
+/*            name argument.                                 */
 /*                                                           */
 /*************************************************************/
 
@@ -1739,12 +1742,13 @@ Fact *GetNextFactInScope(
 /*************************************/
 void FactPPForm(
   Fact *theFact,
-  StringBuilder *theSB)
+  StringBuilder *theSB,
+  bool ignoreDefaults)
   {
    Environment *theEnv = theFact->whichDeftemplate->header.env;
    
    OpenStringBuilderDestination(theEnv,"FactPPForm",theSB);
-   PrintFactWithIdentifier(theEnv,"FactPPForm",theFact,NULL);
+   PrintFact(theEnv,"FactPPForm",theFact,true,ignoreDefaults,NULL);
    CloseStringBuilderDestination(theEnv,"FactPPForm");
   }
 

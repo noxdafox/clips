@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  01/21/18             */
+   /*            CLIPS Version 6.40  07/02/18             */
    /*                                                     */
    /*               CLASS INITIALIZATION MODULE           */
    /*******************************************************/
@@ -55,6 +55,9 @@
 /*                                                           */
 /*            Removed initial-object support.                 */
 /*                                                            */
+/*            Pretty print functions accept optional logical */
+/*            name argument.                                 */
+/*                                                           */
 /**************************************************************/
 
 /* =========================================
@@ -634,7 +637,7 @@ static void SetupDefclasses(
 
 #if DEBUGGING_FUNCTIONS
    AddUDF(theEnv,"list-defclasses","v",0,1,"y",ListDefclassesCommand,"ListDefclassesCommand",NULL);
-   AddUDF(theEnv,"ppdefclass","v",1,1,"y",PPDefclassCommand,"PPDefclassCommand",NULL);
+   AddUDF(theEnv,"ppdefclass","vs",1,2,";y;ldsyn",PPDefclassCommand,"PPDefclassCommand",NULL);
    AddUDF(theEnv,"describe-class","v",1,1,"y",DescribeClassCommand,"DescribeClassCommand",NULL);
    AddUDF(theEnv,"browse-classes","v",0,1,"y",BrowseClassesCommand,"BrowseClassesCommand",NULL);
 #endif

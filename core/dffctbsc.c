@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  11/01/16             */
+   /*            CLIPS Version 6.40  07/02/18             */
    /*                                                     */
    /*         DEFFACTS BASIC COMMANDS HEADER FILE         */
    /*******************************************************/
@@ -52,6 +52,9 @@
 /*            UDF redesign.                                  */
 /*                                                           */
 /*            Removed initial-fact support.                  */
+/*                                                           */
+/*            Pretty print functions accept optional logical */
+/*            name argument.                                 */
 /*                                                           */
 /*************************************************************/
 
@@ -110,7 +113,7 @@ void DeffactsBasicCommands(
 
 #if DEBUGGING_FUNCTIONS
    AddUDF(theEnv,"list-deffacts","v",0,1,"y",ListDeffactsCommand,"ListDeffactsCommand",NULL);
-   AddUDF(theEnv,"ppdeffacts","v",1,1,"y",PPDeffactsCommand,"PPDeffactsCommand",NULL);
+   AddUDF(theEnv,"ppdeffacts","vs",1,2,";y;ldsyn",PPDeffactsCommand,"PPDeffactsCommand",NULL);
 #endif
 
 #if (BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE)
@@ -259,7 +262,7 @@ void PPDeffactsCommand(
   UDFContext *context,
   UDFValue *returnValue)
   {
-   PPConstructCommand(context,"ppdeffacts",DeffactsData(theEnv)->DeffactsConstruct);
+   PPConstructCommand(context,"ppdeffacts",DeffactsData(theEnv)->DeffactsConstruct,returnValue);
   }
 
 /************************************/

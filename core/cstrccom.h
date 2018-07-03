@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  08/25/16            */
+   /*             CLIPS Version 6.40  07/02/18            */
    /*                                                     */
    /*           CONSTRUCT COMMAND HEADER MODULE           */
    /*******************************************************/
@@ -38,6 +38,9 @@
 /*                                                           */
 /*            UDF redesign.                                  */
 /*                                                           */
+/*            Pretty print functions accept optional logical */
+/*            name argument.                                 */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_cstrccom
@@ -62,6 +65,7 @@ typedef void ConstructActionFunction(Environment *,ConstructHeader *,void *);
    ConstructHeader               *FindNamedConstructInModuleOrImports(Environment *,const char *,Construct *);
    void                           UndefconstructCommand(UDFContext *,const char *,Construct *);
    bool                           PPConstruct(Environment *,const char *,const char *,Construct *);
+   const char                    *PPConstructNil(Environment *,const char *,Construct *);
    CLIPSLexeme                   *GetConstructModuleCommand(UDFContext *,const char *,Construct *);
    Defmodule                     *GetConstructModule(Environment *,const char *,Construct *);
    bool                           Undefconstruct(Environment *,ConstructHeader *,Construct *);
@@ -78,7 +82,7 @@ typedef void ConstructActionFunction(Environment *,ConstructHeader *,void *);
    void                           SetNextConstruct(ConstructHeader *,ConstructHeader *);
    struct defmoduleItemHeader    *GetConstructModuleItem(ConstructHeader *);
    const char                    *GetConstructPPForm(ConstructHeader *);
-   void                           PPConstructCommand(UDFContext *,const char *,Construct *);
+   void                           PPConstructCommand(UDFContext *,const char *,Construct *,UDFValue *);
    ConstructHeader               *GetNextConstructItem(Environment *,ConstructHeader *,unsigned);
    struct defmoduleItemHeader    *GetConstructModuleItemByIndex(Environment *,Defmodule *,unsigned);
    void                           FreeConstructHeaderModule(Environment *,struct defmoduleItemHeader *,
