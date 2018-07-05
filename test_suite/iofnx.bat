@@ -231,4 +231,7 @@ ab cd ef
 (seek temp 0 seek-set)
 (readline temp)
 (close temp)
+(chdir)
+(chdir 3)
+(chdir 3 4)
 (clear)

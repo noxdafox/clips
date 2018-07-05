@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  06/01/18             */
+   /*            CLIPS Version 6.40  07/05/18             */
    /*                                                     */
    /*                I/O FUNCTIONS MODULE                 */
    /*******************************************************/
@@ -95,11 +95,12 @@
 /*            Added r+, w+, a+, rb+, wb+, and ab+ file       */
 /*            access modes for the open function.            */
 /*                                                           */
-/*            Added flush, rewind, tell, and seek functions. */
+/*            Added flush, rewind, tell, seek, and chdir     */
+/*            functions.                                     */
 /*                                                           */
 /*            Changed error return value of read, readline,  */
-/*            and read-number functions to FALSE and assign  */
-/*            an error code.                                 */
+/*            and read-number functions to FALSE and added   */
+/*            an error code for read.                        */
 /*                                                           */
 /*************************************************************/
 
@@ -202,6 +203,7 @@ void IOFunctionDefinitions(
    AddUDF(theEnv,"readline","sy",0,1,";ldsyn",ReadlineFunction,"ReadlineFunction",NULL);
    AddUDF(theEnv,"set-locale","sy",0,1,";s",SetLocaleFunction,"SetLocaleFunction",NULL);
    AddUDF(theEnv,"read-number","syld",0,1,";ldsyn",ReadNumberFunction,"ReadNumberFunction",NULL);
+   AddUDF(theEnv,"chdir","b",0,1,"sy",ChdirFunction,"ChdirFunction",NULL);
 #endif
 #else
 #if MAC_XCD
@@ -1174,6 +1176,70 @@ void RenameFunction(
    /*==============================================*/
 
    returnValue->lexemeValue = CreateBoolean(theEnv,genrename(theEnv,oldFileName,newFileName));
+  }
+
+/*************************************/
+/* ChdirFunction: H/L access routine */
+/*   for the chdir function.         */
+/*************************************/
+void ChdirFunction(
+  Environment *theEnv,
+  UDFContext *context,
+  UDFValue *returnValue)
+  {
+   const char *theFileName;
+   int success;
+
+   /*===============================================*/
+   /* If called with no arguments, the return value */
+   /* indicates whether chdir is supported.         */
+   /*===============================================*/
+   
+   if (! UDFHasNextArgument(context))
+     {
+      if (genchdir(theEnv,NULL))
+        { returnValue->lexemeValue = TrueSymbol(theEnv); }
+      else
+        { returnValue->lexemeValue = FalseSymbol(theEnv); }
+        
+      return;
+     }
+
+   /*====================*/
+   /* Get the file name. */
+   /*====================*/
+
+   if ((theFileName = GetFileName(context)) == NULL)
+     {
+      returnValue->lexemeValue = FalseSymbol(theEnv);
+      return;
+     }
+
+   /*==================================================*/
+   /* Change the directory. Return TRUE if successful, */
+   /* FALSE if unsuccessful, and UNSUPPORTED if the    */
+   /* chdir functionality is not implemented.          */
+   /*==================================================*/
+
+   success = genchdir(theEnv,theFileName);
+   
+   switch (success)
+     {
+      case 1:
+        returnValue->lexemeValue = TrueSymbol(theEnv);
+        break;
+        
+      case 0:
+        returnValue->lexemeValue = FalseSymbol(theEnv);
+        break;
+
+      default:
+        WriteString(theEnv,STDERR,"The chdir function is not supported on this system.\n");
+        SetHaltExecution(theEnv,true);
+        SetEvaluationError(theEnv,true);
+        returnValue->lexemeValue = FalseSymbol(theEnv);
+        break;
+     }
   }
 
 /****************************************/

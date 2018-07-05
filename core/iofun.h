@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  10/19/17            */
+   /*             CLIPS Version 6.40  07/05/18            */
    /*                                                     */
    /*               I/O FUNCTIONS HEADER FILE             */
    /*******************************************************/
@@ -71,7 +71,8 @@
 /*                                                           */
 /*            Added unget-char function.                     */
 /*                                                           */
-/*            Added flush, rewind, tell, and seek functions. */
+/*            Added flush, rewind, tell, seek, and chdir     */
+/*            functions.                                     */
 /*                                                           */
 /*************************************************************/
 
@@ -100,6 +101,7 @@
    void                           ReadlineFunction(Environment *,UDFContext *,UDFValue *);
    void                           FormatFunction(Environment *,UDFContext *,UDFValue *);
    void                           RemoveFunction(Environment *,UDFContext *,UDFValue *);
+   void                           ChdirFunction(Environment *,UDFContext *,UDFValue *);
    void                           RenameFunction(Environment *,UDFContext *,UDFValue *);
    void                           SetLocaleFunction(Environment *,UDFContext *,UDFValue *);
    void                           ReadNumberFunction(Environment *,UDFContext *,UDFValue *);

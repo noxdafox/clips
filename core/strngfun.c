@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  06/22/18             */
+   /*            CLIPS Version 6.40  07/05/18             */
    /*                                                     */
    /*            STRING_TYPE FUNCTIONS MODULE             */
    /*******************************************************/
@@ -682,9 +682,12 @@ void StringToField(
       returnValue->value = CreateSymbol(theEnv,"EOF");
      }
    else if (theToken.tknType == UNKNOWN_VALUE_TOKEN)
-     { returnValue->value = CreateString(theEnv,"*** ERROR ***"); }
+     {
+      SetErrorValue(theEnv,&CreateSymbol(theEnv,"INVALID_ARGUMENT")->header);
+      returnValue->lexemeValue = FalseSymbol(theEnv);
+     }
    else
-     { returnValue->value = CreateString(theEnv,theToken.printForm); }
+     { returnValue->value = CreateSymbol(theEnv,theToken.printForm); }
   }
 
 /**************************************/

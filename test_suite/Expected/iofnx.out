@@ -451,5 +451,11 @@ CLIPS> (readline temp)
 "Jack Smith"
 CLIPS> (close temp)
 TRUE
+CLIPS> (chdir)
+TRUE ; FALSE on unsupported systems
+CLIPS> (chdir 3)
+[ARGACCES2] Function 'chdir' expected argument #1 to be of type symbol or string.
+CLIPS> (chdir 3 4)
+[ARGACCES1] Function 'chdir' expected no more than 1 argument.
 CLIPS> (clear)
 CLIPS> (dribble-off)

@@ -91,10 +91,13 @@
 (deftemplate person (slot name)(slot age (default 0)))
 (assert (person (name Me)))
 (ppfact 1)
+(ppfact 1 bogus)
 (ppfact 1 nil)
 (ppfact 1 t)
 (ppfact 1 t FALSE)
 (ppfact 1 t TRUE)
+(ppfact 1 nil FALSE)
+(ppfact 1 nil TRUE)
 
 (deftemplate bar
    (slot w)

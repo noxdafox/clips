@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  01/25/18             */
+   /*            CLIPS Version 6.40  07/05/18             */
    /*                                                     */
    /*               SYSTEM DEPENDENT MODULE               */
    /*******************************************************/
@@ -389,21 +389,41 @@ char *gengetcwd(
 #endif
   }
 
-/******************************************/
-/* genchdir: Generic function for setting */
-/*   the current directory.               */
-/******************************************/
+/*************************************************/
+/* genchdir: Generic function for setting the    */
+/*   current directory. Returns 1 if successful, */
+/*   0 if unsuccessful, and -1 if unavailable.   */
+/*************************************************/
 int genchdir(
   Environment *theEnv,
   const char *directory)
   {
+   int rv = -1;
+   
+   /*==========================================================*/
+   /* If the directory argument is NULL, then the return value */
+   /* indicates whether the chdir functionality is supported.  */
+   /*==========================================================*/
+   
+   if (directory == NULL)
+     {
+#if MAC_XCD || DARWIN || LINUX || WIN_MVC
+      return 1;
+#else
+      return 0;
+#endif
+     }
+     
+   /*========================================*/
+   /* Otherwise, try changing the directory. */
+   /*========================================*/
+   
 #if MAC_XCD || DARWIN || LINUX
-   return chdir(directory);
+   rv = chdir(directory) + 1;
 #endif
 #if WIN_MVC 
    wchar_t *wdirectory;
    int wlength;
-   int rv;
 
    wlength = MultiByteToWideChar(CP_UTF8,0,directory,-1,NULL,0);
 
@@ -411,14 +431,12 @@ int genchdir(
 
    MultiByteToWideChar(CP_UTF8,0,directory,-1,wdirectory,wlength);
 
-   rv = _wchdir(wdirectory);
+   rv = _wchdir(wdirectory) + 1;
 
    genfree(theEnv,wdirectory,wlength * sizeof(wchar_t));
-
-   return rv;
 #endif
 
-   return -1;
+   return rv;
   }
 
 /****************************************************/
