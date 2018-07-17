@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/25/16             */
+   /*            CLIPS Version 6.40  07/10/18             */
    /*                                                     */
    /*                RULE COMMANDS MODULE                 */
    /*******************************************************/
