@@ -113,7 +113,7 @@
    else
      {
       dispatch_sync(dispatch_get_main_queue(),
-                    ^{ [executionIndicator startAnimation: nil]; });
+                    ^{ [self->executionIndicator startAnimation: nil]; });
      }
   }
 
@@ -127,7 +127,7 @@
    else
      {
       dispatch_sync(dispatch_get_main_queue(),
-                    ^{ [executionIndicator stopAnimation: nil]; });
+                    ^{ [self->executionIndicator stopAnimation: nil]; });
      }
   }
 

@@ -91,7 +91,7 @@
    else
      {
       dispatch_sync(dispatch_get_main_queue(),
-                    ^{ [executionIndicator startAnimation: nil]; });
+                    ^{ [self->executionIndicator startAnimation: nil]; });
      }
   }
 
@@ -105,7 +105,7 @@
    else
      {
       dispatch_sync(dispatch_get_main_queue(),
-                    ^{ [executionIndicator stopAnimation: nil]; });
+                    ^{ [self->executionIndicator stopAnimation: nil]; });
      }
   }
 
@@ -129,8 +129,8 @@
         {
          dispatch_sync(dispatch_get_main_queue(),
                     ^{
-                      [focusStack selectRowIndexes: [NSIndexSet indexSetWithIndex: 0] byExtendingSelection: NO];
-                      [agendaList selectRowIndexes: [NSIndexSet indexSetWithIndex: 0] byExtendingSelection: NO];
+                      [self->focusStack selectRowIndexes: [NSIndexSet indexSetWithIndex: 0] byExtendingSelection: NO];
+                      [self->agendaList selectRowIndexes: [NSIndexSet indexSetWithIndex: 0] byExtendingSelection: NO];
                       [self updateAgendaInspectorText];
                     });
         }
@@ -154,10 +154,10 @@
               {
                dispatch_sync(dispatch_get_main_queue(),
                     ^{
-                      [runButton setEnabled: NO];
-                      [resetButton setEnabled: NO];
-                      [stepButton setEnabled: NO];
-                      [haltButton setEnabled: YES];
+                      [self->runButton setEnabled: NO];
+                      [self->resetButton setEnabled: NO];
+                      [self->stepButton setEnabled: NO];
+                      [self->haltButton setEnabled: YES];
                       [self startExecutionIndicator];
                       [self updateAgendaInspectorText];
                     });
@@ -178,10 +178,10 @@
               {
                dispatch_sync(dispatch_get_main_queue(),
                     ^{
-                      [runButton setEnabled: YES];
-                      [resetButton setEnabled: YES];
-                      [stepButton setEnabled: YES];
-                      [haltButton setEnabled: NO];
+                      [self->runButton setEnabled: YES];
+                      [self->resetButton setEnabled: YES];
+                      [self->stepButton setEnabled: YES];
+                      [self->haltButton setEnabled: NO];
                       [self stopExecutionIndicator];
                       [self updateAgendaInspectorText];
                     });
