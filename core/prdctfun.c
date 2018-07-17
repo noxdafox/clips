@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  05/29/18             */
+   /*            CLIPS Version 6.40  07/08/18             */
    /*                                                     */
    /*              PREDICATE FUNCTIONS MODULE             */
    /*******************************************************/
@@ -40,6 +40,9 @@
 /*            UDF redesign.                                  */
 /*                                                           */
 /*            Removed the wordp and sequencep functions.     */
+/*                                                           */
+/*            Deprecated the pointerp function and added     */
+/*            the external-addressp function.                */
 /*                                                           */
 /*************************************************************/
 
@@ -87,7 +90,8 @@ void PredicateFunctionDefinitions(
    AddUDF(theEnv,"oddp","b",1,1,"l",OddpFunction,"OddpFunction",NULL);
    AddUDF(theEnv,"evenp","b",1,1,"l",EvenpFunction,"EvenpFunction",NULL);
    AddUDF(theEnv,"multifieldp","b",1,1,NULL,MultifieldpFunction,"MultifieldpFunction",NULL);
-   AddUDF(theEnv,"pointerp","b",1,1,NULL,PointerpFunction,"PointerpFunction",NULL);
+   AddUDF(theEnv,"pointerp","b",1,1,NULL,ExternalAddresspFunction,"PointerpFunction",NULL);
+   AddUDF(theEnv,"external-addressp","b",1,1,NULL,ExternalAddresspFunction,"PointerpFunction",NULL);
 #else
 #if MAC_XCD
 #pragma unused(theEnv)
@@ -375,11 +379,11 @@ void MultifieldpFunction(
      { returnValue->lexemeValue = FalseSymbol(theEnv); }
   }
 
-/******************************************/
-/* PointerpFunction: H/L access routine   */
-/*   for the pointerp function.           */
-/******************************************/
-void PointerpFunction(
+/************************************************/
+/* ExternalAddresspFunction: H/L access routine */
+/*   for the external-addressp function.        */
+/************************************************/
+void ExternalAddresspFunction(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)

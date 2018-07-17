@@ -231,7 +231,7 @@ CLIPS> (explode$ "hammer drill saw screw")
 CLIPS> (explode$ "1 2 abc 3 4 \"abc\" \"def\"")
 (1 2 abc 3 4 "abc" "def")
 CLIPS> (explode$ "?x ~ )")             ; 10.3.7
-("?x" "~" ")")
+(?x ~ ))
 CLIPS> (implode$)                      ; 10.3.8
 [ARGACCES1] Function 'implode$' expected exactly 1 argument.
 CLIPS> (implode$ (create$ a b) dkj)    ; 10.3.8

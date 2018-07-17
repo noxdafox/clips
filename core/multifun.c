@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  10/18/16             */
+   /*            CLIPS Version 6.40  07/09/18             */
    /*                                                     */
    /*             MULTIFIELD FUNCTIONS MODULE             */
    /*******************************************************/
@@ -68,6 +68,11 @@
 /*            for garbage collection blocks.                 */
 /*                                                           */
 /*            Eval support for run time and bload only.      */
+/*                                                           */
+/*            The explode$ function via StringToMultifield   */
+/*            now converts non-primitive value tokens        */
+/*            (such as parentheses) to symbols rather than   */
+/*            strings.                                       */
 /*                                                           */
 /*************************************************************/
 

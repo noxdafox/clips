@@ -179,13 +179,13 @@ CLIPS> (make-instance a of A)
 [a]
 CLIPS> (watch all)
 CLIPS> (modify-instance a (foo 0))
-MSG >> direct-modify ED:1 (<Instance-a> <Pointer-0x608000442070>) ;; Reference Pointer
+MSG >> direct-modify ED:1 (<Instance-a> <Pointer-C-0x60400005b6f0>) ;; Reference Pointer
 HND >> direct-modify primary in class USER
-       ED:1 (<Instance-a> <Pointer-0x608000442070>)               ;; Should be the same as above
+       ED:1 (<Instance-a> <Pointer-C-0x60400005b6f0>)               ;; Should be the same as above
 ::= local slot foo in instance a <- 0
 HND << direct-modify primary in class USER
-       ED:1 (<Instance-a> <Pointer-0x608000442070>)               ;; Should be the same as above
-MSG << direct-modify ED:1 (<Instance-a> <Pointer-0x608000442070>) ;; Should be the same as above
+       ED:1 (<Instance-a> <Pointer-C-0x60400005b6f0>)               ;; Should be the same as above
+MSG << direct-modify ED:1 (<Instance-a> <Pointer-C-0x60400005b6f0)  ;; Should be the same as above
 TRUE
 CLIPS> (unwatch all)
 CLIPS> (clear) ;; CLIPSESG Bug

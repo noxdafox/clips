@@ -43,10 +43,10 @@
 (multifieldp (create$))            ; 10.2.9
 (multifieldp (create$ a 3 4.1))    ; 10.2.9
 (multifieldp "hit")                ; 10.2.9
-(pointerp)                         ; 10.2.10
-(pointerp 3 a)                     ; 10.2.10
-(pointerp 3)                       ; 10.2.10
-(pointerp x)                       ; 10.2.10
+(external-addressp)                ; 10.2.10
+(external-addressp 3 a)            ; 10.2.10
+(external-addressp 3)              ; 10.2.10
+(external-addressp x)              ; 10.2.10
 (eq)                               ; 10.2.11
 (eq a)                             ; 10.2.11
 (eq a a b)                         ; 10.2.11

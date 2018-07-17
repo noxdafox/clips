@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  01/06/18             */
+   /*            CLIPS Version 6.40  07/09/18             */
    /*                                                     */
    /*                  MULTIFIELD MODULE                  */
    /*******************************************************/
@@ -53,6 +53,11 @@
 /*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
 /*            UDF redesign.                                  */
+/*                                                           */
+/*            The explode$ function via StringToMultifield   */
+/*            now converts non-primitive value tokens        */
+/*            (such as parentheses) to symbols rather than   */
+/*            strings.                                       */
 /*                                                           */
 /*************************************************************/
 
@@ -227,7 +232,7 @@ Multifield *StringToMultifield(
           (theToken.tknType == INSTANCE_NAME_TOKEN))
         { theAtom = GenConstant(theEnv,TokenTypeToType(theToken.tknType),theToken.value); }
       else
-        { theAtom = GenConstant(theEnv,STRING_TYPE,CreateString(theEnv,theToken.printForm)); }
+        { theAtom = GenConstant(theEnv,SYMBOL_TYPE,CreateSymbol(theEnv,theToken.printForm)); }
 
       numberOfFields++;
       if (topAtom == NULL) topAtom = theAtom;

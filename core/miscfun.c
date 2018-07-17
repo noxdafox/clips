@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  05/29/18             */
+   /*            CLIPS Version 6.40  07/10/18             */
    /*                                                     */
    /*            MISCELLANEOUS FUNCTIONS MODULE           */
    /*******************************************************/
@@ -99,6 +99,11 @@
 /*                                                           */
 /*            Added get-error, set-error, and clear-error    */
 /*            functions.                                     */
+/*                                                           */
+/*            Added void function.                           */
+/*                                                           */
+/*            Function operating system returns MAC-OS       */
+/*            instead of MAC-OS-X.                           */
 /*                                                           */
 /*************************************************************/
 
@@ -202,6 +207,8 @@ void MiscFunctionDefinitions(
    AddUDF(theEnv,"get-error","*",0,0,NULL,GetErrorFunction,"GetErrorFunction",NULL);
    AddUDF(theEnv,"clear-error","*",0,0,NULL,ClearErrorFunction,"ClearErrorFunction",NULL);
    AddUDF(theEnv,"set-error","v",1,1,NULL,SetErrorFunction,"SetErrorFunction",NULL);
+
+   AddUDF(theEnv,"void","v",0,0,NULL,VoidFunction,"VoidFunction",NULL);
 #endif
   }
 
@@ -866,7 +873,7 @@ void OperatingSystemFunction(
 #elif DARWIN
    returnValue->lexemeValue = CreateSymbol(theEnv,"DARWIN");
 #elif MAC_XCD
-   returnValue->lexemeValue = CreateSymbol(theEnv,"MAC-OS-X");
+   returnValue->lexemeValue = CreateSymbol(theEnv,"MAC-OS");
 #elif IBM && (! WINDOW_INTERFACE)
    returnValue->lexemeValue = CreateSymbol(theEnv,"DOS");
 #elif IBM && WINDOW_INTERFACE
@@ -1149,6 +1156,9 @@ void GetFunctionRestrictions(
                                     stringBuffer,&bufferPosition,&bufferMaximum);
      }
 
+   stringBuffer = AppendToString(theEnv,";",
+                                 stringBuffer,&bufferPosition,&bufferMaximum);
+
    if (fptr->maxArgs == UNBOUNDED)
      {
       stringBuffer = AppendToString(theEnv,"*",
@@ -1159,6 +1169,9 @@ void GetFunctionRestrictions(
       stringBuffer = AppendToString(theEnv,LongIntegerToString(theEnv,fptr->maxArgs),
                                     stringBuffer,&bufferPosition,&bufferMaximum);
      }
+     
+   stringBuffer = AppendToString(theEnv,";",
+                                 stringBuffer,&bufferPosition,&bufferMaximum);
 
    if (fptr->restrictions == NULL)
      {
@@ -1771,4 +1784,16 @@ void SetErrorFunction(
    NormalizeMultifield(theEnv,&theArg);
    cv.value = theArg.value;
    SetErrorValue(theEnv,cv.header);
+  }
+
+/************************************/
+/* VoidFunction: H/L access routine */
+/*   for the void function.         */
+/************************************/
+void VoidFunction(
+  Environment *theEnv,
+  UDFContext *context,
+  UDFValue *returnValue)
+  {
+   returnValue->voidValue = VoidConstant(theEnv);
   }

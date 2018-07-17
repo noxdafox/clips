@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  11/15/17             */
+   /*            CLIPS Version 6.40  07/17/18             */
    /*                                                     */
    /*          INSTANCE PRIMITIVE SUPPORT MODULE          */
    /*******************************************************/
@@ -291,6 +291,9 @@ Instance *BuildInstance(
    unsigned modulePosition;
    CLIPSLexeme *moduleName;
    UDFValue temp;
+
+   if (iname->header.type == SYMBOL_TYPE)
+     { iname = CreateInstanceName(theEnv,iname->contents); }
 
 #if DEFRULE_CONSTRUCT
    if (EngineData(theEnv)->JoinOperationInProgress && cls->reactive)

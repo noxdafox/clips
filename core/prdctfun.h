@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  08/25/16            */
+   /*             CLIPS Version 6.40  07/08/18            */
    /*                                                     */
    /*            PREDICATE FUNCTIONS HEADER FILE          */
    /*******************************************************/
@@ -37,6 +37,9 @@
 /*                                                           */
 /*            UDF redesign.                                  */
 /*                                                           */
+/*            Deprecated the pointerp function and added     */
+/*            the external-addressp function.                */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_prdctfun
@@ -55,7 +58,7 @@
    void                           FloatpFunction(Environment *,UDFContext *,UDFValue *);
    void                           IntegerpFunction(Environment *,UDFContext *,UDFValue *);
    void                           MultifieldpFunction(Environment *,UDFContext *,UDFValue *);
-   void                           PointerpFunction(Environment *,UDFContext *,UDFValue *);
+   void                           ExternalAddresspFunction(Environment *,UDFContext *,UDFValue *);
    void                           NotFunction(Environment *,UDFContext *,UDFValue *);
    void                           AndFunction(Environment *,UDFContext *,UDFValue *);
    void                           OrFunction(Environment *,UDFContext *,UDFValue *);

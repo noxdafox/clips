@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/22/28            */
+   /*             CLIPS Version 6.40  07/17/18            */
    /*                                                     */
    /*          MISCELLANEOUS FUNCTIONS HEADER FILE        */
    /*******************************************************/
@@ -121,6 +121,7 @@
    void                           ClearErrorFunction(Environment *,UDFContext *,UDFValue *);
    void                           SetErrorFunction(Environment *,UDFContext *,UDFValue *);
    void                           SetErrorValue(Environment *,TypeHeader *);
+   void                           VoidFunction(Environment *,UDFContext *,UDFValue *);
 
 #endif /* _H_miscfun */
 

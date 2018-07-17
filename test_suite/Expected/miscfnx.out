@@ -237,9 +237,9 @@ CLIPS> (iterate (return))
 
 [PRCDRPSR2] The return function is not valid in this context.
 CLIPS> (get-function-restrictions +)
-"2*ld"
+"2;*;ld"
 CLIPS> (get-function-restrictions make-instance)
-"0**"
+"0;*;*"
 CLIPS> (get-function-restrictions)
 [ARGACCES1] Function 'get-function-restrictions' expected exactly 1 argument.
 CLIPS> (get-function-restrictions bogus)
@@ -385,4 +385,19 @@ CLIPS> (set-error)
 [ARGACCES1] Function 'set-error' expected exactly 1 argument.
 CLIPS> (set-error 3 4)
 [ARGACCES1] Function 'set-error' expected exactly 1 argument.
+CLIPS> (void)
+CLIPS> (void 3)
+[ARGACCES1] Function 'void' expected exactly 0 arguments.
+CLIPS> (deffunction foo () (void))
+CLIPS> (foo)
+CLIPS> (deffunction bar () (return (void)))
+CLIPS> (bar)
+CLIPS> (local-time)
+(2018 7 6 18 38 13 Friday 186 TRUE) ; Different Values OK
+CLIPS> (gm-time)
+(2018 7 6 23 38 13 Friday 186 FALSE) ; Different Values OK
+CLIPS> (local-time 3)
+[ARGACCES1] Function 'local-time' expected exactly 0 arguments.
+CLIPS> (gm-time 3)
+[ARGACCES1] Function 'gm-time' expected exactly 0 arguments.
 CLIPS> (dribble-off)

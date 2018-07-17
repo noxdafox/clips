@@ -91,13 +91,13 @@ CLIPS> (multifieldp (create$ a 3 4.1))    ; 10.2.9
 TRUE
 CLIPS> (multifieldp "hit")                ; 10.2.9
 FALSE
-CLIPS> (pointerp)                         ; 10.2.10
-[ARGACCES1] Function 'pointerp' expected exactly 1 argument.
-CLIPS> (pointerp 3 a)                     ; 10.2.10
-[ARGACCES1] Function 'pointerp' expected exactly 1 argument.
-CLIPS> (pointerp 3)                       ; 10.2.10
+CLIPS> (external-addressp)                ; 10.2.10
+[ARGACCES1] Function 'external-addressp' expected exactly 1 argument.
+CLIPS> (external-addressp 3 a)            ; 10.2.10
+[ARGACCES1] Function 'external-addressp' expected exactly 1 argument.
+CLIPS> (external-addressp 3)              ; 10.2.10
 FALSE
-CLIPS> (pointerp x)                       ; 10.2.10
+CLIPS> (external-addressp x)              ; 10.2.10
 FALSE
 CLIPS> (eq)                               ; 10.2.11
 [ARGACCES1] Function 'eq' expected at least 2 arguments.
