@@ -105,7 +105,7 @@ public class DialogFrame extends JInternalFrame
       statusPanel.setPreferredSize(new Dimension(600,40));
       
       currentDirectoryLabel = new JLabel("Dir: ");
-      if (dirChanged == 0)
+      if (dirChanged == 1)
         { currentDirectoryLabel.setText("Dir: " + currentDirectory.getAbsolutePath()); }
       else
         { currentDirectoryLabel.setText("Dir: "); }
@@ -387,7 +387,7 @@ public class DialogFrame extends JInternalFrame
      {
       int dirChanged = clips.changeDirectory(newDirectory.getAbsolutePath());
       
-      if (dirChanged == 0)
+      if (dirChanged == 1)
         { 
          currentDirectoryLabel.setText("Dir: " + newDirectory.getAbsolutePath()); 
          return true;
