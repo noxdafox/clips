@@ -442,7 +442,7 @@ namespace CLIPSIDE
         {
          bool dirChanged = dialog.ChangeDirectory(newDirectory);
 
-         if (dirChanged == false)
+         if (dirChanged == true)
            { 
             this.currentDirectoryLabel.Content = "Dir: " + newDirectory;
             return true;

@@ -17,7 +17,7 @@
         <Label x:Name="label1" Content="Version 6.4" HorizontalAlignment="Center" Margin="0,110,0,0" VerticalAlignment="Top"/>
         <Label x:Name="label2" Content="Design and Development" HorizontalAlignment="Center" Margin="0,150,0,0" VerticalAlignment="Top" FontWeight="Bold" FontSize="14"/>
         <Label x:Name="label3" Content="Gary Riley" HorizontalAlignment="Center" Margin="0,170,0,0" VerticalAlignment="Top" FontSize="14"/>
-        <Label x:Name="label4" Content="Public Domain Release, March 2018" HorizontalAlignment="Center" Margin="0,220,0,0" VerticalAlignment="Top"/>
+        <Label x:Name="label4" Content="Public Domain Release, July 2018" HorizontalAlignment="Center" Margin="0,220,0,0" VerticalAlignment="Top"/>
 
     </Grid>
 </Window>
