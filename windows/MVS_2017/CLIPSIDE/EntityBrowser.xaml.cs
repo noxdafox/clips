@@ -120,7 +120,6 @@ namespace CLIPSIDE
       /**************/
       /* AssignData */
       /**************/
- 
       private void AssignData(
         List<Module> theModules,
         List<FactInstance> theEntityList,
