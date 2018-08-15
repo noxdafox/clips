@@ -228,7 +228,7 @@ namespace CLIPSNET
       if (ebFileName->Length)
         {
          pin_ptr<Byte> pbFileName = &ebFileName[0];
-         if (m_Env->Load((char *) pbFileName) == 0)
+         if (m_Env->Load((char *) pbFileName) != 0)
            {
             CaptureEnd(commandCapture,false);
             throw gcnew System::IO::FileNotFoundException(
