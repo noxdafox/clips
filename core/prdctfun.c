@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/08/18             */
+   /*            CLIPS Version 6.40  08/19/18             */
    /*                                                     */
    /*              PREDICATE FUNCTIONS MODULE             */
    /*******************************************************/
@@ -90,8 +90,8 @@ void PredicateFunctionDefinitions(
    AddUDF(theEnv,"oddp","b",1,1,"l",OddpFunction,"OddpFunction",NULL);
    AddUDF(theEnv,"evenp","b",1,1,"l",EvenpFunction,"EvenpFunction",NULL);
    AddUDF(theEnv,"multifieldp","b",1,1,NULL,MultifieldpFunction,"MultifieldpFunction",NULL);
-   AddUDF(theEnv,"pointerp","b",1,1,NULL,ExternalAddresspFunction,"PointerpFunction",NULL);
-   AddUDF(theEnv,"external-addressp","b",1,1,NULL,ExternalAddresspFunction,"PointerpFunction",NULL);
+   AddUDF(theEnv,"pointerp","b",1,1,NULL,ExternalAddresspFunction,"ExternalAddresspFunction",NULL);
+   AddUDF(theEnv,"external-addressp","b",1,1,NULL,ExternalAddresspFunction,"ExternalAddresspFunction",NULL);
 #else
 #if MAC_XCD
 #pragma unused(theEnv)
