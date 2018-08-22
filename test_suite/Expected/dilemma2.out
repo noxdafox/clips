@@ -110,6 +110,7 @@ Farmer moves with goat to shore-1.
 Farmer moves with cabbage to shore-2.
 Farmer moves alone to shore-1.
 Farmer moves with goat to shore-2.
+
 DFN >> opposite-shore ED:16 (shore-2)
 DFN << opposite-shore ED:16 (shore-2)
 DFN >> opposite-shore ED:16 (shore-2)
@@ -230,6 +231,7 @@ Farmer moves with goat to shore-1.
 Farmer moves with fox to shore-2.
 Farmer moves alone to shore-1.
 Farmer moves with goat to shore-2.
+
 DFN >> opposite-shore ED:16 (shore-2)
 DFN << opposite-shore ED:16 (shore-2)
 DFN >> opposite-shore ED:16 (shore-2)

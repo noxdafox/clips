@@ -152,7 +152,8 @@
 
 (defrule startup
    =>
-   (println crlf
+   (print
+    crlf
     "There are five houses, each of a different color, inhabited by men of"  crlf
     "different nationalities, with different pets, drinks, and cigarettes."  crlf
     crlf
@@ -160,14 +161,13 @@
     "The ivory house is immediately to the left of the green house, where"   crlf
     "the coffee drinker lives.  The milk drinker lives in the middle house." crlf
     "The man who smokes Old Golds also keeps snails.  The Ukrainian drinks"  crlf
-    "tea.  The Norwegian resides in the first house on the left.  The"       crlf)
-   (println
+    "tea.  The Norwegian resides in the first house on the left.  The"       crlf
     "Chesterfields smoker lives next door to the fox owner.  The Lucky"      crlf
     "Strike smoker drinks orange juice.  The Japanese smokes Parliaments."   crlf
     "The horse owner lives next to the Kools smoker, whose house is yellow." crlf
     "The Norwegian lives next to the blue house."			                 crlf
     crlf
-    "Now, who drinks water?  And who owns the zebra?" crlf)
+    "Now, who drinks water?  And who owns the zebra?" crlf crlf)
    (assert (value color red) 
            (value color green) 
            (value color ivory)

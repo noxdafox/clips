@@ -40,6 +40,7 @@ Farmer moves with goat to shore-1.
 Farmer moves with cabbage to shore-2.
 Farmer moves alone to shore-1.
 Farmer moves with goat to shore-2.
+
 FIRE   33 move-with-fox: [gen15],[gen3]
 FIRE   34 move-alone: [gen20],[gen2]
 FIRE   35 fox-eats-goat: [gen21]
@@ -86,6 +87,7 @@ Farmer moves with goat to shore-1.
 Farmer moves with fox to shore-2.
 Farmer moves alone to shore-1.
 Farmer moves with goat to shore-2.
+
 FIRE   69 move-with-fox: [gen32],[gen3]
 FIRE   70 circular-path: [gen30],[gen37]
 FIRE   71 move-with-cabbage: [gen32],[gen3]

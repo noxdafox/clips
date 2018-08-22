@@ -40,6 +40,7 @@ Farmer moves with goat to shore-1.
 Farmer moves with cabbage to shore-2.
 Farmer moves alone to shore-1.
 Farmer moves with goat to shore-2.
+
 FIRE   33 move-with-fox: f-15,f-3
 FIRE   34 move-alone: f-20,f-2
 FIRE   35 fox-eats-goat: f-21
@@ -86,6 +87,7 @@ Farmer moves with goat to shore-1.
 Farmer moves with fox to shore-2.
 Farmer moves alone to shore-1.
 Farmer moves with goat to shore-2.
+
 FIRE   69 move-with-fox: f-32,f-3
 FIRE   70 circular-path: f-30,f-37
 FIRE   71 move-with-cabbage: f-32,f-3
