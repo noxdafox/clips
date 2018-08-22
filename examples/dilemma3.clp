@@ -6,17 +6,22 @@
 ;;;     missionary) in agricultural terms. The point is
 ;;;     to get the farmer, the fox the cabbage and the
 ;;;     goat across a stream.
-;;;        But the boat only holds 2 items. If left 
+;;;
+;;;     But the boat only holds 2 items. If left 
 ;;;     alone with the goat, the fox will eat it. If
 ;;;     left alone with the cabbage, the goat will eat
 ;;;     it.
-;;;        This example uses rules and object pattern  
+;;;
+;;;     This example uses rules and object pattern  
 ;;;     matching to solve the problem.
 ;;;
 ;;;     CLIPS Version 6.4 Example
 ;;;
 ;;;     To execute, merely load, reset and run.
 ;;;======================================================
+
+(defmodule MAIN 
+  (export defclass status))
 
 ;;;***********
 ;;;* CLASSES *
@@ -25,58 +30,33 @@
 ;;; The status instances hold the state  
 ;;; information of the search tree.
 
-(defclass status (is-a USER)
-   (role concrete)
-   (pattern-match reactive)
+(defclass MAIN::status (is-a USER)
    (slot search-depth
-     (create-accessor write)
      (type INTEGER) (range 1 ?VARIABLE) (default 1)) 
    (slot parent
-     (create-accessor write)
-     (type INSTANCE-ADDRESS) (default ?DERIVE))
+     (type INSTANCE-NAME) (default [no-parent]))
    (slot farmer-location 
-     (create-accessor write)
      (type SYMBOL) (allowed-symbols shore-1 shore-2) (default shore-1))
    (slot fox-location
-     (create-accessor write)
      (type SYMBOL) (allowed-symbols shore-1 shore-2) (default shore-1))
    (slot goat-location
-     (create-accessor write)
      (type SYMBOL) (allowed-symbols shore-1 shore-2) (default shore-1))
    (slot cabbage-location
-     (create-accessor write)
      (type SYMBOL) (allowed-symbols shore-1 shore-2) (default shore-1))
    (slot last-move
-     (create-accessor write)
      (type SYMBOL) (allowed-symbols no-move alone fox goat cabbage)
      (default no-move)))
    
-;;; The moves instances hold the information of all the moves
-;;; made to reach a given state.
-       
-(defclass moves (is-a USER)
-   (role concrete)
-   (pattern-match reactive)
-   (slot id
-      (create-accessor write)
-      (type INSTANCE)) 
-   (multislot moves-list 
-      (create-accessor write)
-      (type SYMBOL)
-      (allowed-symbols no-move alone fox goat cabbage)))
-
-(defclass opposite-of
+(defclass MAIN::opposite-of
    (is-a USER)
-   (role concrete)
-   (pattern-match reactive)
-   (slot value (create-accessor write))
-   (slot opposite-value (create-accessor write)))
+   (slot value)
+   (slot opposite-value))
 
 ;;;*****************
 ;;;* INITIAL STATE *
 ;;;*****************
 
-(definstances startups
+(definstances MAIN::startups
   (of status)
   (of opposite-of (value shore-1) (opposite-value shore-2))
   (of opposite-of (value shore-2) (opposite-value shore-1)))
@@ -85,7 +65,7 @@
 ;;;* GENERATE PATH RULES *
 ;;;***********************
 
-(defrule move-alone 
+(defrule MAIN::move-alone 
   ?node <- (object (is-a status)
                    (search-depth ?num)  
                    (farmer-location ?fs))
@@ -93,11 +73,11 @@
   =>
   (duplicate-instance ?node
     (search-depth (+ 1 ?num))
-    (parent ?node)
+    (parent (instance-name ?node))
     (farmer-location ?ns)
     (last-move alone)))
 
-(defrule move-with-fox
+(defrule MAIN::move-with-fox
   ?node <- (object (is-a status)
                    (search-depth ?num) 
                    (farmer-location ?fs)
@@ -106,12 +86,12 @@
   =>
   (duplicate-instance ?node
     (search-depth (+ 1 ?num))
-    (parent ?node)
+    (parent (instance-name ?node))
     (farmer-location ?ns)
     (last-move fox)
     (fox-location ?ns)))
 
-(defrule move-with-goat 
+(defrule MAIN::move-with-goat 
   ?node <- (object (is-a status)
                    (search-depth ?num) 
                    (farmer-location ?fs)
@@ -120,12 +100,12 @@
   =>
   (duplicate-instance ?node
     (search-depth (+ 1 ?num))
-    (parent ?node)
+    (parent (instance-name ?node))
     (farmer-location ?ns)
     (last-move goat)
     (goat-location ?ns)))
 
-(defrule move-with-cabbage
+(defrule MAIN::move-with-cabbage
   ?node <- (object (is-a status)
                    (search-depth ?num) 
                    (farmer-location ?fs)
@@ -134,7 +114,7 @@
   =>
   (duplicate-instance ?node
     (search-depth (+ 1 ?num))
-    (parent ?node)
+    (parent (instance-name ?node))
     (farmer-location ?ns)
     (last-move cabbage)
     (cabbage-location ?ns)))
@@ -143,8 +123,11 @@
 ;;;* CONSTRAINT VIOLATION RULES *
 ;;;******************************
 
-(defrule fox-eats-goat 
-  (declare (salience 200))
+(defmodule CONSTRAINTS 
+  (import MAIN defclass status))
+  
+(defrule CONSTRAINTS::fox-eats-goat 
+  (declare (auto-focus TRUE))
   ?node <- (object (is-a status)
                    (farmer-location ?s1)
                    (fox-location ?s2&~?s1)
@@ -152,8 +135,8 @@
   =>
   (unmake-instance ?node))
 
-(defrule goat-eats-cabbage 
-  (declare (salience 200))
+(defrule CONSTRAINTS::goat-eats-cabbage 
+  (declare (auto-focus TRUE))
   ?node <- (object (is-a status)
                    (farmer-location ?s1)
                    (goat-location ?s2&~?s1)
@@ -161,8 +144,8 @@
   =>
   (unmake-instance ?node))
 
-(defrule circular-path 
-  (declare (salience 200))
+(defrule CONSTRAINTS::circular-path 
+  (declare (auto-focus TRUE))
   (object (is-a status)
           (search-depth ?sd1)
           (farmer-location ?fs)
@@ -182,8 +165,21 @@
 ;;;* FIND AND PRINT SOLUTION RULES *
 ;;;*********************************
 
-(defrule recognize-solution 
-  (declare (salience 100))
+(defmodule SOLUTION 
+  (import MAIN defclass status))
+  
+;;; The moves instances hold the information of all the moves
+;;; made to reach a given state.
+       
+(defclass SOLUTION::moves (is-a USER)
+   (slot id
+      (type INSTANCE)) 
+   (multislot moves-list 
+      (type SYMBOL)
+      (allowed-symbols no-move alone fox goat cabbage)))
+
+(defrule SOLUTION::recognize-solution 
+  (declare (auto-focus TRUE))
   ?node <- (object (is-a status)
                    (parent ?parent)
                    (farmer-location shore-2)
@@ -196,21 +192,20 @@
   (make-instance of moves
      (id ?parent) (moves-list ?move)))
 
-(defrule further-solution 
-  (declare (salience 100))
-  ?state <- (object (is-a status)
-                    (parent ?parent)
-                    (last-move ?move))
+(defrule SOLUTION::further-solution 
+  (object (is-a status)
+          (name ?name)
+          (parent ?parent)
+          (last-move ?move))
   ?mv <- (object (is-a moves)
-                 (id ?state)
+                 (id ?name)
                  (moves-list $?rest))
   =>
   (modify-instance ?mv (id ?parent) (moves-list ?move ?rest)))
 
-(defrule print-solution 
-  (declare (salience 100))
+(defrule SOLUTION::print-solution 
   ?mv <- (object (is-a moves)
-                 ;(id [no-parent]) 
+                 (id [no-parent])
                  (moves-list no-move $?m))
   =>
   (unmake-instance ?mv)

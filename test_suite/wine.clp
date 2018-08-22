@@ -18,11 +18,11 @@
 ;;****************
 
 (deffunction MAIN::ask-question (?question ?allowed-values)
-   (printout t ?question)
+   (print ?question)
    (bind ?answer (read))
    (if (lexemep ?answer) then (bind ?answer (lowcase ?answer)))
    (while (not (member$ ?answer ?allowed-values)) do
-      (printout t ?question)
+      (print ?question)
       (bind ?answer (read))
       (if (lexemep ?answer) then (bind ?answer (lowcase ?answer))))
    ?answer)
@@ -364,10 +364,10 @@
 (defrule PRINT-RESULTS::header ""
    (declare (salience 10))
    =>
-   (printout t crlf)
-   (printout t "        SELECTED WINES" crlf crlf)
-   (printout t " WINE                  CERTAINTY" crlf)
-   (printout t " -------------------------------" crlf)
+   (println)
+   (println "        SELECTED WINES" crlf)
+   (println " WINE                  CERTAINTY")
+   (println " -------------------------------")
    (assert (phase print-wines)))
 
 (defrule PRINT-RESULTS::print-wine ""
@@ -385,8 +385,4 @@
 (defrule PRINT-RESULTS::end-spaces ""
    (not (attribute (name wine)))
    =>
-   (printout t crlf))
-
-
-
-
+   (println))

@@ -6,11 +6,13 @@
 ;;;     missionary) in agricultural terms. The point is
 ;;;     to get the farmer, the fox the cabbage and the
 ;;;     goat across a stream.
-;;;        But the boat only holds 2 items. If left 
+;;;
+;;;     But the boat only holds 2 items. If left 
 ;;;     alone with the goat, the fox will eat it. If
 ;;;     left alone with the cabbage, the goat will eat
 ;;;     it.
-;;;        This example uses rules and fact pattern 
+;;;
+;;;     This example uses rules and fact pattern 
 ;;;     matching to solve the problem.
 ;;;
 ;;;     CLIPS Version 6.4 Example

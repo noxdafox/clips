@@ -7,7 +7,7 @@
 ;;;     The point is for the monkee to find
 ;;;     and eat some bananas.
 ;;;
-;;;     CLIPS Version 6.0 Example
+;;;     CLIPS Version 6.4 Example
 ;;;
 ;;;     To execute, merely load, reset and run.
 ;;;======================================================
@@ -57,61 +57,64 @@
    (slot action 
       (type SYMBOL)
       (allowed-symbols hold unlock eat move on walk-to)
-      (default ?NONE)) 
-   (multislot arguments 
+      (default ?NONE))   
+   (slot target 
       (type SYMBOL)
-      (default ?NONE)))
+      (default unspecified))
+   (slot location 
+      (type SYMBOL)
+      (default unspecified)))
              
 ;;;*************************
 ;;;* CHEST UNLOCKING RULES *
 ;;;*************************
 
 (defrule hold-chest-to-put-on-floor "" 
-  (goal-is-to (action unlock) (arguments ?chest))
+  (goal-is-to (action unlock) (target ?chest))
   (thing (name ?chest) (on-top-of ~floor) (weight light))
   (monkey (holding ~?chest))
-  (not (goal-is-to (action hold) (arguments ?chest)))
+  (not (goal-is-to (action hold) (target ?chest)))
   =>
-  (assert (goal-is-to (action hold) (arguments ?chest))))
+  (assert (goal-is-to (action hold) (target ?chest))))
 
 (defrule put-chest-on-floor "" 
-  (goal-is-to (action unlock) (arguments ?chest))
+  (goal-is-to (action unlock) (target ?chest))
   ?monkey <- (monkey (location ?place) (on-top-of ?on) (holding ?chest))
   ?thing <- (thing (name ?chest))
   =>
-  (printout t "Monkey throws the " ?chest " off the " 
-              ?on " onto the floor." crlf)
-  (modify ?monkey (holding blank))
+  (println "Monkey throws the " ?chest " off the " 
+           ?on " onto the floor.")
+  (modify ?monkey (holding nothing))
   (modify ?thing (location ?place) (on-top-of floor)))
 
 (defrule get-key-to-unlock "" 
-  (goal-is-to (action unlock) (arguments ?obj))
+  (goal-is-to (action unlock) (target ?obj))
   (thing (name ?obj) (on-top-of floor))
   (chest (name ?obj) (unlocked-by ?key))
   (monkey (holding ~?key))
-  (not (goal-is-to (action hold) (arguments ?key)))
+  (not (goal-is-to (action hold) (target ?key)))
   =>
-  (assert (goal-is-to (action hold) (arguments ?key))))
+  (assert (goal-is-to (action hold) (target ?key))))
 
 (defrule move-to-chest-with-key "" 
-  (goal-is-to (action unlock) (arguments ?chest))
+  (goal-is-to (action unlock) (target ?chest))
   (monkey (location ?mplace) (holding ?key))
   (thing (name ?chest) (location ?cplace&~?mplace) (on-top-of floor))
   (chest (name ?chest) (unlocked-by ?key))
-  (not (goal-is-to (action walk-to) (arguments ?cplace)))
+  (not (goal-is-to (action walk-to) (location ?cplace)))
   =>
-  (assert (goal-is-to (action walk-to) (arguments ?cplace))))
+  (assert (goal-is-to (action walk-to) (location ?cplace))))
 
 (defrule unlock-chest-with-key "" 
-  ?goal <- (goal-is-to (action unlock) (arguments ?name))
+  ?goal <- (goal-is-to (action unlock) (target ?name))
   ?chest <- (chest (name ?name) (contents ?contents) (unlocked-by ?key))
   (thing (name ?name) (location ?place) (on-top-of ?on))
   (monkey (location ?place) (on-top-of ?on) (holding ?key))
   =>
-  (printout t "Monkey opens the " ?name " with the " ?key 
-              " revealing the " ?contents "." crlf)
-  (modify ?chest (contents nothing))
+  (println "Monkey opens the " ?name " with the " ?key 
+           " revealing the " ?contents ".")
   (assert (thing (name ?contents) (location ?place) (on-top-of ?name)))
+  (modify ?chest (contents nothing))
   (retract ?goal))
 
 ;;;*********************
@@ -119,85 +122,85 @@
 ;;;*********************
 
 (defrule unlock-chest-to-hold-object ""
-  (goal-is-to (action hold) (arguments ?obj))
+  (goal-is-to (action hold) (target ?obj))
   (chest (name ?chest) (contents ?obj))
-  (not (goal-is-to (action unlock) (arguments ?chest)))
+  (not (goal-is-to (action unlock) (target ?chest)))
   =>
-  (assert (goal-is-to (action unlock) (arguments ?chest))))
+  (assert (goal-is-to (action unlock) (target ?chest))))
 
 (defrule use-ladder-to-hold ""
-  (goal-is-to (action hold) (arguments ?obj))
+  (goal-is-to (action hold) (target ?obj))
   (thing (name ?obj) (location ?place) (on-top-of ceiling) (weight light))
   (not (thing (name ladder) (location ?place)))
-  (not (goal-is-to (action move) (arguments ladder ?place)))
+  (not (goal-is-to (action move) (target ladder) (location ?place)))
   =>
-  (assert (goal-is-to (action move) (arguments ladder ?place))))
+  (assert (goal-is-to (action move) (target ladder) (location ?place))))
 
 (defrule climb-ladder-to-hold ""
-  (goal-is-to (action hold) (arguments ?obj))
+  (goal-is-to (action hold) (target ?obj))
   (thing (name ?obj) (location ?place) (on-top-of ceiling) (weight light))
   (thing (name ladder) (location ?place) (on-top-of floor))
   (monkey (on-top-of ~ladder))
-  (not (goal-is-to (action on) (arguments ladder)))
+  (not (goal-is-to (action on) (target ladder)))
   =>
-  (assert (goal-is-to (action on) (arguments ladder))))
+  (assert (goal-is-to (action on) (target ladder))))
 
 (defrule grab-object-from-ladder "" 
-  ?goal <- (goal-is-to (action hold) (arguments ?name))
+  ?goal <- (goal-is-to (action hold) (target ?name))
   ?thing <- (thing (name ?name) (location ?place) 
-                     (on-top-of ceiling) (weight light))
+                   (on-top-of ceiling) (weight light))
   (thing (name ladder) (location ?place))
-  ?monkey <- (monkey (location ?place) (on-top-of ladder) (holding blank))
+  ?monkey <- (monkey (location ?place) (on-top-of ladder) (holding nothing))
   =>
-  (printout t "Monkey grabs the " ?name "." crlf)
+  (println "Monkey grabs the " ?name ".")
   (modify ?thing (location held) (on-top-of held))
   (modify ?monkey (holding ?name))
   (retract ?goal))
 
 (defrule climb-to-hold "" 
-  (goal-is-to (action hold) (arguments ?obj))
+  (goal-is-to (action hold) (target ?obj))
   (thing (name ?obj) (location ?place) (on-top-of ?on&~ceiling) (weight light))
   (monkey (location ?place) (on-top-of ~?on))
-  (not (goal-is-to (action on) (arguments ?on)))
+  (not (goal-is-to (action on) (target ?on)))
   =>
-  (assert (goal-is-to (action on) (arguments ?on))))
+  (assert (goal-is-to (action on) (target ?on))))
 
 (defrule walk-to-hold ""
-  (goal-is-to (action hold) (arguments ?obj))
+  (goal-is-to (action hold) (target ?obj))
   (thing (name ?obj) (location ?place) (on-top-of ~ceiling) (weight light))
   (monkey (location ~?place))
-  (not (goal-is-to (action walk-to) (arguments ?place)))
+  (not (goal-is-to (action walk-to) (location ?place)))
   =>
-  (assert (goal-is-to (action walk-to) (arguments ?place))))
+  (assert (goal-is-to (action walk-to) (location ?place))))
 
 (defrule drop-to-hold ""
-  (goal-is-to (action hold) (arguments ?obj))
+  (goal-is-to (action hold) (target ?obj))
   (thing (name ?obj) (location ?place) (on-top-of ?on) (weight light))
-  (monkey (location ?place) (on-top-of ?on) (holding ~blank))
-  (not (goal-is-to (action hold) (arguments blank)))
+  (monkey (location ?place) (on-top-of ?on) (holding ~nothing))
+  (not (goal-is-to (action hold) (target nothing)))
   =>
-  (assert (goal-is-to (action hold) (arguments blank))))
+  (assert (goal-is-to (action hold) (target nothing))))
 
 (defrule grab-object "" 
-  ?goal <- (goal-is-to (action hold) (arguments ?name))
+  ?goal <- (goal-is-to (action hold) (target ?name))
   ?thing <- (thing (name ?name) (location ?place) 
                      (on-top-of ?on) (weight light))
-  ?monkey <- (monkey (location ?place) (on-top-of ?on) (holding blank))
+  ?monkey <- (monkey (location ?place) (on-top-of ?on) (holding nothing))
   =>
-  (printout t "Monkey grabs the " ?name "." crlf)
+  (println "Monkey grabs the " ?name ".")
   (modify ?thing (location held) (on-top-of held))
   (modify ?monkey (holding ?name))
   (retract ?goal))
 
 (defrule drop-object ""  
-  ?goal <- (goal-is-to (action hold) (arguments blank))
+  ?goal <- (goal-is-to (action hold) (target nothing))
   ?monkey <- (monkey (location ?place) 
                      (on-top-of ?on) 
-                     (holding ?name&~blank))
+                     (holding ?name&~nothing))
   ?thing <- (thing (name ?name))
   =>
-  (printout t "Monkey drops the " ?name "." crlf)
-  (modify ?monkey (holding blank))
+  (println "Monkey drops the " ?name ".")
+  (modify ?monkey (holding nothing))
   (modify ?thing (location ?place) (on-top-of ?on))
   (retract ?goal))
 
@@ -206,39 +209,39 @@
 ;;;*********************
 
 (defrule unlock-chest-to-move-object "" 
-  (goal-is-to (action move) (arguments ?obj ?))
+  (goal-is-to (action move) (target ?obj))
   (chest (name ?chest) (contents ?obj))
-  (not (goal-is-to (action unlock) (arguments ?chest)))
+  (not (goal-is-to (action unlock) (target ?chest)))
   =>
-  (assert (goal-is-to (action unlock) (arguments ?chest))))
+  (assert (goal-is-to (action unlock) (target ?chest))))
 
 (defrule hold-object-to-move ""  
-  (goal-is-to (action move) (arguments ?obj ?place))
+  (goal-is-to (action move) (target ?obj) (location ?place))
   (thing (name ?obj) (location ~?place) (weight light))
   (monkey (holding ~?obj))
-  (not (goal-is-to (action hold) (arguments ?obj)))
+  (not (goal-is-to (action hold) (target ?obj)))
   =>
-  (assert (goal-is-to (action hold) (arguments ?obj))))
+  (assert (goal-is-to (action hold) (target ?obj))))
 
 (defrule move-object-to-place "" 
-  (goal-is-to (action move) (arguments ?obj ?place))
+  (goal-is-to (action move) (target ?obj) (location ?place))
   (monkey (location ~?place) (holding ?obj))
-  (not (goal-is-to (action walk-to) (arguments ?place)))
+  (not (goal-is-to (action walk-to) (location ?place)))
   =>
-  (assert (goal-is-to (action walk-to) (arguments ?place))))
+  (assert (goal-is-to (action walk-to) (location ?place))))
 
 (defrule drop-object-once-moved "" 
-  ?goal <- (goal-is-to (action move) (arguments ?name ?place))
-  ?monkey <- (monkey (location ?place) (holding ?obj))
+  ?goal <- (goal-is-to (action move) (target ?name) (location ?place))
+  ?monkey <- (monkey (location ?place) (holding ?name))
   ?thing <- (thing (name ?name) (weight light))
   =>
-  (printout t "Monkey drops the " ?name "." crlf)
-  (modify ?monkey (holding blank))
+  (println "Monkey drops the " ?name ".")
+  (modify ?monkey (holding nothing))
   (modify ?thing (location ?place) (on-top-of floor))
   (retract ?goal))
 
 (defrule already-moved-object ""
-  ?goal <- (goal-is-to (action move) (arguments ?obj ?place))
+  ?goal <- (goal-is-to (action move) (target ?obj) (location ?place))
   (thing (name ?obj) (location ?place))
   =>
   (retract ?goal))
@@ -248,31 +251,31 @@
 ;;;***********************
 
 (defrule already-at-place "" 
-  ?goal <- (goal-is-to (action walk-to) (arguments ?place))
+  ?goal <- (goal-is-to (action walk-to) (location ?place))
   (monkey (location ?place))
   =>
   (retract ?goal))
 
 (defrule get-on-floor-to-walk ""
-  (goal-is-to (action walk-to) (arguments ?place))
+  (goal-is-to (action walk-to) (location ?place))
   (monkey (location ~?place) (on-top-of ~floor))
-  (not (goal-is-to (action on) (arguments floor)))
+  (not (goal-is-to (action on) (target floor)))
   =>
-  (assert (goal-is-to (action on) (arguments floor))))
+  (assert (goal-is-to (action on) (target floor))))
 
 (defrule walk-holding-nothing ""
-  ?goal <- (goal-is-to (action walk-to) (arguments ?place))
-  ?monkey <- (monkey (location ~?place) (on-top-of floor) (holding blank))
+  ?goal <- (goal-is-to (action walk-to) (location ?place))
+  ?monkey <- (monkey (location ~?place) (on-top-of floor) (holding nothing))
   =>
-  (printout t "Monkey walks to " ?place "." crlf)
+  (println "Monkey walks to " ?place ".")
   (modify ?monkey (location ?place))
   (retract ?goal))
 
 (defrule walk-holding-object ""
-  ?goal <- (goal-is-to (action walk-to) (arguments ?place))
-  ?monkey <- (monkey (location ~?place) (on-top-of floor) (holding ?obj&~blank))
+  ?goal <- (goal-is-to (action walk-to) (location ?place))
+  ?monkey <- (monkey (location ~?place) (on-top-of floor) (holding ?obj&~nothing))
   =>
-  (printout t "Monkey walks to " ?place " holding the " ?obj "." crlf)
+  (println "Monkey walks to " ?place " holding the " ?obj ".")
   (modify ?monkey (location ?place))
   (retract ?goal))
 
@@ -281,48 +284,48 @@
 ;;;***********************
 
 (defrule jump-onto-floor "" 
-  ?goal <- (goal-is-to (action on) (arguments floor))
+  ?goal <- (goal-is-to (action on) (target floor))
   ?monkey <- (monkey (on-top-of ?on&~floor))
   =>
-  (printout t "Monkey jumps off the " ?on " onto the floor." crlf)
+  (println "Monkey jumps off the " ?on " onto the floor.")
   (modify ?monkey (on-top-of floor))
   (retract ?goal))
 
 (defrule walk-to-place-to-climb "" 
-  (goal-is-to (action on) (arguments ?obj))
+  (goal-is-to (action on) (target ?obj))
   (thing (name ?obj) (location ?place))
   (monkey (location ~?place))
-  (not (goal-is-to (action walk-to) (arguments ?place)))
+  (not (goal-is-to (action walk-to) (location ?place)))
   =>
-  (assert (goal-is-to (action walk-to) (arguments ?place))))
+  (assert (goal-is-to (action walk-to) (location ?place))))
 
 (defrule drop-to-climb "" 
-  (goal-is-to (action on) (arguments ?obj))
+  (goal-is-to (action on) (target ?obj))
   (thing (name ?obj) (location ?place))
-  (monkey (location ?place) (holding ~blank))
-  (not (goal-is-to (action hold) (arguments blank)))
+  (monkey (location ?place) (holding ~nothing))
+  (not (goal-is-to (action hold) (target nothing)))
   =>
-  (assert (goal-is-to (action hold) (arguments blank))))
+  (assert (goal-is-to (action hold) (target nothing))))
 
 (defrule climb-indirectly "" 
-  (goal-is-to (action on) (arguments ?obj))
+  (goal-is-to (action on) (target ?obj))
   (thing (name ?obj) (location ?place) (on-top-of ?on))
-  (monkey (location ?place) (on-top-of ~?on&~?obj) (holding blank))
-  (not (goal-is-to (action on) (arguments ?on)))
+  (monkey (location ?place) (on-top-of ~?on&~?obj) (holding nothing))
+  (not (goal-is-to (action on) (target ?on)))
   =>
-  (assert (goal-is-to (action on) (arguments ?on))))
+  (assert (goal-is-to (action on) (target ?on))))
 
 (defrule climb-directly ""  
-  ?goal <- (goal-is-to (action on) (arguments ?obj))
+  ?goal <- (goal-is-to (action on) (target ?obj))
   (thing (name ?obj) (location ?place) (on-top-of ?on))
-  ?monkey <- (monkey (location ?place) (on-top-of ?on) (holding blank))
+  ?monkey <- (monkey (location ?place) (on-top-of ?on) (holding nothing))
   =>
-  (printout t "Monkey climbs onto the " ?obj "." crlf)
+  (println "Monkey climbs onto the " ?obj ".")
   (modify ?monkey (on-top-of ?obj))
   (retract ?goal))
 
 (defrule already-on-object ""
-  ?goal <- (goal-is-to (action on) (arguments ?obj))
+  ?goal <- (goal-is-to (action on) (target ?obj))
   (monkey (on-top-of ?obj))
   =>
   (retract ?goal))
@@ -332,19 +335,19 @@
 ;;;********************
 
 (defrule hold-to-eat ""
-  (goal-is-to (action eat) (arguments ?obj))
+  (goal-is-to (action eat) (target ?obj))
   (monkey (holding ~?obj))
-  (not (goal-is-to (action hold) (arguments ?obj)))
+  (not (goal-is-to (action hold) (target ?obj)))
   =>
-  (assert (goal-is-to (action hold) (arguments ?obj))))
+  (assert (goal-is-to (action hold) (target ?obj))))
 
 (defrule satisfy-hunger ""
-  ?goal <- (goal-is-to (action eat) (arguments ?name))
+  ?goal <- (goal-is-to (action eat) (target ?name))
   ?monkey <- (monkey (holding ?name))
   ?thing <- (thing (name ?name))
   =>
-  (printout t "Monkey eats the " ?name "." crlf)
-  (modify ?monkey (holding blank))
+  (println "Monkey eats the " ?name ".")
+  (modify ?monkey (holding nothing))
   (retract ?goal ?thing))
  
 ;;;**********************
@@ -353,7 +356,7 @@
 
 (defrule startup ""
   =>
-  (assert (monkey (location t5-7) (on-top-of green-couch) (holding blank)))
+  (assert (monkey (location t5-7) (on-top-of green-couch) (holding nothing)))
   (assert (thing (name green-couch) (location t5-7) (weight heavy)))
   (assert (thing (name red-couch) (location t2-2) (weight heavy)))
   (assert (thing (name big-pillow) (location t2-2) (on-top-of red-couch)))
@@ -365,4 +368,4 @@
   (assert (thing (name green-chest) (location t8-8) (on-top-of ceiling)))
   (assert (chest (name green-chest) (contents blue-key) (unlocked-by red-key)))
   (assert (thing (name red-key) (location t1-3)))
-  (assert (goal-is-to (action eat) (arguments bananas))))
+  (assert (goal-is-to (action eat) (target bananas))))

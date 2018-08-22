@@ -6,13 +6,16 @@
 ;;;     missionary) in agricultural terms. The point is
 ;;;     to get the farmer, the fox the cabbage and the
 ;;;     goat across a stream.
+;;;
 ;;;     But the boat only holds 2 items. If left 
 ;;;     alone with the goat, the fox will eat it. If
 ;;;     left alone with the cabbage, the goat will eat
 ;;;     it.
-;;;     This example uses rules to solve the problem.
 ;;;
-;;;     CLIPS Version 6.0 Example
+;;;     This example uses rules and fact pattern 
+;;;     matching to solve the problem.
+;;;
+;;;     CLIPS Version 6.4 Example
 ;;;
 ;;;     To execute, merely load, reset and run.
 ;;;======================================================
@@ -181,16 +184,17 @@
   ?mv <- (moves (id no-parent) (moves-list no-move $?m))
   =>
   (retract ?mv)
-  (printout t crlf "Solution found: " crlf crlf)
+  (println crlf "Solution found: " crlf)
   (bind ?length (length$ ?m))
   (bind ?i 1)
   (bind ?shore shore-2)
   (while (<= ?i ?length)
      (bind ?thing (nth$ ?i ?m))
      (if (eq ?thing alone)
-        then (printout t "Farmer moves alone to " ?shore "." crlf)
-        else (printout t "Farmer moves with " ?thing " to " ?shore "." crlf))
+        then (println "Farmer moves alone to " ?shore ".")
+        else (println "Farmer moves with " ?thing " to " ?shore "."))
      (if (eq ?shore shore-1)
         then (bind ?shore shore-2)
         else (bind ?shore shore-1))
-     (bind ?i (+ 1 ?i))))
+     (bind ?i (+ 1 ?i)))
+  (println))

@@ -9,7 +9,7 @@
 ;;;     set of conditions, it must be determined which
 ;;;     attributes are assigned to each man.
 ;;;
-;;;     CLIPS Version 6.0 Example
+;;;     CLIPS Version 6.4 Example
 ;;;
 ;;;     To execute, merely load, reset and run.
 ;;;======================================================
@@ -148,11 +148,11 @@
   (format t "  3   | %-11s | %-6s | %-6s | %-12s | %-13s%n" ?n3 ?c3 ?p3 ?d3 ?s3)
   (format t "  4   | %-11s | %-6s | %-6s | %-12s | %-13s%n" ?n4 ?c4 ?p4 ?d4 ?s4)
   (format t "  5   | %-11s | %-6s | %-6s | %-12s | %-13s%n" ?n5 ?c5 ?p5 ?d5 ?s5)
-  (printout t crlf crlf))
+  (format t "%n"))
 
 (defrule startup
    =>
-   (printout t
+   (println crlf
     "There are five houses, each of a different color, inhabited by men of"  crlf
     "different nationalities, with different pets, drinks, and cigarettes."  crlf
     crlf
@@ -161,13 +161,13 @@
     "the coffee drinker lives.  The milk drinker lives in the middle house." crlf
     "The man who smokes Old Golds also keeps snails.  The Ukrainian drinks"  crlf
     "tea.  The Norwegian resides in the first house on the left.  The"       crlf)
-   (printout t
+   (println
     "Chesterfields smoker lives next door to the fox owner.  The Lucky"      crlf
     "Strike smoker drinks orange juice.  The Japanese smokes Parliaments."   crlf
     "The horse owner lives next to the Kools smoker, whose house is yellow." crlf
     "The Norwegian lives next to the blue house."			                 crlf
     crlf
-    "Now, who drinks water?  And who owns the zebra?" crlf crlf)
+    "Now, who drinks water?  And who owns the zebra?" crlf)
    (assert (value color red) 
            (value color green) 
            (value color ivory)
