@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  11/13/17             */
+   /*            CLIPS Version 6.40  09/03/18             */
    /*                                                     */
    /*                  DEFGLOBAL MODULE                   */
    /*******************************************************/
@@ -436,6 +436,8 @@ void QSetDefglobalValue(
   UDFValue *vPtr,
   bool resetVar)
   {
+   CLIPSValue newValue;
+   
    /*====================================================*/
    /* If the new value passed for the defglobal is NULL, */
    /* then reset the defglobal to the initial value it   */
@@ -470,6 +472,17 @@ void QSetDefglobalValue(
 #endif
 
    /*==============================================*/
+   /* Retain the new value of the global variable. */
+   /*==============================================*/
+   
+   NormalizeMultifield(theEnv,vPtr);
+   if (vPtr->header->type != MULTIFIELD_TYPE)
+     { newValue.value = vPtr->value; }
+   else
+     { newValue.value = CopyMultifield(theEnv,vPtr->multifieldValue); }
+   Retain(theEnv,newValue.header);
+
+   /*==============================================*/
    /* Remove the old value of the global variable. */
    /*==============================================*/
 
@@ -486,11 +499,7 @@ void QSetDefglobalValue(
    /* Set the new value of the global variable. */
    /*===========================================*/
 
-   if (vPtr->header->type != MULTIFIELD_TYPE)
-     { theGlobal->current.value = vPtr->value; }
-   else
-     { theGlobal->current.value = CopyMultifield(theEnv,vPtr->multifieldValue); }
-   Retain(theEnv,theGlobal->current.header);
+   theGlobal->current.value = newValue.value;
 
    /*===========================================*/
    /* Set the variable indicating that a change */

@@ -634,3 +634,6 @@
 (progn$ (?a (create$ a b c)) 
             (progn$ (?b (create$ x y)) (printout t ?a " " ?b crlf)))
 (clear)
+(defglobal ?*crash* = (create$ 1 2 3 etc))
+(bind ?*crash* (rest$ ?*crash*))
+(clear)
