@@ -636,4 +636,6 @@
 (clear)
 (defglobal ?*crash* = (create$ 1 2 3 etc))
 (bind ?*crash* (rest$ ?*crash*))
+(clear) ; SourceForge Ticket #49
+(::)
 (clear)

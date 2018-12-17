@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  01/15/18             */
+   /*            CLIPS Version 6.40  12/17/18             */
    /*                                                     */
    /*              EXPRESSION PARSER MODULE               */
    /*******************************************************/
@@ -42,6 +42,9 @@
 /*            occurring when using $ with global variables.  */
 /*                                                           */
 /*            Fast router used for ParseConstantArguments.   */
+/*                                                           */
+/*            Fixed crash bug when module separator :: is    */
+/*            used but no module name specified.             */
 /*                                                           */
 /*      6.40: Changed restrictions from char * to            */
 /*            CLIPSLexeme * to support strings               */
@@ -194,6 +197,16 @@ struct expr *Function2Parse(
    if ((position = FindModuleSeparator(name)) != 0)
      {
       moduleName = ExtractModuleName(theEnv,position,name);
+      
+      if (moduleName == NULL)
+        {
+         PrintErrorID(theEnv,"EXPRNPSR",7,true);
+         WriteString(theEnv,STDERR,"Missing module name for '");
+         WriteString(theEnv,STDERR,name);
+         WriteString(theEnv,STDERR,"'.\n");
+         return NULL;
+        }
+
       constructName = ExtractConstructName(theEnv,position,name,SYMBOL_TYPE);
       moduleSpecified = true;
      }
