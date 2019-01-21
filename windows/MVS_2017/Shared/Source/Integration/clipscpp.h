@@ -390,6 +390,8 @@ class FactAddressValue : public Value
      CLIPSCPPType GetCLIPSType();
      virtual long long GetFactIndex() const;
      Fact *GetFactAddressValue();
+     void Retain();
+     void Release();
   
    private:
      Fact *theFactAddress;
@@ -408,6 +410,8 @@ class InstanceAddressValue : public Value
      virtual const char *GetInstanceName() const;
      virtual DataObject DirectGetSlot(char *) const;
      Instance *GetInstanceAddressValue();
+     void Retain();
+     void Release();
   
    private:
      Instance *theInstanceAddress;

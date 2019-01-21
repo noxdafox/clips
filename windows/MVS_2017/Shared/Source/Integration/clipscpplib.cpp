@@ -1778,11 +1778,6 @@ FloatValue *FloatValue::clone() const
 FactAddressValue::FactAddressValue(
   Fact *theFact) : theFactAddress(theFact)
   {
-#ifndef CLIPS_DLL_WRAPPER
-   RetainFact(theFact);
-#else
-   __RetainFact(theFact);
-#endif
   }
 
 /********************/
@@ -1797,6 +1792,25 @@ FactAddressValue::FactAddressValue( const FactAddressValue& v) : theFactAddress(
 /* ~FactAddressValue */
 /*********************/
 FactAddressValue::~FactAddressValue()
+  {   
+  }
+
+/**********/
+/* Retain */
+/**********/
+void FactAddressValue::Retain()
+  {
+#ifndef CLIPS_DLL_WRAPPER
+   RetainFact(theFactAddress);
+#else
+   __RetainFact(theFactAddress);
+#endif
+  }
+
+/***********/
+/* Release */
+/***********/
+void FactAddressValue::Release()
   {   
 #ifndef CLIPS_DLL_WRAPPER
    ::ReleaseFact(theFactAddress);
@@ -1821,23 +1835,8 @@ FactAddressValue& FactAddressValue::operator = (
   {
    if (this == &v) return *this;
 
-   if (theFactAddress != NULL)
-     { 
-#ifndef CLIPS_DLL_WRAPPER
-      ::ReleaseFact(theFactAddress);
-#else
-      __ReleaseFact(theFactAddress);
-#endif
-     }
-        
    theFactAddress = v.theFactAddress;
-     
-#ifndef CLIPS_DLL_WRAPPER
-   RetainFact(theFactAddress);
-#else
-   __RetainFact(theFactAddress);
-#endif
-   
+        
    return *this;
   }
 
@@ -1851,7 +1850,6 @@ long long FactAddressValue::GetFactIndex() const
 #else
    return __FactIndex(theFactAddress);
 #endif
-
   }
 
 /*********/
@@ -1910,11 +1908,6 @@ Fact *FactAddressValue::GetFactAddressValue()
 InstanceAddressValue::InstanceAddressValue(
   Instance *theInstance) : theInstanceAddress(theInstance)
   {
-#ifndef CLIPS_DLL_WRAPPER
-   RetainInstance(theInstance);
-#else
-   __RetainInstance(theInstance);
-#endif
   }
 
 /************************/
@@ -1929,6 +1922,25 @@ InstanceAddressValue::InstanceAddressValue( const InstanceAddressValue& v) : the
 /* ~InstanceAddressValue */
 /*************************/
 InstanceAddressValue::~InstanceAddressValue()
+  {   
+  }
+
+/**********/
+/* Retain */
+/**********/
+void InstanceAddressValue::Retain()
+  {
+#ifndef CLIPS_DLL_WRAPPER
+   RetainInstance(theInstanceAddress);
+#else
+   __RetainInstance(theInstanceAddress);
+#endif
+  }
+
+/***********/
+/* Release */
+/***********/
+void InstanceAddressValue::Release()
   {   
 #ifndef CLIPS_DLL_WRAPPER
    ::ReleaseInstance(theInstanceAddress);
