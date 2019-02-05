@@ -638,4 +638,16 @@
 (bind ?*crash* (rest$ ?*crash*))
 (clear) ; SourceForge Ticket #49
 (::)
+(clear) ; CLIPSESG https://groups.google.com/forum/#!topic/CLIPSESG/j4fmacgmAZY
+
+(deftemplate example
+   (slot value
+      (type SYMBOL)
+      (allowed-symbols FALSE TRUE)))
+
+(defrule attempt-to-construct-example
+   ?f <- (line ?line)
+   =>
+   (retract ?f)
+   (assert (example (value (eq ?line "")))))
 (clear)

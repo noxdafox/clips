@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/21/18             */
+   /*            CLIPS Version 6.40  02/05/19             */
    /*                                                     */
    /*                CONSTANTS HEADER FILE                */
    /*******************************************************/
@@ -175,7 +175,7 @@ typedef enum
   } CLIPSType;
 
 #define NUMBER_BITS (INTEGER_BIT | FLOAT_BIT)
-#define LEXEME_BITS (SYMBOL_BIT | STRING_BIT)
+#define LEXEME_BITS (SYMBOL_BIT | STRING_BIT | BOOLEAN_BIT)
 #define ADDRESS_BITS (EXTERNAL_ADDRESS_BIT | FACT_ADDRESS_BIT | INSTANCE_ADDRESS_BIT)
 #define INSTANCE_BITS (INSTANCE_ADDRESS_BIT | INSTANCE_NAME_BIT)
 #define SINGLEFIELD_BITS (NUMBER_BITS | LEXEME_BITS | ADDRESS_BITS | INSTANCE_NAME_BIT)

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  10/24/17             */
+   /*            CLIPS Version 6.40  02/05/19             */
    /*                                                     */
    /*               EXTERNAL FUNCTION MODULE              */
    /*******************************************************/
@@ -971,8 +971,7 @@ void PrintTypesString(
    typeCount = 0;
    if (expectedType & INTEGER_BIT) typeCount++;
    if (expectedType & FLOAT_BIT) typeCount++;
-   if (expectedType & BOOLEAN_BIT) typeCount++;
-   if (expectedType & SYMBOL_BIT) typeCount++;
+   if (expectedType & (SYMBOL_BIT | BOOLEAN_BIT)) typeCount++;
    if (expectedType & STRING_BIT) typeCount++;
    if (expectedType & INSTANCE_NAME_BIT) typeCount++;
    if (expectedType & INSTANCE_ADDRESS_BIT) typeCount++;
@@ -987,11 +986,10 @@ void PrintTypesString(
     if (expectedType & FLOAT_BIT)
      { PrintType(theEnv,logicalName,typeCount,&typesPrinted,"float"); }
 
-   if (expectedType & BOOLEAN_BIT)
-     { PrintType(theEnv,logicalName,typeCount,&typesPrinted,"boolean"); }
-
    if (expectedType & SYMBOL_BIT)
      { PrintType(theEnv,logicalName,typeCount,&typesPrinted,"symbol"); }
+   else if (expectedType & BOOLEAN_BIT)
+     { PrintType(theEnv,logicalName,typeCount,&typesPrinted,"boolean"); }
 
    if (expectedType & STRING_BIT)
      { PrintType(theEnv,logicalName,typeCount,&typesPrinted,"string"); }

@@ -1108,5 +1108,17 @@ CLIPS> (clear) ; SourceForge Ticket #49
 CLIPS> (::)
 
 [EXPRNPSR7] Missing module name for '::'.
+CLIPS> (clear) ; CLIPSESG https://groups.google.com/forum/#!topic/CLIPSESG/j4fmacgmAZY
+CLIPS> 
+(deftemplate example
+   (slot value
+      (type SYMBOL)
+      (allowed-symbols FALSE TRUE)))
+CLIPS> 
+(defrule attempt-to-construct-example
+   ?f <- (line ?line)
+   =>
+   (retract ?f)
+   (assert (example (value (eq ?line "")))))
 CLIPS> (clear)
 CLIPS> (dribble-off)
