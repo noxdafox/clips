@@ -1120,5 +1120,28 @@ CLIPS>
    =>
    (retract ?f)
    (assert (example (value (eq ?line "")))))
+CLIPS> (clear) ; CLIPSESG https://groups.google.com/forum/#!topic/CLIPSESG/YaNnNF1xg5w
+CLIPS> 
+(defclass OAV
+   (is-a USER)
+   (slot object)
+   (slot attribute)
+   (multislot values))
+CLIPS> 
+(make-instance oav1 of OAV
+   (object Fred)
+   (attribute hobbies)
+   (values reading hiking chess))
+[oav1]
+CLIPS> (bsave-instances "Temp//drins.bin")
+1
+CLIPS> (reset)
+CLIPS> (bload-instances "Temp//drins.bin")
+1
+CLIPS> (send [oav1] print)
+[oav1] of OAV
+(object Fred)
+(attribute hobbies)
+(values reading hiking chess)
 CLIPS> (clear)
 CLIPS> (dribble-off)

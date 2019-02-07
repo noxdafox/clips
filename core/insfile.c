@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  06/22/18             */
+   /*            CLIPS Version 6.40  02/07/19             */
    /*                                                     */
    /*         INSTANCE LOAD/SAVE (ASCII/BINARY) MODULE    */
    /*******************************************************/
@@ -1650,7 +1650,7 @@ static void CreateSlotValue(
       returnValue->range = valueCount;
       for (i = 0 ; i < valueCount ; i++)
         {
-         returnValue->multifieldValue->contents[i].value = GetBinaryAtomValue(theEnv,&bsaValues[i-1]);
+         returnValue->multifieldValue->contents[i].value = GetBinaryAtomValue(theEnv,&bsaValues[i]);
         }
      }
   }

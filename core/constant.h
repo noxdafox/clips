@@ -117,11 +117,11 @@ typedef enum
 #endif
 
 #ifndef CREATION_DATE_STRING
-#define CREATION_DATE_STRING "8/21/18"
+#define CREATION_DATE_STRING "2/7/19"
 #endif
 
 #ifndef BANNER_STRING
-#define BANNER_STRING "         CLIPS (Cypher Beta 8/21/18)\n"
+#define BANNER_STRING "         CLIPS (Cypher Beta 2/7/19)\n"
 #endif
 
 /*************************/
