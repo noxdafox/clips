@@ -638,6 +638,18 @@
 (bind ?*crash* (rest$ ?*crash*))
 (clear) ; SourceForge Ticket #49
 (::)
+(clear) ; SourceForge Ticket #54 Extraneous Module Specifier
+(defmodule EXTRANEOUS::COMPUTE)
+(deftemplate MAIN::EXTRANEOUS::point)
+(deffacts MAIN::EXTRANEOUS::points)
+(defrule MAIN::EXTRANEOUS::find-point =>)
+(defclass MAIN::EXTRANEOUS::POINT (is-a USER))
+(defclass MAIN::POINT (is-a USER))
+(defmessage-handler MAIN::EXTRANEOUS::POINT add-points ())
+(definstances MAIN::EXTRANEOUS::points)
+(deffunction MAIN::EXTRANEOUS::add-point (?x ?y))
+(defgeneric MAIN::EXTRANEOUS::add-point)
+(defmethod MAIN::EXTRANEOUS::add-point ((?x FLOAT) (?y FLOAT)))
 (clear) ; CLIPSESG https://groups.google.com/forum/#!topic/CLIPSESG/j4fmacgmAZY
 
 (deftemplate example

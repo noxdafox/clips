@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  01/14/18             */
+   /*            CLIPS Version 6.40  03/18/19             */
    /*                                                     */
    /*              DEFMODULE UTILITY MODULE               */
    /*******************************************************/
@@ -25,6 +25,9 @@
 /*            deprecation warnings.                          */
 /*                                                           */
 /*      6.31: Used strstr function to find module separator. */
+/*                                                           */
+/*            Disallowed use of extraneous module            */
+/*            specifiers in a construct name.                */
 /*                                                           */
 /*      6.40: Added Env prefix to GetHaltExecution and       */
 /*            SetHaltExecution functions.                    */
@@ -886,6 +889,12 @@ CLIPSLexeme *GetConstructNameAndComment(
       if (name == NULL)
         {
          SyntaxErrorMessage(theEnv,"construct name");
+         return NULL;
+        }
+        
+      if (FindModuleSeparator(name->contents) != 0)
+        {
+         SyntaxErrorMessage(theEnv,"module specifier");
          return NULL;
         }
      }
