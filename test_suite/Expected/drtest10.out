@@ -1048,5 +1048,67 @@ CLIPS> (clear) ; SourceForge Ticket #49
 CLIPS> (::)
 
 [EXPRNPSR8] Missing module name for '::'.
+CLIPS> (clear) ; SourceForge Ticket #54 Extraneous Module Specifier
+CLIPS> (defmodule EXTRANEOUS::COMPUTE)
+
+[PRNTUTIL2] Syntax Error:  Check appropriate syntax for module specifier.
+
+ERROR:
+(defmodule EXTRANEOUS::COMPUTE
+CLIPS> (deftemplate MAIN::EXTRANEOUS::point)
+
+[PRNTUTIL2] Syntax Error:  Check appropriate syntax for module specifier.
+
+ERROR:
+(deftemplate MAIN::EXTRANEOUS::point
+CLIPS> (deffacts MAIN::EXTRANEOUS::points)
+
+[PRNTUTIL2] Syntax Error:  Check appropriate syntax for module specifier.
+
+ERROR:
+(deffacts MAIN::EXTRANEOUS::points
+CLIPS> (defrule MAIN::EXTRANEOUS::find-point =>)
+
+[PRNTUTIL2] Syntax Error:  Check appropriate syntax for module specifier.
+
+ERROR:
+(defrule MAIN::EXTRANEOUS::find-point
+CLIPS> (defclass MAIN::EXTRANEOUS::POINT (is-a USER))
+
+[PRNTUTIL2] Syntax Error:  Check appropriate syntax for module specifier.
+
+ERROR:
+(defclass MAIN::EXTRANEOUS::POINT
+CLIPS> (defclass MAIN::POINT (is-a USER))
+CLIPS> (defmessage-handler MAIN::EXTRANEOUS::POINT add-points ())
+
+[PRNTUTIL2] Syntax Error:  Check appropriate syntax for module specifier.
+
+ERROR:
+(defmessage-handler MAIN::EXTRANEOUS::POINT
+CLIPS> (definstances MAIN::EXTRANEOUS::points)
+
+[PRNTUTIL2] Syntax Error:  Check appropriate syntax for module specifier.
+
+ERROR:
+(definstances MAIN::EXTRANEOUS::points
+CLIPS> (deffunction MAIN::EXTRANEOUS::add-point (?x ?y))
+
+[PRNTUTIL2] Syntax Error:  Check appropriate syntax for module specifier.
+
+ERROR:
+(deffunction MAIN::EXTRANEOUS::add-point
+CLIPS> (defgeneric MAIN::EXTRANEOUS::add-point)
+
+[PRNTUTIL2] Syntax Error:  Check appropriate syntax for module specifier.
+
+ERROR:
+(defgeneric MAIN::EXTRANEOUS::add-point
+CLIPS> (defmethod MAIN::EXTRANEOUS::add-point ((?x FLOAT) (?y FLOAT)))
+
+[PRNTUTIL2] Syntax Error:  Check appropriate syntax for module specifier.
+
+ERROR:
+(defmethod MAIN::EXTRANEOUS::add-point
 CLIPS> (clear)
 CLIPS> (dribble-off)
