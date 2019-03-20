@@ -19,10 +19,10 @@
 (facts)                            ; DR0604
 (clear)                            ; DR0606
 
-(defrule blah                      ; DR0606
-   =>                              ; DR0606
-  (bsave "Temp//me.bin")           ; DR0606
-  (bload "Temp//me.bin"))          ; DR0606
+(defrule blah                             ; DR0606
+   =>                                     ; DR0606
+  (bsave "Temp//me.bin")                  ; DR0606
+  (bload "Temp//me.bin"))                 ; DR0606
 (reset)                            ; DR0606
 (run)                              ; DR0606
 (tan (deg-rad 270))                ; DR0609 - Error
