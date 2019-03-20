@@ -1170,6 +1170,28 @@ CLIPS> (defmethod MAIN::EXTRANEOUS::add-point ((?x FLOAT) (?y FLOAT)))
 
 ERROR:
 (defmethod MAIN::EXTRANEOUS::add-point
+CLIPS> (clear) ; Error line count issue
+CLIPS> (load line_error_crlf.clp)
+%$
+[TMPLTDEF1] line_error_crlf.clp, Line 7: Invalid slot 'z' not defined in corresponding deftemplate 'point'.
+
+ERROR:
+(deffacts MAIN::points
+   (point (x 1) (y 2))
+   (point (x 3) (y 4) (z
+
+FALSE
+CLIPS> (clear)
+CLIPS> (load line_error_lf.clp)
+%$
+[TMPLTDEF1] line_error_lf.clp, Line 7: Invalid slot 'z' not defined in corresponding deftemplate 'point'.
+
+ERROR:
+(deffacts MAIN::points
+   (point (x 1) (y 2))
+   (point (x 3) (y 4) (z
+
+FALSE
 CLIPS> (clear) ; CLIPSESG https://groups.google.com/forum/#!topic/CLIPSESG/j4fmacgmAZY
 CLIPS> 
 (deftemplate example

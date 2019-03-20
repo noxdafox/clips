@@ -650,6 +650,10 @@
 (deffunction MAIN::EXTRANEOUS::add-point (?x ?y))
 (defgeneric MAIN::EXTRANEOUS::add-point)
 (defmethod MAIN::EXTRANEOUS::add-point ((?x FLOAT) (?y FLOAT)))
+(clear) ; Error line count issue
+(load line_error_crlf.clp)
+(clear)
+(load line_error_lf.clp)
 (clear) ; CLIPSESG https://groups.google.com/forum/#!topic/CLIPSESG/j4fmacgmAZY
 
 (deftemplate example
