@@ -34,7 +34,7 @@
 	<key>CFBundleIconFile</key>
 	<string>CLIPS</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.SSoP.CLIPSIDE</string>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
@@ -44,7 +44,7 @@
 	<key>CFBundleSignature</key>
 	<string>CLIS</string>
 	<key>CFBundleVersion</key>
-	<string>6.3</string>
+	<string>6.31</string>
 	<key>NSMainNibFile</key>
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>

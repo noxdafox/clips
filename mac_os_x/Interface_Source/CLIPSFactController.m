@@ -10,6 +10,7 @@
 #import "AppController.h"
 #import "EnvController.h"
 #import "CLIPSEnvironment.h"
+#import "CLIPSAgendaController.h"
 #import "CLIPSFactInstance.h"
 #import "ModuleArrayController.h"
 
@@ -136,13 +137,41 @@
      }
    else
      {
-      [executionIndicator startAnimation: nil];
+      [self startExecutionIndicator];
      }
   }
 
-/**************************************************/
+/***************************/
+/* startExecutionIndicator */
+/***************************/
+- (void) startExecutionIndicator
+  {
+   if ([NSThread isMainThread])
+     { [executionIndicator startAnimation: nil]; }
+   else
+     {
+      dispatch_sync(dispatch_get_main_queue(),
+                    ^{ [self->executionIndicator startAnimation: nil]; });
+     }
+  }
+
+/**************************/
+/* stopExecutionIndicator */
+/**************************/
+- (void) stopExecutionIndicator
+  {
+   if ([NSThread isMainThread])
+     { [executionIndicator stopAnimation: nil]; }
+   else
+     {
+      dispatch_sync(dispatch_get_main_queue(),
+                    ^{ [self->executionIndicator stopAnimation: nil]; });
+     }
+  }
+
+/***************************/
 /* observeValueForKeyPath: */
-/**************************************************/
+/***************************/
 - (void) observeValueForKeyPath: (NSString *) keyPath 
                        ofObject: (id) object 
                         change: (NSDictionary *) change 
@@ -158,9 +187,9 @@
       if ([[change valueForKey: NSKeyValueChangeKindKey] intValue] == NSKeyValueChangeSetting)
         {
          if ([[change valueForKey: NSKeyValueChangeNewKey] intValue])
-           { [executionIndicator startAnimation: nil]; }
+           { [self startExecutionIndicator]; }
          else
-           { [executionIndicator stopAnimation: nil]; }
+           { [self stopExecutionIndicator]; }
         }
      }
   }
@@ -440,12 +469,12 @@
       
       if ([[theEnvironment executionLock] tryLock]) 
         {
-         [executionIndicator stopAnimation: nil];  
+         [self stopExecutionIndicator];
          [[theEnvironment executionLock] unlock];
         }
       else
         {
-         [executionIndicator startAnimation: nil];
+         [self startExecutionIndicator];
         }
       
       /*======================================================*/
@@ -464,9 +493,7 @@
    /*===============================================================*/
    
    else
-     {
-      [executionIndicator stopAnimation: nil];  
-     }
+     { [self stopExecutionIndicator]; }
 
    /*=============================*/
    /* Release the old environment */

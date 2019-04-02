@@ -28,9 +28,6 @@
 		B549629209BA9D6100697F33 /* CogDown.tiff in Resources */ = {isa = PBXBuildFile; fileRef = B549628F09BA9D6100697F33 /* CogDown.tiff */; };
 		B549629309BA9D6100697F33 /* CogGreyed.tiff in Resources */ = {isa = PBXBuildFile; fileRef = B549629009BA9D6100697F33 /* CogGreyed.tiff */; };
 		B549629409BA9D6100697F33 /* CogUp.tiff in Resources */ = {isa = PBXBuildFile; fileRef = B549629109BA9D6100697F33 /* CogUp.tiff */; };
-		B565435C09D220C3002856FE /* GenericController.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = B565435A09D220C3002856FE /* GenericController.h */; };
-		B565435D09D220C3002856FE /* GenericController.m in Sources */ = {isa = PBXBuildFile; fileRef = B565435B09D220C3002856FE /* GenericController.m */; };
-		B565436609D22215002856FE /* GenericInspector.nib in Resources */ = {isa = PBXBuildFile; fileRef = B565436409D22215002856FE /* GenericInspector.nib */; };
 		B569B68209AB75FC00BD6DE0 /* CLIPSTextDocument.nib in Resources */ = {isa = PBXBuildFile; fileRef = B569B68009AB75FC00BD6DE0 /* CLIPSTextDocument.nib */; };
 		B571D71B09D5E026003FCD41 /* CLIPSTerminalGlue.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = B571D71909D5E026003FCD41 /* CLIPSTerminalGlue.h */; };
 		B571D72509D5E0D4003FCD41 /* CLIPSTerminalGlue.m in Sources */ = {isa = PBXBuildFile; fileRef = B571D72409D5E0D4003FCD41 /* CLIPSTerminalGlue.m */; };
@@ -557,7 +554,6 @@
 		B5C0243309C28C6C00221A69 /* CLIPSAgendaBrowser.nib in Resources */ = {isa = PBXBuildFile; fileRef = B5C0243109C28C6C00221A69 /* CLIPSAgendaBrowser.nib */; };
 		B5CE5D870D7DB62B002166A8 /* CLIPSInstanceController.m in Sources */ = {isa = PBXBuildFile; fileRef = B5CE5D860D7DB62B002166A8 /* CLIPSInstanceController.m */; };
 		B5CE5DCD0D7DDF12002166A8 /* CLIPSInstanceBrowser.nib in Resources */ = {isa = PBXBuildFile; fileRef = B5CE5DCB0D7DDF12002166A8 /* CLIPSInstanceBrowser.nib */; };
-		B5D2C29D09CCD63F00D4B00E /* CLIPSFactInspector.nib in Resources */ = {isa = PBXBuildFile; fileRef = B5D2C29B09CCD63F00D4B00E /* CLIPSFactInspector.nib */; };
 		B5FA491E09A28A1C00FF7799 /* Preferences.nib in Resources */ = {isa = PBXBuildFile; fileRef = B5FA491C09A28A1C00FF7799 /* Preferences.nib */; };
 		B5FB532109AD41E2001AE877 /* CLIPSEnvironment.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = B5FB531709AD41E2001AE877 /* CLIPSEnvironment.h */; };
 		B5FB532209AD41E2001AE877 /* CLIPSEnvironment.m in Sources */ = {isa = PBXBuildFile; fileRef = B5FB531809AD41E2001AE877 /* CLIPSEnvironment.m */; };
@@ -600,7 +596,6 @@
 				B5B1B54609CDE38600F76417 /* CLIPSFocus.h in CopyFiles */,
 				B5B1B54809CDE38600F76417 /* CLIPSTextView.h in CopyFiles */,
 				B5B1B57A09CDE69F00F76417 /* CLIPSFactInstance.h in CopyFiles */,
-				B565435C09D220C3002856FE /* GenericController.h in CopyFiles */,
 				B571D71B09D5E026003FCD41 /* CLIPSTerminalGlue.h in CopyFiles */,
 				B533575009D72E5900893C2F /* CLIPSConstructInspectorController.h in CopyFiles */,
 				B591DCA90A13C16E0021AA02 /* CLIPSTextMenu.h in CopyFiles */,
@@ -613,17 +608,24 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		089C1660FE840EACC02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		2A37F4B7FDCFA73011CA2CEA /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/MainMenu.nib; sourceTree = "<group>"; };
-		2A37F4BAFDCFA73011CA2CEA /* English */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = English; path = English.lproj/Credits.rtf; sourceTree = "<group>"; };
 		B501CB3E09F4815400D8F101 /* HaltAfterRule.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = HaltAfterRule.tiff; path = Resources/HaltAfterRule.tiff; sourceTree = "<group>"; };
 		B501CB3F09F4815400D8F101 /* HaltImmediately.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = HaltImmediately.tiff; path = Resources/HaltImmediately.tiff; sourceTree = "<group>"; };
+		B50805F2225189CF00887A7C /* Base */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = Base; path = Base.lproj/CLIPSInstanceBrowser.nib; sourceTree = "<group>"; };
+		B50805F3225189CF00887A7C /* Base */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = Base; path = Base.lproj/CLIPSTerminal.nib; sourceTree = "<group>"; };
+		B50805F4225189CF00887A7C /* Base */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = Base; path = Base.lproj/MainMenu.nib; sourceTree = "<group>"; };
+		B50805F5225189CF00887A7C /* Base */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = Base; path = Base.lproj/Preferences.nib; sourceTree = "<group>"; };
+		B50805F6225189CF00887A7C /* Base */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = Base; path = Base.lproj/CLIPSTextDocument.nib; sourceTree = "<group>"; };
+		B50805F7225189CF00887A7C /* Base */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = Base; path = Base.lproj/EnvController.nib; sourceTree = "<group>"; };
+		B50805F8225189CF00887A7C /* Base */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = Base; path = Base.lproj/CLIPSAgendaBrowser.nib; sourceTree = "<group>"; };
+		B50805FB225189CF00887A7C /* Base */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = Base; path = Base.lproj/CLIPSConstructInspector.nib; sourceTree = "<group>"; };
+		B50805FC225189CF00887A7C /* Base */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = Base; path = Base.lproj/TextMenu.nib; sourceTree = "<group>"; };
+		B50805FD225189CF00887A7C /* Base */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = Base; path = Base.lproj/CLIPSFactBrowser.nib; sourceTree = "<group>"; };
+		B50805FE225189D400887A7C /* en */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = en; path = en.lproj/Credits.rtf; sourceTree = "<group>"; };
+		B50805FF225189D400887A7C /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		B5134C1A0B9F9D5A007B3571 /* main.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = main.c; path = CLIPS_Source/main.c; sourceTree = "<group>"; };
 		B533574E09D72E5900893C2F /* CLIPSConstructInspectorController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = CLIPSConstructInspectorController.h; path = Interface_Source/CLIPSConstructInspectorController.h; sourceTree = "<group>"; };
 		B533574F09D72E5900893C2F /* CLIPSConstructInspectorController.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = CLIPSConstructInspectorController.m; path = Interface_Source/CLIPSConstructInspectorController.m; sourceTree = "<group>"; };
-		B533575309D72F6B00893C2F /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/CLIPSConstructInspector.nib; sourceTree = "<group>"; };
 		B53734AC09F946D60086408A /* userfunctions.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = userfunctions.c; path = CLIPS_Source/userfunctions.c; sourceTree = "<group>"; };
-		B53DE9A20A0AE97800CA1063 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/TextMenu.nib; sourceTree = "<group>"; };
 		B53E50C909B0FD8A00F72EB0 /* CLIPSTerminalView.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = CLIPSTerminalView.h; path = Interface_Source/CLIPSTerminalView.h; sourceTree = "<group>"; };
 		B53E50CA09B0FD8A00F72EB0 /* CLIPSTerminalView.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = CLIPSTerminalView.m; path = Interface_Source/CLIPSTerminalView.m; sourceTree = "<group>"; };
 		B53E50CB09B0FD8A00F72EB0 /* PreferenceController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = PreferenceController.h; path = Interface_Source/PreferenceController.h; sourceTree = "<group>"; };
@@ -635,10 +637,6 @@
 		B549628F09BA9D6100697F33 /* CogDown.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = CogDown.tiff; path = Resources/CogDown.tiff; sourceTree = "<group>"; };
 		B549629009BA9D6100697F33 /* CogGreyed.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = CogGreyed.tiff; path = Resources/CogGreyed.tiff; sourceTree = "<group>"; };
 		B549629109BA9D6100697F33 /* CogUp.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = CogUp.tiff; path = Resources/CogUp.tiff; sourceTree = "<group>"; };
-		B565435A09D220C3002856FE /* GenericController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GenericController.h; path = Interface_Source/GenericController.h; sourceTree = "<group>"; };
-		B565435B09D220C3002856FE /* GenericController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GenericController.m; path = Interface_Source/GenericController.m; sourceTree = "<group>"; };
-		B565436509D22215002856FE /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/GenericInspector.nib; sourceTree = "<group>"; };
-		B569B68109AB75FC00BD6DE0 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/CLIPSTextDocument.nib; sourceTree = "<group>"; };
 		B571D71909D5E026003FCD41 /* CLIPSTerminalGlue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CLIPSTerminalGlue.h; path = Interface_Source/CLIPSTerminalGlue.h; sourceTree = "<group>"; };
 		B571D72409D5E0D4003FCD41 /* CLIPSTerminalGlue.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = CLIPSTerminalGlue.m; path = Interface_Source/CLIPSTerminalGlue.m; sourceTree = "<group>"; };
 		B57AFA0A0BA9F90F002491B9 /* CLIPSModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CLIPSModule.h; path = Interface_Source/CLIPSModule.h; sourceTree = "<group>"; };
@@ -649,8 +647,6 @@
 		B59D13FF179C5C1A00E1A6C7 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		B5AC0A4209B21DA100297B9E /* EnvController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = EnvController.h; path = Interface_Source/EnvController.h; sourceTree = "<group>"; };
 		B5AC0A4309B21DA100297B9E /* EnvController.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = EnvController.m; path = Interface_Source/EnvController.m; sourceTree = "<group>"; };
-		B5AC0A4709B21E1200297B9E /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/EnvController.nib; sourceTree = "<group>"; };
-		B5AF77060BA89AAC0090AC5E /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/CLIPSFactBrowser.nib; sourceTree = "<group>"; };
 		B5AF77130BA89B360090AC5E /* CLIPSAgendaController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = CLIPSAgendaController.h; path = Interface_Source/CLIPSAgendaController.h; sourceTree = "<group>"; };
 		B5AF77150BA89B750090AC5E /* CLIPSFactController.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = CLIPSFactController.m; path = Interface_Source/CLIPSFactController.m; sourceTree = "<group>"; };
 		B5B1B53609CDE36A00F76417 /* CLIPSActivation.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = CLIPSActivation.h; path = Interface_Source/CLIPSActivation.h; sourceTree = "<group>"; };
@@ -996,12 +992,8 @@
 		B5BCF0AC09AD245B000E597B /* utility.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = utility.h; path = CLIPS_Source/utility.h; sourceTree = "<group>"; };
 		B5BCF0AD09AD245B000E597B /* watch.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = watch.c; path = CLIPS_Source/watch.c; sourceTree = "<group>"; };
 		B5BCF0AE09AD245B000E597B /* watch.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = watch.h; path = CLIPS_Source/watch.h; sourceTree = "<group>"; };
-		B5C0243209C28C6C00221A69 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/CLIPSAgendaBrowser.nib; sourceTree = "<group>"; };
 		B5CE5D850D7DB62B002166A8 /* CLIPSInstanceController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = CLIPSInstanceController.h; path = Interface_Source/CLIPSInstanceController.h; sourceTree = "<group>"; };
 		B5CE5D860D7DB62B002166A8 /* CLIPSInstanceController.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = CLIPSInstanceController.m; path = Interface_Source/CLIPSInstanceController.m; sourceTree = "<group>"; };
-		B5CE5DCC0D7DDF12002166A8 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/CLIPSInstanceBrowser.nib; sourceTree = "<group>"; };
-		B5D2C29C09CCD63F00D4B00E /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/CLIPSFactInspector.nib; sourceTree = "<group>"; };
-		B5FA491D09A28A1C00FF7799 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/Preferences.nib; sourceTree = "<group>"; };
 		B5FB52F109AD3E90001AE877 /* CLIPS IDE.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "CLIPS IDE.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B5FB531709AD41E2001AE877 /* CLIPSEnvironment.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = CLIPSEnvironment.h; path = Interface_Source/CLIPSEnvironment.h; sourceTree = "<group>"; };
 		B5FB531809AD41E2001AE877 /* CLIPSEnvironment.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = CLIPSEnvironment.m; path = Interface_Source/CLIPSEnvironment.m; sourceTree = "<group>"; };
@@ -1011,7 +1003,6 @@
 		B5FB531E09AD41E2001AE877 /* AppController.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = AppController.m; path = Interface_Source/AppController.m; sourceTree = "<group>"; };
 		B5FB532B09AD4203001AE877 /* main.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = main.m; path = Interface_Source/main.m; sourceTree = "<group>"; };
 		B5FB533009AD425F001AE877 /* CLIPS.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = CLIPS.icns; path = Interface_Source/CLIPS.icns; sourceTree = "<group>"; };
-		B5FB533309AD4276001AE877 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/CLIPSTerminal.nib; sourceTree = "<group>"; };
 		B5FB533B09AD42E6001AE877 /* CLIPS-Info.plist */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.plist.xml; name = "CLIPS-Info.plist"; path = "Interface_Source/CLIPS-Info.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -1119,8 +1110,6 @@
 				B5B1B54309CDE38600F76417 /* CLIPSTextView.m */,
 				B5AC0A4209B21DA100297B9E /* EnvController.h */,
 				B5AC0A4309B21DA100297B9E /* EnvController.m */,
-				B565435A09D220C3002856FE /* GenericController.h */,
-				B565435B09D220C3002856FE /* GenericController.m */,
 				B5491E780BB18E2C00206EA5 /* ModuleArrayController.h */,
 				B5491E790BB18E2C00206EA5 /* ModuleArrayController.m */,
 				B53E50CB09B0FD8A00F72EB0 /* PreferenceController.h */,
@@ -1156,8 +1145,6 @@
 				B569B68009AB75FC00BD6DE0 /* CLIPSTextDocument.nib */,
 				B5AC0A4609B21E1200297B9E /* EnvController.nib */,
 				B5C0243109C28C6C00221A69 /* CLIPSAgendaBrowser.nib */,
-				B5D2C29B09CCD63F00D4B00E /* CLIPSFactInspector.nib */,
-				B565436409D22215002856FE /* GenericInspector.nib */,
 				B533575209D72F6B00893C2F /* CLIPSConstructInspector.nib */,
 				B53DE9A10A0AE97800CA1063 /* TextMenu.nib */,
 				B5AF77050BA89AAC0090AC5E /* CLIPSFactBrowser.nib */,
@@ -1775,17 +1762,18 @@
 		2A37F4A9FDCFA73011CA2CEA /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0610;
+				LastUpgradeCheck = 1020;
 			};
 			buildConfigurationList = C05733CB08A9546B00998B17 /* Build configuration list for PBXProject "CLIPS" */;
 			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
+			developmentRegion = en;
 			hasScannedForEncodings = 1;
 			knownRegions = (
-				English,
-				Japanese,
-				French,
-				German,
+				de,
+				fr,
+				Base,
+				ja,
+				en,
 			);
 			mainGroup = 2A37F4AAFDCFA73011CA2CEA /* CLIPSEditor */;
 			projectDirPath = "";
@@ -1815,8 +1803,6 @@
 				B549629309BA9D6100697F33 /* CogGreyed.tiff in Resources */,
 				B549629409BA9D6100697F33 /* CogUp.tiff in Resources */,
 				B5C0243309C28C6C00221A69 /* CLIPSAgendaBrowser.nib in Resources */,
-				B5D2C29D09CCD63F00D4B00E /* CLIPSFactInspector.nib in Resources */,
-				B565436609D22215002856FE /* GenericInspector.nib in Resources */,
 				B533575409D72F6B00893C2F /* CLIPSConstructInspector.nib in Resources */,
 				B501CB4009F4815400D8F101 /* HaltAfterRule.tiff in Resources */,
 				B501CB4109F4815400D8F101 /* HaltImmediately.tiff in Resources */,
@@ -1863,7 +1849,6 @@
 				B5B1B54709CDE38600F76417 /* CLIPSFocus.m in Sources */,
 				B5B1B54909CDE38600F76417 /* CLIPSTextView.m in Sources */,
 				B5B1B57B09CDE69F00F76417 /* CLIPSFactInstance.m in Sources */,
-				B565435D09D220C3002856FE /* GenericController.m in Sources */,
 				B571D72509D5E0D4003FCD41 /* CLIPSTerminalGlue.m in Sources */,
 				B533575109D72E5900893C2F /* CLIPSConstructInspectorController.m in Sources */,
 				B591DCA80A13C16D0021AA02 /* CLIPSTextMenu.m in Sources */,
@@ -2229,7 +2214,7 @@
 		089C165FFE840EACC02AAC07 /* InfoPlist.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
-				089C1660FE840EACC02AAC07 /* English */,
+				B50805FF225189D400887A7C /* en */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
@@ -2237,7 +2222,7 @@
 		2A37F4B6FDCFA73011CA2CEA /* MainMenu.nib */ = {
 			isa = PBXVariantGroup;
 			children = (
-				2A37F4B7FDCFA73011CA2CEA /* English */,
+				B50805F4225189CF00887A7C /* Base */,
 			);
 			name = MainMenu.nib;
 			sourceTree = "<group>";
@@ -2245,7 +2230,7 @@
 		2A37F4B9FDCFA73011CA2CEA /* Credits.rtf */ = {
 			isa = PBXVariantGroup;
 			children = (
-				2A37F4BAFDCFA73011CA2CEA /* English */,
+				B50805FE225189D400887A7C /* en */,
 			);
 			name = Credits.rtf;
 			sourceTree = "<group>";
@@ -2253,7 +2238,7 @@
 		B533575209D72F6B00893C2F /* CLIPSConstructInspector.nib */ = {
 			isa = PBXVariantGroup;
 			children = (
-				B533575309D72F6B00893C2F /* English */,
+				B50805FB225189CF00887A7C /* Base */,
 			);
 			name = CLIPSConstructInspector.nib;
 			sourceTree = "<group>";
@@ -2261,23 +2246,15 @@
 		B53DE9A10A0AE97800CA1063 /* TextMenu.nib */ = {
 			isa = PBXVariantGroup;
 			children = (
-				B53DE9A20A0AE97800CA1063 /* English */,
+				B50805FC225189CF00887A7C /* Base */,
 			);
 			name = TextMenu.nib;
-			sourceTree = "<group>";
-		};
-		B565436409D22215002856FE /* GenericInspector.nib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				B565436509D22215002856FE /* English */,
-			);
-			name = GenericInspector.nib;
 			sourceTree = "<group>";
 		};
 		B569B68009AB75FC00BD6DE0 /* CLIPSTextDocument.nib */ = {
 			isa = PBXVariantGroup;
 			children = (
-				B569B68109AB75FC00BD6DE0 /* English */,
+				B50805F6225189CF00887A7C /* Base */,
 			);
 			name = CLIPSTextDocument.nib;
 			sourceTree = "<group>";
@@ -2285,7 +2262,7 @@
 		B5AC0A4609B21E1200297B9E /* EnvController.nib */ = {
 			isa = PBXVariantGroup;
 			children = (
-				B5AC0A4709B21E1200297B9E /* English */,
+				B50805F7225189CF00887A7C /* Base */,
 			);
 			name = EnvController.nib;
 			sourceTree = "<group>";
@@ -2293,7 +2270,7 @@
 		B5AF77050BA89AAC0090AC5E /* CLIPSFactBrowser.nib */ = {
 			isa = PBXVariantGroup;
 			children = (
-				B5AF77060BA89AAC0090AC5E /* English */,
+				B50805FD225189CF00887A7C /* Base */,
 			);
 			name = CLIPSFactBrowser.nib;
 			sourceTree = "<group>";
@@ -2301,7 +2278,7 @@
 		B5C0243109C28C6C00221A69 /* CLIPSAgendaBrowser.nib */ = {
 			isa = PBXVariantGroup;
 			children = (
-				B5C0243209C28C6C00221A69 /* English */,
+				B50805F8225189CF00887A7C /* Base */,
 			);
 			name = CLIPSAgendaBrowser.nib;
 			sourceTree = "<group>";
@@ -2309,23 +2286,15 @@
 		B5CE5DCB0D7DDF12002166A8 /* CLIPSInstanceBrowser.nib */ = {
 			isa = PBXVariantGroup;
 			children = (
-				B5CE5DCC0D7DDF12002166A8 /* English */,
+				B50805F2225189CF00887A7C /* Base */,
 			);
 			name = CLIPSInstanceBrowser.nib;
-			sourceTree = "<group>";
-		};
-		B5D2C29B09CCD63F00D4B00E /* CLIPSFactInspector.nib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				B5D2C29C09CCD63F00D4B00E /* English */,
-			);
-			name = CLIPSFactInspector.nib;
 			sourceTree = "<group>";
 		};
 		B5FA491C09A28A1C00FF7799 /* Preferences.nib */ = {
 			isa = PBXVariantGroup;
 			children = (
-				B5FA491D09A28A1C00FF7799 /* English */,
+				B50805F5225189CF00887A7C /* Base */,
 			);
 			name = Preferences.nib;
 			sourceTree = "<group>";
@@ -2333,7 +2302,7 @@
 		B5FB533209AD4276001AE877 /* CLIPSTerminal.nib */ = {
 			isa = PBXVariantGroup;
 			children = (
-				B5FB533309AD4276001AE877 /* English */,
+				B50805F3225189CF00887A7C /* Base */,
 			);
 			name = CLIPSTerminal.nib;
 			sourceTree = "<group>";
@@ -2344,19 +2313,43 @@
 		1E6F78CD0D502A6500B9DCFB /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_MODEL_PPC64 = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"WINDOW_INTERFACE=1",
 					"MAC_XCD=1",
 				);
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_PARAMETER = NO;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				SDKROOT = macosx;
 				VALID_ARCHS = "ppc64 ppc7400 ppc970 i386 x86_64 ppc";
 			};
@@ -2365,6 +2358,8 @@
 		1E6F78CE0D502A6500B9DCFB /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_OBJC_WEAK = YES;
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -2373,7 +2368,8 @@
 					"WINDOW_INTERFACE=0",
 					"DARWIN=1",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "";
 				OTHER_REZFLAGS = "";
@@ -2393,15 +2389,19 @@
 		1E6F78CF0D502A6500B9DCFB /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_OBJC_WEAK = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				INFOPLIST_FILE = Interface_Source/Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
-				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				PRODUCT_BUNDLE_IDENTIFIER = com.SSoP.CLIPSIDE;
 				PRODUCT_NAME = "CLIPS IDE";
 				SDKROOT = macosx;
 				VALID_ARCHS = "i386 x86_64";
@@ -2413,6 +2413,8 @@
 		1E6F78D00D502A6500B9DCFB /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_OBJC_WEAK = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -2425,10 +2427,12 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "";
+				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				INFOPLIST_FILE = "Interface_Source/CLIPS-Info.plist";
 				INSTALL_PATH = "@executable_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				OTHER_LDFLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = com.SSoP;
 				PRODUCT_NAME = CLIPS;
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
@@ -2440,6 +2444,8 @@
 		B5997A560D4D9B9E00C9B896 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_OBJC_WEAK = YES;
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -2448,7 +2454,8 @@
 					"WINDOW_INTERFACE=0",
 					"DARWIN=1",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "";
 				OTHER_REZFLAGS = "";
@@ -2468,6 +2475,8 @@
 		B5BCEF5809AD23C0000E597B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_OBJC_WEAK = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -2480,10 +2489,12 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "";
+				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				INFOPLIST_FILE = "Interface_Source/CLIPS-Info.plist";
 				INSTALL_PATH = "@executable_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				OTHER_LDFLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = com.SSoP;
 				PRODUCT_NAME = CLIPS;
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
@@ -2495,15 +2506,19 @@
 		C05733C808A9546B00998B17 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_OBJC_WEAK = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				INFOPLIST_FILE = Interface_Source/Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
-				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				PRODUCT_BUNDLE_IDENTIFIER = com.SSoP.CLIPSIDE;
 				PRODUCT_NAME = "CLIPS IDE";
 				SDKROOT = macosx;
 				VALID_ARCHS = "i386 x86_64";
@@ -2515,18 +2530,43 @@
 		C05733CC08A9546B00998B17 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"WINDOW_INTERFACE=1",
 					"MAC_XCD=1",
 				);
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_PARAMETER = NO;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
 				VALID_ARCHS = "ppc64 ppc7400 ppc970 i386 x86_64 ppc";

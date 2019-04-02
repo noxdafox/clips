@@ -898,10 +898,11 @@
    /*=================================================*/
    /* Delete the prior contents of the dialog window. */
    /*=================================================*/
-   
-   [textView setSelectedRange: theRange];   
-   [textView delete: sender]; 
-   
+
+   clearWindow = YES;
+   [textView replaceCharactersInRange: theRange withString:@""];
+   clearWindow = NO;
+
    lineCount = 1;
    lastDumpPosition = 0;
    
@@ -918,10 +919,12 @@
    
    if (theCString != NULL)
      {
+      clearWindow = YES;
       theStr = [NSString stringWithCString: theCString encoding: NSUTF8StringEncoding];
       [theStr retain];
       [self print: theStr];
       [theStr release];
+      clearWindow = NO;
      }
   }
 
@@ -932,18 +935,11 @@
 /*********************************************************/
 - (void) clearScrollbackFunction
   {
-
-   [outputBufferLock lock];
-
-   //[textView clearTerminal];
-   
-   //lineCount = 1;
-   //lastDumpPosition = 0;
-   
+   [outputBufferLock lock];   
    clearWindow = YES;
    [outputBuffer setString: @""];
    bufferCount = 0;
-   [outputBufferLock unlockWithCondition: BUFFER_IS_EMPTY]; 
+   [outputBufferLock unlockWithCondition: BUFFER_IS_EMPTY];
   }
 
 /*****************************************************************/
@@ -1612,9 +1608,7 @@
     textLength = [[textView string] length];
     NSUInteger inputEnd = textLength;
     NSUInteger inputStart = textLength - charOffset;
-    
-    //NSLog(@"inputStart = %d inputEnd = %d",(int) inputStart, (int) inputEnd);
-    
+        
     /*==================================*/
     /* Look for the original selection. */
     /*==================================*/

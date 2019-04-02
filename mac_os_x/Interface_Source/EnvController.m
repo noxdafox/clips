@@ -4,7 +4,6 @@
 #import "CLIPSFactController.h"
 #import "CLIPSInstanceController.h"
 #import "CLIPSConstructInspectorController.h"
-#import "GenericController.h"
 
 @implementation EnvController
   
@@ -183,18 +182,6 @@
    CLIPSInstanceController *theController;
       
    theController = [[CLIPSInstanceController alloc] init]; 
-        
-   [theController showWindow: self];
-  }
-
-/**************************/
-/* newDebugGenericInspector: */
-/**************************/
-- (IBAction) newDebugGenericInspector: (id) sender
-  {
-   GenericController *theController;
-      
-   theController = [[GenericController alloc] init]; 
         
    [theController showWindow: self];
   }

@@ -19,7 +19,6 @@
 - (IBAction) newDebugAgenda: (id) sender;
 - (IBAction) newDebugFactBrowser: (id) sender;
 - (IBAction) newDebugInstanceBrowser: (id) sender;
-- (IBAction) newDebugGenericInspector: (id) sender;
 
 - (IBAction) showConstructInspectorPanel: (id) sender;
 

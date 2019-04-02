@@ -336,37 +336,25 @@
    [self updateView];
   }
 
-/*****************************/
-/* dataRepresentationOfType: */
-/*****************************/  
-- (NSData *) dataRepresentationOfType: (NSString *) aType
-  {
-   // Insert code here to write your document from the given data.  You can also choose to 
-   // override -fileWrapperRepresentationOfType: or -writeToFile:ofType: instead.
-    
-   // For applications targeted for Tiger or later systems, you should use the new Tiger API -dataOfType:error:.  
-   // In this case you can also choose to override -writeToURL:ofType:error:, -fileWrapperOfType:error:, or
-   // -writeToURL:ofType:forSaveOperation:originalContentsURL:error: instead.
-
-   [self updateString];
+/*********************/
+/* dataOfType:error: */
+/*********************/
+- (NSData *) dataOfType: (NSString *) typeName
+                  error: (NSError * _Nullable *) outError
+   {
+    [self updateString];
    
-   return [string dataUsingEncoding: NSUTF8StringEncoding allowLossyConversion:YES];
-  }
+    return [string dataUsingEncoding: NSUTF8StringEncoding allowLossyConversion:YES];
+   }
 
-/**********************************/
-/* loadDataRepresentation:ofType: */
-/**********************************/
-- (BOOL) loadDataRepresentation: (NSData *) data 
-         ofType: (NSString *) aType
+/******************************/
+/* readFromData:ofType:error: */
+/******************************/
+- (BOOL) readFromData: (NSData *) data
+               ofType: (NSString *) typeName
+                error: (NSError * _Nullable *) outError;
   {
    NSString *aString;
-
-   // Insert code here to read your document from the given data.  You can also choose 
-   // to override -loadFileWrapperRepresentation:ofType: or -readFromFile:ofType: instead.
-    
-   // For applications targeted for Tiger or later systems, you should use the new Tiger API
-   // readFromData:ofType:error:.  In this case you can also choose to override 
-   // -readFromURL:ofType:error: or -readFromFileWrapper:ofType:error: instead.
 
    aString = [[NSString alloc] initWithData:data 
                                encoding: NSUTF8StringEncoding]; 
