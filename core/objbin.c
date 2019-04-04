@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  02/03/18             */
+   /*            CLIPS Version 6.40  04/03/19             */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -28,6 +28,9 @@
 /*                                                           */
 /*      6.31: Optimization for marking relevant alpha nodes  */
 /*            in the object pattern network.                 */
+/*                                                           */
+/*            Changed allocation of multifield slot default  */
+/*            from ephemeral to explicit deallocation.       */
 /*                                                           */
 /*      6.40: Pragma once and other inclusion changes.       */
 /*                                                           */
@@ -271,7 +274,12 @@ static void DeallocateObjectBinaryData(
       for (i = 0L ; i < ObjectBinaryData(theEnv)->SlotCount ; i++)
         {
          if ((ObjectBinaryData(theEnv)->SlotArray[i].defaultValue != NULL) && (ObjectBinaryData(theEnv)->SlotArray[i].dynamicDefault == 0))
-           { rtn_struct(theEnv,udfValue,ObjectBinaryData(theEnv)->SlotArray[i].defaultValue); }
+           {
+            UDFValue *theValue = (UDFValue *) ObjectBinaryData(theEnv)->SlotArray[i].defaultValue;
+            if (theValue->header->type == MULTIFIELD_TYPE)
+              { ReturnMultifield(theEnv,theValue->multifieldValue); }
+            rtn_struct(theEnv,udfValue,ObjectBinaryData(theEnv)->SlotArray[i].defaultValue);
+           }
         }
 
       space = (sizeof(Defclass) * ObjectBinaryData(theEnv)->ClassCount);
@@ -1309,7 +1317,7 @@ static void UpdateSlot(
         {
          sp->defaultValue = get_struct(theEnv,udfValue);
          EvaluateAndStoreInDataObject(theEnv,sp->multiple,ExpressionPointer(bsp->defaultValue),
-                                      (UDFValue *) sp->defaultValue,true);
+                                      (UDFValue *) sp->defaultValue,false);
          RetainUDFV(theEnv,(UDFValue *) sp->defaultValue);
         }
      }
@@ -1427,7 +1435,10 @@ static void ClearBloadObjects(
          ReleaseLexeme(theEnv,ObjectBinaryData(theEnv)->SlotArray[i].overrideMessage);
          if ((ObjectBinaryData(theEnv)->SlotArray[i].defaultValue != NULL) && (ObjectBinaryData(theEnv)->SlotArray[i].dynamicDefault == 0))
            {
+            UDFValue *theValue = (UDFValue *) ObjectBinaryData(theEnv)->SlotArray[i].defaultValue;
             ReleaseUDFV(theEnv,(UDFValue *) ObjectBinaryData(theEnv)->SlotArray[i].defaultValue);
+            if (theValue->header->type == MULTIFIELD_TYPE)
+              { ReturnMultifield(theEnv,theValue->multifieldValue); }
             rtn_struct(theEnv,udfValue,ObjectBinaryData(theEnv)->SlotArray[i].defaultValue);
            }
         }

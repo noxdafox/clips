@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  11/15/17             */
+   /*            CLIPS Version 6.40  03/28/19             */
    /*                                                     */
    /*                   UTILITY MODULE                    */
    /*******************************************************/
@@ -45,6 +45,9 @@
 /*            deprecation warnings.                          */
 /*                                                           */
 /*            Converted API macros to function calls.        */
+/*                                                           */
+/*      6.31: Added debugging code for checking the garbage  */
+/*            frame.                                         */
 /*                                                           */
 /*      6.40: Fix for memory used discrepancy.               */
 /*                                                           */
@@ -319,6 +322,22 @@ void GCBlockEndUDF(
   UDFValue *rv)
   {
    RestorePriorGarbageFrame(theEnv,&theBlock->newGarbageFrame,theBlock->oldGarbageFrame,rv);
+  }
+
+/*******************************/
+/* CurrentGarbageFrameIsDirty: */
+/*******************************/
+bool CurrentGarbageFrameIsDirty(
+  Environment *theEnv)
+  {
+   struct garbageFrame *cgf;
+   
+   cgf = UtilityData(theEnv)->CurrentGarbageFrame;
+   
+   if (cgf->dirty)
+     { return true; }
+   else
+     { return false; }
   }
 
 /*************************/

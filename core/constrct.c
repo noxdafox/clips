@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  11/10/17             */
+   /*            CLIPS Version 6.40  03/26/19             */
    /*                                                     */
    /*                  CONSTRUCT MODULE                   */
    /*******************************************************/
@@ -526,6 +526,7 @@ void Reset(
      {
       ConstructData(theEnv)->ResetReadyInProgress = false;
       ConstructData(theEnv)->ResetInProgress = false;
+      GCBlockEnd(theEnv,&gcb);
       return;
      }
    ConstructData(theEnv)->ResetReadyInProgress = false;
@@ -545,12 +546,23 @@ void Reset(
 
    SetCurrentModule(theEnv,FindDefmodule(theEnv,"MAIN"));
 
-   /*===========================================*/
-   /* Perform periodic cleanup if the reset was */
-   /* issued from an embedded controller.       */
-   /*===========================================*/
-
+   /*================================*/
+   /* Restore the old garbage frame. */
+   /*================================*/
+   
    GCBlockEnd(theEnv,&gcb);
+   
+   /*===============================================*/
+   /* If embedded, clean the topmost garbage frame. */
+   /*===============================================*/
+
+   if (EvaluationData(theEnv)->CurrentExpression == NULL)
+     { CleanCurrentGarbageFrame(theEnv,NULL); }
+
+   /*======================*/
+   /* Call periodic tasks. */
+   /*======================*/
+   
    CallPeriodicTasks(theEnv);
 
    /*===================================*/
@@ -684,6 +696,18 @@ bool Clear(
    /*================================*/
    
    GCBlockEnd(theEnv,&gcb);
+   
+   /*=======================================*/
+   /* If embedded, clean the garbage frame. */
+   /*=======================================*/
+
+   if (EvaluationData(theEnv)->CurrentExpression == NULL)
+     { CleanCurrentGarbageFrame(theEnv,NULL); }
+
+   /*======================*/
+   /* Call periodic tasks. */
+   /*======================*/
+   
    CallPeriodicTasks(theEnv);
 
    /*===========================*/

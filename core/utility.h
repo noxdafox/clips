@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  11/15/17            */
+   /*             CLIPS Version 6.40  04/04/19            */
    /*                                                     */
    /*                 UTILITY HEADER FILE                 */
    /*******************************************************/
@@ -42,6 +42,9 @@
 /*            deprecation warnings.                          */
 /*                                                           */
 /*            Converted API macros to function calls.        */
+/*                                                           */
+/*      6.31: Added debugging code for checking the garbage  */
+/*            frame.                                         */
 /*                                                           */
 /*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
@@ -219,6 +222,7 @@ struct utilityData
    void                           GCBlockStart(Environment *,GCBlock *);
    void                           GCBlockEnd(Environment *,GCBlock *);
    void                           GCBlockEndUDF(Environment *,GCBlock *,UDFValue *);
+   bool                           CurrentGarbageFrameIsDirty(Environment *);
    StringBuilder                 *CreateStringBuilder(Environment *,size_t);
    void                           SBDispose(StringBuilder *);
    void                           SBAppend(StringBuilder *,const char *);

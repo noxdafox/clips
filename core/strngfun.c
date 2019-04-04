@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/05/18             */
+   /*            CLIPS Version 6.40  03/26/19             */
    /*                                                     */
    /*            STRING_TYPE FUNCTIONS MODULE             */
    /*******************************************************/
@@ -1015,6 +1015,13 @@ BuildError Build(
    /*===================================*/
    
    GCBlockEnd(theEnv,&gcb);
+
+   /*===============================================*/
+   /* If embedded, clean the topmost garbage frame. */
+   /*===============================================*/
+   
+   if (EvaluationData(theEnv)->CurrentExpression == NULL)
+     { CleanCurrentGarbageFrame(theEnv,NULL); }
 
    /*===================================*/
    /* Throw error for extraneous input. */

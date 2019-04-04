@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  10/04/17             */
+   /*            CLIPS Version 6.40  03/22/19             */
    /*                                                     */
    /*                FACT COMMANDS MODULE                 */
    /*******************************************************/
@@ -48,6 +48,13 @@
 /*      6.31: Error messages are now generated when the      */
 /*            fact-index function is given a retracted       */
 /*            fact.                                          */
+/*                                                           */
+/*            Added code to keep track of pointers to        */
+/*            constructs that are contained externally to    */
+/*            to constructs, DanglingConstructs.             */
+/*                                                           */
+/*            If embedded, LoadFacts cleans the current      */
+/*            garbage frame.                                 */
 /*                                                           */
 /*      6.40: Added Env prefix to GetEvaluationError and     */
 /*            SetEvaluationError functions.                  */
@@ -1141,7 +1148,9 @@ bool LoadFacts(
    struct token theToken;
    struct expr *testPtr;
    UDFValue rv;
-   
+   int danglingConstructs;
+   GCBlock gcb;
+
    /*=====================================*/
    /* If embedded, clear the error flags. */
    /*=====================================*/
@@ -1161,9 +1170,17 @@ bool LoadFacts(
 
    SetFastLoad(theEnv,filePtr);
 
+   /*========================================*/
+   /* Set up the frame for tracking garbage. */
+   /*========================================*/
+   
+   GCBlockStart(theEnv,&gcb);
+
    /*=================*/
    /* Load the facts. */
    /*=================*/
+   
+   danglingConstructs = ConstructData(theEnv)->DanglingConstructs;
 
    theToken.tknType = LEFT_PARENTHESIS_TOKEN;
    while (theToken.tknType != STOP_TOKEN)
@@ -1173,6 +1190,28 @@ bool LoadFacts(
       else EvaluateExpression(theEnv,testPtr,&rv);
       ReturnExpression(theEnv,testPtr);
      }
+     
+   /*================================*/
+   /* Restore the old garbage frame. */
+   /*================================*/
+   
+   GCBlockEnd(theEnv,&gcb);
+
+   /*===============================================*/
+   /* If embedded, clean the topmost garbage frame. */
+   /*===============================================*/
+
+   if (EvaluationData(theEnv)->CurrentExpression == NULL)
+     {
+      CleanCurrentGarbageFrame(theEnv,NULL);
+      ConstructData(theEnv)->DanglingConstructs = danglingConstructs;
+     }
+
+   /*======================*/
+   /* Call periodic tasks. */
+   /*======================*/
+   
+   CallPeriodicTasks(theEnv);
 
    /*=================*/
    /* Close the file. */

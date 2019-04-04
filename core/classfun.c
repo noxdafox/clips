@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  02/03/18             */
+   /*            CLIPS Version 6.40  04/03/19             */
    /*                                                     */
    /*                CLASS FUNCTIONS MODULE               */
    /*******************************************************/
@@ -44,6 +44,9 @@
 /*                                                           */
 /*            Optimization for marking relevant alpha nodes  */
 /*            in the object pattern network.                 */
+/*                                                           */
+/*            Changed allocation of multifield slot default  */
+/*            from ephemeral to explicit deallocation.       */
 /*                                                           */
 /*      6.40: Added Env prefix to GetEvaluationError and     */
 /*            SetEvaluationError functions.                  */
@@ -782,7 +785,12 @@ void RemoveDefclass(
          if (cls->slots[i].dynamicDefault)
            ReturnPackedExpression(theEnv,(Expression *) cls->slots[i].defaultValue);
          else
-           rtn_struct(theEnv,udfValue,cls->slots[i].defaultValue);
+           {
+            UDFValue *theValue = (UDFValue *) cls->slots[i].defaultValue;
+            if (theValue->header->type == MULTIFIELD_TYPE)
+              { ReturnMultifield(theEnv,theValue->multifieldValue); }
+            rtn_struct(theEnv,udfValue,theValue);
+           }
         }
       DeleteSlotName(theEnv,cls->slots[i].slotName);
       RemoveConstraint(theEnv,cls->slots[i].constraint);
@@ -861,10 +869,20 @@ void DestroyDefclass(
          if (cls->slots[i].dynamicDefault)
            ReturnPackedExpression(theEnv,(Expression *) cls->slots[i].defaultValue);
          else
-           rtn_struct(theEnv,udfValue,cls->slots[i].defaultValue);
+           {
+            UDFValue *theValue = (UDFValue *) cls->slots[i].defaultValue;
+            if (theValue->header->type == MULTIFIELD_TYPE)
+              { ReturnMultifield(theEnv,theValue->multifieldValue); }
+            rtn_struct(theEnv,udfValue,theValue);
+           }
 #else
          if (cls->slots[i].dynamicDefault == 0)
-           rtn_struct(theEnv,udfValue,cls->slots[i].defaultValue);
+           {
+            UDFValue *theValue = (UDFValue *) cls->slots[i].defaultValue;
+            if (theValue->header->type == MULTIFIELD_TYPE)
+              { ReturnMultifield(theEnv,theValue->multifieldValue); }
+            rtn_struct(theEnv,udfValue,theValue);
+           }
 #endif
         }
      }

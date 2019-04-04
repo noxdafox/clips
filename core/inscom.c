@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  01/15/18             */
+   /*            CLIPS Version 6.40  04/04/19             */
    /*                                                     */
    /*               INSTANCE COMMAND MODULE               */
    /*******************************************************/
@@ -46,6 +46,10 @@
 /*            Converted API macros to function calls.        */
 /*                                                           */
 /*      6.31: Fast router used for MakeInstance.             */
+/*                                                           */
+/*            Added code to keep track of pointers to        */
+/*            constructs that are contained externally to    */
+/*            to constructs, DanglingConstructs.             */
 /*                                                           */
 /*      6.40: Added Env prefix to GetEvaluationError and     */
 /*            SetEvaluationError functions.                  */
@@ -698,6 +702,7 @@ Instance *MakeInstance(
    const char *oldRouter;
    const char *oldString;
    long oldIndex;
+   int danglingConstructs;
    
    InstanceData(theEnv)->makeInstanceError = MIE_NO_ERROR;
    
@@ -733,7 +738,9 @@ Instance *MakeInstance(
    GetToken(theEnv,router,&tkn);
    if (tkn.tknType == LEFT_PARENTHESIS_TOKEN)
      {
-      top = GenConstant(theEnv,FCALL,FindFunction(theEnv,"make-instance"));
+      danglingConstructs = ConstructData(theEnv)->DanglingConstructs;
+
+      top = GenConstant(theEnv,FCALL,FindFunction(theEnv,"make-instance"));    
       if (ParseSimpleInstance(theEnv,top,router) != NULL)
         {
          GetToken(theEnv,router,&tkn);
@@ -752,6 +759,9 @@ Instance *MakeInstance(
         }
       else
         { InstanceData(theEnv)->makeInstanceError = MIE_PARSING_ERROR; }
+      
+      if (EvaluationData(theEnv)->CurrentExpression == NULL)
+        { ConstructData(theEnv)->DanglingConstructs = danglingConstructs; }
      }
    else
      {

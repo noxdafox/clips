@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/05/18             */
+   /*            CLIPS Version 6.40  03/04/19             */
    /*                                                     */
    /*               SYSTEM DEPENDENT MODULE               */
    /*******************************************************/
@@ -74,6 +74,8 @@
 /*                                                           */
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
+/*                                                           */
+/*      6.31: Compiler warning fix.                          */
 /*                                                           */
 /*      6.40: Added genchdir function for changing the       */
 /*            current directory.                             */

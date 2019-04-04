@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  02/07/19             */
+   /*            CLIPS Version 6.40  04/03/19             */
    /*                                                     */
    /*         INSTANCE LOAD/SAVE (ASCII/BINARY) MODULE    */
    /*******************************************************/
@@ -43,6 +43,14 @@
 /*            EnvLoadInstances, EnvRestoreInstances,         */
 /*            EnvLoadInstancesFromString, and                */
 /*            EnvRestoreInstancesFromString are processed.   */
+/*                                                           */
+/*            Added code to keep track of pointers to        */
+/*            constructs that are contained externally to    */
+/*            to constructs, DanglingConstructs.             */
+/*                                                           */
+/*            If embedded, LoadInstances and                 */
+/*            RestoreInstances clean the current garbage     */
+/*            frame.                                         */
 /*                                                           */
 /*      6.40: Added Env prefix to GetEvaluationError and     */
 /*            SetEvaluationError functions.                  */
@@ -1322,7 +1330,9 @@ static long LoadOrRestoreInstances(
    Expression *top;
    bool svoverride;
    long instanceCount = 0L;
-   
+   int danglingConstructs;
+   GCBlock gcb;
+
    /*=====================================*/
    /* If embedded, clear the error flags. */
    /*=====================================*/
@@ -1348,6 +1358,14 @@ static long LoadOrRestoreInstances(
    GetToken(theEnv,ilog,&DefclassData(theEnv)->ObjectParseToken);
    svoverride = InstanceData(theEnv)->MkInsMsgPass;
    InstanceData(theEnv)->MkInsMsgPass = usemsgs;
+   
+   danglingConstructs = ConstructData(theEnv)->DanglingConstructs;
+
+   /*========================================*/
+   /* Set up the frame for tracking garbage. */
+   /*========================================*/
+   
+   GCBlockStart(theEnv,&gcb);
 
    while ((DefclassData(theEnv)->ObjectParseToken.tknType != STOP_TOKEN) && (EvaluationData(theEnv)->HaltExecution != true))
      {
@@ -1362,6 +1380,15 @@ static long LoadOrRestoreInstances(
            }
          SetEvaluationError(theEnv,true);
          InstanceData(theEnv)->MkInsMsgPass = svoverride;
+
+         GCBlockEnd(theEnv,&gcb);
+
+         if (EvaluationData(theEnv)->CurrentExpression == NULL)
+           {
+            ConstructData(theEnv)->DanglingConstructs = danglingConstructs;
+            CleanCurrentGarbageFrame(theEnv,NULL);
+           }
+
          return instanceCount;
         }
         
@@ -1374,6 +1401,15 @@ static long LoadOrRestoreInstances(
            }
          InstanceData(theEnv)->MkInsMsgPass = svoverride;
          SetEvaluationError(theEnv,true);
+
+         GCBlockEnd(theEnv,&gcb);
+
+         if (EvaluationData(theEnv)->CurrentExpression == NULL)
+           {
+            ConstructData(theEnv)->DanglingConstructs = danglingConstructs;
+            CleanCurrentGarbageFrame(theEnv,NULL);
+           }
+
          return instanceCount;
         }
       ExpressionInstall(theEnv,top);
@@ -1386,6 +1422,22 @@ static long LoadOrRestoreInstances(
       GetToken(theEnv,ilog,&DefclassData(theEnv)->ObjectParseToken);
      }
      
+   /*================================*/
+   /* Restore the old garbage frame. */
+   /*================================*/
+   
+   GCBlockEnd(theEnv,&gcb);
+   
+   /*===============================================*/
+   /* If embedded, clean the topmost garbage frame. */
+   /*===============================================*/
+
+   if (EvaluationData(theEnv)->CurrentExpression == NULL)
+     {
+      ConstructData(theEnv)->DanglingConstructs = danglingConstructs;
+      CleanCurrentGarbageFrame(theEnv,NULL);
+     }
+
    rtn_struct(theEnv,expr,top);
    if (isFileName)
      {

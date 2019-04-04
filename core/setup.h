@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  08/23/17            */
+   /*             CLIPS Version 6.40  03/31/19            */
    /*                                                     */
    /*                  SETUP HEADER FILE                  */
    /*******************************************************/
@@ -114,7 +114,7 @@
 #endif
 
 #ifndef MAC_XCD
-#define MAC_XCD 0   /* MacOS 10.13 with Xcode 9.4 */
+#define MAC_XCD 0   /* MacOS 10.14 with Xcode 10.2 */
 #endif
 
 #ifndef WIN_MVC
