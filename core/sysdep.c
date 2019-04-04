@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/22/14            */
+   /*             CLIPS Version 6.30  04/04/19            */
    /*                                                     */
    /*               SYSTEM DEPENDENT MODULE               */
    /*******************************************************/
@@ -74,6 +74,8 @@
 /*                                                           */
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
+/*                                                           */
+/*      6.31: Compiler warning fix.                          */
 /*                                                           */
 /*************************************************************/
 
@@ -1151,11 +1153,11 @@ globle char *gengetcwd(
   {
 #if MAC_XCD
    return(getcwd(buffer,buflength));
-#endif
-
+#else
    if (buffer != NULL)
      { buffer[0] = 0; }
    return(buffer);
+#endif
   }
 
 /****************************************************/

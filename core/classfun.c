@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.31  02/03/18            */
+   /*             CLIPS Version 6.31  04/03/19            */
    /*                                                     */
    /*                CLASS FUNCTIONS MODULE               */
    /*******************************************************/
@@ -44,6 +44,9 @@
 /*                                                           */
 /*            Optimization for marking relevant alpha nodes  */
 /*            in the object pattern network.                 */
+/*                                                           */
+/*            Changed allocation of multifield slot default  */
+/*            from ephemeral to explicit deallocation.       */
 /*                                                           */
 /*************************************************************/
 
@@ -763,7 +766,12 @@ LOCALE void RemoveDefclass(
          if (cls->slots[i].dynamicDefault)
            ReturnPackedExpression(theEnv,(EXPRESSION *) cls->slots[i].defaultValue);
          else
-           rtn_struct(theEnv,dataObject,cls->slots[i].defaultValue);
+           {
+            DATA_OBJECT *theValue = (DATA_OBJECT *) cls->slots[i].defaultValue;
+            if (theValue->type == MULTIFIELD)
+              { ReturnMultifield(theEnv,theValue->value); }
+            rtn_struct(theEnv,dataObject,cls->slots[i].defaultValue);
+           }
         }
       DeleteSlotName(theEnv,cls->slots[i].slotName);
       RemoveConstraint(theEnv,cls->slots[i].constraint);
@@ -843,10 +851,20 @@ LOCALE void DestroyDefclass(
          if (cls->slots[i].dynamicDefault)
            ReturnPackedExpression(theEnv,(EXPRESSION *) cls->slots[i].defaultValue);
          else
-           rtn_struct(theEnv,dataObject,cls->slots[i].defaultValue);
+           {
+            DATA_OBJECT *theValue = (DATA_OBJECT *) cls->slots[i].defaultValue;
+            if (theValue->type == MULTIFIELD)
+              { ReturnMultifield(theEnv,theValue->value); }
+            rtn_struct(theEnv,dataObject,cls->slots[i].defaultValue);
+           }
 #else
          if (cls->slots[i].dynamicDefault == 0)
-           rtn_struct(theEnv,dataObject,cls->slots[i].defaultValue);
+           {
+            DATA_OBJECT *theValue = (DATA_OBJECT *) cls->slots[i].defaultValue;
+            if (theValue->type == MULTIFIELD)
+              { ReturnMultifield(theEnv,theValue->value); }
+            rtn_struct(theEnv,dataObject,cls->slots[i].defaultValue);
+           }
 #endif
         }
      }

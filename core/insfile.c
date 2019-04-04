@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*              CLIPS Version 6.30  10/02/17           */
+   /*              CLIPS Version 6.31  04/03/19           */
    /*                                                     */
    /*         INSTANCE LOAD/SAVE (ASCII/BINARY) MODULE    */
    /*******************************************************/
@@ -44,6 +44,14 @@
 /*            EnvLoadInstancesFromString, and                */
 /*            EnvRestoreInstancesFromString are processed.   */
 /*                                                           */
+/*            Added code to keep track of pointers to        */
+/*            constructs that are contained externally to    */
+/*            to constructs, DanglingConstructs.             */
+/*                                                           */
+/*            If embedded, LoadInstances and                 */
+/*            RestoreInstances clean the current garbage     */
+/*            frame.                                         */
+/*                                                           */
 /*************************************************************/
 
 /* =========================================
@@ -59,6 +67,7 @@
 #if OBJECT_SYSTEM
 
 #include "argacces.h"
+#include "commline.h"
 #include "classcom.h"
 #include "classfun.h"
 #include "memalloc.h"
@@ -1254,6 +1263,8 @@ static long LoadOrRestoreInstances(
    EXPRESSION *top;
    int svoverride;
    long instanceCount = 0L;
+   int danglingConstructs;
+   struct garbageFrame newGarbageFrame, *oldGarbageFrame;
 
    if (isFileName) {
      if ((sfile = GenOpen(theEnv,file,"r")) == NULL)
@@ -1278,6 +1289,17 @@ static long LoadOrRestoreInstances(
       SetHaltExecution(theEnv,FALSE);
      }
    
+   danglingConstructs = ConstructData(theEnv)->DanglingConstructs;
+
+   /*========================================*/
+   /* Set up the frame for tracking garbage. */
+   /*========================================*/
+   
+   oldGarbageFrame = UtilityData(theEnv)->CurrentGarbageFrame;
+   memset(&newGarbageFrame,0,sizeof(struct garbageFrame));
+   newGarbageFrame.priorFrame = oldGarbageFrame;
+   UtilityData(theEnv)->CurrentGarbageFrame = &newGarbageFrame;
+
    while ((GetType(DefclassData(theEnv)->ObjectParseToken) != STOP) && (EvaluationData(theEnv)->HaltExecution != TRUE))
      {
       if (GetType(DefclassData(theEnv)->ObjectParseToken) != LPAREN)
@@ -1290,6 +1312,16 @@ static long LoadOrRestoreInstances(
          }
          SetEvaluationError(theEnv,TRUE);
          InstanceData(theEnv)->MkInsMsgPass = svoverride;
+         
+         RestorePriorGarbageFrame(theEnv,&newGarbageFrame,oldGarbageFrame,NULL);
+
+         if ((! CommandLineData(theEnv)->EvaluatingTopLevelCommand) &&
+             (EvaluationData(theEnv)->CurrentExpression == NULL))
+           {
+            ConstructData(theEnv)->DanglingConstructs = danglingConstructs;
+            CleanCurrentGarbageFrame(theEnv,NULL);
+           }
+
          return(instanceCount);
         }
       if (ParseSimpleInstance(theEnv,top,ilog) == NULL)
@@ -1300,6 +1332,16 @@ static long LoadOrRestoreInstances(
          }
          InstanceData(theEnv)->MkInsMsgPass = svoverride;
          SetEvaluationError(theEnv,TRUE);
+         
+         RestorePriorGarbageFrame(theEnv,&newGarbageFrame,oldGarbageFrame,NULL);
+         
+         if ((! CommandLineData(theEnv)->EvaluatingTopLevelCommand) &&
+             (EvaluationData(theEnv)->CurrentExpression == NULL))
+           {
+            ConstructData(theEnv)->DanglingConstructs = danglingConstructs;
+            CleanCurrentGarbageFrame(theEnv,NULL);
+           }
+
          return(instanceCount);
         }
       ExpressionInstall(theEnv,top);
@@ -1311,6 +1353,24 @@ static long LoadOrRestoreInstances(
       top->argList = NULL;
       GetToken(theEnv,ilog,&DefclassData(theEnv)->ObjectParseToken);
      }
+      
+   /*================================*/
+   /* Restore the old garbage frame. */
+   /*================================*/
+   
+   RestorePriorGarbageFrame(theEnv,&newGarbageFrame,oldGarbageFrame,NULL);
+  
+   /*===============================================*/
+   /* If embedded, clean the topmost garbage frame. */
+   /*===============================================*/
+
+   if ((! CommandLineData(theEnv)->EvaluatingTopLevelCommand) &&
+       (EvaluationData(theEnv)->CurrentExpression == NULL))
+     {
+      ConstructData(theEnv)->DanglingConstructs = danglingConstructs;
+      CleanCurrentGarbageFrame(theEnv,NULL);
+     }
+
    rtn_struct(theEnv,expr,top);
    if (isFileName) {
      GenClose(theEnv,sfile);

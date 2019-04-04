@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/19/14            */
+   /*             CLIPS Version 6.31  03/31/19            */
    /*                                                     */
    /*                  MULTIFIELD MODULE                  */
    /*******************************************************/
@@ -39,6 +39,8 @@
 /*            Fixed issue with StoreInMultifield when        */
 /*            asserting void values in implied deftemplate   */
 /*            facts.                                         */
+/*                                                           */
+/*      6.31: Fixed Xcode compiler warnings.                 */
 /*                                                           */
 /*************************************************************/
 
@@ -754,7 +756,8 @@ globle void *ImplodeMultifield(
          while(*tmp_str)
            {
             *(ret_str+j) = *tmp_str;
-            j++, tmp_str++;
+            j++;
+            tmp_str++;
            }
         }
       else if (GetMFType(theMultifield,i) == INTEGER)
@@ -763,7 +766,8 @@ globle void *ImplodeMultifield(
          while(*tmp_str)
            {
             *(ret_str+j) = *tmp_str;
-            j++, tmp_str++;
+            j++;
+            tmp_str++;
            }
         }
 
@@ -791,7 +795,8 @@ globle void *ImplodeMultifield(
               }                        /* GDR 111599 #835 */
               
             *(ret_str+j) = *tmp_str;
-            j++, tmp_str++;
+            j++;
+            tmp_str++;
            }
          *(ret_str+j) = '"';
          j++;
@@ -804,7 +809,8 @@ globle void *ImplodeMultifield(
          while(*tmp_str)
            {
             *(ret_str+j) = *tmp_str;
-            j++, tmp_str++;
+            j++;
+            tmp_str++;
            }
          *(ret_str + j++) = ']';
         }
@@ -815,7 +821,7 @@ globle void *ImplodeMultifield(
          while(*tmp_str)
            {
             *(ret_str+j) = *tmp_str;
-            j++, tmp_str++;
+            j++; tmp_str++;
            }
          *(ret_str + j++) = ']';
         }
@@ -828,7 +834,7 @@ globle void *ImplodeMultifield(
          while(*tmp_str)
            {
             *(ret_str+j) = *tmp_str;
-            j++, tmp_str++;
+            j++; tmp_str++;
            }
          }
       *(ret_str+j) = ' ';
