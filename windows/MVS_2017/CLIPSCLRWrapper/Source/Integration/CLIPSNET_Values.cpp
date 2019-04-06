@@ -36,21 +36,21 @@ namespace CLIPSNET
 		   theStringValue = (CLIPS::StringValue *) theValue;
 		   theCPPString = theStringValue->GetStringValue();
 		   theCString = theCPPString->c_str();
-		   rv = gcnew StringValue(gcnew String(theCString));
+		   rv = gcnew StringValue(gcnew String(theCString,0,strlen(theCString),UTF8Encoding::UTF8));
 		   break;
 
 		 case CPP_SYMBOL_TYPE:
 		   theSymbolValue = (CLIPS::SymbolValue *) theValue;
 		   theCPPString = theSymbolValue->GetSymbolValue();
 		   theCString = theCPPString->c_str();
-		   rv = gcnew SymbolValue(gcnew String(theCString));
+		   rv = gcnew SymbolValue(gcnew String(theCString,0,strlen(theCString),UTF8Encoding::UTF8));
 		   break;
 
 		 case CPP_INSTANCE_NAME_TYPE:
 		   theInstanceNameValue = (CLIPS::InstanceNameValue *) theValue;
 		   theCPPString = theInstanceNameValue->GetInstanceNameValue();
 		   theCString = theCPPString->c_str();
-		   rv = gcnew InstanceNameValue(gcnew String(theCString));
+		   rv = gcnew InstanceNameValue(gcnew String(theCString,0,strlen(theCString),UTF8Encoding::UTF8));
 		   break;
 
 		 case CPP_INTEGER_TYPE:
