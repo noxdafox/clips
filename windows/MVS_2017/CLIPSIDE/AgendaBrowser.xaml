@@ -66,7 +66,7 @@
                     <ColumnDefinition Width="3*"/>
                 </Grid.ColumnDefinitions>
 
-                <DataGrid x:Name="focusStackDataGridView" Margin="0" RowHeaderWidth="0" AutoGenerateColumns="False" CanUserResizeRows="False" CanUserAddRows="False" Grid.Column="0" SelectedIndex="1" CanUserSortColumns="False" SelectionMode="Single" SelectionChanged="ModuleFocusChanged">
+                <DataGrid x:Name="focusStackDataGridView" Margin="0" RowHeaderWidth="0" AutoGenerateColumns="False" CanUserResizeRows="False" CanUserAddRows="False" Grid.Column="0" CanUserSortColumns="False" SelectionMode="Single" SelectionChanged="ModuleFocusChanged">
                     <DataGrid.Columns>
                         <DataGridTextColumn Binding="{Binding Path=ModuleName}" Header="Focus Stack" IsReadOnly="True" CanUserResize="False" Width="*"/>
                     </DataGrid.Columns>
@@ -86,7 +86,7 @@
 
                 </GridSplitter>
 
-                <DataGrid x:Name="activationDataGridView" Margin="0" RowHeaderWidth="0" AutoGenerateColumns="False" CanUserResizeRows="False" CanUserAddRows="False" Grid.Column="2" SelectedIndex="1" CanUserSortColumns="False" SelectionMode="Single">
+                <DataGrid x:Name="activationDataGridView" Margin="0" RowHeaderWidth="0" AutoGenerateColumns="False" CanUserResizeRows="False" CanUserAddRows="False" Grid.Column="2" CanUserSortColumns="False" SelectionMode="Single">
                     <DataGrid.Columns>
                         <DataGridTextColumn Binding="{Binding Path=Salience}" Header="Salience" IsReadOnly="True" Width="1*" MinWidth="60"/>
                         <DataGridTextColumn Binding="{Binding Path=RuleName}" Header="Rule" IsReadOnly="True" Width="4*" MinWidth="60"/>

@@ -74,7 +74,7 @@
                     <ColumnDefinition Width="6*"/>
                 </Grid.ColumnDefinitions>
 
-                <DataGrid x:Name="moduleDataGridView" Margin="0" RowHeaderWidth="0" AutoGenerateColumns="False" CanUserResizeRows="False" CanUserAddRows="False" Grid.Column="0" SelectedIndex="1" CanUserSortColumns="True" SelectionMode="Single" SelectionChanged="ModuleChanged">
+                <DataGrid x:Name="moduleDataGridView" Margin="0" RowHeaderWidth="0" AutoGenerateColumns="False" CanUserResizeRows="False" CanUserAddRows="False" Grid.Column="0" CanUserSortColumns="True" SelectionMode="Single" SelectionChanged="ModuleChanged">
                     <DataGrid.Columns>
                         <DataGridTextColumn Binding="{Binding Path=ModuleName}" Header="Module" IsReadOnly="True" CanUserResize="False" Width="*"/>
                     </DataGrid.Columns>
@@ -94,7 +94,7 @@
 
                 </GridSplitter>
 
-                <DataGrid x:Name="entityDataGridView" Margin="0" RowHeaderWidth="0" AutoGenerateColumns="False" CanUserResizeRows="False" CanUserAddRows="False" Grid.Column="2" SelectedIndex="1" CanUserSortColumns="True" SelectionMode="Single" SelectionChanged="EntityChanged">
+                <DataGrid x:Name="entityDataGridView" Margin="0" RowHeaderWidth="0" AutoGenerateColumns="False" CanUserResizeRows="False" CanUserAddRows="False" Grid.Column="2" CanUserSortColumns="True" SelectionMode="Single" SelectionChanged="EntityChanged">
                     <DataGrid.Columns>
                         <DataGridTextColumn Binding="{Binding Path=Name}" Header="Index" IsReadOnly="True" Width="1*" MinWidth="60"/>
                         <DataGridTextColumn Binding="{Binding Path=RelationName}" Header="Template" IsReadOnly="True" Width="4*" MinWidth="60"/>
@@ -115,7 +115,7 @@
 
                 </GridSplitter>
 
-                <DataGrid x:Name="slotDataGridView" Margin="0" RowHeaderWidth="0" AutoGenerateColumns="False" CanUserResizeRows="False" CanUserAddRows="False" Grid.Column="4" SelectedIndex="1" CanUserSortColumns="True" SelectionMode="Single">
+                <DataGrid x:Name="slotDataGridView" Margin="0" RowHeaderWidth="0" AutoGenerateColumns="False" CanUserResizeRows="False" CanUserAddRows="False" Grid.Column="4" CanUserSortColumns="True" SelectionMode="Single">
                     <DataGrid.Columns>
                         <DataGridTextColumn Binding="{Binding Path=SlotName}" Header="Slot" IsReadOnly="True" Width="1*" MinWidth="60"/>
                         <DataGridTextColumn Binding="{Binding Path=Contents}" Header="Value" IsReadOnly="True" Width="4*" MinWidth="60"/>
