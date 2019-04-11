@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  04/04/19             */
+   /*            CLIPS Version 6.40  04/08/19             */
    /*                                                     */
    /*               INSTANCE COMMAND MODULE               */
    /*******************************************************/
@@ -2051,8 +2051,8 @@ static InstanceSlot *FindISlotByName(
   {
    CLIPSLexeme *ssym;
 
-   ssym = FindSymbolHN(theEnv,sname,LEXEME_BITS | INSTANCE_NAME_BIT);
-   
+   ssym = FindSymbolHN(theEnv,sname,SYMBOL_BIT);
+
    if (ssym == NULL)
      { return NULL; }
 

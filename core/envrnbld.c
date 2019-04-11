@@ -205,15 +205,7 @@ bool DestroyEnvironment(
    int i;
    struct memoryData *theMemData;
    bool rv = true;
-/*
-   if (EvaluationData(theEnvironment)->CurrentExpression != NULL)
-     { return false; }
 
-#if DEFRULE_CONSTRUCT
-   if (EngineData(theEnvironment)->ExecutingRule != NULL)
-     { return false; }
-#endif
-*/
    theMemData = MemoryData(theEnvironment);
 
    ReleaseMem(theEnvironment,-1);
