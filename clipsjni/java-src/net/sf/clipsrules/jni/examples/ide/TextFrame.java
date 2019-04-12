@@ -234,8 +234,6 @@ public class TextFrame extends JInternalFrame
          else if (characterToCheck == ')') 
            { nestingDepth++; }
         }
-           
-      Toolkit.getDefaultToolkit().beep();                                
      }    
        
    /***************/

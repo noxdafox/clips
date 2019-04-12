@@ -417,12 +417,6 @@ public class CommandPromptTextArea extends RouterTextArea
          else if (characterToCheck == ')') 
            { nestingDepth++; }
         }
-
-      /*================================================*/
-      /* Beep to indicate a matching ')' was not found. */
-      /*================================================*/
-
-      Toolkit.getDefaultToolkit().beep();
      }
      
    /*********************/
