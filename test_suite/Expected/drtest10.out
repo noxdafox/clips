@@ -1170,6 +1170,33 @@ CLIPS> (defmethod MAIN::EXTRANEOUS::add-point ((?x FLOAT) (?y FLOAT)))
 
 ERROR:
 (defmethod MAIN::EXTRANEOUS::add-point
+CLIPS> (clear) ; bsave-instances external-address issue
+CLIPS> 
+(defclass EXPERIMENT 
+   (is-a USER)
+   (slot fa (type FACT-ADDRESS))
+   (slot ia (type INSTANCE-ADDRESS))
+   (slot ea (type EXTERNAL-ADDRESS)))
+CLIPS>    
+(make-instance e1 of EXPERIMENT
+   (fa (assert (b)))
+   (ia (instance-address(make-instance e2 of EXPERIMENT))))
+[e1]
+CLIPS> (bsave-instances "Temp//experiment.bins")
+2
+CLIPS> (reset)
+CLIPS> (bload-instances "Temp//experiment.bins")
+2
+CLIPS> (send [e1] print)
+[e1] of EXPERIMENT
+(fa <Dummy Fact>)
+(ia [e2])
+(ea <Pointer-C-0x0>)
+CLIPS> (send [e2] print)
+[e2] of EXPERIMENT
+(fa <Dummy Fact>)
+(ia [Dummy Instance])
+(ea <Pointer-C-0x0>)
 CLIPS> (clear) ; Error line count issue
 CLIPS> (load line_error_crlf.clp)
 %$

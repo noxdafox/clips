@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  04/03/19             */
+   /*            CLIPS Version 6.40  04/15/19             */
    /*                                                     */
    /*         INSTANCE LOAD/SAVE (ASCII/BINARY) MODULE    */
    /*******************************************************/
@@ -51,6 +51,9 @@
 /*            If embedded, LoadInstances and                 */
 /*            RestoreInstances clean the current garbage     */
 /*            frame.                                         */
+/*                                                           */
+/*            Fixed external address issue with binary       */
+/*            instance files.                                */
 /*                                                           */
 /*      6.40: Added Env prefix to GetEvaluationError and     */
 /*            SetEvaluationError functions.                  */
@@ -1741,7 +1744,7 @@ static void *GetBinaryAtomValue(
 #endif
 
       case EXTERNAL_ADDRESS_TYPE:
-        return NULL;
+        return CreateExternalAddress(theEnv,NULL,0);
 
       default:
         {
