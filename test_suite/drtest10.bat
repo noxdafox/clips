@@ -606,4 +606,20 @@
 (deffunction MAIN::EXTRANEOUS::add-point (?x ?y))
 (defgeneric MAIN::EXTRANEOUS::add-point)
 (defmethod MAIN::EXTRANEOUS::add-point ((?x FLOAT) (?y FLOAT)))
+(clear) ; bsave-instances external-address issue
+
+(defclass EXPERIMENT 
+   (is-a USER)
+   (slot fa (type FACT-ADDRESS))
+   (slot ia (type INSTANCE-ADDRESS))
+   (slot ea (type EXTERNAL-ADDRESS)))
+   
+(make-instance e1 of EXPERIMENT
+   (fa (assert (b)))
+   (ia (instance-address(make-instance e2 of EXPERIMENT))))
+(bsave-instances "Temp//experiment.bins")
+(reset)
+(bload-instances "Temp//experiment.bins")
+(send [e1] print)
+(send [e2] print)
 (clear)
