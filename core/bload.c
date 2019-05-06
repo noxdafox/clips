@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  10/04/17             */
+   /*            CLIPS Version 6.40  05/03/19             */
    /*                                                     */
    /*                    BLOAD MODULE                     */
    /*******************************************************/
@@ -143,7 +143,7 @@ bool Bload(
    /* Open the file. */
    /*================*/
 
-   if (GenOpenReadBinary(theEnv,"bload",fileName) == 0)
+   if (GenOpenReadBinary(theEnv,"bload",fileName) == false)
      {
       OpenErrorMessage(theEnv,"bload",fileName);
       return false;

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  04/08/19             */
+   /*            CLIPS Version 6.40  05/03/19             */
    /*                                                     */
    /*               INSTANCE COMMAND MODULE               */
    /*******************************************************/
@@ -209,7 +209,7 @@ void SetupInstances(
 
    AddUDF(theEnv,"symbol-to-instance-name","*",1,1,"y",SymbolToInstanceNameFunction,"SymbolToInstanceNameFunction",NULL);
    AddUDF(theEnv,"instance-name-to-symbol","y",1,1,"ny",InstanceNameToSymbolFunction,"InstanceNameToSymbolFunction",NULL);
-   AddUDF(theEnv,"instance-address","bn",1,2,";iyn;yn",InstanceAddressCommand,"InstanceAddressCommand",NULL);
+   AddUDF(theEnv,"instance-address","bi",1,2,";iyn;yn",InstanceAddressCommand,"InstanceAddressCommand",NULL);
    AddUDF(theEnv,"instance-addressp","b",1,1,NULL,InstanceAddressPCommand,"InstanceAddressPCommand",NULL);
    AddUDF(theEnv,"instance-namep","b",1,1,NULL,InstanceNamePCommand,"InstanceNamePCommand",NULL);
    AddUDF(theEnv,"instance-name","bn",1,1,"yin",InstanceNameCommand,"InstanceNameCommand",NULL);

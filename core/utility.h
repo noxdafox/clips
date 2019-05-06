@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  04/04/19            */
+   /*             CLIPS Version 6.40  05/03/19            */
    /*                                                     */
    /*                 UTILITY HEADER FILE                 */
    /*******************************************************/
@@ -65,6 +65,9 @@
 /*            for garbage collection blocks.                 */
 /*                                                           */
 /*            Added StringBuilder functions.                 */
+/*                                                           */
+/*            Moved BufferedRead and FreeReadBuffer from     */
+/*            insfile.c to utility.c                         */
 /*                                                           */
 /*************************************************************/
 
@@ -163,6 +166,11 @@ struct utilityData
    struct trackedMemory *trackList;
    struct garbageFrame MasterGarbageFrame;
    struct garbageFrame *CurrentGarbageFrame;
+   size_t BinaryFileSize;
+   size_t BinaryFileOffset;
+   char *CurrentReadBuffer;
+   size_t CurrentReadBufferSize;
+   size_t CurrentReadBufferOffset;
   };
 
 #define UtilityData(theEnv) ((struct utilityData *) GetEnvironmentData(theEnv,UTILITY_DATA))
@@ -232,6 +240,8 @@ struct utilityData
    void                           SBReset(StringBuilder *);
    char                          *SBCopy(StringBuilder *);
    void                          *GetPeriodicFunctionContext(Environment *,const char *);
+   void                           BufferedRead(Environment *,void *,size_t);
+   void                           FreeReadBuffer(Environment *);
 
 #endif /* _H_utility */
 

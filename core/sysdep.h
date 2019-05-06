@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  01/25/18             */
+   /*            CLIPS Version 6.40  05/03/19             */
    /*                                                     */
    /*            SYSTEM DEPENDENT HEADER FILE             */
    /*******************************************************/
@@ -107,7 +107,7 @@
 
    double                      gentime(void);
    int                         gensystem(Environment *,const char *);
-   int                         GenOpenReadBinary(Environment *,const char *,const char *);
+   bool                        GenOpenReadBinary(Environment *,const char *,const char *);
    void                        GetSeekCurBinary(Environment *,long);
    void                        GetSeekSetBinary(Environment *,long);
    void                        GenTellBinary(Environment *,long *);

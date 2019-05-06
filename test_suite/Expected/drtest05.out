@@ -39,10 +39,10 @@ f-1     (fact "a b c")
 f-2     (fact a b c)
 For a total of 2 facts.
 CLIPS> (save-facts "Temp//foo.tmp")       ; DR0411
-TRUE
+2
 CLIPS> (reset)                            ; DR0411
 CLIPS> (load-facts "Temp//foo.tmp")       ; DR0411
-TRUE
+2
 CLIPS> (facts)                            ; DR0411
 f-1     (fact "a b c")
 f-2     (fact a b c)

@@ -187,7 +187,7 @@ CLIPS> (remove blah.txt)
 FALSE
 CLIPS> (load-facts blah.txt)
 [ARGACCES3] Function 'load-facts' was unable to open file 'blah.txt'.
-FALSE
+-1
 CLIPS> (batch blah.txt)
 [ARGACCES3] Function 'batch' was unable to open file 'blah.txt'.
 FALSE

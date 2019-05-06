@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  03/28/19             */
+   /*            CLIPS Version 6.40  05/03/19             */
    /*                                                     */
    /*                   UTILITY MODULE                    */
    /*******************************************************/
@@ -69,6 +69,9 @@
 /*                                                           */
 /*            Added StringBuilder functions.                 */
 /*                                                           */
+/*            Moved BufferedRead and FreeReadBuffer from     */
+/*            insfile.c to utility.c                         */
+/*                                                           */
 /*************************************************************/
 
 #include "setup.h"
@@ -86,6 +89,7 @@
 #include "memalloc.h"
 #include "multifld.h"
 #include "prntutil.h"
+#include "router.h"
 #include "symbol.h"
 #include "sysdep.h"
 
@@ -95,6 +99,8 @@
 #define MAX_EPHEMERAL_SIZE 10240L
 #define COUNT_INCREMENT 1000L
 #define SIZE_INCREMENT 10240L
+
+#define MAX_BLOCK_SIZE 10240
 
 /***************************************/
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
@@ -1497,3 +1503,92 @@ void SBDispose(
    rtn_struct(theEnv,stringBuilder,theSB);
   }
 
+/***************************************************
+  NAME         : BufferedRead
+  DESCRIPTION  : Reads data from binary file
+                 (Larger blocks than requested size
+                  may be read and buffered)
+  INPUTS       : 1) The buffer
+                 2) The buffer size
+  RETURNS      : Nothing useful
+  SIDE EFFECTS : Data stored in buffer
+  NOTES        : None
+ ***************************************************/
+void BufferedRead(
+  Environment *theEnv,
+  void *buf,
+  size_t bufsz)
+  {
+   size_t i, amountLeftToRead;
+
+   if (UtilityData(theEnv)->CurrentReadBuffer != NULL)
+     {
+      amountLeftToRead = UtilityData(theEnv)->CurrentReadBufferSize - UtilityData(theEnv)->CurrentReadBufferOffset;
+      if (bufsz <= amountLeftToRead)
+        {
+         for (i = 0L ; i < bufsz ; i++)
+           ((char *) buf)[i] = UtilityData(theEnv)->CurrentReadBuffer[i + UtilityData(theEnv)->CurrentReadBufferOffset];
+         UtilityData(theEnv)->CurrentReadBufferOffset += bufsz;
+         if (UtilityData(theEnv)->CurrentReadBufferOffset == UtilityData(theEnv)->CurrentReadBufferSize)
+           FreeReadBuffer(theEnv);
+        }
+      else
+        {
+         if (UtilityData(theEnv)->CurrentReadBufferOffset < UtilityData(theEnv)->CurrentReadBufferSize)
+           {
+            for (i = 0 ; i < amountLeftToRead ; i++)
+              ((char *) buf)[i] = UtilityData(theEnv)->CurrentReadBuffer[i + UtilityData(theEnv)->CurrentReadBufferOffset];
+            bufsz -= amountLeftToRead;
+            buf = (void *) (((char *) buf) + amountLeftToRead);
+           }
+         FreeReadBuffer(theEnv);
+         BufferedRead(theEnv,buf,bufsz);
+        }
+     }
+   else
+     {
+      if (bufsz > MAX_BLOCK_SIZE)
+        {
+         UtilityData(theEnv)->CurrentReadBufferSize = bufsz;
+         if (bufsz > (UtilityData(theEnv)->BinaryFileSize - UtilityData(theEnv)->BinaryFileOffset))
+           {
+            SystemError(theEnv,"INSFILE",2);
+            ExitRouter(theEnv,EXIT_FAILURE);
+           }
+        }
+      else if (MAX_BLOCK_SIZE >
+              (UtilityData(theEnv)->BinaryFileSize - UtilityData(theEnv)->BinaryFileOffset))
+        {
+         UtilityData(theEnv)->CurrentReadBufferSize = UtilityData(theEnv)->BinaryFileSize - UtilityData(theEnv)->BinaryFileOffset;
+        }
+      else
+        { UtilityData(theEnv)->CurrentReadBufferSize = (unsigned long) MAX_BLOCK_SIZE; }
+        
+      UtilityData(theEnv)->CurrentReadBuffer = (char *) genalloc(theEnv,UtilityData(theEnv)->CurrentReadBufferSize);
+      GenReadBinary(theEnv,UtilityData(theEnv)->CurrentReadBuffer,UtilityData(theEnv)->CurrentReadBufferSize);
+      for (i = 0L ; i < bufsz ; i++)
+        ((char *) buf)[i] = UtilityData(theEnv)->CurrentReadBuffer[i];
+      UtilityData(theEnv)->CurrentReadBufferOffset = bufsz;
+      UtilityData(theEnv)->BinaryFileOffset += UtilityData(theEnv)->CurrentReadBufferSize;
+     }
+  }
+
+/*****************************************************
+  NAME         : FreeReadBuffer
+  DESCRIPTION  : Deallocates buffer for binary reads
+  INPUTS       : None
+  RETURNS      : Nothing usefu
+  SIDE EFFECTS : Binary global read buffer deallocated
+  NOTES        : None
+ *****************************************************/
+void FreeReadBuffer(
+  Environment *theEnv)
+  {
+   if (UtilityData(theEnv)->CurrentReadBufferSize != 0L)
+     {
+      genfree(theEnv,UtilityData(theEnv)->CurrentReadBuffer,UtilityData(theEnv)->CurrentReadBufferSize);
+      UtilityData(theEnv)->CurrentReadBuffer = NULL;
+      UtilityData(theEnv)->CurrentReadBufferSize = 0L;
+      UtilityData(theEnv)->CurrentReadBufferOffset = 0L; // TBD Added
+     }
+  }

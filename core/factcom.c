@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  03/22/19             */
+   /*            CLIPS Version 6.40  05/03/19             */
    /*                                                     */
    /*                FACT COMMANDS MODULE                 */
    /*******************************************************/
@@ -78,6 +78,9 @@
 /*            Watch facts for modify command only prints     */
 /*            changed slots.                                 */
 /*                                                           */
+/*            Moved load-facts and save-facts functions to   */
+/*            factfile.c and factfile.h.                     */
+/*                                                           */
 /*************************************************************/
 
 #include <stdio.h>
@@ -88,32 +91,17 @@
 #if DEFTEMPLATE_CONSTRUCT
 
 #include "argacces.h"
-#include "constant.h"
-#include "envrnmnt.h"
-#include "exprnpsr.h"
 #include "extnfunc.h"
-#include "facthsh.h"
-#include "factmch.h"
 #include "factmngr.h"
 #include "factrhs.h"
-#include "match.h"
-#include "memalloc.h"
-#include "modulutl.h"
 #include "multifld.h"
 #include "pprint.h"
 #include "prntutil.h"
 #include "router.h"
 #include "scanner.h"
-#include "strngrtr.h"
 #include "sysdep.h"
 #include "tmpltdef.h"
-#include "tmpltfun.h"
-#include "tmpltpsr.h"
 #include "tmpltutl.h"
-
-#if BLOAD_AND_BSAVE || BLOAD || BLOAD_ONLY
-#include "bload.h"
-#endif
 
 #include "factcom.h"
 
@@ -128,9 +116,6 @@
 #if DEBUGGING_FUNCTIONS
    static long long               GetFactsArgument(UDFContext *);
 #endif
-   static struct expr            *StandardLoadFact(Environment *,const char *,struct token *);
-   static Deftemplate           **GetSaveFactsDeftemplateNames(Environment *,struct expr *,int,
-                                                               unsigned int *,bool *);
 
 /***************************************/
 /* FactCommandDefinitions: Initializes */
@@ -152,8 +137,6 @@ void FactCommandDefinitions(
    AddUDF(theEnv,"get-fact-duplication","b",0,0,NULL,GetFactDuplicationCommand,"GetFactDuplicationCommand", NULL);
    AddUDF(theEnv,"set-fact-duplication","b",1,1,NULL,SetFactDuplicationCommand,"SetFactDuplicationCommand", NULL);
 
-   AddUDF(theEnv,"save-facts","b",1,UNBOUNDED,"y;sy",SaveFactsCommand,"SaveFactsCommand",NULL);
-   AddUDF(theEnv,"load-facts","b",1,1,"sy",LoadFactsCommand,"LoadFactsCommand",NULL);
    AddUDF(theEnv,"fact-index","l",1,1,"f",FactIndexFunction,"FactIndexFunction",NULL);
 
    FuncSeqOvlFlags(theEnv,"assert",false,false);
@@ -206,9 +189,7 @@ void AssertCommand(
      {
       newFact = CreateFactBySize(theEnv,1);
       if (theExpression->nextArg == NULL)
-        {
-         newFact->theProposition.contents[0].multifieldValue = CreateUnmanagedMultifield(theEnv,0L);
-        }
+        { newFact->theProposition.contents[0].multifieldValue = CreateUnmanagedMultifield(theEnv,0L); }
       slotPtr = NULL;
      }
 
@@ -743,583 +724,6 @@ void AssertStringFunction(
      { returnValue->lexemeValue = FalseSymbol(theEnv); }
   }
 
-/******************************************/
-/* SaveFactsCommand: H/L access routine   */
-/*   for the save-facts command.          */
-/******************************************/
-void SaveFactsCommand(
-  Environment *theEnv,
-  UDFContext *context,
-  UDFValue *returnValue)
-  {
-   const char *fileName;
-   unsigned int numArgs;
-   SaveScope saveCode = LOCAL_SAVE;
-   const char *argument;
-   UDFValue theValue;
-   struct expr *theList = NULL;
-
-   /*============================================*/
-   /* Check for the correct number of arguments. */
-   /*============================================*/
-
-   numArgs = UDFArgumentCount(context);
-
-   /*=================================================*/
-   /* Get the file name to which facts will be saved. */
-   /*=================================================*/
-
-   if ((fileName = GetFileName(context)) == NULL)
-     {
-      returnValue->lexemeValue = FalseSymbol(theEnv);
-      return;
-     }
-
-   /*=============================================================*/
-   /* If specified, the second argument to save-facts indicates   */
-   /* whether just facts local to the current module or all facts */
-   /* visible to the current module will be saved.                */
-   /*=============================================================*/
-
-   if (numArgs > 1)
-     {
-      if (! UDFNextArgument(context,SYMBOL_BIT,&theValue))
-        {
-         returnValue->lexemeValue = FalseSymbol(theEnv);
-         return;
-        }
-
-      argument = theValue.lexemeValue->contents;
-
-      if (strcmp(argument,"local") == 0)
-        { saveCode = LOCAL_SAVE; }
-      else if (strcmp(argument,"visible") == 0)
-        { saveCode = VISIBLE_SAVE; }
-      else
-        {
-         ExpectedTypeError1(theEnv,"save-facts",2,"symbol with value local or visible");
-         returnValue->lexemeValue = FalseSymbol(theEnv);
-         return;
-        }
-     }
-
-   /*======================================================*/
-   /* Subsequent arguments indicate that only those facts  */
-   /* associated with the specified deftemplates should be */
-   /* saved to the file.                                   */
-   /*======================================================*/
-
-   if (numArgs > 2) theList = GetFirstArgument()->nextArg->nextArg;
-
-   /*====================================*/
-   /* Call the SaveFacts driver routine. */
-   /*====================================*/
-
-   if (SaveFactsDriver(theEnv,fileName,saveCode,theList) == false)
-     { returnValue->lexemeValue = FalseSymbol(theEnv); }
-   else
-     { returnValue->lexemeValue = TrueSymbol(theEnv); }
-  }
-
-/******************************************/
-/* LoadFactsCommand: H/L access routine   */
-/*   for the load-facts command.          */
-/******************************************/
-void LoadFactsCommand(
-  Environment *theEnv,
-  UDFContext *context,
-  UDFValue *returnValue)
-  {
-   const char *fileName;
-
-   /*====================================================*/
-   /* Get the file name from which facts will be loaded. */
-   /*====================================================*/
-
-   if ((fileName = GetFileName(context)) == NULL)
-     {
-      returnValue->lexemeValue = FalseSymbol(theEnv);
-      return;
-     }
-
-   /*====================================*/
-   /* Call the LoadFacts driver routine. */
-   /*====================================*/
-
-   returnValue->lexemeValue = CreateBoolean(theEnv,LoadFacts(theEnv,fileName));
-  }
-
-/***********************************************************/
-/* SaveFacts: C access routine for the save-facts command. */
-/***********************************************************/
-bool SaveFacts(
-  Environment *theEnv,
-  const char *fileName,
-  SaveScope saveCode)
-  {
-   return SaveFactsDriver(theEnv,fileName,saveCode,NULL);
-  }
-
-/*****************************************************************/
-/* SaveFactsDriver: C access routine for the save-facts command. */
-/*****************************************************************/
-bool SaveFactsDriver(
-  Environment *theEnv,
-  const char *fileName,
-  SaveScope saveCode,
-  struct expr *theList)
-  {
-   bool tempValue1, tempValue2, tempValue3;
-   Fact *theFact;
-   FILE *filePtr;
-   Defmodule *theModule;
-   Deftemplate **deftemplateArray;
-   unsigned int count, i;
-   bool printFact, error;
-
-   /*======================================================*/
-   /* Open the file. Use either "fast save" or I/O Router. */
-   /*======================================================*/
-
-   if ((filePtr = GenOpen(theEnv,fileName,"w")) == NULL)
-     {
-      OpenErrorMessage(theEnv,"save-facts",fileName);
-      return false;
-     }
-
-   SetFastSave(theEnv,filePtr);
-
-   /*===========================================*/
-   /* Set the print flags so that addresses and */
-   /* strings are printed properly to the file. */
-   /*===========================================*/
-
-   tempValue1 = PrintUtilityData(theEnv)->PreserveEscapedCharacters;
-   PrintUtilityData(theEnv)->PreserveEscapedCharacters = true;
-   tempValue2 = PrintUtilityData(theEnv)->AddressesToStrings;
-   PrintUtilityData(theEnv)->AddressesToStrings = true;
-   tempValue3 = PrintUtilityData(theEnv)->InstanceAddressesToNames;
-   PrintUtilityData(theEnv)->InstanceAddressesToNames = true;
-
-   /*===================================================*/
-   /* Determine the list of specific facts to be saved. */
-   /*===================================================*/
-
-   deftemplateArray = GetSaveFactsDeftemplateNames(theEnv,theList,saveCode,&count,&error);
-
-   if (error)
-     {
-      PrintUtilityData(theEnv)->PreserveEscapedCharacters = tempValue1;
-      PrintUtilityData(theEnv)->AddressesToStrings = tempValue2;
-      PrintUtilityData(theEnv)->InstanceAddressesToNames = tempValue3;
-      GenClose(theEnv,filePtr);
-      SetFastSave(theEnv,NULL);
-      return false;
-     }
-
-   /*=================*/
-   /* Save the facts. */
-   /*=================*/
-
-   theModule = GetCurrentModule(theEnv);
-
-   for (theFact = GetNextFactInScope(theEnv,NULL);
-        theFact != NULL;
-        theFact = GetNextFactInScope(theEnv,theFact))
-     {
-      /*===========================================================*/
-      /* If we're doing a local save and the facts's corresponding */
-      /* deftemplate isn't in the current module, then don't save  */
-      /* the fact.                                                 */
-      /*===========================================================*/
-
-      if ((saveCode == LOCAL_SAVE) &&
-          (theFact->whichDeftemplate->header.whichModule->theModule != theModule))
-        { printFact = false; }
-
-      /*=====================================================*/
-      /* Otherwise, if the list of facts to be printed isn't */
-      /* restricted, then set the print flag to true.        */
-      /*=====================================================*/
-
-      else if (theList == NULL)
-        { printFact = true; }
-
-      /*=======================================================*/
-      /* Otherwise see if the fact's corresponding deftemplate */
-      /* is in the list of deftemplates whose facts are to be  */
-      /* saved. If it's in the list, then set the print flag   */
-      /* to true, otherwise set it to false.                   */
-      /*=======================================================*/
-
-      else
-        {
-         printFact = false;
-         for (i = 0; i < count; i++)
-           {
-            if (deftemplateArray[i] == theFact->whichDeftemplate)
-              {
-               printFact = true;
-               break;
-              }
-           }
-        }
-
-      /*===================================*/
-      /* If the print flag is set to true, */
-      /* then save the fact to the file.   */
-      /*===================================*/
-
-      if (printFact)
-        {
-         PrintFact(theEnv,(char *) filePtr,theFact,false,false,NULL);
-         WriteString(theEnv,(char *) filePtr,"\n");
-        }
-     }
-
-   /*==========================*/
-   /* Restore the print flags. */
-   /*==========================*/
-
-   PrintUtilityData(theEnv)->PreserveEscapedCharacters = tempValue1;
-   PrintUtilityData(theEnv)->AddressesToStrings = tempValue2;
-   PrintUtilityData(theEnv)->InstanceAddressesToNames = tempValue3;
-
-   /*=================*/
-   /* Close the file. */
-   /*=================*/
-
-   GenClose(theEnv,filePtr);
-   SetFastSave(theEnv,NULL);
-
-   /*==================================*/
-   /* Free the deftemplate name array. */
-   /*==================================*/
-
-   if (theList != NULL)
-     { rm(theEnv,deftemplateArray,sizeof(Deftemplate *) * count); }
-
-   /*===================================*/
-   /* Return true to indicate no errors */
-   /* occurred while saving the facts.  */
-   /*===================================*/
-
-   return true;
-  }
-
-/*******************************************************************/
-/* GetSaveFactsDeftemplateNames: Retrieves the list of deftemplate */
-/*   names for saving specific facts with the save-facts command.  */
-/*******************************************************************/
-static Deftemplate **GetSaveFactsDeftemplateNames(
-  Environment *theEnv,
-  struct expr *theList,
-  int saveCode,
-  unsigned int *count,
-  bool *error)
-  {
-   struct expr *tempList;
-   Deftemplate **deftemplateArray;
-   UDFValue tempArg;
-   unsigned int i, tempCount;
-   Deftemplate *theDeftemplate = NULL;
-
-   /*=============================*/
-   /* Initialize the error state. */
-   /*=============================*/
-
-   *error = false;
-
-   /*=====================================================*/
-   /* If no deftemplate names were specified as arguments */
-   /* then the deftemplate name list is empty.            */
-   /*=====================================================*/
-
-   if (theList == NULL)
-     {
-      *count = 0;
-      return NULL;
-     }
-
-   /*======================================*/
-   /* Determine the number of deftemplate  */
-   /* names to be stored in the name list. */
-   /*======================================*/
-
-   for (tempList = theList, *count = 0;
-        tempList != NULL;
-        tempList = tempList->nextArg, (*count)++)
-     { /* Do Nothing */ }
-
-   /*=========================================*/
-   /* Allocate the storage for the name list. */
-   /*=========================================*/
-
-   deftemplateArray = (Deftemplate **) gm2(theEnv,sizeof(Deftemplate *) * *count);
-
-   /*=====================================*/
-   /* Loop through each of the arguments. */
-   /*=====================================*/
-
-   for (tempList = theList, i = 0;
-        i < *count;
-        tempList = tempList->nextArg, i++)
-     {
-      /*========================*/
-      /* Evaluate the argument. */
-      /*========================*/
-
-      EvaluateExpression(theEnv,tempList,&tempArg);
-
-      if (EvaluationData(theEnv)->EvaluationError)
-        {
-         *error = true;
-         rm(theEnv,deftemplateArray,sizeof(Deftemplate *) * *count);
-         return NULL;
-        }
-
-      /*======================================*/
-      /* A deftemplate name must be a symbol. */
-      /*======================================*/
-
-      if (tempArg.header->type != SYMBOL_TYPE)
-        {
-         *error = true;
-         ExpectedTypeError1(theEnv,"save-facts",3+i,"symbol");
-         rm(theEnv,deftemplateArray,sizeof(Deftemplate *) * *count);
-         return NULL;
-        }
-
-      /*===================================================*/
-      /* Find the deftemplate. For a local save, look only */
-      /* in the current module. For a visible save, look   */
-      /* in all visible modules.                           */
-      /*===================================================*/
-
-      if (saveCode == LOCAL_SAVE)
-        {
-         theDeftemplate = FindDeftemplateInModule(theEnv,tempArg.lexemeValue->contents);
-         if (theDeftemplate == NULL)
-           {
-            *error = true;
-            ExpectedTypeError1(theEnv,"save-facts",3+i,"'local deftemplate name'");
-            rm(theEnv,deftemplateArray,sizeof(Deftemplate *) * *count);
-            return NULL;
-           }
-        }
-      else if (saveCode == VISIBLE_SAVE)
-        {
-         theDeftemplate = (Deftemplate *)
-           FindImportedConstruct(theEnv,"deftemplate",NULL,
-                                 tempArg.lexemeValue->contents,
-                                 &tempCount,true,NULL);
-         if (theDeftemplate == NULL)
-           {
-            *error = true;
-            ExpectedTypeError1(theEnv,"save-facts",3+i,"'visible deftemplate name'");
-            rm(theEnv,deftemplateArray,sizeof(Deftemplate *) * *count);
-            return NULL;
-           }
-        }
-
-      /*==================================*/
-      /* Add a pointer to the deftemplate */
-      /* to the array being created.      */
-      /*==================================*/
-
-      deftemplateArray[i] = theDeftemplate;
-     }
-
-   /*===================================*/
-   /* Return the array of deftemplates. */
-   /*===================================*/
-
-   return deftemplateArray;
-  }
-
-/***********************************************************/
-/* LoadFacts: C access routine for the load-facts command. */
-/***********************************************************/
-bool LoadFacts(
-  Environment *theEnv,
-  const char *fileName)
-  {
-   FILE *filePtr;
-   struct token theToken;
-   struct expr *testPtr;
-   UDFValue rv;
-   int danglingConstructs;
-   GCBlock gcb;
-
-   /*=====================================*/
-   /* If embedded, clear the error flags. */
-   /*=====================================*/
-   
-   if (EvaluationData(theEnv)->CurrentExpression == NULL)
-     { ResetErrorFlags(theEnv); }
-
-   /*======================================================*/
-   /* Open the file. Use either "fast save" or I/O Router. */
-   /*======================================================*/
-
-   if ((filePtr = GenOpen(theEnv,fileName,"r")) == NULL)
-     {
-      OpenErrorMessage(theEnv,"load-facts",fileName);
-      return false;
-     }
-
-   SetFastLoad(theEnv,filePtr);
-
-   /*========================================*/
-   /* Set up the frame for tracking garbage. */
-   /*========================================*/
-   
-   GCBlockStart(theEnv,&gcb);
-
-   /*=================*/
-   /* Load the facts. */
-   /*=================*/
-   
-   danglingConstructs = ConstructData(theEnv)->DanglingConstructs;
-
-   theToken.tknType = LEFT_PARENTHESIS_TOKEN;
-   while (theToken.tknType != STOP_TOKEN)
-     {
-      testPtr = StandardLoadFact(theEnv,(char *) filePtr,&theToken);
-      if (testPtr == NULL) theToken.tknType = STOP_TOKEN;
-      else EvaluateExpression(theEnv,testPtr,&rv);
-      ReturnExpression(theEnv,testPtr);
-     }
-     
-   /*================================*/
-   /* Restore the old garbage frame. */
-   /*================================*/
-   
-   GCBlockEnd(theEnv,&gcb);
-
-   /*===============================================*/
-   /* If embedded, clean the topmost garbage frame. */
-   /*===============================================*/
-
-   if (EvaluationData(theEnv)->CurrentExpression == NULL)
-     {
-      CleanCurrentGarbageFrame(theEnv,NULL);
-      ConstructData(theEnv)->DanglingConstructs = danglingConstructs;
-     }
-
-   /*======================*/
-   /* Call periodic tasks. */
-   /*======================*/
-   
-   CallPeriodicTasks(theEnv);
-
-   /*=================*/
-   /* Close the file. */
-   /*=================*/
-
-   SetFastLoad(theEnv,NULL);
-   GenClose(theEnv,filePtr);
-
-   /*================================================*/
-   /* Return true if no error occurred while loading */
-   /* the facts, otherwise return false.             */
-   /*================================================*/
-
-   if (EvaluationData(theEnv)->EvaluationError) return false;
-   return true;
-  }
-
-/******************************************/
-/* LoadFactsFromString: C access routine. */
-/******************************************/
-bool LoadFactsFromString(
-  Environment *theEnv,
-  const char *theString,
-  size_t theMax)
-  {
-   const char *theStrRouter = "*** load-facts-from-string ***";
-   struct token theToken;
-   struct expr *testPtr;
-   UDFValue rv;
-   
-   /*=====================================*/
-   /* If embedded, clear the error flags. */
-   /*=====================================*/
-   
-   if (EvaluationData(theEnv)->CurrentExpression == NULL)
-     { ResetErrorFlags(theEnv); }
-
-   /*==========================*/
-   /* Initialize string router */
-   /*==========================*/
-
-   if ((theMax == SIZE_MAX) ? (! OpenStringSource(theEnv,theStrRouter,theString,0)) :
-                              (! OpenTextSource(theEnv,theStrRouter,theString,0,theMax)))
-     return false;
-
-   /*=================*/
-   /* Load the facts. */
-   /*=================*/
-
-   theToken.tknType = LEFT_PARENTHESIS_TOKEN;
-   while (theToken.tknType != STOP_TOKEN)
-     {
-      testPtr = StandardLoadFact(theEnv,theStrRouter,&theToken);
-      if (testPtr == NULL) theToken.tknType = STOP_TOKEN;
-      else EvaluateExpression(theEnv,testPtr,&rv);
-      ReturnExpression(theEnv,testPtr);
-     }
-
-   /*=================*/
-   /* Close router.   */
-   /*=================*/
-
-   CloseStringSource(theEnv,theStrRouter);
-
-   /*================================================*/
-   /* Return true if no error occurred while loading */
-   /* the facts, otherwise return false.             */
-   /*================================================*/
-
-   if (EvaluationData(theEnv)->EvaluationError) return false;
-   return true;
-  }
-
-/**************************************************************************/
-/* StandardLoadFact: Loads a single fact from the specified logical name. */
-/**************************************************************************/
-static struct expr *StandardLoadFact(
-  Environment *theEnv,
-  const char *logicalName,
-  struct token *theToken)
-  {
-   bool error = false;
-   struct expr *temp;
-
-   GetToken(theEnv,logicalName,theToken);
-   if (theToken->tknType != LEFT_PARENTHESIS_TOKEN) return NULL;
-
-   temp = GenConstant(theEnv,FCALL,FindFunction(theEnv,"assert"));
-   temp->argList = GetRHSPattern(theEnv,logicalName,theToken,&error,
-                                  true,false,true,RIGHT_PARENTHESIS_TOKEN);
-
-   if (error == true)
-     {
-      WriteString(theEnv,STDERR,"Function load-facts encountered an error\n");
-      SetEvaluationError(theEnv,true);
-      ReturnExpression(theEnv,temp);
-      return NULL;
-     }
-
-   if (ExpressionContainsVariables(temp,true))
-     {
-      ReturnExpression(theEnv,temp);
-      return NULL;
-     }
-
-   return(temp);
-  }
-
 /****************************************************************/
 /* AssertParse: Driver routine for parsing the assert function. */
 /****************************************************************/
@@ -1341,5 +745,3 @@ static struct expr *AssertParse(
   }
 
 #endif /* DEFTEMPLATE_CONSTRUCT */
-
-

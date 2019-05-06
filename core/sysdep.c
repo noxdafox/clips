@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  03/04/19             */
+   /*            CLIPS Version 6.40  05/03/19             */
    /*                                                     */
    /*               SYSTEM DEPENDENT MODULE               */
    /*******************************************************/
@@ -700,7 +700,7 @@ int GenSeek(
 /*   open at a time when using this function since the file */
 /*   pointer is stored in a global variable.                */
 /************************************************************/
-int GenOpenReadBinary(
+bool GenOpenReadBinary(
   Environment *theEnv,
   const char *funcName,
   const char *fileName)
@@ -714,7 +714,7 @@ int GenOpenReadBinary(
      {
       if (SystemDependentData(theEnv)->AfterOpenFunction != NULL)
         { (*SystemDependentData(theEnv)->AfterOpenFunction)(theEnv); }
-      return 0;
+      return false;
      }
 #endif
 
@@ -723,14 +723,14 @@ int GenOpenReadBinary(
      {
       if (SystemDependentData(theEnv)->AfterOpenFunction != NULL)
         { (*SystemDependentData(theEnv)->AfterOpenFunction)(theEnv); }
-      return 0;
+      return false;
      }
 #endif
 
    if (SystemDependentData(theEnv)->AfterOpenFunction != NULL)
      { (*SystemDependentData(theEnv)->AfterOpenFunction)(theEnv); }
 
-   return 1;
+   return true;
   }
 
 /***********************************************/

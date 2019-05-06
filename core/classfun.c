@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  04/03/19             */
+   /*            CLIPS Version 6.40  05/03/19             */
    /*                                                     */
    /*                CLASS FUNCTIONS MODULE               */
    /*******************************************************/
@@ -852,10 +852,10 @@ void DestroyDefclass(
   Defclass *cls)
   {
    long i;
+#if ! RUN_TIME
    CLASS_ALPHA_LINK *currentAlphaLink;
    CLASS_ALPHA_LINK *nextAlphaLink;
 
-#if ! RUN_TIME
    DefmessageHandler *hnd;
    DeletePackedClassLinks(theEnv,&cls->directSuperclasses,false);
    DeletePackedClassLinks(theEnv,&cls->allSuperclasses,false);

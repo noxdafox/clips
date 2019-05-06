@@ -48,7 +48,7 @@ CLIPS> (save-facts 10)
 CLIPS> (save-facts "Temp//factscmd.tmp" 10)
 [ARGACCES2] Function 'save-facts' expected argument #2 to be of type symbol.
 CLIPS> (save-facts "Temp//factscmd.tmp")
-TRUE
+6
 CLIPS> (clear)
 CLIPS> (facts)
 CLIPS> (load-facts)
@@ -58,7 +58,7 @@ CLIPS> (load-facts 10)
 CLIPS> (load-facts "Temp//factscmd.tmp" 10)
 [ARGACCES1] Function 'load-facts' expected exactly 1 argument.
 CLIPS> (load-facts "Temp//factscmd.tmp")
-TRUE
+6
 CLIPS> (facts)
 f-1     (a)
 f-2     (b)
