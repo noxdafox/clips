@@ -34,7 +34,7 @@ OBJS = agenda.o analysis.o argacces.o bload.o bmathfun.o bsave.o \
  	dffnxfun.o dffnxpsr.o dfinsbin.o dfinscmp.o drive.o emathfun.o \
  	engine.o envrnmnt.o envrnbld.o evaluatn.o expressn.o exprnbin.o \
  	exprnops.o exprnpsr.o extnfunc.o factbin.o factbld.o factcmp.o \
- 	factcom.o factfun.o factgen.o facthsh.o factlhs.o factmch.o \
+ 	factcom.o factfun.o factgen.o facthsh.o factfile.o factlhs.o factmch.o \
  	factmngr.o factprt.o factqpsr.o factqury.o factrete.o factrhs.o \
  	filecom.o filertr.o fileutil.o generate.o genrcbin.o genrccmp.o \
  	genrccom.o genrcexe.o genrcfun.o genrcpsr.o globlbin.o globlbsc.o \
@@ -121,7 +121,7 @@ argacces.o: argacces.c setup.h envrnmnt.h entities.h usrsetup.h \
   exprnops.h constrct.h userdata.h moduldef.h utility.h symbol.h \
   factmngr.h conscomp.h symblcmp.h tmpltdef.h factbld.h network.h \
   match.h ruledef.h agenda.h crstrtgy.h cstrccom.h facthsh.h insfun.h \
-  object.h multifld.h prntutil.h router.h sysdep.h argacces.h
+  object.h multifld.h objrtmch.h prntutil.h router.h sysdep.h argacces.h
 
 bload.o: bload.c setup.h envrnmnt.h entities.h usrsetup.h argacces.h \
   expressn.h exprnops.h constrct.h userdata.h moduldef.h utility.h \
@@ -145,65 +145,67 @@ classcom.o: classcom.c setup.h envrnmnt.h entities.h usrsetup.h bload.h \
   expressn.h exprnops.h constrct.h symbol.h exprnbin.h sysdep.h \
   symblbin.h argacces.h classfun.h object.h constrnt.h multifld.h \
   match.h network.h ruledef.h agenda.h crstrtgy.h conscomp.h symblcmp.h \
-  cstrccom.h scanner.h classcom.h classini.h modulutl.h msgcom.h \
-  msgpass.h prntutil.h router.h
+  cstrccom.h objrtmch.h scanner.h classcom.h classini.h modulutl.h \
+  msgcom.h msgpass.h prntutil.h router.h
 
 classexm.o: classexm.c setup.h envrnmnt.h entities.h usrsetup.h \
   argacces.h expressn.h exprnops.h constrct.h userdata.h moduldef.h \
   utility.h evaluatn.h constant.h classcom.h cstrccom.h object.h \
   constrnt.h multifld.h symbol.h match.h network.h ruledef.h agenda.h \
-  crstrtgy.h conscomp.h extnfunc.h symblcmp.h classfun.h scanner.h \
-  classini.h insfun.h memalloc.h msgcom.h msgpass.h msgfun.h prntutil.h \
-  router.h strngrtr.h sysdep.h classexm.h
+  crstrtgy.h conscomp.h extnfunc.h symblcmp.h objrtmch.h classfun.h \
+  scanner.h classini.h insfun.h memalloc.h msgcom.h msgpass.h msgfun.h \
+  prntutil.h router.h strngrtr.h sysdep.h classexm.h
 
 classfun.o: classfun.c setup.h envrnmnt.h entities.h usrsetup.h bload.h \
   utility.h evaluatn.h constant.h moduldef.h userdata.h extnfunc.h \
   expressn.h exprnops.h constrct.h symbol.h exprnbin.h sysdep.h \
   symblbin.h classcom.h cstrccom.h object.h constrnt.h multifld.h \
   match.h network.h ruledef.h agenda.h crstrtgy.h conscomp.h symblcmp.h \
-  classini.h cstrcpsr.h inscom.h insfun.h insmngr.h memalloc.h \
-  modulutl.h scanner.h msgfun.h msgpass.h prntutil.h router.h classfun.h
+  objrtmch.h classini.h cstrcpsr.h strngfun.h inscom.h insfun.h \
+  insmngr.h memalloc.h modulutl.h scanner.h msgfun.h msgpass.h \
+  prntutil.h router.h classfun.h
 
 classinf.o: classinf.c setup.h envrnmnt.h entities.h usrsetup.h \
   argacces.h expressn.h exprnops.h constrct.h userdata.h moduldef.h \
   utility.h evaluatn.h constant.h classcom.h cstrccom.h object.h \
   constrnt.h multifld.h symbol.h match.h network.h ruledef.h agenda.h \
-  crstrtgy.h conscomp.h extnfunc.h symblcmp.h classexm.h classfun.h \
-  scanner.h classini.h memalloc.h insfun.h msgcom.h msgpass.h msgfun.h \
-  prntutil.h classinf.h
+  crstrtgy.h conscomp.h extnfunc.h symblcmp.h objrtmch.h classexm.h \
+  classfun.h scanner.h classini.h memalloc.h insfun.h msgcom.h msgpass.h \
+  msgfun.h prntutil.h classinf.h
 
 classini.o: classini.c setup.h envrnmnt.h entities.h usrsetup.h \
   classcom.h cstrccom.h moduldef.h userdata.h utility.h evaluatn.h \
   constant.h constrct.h object.h constrnt.h expressn.h exprnops.h \
   multifld.h symbol.h match.h network.h ruledef.h agenda.h crstrtgy.h \
-  conscomp.h extnfunc.h symblcmp.h classexm.h classfun.h scanner.h \
-  classinf.h classpsr.h cstrcpsr.h inscom.h insfun.h memalloc.h \
-  modulpsr.h modulutl.h msgcom.h msgpass.h watch.h defins.h insquery.h \
-  bload.h exprnbin.h sysdep.h symblbin.h objbin.h objcmp.h objrtbld.h \
-  objrtfnx.h objrtmch.h classini.h
+  conscomp.h extnfunc.h symblcmp.h objrtmch.h classexm.h classfun.h \
+  scanner.h classinf.h classpsr.h cstrcpsr.h strngfun.h inscom.h \
+  insfun.h memalloc.h modulpsr.h modulutl.h msgcom.h msgpass.h watch.h \
+  defins.h insquery.h bload.h exprnbin.h sysdep.h symblbin.h objbin.h \
+  objcmp.h objrtbld.h objrtfnx.h classini.h
 
 classpsr.o: classpsr.c setup.h envrnmnt.h entities.h usrsetup.h bload.h \
   utility.h evaluatn.h constant.h moduldef.h userdata.h extnfunc.h \
   expressn.h exprnops.h constrct.h symbol.h exprnbin.h sysdep.h \
   symblbin.h classcom.h cstrccom.h object.h constrnt.h multifld.h \
   match.h network.h ruledef.h agenda.h crstrtgy.h conscomp.h symblcmp.h \
-  classfun.h scanner.h clsltpsr.h cstrcpsr.h inherpsr.h memalloc.h \
-  modulpsr.h modulutl.h msgpsr.h pprint.h prntutil.h router.h classpsr.h
+  objrtmch.h classfun.h scanner.h clsltpsr.h cstrcpsr.h strngfun.h \
+  inherpsr.h memalloc.h modulpsr.h modulutl.h msgpsr.h pprint.h \
+  prntutil.h router.h classpsr.h
 
 clsltpsr.o: clsltpsr.c setup.h envrnmnt.h entities.h usrsetup.h \
   classcom.h cstrccom.h moduldef.h userdata.h utility.h evaluatn.h \
   constant.h constrct.h object.h constrnt.h expressn.h exprnops.h \
   multifld.h symbol.h match.h network.h ruledef.h agenda.h crstrtgy.h \
-  conscomp.h extnfunc.h symblcmp.h classfun.h scanner.h cstrnchk.h \
-  cstrnpsr.h cstrnutl.h default.h insfun.h memalloc.h pprint.h \
-  prntutil.h router.h clsltpsr.h
+  conscomp.h extnfunc.h symblcmp.h objrtmch.h classfun.h scanner.h \
+  cstrnchk.h cstrnpsr.h cstrnutl.h default.h insfun.h memalloc.h \
+  pprint.h prntutil.h router.h clsltpsr.h
 
 commline.o: commline.c setup.h envrnmnt.h entities.h usrsetup.h \
   constant.h argacces.h expressn.h exprnops.h constrct.h userdata.h \
-  moduldef.h utility.h evaluatn.h cstrcpsr.h exprnpsr.h extnfunc.h \
-  symbol.h scanner.h fileutil.h memalloc.h multifld.h pprint.h \
-  prcdrfun.h prcdrpsr.h constrnt.h prntutil.h router.h strngrtr.h \
-  sysdep.h commline.h
+  moduldef.h utility.h evaluatn.h cstrcpsr.h strngfun.h exprnpsr.h \
+  extnfunc.h symbol.h scanner.h fileutil.h memalloc.h multifld.h \
+  pprint.h prcdrfun.h prcdrpsr.h constrnt.h prntutil.h router.h \
+  strngrtr.h sysdep.h commline.h
 
 conscomp.o: conscomp.c setup.h envrnmnt.h entities.h usrsetup.h \
   argacces.h expressn.h exprnops.h constrct.h userdata.h moduldef.h \
@@ -212,15 +214,15 @@ conscomp.o: conscomp.c setup.h envrnmnt.h entities.h usrsetup.h \
   prntutil.h router.h sysdep.h network.h match.h ruledef.h agenda.h \
   crstrtgy.h conscomp.h symblcmp.h dffnxcmp.h dffnxfun.h tmpltcmp.h \
   tmpltdef.h factbld.h globlcmp.h globldef.h genrccmp.h genrcfun.h \
-  objcmp.h object.h multifld.h
+  objcmp.h object.h multifld.h objrtmch.h
 
 constrct.o: constrct.c setup.h envrnmnt.h entities.h usrsetup.h \
   argacces.h expressn.h exprnops.h constrct.h userdata.h moduldef.h \
-  utility.h evaluatn.h constant.h commline.h cstrcpsr.h exprnpsr.h \
-  extnfunc.h symbol.h scanner.h memalloc.h modulutl.h multifld.h \
-  prcdrfun.h prcdrpsr.h constrnt.h prntutil.h router.h ruledef.h \
-  network.h match.h agenda.h crstrtgy.h conscomp.h symblcmp.h cstrccom.h \
-  sysdep.h watch.h
+  utility.h evaluatn.h constant.h commline.h cstrcpsr.h strngfun.h \
+  exprnpsr.h extnfunc.h symbol.h scanner.h memalloc.h miscfun.h \
+  modulutl.h multifld.h prcdrfun.h prcdrpsr.h constrnt.h prntutil.h \
+  router.h ruledef.h network.h match.h agenda.h crstrtgy.h conscomp.h \
+  symblcmp.h cstrccom.h sysdep.h watch.h
 
 constrnt.o: constrnt.c setup.h envrnmnt.h entities.h usrsetup.h \
   argacces.h expressn.h exprnops.h constrct.h userdata.h moduldef.h \
@@ -242,13 +244,14 @@ cstrccom.o: cstrccom.c setup.h envrnmnt.h entities.h usrsetup.h \
   constant.h extnfunc.h evaluatn.h expressn.h exprnops.h constrct.h \
   userdata.h moduldef.h utility.h symbol.h memalloc.h argacces.h \
   multifld.h modulutl.h scanner.h prntutil.h router.h commline.h \
-  sysdep.h bload.h exprnbin.h symblbin.h cstrcpsr.h cstrccom.h
+  sysdep.h bload.h exprnbin.h symblbin.h cstrcpsr.h strngfun.h \
+  cstrccom.h
 
 cstrcpsr.o: cstrcpsr.c setup.h envrnmnt.h entities.h usrsetup.h router.h \
   watch.h expressn.h exprnops.h constrct.h userdata.h moduldef.h \
   utility.h evaluatn.h constant.h prcdrpsr.h constrnt.h exprnpsr.h \
   extnfunc.h symbol.h scanner.h memalloc.h modulutl.h modulpsr.h \
-  pprint.h prntutil.h sysdep.h cstrcpsr.h
+  pprint.h prntutil.h strngrtr.h sysdep.h cstrcpsr.h strngfun.h
 
 cstrnbin.o: cstrnbin.c setup.h envrnmnt.h entities.h usrsetup.h \
   constant.h memalloc.h prntutil.h router.h bload.h utility.h evaluatn.h \
@@ -260,7 +263,7 @@ cstrnchk.o: cstrnchk.c setup.h envrnmnt.h entities.h usrsetup.h \
   exprnops.h constrct.h userdata.h moduldef.h utility.h symbol.h \
   multifld.h prntutil.h router.h classcom.h cstrccom.h object.h match.h \
   network.h ruledef.h agenda.h crstrtgy.h conscomp.h symblcmp.h \
-  classexm.h inscom.h insfun.h cstrnchk.h
+  objrtmch.h classexm.h inscom.h insfun.h cstrnchk.h
 
 cstrncmp.o: cstrncmp.c setup.h envrnmnt.h entities.h usrsetup.h \
   constant.h conscomp.h constrct.h userdata.h moduldef.h utility.h \
@@ -287,25 +290,25 @@ default.o: default.c setup.h envrnmnt.h entities.h usrsetup.h constant.h \
   expressn.h exprnops.h constrct.h userdata.h moduldef.h utility.h \
   symbol.h scanner.h factmngr.h conscomp.h symblcmp.h tmpltdef.h \
   factbld.h network.h match.h ruledef.h agenda.h crstrtgy.h cstrccom.h \
-  facthsh.h inscom.h insfun.h object.h multifld.h pprint.h prntutil.h \
-  router.h default.h
+  facthsh.h inscom.h insfun.h object.h multifld.h objrtmch.h pprint.h \
+  prntutil.h router.h default.h
 
 defins.o: defins.c setup.h envrnmnt.h entities.h usrsetup.h bload.h \
   utility.h evaluatn.h constant.h moduldef.h userdata.h extnfunc.h \
   expressn.h exprnops.h constrct.h symbol.h exprnbin.h sysdep.h \
   symblbin.h dfinsbin.h defins.h conscomp.h symblcmp.h cstrccom.h \
   object.h constrnt.h multifld.h match.h network.h ruledef.h agenda.h \
-  crstrtgy.h dfinscmp.h argacces.h classcom.h classfun.h scanner.h \
-  cstrcpsr.h insfun.h inspsr.h memalloc.h modulpsr.h modulutl.h pprint.h \
-  prntutil.h router.h
+  crstrtgy.h objrtmch.h dfinscmp.h argacces.h classcom.h classfun.h \
+  scanner.h cstrcpsr.h strngfun.h insfun.h inspsr.h memalloc.h \
+  modulpsr.h modulutl.h pprint.h prntutil.h router.h
 
 developr.o: developr.c setup.h envrnmnt.h entities.h usrsetup.h \
   argacces.h expressn.h exprnops.h constrct.h userdata.h moduldef.h \
   utility.h evaluatn.h constant.h extnfunc.h symbol.h factmngr.h \
   conscomp.h symblcmp.h tmpltdef.h constrnt.h factbld.h network.h \
   match.h ruledef.h agenda.h crstrtgy.h cstrccom.h facthsh.h inscom.h \
-  insfun.h object.h multifld.h modulutl.h scanner.h prntutil.h router.h \
-  classcom.h classfun.h objrtmch.h developr.h
+  insfun.h object.h multifld.h objrtmch.h modulutl.h scanner.h \
+  prntutil.h router.h classcom.h classfun.h developr.h
 
 dffctbin.o: dffctbin.c setup.h envrnmnt.h entities.h usrsetup.h bload.h \
   utility.h evaluatn.h constant.h moduldef.h userdata.h extnfunc.h \
@@ -315,11 +318,12 @@ dffctbin.o: dffctbin.c setup.h envrnmnt.h entities.h usrsetup.h bload.h \
 
 dffctbsc.o: dffctbsc.c setup.h envrnmnt.h entities.h usrsetup.h \
   argacces.h expressn.h exprnops.h constrct.h userdata.h moduldef.h \
-  utility.h evaluatn.h constant.h cstrccom.h cstrcpsr.h dffctdef.h \
-  conscomp.h extnfunc.h symbol.h symblcmp.h dffctpsr.h factrhs.h \
-  factmngr.h tmpltdef.h constrnt.h factbld.h network.h match.h ruledef.h \
-  agenda.h crstrtgy.h facthsh.h scanner.h memalloc.h multifld.h router.h \
-  dffctbin.h cstrcbin.h modulbin.h dffctcmp.h dffctbsc.h
+  utility.h evaluatn.h constant.h cstrccom.h cstrcpsr.h strngfun.h \
+  dffctdef.h conscomp.h extnfunc.h symbol.h symblcmp.h dffctpsr.h \
+  factrhs.h factmngr.h tmpltdef.h constrnt.h factbld.h network.h match.h \
+  ruledef.h agenda.h crstrtgy.h facthsh.h scanner.h memalloc.h \
+  multifld.h router.h dffctbin.h cstrcbin.h modulbin.h dffctcmp.h \
+  dffctbsc.h
 
 dffctcmp.o: dffctcmp.c setup.h envrnmnt.h entities.h usrsetup.h \
   conscomp.h constrct.h userdata.h moduldef.h utility.h evaluatn.h \
@@ -336,10 +340,11 @@ dffctdef.o: dffctdef.c setup.h envrnmnt.h entities.h usrsetup.h \
 dffctpsr.o: dffctpsr.c setup.h envrnmnt.h entities.h usrsetup.h bload.h \
   utility.h evaluatn.h constant.h moduldef.h userdata.h extnfunc.h \
   expressn.h exprnops.h constrct.h symbol.h exprnbin.h sysdep.h \
-  symblbin.h cstrcpsr.h dffctbsc.h dffctdef.h conscomp.h symblcmp.h \
-  cstrccom.h factrhs.h factmngr.h tmpltdef.h constrnt.h factbld.h \
-  network.h match.h ruledef.h agenda.h crstrtgy.h facthsh.h scanner.h \
-  memalloc.h modulutl.h pprint.h prntutil.h router.h dffctpsr.h
+  symblbin.h cstrcpsr.h strngfun.h dffctbsc.h dffctdef.h conscomp.h \
+  symblcmp.h cstrccom.h factrhs.h factmngr.h tmpltdef.h constrnt.h \
+  factbld.h network.h match.h ruledef.h agenda.h crstrtgy.h facthsh.h \
+  scanner.h memalloc.h modulutl.h pprint.h prntutil.h router.h \
+  dffctpsr.h
 
 dffnxbin.o: dffnxbin.c setup.h envrnmnt.h entities.h usrsetup.h bload.h \
   utility.h evaluatn.h constant.h moduldef.h userdata.h extnfunc.h \
@@ -360,30 +365,30 @@ dffnxexe.o: dffnxexe.c setup.h envrnmnt.h entities.h usrsetup.h \
 dffnxfun.o: dffnxfun.c setup.h envrnmnt.h entities.h usrsetup.h bload.h \
   utility.h evaluatn.h constant.h moduldef.h userdata.h extnfunc.h \
   expressn.h exprnops.h constrct.h symbol.h exprnbin.h sysdep.h \
-  symblbin.h dffnxbin.h dffnxfun.h dffnxcmp.h cstrcpsr.h dffnxpsr.h \
-  modulpsr.h scanner.h dffnxexe.h watch.h argacces.h cstrccom.h \
-  memalloc.h modulutl.h multifld.h prntutil.h router.h
+  symblbin.h dffnxbin.h dffnxfun.h dffnxcmp.h cstrcpsr.h strngfun.h \
+  dffnxpsr.h modulpsr.h scanner.h dffnxexe.h watch.h argacces.h \
+  cstrccom.h memalloc.h modulutl.h multifld.h prntutil.h router.h
 
 dffnxpsr.o: dffnxpsr.c setup.h envrnmnt.h entities.h usrsetup.h bload.h \
   utility.h evaluatn.h constant.h moduldef.h userdata.h extnfunc.h \
   expressn.h exprnops.h constrct.h symbol.h exprnbin.h sysdep.h \
   symblbin.h network.h match.h ruledef.h agenda.h crstrtgy.h conscomp.h \
   symblcmp.h constrnt.h cstrccom.h genrccom.h genrcfun.h cstrcpsr.h \
-  dffnxfun.h exprnpsr.h scanner.h memalloc.h modulutl.h pprint.h \
-  prccode.h prntutil.h router.h dffnxpsr.h
+  strngfun.h dffnxfun.h exprnpsr.h scanner.h memalloc.h modulutl.h \
+  pprint.h prccode.h prntutil.h router.h dffnxpsr.h
 
 dfinsbin.o: dfinsbin.c setup.h envrnmnt.h entities.h usrsetup.h bload.h \
   utility.h evaluatn.h constant.h moduldef.h userdata.h extnfunc.h \
   expressn.h exprnops.h constrct.h symbol.h exprnbin.h sysdep.h \
   symblbin.h bsave.h cstrcbin.h defins.h conscomp.h symblcmp.h \
   cstrccom.h object.h constrnt.h multifld.h match.h network.h ruledef.h \
-  agenda.h crstrtgy.h memalloc.h modulbin.h dfinsbin.h
+  agenda.h crstrtgy.h objrtmch.h memalloc.h modulbin.h dfinsbin.h
 
 dfinscmp.o: dfinscmp.c setup.h envrnmnt.h entities.h usrsetup.h \
   conscomp.h constrct.h userdata.h moduldef.h utility.h evaluatn.h \
   constant.h extnfunc.h expressn.h exprnops.h symbol.h symblcmp.h \
   defins.h cstrccom.h object.h constrnt.h multifld.h match.h network.h \
-  ruledef.h agenda.h crstrtgy.h dfinscmp.h
+  ruledef.h agenda.h crstrtgy.h objrtmch.h dfinscmp.h
 
 drive.o: drive.c setup.h envrnmnt.h entities.h usrsetup.h agenda.h \
   ruledef.h constrct.h userdata.h moduldef.h utility.h evaluatn.h \
@@ -394,17 +399,17 @@ drive.o: drive.c setup.h envrnmnt.h entities.h usrsetup.h agenda.h \
 
 emathfun.o: emathfun.c setup.h envrnmnt.h entities.h usrsetup.h \
   argacces.h expressn.h exprnops.h constrct.h userdata.h moduldef.h \
-  utility.h evaluatn.h constant.h extnfunc.h symbol.h prntutil.h \
-  router.h emathfun.h
+  utility.h evaluatn.h constant.h extnfunc.h symbol.h miscfun.h \
+  prntutil.h router.h emathfun.h
 
 engine.o: engine.c setup.h envrnmnt.h entities.h usrsetup.h agenda.h \
   ruledef.h constrct.h userdata.h moduldef.h utility.h evaluatn.h \
   constant.h expressn.h exprnops.h network.h match.h conscomp.h \
   extnfunc.h symbol.h symblcmp.h constrnt.h cstrccom.h crstrtgy.h \
   argacces.h commline.h factmngr.h tmpltdef.h factbld.h facthsh.h \
-  inscom.h insfun.h object.h multifld.h memalloc.h modulutl.h scanner.h \
-  prccode.h prcdrfun.h prntutil.h proflfun.h reteutil.h retract.h \
-  router.h ruledlt.h sysdep.h watch.h engine.h lgcldpnd.h
+  inscom.h insfun.h object.h multifld.h objrtmch.h memalloc.h modulutl.h \
+  scanner.h prccode.h prcdrfun.h prntutil.h proflfun.h reteutil.h \
+  retract.h router.h ruledlt.h sysdep.h watch.h engine.h lgcldpnd.h
 
 envrnbld.o: envrnbld.c setup.h envrnmnt.h entities.h usrsetup.h \
   bmathfun.h evaluatn.h constant.h commline.h emathfun.h engine.h \
@@ -415,7 +420,7 @@ envrnbld.o: envrnbld.c setup.h envrnmnt.h entities.h usrsetup.h \
   pprint.h prccode.h scanner.h prcdrfun.h prdctfun.h prntutil.h \
   proflfun.h router.h sortfun.h strngfun.h sysdep.h textpro.h watch.h \
   dffctdef.h genrccom.h genrcfun.h dffnxfun.h globldef.h tmpltdef.h \
-  factbld.h classini.h object.h multifld.h envrnbld.h
+  factbld.h classini.h object.h multifld.h objrtmch.h envrnbld.h
 
 envrnmnt.o: envrnmnt.c setup.h envrnmnt.h entities.h usrsetup.h \
   bmathfun.h evaluatn.h constant.h commline.h emathfun.h engine.h \
@@ -426,16 +431,16 @@ envrnmnt.o: envrnmnt.c setup.h envrnmnt.h entities.h usrsetup.h \
   prccode.h scanner.h prcdrfun.h prdctfun.h prntutil.h proflfun.h \
   router.h sortfun.h strngfun.h sysdep.h textpro.h watch.h dffctdef.h \
   genrccom.h genrcfun.h dffnxfun.h globldef.h tmpltdef.h factbld.h \
-  classini.h object.h multifld.h
+  classini.h object.h multifld.h objrtmch.h
 
 evaluatn.o: evaluatn.c setup.h envrnmnt.h entities.h usrsetup.h \
   argacces.h expressn.h exprnops.h constrct.h userdata.h moduldef.h \
   utility.h evaluatn.h constant.h commline.h factmngr.h conscomp.h \
   extnfunc.h symbol.h symblcmp.h tmpltdef.h constrnt.h factbld.h \
   network.h match.h ruledef.h agenda.h crstrtgy.h cstrccom.h facthsh.h \
-  memalloc.h router.h prcdrfun.h multifld.h prntutil.h exprnpsr.h \
-  scanner.h proflfun.h sysdep.h dffnxfun.h genrccom.h genrcfun.h \
-  object.h inscom.h insfun.h
+  memalloc.h modulutl.h scanner.h router.h prcdrfun.h multifld.h \
+  prntutil.h exprnpsr.h proflfun.h sysdep.h dffnxfun.h genrccom.h \
+  genrcfun.h object.h objrtmch.h inscom.h insfun.h
 
 expressn.o: expressn.c setup.h envrnmnt.h entities.h usrsetup.h bload.h \
   utility.h evaluatn.h constant.h moduldef.h userdata.h extnfunc.h \
@@ -449,7 +454,7 @@ exprnbin.o: exprnbin.c setup.h envrnmnt.h entities.h usrsetup.h bload.h \
   memalloc.h network.h match.h ruledef.h agenda.h crstrtgy.h constrnt.h \
   genrcbin.h genrcfun.h dffnxbin.h dffnxfun.h factmngr.h tmpltdef.h \
   factbld.h facthsh.h tmpltbin.h cstrcbin.h modulbin.h globlbin.h \
-  globldef.h objbin.h object.h multifld.h insfun.h inscom.h
+  globldef.h objbin.h object.h multifld.h objrtmch.h insfun.h inscom.h
 
 exprnops.o: exprnops.c setup.h envrnmnt.h entities.h usrsetup.h \
   cstrnchk.h constrnt.h evaluatn.h constant.h cstrnops.h cstrnutl.h \
@@ -469,7 +474,8 @@ extnfunc.o: extnfunc.c setup.h envrnmnt.h entities.h usrsetup.h \
   utility.h evaluatn.h constant.h exprnpsr.h extnfunc.h symbol.h \
   scanner.h factmngr.h conscomp.h symblcmp.h tmpltdef.h constrnt.h \
   factbld.h network.h match.h ruledef.h agenda.h crstrtgy.h cstrccom.h \
-  facthsh.h memalloc.h router.h inscom.h insfun.h object.h multifld.h
+  facthsh.h memalloc.h router.h inscom.h insfun.h object.h multifld.h \
+  objrtmch.h
 
 factbin.o: factbin.c setup.h envrnmnt.h entities.h usrsetup.h bload.h \
   utility.h evaluatn.h constant.h moduldef.h userdata.h extnfunc.h \
@@ -496,12 +502,19 @@ factcmp.o: factcmp.c setup.h envrnmnt.h entities.h usrsetup.h factbld.h \
 
 factcom.o: factcom.c setup.h envrnmnt.h entities.h usrsetup.h argacces.h \
   expressn.h exprnops.h constrct.h userdata.h moduldef.h utility.h \
-  evaluatn.h constant.h exprnpsr.h extnfunc.h symbol.h scanner.h \
-  facthsh.h factmch.h factbld.h network.h match.h ruledef.h agenda.h \
-  crstrtgy.h conscomp.h symblcmp.h constrnt.h cstrccom.h factmngr.h \
-  tmpltdef.h factrhs.h memalloc.h modulutl.h multifld.h pprint.h \
-  prntutil.h router.h strngrtr.h sysdep.h tmpltfun.h tmpltpsr.h \
-  tmpltutl.h bload.h exprnbin.h symblbin.h factcom.h
+  evaluatn.h constant.h extnfunc.h symbol.h factmngr.h conscomp.h \
+  symblcmp.h tmpltdef.h constrnt.h factbld.h network.h match.h ruledef.h \
+  agenda.h crstrtgy.h cstrccom.h facthsh.h factrhs.h scanner.h \
+  multifld.h pprint.h prntutil.h router.h sysdep.h tmpltutl.h factcom.h
+
+factfile.o: factfile.c setup.h envrnmnt.h entities.h usrsetup.h \
+  argacces.h expressn.h exprnops.h constrct.h userdata.h moduldef.h \
+  utility.h evaluatn.h constant.h bload.h extnfunc.h symbol.h exprnbin.h \
+  sysdep.h symblbin.h cstrcpsr.h strngfun.h factmngr.h conscomp.h \
+  symblcmp.h tmpltdef.h constrnt.h factbld.h network.h match.h ruledef.h \
+  agenda.h crstrtgy.h cstrccom.h facthsh.h factrhs.h scanner.h insmngr.h \
+  object.h multifld.h objrtmch.h inscom.h insfun.h memalloc.h modulpsr.h \
+  modulutl.h prntutil.h router.h strngrtr.h tmpltutl.h factfile.h
 
 factfun.o: factfun.c setup.h envrnmnt.h entities.h usrsetup.h argacces.h \
   expressn.h exprnops.h constrct.h userdata.h moduldef.h utility.h \
@@ -527,12 +540,12 @@ facthsh.o: facthsh.c setup.h envrnmnt.h entities.h usrsetup.h constant.h \
   sysdep.h lgcldpnd.h
 
 factlhs.o: factlhs.c setup.h envrnmnt.h entities.h usrsetup.h cstrcpsr.h \
-  modulpsr.h evaluatn.h constant.h moduldef.h userdata.h utility.h \
-  symbol.h scanner.h modulutl.h pattern.h expressn.h exprnops.h \
-  constrct.h match.h network.h ruledef.h agenda.h crstrtgy.h conscomp.h \
-  extnfunc.h symblcmp.h constrnt.h cstrccom.h reorder.h pprint.h \
-  prntutil.h router.h tmpltdef.h factbld.h tmpltlhs.h tmpltpsr.h \
-  tmpltutl.h factmngr.h facthsh.h factlhs.h
+  strngfun.h modulpsr.h evaluatn.h constant.h moduldef.h userdata.h \
+  utility.h symbol.h scanner.h modulutl.h pattern.h expressn.h \
+  exprnops.h constrct.h match.h network.h ruledef.h agenda.h crstrtgy.h \
+  conscomp.h extnfunc.h symblcmp.h constrnt.h cstrccom.h reorder.h \
+  pprint.h prntutil.h router.h tmpltdef.h factbld.h tmpltlhs.h \
+  tmpltpsr.h tmpltutl.h factmngr.h facthsh.h factlhs.h
 
 factmch.o: factmch.c setup.h envrnmnt.h entities.h usrsetup.h drive.h \
   expressn.h exprnops.h constrct.h userdata.h moduldef.h utility.h \
@@ -548,9 +561,10 @@ factmngr.o: factmngr.c setup.h envrnmnt.h entities.h usrsetup.h \
   moduldef.h utility.h expressn.h exprnops.h agenda.h symbol.h \
   crstrtgy.h conscomp.h extnfunc.h symblcmp.h cstrccom.h retract.h \
   factbin.h factbld.h factcmp.h pattern.h scanner.h reorder.h factcom.h \
-  factfun.h factmngr.h tmpltdef.h facthsh.h factmch.h factqury.h \
-  factrhs.h memalloc.h multifld.h prntutil.h router.h strngrtr.h \
-  sysdep.h tmpltbsc.h tmpltfun.h tmpltutl.h watch.h
+  factfile.h factfun.h factmngr.h tmpltdef.h facthsh.h factmch.h \
+  factqury.h factrhs.h memalloc.h multifld.h prntutil.h router.h \
+  strngrtr.h sysdep.h tmpltbsc.h tmpltfun.h tmpltutl.h watch.h \
+  cstrnchk.h
 
 factprt.o: factprt.c setup.h envrnmnt.h entities.h usrsetup.h factgen.h \
   reorder.h expressn.h exprnops.h constrct.h userdata.h moduldef.h \
@@ -572,7 +586,7 @@ factqury.o: factqury.c setup.h envrnmnt.h entities.h usrsetup.h \
   symbol.h scanner.h modulutl.h tmpltutl.h constrnt.h factmngr.h \
   conscomp.h symblcmp.h tmpltdef.h factbld.h network.h match.h ruledef.h \
   agenda.h crstrtgy.h cstrccom.h facthsh.h insfun.h object.h multifld.h \
-  factqpsr.h prcdrfun.h prntutil.h router.h factqury.h
+  objrtmch.h factqpsr.h prcdrfun.h prntutil.h router.h factqury.h
 
 factrete.o: factrete.c setup.h envrnmnt.h entities.h usrsetup.h drive.h \
   expressn.h exprnops.h constrct.h userdata.h moduldef.h utility.h \
@@ -585,26 +599,26 @@ factrete.o: factrete.c setup.h envrnmnt.h entities.h usrsetup.h drive.h \
 factrhs.o: factrhs.c setup.h envrnmnt.h entities.h usrsetup.h bload.h \
   utility.h evaluatn.h constant.h moduldef.h userdata.h extnfunc.h \
   expressn.h exprnops.h constrct.h symbol.h exprnbin.h sysdep.h \
-  symblbin.h cstrcpsr.h exprnpsr.h scanner.h modulutl.h modulpsr.h \
-  pattern.h match.h network.h ruledef.h agenda.h crstrtgy.h conscomp.h \
-  symblcmp.h constrnt.h cstrccom.h reorder.h pprint.h prntutil.h \
-  router.h strngrtr.h tmpltpsr.h tmpltdef.h factbld.h tmpltrhs.h \
-  tmpltutl.h factmngr.h facthsh.h factrhs.h
+  symblbin.h cstrcpsr.h strngfun.h exprnpsr.h scanner.h modulutl.h \
+  modulpsr.h pattern.h match.h network.h ruledef.h agenda.h crstrtgy.h \
+  conscomp.h symblcmp.h constrnt.h cstrccom.h reorder.h pprint.h \
+  prntutil.h router.h strngrtr.h tmpltpsr.h tmpltdef.h factbld.h \
+  tmpltrhs.h tmpltutl.h factmngr.h facthsh.h factrhs.h
 
 filecom.o: filecom.c setup.h envrnmnt.h entities.h usrsetup.h argacces.h \
   expressn.h exprnops.h constrct.h userdata.h moduldef.h utility.h \
   evaluatn.h constant.h bload.h extnfunc.h symbol.h exprnbin.h sysdep.h \
-  symblbin.h bsave.h commline.h cstrcpsr.h fileutil.h memalloc.h \
-  router.h filecom.h
+  symblbin.h bsave.h commline.h cstrcpsr.h strngfun.h fileutil.h \
+  memalloc.h router.h filecom.h
 
 filertr.o: filertr.c setup.h envrnmnt.h entities.h usrsetup.h constant.h \
   memalloc.h router.h sysdep.h filertr.h
 
 fileutil.o: fileutil.c setup.h envrnmnt.h entities.h usrsetup.h \
   argacces.h expressn.h exprnops.h constrct.h userdata.h moduldef.h \
-  utility.h evaluatn.h constant.h commline.h cstrcpsr.h memalloc.h \
-  prcdrfun.h pprint.h prntutil.h router.h scanner.h strngrtr.h sysdep.h \
-  filecom.h fileutil.h
+  utility.h evaluatn.h constant.h commline.h cstrcpsr.h strngfun.h \
+  memalloc.h prcdrfun.h pprint.h prntutil.h router.h scanner.h \
+  strngrtr.h sysdep.h filecom.h fileutil.h
 
 generate.o: generate.c setup.h envrnmnt.h entities.h usrsetup.h \
   argacces.h expressn.h exprnops.h constrct.h userdata.h moduldef.h \
@@ -619,47 +633,50 @@ genrcbin.o: genrcbin.c setup.h envrnmnt.h entities.h usrsetup.h bload.h \
   symblbin.h bsave.h cstrcbin.h cstrccom.h genrccom.h genrcfun.h \
   conscomp.h symblcmp.h memalloc.h modulbin.h objbin.h object.h \
   constrnt.h multifld.h match.h network.h ruledef.h agenda.h crstrtgy.h \
-  router.h genrcbin.h
+  objrtmch.h router.h genrcbin.h
 
 genrccmp.o: genrccmp.c setup.h envrnmnt.h entities.h usrsetup.h \
   conscomp.h constrct.h userdata.h moduldef.h utility.h evaluatn.h \
   constant.h extnfunc.h expressn.h exprnops.h symbol.h symblcmp.h \
   genrccom.h genrcfun.h network.h match.h ruledef.h agenda.h crstrtgy.h \
-  constrnt.h cstrccom.h objcmp.h object.h multifld.h genrccmp.h
+  constrnt.h cstrccom.h objcmp.h object.h multifld.h objrtmch.h \
+  genrccmp.h
 
 genrccom.o: genrccom.c setup.h envrnmnt.h entities.h usrsetup.h \
   argacces.h expressn.h exprnops.h constrct.h userdata.h moduldef.h \
   utility.h evaluatn.h constant.h bload.h extnfunc.h symbol.h exprnbin.h \
   sysdep.h symblbin.h classcom.h cstrccom.h object.h constrnt.h \
   multifld.h match.h network.h ruledef.h agenda.h crstrtgy.h conscomp.h \
-  symblcmp.h inscom.h insfun.h cstrcpsr.h genrcbin.h genrcfun.h \
-  genrccmp.h genrcexe.h genrcpsr.h memalloc.h modulpsr.h scanner.h \
-  modulutl.h router.h strngrtr.h watch.h prntutil.h genrccom.h
+  symblcmp.h objrtmch.h inscom.h insfun.h cstrcpsr.h strngfun.h \
+  genrcbin.h genrcfun.h genrccmp.h genrcexe.h genrcpsr.h memalloc.h \
+  modulpsr.h scanner.h modulutl.h router.h strngrtr.h watch.h prntutil.h \
+  genrccom.h
 
 genrcexe.o: genrcexe.c setup.h envrnmnt.h entities.h usrsetup.h \
   classcom.h cstrccom.h moduldef.h userdata.h utility.h evaluatn.h \
   constant.h constrct.h object.h constrnt.h expressn.h exprnops.h \
   multifld.h symbol.h match.h network.h ruledef.h agenda.h crstrtgy.h \
-  conscomp.h extnfunc.h symblcmp.h classfun.h scanner.h insfun.h \
-  argacces.h genrccom.h genrcfun.h prcdrfun.h prccode.h prntutil.h \
-  proflfun.h router.h genrcexe.h
+  conscomp.h extnfunc.h symblcmp.h objrtmch.h classfun.h scanner.h \
+  insfun.h argacces.h genrccom.h genrcfun.h prcdrfun.h prccode.h \
+  prntutil.h proflfun.h router.h genrcexe.h
 
 genrcfun.o: genrcfun.c setup.h envrnmnt.h entities.h usrsetup.h bload.h \
   utility.h evaluatn.h constant.h moduldef.h userdata.h extnfunc.h \
   expressn.h exprnops.h constrct.h symbol.h exprnbin.h sysdep.h \
   symblbin.h classcom.h cstrccom.h object.h constrnt.h multifld.h \
   match.h network.h ruledef.h agenda.h crstrtgy.h conscomp.h symblcmp.h \
-  classfun.h scanner.h argacces.h cstrcpsr.h genrccom.h genrcfun.h \
-  genrcexe.h memalloc.h modulutl.h prccode.h prntutil.h router.h
+  objrtmch.h classfun.h scanner.h argacces.h cstrcpsr.h strngfun.h \
+  genrccom.h genrcfun.h genrcexe.h memalloc.h modulutl.h prccode.h \
+  prntutil.h router.h
 
 genrcpsr.o: genrcpsr.c setup.h envrnmnt.h entities.h usrsetup.h bload.h \
   utility.h evaluatn.h constant.h moduldef.h userdata.h extnfunc.h \
   expressn.h exprnops.h constrct.h symbol.h exprnbin.h sysdep.h \
   symblbin.h dffnxfun.h classfun.h object.h constrnt.h multifld.h \
   match.h network.h ruledef.h agenda.h crstrtgy.h conscomp.h symblcmp.h \
-  cstrccom.h scanner.h classcom.h cstrcpsr.h exprnpsr.h genrccom.h \
-  genrcfun.h immthpsr.h memalloc.h modulutl.h pprint.h prcdrpsr.h \
-  prccode.h prntutil.h router.h genrcpsr.h
+  cstrccom.h objrtmch.h scanner.h classcom.h cstrcpsr.h strngfun.h \
+  exprnpsr.h genrccom.h genrcfun.h immthpsr.h memalloc.h modulutl.h \
+  pprint.h prcdrpsr.h prccode.h prntutil.h router.h genrcpsr.h
 
 globlbin.o: globlbin.c setup.h envrnmnt.h entities.h usrsetup.h bload.h \
   utility.h evaluatn.h constant.h moduldef.h userdata.h extnfunc.h \
@@ -694,16 +711,17 @@ globldef.o: globldef.c setup.h envrnmnt.h entities.h usrsetup.h bload.h \
 globlpsr.o: globlpsr.c setup.h envrnmnt.h entities.h usrsetup.h bload.h \
   utility.h evaluatn.h constant.h moduldef.h userdata.h extnfunc.h \
   expressn.h exprnops.h constrct.h symbol.h exprnbin.h sysdep.h \
-  symblbin.h cstrcpsr.h exprnpsr.h scanner.h globlbsc.h globldef.h \
-  conscomp.h symblcmp.h cstrccom.h memalloc.h modulpsr.h modulutl.h \
-  multifld.h pprint.h prntutil.h router.h watch.h globlpsr.h
+  symblbin.h cstrcpsr.h strngfun.h exprnpsr.h scanner.h globlbsc.h \
+  globldef.h conscomp.h symblcmp.h cstrccom.h memalloc.h modulpsr.h \
+  modulutl.h multifld.h pprint.h prntutil.h router.h watch.h globlpsr.h
 
 immthpsr.o: immthpsr.c setup.h envrnmnt.h entities.h usrsetup.h \
   classcom.h cstrccom.h moduldef.h userdata.h utility.h evaluatn.h \
   constant.h constrct.h object.h constrnt.h expressn.h exprnops.h \
   multifld.h symbol.h match.h network.h ruledef.h agenda.h crstrtgy.h \
-  conscomp.h extnfunc.h symblcmp.h classfun.h scanner.h cstrnutl.h \
-  exprnpsr.h genrcpsr.h genrcfun.h memalloc.h prccode.h immthpsr.h
+  conscomp.h extnfunc.h symblcmp.h objrtmch.h classfun.h scanner.h \
+  cstrnutl.h exprnpsr.h genrcpsr.h genrcfun.h memalloc.h prccode.h \
+  immthpsr.h
 
 incrrset.o: incrrset.c setup.h envrnmnt.h entities.h usrsetup.h agenda.h \
   ruledef.h constrct.h userdata.h moduldef.h utility.h evaluatn.h \
@@ -716,32 +734,33 @@ inherpsr.o: inherpsr.c setup.h envrnmnt.h entities.h usrsetup.h \
   classcom.h cstrccom.h moduldef.h userdata.h utility.h evaluatn.h \
   constant.h constrct.h object.h constrnt.h expressn.h exprnops.h \
   multifld.h symbol.h match.h network.h ruledef.h agenda.h crstrtgy.h \
-  conscomp.h extnfunc.h symblcmp.h classfun.h scanner.h memalloc.h \
-  modulutl.h pprint.h prntutil.h router.h inherpsr.h
+  conscomp.h extnfunc.h symblcmp.h objrtmch.h classfun.h scanner.h \
+  memalloc.h modulutl.h pprint.h prntutil.h router.h inherpsr.h
 
 inscom.o: inscom.c setup.h envrnmnt.h entities.h usrsetup.h argacces.h \
   expressn.h exprnops.h constrct.h userdata.h moduldef.h utility.h \
   evaluatn.h constant.h classcom.h cstrccom.h object.h constrnt.h \
   multifld.h symbol.h match.h network.h ruledef.h agenda.h crstrtgy.h \
-  conscomp.h extnfunc.h symblcmp.h classfun.h scanner.h classinf.h \
-  commline.h exprnpsr.h insfile.h insfun.h insmngr.h insmoddp.h \
-  insmult.h inspsr.h lgcldpnd.h memalloc.h msgcom.h msgpass.h msgfun.h \
-  prntutil.h router.h strngrtr.h sysdep.h inscom.h
+  conscomp.h extnfunc.h symblcmp.h objrtmch.h classfun.h scanner.h \
+  classinf.h commline.h exprnpsr.h insfile.h insfun.h insmngr.h inscom.h \
+  insmoddp.h insmult.h inspsr.h lgcldpnd.h memalloc.h msgcom.h msgpass.h \
+  msgfun.h prntutil.h router.h strngrtr.h sysdep.h
 
 insfile.o: insfile.c setup.h envrnmnt.h entities.h usrsetup.h argacces.h \
   expressn.h exprnops.h constrct.h userdata.h moduldef.h utility.h \
   evaluatn.h constant.h classcom.h cstrccom.h object.h constrnt.h \
   multifld.h symbol.h match.h network.h ruledef.h agenda.h crstrtgy.h \
-  conscomp.h extnfunc.h symblcmp.h classfun.h scanner.h memalloc.h \
-  factmngr.h tmpltdef.h factbld.h facthsh.h inscom.h insfun.h insmngr.h \
-  inspsr.h prntutil.h router.h strngrtr.h symblbin.h sysdep.h insfile.h
+  conscomp.h extnfunc.h symblcmp.h objrtmch.h classfun.h scanner.h \
+  memalloc.h factmngr.h tmpltdef.h factbld.h facthsh.h inscom.h insfun.h \
+  insmngr.h inspsr.h prntutil.h router.h strngrtr.h symblbin.h sysdep.h \
+  insfile.h
 
 insfun.o: insfun.c setup.h envrnmnt.h entities.h usrsetup.h argacces.h \
   expressn.h exprnops.h constrct.h userdata.h moduldef.h utility.h \
   evaluatn.h constant.h classcom.h cstrccom.h object.h constrnt.h \
   multifld.h symbol.h match.h network.h ruledef.h agenda.h crstrtgy.h \
-  conscomp.h extnfunc.h symblcmp.h classfun.h scanner.h cstrnchk.h \
-  drive.h objrtmch.h engine.h lgcldpnd.h retract.h inscom.h insfun.h \
+  conscomp.h extnfunc.h symblcmp.h objrtmch.h classfun.h scanner.h \
+  cstrnchk.h drive.h engine.h lgcldpnd.h retract.h inscom.h insfun.h \
   insmngr.h memalloc.h modulutl.h msgcom.h msgpass.h msgfun.h prccode.h \
   prntutil.h router.h
 
@@ -750,51 +769,53 @@ insmngr.o: insmngr.c setup.h envrnmnt.h entities.h usrsetup.h network.h \
   evaluatn.h constant.h expressn.h exprnops.h agenda.h symbol.h \
   crstrtgy.h conscomp.h extnfunc.h symblcmp.h constrnt.h cstrccom.h \
   drive.h objrtmch.h object.h multifld.h lgcldpnd.h classcom.h \
-  classfun.h scanner.h engine.h retract.h insfun.h memalloc.h miscfun.h \
-  modulutl.h msgcom.h msgpass.h msgfun.h prccode.h prntutil.h router.h \
-  sysdep.h insmngr.h inscom.h watch.h
+  classfun.h scanner.h cstrnchk.h engine.h retract.h insfun.h memalloc.h \
+  miscfun.h modulutl.h msgcom.h msgpass.h msgfun.h prccode.h prntutil.h \
+  router.h sysdep.h insmngr.h inscom.h watch.h
 
 insmoddp.o: insmoddp.c setup.h envrnmnt.h entities.h usrsetup.h \
   argacces.h expressn.h exprnops.h constrct.h userdata.h moduldef.h \
   utility.h evaluatn.h constant.h extnfunc.h symbol.h inscom.h insfun.h \
   object.h constrnt.h multifld.h match.h network.h ruledef.h agenda.h \
-  crstrtgy.h conscomp.h symblcmp.h cstrccom.h insmngr.h inspsr.h \
-  memalloc.h miscfun.h msgcom.h msgpass.h msgfun.h objrtmch.h prccode.h \
+  crstrtgy.h conscomp.h symblcmp.h cstrccom.h objrtmch.h insmngr.h \
+  inspsr.h memalloc.h miscfun.h msgcom.h msgpass.h msgfun.h prccode.h \
   scanner.h prntutil.h router.h insmoddp.h
 
 insmult.o: insmult.c setup.h envrnmnt.h entities.h usrsetup.h argacces.h \
   expressn.h exprnops.h constrct.h userdata.h moduldef.h utility.h \
   evaluatn.h constant.h extnfunc.h symbol.h insfun.h object.h constrnt.h \
   multifld.h match.h network.h ruledef.h agenda.h crstrtgy.h conscomp.h \
-  symblcmp.h cstrccom.h msgfun.h msgpass.h multifun.h prntutil.h \
-  router.h insmult.h
+  symblcmp.h cstrccom.h objrtmch.h msgfun.h msgpass.h multifun.h \
+  prntutil.h router.h insmult.h
 
 inspsr.o: inspsr.c setup.h envrnmnt.h entities.h usrsetup.h classcom.h \
   cstrccom.h moduldef.h userdata.h utility.h evaluatn.h constant.h \
   constrct.h object.h constrnt.h expressn.h exprnops.h multifld.h \
   symbol.h match.h network.h ruledef.h agenda.h crstrtgy.h conscomp.h \
-  extnfunc.h symblcmp.h classfun.h scanner.h classinf.h exprnpsr.h \
-  pprint.h prntutil.h router.h inspsr.h
+  extnfunc.h symblcmp.h objrtmch.h classfun.h scanner.h classinf.h \
+  exprnpsr.h pprint.h prntutil.h router.h inspsr.h
 
 insquery.o: insquery.c setup.h envrnmnt.h entities.h usrsetup.h \
   argacces.h expressn.h exprnops.h constrct.h userdata.h moduldef.h \
   utility.h evaluatn.h constant.h classcom.h cstrccom.h object.h \
   constrnt.h multifld.h symbol.h match.h network.h ruledef.h agenda.h \
-  crstrtgy.h conscomp.h extnfunc.h symblcmp.h classfun.h scanner.h \
-  exprnpsr.h insfun.h insmngr.h insqypsr.h memalloc.h prcdrfun.h \
-  prntutil.h router.h insquery.h
+  crstrtgy.h conscomp.h extnfunc.h symblcmp.h objrtmch.h classfun.h \
+  scanner.h exprnpsr.h insfun.h insmngr.h inscom.h insqypsr.h memalloc.h \
+  prcdrfun.h prntutil.h router.h insquery.h
 
 insqypsr.o: insqypsr.c setup.h envrnmnt.h entities.h usrsetup.h \
   classcom.h cstrccom.h moduldef.h userdata.h utility.h evaluatn.h \
   constant.h constrct.h object.h constrnt.h expressn.h exprnops.h \
   multifld.h symbol.h match.h network.h ruledef.h agenda.h crstrtgy.h \
-  conscomp.h extnfunc.h symblcmp.h exprnpsr.h scanner.h insquery.h \
-  prcdrpsr.h pprint.h prntutil.h router.h strngrtr.h insqypsr.h
+  conscomp.h extnfunc.h symblcmp.h objrtmch.h exprnpsr.h scanner.h \
+  insquery.h prcdrpsr.h pprint.h prntutil.h router.h strngrtr.h \
+  insqypsr.h
 
 iofun.o: iofun.c setup.h envrnmnt.h entities.h usrsetup.h argacces.h \
   expressn.h exprnops.h constrct.h userdata.h moduldef.h utility.h \
   evaluatn.h constant.h commline.h extnfunc.h symbol.h filertr.h \
-  memalloc.h prntutil.h router.h scanner.h strngrtr.h sysdep.h iofun.h
+  memalloc.h miscfun.h prntutil.h router.h scanner.h strngrtr.h sysdep.h \
+  iofun.h
 
 lgcldpnd.o: lgcldpnd.c setup.h envrnmnt.h entities.h usrsetup.h \
   argacces.h expressn.h exprnops.h constrct.h userdata.h moduldef.h \
@@ -806,18 +827,18 @@ lgcldpnd.o: lgcldpnd.c setup.h envrnmnt.h entities.h usrsetup.h \
 
 main.o: main.c clips.h setup.h envrnmnt.h entities.h usrsetup.h \
   argacces.h expressn.h exprnops.h constrct.h userdata.h moduldef.h \
-  utility.h evaluatn.h constant.h memalloc.h cstrcpsr.h fileutil.h \
-  strngfun.h envrnbld.h extnfunc.h symbol.h commline.h prntutil.h \
+  utility.h evaluatn.h constant.h memalloc.h cstrcpsr.h strngfun.h \
+  fileutil.h envrnbld.h extnfunc.h symbol.h commline.h prntutil.h \
   router.h filertr.h strngrtr.h iofun.h sysdep.h bmathfun.h exprnpsr.h \
-  scanner.h watch.h modulbsc.h bload.h exprnbin.h symblbin.h bsave.h \
-  ruledef.h network.h match.h agenda.h crstrtgy.h conscomp.h symblcmp.h \
-  constrnt.h cstrccom.h rulebsc.h engine.h lgcldpnd.h retract.h drive.h \
-  incrrset.h rulecom.h dffctdef.h dffctbsc.h tmpltdef.h factbld.h \
-  tmpltbsc.h tmpltfun.h factmngr.h facthsh.h factcom.h factfun.h \
-  globldef.h globlbsc.h globlcom.h dffnxfun.h genrccom.h genrcfun.h \
-  classcom.h object.h multifld.h classexm.h classfun.h classinf.h \
-  classini.h classpsr.h defins.h inscom.h insfun.h insfile.h insmngr.h \
-  msgcom.h msgpass.h objrtmch.h
+  scanner.h miscfun.h watch.h modulbsc.h bload.h exprnbin.h symblbin.h \
+  bsave.h ruledef.h network.h match.h agenda.h crstrtgy.h conscomp.h \
+  symblcmp.h constrnt.h cstrccom.h rulebsc.h engine.h lgcldpnd.h \
+  retract.h drive.h incrrset.h rulecom.h dffctdef.h dffctbsc.h \
+  tmpltdef.h factbld.h tmpltbsc.h tmpltfun.h factmngr.h facthsh.h \
+  factcom.h factfun.h globldef.h globlbsc.h globlcom.h dffnxfun.h \
+  genrccom.h genrcfun.h classcom.h object.h multifld.h objrtmch.h \
+  classexm.h classfun.h classinf.h classini.h classpsr.h defins.h \
+  inscom.h insfun.h insfile.h insmngr.h msgcom.h msgpass.h
 
 memalloc.o: memalloc.c setup.h envrnmnt.h entities.h usrsetup.h \
   constant.h memalloc.h prntutil.h router.h utility.h evaluatn.h \
@@ -855,130 +876,136 @@ moduldef.o: moduldef.c setup.h envrnmnt.h entities.h usrsetup.h \
 
 modulpsr.o: modulpsr.c setup.h envrnmnt.h entities.h usrsetup.h \
   argacces.h expressn.h exprnops.h constrct.h userdata.h moduldef.h \
-  utility.h evaluatn.h constant.h cstrcpsr.h extnfunc.h symbol.h \
-  memalloc.h modulutl.h scanner.h pprint.h prntutil.h router.h bload.h \
-  exprnbin.h sysdep.h symblbin.h modulpsr.h
+  utility.h evaluatn.h constant.h cstrcpsr.h strngfun.h extnfunc.h \
+  symbol.h memalloc.h modulutl.h scanner.h pprint.h prntutil.h router.h \
+  bload.h exprnbin.h sysdep.h symblbin.h modulpsr.h
 
 modulutl.o: modulutl.c setup.h envrnmnt.h entities.h usrsetup.h \
-  cstrcpsr.h memalloc.h modulpsr.h evaluatn.h constant.h moduldef.h \
-  userdata.h utility.h symbol.h scanner.h pprint.h prntutil.h router.h \
-  sysdep.h watch.h expressn.h exprnops.h constrct.h modulutl.h
+  cstrcpsr.h strngfun.h memalloc.h modulpsr.h evaluatn.h constant.h \
+  moduldef.h userdata.h utility.h symbol.h scanner.h pprint.h prntutil.h \
+  router.h sysdep.h watch.h expressn.h exprnops.h constrct.h modulutl.h
 
 msgcom.o: msgcom.c setup.h envrnmnt.h entities.h usrsetup.h argacces.h \
   expressn.h exprnops.h constrct.h userdata.h moduldef.h utility.h \
   evaluatn.h constant.h bload.h extnfunc.h symbol.h exprnbin.h sysdep.h \
   symblbin.h classcom.h cstrccom.h object.h constrnt.h multifld.h \
   match.h network.h ruledef.h agenda.h crstrtgy.h conscomp.h symblcmp.h \
-  classfun.h scanner.h classinf.h msgpsr.h insfun.h insmoddp.h msgfun.h \
-  msgpass.h memalloc.h prccode.h prntutil.h router.h watch.h msgcom.h
+  objrtmch.h classfun.h scanner.h classinf.h msgpsr.h insfun.h \
+  insmoddp.h msgfun.h msgpass.h memalloc.h prccode.h prntutil.h router.h \
+  watch.h msgcom.h
 
 msgfun.o: msgfun.c setup.h envrnmnt.h entities.h usrsetup.h classcom.h \
   cstrccom.h moduldef.h userdata.h utility.h evaluatn.h constant.h \
   constrct.h object.h constrnt.h expressn.h exprnops.h multifld.h \
   symbol.h match.h network.h ruledef.h agenda.h crstrtgy.h conscomp.h \
-  extnfunc.h symblcmp.h classfun.h scanner.h insfun.h memalloc.h \
-  msgcom.h msgpass.h prccode.h prntutil.h router.h msgfun.h
+  extnfunc.h symblcmp.h objrtmch.h classfun.h scanner.h inscom.h \
+  insfun.h memalloc.h msgcom.h msgpass.h prccode.h prntutil.h router.h \
+  msgfun.h
 
 msgpass.o: msgpass.c setup.h envrnmnt.h entities.h usrsetup.h argacces.h \
   expressn.h exprnops.h constrct.h userdata.h moduldef.h utility.h \
   evaluatn.h constant.h classcom.h cstrccom.h object.h constrnt.h \
   multifld.h symbol.h match.h network.h ruledef.h agenda.h crstrtgy.h \
-  conscomp.h extnfunc.h symblcmp.h classfun.h scanner.h commline.h \
-  exprnpsr.h inscom.h insfun.h memalloc.h msgcom.h msgpass.h msgfun.h \
-  prccode.h prcdrfun.h prntutil.h proflfun.h router.h strngfun.h
+  conscomp.h extnfunc.h symblcmp.h objrtmch.h classfun.h scanner.h \
+  commline.h exprnpsr.h inscom.h insfun.h memalloc.h msgcom.h msgpass.h \
+  msgfun.h prccode.h prcdrfun.h prntutil.h proflfun.h router.h \
+  strngfun.h
 
 msgpsr.o: msgpsr.c setup.h envrnmnt.h entities.h usrsetup.h bload.h \
   utility.h evaluatn.h constant.h moduldef.h userdata.h extnfunc.h \
   expressn.h exprnops.h constrct.h symbol.h exprnbin.h sysdep.h \
   symblbin.h classcom.h cstrccom.h object.h constrnt.h multifld.h \
   match.h network.h ruledef.h agenda.h crstrtgy.h conscomp.h symblcmp.h \
-  classfun.h scanner.h cstrcpsr.h cstrnchk.h exprnpsr.h insfun.h \
-  memalloc.h modulutl.h msgcom.h msgpass.h msgfun.h pprint.h prccode.h \
-  prntutil.h router.h strngrtr.h msgpsr.h
+  objrtmch.h classfun.h scanner.h cstrcpsr.h strngfun.h cstrnchk.h \
+  exprnpsr.h insfun.h memalloc.h modulutl.h msgcom.h msgpass.h msgfun.h \
+  pprint.h prccode.h prntutil.h router.h strngrtr.h msgpsr.h
 
 multifld.o: multifld.c setup.h envrnmnt.h entities.h usrsetup.h \
   constant.h evaluatn.h exprnops.h expressn.h constrct.h userdata.h \
   moduldef.h utility.h memalloc.h object.h constrnt.h multifld.h \
   symbol.h match.h network.h ruledef.h agenda.h crstrtgy.h conscomp.h \
-  extnfunc.h symblcmp.h cstrccom.h scanner.h prntutil.h router.h \
-  strngrtr.h
+  extnfunc.h symblcmp.h cstrccom.h objrtmch.h scanner.h prntutil.h \
+  router.h strngrtr.h
 
 multifun.o: multifun.c setup.h envrnmnt.h entities.h usrsetup.h \
   argacces.h expressn.h exprnops.h constrct.h userdata.h moduldef.h \
   utility.h evaluatn.h constant.h exprnpsr.h extnfunc.h symbol.h \
   scanner.h memalloc.h multifld.h multifun.h object.h constrnt.h match.h \
   network.h ruledef.h agenda.h crstrtgy.h conscomp.h symblcmp.h \
-  cstrccom.h pprint.h prcdrpsr.h prcdrfun.h prntutil.h router.h
+  cstrccom.h objrtmch.h pprint.h prcdrpsr.h prcdrfun.h prntutil.h \
+  router.h
 
 objbin.o: objbin.c setup.h envrnmnt.h entities.h usrsetup.h bload.h \
   utility.h evaluatn.h constant.h moduldef.h userdata.h extnfunc.h \
   expressn.h exprnops.h constrct.h symbol.h exprnbin.h sysdep.h \
   symblbin.h bsave.h classcom.h cstrccom.h object.h constrnt.h \
   multifld.h match.h network.h ruledef.h agenda.h crstrtgy.h conscomp.h \
-  symblcmp.h classfun.h scanner.h classini.h cstrcbin.h cstrnbin.h \
-  insfun.h memalloc.h modulbin.h msgcom.h msgpass.h msgfun.h prntutil.h \
-  router.h objbin.h
+  symblcmp.h objrtmch.h classfun.h scanner.h classini.h cstrcbin.h \
+  cstrnbin.h insfun.h memalloc.h modulbin.h msgcom.h msgpass.h msgfun.h \
+  prntutil.h router.h objrtbin.h objbin.h
 
 objcmp.o: objcmp.c setup.h envrnmnt.h entities.h usrsetup.h conscomp.h \
   constrct.h userdata.h moduldef.h utility.h evaluatn.h constant.h \
   extnfunc.h expressn.h exprnops.h symbol.h symblcmp.h classcom.h \
   cstrccom.h object.h constrnt.h multifld.h match.h network.h ruledef.h \
-  agenda.h crstrtgy.h classfun.h scanner.h classini.h cstrncmp.h \
-  objrtfnx.h objrtmch.h sysdep.h objcmp.h
+  agenda.h crstrtgy.h objrtmch.h classfun.h scanner.h classini.h \
+  cstrncmp.h objrtfnx.h sysdep.h objrtcmp.h objcmp.h
 
 objrtbin.o: objrtbin.c setup.h envrnmnt.h entities.h usrsetup.h bload.h \
   utility.h evaluatn.h constant.h moduldef.h userdata.h extnfunc.h \
   expressn.h exprnops.h constrct.h symbol.h exprnbin.h sysdep.h \
-  symblbin.h bsave.h memalloc.h insfun.h object.h constrnt.h multifld.h \
-  match.h network.h ruledef.h agenda.h crstrtgy.h conscomp.h symblcmp.h \
-  cstrccom.h objrtmch.h pattern.h scanner.h reorder.h reteutil.h \
-  rulebin.h cstrcbin.h modulbin.h objrtbin.h
+  symblbin.h bsave.h classfun.h object.h constrnt.h multifld.h match.h \
+  network.h ruledef.h agenda.h crstrtgy.h conscomp.h symblcmp.h \
+  cstrccom.h objrtmch.h scanner.h classcom.h memalloc.h insfun.h \
+  pattern.h reorder.h reteutil.h rulebin.h cstrcbin.h modulbin.h \
+  objrtbin.h
 
 objrtbld.o: objrtbld.c setup.h envrnmnt.h entities.h usrsetup.h \
   classcom.h cstrccom.h moduldef.h userdata.h utility.h evaluatn.h \
   constant.h constrct.h object.h constrnt.h expressn.h exprnops.h \
   multifld.h symbol.h match.h network.h ruledef.h agenda.h crstrtgy.h \
-  conscomp.h extnfunc.h symblcmp.h classfun.h scanner.h cstrnutl.h \
-  cstrnchk.h cstrnops.h drive.h inscom.h insfun.h insmngr.h memalloc.h \
-  pattern.h reorder.h prntutil.h reteutil.h rulepsr.h exprnpsr.h \
-  objrtmch.h objrtgen.h objrtfnx.h pprint.h router.h objrtbin.h \
+  conscomp.h extnfunc.h symblcmp.h objrtmch.h classfun.h scanner.h \
+  cstrnutl.h cstrnchk.h cstrnops.h drive.h inscom.h insfun.h insmngr.h \
+  memalloc.h pattern.h reorder.h prntutil.h reteutil.h rulepsr.h \
+  exprnpsr.h objrtgen.h objrtfnx.h pprint.h router.h objrtbin.h \
   objrtcmp.h objrtbld.h
 
 objrtcmp.o: objrtcmp.c setup.h envrnmnt.h entities.h usrsetup.h \
   conscomp.h constrct.h userdata.h moduldef.h utility.h evaluatn.h \
   constant.h extnfunc.h expressn.h exprnops.h symbol.h symblcmp.h \
-  objrtfnx.h match.h network.h ruledef.h agenda.h crstrtgy.h constrnt.h \
-  cstrccom.h object.h multifld.h objrtmch.h pattern.h scanner.h \
-  reorder.h sysdep.h objrtcmp.h
+  classcom.h cstrccom.h object.h constrnt.h multifld.h match.h network.h \
+  ruledef.h agenda.h crstrtgy.h objrtmch.h objrtfnx.h pattern.h \
+  scanner.h reorder.h sysdep.h objrtcmp.h
 
 objrtfnx.o: objrtfnx.c setup.h envrnmnt.h entities.h usrsetup.h \
   classcom.h cstrccom.h moduldef.h userdata.h utility.h evaluatn.h \
   constant.h constrct.h object.h constrnt.h expressn.h exprnops.h \
   multifld.h symbol.h match.h network.h ruledef.h agenda.h crstrtgy.h \
-  conscomp.h extnfunc.h symblcmp.h classfun.h scanner.h bload.h \
-  exprnbin.h sysdep.h symblbin.h drive.h engine.h lgcldpnd.h retract.h \
-  memalloc.h objrtmch.h prntutil.h reteutil.h router.h objrtfnx.h
+  conscomp.h extnfunc.h symblcmp.h objrtmch.h classfun.h scanner.h \
+  bload.h exprnbin.h sysdep.h symblbin.h drive.h engine.h lgcldpnd.h \
+  retract.h memalloc.h prntutil.h reteutil.h router.h objrtfnx.h
 
 objrtgen.o: objrtgen.c setup.h envrnmnt.h entities.h usrsetup.h \
   classfun.h object.h constrct.h userdata.h moduldef.h utility.h \
   evaluatn.h constant.h constrnt.h expressn.h exprnops.h multifld.h \
   symbol.h match.h network.h ruledef.h agenda.h crstrtgy.h conscomp.h \
-  extnfunc.h symblcmp.h cstrccom.h scanner.h classcom.h objrtfnx.h \
-  objrtmch.h objrtgen.h reorder.h pattern.h
+  extnfunc.h symblcmp.h cstrccom.h objrtmch.h scanner.h classcom.h \
+  objrtfnx.h objrtgen.h reorder.h pattern.h
 
 objrtmch.o: objrtmch.c setup.h envrnmnt.h entities.h usrsetup.h \
   classfun.h object.h constrct.h userdata.h moduldef.h utility.h \
   evaluatn.h constant.h constrnt.h expressn.h exprnops.h multifld.h \
   symbol.h match.h network.h ruledef.h agenda.h crstrtgy.h conscomp.h \
-  extnfunc.h symblcmp.h cstrccom.h scanner.h classcom.h memalloc.h \
-  drive.h engine.h lgcldpnd.h retract.h incrrset.h objrtfnx.h objrtmch.h \
-  prntutil.h reteutil.h ruledlt.h reorder.h pattern.h router.h insmngr.h
+  extnfunc.h symblcmp.h cstrccom.h objrtmch.h scanner.h classcom.h \
+  memalloc.h drive.h engine.h lgcldpnd.h retract.h incrrset.h objrtfnx.h \
+  prntutil.h reteutil.h ruledlt.h reorder.h pattern.h router.h insmngr.h \
+  inscom.h insfun.h
 
 parsefun.o: parsefun.c setup.h envrnmnt.h entities.h usrsetup.h \
   argacces.h expressn.h exprnops.h constrct.h userdata.h moduldef.h \
-  utility.h evaluatn.h constant.h cstrcpsr.h exprnpsr.h extnfunc.h \
-  symbol.h scanner.h memalloc.h multifld.h pprint.h prcdrpsr.h \
-  constrnt.h prntutil.h router.h strngrtr.h parsefun.h
+  utility.h evaluatn.h constant.h cstrcpsr.h strngfun.h exprnpsr.h \
+  extnfunc.h symbol.h scanner.h memalloc.h multifld.h pprint.h \
+  prcdrpsr.h constrnt.h prntutil.h router.h strngrtr.h parsefun.h
 
 pattern.o: pattern.c setup.h envrnmnt.h entities.h usrsetup.h constant.h \
   constrnt.h evaluatn.h cstrnchk.h cstrnutl.h exprnpsr.h extnfunc.h \
@@ -995,8 +1022,8 @@ prccode.o: prccode.c setup.h envrnmnt.h entities.h usrsetup.h memalloc.h \
   constant.h globlpsr.h expressn.h exprnops.h constrct.h userdata.h \
   moduldef.h utility.h evaluatn.h exprnpsr.h extnfunc.h symbol.h \
   scanner.h multifld.h object.h constrnt.h match.h network.h ruledef.h \
-  agenda.h crstrtgy.h conscomp.h symblcmp.h cstrccom.h pprint.h \
-  prcdrpsr.h prntutil.h router.h prccode.h
+  agenda.h crstrtgy.h conscomp.h symblcmp.h cstrccom.h objrtmch.h \
+  pprint.h prcdrpsr.h prntutil.h router.h prccode.h
 
 prcdrfun.o: prcdrfun.c setup.h envrnmnt.h entities.h usrsetup.h \
   argacces.h expressn.h exprnops.h constrct.h userdata.h moduldef.h \
@@ -1019,18 +1046,20 @@ prdctfun.o: prdctfun.c setup.h envrnmnt.h entities.h usrsetup.h \
 
 prntutil.o: prntutil.c setup.h envrnmnt.h entities.h usrsetup.h \
   argacces.h expressn.h exprnops.h constrct.h userdata.h moduldef.h \
-  utility.h evaluatn.h constant.h cstrcpsr.h factmngr.h conscomp.h \
-  extnfunc.h symbol.h symblcmp.h tmpltdef.h constrnt.h factbld.h \
-  network.h match.h ruledef.h agenda.h crstrtgy.h cstrccom.h facthsh.h \
-  inscom.h insfun.h object.h multifld.h insmngr.h memalloc.h multifun.h \
-  router.h scanner.h sysdep.h prntutil.h
+  utility.h evaluatn.h constant.h cstrcpsr.h strngfun.h factmngr.h \
+  conscomp.h extnfunc.h symbol.h symblcmp.h tmpltdef.h constrnt.h \
+  factbld.h network.h match.h ruledef.h agenda.h crstrtgy.h cstrccom.h \
+  facthsh.h inscom.h insfun.h object.h multifld.h objrtmch.h insmngr.h \
+  memalloc.h multifun.h router.h scanner.h strngrtr.h sysdep.h \
+  prntutil.h
 
 proflfun.o: proflfun.c setup.h envrnmnt.h entities.h usrsetup.h \
   argacces.h expressn.h exprnops.h constrct.h userdata.h moduldef.h \
   utility.h evaluatn.h constant.h classcom.h cstrccom.h object.h \
   constrnt.h multifld.h symbol.h match.h network.h ruledef.h agenda.h \
-  crstrtgy.h conscomp.h extnfunc.h symblcmp.h dffnxfun.h genrccom.h \
-  genrcfun.h memalloc.h msgcom.h msgpass.h router.h sysdep.h proflfun.h
+  crstrtgy.h conscomp.h extnfunc.h symblcmp.h objrtmch.h dffnxfun.h \
+  genrccom.h genrcfun.h memalloc.h msgcom.h msgpass.h router.h sysdep.h \
+  proflfun.h
 
 reorder.o: reorder.c setup.h envrnmnt.h entities.h usrsetup.h cstrnutl.h \
   constrnt.h evaluatn.h constant.h extnfunc.h expressn.h exprnops.h \
@@ -1129,12 +1158,12 @@ rulepsr.o: rulepsr.c setup.h envrnmnt.h entities.h usrsetup.h analysis.h \
   expressn.h exprnops.h constrct.h userdata.h moduldef.h utility.h \
   evaluatn.h constant.h reorder.h pattern.h symbol.h scanner.h match.h \
   network.h ruledef.h agenda.h crstrtgy.h conscomp.h extnfunc.h \
-  symblcmp.h constrnt.h cstrccom.h cstrcpsr.h cstrnchk.h cstrnops.h \
-  engine.h lgcldpnd.h retract.h exprnpsr.h incrrset.h memalloc.h \
-  modulutl.h prccode.h prcdrpsr.h pprint.h prntutil.h router.h rulebld.h \
-  rulebsc.h rulecstr.h ruledlt.h rulelhs.h watch.h tmpltfun.h factmngr.h \
-  tmpltdef.h factbld.h facthsh.h bload.h exprnbin.h sysdep.h symblbin.h \
-  rulepsr.h
+  symblcmp.h constrnt.h cstrccom.h cstrcpsr.h strngfun.h cstrnchk.h \
+  cstrnops.h engine.h lgcldpnd.h retract.h exprnpsr.h incrrset.h \
+  memalloc.h modulutl.h prccode.h prcdrpsr.h pprint.h prntutil.h \
+  router.h rulebld.h rulebsc.h rulecstr.h ruledlt.h rulelhs.h watch.h \
+  tmpltfun.h factmngr.h tmpltdef.h factbld.h facthsh.h bload.h \
+  exprnbin.h sysdep.h symblbin.h rulepsr.h
 
 scanner.o: scanner.c setup.h envrnmnt.h entities.h usrsetup.h constant.h \
   memalloc.h pprint.h prntutil.h router.h symbol.h sysdep.h utility.h \
@@ -1147,11 +1176,11 @@ sortfun.o: sortfun.c setup.h envrnmnt.h entities.h usrsetup.h argacces.h \
 
 strngfun.o: strngfun.c setup.h envrnmnt.h entities.h usrsetup.h \
   argacces.h expressn.h exprnops.h constrct.h userdata.h moduldef.h \
-  utility.h evaluatn.h constant.h commline.h cstrcpsr.h engine.h \
-  lgcldpnd.h match.h network.h ruledef.h agenda.h symbol.h crstrtgy.h \
-  conscomp.h extnfunc.h symblcmp.h constrnt.h cstrccom.h retract.h \
-  exprnpsr.h scanner.h memalloc.h multifld.h prcdrpsr.h pprint.h \
-  prntutil.h router.h strngrtr.h sysdep.h drive.h strngfun.h
+  utility.h evaluatn.h constant.h commline.h cstrcpsr.h strngfun.h \
+  engine.h lgcldpnd.h match.h network.h ruledef.h agenda.h symbol.h \
+  crstrtgy.h conscomp.h extnfunc.h symblcmp.h constrnt.h cstrccom.h \
+  retract.h exprnpsr.h scanner.h memalloc.h miscfun.h multifld.h \
+  prcdrpsr.h pprint.h prntutil.h router.h strngrtr.h sysdep.h drive.h
 
 strngrtr.o: strngrtr.c setup.h envrnmnt.h entities.h usrsetup.h \
   constant.h memalloc.h prntutil.h router.h sysdep.h strngrtr.h \
@@ -1174,7 +1203,8 @@ symbol.o: symbol.c setup.h envrnmnt.h entities.h usrsetup.h argacces.h \
   evaluatn.h constant.h memalloc.h multifld.h prntutil.h router.h \
   sysdep.h symbol.h
 
-sysdep.o: sysdep.c setup.h envrnmnt.h entities.h usrsetup.h sysdep.h
+sysdep.o: sysdep.c setup.h envrnmnt.h entities.h usrsetup.h memalloc.h \
+  sysdep.h
 
 textpro.o: textpro.c setup.h envrnmnt.h entities.h usrsetup.h argacces.h \
   expressn.h exprnops.h constrct.h userdata.h moduldef.h utility.h \
@@ -1191,11 +1221,12 @@ tmpltbin.o: tmpltbin.c setup.h envrnmnt.h entities.h usrsetup.h bload.h \
 
 tmpltbsc.o: tmpltbsc.c setup.h envrnmnt.h entities.h usrsetup.h \
   argacces.h expressn.h exprnops.h constrct.h userdata.h moduldef.h \
-  utility.h evaluatn.h constant.h cstrccom.h cstrcpsr.h extnfunc.h \
-  symbol.h factrhs.h factmngr.h conscomp.h symblcmp.h tmpltdef.h \
-  constrnt.h factbld.h network.h match.h ruledef.h agenda.h crstrtgy.h \
-  facthsh.h scanner.h memalloc.h multifld.h router.h tmpltbin.h \
-  cstrcbin.h modulbin.h tmpltcmp.h tmpltpsr.h tmpltutl.h tmpltbsc.h
+  utility.h evaluatn.h constant.h cstrccom.h cstrcpsr.h strngfun.h \
+  extnfunc.h symbol.h factrhs.h factmngr.h conscomp.h symblcmp.h \
+  tmpltdef.h constrnt.h factbld.h network.h match.h ruledef.h agenda.h \
+  crstrtgy.h facthsh.h scanner.h memalloc.h multifld.h router.h \
+  tmpltbin.h cstrcbin.h modulbin.h tmpltcmp.h tmpltpsr.h tmpltutl.h \
+  tmpltbsc.h
 
 tmpltcmp.o: tmpltcmp.c setup.h envrnmnt.h entities.h usrsetup.h \
   conscomp.h constrct.h userdata.h moduldef.h utility.h evaluatn.h \
@@ -1234,11 +1265,11 @@ tmpltlhs.o: tmpltlhs.c setup.h envrnmnt.h entities.h usrsetup.h \
 tmpltpsr.o: tmpltpsr.c setup.h envrnmnt.h entities.h usrsetup.h bload.h \
   utility.h evaluatn.h constant.h moduldef.h userdata.h extnfunc.h \
   expressn.h exprnops.h constrct.h symbol.h exprnbin.h sysdep.h \
-  symblbin.h cstrcpsr.h cstrnchk.h constrnt.h cstrnpsr.h cstrnutl.h \
-  default.h exprnpsr.h scanner.h factmngr.h conscomp.h symblcmp.h \
-  tmpltdef.h factbld.h network.h match.h ruledef.h agenda.h crstrtgy.h \
-  cstrccom.h facthsh.h memalloc.h modulutl.h pattern.h reorder.h \
-  pprint.h prntutil.h router.h tmpltbsc.h watch.h tmpltpsr.h
+  symblbin.h cstrcpsr.h strngfun.h cstrnchk.h constrnt.h cstrnpsr.h \
+  cstrnutl.h default.h exprnpsr.h scanner.h factmngr.h conscomp.h \
+  symblcmp.h tmpltdef.h factbld.h network.h match.h ruledef.h agenda.h \
+  crstrtgy.h cstrccom.h facthsh.h memalloc.h modulutl.h pattern.h \
+  reorder.h pprint.h prntutil.h router.h tmpltbsc.h watch.h tmpltpsr.h
 
 tmpltrhs.o: tmpltrhs.c setup.h envrnmnt.h entities.h usrsetup.h default.h \
   constrnt.h evaluatn.h constant.h extnfunc.h expressn.h exprnops.h \
@@ -1262,24 +1293,24 @@ userdata.o: userdata.c setup.h envrnmnt.h entities.h usrsetup.h \
 userfunctions.o: userfunctions.c clips.h setup.h envrnmnt.h entities.h \
   usrsetup.h argacces.h expressn.h exprnops.h constrct.h userdata.h \
   moduldef.h utility.h evaluatn.h constant.h memalloc.h cstrcpsr.h \
-  fileutil.h strngfun.h envrnbld.h extnfunc.h symbol.h commline.h \
+  strngfun.h fileutil.h envrnbld.h extnfunc.h symbol.h commline.h \
   prntutil.h router.h filertr.h strngrtr.h iofun.h sysdep.h bmathfun.h \
-  exprnpsr.h scanner.h watch.h modulbsc.h bload.h exprnbin.h symblbin.h \
-  bsave.h ruledef.h network.h match.h agenda.h crstrtgy.h conscomp.h \
-  symblcmp.h constrnt.h cstrccom.h rulebsc.h engine.h lgcldpnd.h \
-  retract.h drive.h incrrset.h rulecom.h dffctdef.h dffctbsc.h \
-  tmpltdef.h factbld.h tmpltbsc.h tmpltfun.h factmngr.h facthsh.h \
-  factcom.h factfun.h globldef.h globlbsc.h globlcom.h dffnxfun.h \
-  genrccom.h genrcfun.h classcom.h object.h multifld.h classexm.h \
-  classfun.h classinf.h classini.h classpsr.h defins.h inscom.h insfun.h \
-  insfile.h insmngr.h msgcom.h msgpass.h objrtmch.h
+  exprnpsr.h scanner.h miscfun.h watch.h modulbsc.h bload.h exprnbin.h \
+  symblbin.h bsave.h ruledef.h network.h match.h agenda.h crstrtgy.h \
+  conscomp.h symblcmp.h constrnt.h cstrccom.h rulebsc.h engine.h \
+  lgcldpnd.h retract.h drive.h incrrset.h rulecom.h dffctdef.h \
+  dffctbsc.h tmpltdef.h factbld.h tmpltbsc.h tmpltfun.h factmngr.h \
+  facthsh.h factcom.h factfun.h globldef.h globlbsc.h globlcom.h \
+  dffnxfun.h genrccom.h genrcfun.h classcom.h object.h multifld.h \
+  objrtmch.h classexm.h classfun.h classinf.h classini.h classpsr.h \
+  defins.h inscom.h insfun.h insfile.h insmngr.h msgcom.h msgpass.h
 
 utility.o: utility.c setup.h envrnmnt.h entities.h usrsetup.h commline.h \
   evaluatn.h constant.h factmngr.h conscomp.h constrct.h userdata.h \
   moduldef.h utility.h extnfunc.h expressn.h exprnops.h symbol.h \
   symblcmp.h tmpltdef.h constrnt.h factbld.h network.h match.h ruledef.h \
   agenda.h crstrtgy.h cstrccom.h facthsh.h memalloc.h multifld.h \
-  prntutil.h sysdep.h
+  prntutil.h router.h sysdep.h
 
 watch.o: watch.c setup.h envrnmnt.h entities.h usrsetup.h argacces.h \
   expressn.h exprnops.h constrct.h userdata.h moduldef.h utility.h \
