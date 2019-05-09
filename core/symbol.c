@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  02/03/15            */
+   /*             CLIPS Version 6.31  05/09/19            */
    /*                                                     */
    /*                    SYMBOL MODULE                    */
    /*******************************************************/
@@ -722,7 +722,7 @@ globle unsigned long HashSymbol(
   const char *word,
   unsigned long range)
   {
-   register int i;
+   int i;
    unsigned long tally = 0;
 
    for (i = 0; word[i]; i++)
@@ -812,7 +812,7 @@ globle unsigned long HashBitMap(
   unsigned long range,
   unsigned length)
   {
-   register unsigned k,j,i;
+   unsigned k,j,i;
    unsigned long tally;
    unsigned longLength;
    unsigned long count = 0L,tmpLong;
@@ -1502,7 +1502,7 @@ globle SYMBOL_HN *GetNextSymbolMatch(
   int anywhere,
   size_t *commonPrefixLength)
   {
-   register unsigned long i;
+   unsigned long i;
    SYMBOL_HN *hashPtr;
    int flag = TRUE;
    size_t prefixLength;
@@ -1633,7 +1633,7 @@ static const char *StringWithinString(
   const char *cs,
   const char *ct)
   {
-   register unsigned i,j,k;
+   unsigned i,j,k;
 
    for (i = 0 ; cs[i] != '\0' ; i++)
      {
@@ -1652,7 +1652,7 @@ static size_t CommonPrefixLength(
   const char *cs,
   const char *ct)
   {
-   register unsigned i;
+   unsigned i;
 
    for (i = 0 ; (cs[i] != '\0') && (ct[i] != '\0') ; i++)
      if (cs[i] != ct[i])

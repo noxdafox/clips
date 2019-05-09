@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*              CLIPS Version 6.31  04/04/19           */
+   /*              CLIPS Version 6.31  05/09/19           */
    /*                                                     */
    /*                INSTANCE COMMAND MODULE              */
    /*******************************************************/
@@ -1597,7 +1597,7 @@ static void PrintInstance(
   const char *separator)
   {
    long i;
-   register INSTANCE_SLOT *sp;
+   INSTANCE_SLOT *sp;
 
    PrintInstanceNameAndClass(theEnv,logicalName,ins,FALSE);
    for (i = 0 ; i < ins->cls->instanceSlotCount ; i++)

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*              CLIPS Version 6.31  04/15/19           */
+   /*              CLIPS Version 6.31  05/09/19           */
    /*                                                     */
    /*         INSTANCE LOAD/SAVE (ASCII/BINARY) MODULE    */
    /*******************************************************/
@@ -1620,7 +1620,7 @@ static void CreateSlotValue(
   struct bsaveSlotValueAtom *bsaValues,
   unsigned long valueCount)
   {
-   register unsigned i;
+   unsigned i;
 
    if (valueCount == 0)
      {

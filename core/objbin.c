@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*               CLIPS Version 6.31  04/03/19          */
+   /*               CLIPS Version 6.31  05/09/19          */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -269,7 +269,7 @@ static void DeallocateObjectBinaryData(
            {
             DATA_OBJECT *theValue = (DATA_OBJECT *) ObjectBinaryData(theEnv)->SlotArray[i].defaultValue;
             if (theValue->type == MULTIFIELD)
-              { ReturnMultifield(theEnv,theValue->value); }
+              { ReturnMultifield(theEnv,(struct multifield *) theValue->value); }
             rtn_struct(theEnv,dataObject,ObjectBinaryData(theEnv)->SlotArray[i].defaultValue);
            }
         }
@@ -353,7 +353,7 @@ globle void *BloadDefclassModuleReference(
 static void BsaveObjectsFind(
   void *theEnv)
   {
-   register unsigned i;
+   unsigned i;
    SLOT_NAME *snp;
 
    /* ========================================================
@@ -633,7 +633,7 @@ static void BsaveObjects(
    BSAVE_DEFCLASS_MODULE dummy_mitem;
    BSAVE_SLOT_NAME dummy_slot_name;
    SLOT_NAME *snp;
-   register unsigned i;
+   unsigned i;
 
    if ((ObjectBinaryData(theEnv)->ClassCount == 0L) && (ObjectBinaryData(theEnv)->HandlerCount == 0L))
      {
@@ -1184,7 +1184,7 @@ static void BloadObjects(
 static void UpdatePrimitiveClassesMap(
   void *theEnv)
   {
-   register unsigned i;
+   unsigned i;
 
    for (i = 0 ; i < OBJECT_TYPE_CODE ; i++)
      DefclassData(theEnv)->PrimitiveClassMap[i] = (DEFCLASS *) &ObjectBinaryData(theEnv)->DefclassArray[i];
@@ -1390,7 +1390,7 @@ static void UpdateHandler(
 static void ClearBloadObjects(
   void *theEnv)
   {
-   register long i;
+   long i;
    size_t space;
 
    space = (sizeof(DEFCLASS_MODULE) * ObjectBinaryData(theEnv)->ModuleCount);
@@ -1422,7 +1422,7 @@ static void ClearBloadObjects(
             DATA_OBJECT *theValue = (DATA_OBJECT *) ObjectBinaryData(theEnv)->SlotArray[i].defaultValue;
             ValueDeinstall(theEnv,(DATA_OBJECT *) ObjectBinaryData(theEnv)->SlotArray[i].defaultValue);
             if (theValue->type == MULTIFIELD)
-              { ReturnMultifield(theEnv,theValue->value); }
+              { ReturnMultifield(theEnv,(struct multifield *) theValue->value); }
             rtn_struct(theEnv,dataObject,ObjectBinaryData(theEnv)->SlotArray[i].defaultValue);
            }
         }

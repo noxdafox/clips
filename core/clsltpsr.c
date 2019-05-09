@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*               CLIPS Version 6.31  04/03/19          */
+   /*               CLIPS Version 6.31  05/09/19          */
    /*                                                     */
    /*                  CLASS PARSER MODULE                */
    /*******************************************************/
@@ -721,7 +721,7 @@ static void BuildCompositeFacets(
                GenCopyMemory(DATA_OBJECT,1,sd->defaultValue,oldValue);
                newValue = (DATA_OBJECT *) sd->defaultValue;
                if (oldValue->type == MULTIFIELD)
-                 { newValue->value = CopyMultifield(theEnv,oldValue->value); }
+                 { newValue->value = CopyMultifield(theEnv,(struct multifield *) oldValue->value); }
                ValueInstall(theEnv,newValue);
               }
            }
@@ -869,7 +869,7 @@ static intBool EvaluateSlotDefaultValue(
             newValue = (DATA_OBJECT *) sd->defaultValue;
             GenCopyMemory(DATA_OBJECT,1,sd->defaultValue,&temp);
             if (temp.type == MULTIFIELD)
-              { newValue->value = CopyMultifield(theEnv,temp.value); }
+              { newValue->value = CopyMultifield(theEnv,(struct multifield *) temp.value); }
             ValueInstall(theEnv,(DATA_OBJECT *) sd->defaultValue);
            }
          else

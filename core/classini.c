@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*               CLIPS Version 6.31  04/03/19          */
+   /*               CLIPS Version 6.31  05/09/19          */
    /*                                                     */
    /*               CLASS INITIALIZATION MODULE           */
    /*******************************************************/
@@ -288,8 +288,8 @@ static void DeallocateDefclassData(
 #else
    DEFCLASS *cls;
    void *tmpexp;
-   register unsigned int i;
-   register int j;
+   unsigned int i;
+   int j;
    
    if (DefclassData(theEnv)->ClassTable != NULL)
      {
@@ -361,7 +361,7 @@ globle void ObjectsRunTimeInitialize(
   {
    DEFCLASS *cls;
    void *tmpexp;
-   register unsigned int i,j;
+   unsigned int i,j;
 
    if (DefclassData(theEnv)->ClassTable != NULL)
      {
@@ -808,7 +808,7 @@ static void ReturnModule(
 static void UpdateDefclassesScope(
   void *theEnv)
   {
-   register unsigned i;
+   unsigned i;
    DEFCLASS *theDefclass;
    int newModuleID,count;
    char *newScopeMap;

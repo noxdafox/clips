@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.31  04/03/19            */
+   /*             CLIPS Version 6.31  05/09/19            */
    /*                                                     */
    /*                CLASS FUNCTIONS MODULE               */
    /*******************************************************/
@@ -189,7 +189,7 @@ globle intBool InstancesPurge(
 globle void InitializeClasses(
   void *theEnv)
   {
-   register int i;
+   int i;
 
    DefclassData(theEnv)->ClassTable =
       (DEFCLASS **) gm2(theEnv,(int) (sizeof(DEFCLASS *) * CLASS_TABLE_HASH_SIZE));
@@ -520,7 +520,7 @@ globle DEFCLASS *NewClass(
   void *theEnv,
   SYMBOL_HN *className)
   {
-   register DEFCLASS *cls;
+   DEFCLASS *cls;
 
    cls = get_struct(theEnv,defclass);
    InitializeConstructHeader(theEnv,"defclass",(struct constructHeader *) cls,className);
@@ -601,7 +601,7 @@ globle void AssignClassID(
   void *theEnv,
   DEFCLASS *cls)
   {
-   register unsigned i;
+   unsigned i;
 
    if ((DefclassData(theEnv)->MaxClassID % CLASS_ID_MAP_CHUNK) == 0)
      {
@@ -769,7 +769,7 @@ LOCALE void RemoveDefclass(
            {
             DATA_OBJECT *theValue = (DATA_OBJECT *) cls->slots[i].defaultValue;
             if (theValue->type == MULTIFIELD)
-              { ReturnMultifield(theEnv,theValue->value); }
+              { ReturnMultifield(theEnv,(struct multifield *) theValue->value); }
             rtn_struct(theEnv,dataObject,cls->slots[i].defaultValue);
            }
         }
@@ -854,7 +854,7 @@ LOCALE void DestroyDefclass(
            {
             DATA_OBJECT *theValue = (DATA_OBJECT *) cls->slots[i].defaultValue;
             if (theValue->type == MULTIFIELD)
-              { ReturnMultifield(theEnv,theValue->value); }
+              { ReturnMultifield(theEnv,(struct multifield *) theValue->value); }
             rtn_struct(theEnv,dataObject,cls->slots[i].defaultValue);
            }
 #else
@@ -862,7 +862,7 @@ LOCALE void DestroyDefclass(
            {
             DATA_OBJECT *theValue = (DATA_OBJECT *) cls->slots[i].defaultValue;
             if (theValue->type == MULTIFIELD)
-              { ReturnMultifield(theEnv,theValue->value); }
+              { ReturnMultifield(theEnv,(struct multifield *) theValue->value); }
             rtn_struct(theEnv,dataObject,cls->slots[i].defaultValue);
            }
 #endif
@@ -1187,7 +1187,7 @@ globle SLOT_NAME *FindIDSlotNameHash(
   void *theEnv,
   int id)
   {
-   register int i;
+   int i;
    SLOT_NAME *snp;
 
    for (i = 0 ; i < SLOT_NAME_TABLE_HASH_SIZE ; i++)
@@ -1218,8 +1218,8 @@ globle SLOT_NAME *FindIDSlotNameHash(
 globle int GetTraversalID(
   void *theEnv)
   {
-   register unsigned i;
-   register DEFCLASS *cls;
+   unsigned i;
+   DEFCLASS *cls;
 
    if (DefclassData(theEnv)->CTID >= MAX_TRAVERSALS)
      {
