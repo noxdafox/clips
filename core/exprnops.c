@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  10/18/16             */
+   /*            CLIPS Version 6.40  05/29/19             */
    /*                                                     */
    /*             EXPRESSION OPERATIONS MODULE            */
    /*******************************************************/
@@ -24,6 +24,9 @@
 /*                                                           */
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
+/*                                                           */
+/*      6.31: Removed FACT_ADDRESS type from                 */
+/*            ExpressionContainsVariables function.          */
 /*                                                           */
 /*      6.40: Pragma once and other inclusion changes.       */
 /*                                                           */
@@ -272,7 +275,6 @@ bool ExpressionContainsVariables(
 
       if ((theExpression->type == MF_VARIABLE) ||
           (theExpression->type == SF_VARIABLE) ||
-          (theExpression->type == FACT_ADDRESS_TYPE) ||
           (((theExpression->type == GBL_VARIABLE) ||
             (theExpression->type == MF_GBL_VARIABLE)) &&
            (globalsAreVariables == true)))
