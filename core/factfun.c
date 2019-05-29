@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/02/18             */
+   /*            CLIPS Version 6.40  05/29/19             */
    /*                                                     */
    /*               FACT FUNCTIONS MODULE                 */
    /*******************************************************/
@@ -94,6 +94,8 @@
 /*            Pretty print functions accept optional logical */
 /*            name argument.                                 */
 /*                                                           */
+/*            Added fact-addressp function.                  */
+/*                                                           */
 /*************************************************************/
 
 #include <stdio.h>
@@ -127,6 +129,7 @@ void FactFunctionDefinitions(
    AddUDF(theEnv,"fact-slot-names","*",1,1,"lf",FactSlotNamesFunction,"FactSlotNamesFunction",NULL);
    AddUDF(theEnv,"get-fact-list","m",0,1,"y",GetFactListFunction,"GetFactListFunction",NULL);
    AddUDF(theEnv,"ppfact","vs",1,3,"*;lf;ldsyn",PPFactFunction,"PPFactFunction",NULL);
+   AddUDF(theEnv,"fact-addressp","b",1,1,NULL,FactAddresspFunction,"FactAddresspFunction",NULL);
 #else
 #if MAC_XCD
 #pragma unused(theEnv)
@@ -206,6 +209,26 @@ bool FactExistp(
    if (theFact->factIndex == 0LL) return false;
 
    return true;
+  }
+
+/********************************************/
+/* FactAddresspFunction: H/L access routine */
+/*   for the fact-addressp function.        */
+/********************************************/
+void FactAddresspFunction(
+  Environment *theEnv,
+  UDFContext *context,
+  UDFValue *returnValue)
+  {
+   UDFValue item;
+
+   if (! UDFFirstArgument(context,ANY_TYPE_BITS,&item))
+     { return; }
+
+   if (CVIsType(&item,FACT_ADDRESS_BIT))
+     { returnValue->lexemeValue = TrueSymbol(theEnv); }
+   else
+     { returnValue->lexemeValue = FalseSymbol(theEnv); }
   }
 
 /***********************************************/

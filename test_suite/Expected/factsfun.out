@@ -33,6 +33,24 @@ CLIPS> (fact-existp a)
 [ARGACCES2] Function 'fact-existp' expected argument #1 to be of type integer or fact address.
 CLIPS> (fact-existp 1 2)
 [ARGACCES1] Function 'fact-existp' expected exactly 1 argument.
+CLIPS> (fact-addressp)
+[ARGACCES1] Function 'fact-addressp' expected exactly 1 argument.
+CLIPS> (fact-addressp 1)
+FALSE
+CLIPS> (fact-addressp 1 2)
+[ARGACCES1] Function 'fact-addressp' expected exactly 1 argument.
+CLIPS> (fact-addressp ?*w*)
+TRUE
+CLIPS> (fact-addressp ?*y*)
+TRUE
+CLIPS> (fact-addressp [x])
+FALSE
+CLIPS> (fact-addressp 1.2)
+FALSE
+CLIPS> (fact-addressp "a")
+FALSE
+CLIPS> (fact-addressp b)
+FALSE
 CLIPS> (clear)
 CLIPS> (reset)
 CLIPS> (deftemplate foo (slot x) (slot y))

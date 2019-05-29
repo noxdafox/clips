@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  08/25/16            */
+   /*             CLIPS Version 6.40  05/29/19            */
    /*                                                     */
    /*              FACT FUNCTIONS HEADER FILE             */
    /*******************************************************/
@@ -45,6 +45,8 @@
 /*                                                           */
 /*            UDF redesign.                                  */
 /*                                                           */
+/*            Added fact-addressp function.                  */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_factfun
@@ -70,6 +72,6 @@
    void                           PPFactFunction(Environment *,UDFContext *,UDFValue *);
    void                           PPFact(Fact *,const char *,bool);
    Fact                          *GetFactAddressOrIndexArgument(UDFContext *,bool);
+   void                           FactAddresspFunction(Environment *,UDFContext *,UDFValue *);
 
 #endif /* _H_factfun */
-
