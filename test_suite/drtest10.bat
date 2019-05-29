@@ -622,4 +622,11 @@
 (bload-instances "Temp//experiment.bins")
 (send [e1] print)
 (send [e2] print)
+(clear) ; Local variables cannot be accessed bug
+
+(deftemplate hello
+  (slot self (type FACT-ADDRESS)))
+  
+(deffacts hellos
+   (hello))
 (clear)

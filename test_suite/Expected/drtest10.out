@@ -1137,5 +1137,12 @@ CLIPS> (send [e2] print)
 (fa <Dummy Fact>)
 (ia [Dummy Instance])
 (ea <Pointer-C-0x0>)
+CLIPS> (clear) ; Local variables cannot be accessed bug
+CLIPS> 
+(deftemplate hello
+  (slot self (type FACT-ADDRESS)))
+CLIPS>   
+(deffacts hellos
+   (hello))
 CLIPS> (clear)
 CLIPS> (dribble-off)
