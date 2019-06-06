@@ -46,10 +46,8 @@
 #include "frame.h"
 #include "findwnd.h"
 
-//#define setProc(hwnd, proc) SetWindowLong(hwnd, GWL_USERDATA, (LPARAM)proc)
 #define setProc(hwnd, proc) SetWindowLongPtr(hwnd, GWLP_USERDATA, (LONG_PTR) proc)
-//#define getProc(hwnd)       (WNDPROC)GetWindowLong(hwnd, GWL_USERDATA)
-#define getProc(hwnd)       (WNDPROC)GetWindowLongPtr(hwnd, GWLP_USERDATA)
+#define getProc(hwnd)       (WNDPROC) GetWindowLongPtr(hwnd, GWLP_USERDATA)
 
 #define DEFAULT_COMMAND_MAX 20
 #define DISPLAY_FONT_NAME "Courier"
@@ -306,7 +304,6 @@ BOOL displayWindow_New(
 
    CreateTerminal(theData);
 
-   //SetWindowLong(DialogWindow,GWL_USERDATA,(long) theData);
    SetWindowLongPtr(DialogWindow,GWLP_USERDATA,(LONG_PTR) theData);
 
    SetScrollRange(DialogWindow,SB_HORZ,0,255,TRUE);

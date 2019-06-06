@@ -428,7 +428,6 @@ static HWND statusWindow_New(
       
    theData->lineSize = tm.tmHeight+ tm.tmExternalLeading;
      
-   //SetWindowLong(hwndChild,GWL_USERDATA,(long) theData);
    SetWindowLongPtr(hwndChild,GWLP_USERDATA, (LONG_PTR) theData);
    
    MoveWindow(hwndChild,xpos,ypos,width,height,TRUE);

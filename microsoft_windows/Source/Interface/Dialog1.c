@@ -201,7 +201,7 @@ INT_PTR CALLBACK ExecDlg(
              
              value = (unsigned) SendDlgItemMessage(hDlg,IDC_EXE_SALIENCE,CB_GETCURSEL,0,0);
 
-             SendDlgItemMessage(hDlg,IDC_EXE_SALIENCE,CB_GETLBTEXT,value,(LONG) Msg );
+             SendDlgItemMessage(hDlg,IDC_EXE_SALIENCE,CB_GETLBTEXT,value,(LPARAM) Msg );
 
              if (strcmp(Msg,"When Defined") == 0)
                { EnvSetSalienceEvaluation(GlobalEnv,WHEN_DEFINED); }
@@ -215,7 +215,7 @@ INT_PTR CALLBACK ExecDlg(
              /*===========================*/
              
              value = (unsigned) SendDlgItemMessage (hDlg, IDC_EXE_STRATEGY, CB_GETCURSEL, 0, 0);
-             SendDlgItemMessage (hDlg, IDC_EXE_STRATEGY, CB_GETLBTEXT, value, (LONG)Msg );
+             SendDlgItemMessage (hDlg, IDC_EXE_STRATEGY, CB_GETLBTEXT, value, (LPARAM) Msg );
 
              if ( strcmp (Msg, "Depth"  ) == 0 )
                { EnvSetStrategy(GlobalEnv,DEPTH_STRATEGY); }
@@ -300,7 +300,7 @@ INT_PTR CALLBACK OptionDlgProc (
         SetCheckBox(hDlg,IDC_PREF_COMPLETE, Complete );
         SendDlgItemMessage(hDlg,IDC_EDIT,EM_LIMITTEXT,3,0);
         sprintf(Number,"%d",RuleStep);
-        SendDlgItemMessage(hDlg, IDC_EDIT, WM_SETTEXT,0, (LONG)Number);
+        SendDlgItemMessage(hDlg, IDC_EDIT, WM_SETTEXT,0, (LPARAM) Number);
         return (TRUE);
 
       case WM_COMMAND:
@@ -312,7 +312,7 @@ INT_PTR CALLBACK OptionDlgProc (
              return (TRUE);
 
            case IDC_OK:
-             SendDlgItemMessage ( hDlg, IDC_EDIT, WM_GETTEXT,4, (LONG)Number);
+             SendDlgItemMessage ( hDlg, IDC_EDIT, WM_GETTEXT,4, (LPARAM) Number);
              temp = atoi (Number);
              for (x=0; x < (int) strlen(Number); x++)
                { 
@@ -323,7 +323,7 @@ INT_PTR CALLBACK OptionDlgProc (
              if (temp < 1 || temp > 999 || flag)
                {  
                 sprintf(Number,"%d", RuleStep );
-                SendDlgItemMessage ( hDlg, IDC_EDIT, WM_SETTEXT,0, (LONG)Number);
+                SendDlgItemMessage ( hDlg, IDC_EDIT, WM_SETTEXT,0, (LPARAM) Number);
                 MessageBeep(0);
                 MessageBox(hDlg,"Must be between 1 and 999 inclusive",
                 "Step Rule Firing Increment", MB_ICONHAND|MB_OK);

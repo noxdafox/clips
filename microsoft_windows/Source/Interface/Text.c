@@ -280,9 +280,8 @@ BOOL text_Revert(
    char szTemp[128];
    struct textWindowData *theData;
    
-   theData = (struct textWindowData *) GetWindowLong(hEditWnd,GWLP_USERDATA);
+   theData = (struct textWindowData *) GetWindowLongPtr(hEditWnd,GWLP_USERDATA);
  
-   
    /*===================================*/
    /* Open the file and get its handle. */
    /*===================================*/
@@ -315,7 +314,6 @@ BOOL text_Revert(
       if (theData == NULL) return(FALSE);
       
       strcpy((char *) &theData->fileName,(char *) fileName);
-      //SetWindowLong(hEditWnd,GWL_USERDATA,(long) theData);
 	  SetWindowLongPtr(hEditWnd,GWLP_USERDATA,(LONG_PTR) theData);
      }
    
@@ -399,8 +397,7 @@ BOOL text_SaveAs(
    /* so the save dialog will appear.    */
    /*====================================*/
    
-   oldData = (struct textWindowData *) GetWindowLong(hEditWnd,GWLP_USERDATA);
-   //SetWindowLong(hEditWnd,GWL_USERDATA,(long) NULL);
+   oldData = (struct textWindowData *) GetWindowLongPtr(hEditWnd,GWLP_USERDATA);
    SetWindowLongPtr(hEditWnd,GWLP_USERDATA,(LONG_PTR) NULL);
 
    /*================*/
@@ -424,7 +421,6 @@ BOOL text_SaveAs(
      }
    else
      { 
-	  //SetWindowLong(hEditWnd,GWL_USERDATA,(long) oldData); 
 	  SetWindowLongPtr(hEditWnd,GWLP_USERDATA,(LONG_PTR) oldData);
 	 }
    
@@ -456,7 +452,7 @@ BOOL text_Save(
    /* Get the window data. */
    /*======================*/
    
-   theData = (struct textWindowData *) GetWindowLong(hEditWnd,GWLP_USERDATA);
+   theData = (struct textWindowData *) GetWindowLongPtr(hEditWnd,GWLP_USERDATA);
    if (theData == NULL)
      {
 	  if (! GetSaveFileName ((LPOPENFILENAME) &ofn))
@@ -467,7 +463,6 @@ BOOL text_Save(
         { return(FALSE); }
         
       strcpy((char *) &theData->fileName,(char *) szFileName);
-      //SetWindowLong(hEditWnd,GWL_USERDATA,(long) theData);
       SetWindowLongPtr(hEditWnd,GWLP_USERDATA,(LONG_PTR) theData);
 	  
       SetWindowText(hEditWnd,szFileName);
@@ -585,7 +580,7 @@ static void text_OnDestroy(
   {
    struct textWindowData *theData;
    
-   theData = (struct textWindowData *) GetWindowLong(hwnd,GWLP_USERDATA);
+   theData = (struct textWindowData *) GetWindowLongPtr(hwnd,GWLP_USERDATA);
    if (theData != NULL)
      { free(theData); }
  

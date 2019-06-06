@@ -34,9 +34,7 @@
 #include "EditUtil.h"
 #include "SearchDialog.h"
 
-//#define setProc(hwnd, proc) SetWindowLong(hwnd, GWL_USERDATA, (LPARAM)proc)
 #define setProc(hwnd, proc) SetWindowLongPtr(hwnd, GWLP_USERDATA, (LONG_PTR) proc)
-//#define getProc(hwnd)       (WNDPROC)GetWindowLong(hwnd, GWL_USERDATA)
 #define getProc(hwnd)       (WNDPROC)GetWindowLongPtr(hwnd, GWLP_USERDATA)
 
 #define getRGB(hwnd)        (COLORREF)GetProp(hwnd, MAKEINTATOM(ATOM_TEXTCOLOR))
