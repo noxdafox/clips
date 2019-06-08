@@ -1,0 +1,107 @@
+JNI_CP = net\sf\clipsrules\jni
+JNI_CLASS = net.sf.clipsrules.jni.Environment
+JNI_BIN = bin\clipsjni
+JNI_SRC = java-src\$(JNI_CP)
+JNI_DST = $(JNI_BIN)\$(JNI_CP)
+JNI_FILES = \
+	$(JNI_SRC)\Environment.java \
+	$(JNI_SRC)\FactAddressValue.java \
+	$(JNI_SRC)\FloatValue.java \
+	$(JNI_SRC)\InstanceAddressValue.java \
+	$(JNI_SRC)\InstanceNameValue.java \
+	$(JNI_SRC)\InstanceValue.java \
+	$(JNI_SRC)\IntegerValue.java \
+	$(JNI_SRC)\LexemeValue.java \
+	$(JNI_SRC)\MultifieldValue.java \
+	$(JNI_SRC)\NumberValue.java \
+	$(JNI_SRC)\PrimitiveValue.java \
+	$(JNI_SRC)\Router.java \
+	$(JNI_SRC)\StringValue.java \
+	$(JNI_SRC)\SymbolValue.java \
+	$(JNI_SRC)\VoidValue.java
+
+ANIMAL_CP = net\sf\clipsrules\jni\examples\animal
+ANIMAL_CLASS = net.sf.clipsrules.jni.examples.animal.AnimalDemo
+ANIMAL_SRC = java-src\$(ANIMAL_CP)
+ANIMAL_BIN = bin\animal
+ANIMAL_DST = $(ANIMAL_BIN)\$(ANIMAL_CP)
+ANIMAL_RSRC_SRC = $(ANIMAL_SRC)\resources
+ANIMAL_RSRC_DST = $(ANIMAL_BIN)\$(ANIMAL_CP)\resources
+
+AUTO_CP = net\sf\clipsrules\jni\examples\auto
+AUTO_CLASS = net.sf.clipsrules.jni.examples.auto.AutoDemo
+AUTO_SRC = java-src\$(AUTO_CP)
+AUTO_BIN = bin\auto
+AUTO_DST = $(AUTO_BIN)\$(AUTO_CP)
+AUTO_RSRC_SRC = $(AUTO_SRC)\resources
+AUTO_RSRC_DST = $(AUTO_BIN)\$(AUTO_CP)\resources
+
+SUDOKU_CP = net\sf\clipsrules\jni\examples\sudoku
+SUDOKU_CLASS = net.sf.clipsrules.jni.examples.sudoku.SudokuDemo
+SUDOKU_SRC = java-src\$(SUDOKU_CP)
+SUDOKU_BIN = bin\sudoku
+SUDOKU_DST = $(SUDOKU_BIN)\$(SUDOKU_CP)
+SUDOKU_RSRC_SRC = $(SUDOKU_SRC)\resources
+SUDOKU_RSRC_DST = $(SUDOKU_BIN)\$(SUDOKU_CP)\resources
+
+WINE_CP = net\sf\clipsrules\jni\examples\wine
+WINE_CLASS = net.sf.clipsrules.jni.examples.wine.WineDemo
+WINE_SRC = java-src\$(WINE_CP)
+WINE_BIN = bin\wine
+WINE_DST = $(WINE_BIN)\$(WINE_CP)
+WINE_RSRC_SRC = $(WINE_SRC)\resources
+WINE_RSRC_DST = $(WINE_BIN)\$(WINE_CP)\resources
+
+all: clipsjni animal auto sudoku wine
+
+clipsjni :
+	javac -d $(JNI_BIN) $(JNI_FILES)
+	jar -cfe CLIPSJNI.jar $(JNI_CLASS) $(JNI_BIN)\$(JNI_CP)\Environment.class -C $(JNI_BIN) net
+
+animal :
+	if not exist $(ANIMAL_RSRC_DST) mkdir $(ANIMAL_RSRC_DST)
+	javac -d $(ANIMAL_BIN) -cp CLIPSJNI.jar $(ANIMAL_SRC)\AnimalDemo.java
+	copy $(ANIMAL_RSRC_SRC)\*.properties $(ANIMAL_RSRC_DST)
+	copy $(ANIMAL_RSRC_SRC)\*.clp $(ANIMAL_RSRC_DST)
+	jar -cfe AnimalDemo.jar $(ANIMAL_CLASS) $(ANIMAL_BIN)\$(ANIMAL_CP)\AnimalDemo.class -C $(ANIMAL_BIN) net 
+	jar -uf AnimalDemo.jar -C $(JNI_BIN) net
+
+auto :
+	if not exist $(AUTO_RSRC_DST) mkdir $(AUTO_RSRC_DST)
+	javac -d $(AUTO_BIN) -cp CLIPSJNI.jar $(AUTO_SRC)\AutoDemo.java
+	copy $(AUTO_RSRC_SRC)\*.properties $(AUTO_RSRC_DST)
+	copy $(AUTO_RSRC_SRC)\*.clp $(AUTO_RSRC_DST)
+	jar -cfe AutoDemo.jar $(AUTO_CLASS) $(AUTO_BIN)\$(AUTO_CP)\AutoDemo.class -C $(AUTO_BIN) net 
+	jar -uf AutoDemo.jar -C $(JNI_BIN) net
+
+sudoku :
+	if not exist $(SUDOKU_RSRC_DST) mkdir $(SUDOKU_RSRC_DST)
+	javac -d $(SUDOKU_BIN) -cp CLIPSJNI.jar $(SUDOKU_SRC)\SudokuDemo.java
+	copy $(SUDOKU_RSRC_SRC)\*.properties $(SUDOKU_RSRC_DST)
+	copy $(SUDOKU_RSRC_SRC)\*.clp $(SUDOKU_RSRC_DST)
+	jar -cfe SudokuDemo.jar $(SUDOKU_CLASS) $(SUDOKU_BIN)\$(SUDOKU_CP)\SudokuDemo.class -C $(SUDOKU_BIN) net 
+	jar -uf SudokuDemo.jar -C $(JNI_BIN) net
+
+wine :
+	if not exist $(WINE_RSRC_DST) mkdir $(WINE_RSRC_DST)
+	javac -d $(WINE_BIN) -cp CLIPSJNI.jar $(WINE_SRC)\WineDemo.java
+	copy $(WINE_RSRC_SRC)\*.properties $(WINE_RSRC_DST)
+	copy $(WINE_RSRC_SRC)\*.clp $(WINE_RSRC_DST)
+	jar -cfe WineDemo.jar $(WINE_CLASS) $(WINE_BIN)\$(WINE_CP)\WineDemo.class -C $(WINE_BIN) net 
+	jar -uf WineDemo.jar -C $(JNI_BIN) net
+
+clean :
+	if exist $(JNI_DST) erase /Q $(JNI_DST)\*.class
+	if exist $(JNI_BIN)\net rmdir /Q /S $(JNI_BIN)\net
+	if exist $(ANIMAL_DST) erase /Q $(ANIMAL_DST)\*.class
+	if exist $(ANIMAL_RSRC_DST) erase /Q $(ANIMAL_RSRC_DST)\*.*
+	if exist $(ANIMAL_BIN)\net rmdir /Q /S $(ANIMAL_BIN)\net
+	if exist $(AUTO_DST) erase /Q $(AUTO_DST)\*.class
+	if exist $(AUTO_RSRC_DST) erase /Q $(AUTO_RSRC_DST)\*.*
+	if exist $(AUTO_BIN)\net rmdir /Q /S $(AUTO_BIN)\net
+	if exist $(SUDOKU_DST) erase /Q $(SUDOKU_DST)\*.class
+	if exist $(SUDOKU_RSRC_DST) erase /Q $(SUDOKU_RSRC_DST)\*.*
+	if exist $(SUDOKU_BIN)\net rmdir /Q /S $(SUDOKU_BIN)\net
+	if exist $(WINE_DST) erase /Q $(WINE_DST)\*.class
+	if exist $(WINE_RSRC_DST) erase /Q $(WINE_RSRC_DST)\*.*
+	if exist $(WINE_BIN)\net rmdir /Q /S $(WINE_BIN)\net

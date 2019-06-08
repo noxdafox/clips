@@ -1,0 +1,7 @@
+﻿# Properties Source File for Japanese
+# Generate the properties file from this file using the following command:
+# native2ascii -encoding UTF-8 AutoResources_ja.source AutoResources_ja.properties
+AutoDemo=自動車のデモンストレーション
+Next=次の
+Prev=前の
+Restart=再起動

@@ -1,0 +1,7 @@
+﻿# Properties Source File for Arabic
+# Generate the properties file from this file using the following command:
+# native2ascii -encoding UTF-8 AnimalResources_ar.source AnimalResources_ar.properties
+AnimalDemo=تظاهرة التظاهرة الحيوانيهت
+Next=القادم
+Prev=السابق
+Restart=استأنف
