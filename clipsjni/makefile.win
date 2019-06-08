@@ -1,3 +1,7 @@
+# CLIPS 6.40
+# CLIPSJNI jars
+# Windows 10 with Java 1.8.0_211
+
 JNI_CP = net\sf\clipsrules\jni
 JNI_CLASS = net.sf.clipsrules.jni.Environment
 JNI_BIN = bin\clipsjni
