@@ -1,10 +1,10 @@
 # CLIPS 6.31
 # Linux CLIPSJNI library
-# Ubuntu 16.04 LTS with OpenJDK 1.8.0_211
-# Debian 9.1 with OpenJDK 1.8.0_211
-# Fedora 26 with OpenJDK 1.8.0_211
-# CentOS 7 with OpenJDK 1.8.0_211
-# Mint 18 with OpenJDK 1.8.0_211
+# Ubuntu 16.04 LTS with OpenJDK 1.8.0_212
+# Debian 9.1 with OpenJDK 1.8.0_141
+# Fedora 26 with OpenJDK 1.8.0_141
+# CentOS 7 with OpenJDK 1.8.0_141
+# Mint 18 with OpenJDK 1.8.0_131
 
 # Notes:
 #    -fPIC option needed for 64-bit systems
@@ -61,6 +61,7 @@ OBJS = agenda.o analysis.o argacces.o bload.o bmathfun.o bsave.o \
 
 .c.o :
 	gcc -c -O3 -fPIC -DLINUX -DALLOW_ENVIRONMENT_GLOBALS=0 \
+	    -I$(JAVA_INCLUDE) -I$(JAVA_INCLUDE_OS) \
 	    -Wall -Wundef -Wpointer-arith -Wshadow \
 	    -Winline -Wmissing-declarations -Wredundant-decls \
 	    -Wmissing-prototypes -Wnested-externs \
@@ -68,7 +69,7 @@ OBJS = agenda.o analysis.o argacces.o bload.o bmathfun.o bsave.o \
 
 libCLIPSJNI.so : $(OBJS) net_sf_clipsrules_jni_Environment.c
 	gcc -o libCLIPSJNI.so -fPIC -shared -Wall -I$(JAVA_INCLUDE) -I$(JAVA_INCLUDE_OS) \
-		-lm $(OBJS) net_sf_clipsrules_jni_Environment.c
+		-lm $(OBJS)
 
 net_sf_clipsrules_jni_Environment.o: net_sf_clipsrules_jni_Environment.c \
   net_sf_clipsrules_jni_Environment.h \
