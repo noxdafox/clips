@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/02/18             */
+   /*            CLIPS Version 6.40  06/12/19             */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -271,7 +271,7 @@ void SetupGenericFunctions(
    FuncSeqOvlFlags(theEnv,"call-specific-method",true,false);
    AddUDF(theEnv,"override-next-method","*",0,UNBOUNDED,NULL,OverrideNextMethod,"OverrideNextMethod",NULL);
    FuncSeqOvlFlags(theEnv,"override-next-method",true,false);
-   AddUDF(theEnv,"next-methodp","b",0,0,NULL,NextMethodPCommand,"NextMethodP",NULL);
+   AddUDF(theEnv,"next-methodp","b",0,0,NULL,NextMethodPCommand,"NextMethodPCommand",NULL);
    FuncSeqOvlFlags(theEnv,"next-methodp",true,false);
 
    AddUDF(theEnv,"(gnrc-current-arg)","*",0,UNBOUNDED,NULL,GetGenericCurrentArgument,"GetGenericCurrentArgument",NULL);
