@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*               CLIPS Version 6.31  05/09/19          */
+   /*               CLIPS Version 6.31  06/12/19          */
    /*                                                     */
    /*               CLASS INITIALIZATION MODULE           */
    /*******************************************************/
@@ -381,7 +381,7 @@ globle void ObjectsRunTimeInitialize(
                  tmpexp = ((DATA_OBJECT *) cls->slots[i].defaultValue)->supplementalInfo;
                  ValueDeinstall(theEnv,(DATA_OBJECT *) cls->slots[i].defaultValue);
                  if (theValue->type == MULTIFIELD)
-                   { ReturnMultifield(theEnv,theValue->value); }
+                   { ReturnMultifield(theEnv,(struct multifield *) theValue->value); }
                  rtn_struct(theEnv,dataObject,cls->slots[i].defaultValue);
                  cls->slots[i].defaultValue = tmpexp;
                 }
