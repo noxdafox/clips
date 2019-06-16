@@ -102,7 +102,7 @@
 - (IBAction) showCLIPSDocumentation: (id) sender
   {
    [[NSWorkspace sharedWorkspace] 
-       openURL: [NSURL URLWithString: @"http://clipsrules.sourceforge.net/OnlineDocs.html"]];
+       openURL: [NSURL URLWithString: @"http://www.clipsrules.net/Documentation.html"]];
   }
 
 /*************************************************/
@@ -111,7 +111,7 @@
 - (IBAction) showCLIPSHomePage: (id) sender
   {
    [[NSWorkspace sharedWorkspace] 
-       openURL: [NSURL URLWithString: @"http://clipsrules.sourceforge.net/"]];
+       openURL: [NSURL URLWithString: @"http://www.clipsrules.net"]];
   }
 
 /*****************************************************/
@@ -120,7 +120,7 @@
 - (IBAction) showCLIPSExamples: (id) sender
   {
    [[NSWorkspace sharedWorkspace] 
-       openURL: [NSURL URLWithString: @"https://sourceforge.net/p/clipsrules/code/HEAD/tree/examples/"]];
+       openURL: [NSURL URLWithString: @"https://sourceforge.net/p/clipsrules/code/HEAD/tree/branches/63x/examples/"]];
   }
 
 /*****************************************/
