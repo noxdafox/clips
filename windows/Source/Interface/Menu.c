@@ -356,15 +356,15 @@ void DoHelpChoice(
         break;
 
 	  case ID_HELP_HOME_PAGE:
-		ShellExecute(NULL, "open", "http://clipsrules.sourceforge.net/", NULL, NULL, SW_SHOWNORMAL);
+		ShellExecute(NULL, "open", "http://clipsrules.net/", NULL, NULL, SW_SHOWNORMAL);
 		break; 
 
       case ID_HELP_DOCUMENTATION: 
-		ShellExecute(NULL, "open", "http://clipsrules.sourceforge.net/OnlineDocs.html", NULL, NULL, SW_SHOWNORMAL); 
+		ShellExecute(NULL, "open", "http://clipsrules.net/Documentation.html", NULL, NULL, SW_SHOWNORMAL); 
         break;
 
       case ID_HELP_EXAMPLES: 
-		ShellExecute(NULL, "open", "https://sourceforge.net/p/clipsrules/code/HEAD/tree/examples/", NULL, NULL, SW_SHOWNORMAL); 
+		ShellExecute(NULL, "open", "https://sourceforge.net/p/clipsrules/code/HEAD/tree/branches/63x/examples/", NULL, NULL, SW_SHOWNORMAL); 
         break;
 
 	  case ID_HELP_CLIPSESG:
