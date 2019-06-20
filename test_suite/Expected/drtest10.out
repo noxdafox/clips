@@ -1144,5 +1144,25 @@ CLIPS>
 CLIPS>   
 (deffacts hellos
    (hello))
+CLIPS> (clear) ; Source Ticket #56
+CLIPS> 
+(deftemplate maze
+   (multislot open-list)
+   (slot goal))
+CLIPS> 
+(defrule test-1
+   (maze (open-list)
+         (goal ?g&nil))
+   =>)
+CLIPS> 
+(defrule test-2
+   (maze (open-list) 
+         (goal ?g&:(eq ?g nil)))
+   =>)
+CLIPS> 
+(defrule test-3
+   (maze (open-list) 
+         (goal ~nil))
+   =>)
 CLIPS> (clear)
 CLIPS> (dribble-off)
