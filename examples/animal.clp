@@ -9,7 +9,7 @@
 ;;;     then used to simulate a backward chaining inference
 ;;;     engine.
 ;;;
-;;;     CLIPS Version 6.4 Example
+;;;     CLIPS Version 6.3 Example
 ;;; 
 ;;;     To execute, merely load, reset, and run.
 ;;;     Answer questions yes or no.

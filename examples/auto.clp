@@ -5,7 +5,7 @@
 ;;;     This expert system diagnoses some simple
 ;;;     problems with a car.
 ;;;
-;;;     CLIPS Version 6.4 Example
+;;;     CLIPS Version 6.3 Example
 ;;;
 ;;;     To execute, merely load, reset and run.
 ;;;======================================================
