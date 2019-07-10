@@ -347,12 +347,6 @@
       else if (characterToCheck == ')') 
         { nestingDepth++; }
      }
-
-   /*================================================*/
-   /* Beep to indicate a matching ')' was not found. */
-   /*================================================*/
-   
-   NSBeep();
   }
 
 /***************/
