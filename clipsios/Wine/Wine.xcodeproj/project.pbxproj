@@ -14,10 +14,25 @@
 		1E3644C31CD53121000EAB3E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1E3644C11CD53121000EAB3E /* LaunchScreen.storyboard */; };
 		1E3644D01CD532BC000EAB3E /* CriteriaTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1E3644CB1CD532BC000EAB3E /* CriteriaTableViewController.m */; };
 		1E3644D11CD532BC000EAB3E /* OptionsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1E3644CD1CD532BC000EAB3E /* OptionsTableViewController.m */; };
-		1EB5AE4C1CD559AC00608FEC /* CLIPSiOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1EB5AE4B1CD559AC00608FEC /* CLIPSiOS.framework */; };
 		1EB5AE4F1CD55CFD00608FEC /* wine.clp in Resources */ = {isa = PBXBuildFile; fileRef = 1EB5AE4E1CD55CFD00608FEC /* wine.clp */; };
 		1EB5AE521CD5742800608FEC /* Wine.m in Sources */ = {isa = PBXBuildFile; fileRef = 1EB5AE511CD5742800608FEC /* Wine.m */; };
+		B560BB6C22E63C75008EE3BF /* CLIPSiOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B513AC1822DFAE740073900C /* CLIPSiOS.framework */; };
+		B560BB6D22E63C75008EE3BF /* CLIPSiOS.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B513AC1822DFAE740073900C /* CLIPSiOS.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		B560BB6E22E63C75008EE3BF /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				B560BB6D22E63C75008EE3BF /* CLIPSiOS.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		1E3644B01CD53121000EAB3E /* Wine.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Wine.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -32,10 +47,10 @@
 		1E3644CB1CD532BC000EAB3E /* CriteriaTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CriteriaTableViewController.m; sourceTree = "<group>"; };
 		1E3644CC1CD532BC000EAB3E /* OptionsTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OptionsTableViewController.h; sourceTree = "<group>"; };
 		1E3644CD1CD532BC000EAB3E /* OptionsTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OptionsTableViewController.m; sourceTree = "<group>"; };
-		1EB5AE4B1CD559AC00608FEC /* CLIPSiOS.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = CLIPSiOS.framework; sourceTree = "<group>"; };
 		1EB5AE4E1CD55CFD00608FEC /* wine.clp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = wine.clp; path = Wine/wine.clp; sourceTree = "<group>"; };
 		1EB5AE501CD5742800608FEC /* Wine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Wine.h; sourceTree = "<group>"; };
 		1EB5AE511CD5742800608FEC /* Wine.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Wine.m; sourceTree = "<group>"; };
+		B513AC1822DFAE740073900C /* CLIPSiOS.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = CLIPSiOS.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -43,7 +58,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1EB5AE4C1CD559AC00608FEC /* CLIPSiOS.framework in Frameworks */,
+				B560BB6C22E63C75008EE3BF /* CLIPSiOS.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -70,7 +85,7 @@
 		1E3644B21CD53121000EAB3E /* Wine */ = {
 			isa = PBXGroup;
 			children = (
-				1EB5AE4B1CD559AC00608FEC /* CLIPSiOS.framework */,
+				B513AC1822DFAE740073900C /* CLIPSiOS.framework */,
 				1E3644B61CD53121000EAB3E /* AppDelegate.h */,
 				1E3644B71CD53121000EAB3E /* AppDelegate.m */,
 				1E3644CA1CD532BC000EAB3E /* CriteriaTableViewController.h */,
@@ -114,6 +129,7 @@
 				1E3644AC1CD53121000EAB3E /* Sources */,
 				1E3644AD1CD53121000EAB3E /* Frameworks */,
 				1E3644AE1CD53121000EAB3E /* Resources */,
+				B560BB6E22E63C75008EE3BF /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -130,7 +146,7 @@
 		1E3644A81CD53121000EAB3E /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0730;
+				LastUpgradeCheck = 1020;
 				ORGANIZATIONNAME = CLIPS;
 				TargetAttributes = {
 					1E3644AF1CD53121000EAB3E = {
@@ -140,7 +156,7 @@
 			};
 			buildConfigurationList = 1E3644AB1CD53121000EAB3E /* Build configuration list for PBXProject "Wine" */;
 			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
@@ -209,20 +225,32 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
@@ -242,7 +270,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -254,23 +282,35 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -281,7 +321,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
