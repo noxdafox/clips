@@ -331,7 +331,7 @@
 					"$(PROJECT_DIR)/Auto",
 				);
 				INFOPLIST_FILE = Auto/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.secretsocietysoftware.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = Auto;
@@ -349,7 +349,7 @@
 					"$(PROJECT_DIR)/Auto",
 				);
 				INFOPLIST_FILE = Auto/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.secretsocietysoftware.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = Auto;
