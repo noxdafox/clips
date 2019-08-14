@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  05/03/19             */
+   /*            CLIPS Version 6.40  08/14/19             */
    /*                                                     */
    /*               INSTANCE COMMAND MODULE               */
    /*******************************************************/
@@ -458,8 +458,8 @@ UnmakeInstanceError UnmakeAllInstances(
 /*******************************************************************
   NAME         : UnmakeInstance
   DESCRIPTION  : Removes a named instance via message-passing
-  INPUTS       : The instance address (NULL to delete all instances)
-  RETURNS      : Error code (UE_NO_ERROR if successful)
+  INPUTS       : The instance address
+  RETURNS      : Error code (UIE_NO_ERROR if successful)
   SIDE EFFECTS : Instance is deallocated
   NOTES        : C interface for deleting instances
  *******************************************************************/
