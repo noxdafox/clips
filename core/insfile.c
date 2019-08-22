@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  05/03/19             */
+   /*            CLIPS Version 6.40  08/22/19             */
    /*                                                     */
    /*         INSTANCE LOAD/SAVE (ASCII/BINARY) MODULE    */
    /*******************************************************/
@@ -74,6 +74,9 @@
 /*                                                           */
 /*            Moved BufferedRead and FreeReadBuffer from     */
 /*            insfile.c to utility.c                         */
+/*                                                           */
+/*            SaveInstances and BinarySaveInstances now      */
+/*            return -1 instead of 0 if an error occurs.     */
 /*                                                           */
 /*************************************************************/
 
@@ -545,7 +548,7 @@ long SaveInstancesDriver(
    classList = ProcessSaveClassList(theEnv,"save-instances",classExpressionList,
                                     saveCode,inheritFlag);
    if ((classList == NULL) && (classExpressionList != NULL))
-     return(0L);
+     return -1L;
 
    SaveOrMarkInstances(theEnv,sfile,saveCode,classList,
                              inheritFlag,true,NULL);
@@ -555,7 +558,7 @@ long SaveInstancesDriver(
       OpenErrorMessage(theEnv,"save-instances",file);
       ReturnSaveClassList(theEnv,classList);
       SetEvaluationError(theEnv,true);
-      return(0L);
+      return -1L;
      }
 
    oldPEC = PrintUtilityData(theEnv)->PreserveEscapedCharacters;
@@ -657,7 +660,7 @@ long BinarySaveInstancesDriver(
    classList = ProcessSaveClassList(theEnv,"bsave-instances",classExpressionList,
                                     saveCode,inheritFlag);
    if ((classList == NULL) && (classExpressionList != NULL))
-     return(0L);
+     return -1L;
 
    UtilityData(theEnv)->BinaryFileSize = 0L;
    InitAtomicValueNeededFlags(theEnv);
@@ -669,7 +672,7 @@ long BinarySaveInstancesDriver(
       OpenErrorMessage(theEnv,"bsave-instances",file);
       ReturnSaveClassList(theEnv,classList);
       SetEvaluationError(theEnv,true);
-      return(0L);
+      return -1L;
      }
    WriteBinaryHeader(theEnv,bsaveFP);
    WriteNeededAtomicValues(theEnv,bsaveFP);

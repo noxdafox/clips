@@ -110,7 +110,7 @@
 #endif              /* Fedora 26, Mint 18, and CentOS 7.     */
 
 #ifndef DARWIN
-#define DARWIN  0   /* Darwin Mac OS 10.13 with Console */
+#define DARWIN  0   /* Darwin Mac OS 10.14 with Console */
 #endif
 
 #ifndef MAC_XCD
