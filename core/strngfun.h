@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  10/26/17            */
+   /*             CLIPS Version 6.40  08/27/19            */
    /*                                                     */
    /*          STRING_TYPE FUNCTIONS HEADER FILE          */
    /*******************************************************/
@@ -49,6 +49,8 @@
 /*                                                           */
 /*            UDF redesign.                                  */
 /*                                                           */
+/*            Added str-replace function.                    */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_strngfun
@@ -89,11 +91,6 @@ typedef enum
    void                           BuildFunction(Environment *,UDFContext *,UDFValue *);
    void                           StringToFieldFunction(Environment *,UDFContext *,UDFValue *);
    void                           StringToField(Environment *,const char *,UDFValue *);
+   void                           StrReplaceFunction(Environment *,UDFContext *,UDFValue *);
 
 #endif /* _H_strngfun */
-
-
-
-
-
-
