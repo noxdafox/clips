@@ -211,6 +211,21 @@
 (format nil "%0.6f" (atan 0))      ; 10.6.2.1 : 0.0
 (format nil "%0.6f" (atan -1.0))   ; 10.6.2.1 : -0.785398
 (format nil "%0.6f" (atan 0.5))    ; 10.6.2.1 : 0.463648
+(atan2)                             
+(atan2 a)                          
+(atan2 1 [b])         
+(atan2 1 2 3)             
+(atan2 0 0)
+(atan2 0.0 0.0)
+(format nil "%0.6f" (atan2 -11 1))  ; -1.480136
+(format nil "%0.6f" (atan2 11 1))   ; 1.480136
+(format nil "%0.6f" (atan2 1 1))    ; 0.785398
+(format nil "%0.6f" (atan2 1 -1))   ; 2.356194
+(format nil "%0.6f" (atan2 -1 -1))  ; -2.356194
+(format nil "%0.6f" (atan2 -1 1))   ; -0.785398
+(format nil "%0.6f" (atan2 1 0))    ; 1.570796
+(format nil "%0.6f" (atan2 -1 0))   ; -1.570796
+(format nil "%0.6f" (atan2 0.5 1))  ; 0.463648
 (atanh)                            ; 10.6.2.1
 (atanh a)                          ; 10.6.2.1
 (atanh 1 [b])                      ; 10.6.2.1

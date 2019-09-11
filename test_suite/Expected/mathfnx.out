@@ -435,6 +435,38 @@ CLIPS> (format nil "%0.6f" (atan -1.0))   ; 10.6.2.1 : -0.785398
 "-0.785398"
 CLIPS> (format nil "%0.6f" (atan 0.5))    ; 10.6.2.1 : 0.463648
 "0.463648"
+CLIPS> (atan2)                             
+[ARGACCES1] Function 'atan2' expected exactly 2 arguments.
+CLIPS> (atan2 a)                          
+[ARGACCES1] Function 'atan2' expected exactly 2 arguments.
+CLIPS> (atan2 1 [b])         
+[ARGACCES2] Function 'atan2' expected argument #2 to be of type integer or float.
+CLIPS> (atan2 1 2 3)             
+[ARGACCES1] Function 'atan2' expected exactly 2 arguments.
+CLIPS> (atan2 0 0)
+[EMATHFUN1] Domain error for 'atan2' function.
+0.0
+CLIPS> (atan2 0.0 0.0)
+[EMATHFUN1] Domain error for 'atan2' function.
+0.0
+CLIPS> (format nil "%0.6f" (atan2 -11 1))  ; -1.480136
+"-1.480136"
+CLIPS> (format nil "%0.6f" (atan2 11 1))   ; 1.480136
+"1.480136"
+CLIPS> (format nil "%0.6f" (atan2 1 1))    ; 0.785398
+"0.785398"
+CLIPS> (format nil "%0.6f" (atan2 1 -1))   ; 2.356194
+"2.356194"
+CLIPS> (format nil "%0.6f" (atan2 -1 -1))  ; -2.356194
+"-2.356194"
+CLIPS> (format nil "%0.6f" (atan2 -1 1))   ; -0.785398
+"-0.785398"
+CLIPS> (format nil "%0.6f" (atan2 1 0))    ; 1.570796
+"1.570796"
+CLIPS> (format nil "%0.6f" (atan2 -1 0))   ; -1.570796
+"-1.570796"
+CLIPS> (format nil "%0.6f" (atan2 0.5 1))  ; 0.463648
+"0.463648"
 CLIPS> (atanh)                            ; 10.6.2.1
 [ARGACCES1] Function 'atanh' expected exactly 1 argument.
 CLIPS> (atanh a)                          ; 10.6.2.1

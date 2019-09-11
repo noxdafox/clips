@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  08/25/16            */
+   /*             CLIPS Version 6.40  09/09/19            */
    /*                                                     */
    /*          EXTENDED MATH FUNCTIONS HEADER FILE        */
    /*******************************************************/
@@ -9,10 +9,10 @@
 /*************************************************************/
 /* Purpose: Contains the code for numerous extended math     */
 /*   functions including cos, sin, tan, sec, csc, cot, acos, */
-/*   asin, atan, asec, acsc, acot, cosh, sinh, tanh, sech,   */
-/*   csch, coth, acosh, asinh, atanh, asech, acsch, acoth,   */
-/*   mod, exp, log, log10, sqrt, pi, deg-rad, rad-deg,       */
-/*   deg-grad, grad-deg, **, and round.                      */
+/*   asin, atan, atan2, asec, acsc, acot, cosh, sinh, tanh,  */
+/*   sech, csch, coth, acosh, asinh, atanh, asech, acsch,    */
+/*   acoth, mod, exp, log, log10, sqrt, pi, deg-rad,         */
+/*   rad-deg,  deg-grad, grad-deg, **, and round.            */
 /*                                                           */
 /* Principal Programmer(s):                                  */
 /*      Gary D. Riley                                        */
@@ -42,6 +42,8 @@
 /*                                                           */
 /*            UDF redesign.                                  */
 /*                                                           */
+/*            Added atan2 function.                          */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_emathfun
@@ -61,6 +63,7 @@
    void                           AcosFunction(Environment *,UDFContext *,UDFValue *);
    void                           AsinFunction(Environment *,UDFContext *,UDFValue *);
    void                           AtanFunction(Environment *,UDFContext *,UDFValue *);
+   void                           Atan2Function(Environment *,UDFContext *,UDFValue *);
    void                           AsecFunction(Environment *,UDFContext *,UDFValue *);
    void                           AcscFunction(Environment *,UDFContext *,UDFValue *);
    void                           AcotFunction(Environment *,UDFContext *,UDFValue *);
