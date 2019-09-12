@@ -725,4 +725,42 @@
 (reset)
 (bload-instances "Temp//drins.bin")
 (send [oav1] print)
+(clear) ; Object pattern matching underflow
+
+(deftemplate range
+   (slot start)
+   (slot finish))
+             
+(deftemplate sequence
+   (multislot elements))
+(defclass container
+   (is-a USER)
+   (multislot contents))
+
+(deffacts defranges
+   (range (start 2) (finish 11))
+   (range (start 12) (finish 19)))
+          
+(deffacts defsequences
+   (sequence (elements 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19)))
+
+(definstances containers
+   (of container 
+      (contents 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19))
+   (of container
+      (contents)))
+
+(defrule eliminate-entire-range
+   (range (start ?start) 
+          (finish ?finish))
+   (sequence (elements ?start $? ?finish))
+   (object (is-a container)
+           (contents $?before ?start $? ?finish $?after)
+           (name ?name))
+   =>
+   (modify-instance ?name
+      (contents $?before 
+      $?after)))
+(reset)
+(run)
 (clear)
