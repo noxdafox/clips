@@ -1,8 +1,9 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="9531" systemVersion="15C50" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14868" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
-        <deployment version="1090" identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="9531"/>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14868"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="CLIPSTextDocument">
@@ -18,27 +19,25 @@
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="135" y="421" width="531" height="418"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1440" height="878"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1417"/>
             <view key="contentView" id="6">
                 <rect key="frame" x="0.0" y="0.0" width="531" height="418"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <scrollView horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" usesPredominantAxisScrolling="NO" id="21">
+                    <scrollView horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="21">
                         <rect key="frame" x="-1" y="-1" width="533" height="387"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <clipView key="contentView" id="xiR-kq-6ds">
+                        <clipView key="contentView" drawsBackground="NO" id="xiR-kq-6ds">
                             <rect key="frame" x="1" y="1" width="516" height="385"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
-                                <textView importsGraphics="NO" richText="NO" findStyle="panel" allowsUndo="YES" usesRuler="YES" usesFontPanel="YES" verticallyResizable="YES" spellingCorrection="YES" smartInsertDelete="YES" id="22" customClass="CLIPSTextView">
+                                <textView importsGraphics="NO" richText="NO" verticallyResizable="YES" usesFontPanel="YES" findStyle="panel" allowsUndo="YES" usesRuler="YES" spellingCorrection="YES" smartInsertDelete="YES" id="22" customClass="CLIPSTextView">
                                     <rect key="frame" x="0.0" y="31" width="516" height="385"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                     <size key="minSize" width="516" height="385"/>
                                     <size key="maxSize" width="533" height="10000000"/>
                                     <color key="insertionPointColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                                    <size key="minSize" width="516" height="385"/>
-                                    <size key="maxSize" width="533" height="10000000"/>
                                     <connections>
                                         <binding destination="23" name="fontName" keyPath="values.editorTextFontName" id="25"/>
                                         <binding destination="23" name="fontSize" keyPath="values.editorTextFontSize" previousBinding="25" id="27"/>
@@ -46,7 +45,6 @@
                                     </connections>
                                 </textView>
                             </subviews>
-                            <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         </clipView>
                         <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" doubleValue="1" horizontal="YES" id="156">
                             <rect key="frame" x="-100" y="-100" width="87" height="18"/>
@@ -57,9 +55,8 @@
                             <autoresizingMask key="autoresizingMask"/>
                         </scroller>
                     </scrollView>
-                    <button id="132">
-                        <rect key="frame" x="8" y="388" width="44" height="23"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <button translatesAutoresizingMaskIntoConstraints="NO" id="132">
+                        <rect key="frame" x="8" y="376" width="44" height="35"/>
                         <buttonCell key="cell" type="bevel" bezelStyle="regularSquare" image="CogUp" imagePosition="above" alignment="center" alternateImage="CogDown" id="154">
                             <behavior key="behavior" lightByContents="YES"/>
                             <font key="font" metaFont="system" size="10"/>
@@ -68,9 +65,8 @@
                             <action selector="performClick:" target="133" id="138"/>
                         </connections>
                     </button>
-                    <popUpButton hidden="YES" verticalHuggingPriority="750" id="133" userLabel="Popup Menu">
+                    <popUpButton hidden="YES" verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="133" userLabel="Popup Menu">
                         <rect key="frame" x="6" y="390" width="31" height="22"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <popUpButtonCell key="cell" type="push" title="Item1" bezelStyle="rounded" alignment="left" controlSize="small" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" inset="2" pullsDown="YES" arrowPosition="arrowAtCenter" preferredEdge="maxY" id="155" userLabel="PopupButtonCell">
                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="smallSystem"/>
@@ -114,11 +110,22 @@
                         </connections>
                     </popUpButton>
                 </subviews>
+                <constraints>
+                    <constraint firstItem="21" firstAttribute="leading" secondItem="6" secondAttribute="leading" constant="-1" id="3PW-se-kmg"/>
+                    <constraint firstItem="133" firstAttribute="top" secondItem="6" secondAttribute="top" constant="7" id="5pF-Ww-6ea"/>
+                    <constraint firstAttribute="bottom" secondItem="21" secondAttribute="bottom" constant="-1" id="Hwy-pc-xEd"/>
+                    <constraint firstItem="21" firstAttribute="top" secondItem="6" secondAttribute="top" constant="32" id="IJu-dH-AAn"/>
+                    <constraint firstAttribute="trailing" secondItem="21" secondAttribute="trailing" constant="-1" id="WQf-ti-kjp"/>
+                    <constraint firstItem="132" firstAttribute="leading" secondItem="6" secondAttribute="leading" constant="8" id="cfE-tI-Ndm"/>
+                    <constraint firstItem="132" firstAttribute="top" secondItem="6" secondAttribute="top" constant="7" id="eoH-7a-hZw"/>
+                    <constraint firstItem="133" firstAttribute="leading" secondItem="6" secondAttribute="leading" constant="9" id="oPN-1G-vAb"/>
+                </constraints>
             </view>
             <connections>
                 <outlet property="delegate" destination="-2" id="17"/>
                 <outlet property="initialFirstResponder" destination="22" id="43"/>
             </connections>
+            <point key="canvasLocation" x="141" y="147"/>
         </window>
         <userDefaultsController representsSharedInstance="YES" id="23" userLabel="Shared Defaults"/>
         <objectController id="44">

@@ -1,8 +1,9 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="9531" systemVersion="15C50" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14868" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
-        <deployment version="1090" identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="9531"/>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14868"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="CLIPSFactController">
@@ -26,29 +27,29 @@
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="500" y="359" width="550" height="232"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1178"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1417"/>
             <value key="minSize" type="size" width="500" height="150"/>
             <view key="contentView" id="6">
                 <rect key="frame" x="0.0" y="0.0" width="550" height="232"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <progressIndicator wantsLayer="YES" horizontalHuggingPriority="750" verticalHuggingPriority="750" maxValue="100" displayedWhenStopped="NO" bezeled="NO" indeterminate="YES" controlSize="small" style="spinning" id="150">
+                    <progressIndicator wantsLayer="YES" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" maxValue="100" displayedWhenStopped="NO" bezeled="NO" indeterminate="YES" controlSize="small" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="150">
                         <rect key="frame" x="529" y="206" width="16" height="16"/>
                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES"/>
                     </progressIndicator>
-                    <splitView vertical="YES" id="177">
+                    <splitView fixedFrame="YES" vertical="YES" translatesAutoresizingMaskIntoConstraints="NO" id="177">
                         <rect key="frame" x="0.0" y="20" width="552" height="175"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <scrollView horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" id="16">
+                            <scrollView fixedFrame="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" id="16">
                                 <rect key="frame" x="0.0" y="0.0" width="121" height="175"/>
                                 <autoresizingMask key="autoresizingMask"/>
-                                <clipView key="contentView" id="5ON-jd-dtr">
+                                <clipView key="contentView" ambiguous="YES" id="5ON-jd-dtr">
                                     <rect key="frame" x="1" y="0.0" width="104" height="159"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" multipleSelection="NO" emptySelection="NO" autosaveColumns="NO" headerView="297" id="17">
-                                            <rect key="frame" x="0.0" y="0.0" width="104" height="19"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="104" height="136"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <size key="intercellSpacing" width="3" height="2"/>
                                             <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -84,7 +85,6 @@
                                             </connections>
                                         </tableView>
                                     </subviews>
-                                    <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </clipView>
                                 <scroller key="horizontalScroller" verticalHuggingPriority="750" horizontal="YES" id="296">
                                     <rect key="frame" x="1" y="159" width="104" height="15"/>
@@ -102,15 +102,15 @@
                                     <outlet property="nextKeyView" destination="21" id="266"/>
                                 </connections>
                             </scrollView>
-                            <scrollView horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" id="20">
+                            <scrollView fixedFrame="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" id="20">
                                 <rect key="frame" x="130" y="0.0" width="176" height="175"/>
                                 <autoresizingMask key="autoresizingMask"/>
-                                <clipView key="contentView" id="C7q-4u-UcN">
+                                <clipView key="contentView" ambiguous="YES" id="C7q-4u-UcN">
                                     <rect key="frame" x="1" y="0.0" width="159" height="159"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" multipleSelection="NO" autosaveColumns="NO" headerView="300" id="21">
-                                            <rect key="frame" x="0.0" y="0.0" width="159" height="19"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="159" height="136"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <size key="intercellSpacing" width="3" height="2"/>
                                             <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -168,7 +168,6 @@
                                             </connections>
                                         </tableView>
                                     </subviews>
-                                    <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </clipView>
                                 <scroller key="horizontalScroller" verticalHuggingPriority="750" horizontal="YES" id="299">
                                     <rect key="frame" x="1" y="159" width="159" height="15"/>
@@ -186,15 +185,15 @@
                                     <outlet property="nextKeyView" destination="17" id="33"/>
                                 </connections>
                             </scrollView>
-                            <scrollView horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" id="172">
+                            <scrollView fixedFrame="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" id="172">
                                 <rect key="frame" x="315" y="0.0" width="237" height="175"/>
                                 <autoresizingMask key="autoresizingMask"/>
-                                <clipView key="contentView" id="561-ae-XA8">
+                                <clipView key="contentView" ambiguous="YES" id="561-ae-XA8">
                                     <rect key="frame" x="1" y="0.0" width="220" height="159"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnReordering="NO" multipleSelection="NO" autosaveColumns="NO" headerView="303" id="173">
-                                            <rect key="frame" x="0.0" y="0.0" width="220" height="19"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="220" height="136"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <size key="intercellSpacing" width="3" height="2"/>
                                             <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -243,7 +242,6 @@
                                             </connections>
                                         </tableView>
                                     </subviews>
-                                    <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </clipView>
                                 <scroller key="horizontalScroller" verticalHuggingPriority="750" horizontal="YES" id="302">
                                     <rect key="frame" x="1" y="159" width="220" height="15"/>
@@ -265,7 +263,7 @@
                             <real value="250"/>
                         </holdingPriorities>
                     </splitView>
-                    <button id="244">
+                    <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="244">
                         <rect key="frame" x="17" y="205" width="155" height="18"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <buttonCell key="cell" type="check" title="Display Defaulted Values" bezelStyle="regularSquare" imagePosition="left" alignment="left" controlSize="small" state="on" inset="2" id="289">
@@ -276,7 +274,7 @@
                             <action selector="displayDefaultedValues:" target="-2" id="245"/>
                         </connections>
                     </button>
-                    <searchField wantsLayer="YES" verticalHuggingPriority="750" id="272">
+                    <searchField wantsLayer="YES" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="272">
                         <rect key="frame" x="308" y="203" width="208" height="19"/>
                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMinY="YES"/>
                         <searchFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" borderStyle="bezel" placeholderString="search" bezelStyle="round" sendsWholeSearchString="YES" id="290">
@@ -295,6 +293,7 @@
                 <outlet property="delegate" destination="-2" id="25"/>
                 <outlet property="initialFirstResponder" destination="21" id="107"/>
             </connections>
+            <point key="canvasLocation" x="140" y="147"/>
         </window>
         <arrayController editable="NO" preservesSelection="NO" selectsInsertedObjects="NO" avoidsEmptySelection="NO" clearsFilterPredicateOnInsertion="NO" id="197" userLabel="slotValuesController">
             <declaredKeys>

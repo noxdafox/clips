@@ -12,6 +12,10 @@
 #import "CLIPSTerminalController.h"
 #import "CLIPSEnvironment.h"
 
+static void BeforeOpenFunctionGlue(Environment *);
+static void AfterOpenFunctionGlue(Environment *);
+static void ExitInterfaceGlue(Environment *theEnv,int,void *);
+
 /*********************************************/
 /* ClearEnvironmentWindowCommand: H/L access */
 /*   routine for the clear-window command.   */
@@ -114,6 +118,20 @@ int UnreadInterfaceCallback(
    return theChar;
   }
 
+/**********************/
+/* ExitInterfaceGlue: */
+/**********************/
+static void ExitInterfaceGlue(
+  Environment *theEnv,
+  int num,
+  void *context)
+  {
+   CLIPSTerminalController *theController = (__bridge CLIPSTerminalController *) context;
+
+   [[NSApplication sharedApplication] terminate: NULL];
+   [theController exit];
+  }
+
 /**********************************************/
 /* ExitInterfaceCallback: Routine to check an */
 /*   exit from the dialog window to make sure */
@@ -123,12 +141,14 @@ void ExitInterfaceCallback(
   Environment *theEnv,
   int num,
   void *context)
-  {   
-   CLIPSTerminalController *theController = (__bridge CLIPSTerminalController *) context;
-
-   [[NSApplication sharedApplication] terminate: NULL];
-   [theController exit];
-   /* AbortExit(theEnv); */
+  {
+   if ([NSThread isMainThread])
+     { ExitInterfaceGlue(theEnv,num,context); }
+   else
+     {
+      dispatch_sync(dispatch_get_main_queue(),
+                   ^{ ExitInterfaceGlue(theEnv,num,context); });
+     }
   }
     
 /************************/
@@ -200,11 +220,11 @@ void MacPeriodicFunction(
     
    EnablePeriodicFunctions(theEnv,false);
   }
-    
-/**************************************/
-/* MacBeforeOpenFunction:             */
-/**************************************/
-int MacBeforeOpenFunction(
+  
+/***************************/
+/* BeforeOpenFunctionGlue: */
+/***************************/
+void BeforeOpenFunctionGlue(
   Environment *theEnv)
   {
    AppController *theDelegate = [NSApp delegate];
@@ -215,6 +235,33 @@ int MacBeforeOpenFunction(
    [theLock lock];
    
    [[NSFileManager defaultManager] changeCurrentDirectoryPath: [theController currentDirectory]];
+  }
+  
+/**************************/
+/* AfterOpenFunctionGlue: */
+/**************************/
+void AfterOpenFunctionGlue(
+  Environment *theEnv)
+  {
+   AppController *theDelegate = [NSApp delegate];
+   NSLock *theLock = [theDelegate fileOpenLock];
+   
+   [theLock unlock];
+  }
+
+/**************************************/
+/* MacBeforeOpenFunction:             */
+/**************************************/
+int MacBeforeOpenFunction(
+  Environment *theEnv)
+  {
+   if ([NSThread isMainThread])
+     { BeforeOpenFunctionGlue(theEnv); }
+   else
+     {
+      dispatch_sync(dispatch_get_main_queue(),
+                   ^{ BeforeOpenFunctionGlue(theEnv); });
+     }
 
    return true;
   }  
@@ -222,13 +269,16 @@ int MacBeforeOpenFunction(
 /*************************/
 /* MacAfterOpenFunction: */
 /*************************/
-int MacAfterOpenFunction( // TBD bool?
+int MacAfterOpenFunction(
   Environment *theEnv)
   {
-   AppController *theDelegate = [NSApp delegate];
-   NSLock *theLock = [theDelegate fileOpenLock];
-   
-   [theLock unlock];
+   if ([NSThread isMainThread])
+     { AfterOpenFunctionGlue(theEnv); }
+   else
+     {
+      dispatch_sync(dispatch_get_main_queue(),
+                   ^{ AfterOpenFunctionGlue(theEnv); });
+     }
 
    return true;
   } 

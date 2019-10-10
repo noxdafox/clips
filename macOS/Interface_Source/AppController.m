@@ -63,9 +63,9 @@
 - (void) setWatchMenuItemState: (NSMenuItem *) menuItem forItem: (WatchItem) watchItem
   {
    if ([mainEnvironment getWatchState: watchItem])
-     { [menuItem setState: NSOnState]; }
+     { [menuItem setState: NSControlStateValueOn]; }
    else
-     { [menuItem setState: NSOffState]; }
+     { [menuItem setState: NSControlStateValueOff]; }
   }
 
 /*********************/

@@ -1,8 +1,9 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="10117" systemVersion="15G31" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14868" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
-        <deployment version="1090" identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="10117"/>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14868"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="CLIPSAgendaController">
@@ -36,19 +37,19 @@
                 <rect key="frame" x="0.0" y="0.0" width="733" height="232"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <splitView vertical="YES" id="37">
+                    <splitView fixedFrame="YES" vertical="YES" translatesAutoresizingMaskIntoConstraints="NO" id="37">
                         <rect key="frame" x="0.0" y="20" width="733" height="171"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <scrollView horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" id="16">
+                            <scrollView fixedFrame="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" id="16">
                                 <rect key="frame" x="0.0" y="0.0" width="162" height="171"/>
                                 <autoresizingMask key="autoresizingMask"/>
-                                <clipView key="contentView" id="THS-QX-2Xy">
+                                <clipView key="contentView" ambiguous="YES" id="THS-QX-2Xy">
                                     <rect key="frame" x="1" y="0.0" width="145" height="155"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" multipleSelection="NO" emptySelection="NO" autosaveColumns="NO" headerView="218" id="17">
-                                            <rect key="frame" x="0.0" y="0.0" width="145" height="19"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="145" height="132"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <size key="intercellSpacing" width="3" height="2"/>
                                             <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -84,7 +85,6 @@
                                             </connections>
                                         </tableView>
                                     </subviews>
-                                    <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </clipView>
                                 <scroller key="horizontalScroller" verticalHuggingPriority="750" horizontal="YES" id="217">
                                     <rect key="frame" x="1" y="155" width="145" height="15"/>
@@ -99,15 +99,15 @@
                                     <autoresizingMask key="autoresizingMask"/>
                                 </tableHeaderView>
                             </scrollView>
-                            <scrollView horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" id="20">
+                            <scrollView fixedFrame="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" id="20">
                                 <rect key="frame" x="171" y="0.0" width="562" height="171"/>
                                 <autoresizingMask key="autoresizingMask"/>
-                                <clipView key="contentView" id="8fM-5U-MaI">
+                                <clipView key="contentView" ambiguous="YES" id="8fM-5U-MaI">
                                     <rect key="frame" x="1" y="0.0" width="545" height="155"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" multipleSelection="NO" autosaveColumns="NO" headerView="221" id="21">
-                                            <rect key="frame" x="0.0" y="0.0" width="545" height="19"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="545" height="132"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <size key="intercellSpacing" width="3" height="2"/>
                                             <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -186,7 +186,6 @@
                                             </connections>
                                         </tableView>
                                     </subviews>
-                                    <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </clipView>
                                 <scroller key="horizontalScroller" verticalHuggingPriority="750" horizontal="YES" id="220">
                                     <rect key="frame" x="1" y="155" width="545" height="15"/>
@@ -210,7 +209,7 @@
                             <real value="250"/>
                         </holdingPriorities>
                     </splitView>
-                    <button verticalHuggingPriority="750" id="97">
+                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="97">
                         <rect key="frame" x="83" y="198" width="70" height="28"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <buttonCell key="cell" type="push" title="Run" bezelStyle="rounded" alignment="center" controlSize="small" borderStyle="border" inset="2" id="207">
@@ -221,7 +220,7 @@
                             <action selector="run:" target="-2" id="99"/>
                         </connections>
                     </button>
-                    <button verticalHuggingPriority="750" id="98">
+                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="98">
                         <rect key="frame" x="151" y="198" width="70" height="28"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <buttonCell key="cell" type="push" title="Step" bezelStyle="rounded" alignment="center" controlSize="small" borderStyle="border" inset="2" id="208">
@@ -232,7 +231,7 @@
                             <action selector="step:" target="-2" id="100"/>
                         </connections>
                     </button>
-                    <button verticalHuggingPriority="750" id="112">
+                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="112">
                         <rect key="frame" x="15" y="198" width="70" height="28"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <buttonCell key="cell" type="push" title="Reset" bezelStyle="rounded" alignment="center" controlSize="small" borderStyle="border" inset="2" id="209">
@@ -243,7 +242,7 @@
                             <action selector="reset:" target="-2" id="113"/>
                         </connections>
                     </button>
-                    <button hidden="YES" id="123">
+                    <button hidden="YES" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="123">
                         <rect key="frame" x="312" y="199" width="44" height="23"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <buttonCell key="cell" type="bevel" bezelStyle="regularSquare" image="CogUp" imagePosition="above" alignment="center" alternateImage="CogDown" enabled="NO" id="210">
@@ -254,7 +253,7 @@
                             <action selector="performClick:" target="124" id="134"/>
                         </connections>
                     </button>
-                    <popUpButton hidden="YES" verticalHuggingPriority="750" id="124" userLabel="Activation menu">
+                    <popUpButton hidden="YES" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="124" userLabel="Activation menu">
                         <rect key="frame" x="310" y="201" width="31" height="22"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <popUpButtonCell key="cell" type="push" title="Item1" bezelStyle="rounded" alignment="left" controlSize="small" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" inset="2" pullsDown="YES" arrowPosition="arrowAtCenter" preferredEdge="maxY" id="211">
@@ -273,11 +272,11 @@
                             </menu>
                         </popUpButtonCell>
                     </popUpButton>
-                    <progressIndicator wantsLayer="YES" horizontalHuggingPriority="750" verticalHuggingPriority="750" maxValue="100" displayedWhenStopped="NO" bezeled="NO" indeterminate="YES" controlSize="small" style="spinning" id="150">
+                    <progressIndicator wantsLayer="YES" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" maxValue="100" displayedWhenStopped="NO" bezeled="NO" indeterminate="YES" controlSize="small" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="150">
                         <rect key="frame" x="712" y="206" width="16" height="16"/>
                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES"/>
                     </progressIndicator>
-                    <button verticalHuggingPriority="750" id="152">
+                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="152">
                         <rect key="frame" x="219" y="198" width="80" height="28"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <buttonCell key="cell" type="push" title="Halt Rules" bezelStyle="rounded" alignment="center" controlSize="small" borderStyle="border" inset="2" id="212">

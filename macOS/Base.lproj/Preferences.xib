@@ -1,8 +1,9 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="9532" systemVersion="15D21" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14868" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
-        <deployment version="1090" identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="9532"/>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14868"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="PreferenceController">
@@ -17,22 +18,22 @@
             <windowStyleMask key="styleMask" titled="YES" closable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="100" y="100" width="547" height="303"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1440" height="878"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1417"/>
             <view key="contentView" id="6">
                 <rect key="frame" x="0.0" y="0.0" width="547" height="303"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <tabView id="7">
+                    <tabView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="7">
                         <rect key="frame" x="13" y="54" width="521" height="243"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <font key="font" metaFont="system"/>
                         <tabViewItems>
                             <tabViewItem label="Dialog" identifier="dialog" id="84">
-                                <view key="view" id="85">
+                                <view key="view" ambiguous="YES" id="85">
                                     <rect key="frame" x="10" y="33" width="501" height="197"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
-                                        <textField verticalHuggingPriority="750" id="86">
+                                        <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="86">
                                             <rect key="frame" x="17" y="160" width="41" height="17"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="Font:" id="201">
@@ -41,7 +42,7 @@
                                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
                                         </textField>
-                                        <button verticalHuggingPriority="750" id="87">
+                                        <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="87">
                                             <rect key="frame" x="58" y="150" width="100" height="32"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <buttonCell key="cell" type="push" title="Change..." bezelStyle="rounded" alignment="center" borderStyle="border" inset="2" id="202">
@@ -52,7 +53,7 @@
                                                 <action selector="changeEditorFont:" target="-2" id="89"/>
                                             </connections>
                                         </button>
-                                        <textField verticalHuggingPriority="750" id="88">
+                                        <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="88">
                                             <rect key="frame" x="29" y="69" width="275" height="81"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="Font Name" id="203">
@@ -61,6 +62,7 @@
                                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
                                             <connections>
+                                                <binding destination="101" name="fontName" keyPath="values.dialogTextFontName" id="ByQ-CB-sGu"/>
                                                 <binding destination="101" name="displayPatternValue1" keyPath="values.dialogTextFontName" id="ZUe-so-4o4">
                                                     <dictionary key="options">
                                                         <string key="NSDisplayPattern">%{value1}@ - %{value2}@pt</string>
@@ -72,11 +74,10 @@
                                                         <string key="NSDisplayPattern">%{value1}@ - %{value2}@pt</string>
                                                     </dictionary>
                                                 </binding>
-                                                <binding destination="101" name="fontName" keyPath="values.dialogTextFontName" id="ByQ-CB-sGu"/>
                                                 <binding destination="101" name="fontSize" keyPath="values.dialogTextFontSize" previousBinding="ByQ-CB-sGu" id="VWe-6o-d79"/>
                                             </connections>
                                         </textField>
-                                        <button id="169">
+                                        <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="169">
                                             <rect key="frame" x="18" y="18" width="150" height="18"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <buttonCell key="cell" type="check" title="Balance Parentheses" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="204">
@@ -95,7 +96,7 @@
                                     <rect key="frame" x="10" y="33" width="501" height="197"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
-                                        <textField verticalHuggingPriority="750" id="S3S-dq-8X0">
+                                        <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="S3S-dq-8X0">
                                             <rect key="frame" x="17" y="160" width="41" height="17"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="Font:" id="Gnf-z0-8Da">
@@ -104,7 +105,7 @@
                                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
                                         </textField>
-                                        <button verticalHuggingPriority="750" id="lif-I9-2fp">
+                                        <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="lif-I9-2fp">
                                             <rect key="frame" x="58" y="150" width="100" height="32"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <buttonCell key="cell" type="push" title="Change..." bezelStyle="rounded" alignment="center" borderStyle="border" inset="2" id="8Yp-ae-uA5">
@@ -115,7 +116,7 @@
                                                 <action selector="changeEditorFont:" target="-2" id="uuM-cF-e0T"/>
                                             </connections>
                                         </button>
-                                        <textField verticalHuggingPriority="750" id="3ye-OP-Ere">
+                                        <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="3ye-OP-Ere">
                                             <rect key="frame" x="29" y="69" width="275" height="81"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="Font Name" id="Ayo-5V-Tbr">
@@ -124,6 +125,7 @@
                                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
                                             <connections>
+                                                <binding destination="101" name="fontName" keyPath="values.editorTextFontName" id="dsa-KA-lED"/>
                                                 <binding destination="101" name="displayPatternValue1" keyPath="values.editorTextFontName" id="rVy-R5-yTW">
                                                     <dictionary key="options">
                                                         <string key="NSDisplayPattern">%{value1}@ - %{value2}@pt</string>
@@ -135,11 +137,10 @@
                                                         <string key="NSDisplayPattern">%{value1}@ - %{value2}@pt</string>
                                                     </dictionary>
                                                 </binding>
-                                                <binding destination="101" name="fontName" keyPath="values.editorTextFontName" id="dsa-KA-lED"/>
                                                 <binding destination="101" name="fontSize" keyPath="values.editorTextFontSize" previousBinding="dsa-KA-lED" id="xcq-qm-fMs"/>
                                             </connections>
                                         </textField>
-                                        <button id="Mw1-yi-xec">
+                                        <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Mw1-yi-xec">
                                             <rect key="frame" x="18" y="18" width="150" height="18"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <buttonCell key="cell" type="check" title="Balance Parentheses" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="cj8-YJ-2bz">
@@ -155,7 +156,7 @@
                             </tabViewItem>
                         </tabViewItems>
                     </tabView>
-                    <button toolTip="Revert to default settings" verticalHuggingPriority="750" id="120" userLabel="Defaults">
+                    <button toolTip="Revert to default settings" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="120" userLabel="Defaults">
                         <rect key="frame" x="445" y="12" width="91" height="32"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <buttonCell key="cell" type="push" title="Defaults" bezelStyle="rounded" alignment="center" borderStyle="border" inset="2" id="208">
@@ -171,6 +172,7 @@
             <connections>
                 <outlet property="delegate" destination="-2" id="91"/>
             </connections>
+            <point key="canvasLocation" x="141" y="147"/>
         </window>
         <userDefaultsController representsSharedInstance="YES" id="101" userLabel="Shared Defaults"/>
     </objects>

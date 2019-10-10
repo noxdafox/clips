@@ -49,7 +49,7 @@
    /* the menu to display immediately when the mouse button goes down.    */
    /*=====================================================================*/
    
-   [popupActivator sendActionOn: NSLeftMouseDownMask];
+   [popupActivator sendActionOn: NSEventMaskLeftMouseDown];
          
    /*======================================================*/
    /* Places a few pixels of white space between the edges */

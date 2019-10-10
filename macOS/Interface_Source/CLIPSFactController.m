@@ -70,13 +70,13 @@
    if ([[theValues valueForKey: @"factsDisplayDefaultedValues"] boolValue]) 
      { 
       [self setValue: nil forKey: @"slotFilter"]; 
-      [displayDefaultedValuesButton setState: NSOnState];
+      [displayDefaultedValuesButton setState: NSControlStateValueOn];
      }
    else
      {
       NSPredicate *predicate = [NSPredicate predicateWithFormat: @"slotDefault = TRUE"]; 
       [self setValue: predicate forKey: @"slotFilter"]; 
-      [displayDefaultedValuesButton setState: NSOffState];
+      [displayDefaultedValuesButton setState: NSControlStateValueOff];
      }
 
    /*=================================================*/

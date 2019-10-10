@@ -184,12 +184,12 @@
    
    // Is there a string on the pasteboard?
    
-   type = [pb availableTypeFromArray: [NSArray arrayWithObject: NSStringPboardType]];
+   type = [pb availableTypeFromArray: [NSArray arrayWithObject: NSPasteboardTypeString]];
    
    if (type)
      {
       // Read the string from the pasteboard
-      theText = [pb stringForType: NSStringPboardType];
+      theText = [pb stringForType: NSPasteboardTypeString];
       
       [self insertText: theText replacementRange: [self selectedRange]];
       

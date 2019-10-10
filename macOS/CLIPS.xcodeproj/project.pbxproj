@@ -3,15 +3,13 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 46;
+	objectVersion = 50;
 	objects = {
 
 /* Begin PBXBuildFile section */
 		1E278EA31DC5A0F4000D88DD /* fileutil.c in Sources */ = {isa = PBXBuildFile; fileRef = 1E278EA21DC5A0F4000D88DD /* fileutil.c */; };
 		1E278EA61DC5A664000D88DD /* fileutil.c in Sources */ = {isa = PBXBuildFile; fileRef = 1E278EA21DC5A0F4000D88DD /* fileutil.c */; };
-		1E278EA71DC5A67E000D88DD /* fileutil.h in Headers */ = {isa = PBXBuildFile; fileRef = 1E278EA41DC5A136000D88DD /* fileutil.h */; };
 		1E8504BD1DC40D0A00FA75A7 /* envrnbld.c in Sources */ = {isa = PBXBuildFile; fileRef = 1E8504BC1DC40D0A00FA75A7 /* envrnbld.c */; };
-		1E8504C01DC4120400FA75A7 /* envrnbld.h in Headers */ = {isa = PBXBuildFile; fileRef = 1E8504BE1DC40D2900FA75A7 /* envrnbld.h */; };
 		1E8504C11DC4122300FA75A7 /* envrnbld.c in Sources */ = {isa = PBXBuildFile; fileRef = 1E8504BC1DC40D0A00FA75A7 /* envrnbld.c */; };
 		1E86D16A1C321BCD00FAB28F /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1E86D1681C321BA600FAB28F /* MainMenu.xib */; };
 		1EB429371C34B3B500093F7A /* CLIPSAgendaBrowser.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1EB429351C34B3AE00093F7A /* CLIPSAgendaBrowser.xib */; };
@@ -21,27 +19,19 @@
 		1EBA251A1C34C98B0013B169 /* Preferences.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1EB429401C34C83400093F7A /* Preferences.xib */; };
 		1EBA251F1C34CB130013B169 /* CLIPSTerminal.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1EBA251B1C34CB0B0013B169 /* CLIPSTerminal.xib */; };
 		1EBA25201C34CB170013B169 /* CLIPSTextDocument.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1EBA251D1C34CB0B0013B169 /* CLIPSTextDocument.xib */; };
-		1EFA0EFD1DC6984700AE8FAA /* entities.h in Headers */ = {isa = PBXBuildFile; fileRef = 1EFA0EFB1DC6975D00AE8FAA /* entities.h */; };
 		8D15AC2C0486D014006FF6A4 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 2A37F4B9FDCFA73011CA2CEA /* Credits.rtf */; };
 		8D15AC2F0486D014006FF6A4 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165FFE840EACC02AAC07 /* InfoPlist.strings */; };
-		B533575009D72E5900893C2F /* CLIPSConstructInspectorController.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = B533574E09D72E5900893C2F /* CLIPSConstructInspectorController.h */; };
 		B533575109D72E5900893C2F /* CLIPSConstructInspectorController.m in Sources */ = {isa = PBXBuildFile; fileRef = B533574F09D72E5900893C2F /* CLIPSConstructInspectorController.m */; };
 		B53734AE09F946D60086408A /* userfunctions.c in Sources */ = {isa = PBXBuildFile; fileRef = B53734AC09F946D60086408A /* userfunctions.c */; };
-		B53E50CD09B0FD8A00F72EB0 /* CLIPSTerminalView.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = B53E50C909B0FD8A00F72EB0 /* CLIPSTerminalView.h */; };
 		B53E50CE09B0FD8A00F72EB0 /* CLIPSTerminalView.m in Sources */ = {isa = PBXBuildFile; fileRef = B53E50CA09B0FD8A00F72EB0 /* CLIPSTerminalView.m */; };
-		B53E50CF09B0FD8A00F72EB0 /* PreferenceController.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = B53E50CB09B0FD8A00F72EB0 /* PreferenceController.h */; };
 		B53E50D009B0FD8A00F72EB0 /* PreferenceController.m in Sources */ = {isa = PBXBuildFile; fileRef = B53E50CC09B0FD8A00F72EB0 /* PreferenceController.m */; };
-		B53E50DA09B1046500F72EB0 /* CLIPSTerminalController.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = B53E50D809B1046500F72EB0 /* CLIPSTerminalController.h */; };
 		B53E50DB09B1046500F72EB0 /* CLIPSTerminalController.m in Sources */ = {isa = PBXBuildFile; fileRef = B53E50D909B1046500F72EB0 /* CLIPSTerminalController.m */; };
-		B5491E7A0BB18E2C00206EA5 /* ModuleArrayController.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = B5491E780BB18E2C00206EA5 /* ModuleArrayController.h */; };
 		B5491E7B0BB18E2C00206EA5 /* ModuleArrayController.m in Sources */ = {isa = PBXBuildFile; fileRef = B5491E790BB18E2C00206EA5 /* ModuleArrayController.m */; };
 		B549629209BA9D6100697F33 /* CogDown.tiff in Resources */ = {isa = PBXBuildFile; fileRef = B549628F09BA9D6100697F33 /* CogDown.tiff */; };
 		B549629309BA9D6100697F33 /* CogGreyed.tiff in Resources */ = {isa = PBXBuildFile; fileRef = B549629009BA9D6100697F33 /* CogGreyed.tiff */; };
 		B549629409BA9D6100697F33 /* CogUp.tiff in Resources */ = {isa = PBXBuildFile; fileRef = B549629109BA9D6100697F33 /* CogUp.tiff */; };
 		B54DCD591EE1D72400014CEC /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B54DCD581EE1D72400014CEC /* Images.xcassets */; };
-		B571D71B09D5E026003FCD41 /* CLIPSTerminalGlue.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = B571D71909D5E026003FCD41 /* CLIPSTerminalGlue.h */; };
 		B571D72509D5E0D4003FCD41 /* CLIPSTerminalGlue.m in Sources */ = {isa = PBXBuildFile; fileRef = B571D72409D5E0D4003FCD41 /* CLIPSTerminalGlue.m */; };
-		B57AFA0C0BA9F90F002491B9 /* CLIPSModule.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = B57AFA0A0BA9F90F002491B9 /* CLIPSModule.h */; };
 		B57AFA0D0BA9F90F002491B9 /* CLIPSModule.m in Sources */ = {isa = PBXBuildFile; fileRef = B57AFA0B0BA9F90F002491B9 /* CLIPSModule.m */; };
 		B59979A90D4D9B9E00C9B896 /* agenda.c in Sources */ = {isa = PBXBuildFile; fileRef = B5BCEF5B09AD245A000E597B /* agenda.c */; };
 		B59979AA0D4D9B9E00C9B896 /* analysis.c in Sources */ = {isa = PBXBuildFile; fileRef = B5BCEF5D09AD245A000E597B /* analysis.c */; };
@@ -209,17 +199,11 @@
 		B5997A510D4D9B9E00C9B896 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = B5134C1A0B9F9D5A007B3571 /* main.c */; };
 		B59D1400179C5C1A00E1A6C7 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B59D13FF179C5C1A00E1A6C7 /* Cocoa.framework */; };
 		B59D1401179C5C9600E1A6C7 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B59D13FF179C5C1A00E1A6C7 /* Cocoa.framework */; };
-		B5AF77140BA89B360090AC5E /* CLIPSAgendaController.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = B5AF77130BA89B360090AC5E /* CLIPSAgendaController.h */; };
 		B5AF77160BA89B760090AC5E /* CLIPSFactController.m in Sources */ = {isa = PBXBuildFile; fileRef = B5AF77150BA89B750090AC5E /* CLIPSFactController.m */; };
-		B5B1B53A09CDE36A00F76417 /* CLIPSActivation.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = B5B1B53609CDE36A00F76417 /* CLIPSActivation.h */; };
 		B5B1B53B09CDE36A00F76417 /* CLIPSActivation.m in Sources */ = {isa = PBXBuildFile; fileRef = B5B1B53709CDE36A00F76417 /* CLIPSActivation.m */; };
-		B5B1B53C09CDE36A00F76417 /* CLIPSFactController.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = B5B1B53809CDE36A00F76417 /* CLIPSFactController.h */; };
 		B5B1B53D09CDE36A00F76417 /* CLIPSAgendaController.m in Sources */ = {isa = PBXBuildFile; fileRef = B5B1B53909CDE36A00F76417 /* CLIPSAgendaController.m */; };
-		B5B1B54609CDE38600F76417 /* CLIPSFocus.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = B5B1B54009CDE38600F76417 /* CLIPSFocus.h */; };
 		B5B1B54709CDE38600F76417 /* CLIPSFocus.m in Sources */ = {isa = PBXBuildFile; fileRef = B5B1B54109CDE38600F76417 /* CLIPSFocus.m */; };
-		B5B1B54809CDE38600F76417 /* CLIPSTextView.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = B5B1B54209CDE38600F76417 /* CLIPSTextView.h */; };
 		B5B1B54909CDE38600F76417 /* CLIPSTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = B5B1B54309CDE38600F76417 /* CLIPSTextView.m */; };
-		B5B1B57A09CDE69F00F76417 /* CLIPSFactInstance.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = B5B1B57809CDE69F00F76417 /* CLIPSFactInstance.h */; };
 		B5B1B57B09CDE69F00F76417 /* CLIPSFactInstance.m in Sources */ = {isa = PBXBuildFile; fileRef = B5B1B57909CDE69F00F76417 /* CLIPSFactInstance.m */; };
 		B5BCF0AF09AD245B000E597B /* agenda.c in Sources */ = {isa = PBXBuildFile; fileRef = B5BCEF5B09AD245A000E597B /* agenda.c */; };
 		B5BCF0B009AD245B000E597B /* agenda.h in Headers */ = {isa = PBXBuildFile; fileRef = B5BCEF5C09AD245A000E597B /* agenda.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -555,12 +539,15 @@
 		B5BCF20209AD245C000E597B /* watch.h in Headers */ = {isa = PBXBuildFile; fileRef = B5BCF0AE09AD245B000E597B /* watch.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B5BCF3AE09AD30A1000E597B /* CLIPS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B5BCEF5509AD23BF000E597B /* CLIPS.framework */; };
 		B5BCF45F09AD30F4000E597B /* CLIPS.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = B5BCEF5509AD23BF000E597B /* CLIPS.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		B5C123D623467EC4002C945D /* fileutil.h in Headers */ = {isa = PBXBuildFile; fileRef = 1E278EA41DC5A136000D88DD /* fileutil.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B5C123D723467ED1002C945D /* entities.h in Headers */ = {isa = PBXBuildFile; fileRef = 1EFA0EFB1DC6975D00AE8FAA /* entities.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B5C123D823467EEF002C945D /* envrnbld.h in Headers */ = {isa = PBXBuildFile; fileRef = 1E8504BE1DC40D2900FA75A7 /* envrnbld.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B5C123D92346811C002C945D /* factfile.h in Headers */ = {isa = PBXBuildFile; fileRef = B5FA5D4D226131DE00FCEF99 /* factfile.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B5CE5D870D7DB62B002166A8 /* CLIPSInstanceController.m in Sources */ = {isa = PBXBuildFile; fileRef = B5CE5D860D7DB62B002166A8 /* CLIPSInstanceController.m */; };
-		B5FB532109AD41E2001AE877 /* CLIPSEnvironment.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = B5FB531709AD41E2001AE877 /* CLIPSEnvironment.h */; };
+		B5FA5D4C2261317800FCEF99 /* factfile.c in Sources */ = {isa = PBXBuildFile; fileRef = B5FA5D4B2261317800FCEF99 /* factfile.c */; };
+		B5FA5D622261401400FCEF99 /* factfile.c in Sources */ = {isa = PBXBuildFile; fileRef = B5FA5D4B2261317800FCEF99 /* factfile.c */; };
 		B5FB532209AD41E2001AE877 /* CLIPSEnvironment.m in Sources */ = {isa = PBXBuildFile; fileRef = B5FB531809AD41E2001AE877 /* CLIPSEnvironment.m */; };
-		B5FB532509AD41E2001AE877 /* CLIPSTextDocument.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = B5FB531B09AD41E2001AE877 /* CLIPSTextDocument.h */; };
 		B5FB532609AD41E2001AE877 /* CLIPSTextDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = B5FB531C09AD41E2001AE877 /* CLIPSTextDocument.m */; };
-		B5FB532709AD41E2001AE877 /* AppController.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = B5FB531D09AD41E2001AE877 /* AppController.h */; };
 		B5FB532809AD41E2001AE877 /* AppController.m in Sources */ = {isa = PBXBuildFile; fileRef = B5FB531E09AD41E2001AE877 /* AppController.m */; };
 		B5FB532C09AD4203001AE877 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = B5FB532B09AD4203001AE877 /* main.m */; };
 /* End PBXBuildFile section */
@@ -583,43 +570,17 @@
 			dstSubfolderSpec = 10;
 			files = (
 				B5BCF45F09AD30F4000E597B /* CLIPS.framework in CopyFiles */,
-				B5FB532109AD41E2001AE877 /* CLIPSEnvironment.h in CopyFiles */,
-				B5FB532509AD41E2001AE877 /* CLIPSTextDocument.h in CopyFiles */,
-				B5FB532709AD41E2001AE877 /* AppController.h in CopyFiles */,
-				B53E50CD09B0FD8A00F72EB0 /* CLIPSTerminalView.h in CopyFiles */,
-				B53E50CF09B0FD8A00F72EB0 /* PreferenceController.h in CopyFiles */,
-				B53E50DA09B1046500F72EB0 /* CLIPSTerminalController.h in CopyFiles */,
-				B5B1B53A09CDE36A00F76417 /* CLIPSActivation.h in CopyFiles */,
-				B5B1B53C09CDE36A00F76417 /* CLIPSFactController.h in CopyFiles */,
-				B5B1B54609CDE38600F76417 /* CLIPSFocus.h in CopyFiles */,
-				B5B1B54809CDE38600F76417 /* CLIPSTextView.h in CopyFiles */,
-				B5B1B57A09CDE69F00F76417 /* CLIPSFactInstance.h in CopyFiles */,
-				B571D71B09D5E026003FCD41 /* CLIPSTerminalGlue.h in CopyFiles */,
-				B533575009D72E5900893C2F /* CLIPSConstructInspectorController.h in CopyFiles */,
-				B5AF77140BA89B360090AC5E /* CLIPSAgendaController.h in CopyFiles */,
-				B57AFA0C0BA9F90F002491B9 /* CLIPSModule.h in CopyFiles */,
-				B5491E7A0BB18E2C00206EA5 /* ModuleArrayController.h in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		089C1660FE840EACC02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		1E278EA21DC5A0F4000D88DD /* fileutil.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = fileutil.c; path = CLIPS_Source/fileutil.c; sourceTree = "<group>"; };
 		1E278EA41DC5A136000D88DD /* fileutil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fileutil.h; path = CLIPS_Source/fileutil.h; sourceTree = "<group>"; };
 		1E8504BC1DC40D0A00FA75A7 /* envrnbld.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = envrnbld.c; path = CLIPS_Source/envrnbld.c; sourceTree = "<group>"; };
 		1E8504BE1DC40D2900FA75A7 /* envrnbld.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = envrnbld.h; path = CLIPS_Source/envrnbld.h; sourceTree = "<group>"; };
-		1E86D1691C321BA600FAB28F /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/MainMenu.xib; sourceTree = "<group>"; };
-		1EB429361C34B3AE00093F7A /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/CLIPSAgendaBrowser.xib; sourceTree = "<group>"; };
-		1EB429391C34C5EE00093F7A /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/CLIPSFactBrowser.xib; sourceTree = "<group>"; };
-		1EB4293B1C34C5EE00093F7A /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/CLIPSInstanceBrowser.xib; sourceTree = "<group>"; };
-		1EB4293F1C34C83400093F7A /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/CLIPSConstructInspector.xib; sourceTree = "<group>"; };
-		1EB429411C34C83400093F7A /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/Preferences.xib; sourceTree = "<group>"; };
-		1EBA251C1C34CB0B0013B169 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/CLIPSTerminal.xib; sourceTree = "<group>"; };
-		1EBA251E1C34CB0B0013B169 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/CLIPSTextDocument.xib; sourceTree = "<group>"; };
 		1EFA0EFB1DC6975D00AE8FAA /* entities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = entities.h; path = CLIPS_Source/entities.h; sourceTree = "<group>"; };
-		2A37F4BAFDCFA73011CA2CEA /* English */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = English; path = English.lproj/Credits.rtf; sourceTree = "<group>"; };
 		B5134C1A0B9F9D5A007B3571 /* main.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = main.c; path = CLIPS_Source/main.c; sourceTree = "<group>"; };
 		B533574E09D72E5900893C2F /* CLIPSConstructInspectorController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = CLIPSConstructInspectorController.h; path = Interface_Source/CLIPSConstructInspectorController.h; sourceTree = "<group>"; };
 		B533574F09D72E5900893C2F /* CLIPSConstructInspectorController.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = CLIPSConstructInspectorController.m; path = Interface_Source/CLIPSConstructInspectorController.m; sourceTree = "<group>"; };
@@ -989,6 +950,18 @@
 		B5BCF0AE09AD245B000E597B /* watch.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = watch.h; path = CLIPS_Source/watch.h; sourceTree = "<group>"; };
 		B5CE5D850D7DB62B002166A8 /* CLIPSInstanceController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = CLIPSInstanceController.h; path = Interface_Source/CLIPSInstanceController.h; sourceTree = "<group>"; };
 		B5CE5D860D7DB62B002166A8 /* CLIPSInstanceController.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = CLIPSInstanceController.m; path = Interface_Source/CLIPSInstanceController.m; sourceTree = "<group>"; };
+		B5FA5D4B2261317800FCEF99 /* factfile.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = factfile.c; path = CLIPS_Source/factfile.c; sourceTree = "<group>"; };
+		B5FA5D4D226131DE00FCEF99 /* factfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = factfile.h; path = CLIPS_Source/factfile.h; sourceTree = "<group>"; };
+		B5FA5D5522613FC700FCEF99 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = en; path = en.lproj/Credits.rtf; sourceTree = "<group>"; };
+		B5FA5D5622613FC700FCEF99 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		B5FA5D5922613FD400FCEF99 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/CLIPSAgendaBrowser.xib; sourceTree = "<group>"; };
+		B5FA5D5A22613FD400FCEF99 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/CLIPSConstructInspector.xib; sourceTree = "<group>"; };
+		B5FA5D5B22613FD400FCEF99 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/CLIPSFactBrowser.xib; sourceTree = "<group>"; };
+		B5FA5D5C22613FD400FCEF99 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/CLIPSInstanceBrowser.xib; sourceTree = "<group>"; };
+		B5FA5D5D22613FD400FCEF99 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/CLIPSTerminal.xib; sourceTree = "<group>"; };
+		B5FA5D5E22613FD400FCEF99 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/CLIPSTextDocument.xib; sourceTree = "<group>"; };
+		B5FA5D5F22613FD400FCEF99 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		B5FA5D6022613FD400FCEF99 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/Preferences.xib; sourceTree = "<group>"; };
 		B5FB52F109AD3E90001AE877 /* CLIPS IDE.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "CLIPS IDE.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B5FB531709AD41E2001AE877 /* CLIPSEnvironment.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = CLIPSEnvironment.h; path = Interface_Source/CLIPSEnvironment.h; sourceTree = "<group>"; };
 		B5FB531809AD41E2001AE877 /* CLIPSEnvironment.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = CLIPSEnvironment.m; path = Interface_Source/CLIPSEnvironment.m; sourceTree = "<group>"; };
@@ -1211,6 +1184,7 @@
 				B5BCEFD009AD245A000E597B /* factbld.h */,
 				B5BCEFD209AD245A000E597B /* factcmp.h */,
 				B5BCEFD409AD245A000E597B /* factcom.h */,
+				B5FA5D4D226131DE00FCEF99 /* factfile.h */,
 				B5BCEFD609AD245A000E597B /* factfun.h */,
 				B5BCEFD809AD245A000E597B /* factgen.h */,
 				B5BCEFDA09AD245A000E597B /* facthsh.h */,
@@ -1389,6 +1363,7 @@
 				B5BCEFCF09AD245A000E597B /* factbld.c */,
 				B5BCEFD109AD245A000E597B /* factcmp.c */,
 				B5BCEFD309AD245A000E597B /* factcom.c */,
+				B5FA5D4B2261317800FCEF99 /* factfile.c */,
 				B5BCEFD509AD245A000E597B /* factfun.c */,
 				B5BCEFD709AD245A000E597B /* factgen.c */,
 				B5BCEFD909AD245A000E597B /* facthsh.c */,
@@ -1519,6 +1494,7 @@
 				B5BCF0B409AD245B000E597B /* argacces.h in Headers */,
 				B5BCF0B609AD245B000E597B /* bload.h in Headers */,
 				B5BCF0B809AD245B000E597B /* bmathfun.h in Headers */,
+				B5C123D723467ED1002C945D /* entities.h in Headers */,
 				B5BCF0BA09AD245B000E597B /* bsave.h in Headers */,
 				B5BCF0BC09AD245B000E597B /* classcom.h in Headers */,
 				B5BCF0BE09AD245B000E597B /* classexm.h in Headers */,
@@ -1564,7 +1540,6 @@
 				B5BCF11209AD245B000E597B /* engine.h in Headers */,
 				B5BCF11409AD245B000E597B /* envrnmnt.h in Headers */,
 				B5BCF11609AD245B000E597B /* evaluatn.h in Headers */,
-				1E278EA71DC5A67E000D88DD /* fileutil.h in Headers */,
 				B5BCF11809AD245B000E597B /* expressn.h in Headers */,
 				B5BCF11A09AD245B000E597B /* exprnbin.h in Headers */,
 				B5BCF11C09AD245B000E597B /* exprnops.h in Headers */,
@@ -1579,6 +1554,7 @@
 				B5BCF12E09AD245B000E597B /* facthsh.h in Headers */,
 				B5BCF13009AD245B000E597B /* factlhs.h in Headers */,
 				B5BCF13209AD245B000E597B /* factmch.h in Headers */,
+				B5C123D823467EEF002C945D /* envrnbld.h in Headers */,
 				B5BCF13409AD245B000E597B /* factmngr.h in Headers */,
 				B5BCF13609AD245B000E597B /* factprt.h in Headers */,
 				B5BCF13809AD245B000E597B /* factqpsr.h in Headers */,
@@ -1603,6 +1579,7 @@
 				B5BCF15E09AD245B000E597B /* immthpsr.h in Headers */,
 				B5BCF16009AD245B000E597B /* incrrset.h in Headers */,
 				B5BCF16209AD245B000E597B /* inherpsr.h in Headers */,
+				B5C123D92346811C002C945D /* factfile.h in Headers */,
 				B5BCF16409AD245B000E597B /* inscom.h in Headers */,
 				B5BCF16609AD245B000E597B /* insfile.h in Headers */,
 				B5BCF16809AD245B000E597B /* insfun.h in Headers */,
@@ -1634,7 +1611,6 @@
 				B5BCF19A09AD245C000E597B /* objcmp.h in Headers */,
 				B5BCF19B09AD245C000E597B /* object.h in Headers */,
 				B5BCF19D09AD245C000E597B /* objrtbin.h in Headers */,
-				1EFA0EFD1DC6984700AE8FAA /* entities.h in Headers */,
 				B5BCF19F09AD245C000E597B /* objrtbld.h in Headers */,
 				B5BCF1A109AD245C000E597B /* objrtcmp.h in Headers */,
 				B5BCF1A309AD245C000E597B /* objrtfnx.h in Headers */,
@@ -1660,7 +1636,6 @@
 				B5BCF1CB09AD245C000E597B /* rulecom.h in Headers */,
 				B5BCF1CD09AD245C000E597B /* rulecstr.h in Headers */,
 				B5BCF1CF09AD245C000E597B /* ruledef.h in Headers */,
-				1E8504C01DC4120400FA75A7 /* envrnbld.h in Headers */,
 				B5BCF1D109AD245C000E597B /* ruledlt.h in Headers */,
 				B5BCF1D309AD245C000E597B /* rulelhs.h in Headers */,
 				B5BCF1D509AD245C000E597B /* rulepsr.h in Headers */,
@@ -1680,6 +1655,7 @@
 				B5BCF1F109AD245C000E597B /* tmpltdef.h in Headers */,
 				B5BCF1F309AD245C000E597B /* tmpltfun.h in Headers */,
 				B5BCF1F509AD245C000E597B /* tmpltlhs.h in Headers */,
+				B5C123D623467EC4002C945D /* fileutil.h in Headers */,
 				B5BCF1F709AD245C000E597B /* tmpltpsr.h in Headers */,
 				B5BCF1F909AD245C000E597B /* tmpltrhs.h in Headers */,
 				B5BCF1FB09AD245C000E597B /* tmpltutl.h in Headers */,
@@ -1756,17 +1732,29 @@
 		2A37F4A9FDCFA73011CA2CEA /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0940;
+				LastUpgradeCheck = 1100;
+				TargetAttributes = {
+					8D15AC270486D014006FF6A4 = {
+						ProvisioningStyle = Manual;
+					};
+					B59979A60D4D9B9E00C9B896 = {
+						ProvisioningStyle = Manual;
+					};
+					B5BCEF5409AD23BF000E597B = {
+						ProvisioningStyle = Manual;
+					};
+				};
 			};
 			buildConfigurationList = C05733CB08A9546B00998B17 /* Build configuration list for PBXProject "CLIPS" */;
-			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
+			compatibilityVersion = "Xcode 9.3";
+			developmentRegion = en;
 			hasScannedForEncodings = 1;
 			knownRegions = (
-				English,
-				Japanese,
-				French,
-				German,
+				fr,
+				ja,
+				en,
+				de,
+				Base,
 			);
 			mainGroup = 2A37F4AAFDCFA73011CA2CEA /* CLIPSEditor */;
 			projectDirPath = "";
@@ -1937,6 +1925,7 @@
 				B5997A010D4D9B9E00C9B896 /* incrrset.c in Sources */,
 				B5997A020D4D9B9E00C9B896 /* inherpsr.c in Sources */,
 				B5997A030D4D9B9E00C9B896 /* inscom.c in Sources */,
+				B5FA5D4C2261317800FCEF99 /* factfile.c in Sources */,
 				B5997A040D4D9B9E00C9B896 /* insfile.c in Sources */,
 				B5997A050D4D9B9E00C9B896 /* insfun.c in Sources */,
 				B5997A060D4D9B9E00C9B896 /* insmngr.c in Sources */,
@@ -2124,6 +2113,7 @@
 				B5BCF17C09AD245C000E597B /* miscfun.c in Sources */,
 				B5BCF17E09AD245C000E597B /* modulbin.c in Sources */,
 				B5BCF18009AD245C000E597B /* modulbsc.c in Sources */,
+				B5FA5D622261401400FCEF99 /* factfile.c in Sources */,
 				B5BCF18209AD245C000E597B /* modulcmp.c in Sources */,
 				B5BCF18409AD245C000E597B /* moduldef.c in Sources */,
 				B5BCF18609AD245C000E597B /* modulpsr.c in Sources */,
@@ -2205,7 +2195,7 @@
 		089C165FFE840EACC02AAC07 /* InfoPlist.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
-				089C1660FE840EACC02AAC07 /* English */,
+				B5FA5D5622613FC700FCEF99 /* en */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
@@ -2213,7 +2203,7 @@
 		1E86D1681C321BA600FAB28F /* MainMenu.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
-				1E86D1691C321BA600FAB28F /* English */,
+				B5FA5D5F22613FD400FCEF99 /* Base */,
 			);
 			name = MainMenu.xib;
 			sourceTree = "<group>";
@@ -2221,7 +2211,7 @@
 		1EB429351C34B3AE00093F7A /* CLIPSAgendaBrowser.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
-				1EB429361C34B3AE00093F7A /* English */,
+				B5FA5D5922613FD400FCEF99 /* Base */,
 			);
 			name = CLIPSAgendaBrowser.xib;
 			sourceTree = "<group>";
@@ -2229,7 +2219,7 @@
 		1EB429381C34C5EE00093F7A /* CLIPSFactBrowser.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
-				1EB429391C34C5EE00093F7A /* English */,
+				B5FA5D5B22613FD400FCEF99 /* Base */,
 			);
 			name = CLIPSFactBrowser.xib;
 			sourceTree = "<group>";
@@ -2237,7 +2227,7 @@
 		1EB4293A1C34C5EE00093F7A /* CLIPSInstanceBrowser.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
-				1EB4293B1C34C5EE00093F7A /* English */,
+				B5FA5D5C22613FD400FCEF99 /* Base */,
 			);
 			name = CLIPSInstanceBrowser.xib;
 			sourceTree = "<group>";
@@ -2245,7 +2235,7 @@
 		1EB4293E1C34C83400093F7A /* CLIPSConstructInspector.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
-				1EB4293F1C34C83400093F7A /* English */,
+				B5FA5D5A22613FD400FCEF99 /* Base */,
 			);
 			name = CLIPSConstructInspector.xib;
 			sourceTree = "<group>";
@@ -2253,7 +2243,7 @@
 		1EB429401C34C83400093F7A /* Preferences.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
-				1EB429411C34C83400093F7A /* English */,
+				B5FA5D6022613FD400FCEF99 /* Base */,
 			);
 			name = Preferences.xib;
 			sourceTree = "<group>";
@@ -2261,7 +2251,7 @@
 		1EBA251B1C34CB0B0013B169 /* CLIPSTerminal.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
-				1EBA251C1C34CB0B0013B169 /* English */,
+				B5FA5D5D22613FD400FCEF99 /* Base */,
 			);
 			name = CLIPSTerminal.xib;
 			sourceTree = "<group>";
@@ -2269,7 +2259,7 @@
 		1EBA251D1C34CB0B0013B169 /* CLIPSTextDocument.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
-				1EBA251E1C34CB0B0013B169 /* English */,
+				B5FA5D5E22613FD400FCEF99 /* Base */,
 			);
 			name = CLIPSTextDocument.xib;
 			sourceTree = "<group>";
@@ -2277,7 +2267,7 @@
 		2A37F4B9FDCFA73011CA2CEA /* Credits.rtf */ = {
 			isa = PBXVariantGroup;
 			children = (
-				2A37F4BAFDCFA73011CA2CEA /* English */,
+				B5FA5D5522613FC700FCEF99 /* en */,
 			);
 			name = Credits.rtf;
 			sourceTree = "<group>";
@@ -2288,6 +2278,7 @@
 		1E6F78CD0D502A6500B9DCFB /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
@@ -2304,6 +2295,7 @@
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -2324,7 +2316,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_PARAMETER = NO;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				SDKROOT = macosx;
 				VALID_ARCHS = "ppc64 ppc7400 ppc970 i386 x86_64 ppc";
 			};
@@ -2336,7 +2328,11 @@
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_IMPLICIT_SIGN_CONVERSION = YES;
 				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Manual;
 				COPY_PHASE_STRIP = NO;
+				DEVELOPMENT_TEAM = "";
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -2347,7 +2343,7 @@
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_SHADOW = YES;
 				GCC_WARN_SIGN_COMPARE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "";
 				OTHER_REZFLAGS = "";
@@ -2355,7 +2351,7 @@
 				REZ_EXECUTABLE = YES;
 				SDKROOT = macosx;
 				SECTORDER_FLAGS = "";
-				VALID_ARCHS = "i386 x86_64";
+				VALID_ARCHS = x86_64;
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -2374,8 +2370,12 @@
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_NULLABLE_TO_NONNULL_CONVERSION = NO;
 				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
+				DEVELOPMENT_TEAM = "";
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_MODEL_TUNING = G5;
@@ -2385,11 +2385,12 @@
 				GCC_WARN_SIGN_COMPARE = YES;
 				INFOPLIST_FILE = Interface_Source/Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
-				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				PRODUCT_BUNDLE_IDENTIFIER = com.SSoP.CLIPSIDE;
 				PRODUCT_NAME = "CLIPS IDE";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = macosx;
-				VALID_ARCHS = "i386 x86_64";
+				VALID_ARCHS = x86_64;
 				WRAPPER_EXTENSION = app;
 				ZERO_LINK = YES;
 			};
@@ -2399,8 +2400,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
+				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
@@ -2413,13 +2417,14 @@
 				GCC_PREFIX_HEADER = "";
 				INFOPLIST_FILE = "Interface_Source/CLIPS-Info.plist";
 				INSTALL_PATH = "@executable_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				OTHER_LDFLAGS = "";
-				PRODUCT_BUNDLE_IDENTIFIER = com.SSoP;
+				PRODUCT_BUNDLE_IDENTIFIER = com.SSoP.CLIPS;
 				PRODUCT_NAME = CLIPS;
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
-				VALID_ARCHS = "i386 x86_64";
+				VALID_ARCHS = x86_64;
 				ZERO_LINK = YES;
 			};
 			name = Release;
@@ -2430,7 +2435,11 @@
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_IMPLICIT_SIGN_CONVERSION = YES;
 				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Manual;
 				COPY_PHASE_STRIP = NO;
+				DEVELOPMENT_TEAM = "";
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -2441,7 +2450,7 @@
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_SHADOW = YES;
 				GCC_WARN_SIGN_COMPARE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "";
 				OTHER_REZFLAGS = "";
@@ -2449,7 +2458,7 @@
 				REZ_EXECUTABLE = YES;
 				SDKROOT = macosx;
 				SECTORDER_FLAGS = "";
-				VALID_ARCHS = "i386 x86_64";
+				VALID_ARCHS = x86_64;
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -2462,8 +2471,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
+				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
@@ -2476,13 +2488,14 @@
 				GCC_PREFIX_HEADER = "";
 				INFOPLIST_FILE = "Interface_Source/CLIPS-Info.plist";
 				INSTALL_PATH = "@executable_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				OTHER_LDFLAGS = "";
-				PRODUCT_BUNDLE_IDENTIFIER = com.SSoP;
+				PRODUCT_BUNDLE_IDENTIFIER = com.SSoP.CLIPS;
 				PRODUCT_NAME = CLIPS;
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
-				VALID_ARCHS = "i386 x86_64";
+				VALID_ARCHS = x86_64;
 				ZERO_LINK = YES;
 			};
 			name = Debug;
@@ -2497,8 +2510,12 @@
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_NULLABLE_TO_NONNULL_CONVERSION = NO;
 				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
+				DEVELOPMENT_TEAM = "";
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_MODEL_TUNING = G5;
@@ -2508,11 +2525,12 @@
 				GCC_WARN_SIGN_COMPARE = YES;
 				INFOPLIST_FILE = Interface_Source/Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
-				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				PRODUCT_BUNDLE_IDENTIFIER = com.SSoP.CLIPSIDE;
 				PRODUCT_NAME = "CLIPS IDE";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = macosx;
-				VALID_ARCHS = "i386 x86_64";
+				VALID_ARCHS = x86_64;
 				WRAPPER_EXTENSION = app;
 				ZERO_LINK = YES;
 			};
@@ -2521,6 +2539,7 @@
 		C05733CC08A9546B00998B17 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
@@ -2537,6 +2556,7 @@
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -2557,7 +2577,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_PARAMETER = NO;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
 				VALID_ARCHS = "ppc64 ppc7400 ppc970 i386 x86_64 ppc";
