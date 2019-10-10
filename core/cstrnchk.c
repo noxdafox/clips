@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  02/05/19             */
+   /*            CLIPS Version 6.40  10/03/19             */
    /*                                                     */
    /*             CONSTRAINT CHECKING MODULE              */
    /*******************************************************/
@@ -533,7 +533,7 @@ void ConstraintViolationErrorMessage(
   unsigned short thePattern,
   CLIPSLexeme *theSlot,
   unsigned short theField,
-  int violationType,
+  ConstraintViolationType violationType,
   CONSTRAINT_RECORD *theConstraint,
   bool printPrelude)
   {

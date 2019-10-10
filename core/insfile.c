@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/22/19             */
+   /*            CLIPS Version 6.40  10/03/19             */
    /*                                                     */
    /*         INSTANCE LOAD/SAVE (ASCII/BINARY) MODULE    */
    /*******************************************************/
@@ -153,9 +153,9 @@ struct classItem
                                                                       SaveScope,Expression *,bool));
    static struct classItem       *ProcessSaveClassList(Environment *,const char *,Expression *,SaveScope,bool);
    static void                    ReturnSaveClassList(Environment *,struct classItem *);
-   static long                    SaveOrMarkInstances(Environment *,FILE *,int,struct classItem *,bool,bool,
+   static long                    SaveOrMarkInstances(Environment *,FILE *,SaveScope,struct classItem *,bool,bool,
                                                       void (*)(Environment *,FILE *,Instance *));
-   static long                    SaveOrMarkInstancesOfClass(Environment *,FILE *,Defmodule *,int,Defclass *,
+   static long                    SaveOrMarkInstancesOfClass(Environment *,FILE *,Defmodule *,SaveScope,Defclass *,
                                                              bool,int,void (*)(Environment *,FILE *,Instance *));
    static void                    SaveSingleInstanceText(Environment *,FILE *,Instance *);
    static void                    ProcessFileErrorMessage(Environment *,const char *,const char *);
@@ -904,7 +904,7 @@ static void ReturnSaveClassList(
 static long SaveOrMarkInstances(
   Environment *theEnv,
   FILE *theOutput,
-  int saveCode,
+  SaveScope saveCode,
   struct classItem *classList,
   bool inheritFlag,
   bool interruptOK,
@@ -976,7 +976,7 @@ static long SaveOrMarkInstancesOfClass(
   Environment *theEnv,
   FILE *theOutput,
   Defmodule *currentModule,
-  int saveCode,
+  SaveScope saveCode,
   Defclass *theDefclass,
   bool inheritFlag,
   int traversalID,

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  05/05/19             */
+   /*            CLIPS Version 6.40  10/03/19             */
    /*                                                     */
    /*        FACT LOAD/SAVE (ASCII/BINARY) MODULE         */
    /*******************************************************/
@@ -83,7 +83,7 @@ struct bsaveSlotValueAtom
 /***************************************/
 
    static struct expr            *StandardLoadFact(Environment *,const char *,struct token *);
-   static Deftemplate           **GetSaveFactsDeftemplateNames(Environment *,const char *,struct expr *,int,
+   static Deftemplate           **GetSaveFactsDeftemplateNames(Environment *,const char *,struct expr *,SaveScope,
                                                                unsigned int *,bool *);
 
    static bool                    VerifyBinaryHeader(Environment *,const char *);
@@ -98,7 +98,7 @@ struct bsaveSlotValueAtom
    static bool                    LoadSingleBinaryFact(Environment *);
    static Deftemplate            *BloadFactsCreateImpliedDeftemplate(Environment *,CLIPSLexeme *);
    static void                    BinaryLoadFactError(Environment *,Deftemplate *);
-   static void                    CreateSlotValue(Environment *,UDFValue *,struct bsaveSlotValueAtom *,unsigned long);
+   static void                    CreateSlotValue(Environment *,UDFValue *,struct bsaveSlotValueAtom *,unsigned long,bool);
    static void                   *GetBinaryAtomValue(Environment *,struct bsaveSlotValueAtom *);
 
 /********************************************************/
@@ -362,7 +362,7 @@ static Deftemplate **GetSaveFactsDeftemplateNames(
   Environment *theEnv,
   const char *functionName,
   struct expr *theList,
-  int saveCode,
+  SaveScope saveCode,
   unsigned int *count,
   bool *error)
   {
@@ -746,7 +746,7 @@ long BinaryLoadFacts(
   const char *fileName)
   {
    GCBlock gcb;
-   unsigned long i;
+   long i;
    long factCount;
 
    /*=====================================*/
@@ -892,7 +892,7 @@ static bool LoadSingleBinaryFact(
    unsigned int count;
    TemplateSlot *sp;
    UDFValue slotValue;
-   bool implied;
+   bool implied, isMultislot;
    bool success = true;
    
    /*===========================*/
@@ -1009,9 +1009,11 @@ static bool LoadSingleBinaryFact(
             break;
            }
         }
-      
+
+      isMultislot = implied || (sp->multislot == true);
+        
       CreateSlotValue(theEnv,&slotValue,(struct bsaveSlotValueAtom *) &bsaArray[j],
-                      bsArray[i].valueCount);
+                      bsArray[i].valueCount,isMultislot);
 
       newFact->theProposition.contents[i].value = slotValue.value;
 
@@ -1081,19 +1083,12 @@ static void CreateSlotValue(
   Environment *theEnv,
   UDFValue *returnValue,
   struct bsaveSlotValueAtom *bsaValues,
-  unsigned long valueCount)
+  unsigned long valueCount,
+  bool isMultislot)
   {
    unsigned i;
 
-   if (valueCount == 0)
-     {
-      returnValue->value = CreateUnmanagedMultifield(theEnv,0L);
-      returnValue->begin = 0;
-      returnValue->range = 0;
-     }
-   else if (valueCount == 1)
-     { returnValue->value = GetBinaryAtomValue(theEnv,&bsaValues[0]); }
-   else
+   if (isMultislot)
      {
       returnValue->value = CreateUnmanagedMultifield(theEnv,valueCount);
       returnValue->begin = 0;
@@ -1101,6 +1096,8 @@ static void CreateSlotValue(
       for (i = 0 ; i < valueCount ; i++)
         { returnValue->multifieldValue->contents[i].value = GetBinaryAtomValue(theEnv,&bsaValues[i]); }
      }
+   else
+     { returnValue->value = GetBinaryAtomValue(theEnv,&bsaValues[0]); }
   }
 
 /**********************/
@@ -1340,7 +1337,7 @@ static long MarkFacts(
    Defmodule *theModule;
    unsigned int i;
    bool markFact;
-   unsigned long factCount = 0;
+   long factCount = 0;
 
    /*=================*/
    /* Save the facts. */

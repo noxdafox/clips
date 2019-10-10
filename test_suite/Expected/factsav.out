@@ -371,4 +371,23 @@ f-1     (stuff (fa <Dummy Fact>) (ea <Pointer-C-0x0>) (ia [Dummy Instance]))
 f-2     (colors red green blue)
 f-3     (stuff (fa <Dummy Fact>) (ea <Pointer-C-0x0>) (ia [t1]))
 For a total of 3 facts.
+CLIPS> (clear)
+CLIPS> (deftemplate cp (multislot v) (multislot a))
+CLIPS> 
+(assert (cp (v) (a))
+        (cp (v 1) (a x))
+        (cp (v 2 3) (a))
+        (cp (v) (a y z)))
+<Fact-4>
+CLIPS> (bsave-facts "Temp//fctsavb11.fct")
+4
+CLIPS> (reset)
+CLIPS> (bload-facts "Temp//fctsavb11.fct")
+4
+CLIPS> (facts)
+f-1     (cp (v) (a))
+f-2     (cp (v 1) (a x))
+f-3     (cp (v 2 3) (a))
+f-4     (cp (v) (a y z))
+For a total of 4 facts.
 CLIPS> (dribble-off)

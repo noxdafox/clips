@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/10/18             */
+   /*            CLIPS Version 6.40  10/03/19             */
    /*                                                     */
    /*                RULE COMMANDS MODULE                 */
    /*******************************************************/
@@ -113,8 +113,8 @@
    static void                    ShowJoins(Environment *,Defrule *);
 #endif
 #if DEBUGGING_FUNCTIONS
-   static long long               ListAlphaMatches(Environment *,struct joinInformation *,int);
-   static long long               ListBetaMatches(Environment *,struct joinInformation *,long,unsigned short,int);
+   static long long               ListAlphaMatches(Environment *,struct joinInformation *,Verbosity);
+   static long long               ListBetaMatches(Environment *,struct joinInformation *,long,unsigned short,Verbosity);
    static void                    ListBetaJoinActivity(Environment *,struct joinInformation *,long,long,int,UDFValue *);
    static unsigned short          AlphaJoinCountDriver(Environment *,struct joinNode *);
    static unsigned short          BetaJoinCountDriver(Environment *,struct joinNode *);
@@ -680,7 +680,7 @@ void FreeJoinArray(
 static long long ListAlphaMatches(
   Environment *theEnv,
   struct joinInformation *theInfo,
-  int output)
+  Verbosity output)
   {
    struct alphaMemoryHash *listOfHashNodes;
    struct partialMatch *listOfMatches;
@@ -905,7 +905,7 @@ static long long ListBetaMatches(
   struct joinInformation *infoArray,
   long joinIndex,
   unsigned short arraySize,
-  int output)
+  Verbosity output)
   {
    long betaCount = 0;
    struct joinInformation *theInfo;

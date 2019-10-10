@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  10/04/17             */
+   /*            CLIPS Version 6.40  10/03/19             */
    /*                                                     */
    /*                    AGENDA MODULE                    */
    /*******************************************************/
@@ -93,7 +93,7 @@
 
    static void                    PrintActivation(Environment *,const char *,Activation *);
    static void                    AgendaClearFunction(Environment *,void *);
-   static const char             *SalienceEvaluationName(int);
+   static const char             *SalienceEvaluationName(SalienceEvaluationType);
    static int                     EvaluateSalience(Environment *,Defrule *);
    static struct salienceGroup   *ReuseOrCreateSalienceGroup(Environment *,struct defruleModule *,int);
    static struct salienceGroup   *FindSalienceGroup(struct defruleModule *,int);
@@ -1189,7 +1189,7 @@ void GetSalienceEvaluationCommand(
 /*   character string of the behavior's name.                    */
 /*****************************************************************/
 static const char *SalienceEvaluationName(
-  int strategy)
+  SalienceEvaluationType strategy)
   {
    const char *sname;
 
