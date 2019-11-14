@@ -102,9 +102,9 @@ class CLIPSCPPEnv
       void AppendToDribble(const char *);
       void PrintBanner();
       void PrintPrompt();
-      void CLIPSCPPEnv::GetFactScopes(std::unordered_map<unsigned long long,std::vector<bool>>&);
+      void GetFactScopes(std::unordered_map<unsigned long long,std::vector<bool> >&);
 	  std::vector<CLIPSCPPFactInstance> *GetFactList();
-      void CLIPSCPPEnv::GetInstanceScopes(std::unordered_map<unsigned long long,std::vector<bool>>&);
+      void GetInstanceScopes(std::unordered_map<unsigned long long,std::vector<bool> >&);
 	  std::vector<CLIPSCPPFactInstance> *GetInstanceList();
 	  std::vector<CLIPSCPPModule> *GetModuleList();
       CLIPSCPPFocusStack *GetFocusStack();
