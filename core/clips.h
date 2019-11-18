@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  03/07/19             */
+   /*            CLIPS Version 6.40  11/17/19             */
    /*                                                     */
    /*                   API HEADER FILE                   */
    /*******************************************************/
@@ -92,6 +92,7 @@
 #include "tmpltbsc.h"
 #include "tmpltfun.h"
 #include "factcom.h"
+#include "factfile.h"
 #include "factfun.h"
 #include "factmngr.h"
 #include "facthsh.h"
