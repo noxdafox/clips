@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/30/16             */
+   /*            CLIPS Version 6.40  12/02/19             */
    /*                                                     */
    /*            CONSTRAINT BLOAD/BSAVE MODULE            */
    /*******************************************************/
@@ -104,7 +104,7 @@ void WriteNeededConstraints(
   FILE *fp)
   {
    int i;
-   unsigned short theIndex = 0;
+   unsigned long theIndex = 0;
    unsigned long numberOfUsedConstraints = 0;
    CONSTRAINT_RECORD *tmpPtr;
    BSAVE_CONSTRAINT_RECORD bsaveConstraints;
@@ -119,7 +119,7 @@ void WriteNeededConstraints(
            tmpPtr != NULL;
            tmpPtr = tmpPtr->next)
         {
-         tmpPtr->bsaveIndex = theIndex++;
+         tmpPtr->bsaveID = theIndex++;
          numberOfUsedConstraints++;
         }
      }

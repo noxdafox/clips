@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  10/18/16            */
+   /*             CLIPS Version 6.40  12/02/19            */
    /*                                                     */
    /*                CONSTRAINT HEADER FILE               */
    /*******************************************************/
@@ -85,7 +85,7 @@ struct constraintRecord
    unsigned int multifieldsAllowed : 1;
    unsigned int singlefieldsAllowed : 1;
    unsigned int installed : 1;
-   unsigned short bsaveIndex;
+   unsigned long bsaveID;
    struct expr *classList;
    struct expr *restrictionList;
    struct expr *minValue;

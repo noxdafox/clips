@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/30/16             */
+   /*            CLIPS Version 6.40  12/02/19             */
    /*                                                     */
    /*          CONSTRAINT CONSTRUCTS-TO-C MODULE          */
    /*******************************************************/
@@ -67,12 +67,13 @@ void ConstraintsToCode(
   unsigned imageID,
   unsigned maxIndices)
   {
-   unsigned int i, j, count;
+   unsigned int i, j;
+   unsigned long count;
    bool newHeader = true;
    FILE *fp;
    unsigned int version = 1;
    int arrayVersion = 1;
-   unsigned short numberOfConstraints = 0;
+   unsigned long numberOfConstraints = 0;
    CONSTRAINT_RECORD *tmpPtr;
 
    /*===============================================*/
@@ -84,7 +85,7 @@ void ConstraintsToCode(
       for (tmpPtr = ConstraintData(theEnv)->ConstraintHashtable[i];
            tmpPtr != NULL;
            tmpPtr = tmpPtr->next)
-        { tmpPtr->bsaveIndex = numberOfConstraints++; }
+        { tmpPtr->bsaveID = numberOfConstraints++; }
      }
 
    /*=====================================================*/
@@ -226,9 +227,9 @@ void PrintConstraintReference(
   {
    if ((cPtr == NULL) || (! GetDynamicConstraintChecking(theEnv)))
      { fprintf(fp,"NULL"); }
-   else fprintf(fp,"&C%u_%u[%u]",imageID,
-                                 (cPtr->bsaveIndex / maxIndices) + 1,
-                                 cPtr->bsaveIndex % maxIndices);
+   else fprintf(fp,"&C%u_%ld[%ld]",imageID,
+                                 (cPtr->bsaveID / maxIndices) + 1,
+                                 cPtr->bsaveID % maxIndices);
   }
 
 #endif /* CONSTRUCT_COMPILER && (! RUN_TIME) */
