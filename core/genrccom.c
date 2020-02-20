@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  06/12/19             */
+   /*            CLIPS Version 6.40  02/19/20             */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -1805,7 +1805,7 @@ static bool DefmethodWatchSupport(
   void (*traceFunc)(Defgeneric *,unsigned short,bool),
   Expression *argExprs)
   {
-   Defgeneric *theGeneric;
+   Defgeneric *theGeneric = NULL;
    unsigned short theMethod = 0;
    unsigned int argIndex = 2;
    UDFValue genericName, methodIndex;

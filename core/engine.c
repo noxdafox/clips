@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  10/04/17             */
+   /*            CLIPS Version 6.40  02/19/20             */
    /*                                                     */
    /*                    ENGINE MODULE                    */
    /*******************************************************/
@@ -184,7 +184,7 @@ long long Run(
 #endif
    unsigned short i;
    struct patternEntity *theMatchingItem;
-   struct partialMatch *theBasis;
+   struct partialMatch *theBasis = NULL;
    Activation *theActivation;
    const char *ruleFiring;
 #if PROFILING_FUNCTIONS

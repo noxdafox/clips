@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/25/16             */
+   /*            CLIPS Version 6.40  02/19/20             */
    /*                                                     */
    /*          DEFTEMPLATE RHS PARSING HEADER FILE        */
    /*******************************************************/
@@ -81,7 +81,7 @@ struct expr *ParseAssertTemplate(
   bool constantsOnly,
   Deftemplate *theDeftemplate)
   {
-   struct expr *firstSlot, *lastSlot, *nextSlot;
+   struct expr *firstSlot, *lastSlot, *nextSlot = NULL;
    struct expr *firstArg, *tempSlot;
    struct templateSlot *slotPtr;
 

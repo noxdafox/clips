@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  08/06/16            */
+   /*             CLIPS Version 6.40  02/19/20            */
    /*                                                     */
    /*                 DEFRULE HEADER FILE                 */
    /*******************************************************/
@@ -83,6 +83,7 @@ struct defruleModule;
 #include "expressn.h"
 #include "network.h"
 #include "ruledef.h"
+#include "symbol.h"
 
 struct defrule
   {
@@ -108,7 +109,6 @@ struct defrule
 #include "cstrccom.h"
 #include "evaluatn.h"
 #include "moduldef.h"
-#include "symbol.h"
 
 struct defruleModule
   {

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/02/18             */
+   /*            CLIPS Version 6.40  02/19/20             */
    /*                                                     */
    /*              CONSTRUCT COMMANDS MODULE              */
    /*******************************************************/
@@ -239,7 +239,7 @@ ConstructHeader *FindNamedConstructInModule(
   Construct *constructClass)
   {
    ConstructHeader *theConstruct;
-   CLIPSLexeme *findValue;
+   CLIPSLexeme *findValue = NULL;
 
    /*==========================*/
    /* Save the current module. */
@@ -1543,7 +1543,7 @@ static bool ConstructWatchSupport(
   ConstructSetWatchFunction *setWatchFunc)
   {
    Defmodule *theModule;
-   ConstructHeader *theConstruct;
+   ConstructHeader *theConstruct = NULL;
    UDFValue constructName;
    unsigned int argIndex = 2;
 

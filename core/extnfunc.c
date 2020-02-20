@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  02/05/19             */
+   /*            CLIPS Version 6.40  02/19/20             */
    /*                                                     */
    /*               EXTERNAL FUNCTION MODULE              */
    /*******************************************************/
@@ -156,6 +156,7 @@ AddUDFError AddUDF(
   {
    unsigned returnTypeBits;
    size_t i;
+   const char *validTypeChars = "bdefilmnsyv*;";
 
    if ((minArgs != UNBOUNDED) && (minArgs > maxArgs))
      { return AUE_MIN_EXCEEDS_MAX_ERROR; }
@@ -164,7 +165,7 @@ AddUDFError AddUDF(
      {
       for (i = 0; argumentTypes[i] != EOS; i++)
         {
-         if (strchr("bdefilmnsyv*;",argumentTypes[i]) == NULL)
+         if (strchr(validTypeChars,argumentTypes[i]) == NULL)
            { return AUE_INVALID_ARGUMENT_TYPE_ERROR; }
         }
      }
@@ -173,7 +174,7 @@ AddUDFError AddUDF(
      {
       for (i = 0; returnTypes[i] != EOS; i++)
         {
-         if (strchr("bdefilmnsyv*;",returnTypes[i]) == NULL)
+         if (strchr(validTypeChars,returnTypes[i]) == NULL)
            { return AUE_INVALID_RETURN_TYPE_ERROR; }
         }
 
