@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/25/16             */
+   /*            CLIPS Version 6.40  02/20/20             */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -419,7 +419,7 @@ void DeleteMethodInfo(
 #if OBJECT_SYSTEM
         DecrementDefclassBusyCount(theEnv,(Defclass *) rptr->types[k]);
 #else
-        DecrementIntegerCount(theEnv,(CLIPSInteger *) rptr->types[k]);
+        ReleaseInteger(theEnv,(CLIPSInteger *) rptr->types[k]);
 #endif
 
       if (rptr->types != NULL)
@@ -512,8 +512,8 @@ bool MethodsExecuting(
   NOTES        : Used only when COOL is not present
  **************************************************************/
 bool SubsumeType(
-  int t1,
-  int t2)
+  long long t1,
+  long long t2)
   {
    if ((t2 == OBJECT_TYPE_CODE) || (t2 == PRIMITIVE_TYPE_CODE))
      return true;
@@ -777,7 +777,7 @@ unsigned short CheckMethodExists(
  *******************************************************/
 const char *TypeName(
   Environment *theEnv,
-  int tcode)
+  long long tcode)
   {
    switch (tcode)
      {

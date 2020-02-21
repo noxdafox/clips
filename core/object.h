@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*               CLIPS Version 6.40  02/03/18          */
+   /*               CLIPS Version 6.40  02/20/20          */
    /*                                                     */
    /*                OBJECT SYSTEM DEFINITIONS            */
    /*******************************************************/
@@ -121,7 +121,7 @@ struct defclass
     * iterate through every single terminal alpha for every single modification
     * to an instance of a defclass.
     */
-#if DEFRULE_CONSTRUCT
+#if DEFRULE_CONSTRUCT && OBJECT_SYSTEM
    CLASS_ALPHA_LINK *relevant_terminal_alpha_nodes;
 #endif
 

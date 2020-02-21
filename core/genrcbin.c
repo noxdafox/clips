@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/30/16             */
+   /*            CLIPS Version 6.40  02/20/20             */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -888,7 +888,7 @@ static void ClearBloadGenerics(
 
 #if ! OBJECT_SYSTEM
    for (i = 0 ; i < DefgenericBinaryData(theEnv)->TypeCount ; i++)
-     DecrementIntegerCount(theEnv,(CLIPSInteger *) DefgenericBinaryData(theEnv)->TypeArray[i]);
+     ReleaseInteger(theEnv,(CLIPSInteger *) DefgenericBinaryData(theEnv)->TypeArray[i]);
 #endif
    space = (sizeof(void *) * DefgenericBinaryData(theEnv)->TypeCount);
    if (space == 0L)
