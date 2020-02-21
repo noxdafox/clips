@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.31  04/04/19             */
+   /*            CLIPS Version 6.32  02/19/20             */
    /*                                                     */
    /*                   UTILITY MODULE                    */
    /*******************************************************/
@@ -50,6 +50,9 @@
 /*                                                           */
 /*            Added debugging code for checking the garbage  */
 /*            frame.                                         */
+/*                                                           */
+/*      6.32: Fixed compilation warning when OBJECT_SYSTEM   */
+/*            set to 0.                                      */
 /*                                                           */
 /*************************************************************/
 
@@ -1021,12 +1024,14 @@ globle unsigned long ItemHashValue(
   void *theValue,
   unsigned long theRange)
   {
+#if OBJECT_SYSTEM
    union
      {
       void *vv;
       unsigned uv;
      } fis;
-     
+#endif
+
    switch(theType)
      {
       case FLOAT:
@@ -1055,10 +1060,10 @@ globle unsigned long ItemHashValue(
         
 #if OBJECT_SYSTEM
       case INSTANCE_ADDRESS:
-#endif
         fis.uv = 0;
         fis.vv = theValue;
         return(fis.uv % theRange);
+#endif
      }
 
    SystemError(theEnv,"UTILITY",1);

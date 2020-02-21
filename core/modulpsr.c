@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*             CLIPS Version 6.32  02/19/20            */
    /*                                                     */
    /*              DEFMODULE PARSER MODULE                */
    /*******************************************************/
@@ -27,13 +27,14 @@
 /*            Fixed linkage issue when DEFMODULE_CONSTRUCT   */
 /*            compiler flag is set to 0.                     */
 /*                                                           */
+/*      6.32: Fixed compilation warning when                 */
+/*            DEFGLOBAL_CONSTRUCT set to 0.                  */
+/*                                                           */
 /*************************************************************/
 
 #define _MODULPSR_SOURCE_
 
 #include "setup.h"
-
-#if DEFMODULE_CONSTRUCT && (! RUN_TIME) && (! BLOAD_ONLY)
 
 #include <stdio.h>
 #include <string.h>
@@ -55,6 +56,8 @@
 #endif
 
 #include "modulpsr.h"
+
+#if DEFMODULE_CONSTRUCT && (! RUN_TIME) && (! BLOAD_ONLY)
 
 /***************************************/
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
