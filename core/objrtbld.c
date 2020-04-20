@@ -178,10 +178,6 @@
 
    static Expression             *ObjectMatchDelayParse(Environment *,Expression *,const char *);
 
-#if ! DEFINSTANCES_CONSTRUCT
-   static void                    ResetInitialObject(Environment *);
-#endif
-
 /* =========================================
    *****************************************
           EXTERNALLY VISIBLE FUNCTIONS

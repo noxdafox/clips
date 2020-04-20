@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/17/18             */
+   /*            CLIPS Version 6.40  04/08/20             */
    /*                                                     */
    /*          INSTANCE PRIMITIVE SUPPORT MODULE          */
    /*******************************************************/
@@ -1660,8 +1660,10 @@ Instance *IBMake(
    CLIPSLexeme *instanceLexeme;
    UDFValue rv;
    unsigned int i;
+#if DEFRULE_CONSTRUCT
    bool ov;
-   
+#endif
+
    if (theIB == NULL) return NULL;
    theEnv = theIB->ibEnv;
    

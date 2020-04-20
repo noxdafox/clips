@@ -1262,7 +1262,9 @@ static void UpdateDefclass(
    cls->busy = 0;
    cls->instanceList = NULL;
    cls->instanceListBottom = NULL;
+#if DEFRULE_CONSTRUCT
    cls->relevant_terminal_alpha_nodes = ClassAlphaPointer(bcls->relevant_terminal_alpha_nodes);
+#endif
 #if DEFMODULE_CONSTRUCT
    cls->scopeMap = BitMapPointer(bcls->scopeMap);
    IncrementBitMapCount(cls->scopeMap);

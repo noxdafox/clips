@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/10/18             */
+   /*            CLIPS Version 6.40  04/20/20             */
    /*                                                     */
    /*            MISCELLANEOUS FUNCTIONS MODULE           */
    /*******************************************************/
@@ -104,6 +104,8 @@
 /*                                                           */
 /*            Function operating system returns MAC-OS       */
 /*            instead of MAC-OS-X.                           */
+/*                                                           */
+/*            Removed WINDOW_INTERFACE flag.                 */
 /*                                                           */
 /*************************************************************/
 
@@ -831,13 +833,6 @@ WriteString(theEnv,STDOUT,"Debugging function package is ");
   WriteString(theEnv,STDOUT,"OFF\n");
 #endif
 
-WriteString(theEnv,STDOUT,"Window Interface flag is ");
-#if WINDOW_INTERFACE
-   WriteString(theEnv,STDOUT,"ON\n");
-#else
-   WriteString(theEnv,STDOUT,"OFF\n");
-#endif
-
 WriteString(theEnv,STDOUT,"Developer flag is ");
 #if DEVELOPER
    WriteString(theEnv,STDOUT,"ON\n");
@@ -874,9 +869,7 @@ void OperatingSystemFunction(
    returnValue->lexemeValue = CreateSymbol(theEnv,"DARWIN");
 #elif MAC_XCD
    returnValue->lexemeValue = CreateSymbol(theEnv,"MAC-OS");
-#elif IBM && (! WINDOW_INTERFACE)
-   returnValue->lexemeValue = CreateSymbol(theEnv,"DOS");
-#elif IBM && WINDOW_INTERFACE
+#elif WINDOWS_OS
    returnValue->lexemeValue = CreateSymbol(theEnv,"WINDOWS");
 #else
    returnValue->lexemeValue = CreateSymbol(theEnv,"UNKNOWN");

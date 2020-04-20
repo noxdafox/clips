@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  05/03/19             */
+   /*            CLIPS Version 6.40  04/08/20             */
    /*                                                     */
    /*                CLASS FUNCTIONS MODULE               */
    /*******************************************************/
@@ -576,7 +576,9 @@ Defclass *NewClass(
    cls->nxtHash = NULL;
    cls->scopeMap = NULL;
    ClearBitString(cls->traversalRecord,TRAVERSAL_BYTES);
+#if DEFRULE_CONSTRUCT
    cls->relevant_terminal_alpha_nodes = NULL;
+#endif
    return(cls);
   }
 
@@ -755,8 +757,10 @@ void RemoveDefclass(
   {
    DefmessageHandler *hnd;
    unsigned long i;
+#if DEFRULE_CONSTRUCT
    CLASS_ALPHA_LINK *currentAlphaLink;
    CLASS_ALPHA_LINK *nextAlphaLink;
+#endif
 
    /* ====================================================
       Remove all of this class's superclasses' links to it
@@ -822,6 +826,7 @@ void RemoveDefclass(
       rm(theEnv,cls->handlerOrderMap,(sizeof(unsigned) * cls->handlerCount));
      }
 
+#if DEFRULE_CONSTRUCT
    currentAlphaLink = cls->relevant_terminal_alpha_nodes;
    while (currentAlphaLink != NULL)
      {
@@ -830,6 +835,7 @@ void RemoveDefclass(
       currentAlphaLink = nextAlphaLink;
      }
    cls->relevant_terminal_alpha_nodes = NULL;
+#endif
 
    SetDefclassPPForm(theEnv,cls,NULL);
    DeassignClassID(theEnv,cls->id);
@@ -853,8 +859,10 @@ void DestroyDefclass(
   {
    long i;
 #if ! RUN_TIME
+#if DEFRULE_CONSTRUCT
    CLASS_ALPHA_LINK *currentAlphaLink;
    CLASS_ALPHA_LINK *nextAlphaLink;
+#endif
 
    DefmessageHandler *hnd;
    DeletePackedClassLinks(theEnv,&cls->directSuperclasses,false);
@@ -917,7 +925,8 @@ void DestroyDefclass(
       rm(theEnv,cls->handlers,(sizeof(DefmessageHandler) * cls->handlerCount));
       rm(theEnv,cls->handlerOrderMap,(sizeof(unsigned) * cls->handlerCount));
      }
-
+     
+#if DEFRULE_CONSTRUCT
    currentAlphaLink = cls->relevant_terminal_alpha_nodes;
    while (currentAlphaLink != NULL)
      {
@@ -926,6 +935,7 @@ void DestroyDefclass(
       currentAlphaLink = nextAlphaLink;
      }
    cls->relevant_terminal_alpha_nodes = NULL;
+#endif
 
    DestroyConstructHeader(theEnv,&cls->header);
 

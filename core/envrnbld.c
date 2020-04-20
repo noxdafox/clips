@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  10/18/16             */
+   /*            CLIPS Version 6.40  04/20/20             */
    /*                                                     */
    /*             ENVIRONMENT BUILD MODULE                */
    /*******************************************************/
@@ -100,7 +100,6 @@
                                                           CLIPSExternalAddress **,
                                                           struct functionDefinition *);
    static void                    SystemFunctionDefinitions(Environment *);
-   static void                    InitializeKeywords(Environment *);
    static void                    InitializeEnvironment(Environment *,CLIPSLexeme **,CLIPSFloat **,
 					   								       CLIPSInteger **,CLIPSBitMap **,
 														   CLIPSExternalAddress **,
@@ -450,13 +449,6 @@ static void InitializeEnvironment(
 
    InstallProcedurePrimitives(theEnvironment);
 
-   /*==============================================*/
-   /* Install keywords in the symbol table so that */
-   /* they are available for command completion.   */
-   /*==============================================*/
-
-   InitializeKeywords(theEnvironment);
-
    /*========================*/
    /* Issue a clear command. */
    /*========================*/
@@ -518,245 +510,5 @@ static void SystemFunctionDefinitions(
 #endif
 
    ParseFunctionDefinitions(theEnv);
-  }
-
-/*********************************************/
-/* InitializeKeywords: Adds key words to the */
-/*   symbol table so that they are available */
-/*   for command completion.                 */
-/*********************************************/
-static void InitializeKeywords(
-  Environment *theEnv)
-  {
-#if (! RUN_TIME) && WINDOW_INTERFACE
-   void *ts;
-
-   /*====================*/
-   /* construct keywords */
-   /*====================*/
-
-   ts = CreateSymbol(theEnv,"defrule");
-   IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"defglobal");
-   IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"deftemplate");
-   IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"deffacts");
-   IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"deffunction");
-   IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"defmethod");
-   IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"defgeneric");
-   IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"defclass");
-   IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"defmessage-handler");
-   IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"definstances");
-   IncrementLexemeCount(ts);
-
-   /*=======================*/
-   /* set-strategy keywords */
-   /*=======================*/
-
-   ts = CreateSymbol(theEnv,"depth");
-   IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"breadth");
-   IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"lex");
-   IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"mea");
-   IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"simplicity");
-   IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"complexity");
-   IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"random");
-   IncrementLexemeCount(ts);
-
-   /*==================================*/
-   /* set-salience-evaluation keywords */
-   /*==================================*/
-
-   ts = CreateSymbol(theEnv,"when-defined");
-   IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"when-activated");
-   IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"every-cycle");
-   IncrementLexemeCount(ts);
-
-   /*======================*/
-   /* deftemplate keywords */
-   /*======================*/
-
-   ts = CreateSymbol(theEnv,"field");
-   IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"multifield");
-   IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"default");
-   IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"type");
-   IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"allowed-symbols");
-   IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"allowed-strings");
-   IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"allowed-numbers");
-   IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"allowed-integers");
-   IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"allowed-floats");
-   IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"allowed-values");
-   IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"min-number-of-elements");
-   IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"max-number-of-elements");
-   IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"NONE");
-   IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"VARIABLE");
-   IncrementLexemeCount(ts);
-
-   /*==================*/
-   /* defrule keywords */
-   /*==================*/
-
-   ts = CreateSymbol(theEnv,"declare");
-   IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"salience");
-   IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"test");
-   IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"or");
-   IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"and");
-   IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"not");
-   IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"logical");
-   IncrementLexemeCount(ts);
-
-   /*===============*/
-   /* COOL keywords */
-   /*===============*/
-
-   ts = CreateSymbol(theEnv,"is-a");
-   IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"role");
-   IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"abstract");
-   IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"concrete");
-   IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"pattern-match");
-   IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"reactive");
-   IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"non-reactive");
-   IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"slot");
-   IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"field");
-   IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"multiple");
-   IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"single");
-   IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"storage");
-   IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"shared");
-   IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"local");
-   IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"access");
-   IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"read");
-   IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"write");
-   IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"read-only");
-   IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"read-write");
-   IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"initialize-only");
-   IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"propagation");
-   IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"inherit");
-   IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"no-inherit");
-   IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"source");
-   IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"composite");
-   IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"exclusive");
-   IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"allowed-lexemes");
-   IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"allowed-instances");
-   IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"around");
-   IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"before");
-   IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"primary");
-   IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"after");
-   IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"of");
-   IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"self");
-   IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"visibility");
-   IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"override-message");
-   IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"private");
-   IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"public");
-   IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"create-accessor");
-   IncrementLexemeCount(ts);
-
-   /*================*/
-   /* watch keywords */
-   /*================*/
-
-   ts = CreateSymbol(theEnv,"compilations");
-   IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"deffunctions");
-   IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"globals");
-   IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"rules");
-   IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"activations");
-   IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"statistics");
-   IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"facts");
-   IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"generic-functions");
-   IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"methods");
-   IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"instances");
-   IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"slots");
-   IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"messages");
-   IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"message-handlers");
-   IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"focus");
-   IncrementLexemeCount(ts);
-#else
-#if MAC_XCD
-#pragma unused(theEnv)
-#endif
-#endif
   }
 
