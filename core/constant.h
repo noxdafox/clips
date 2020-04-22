@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.32  02/19/20            */
+   /*             CLIPS Version 6.32  04/22/20            */
    /*                                                     */
    /*                CONSTANTS HEADER FILE                */
    /*******************************************************/
@@ -83,11 +83,11 @@
 #endif
 
 #ifndef CREATION_DATE_STRING
-#define CREATION_DATE_STRING "2/19/20"
+#define CREATION_DATE_STRING "4/22/20"
 #endif
 
 #ifndef BANNER_STRING
-#define BANNER_STRING "         CLIPS (6.32 2/19/20)\n"
+#define BANNER_STRING "         CLIPS (6.32 4/22/20)\n"
 #endif
 
 /*************************/

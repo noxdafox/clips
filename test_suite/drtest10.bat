@@ -629,7 +629,7 @@
   
 (deffacts hellos
    (hello))
-(clear) ; Source Ticket #56
+(clear) ; SourceForge Ticket #56
 
 (deftemplate maze
    (multislot open-list)
@@ -649,4 +649,15 @@
    (maze (open-list) 
          (goal ~nil))
    =>)
+(clear) ; SourceForge Ticket #58
+
+(defclass FOO (is-a USER)
+  (slot ins (type INSTANCE-ADDRESS)))
+(make-instance [foo] of FOO)
+(timetag (send [foo] get-ins))
+
+(deftemplate foo
+  (slot fct (type FACT-ADDRESS)))
+(assert (foo))   
+(timetag (fact-slot-value 1 fct))
 (clear)

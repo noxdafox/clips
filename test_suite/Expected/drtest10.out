@@ -1144,7 +1144,7 @@ CLIPS>
 CLIPS>   
 (deffacts hellos
    (hello))
-CLIPS> (clear) ; Source Ticket #56
+CLIPS> (clear) ; SourceForge Ticket #56
 CLIPS> 
 (deftemplate maze
    (multislot open-list)
@@ -1164,5 +1164,22 @@ CLIPS>
    (maze (open-list) 
          (goal ~nil))
    =>)
+CLIPS> (clear) ; SourceForge Ticket #58
+CLIPS> 
+(defclass FOO (is-a USER)
+  (slot ins (type INSTANCE-ADDRESS)))
+CLIPS> (make-instance [foo] of FOO)
+[foo]
+CLIPS> (timetag (send [foo] get-ins))
+[PRNTUTIL1] Unable to find instance <Dummy Instance>.
+-1
+CLIPS> 
+(deftemplate foo
+  (slot fct (type FACT-ADDRESS)))
+CLIPS> (assert (foo))   
+<Fact-1>
+CLIPS> (timetag (fact-slot-value 1 fct))
+[PRNTUTIL1] Unable to find fact <Dummy Fact>.
+-1
 CLIPS> (clear)
 CLIPS> (dribble-off)

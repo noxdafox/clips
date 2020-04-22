@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.31  05/09/19            */
+   /*             CLIPS Version 6.32  04/22/20            */
    /*                                                     */
    /*               ARGUMENT ACCESS MODULE                */
    /*******************************************************/
@@ -40,6 +40,9 @@
 /*            dependents functions are given a retracted     */
 /*            fact.                                          */
 /*                                                           */
+/*      6.32: Fixed crash bug when passing <Dummy Instance>  */
+/*            to a function.                                 */
+/*                                                           */
 /*************************************************************/
 
 #define _ARGACCES_SOURCE_
@@ -56,6 +59,7 @@
 #include "extnfunc.h"
 #include "router.h"
 #include "cstrnchk.h"
+#include "inscom.h"
 #include "insfun.h"
 #include "factmngr.h"
 #include "prntutil.h"
@@ -987,7 +991,12 @@ void *GetFactOrInstanceArgument(
 
    if (GetpType(item) == FACT_ADDRESS)
      {
-      if (((struct fact *) GetpValue(item))->garbage)
+      if (GetpValue(item) == &FactData(theEnv)->DummyFact)
+        {
+         CantFindItemErrorMessage(theEnv,"fact","<Dummy Fact>");
+         return NULL;
+        }
+      else if (((struct fact *) GetpValue(item))->garbage)
         {
          FactRetractedErrorMessage(theEnv,GetpValue(item));
          return NULL;
@@ -998,7 +1007,12 @@ void *GetFactOrInstanceArgument(
 
    if (GetpType(item) == INSTANCE_ADDRESS)
      {
-      if (((struct instance *) GetpValue(item))->garbage)
+      if (GetpValue(item) == &InstanceData(theEnv)->DummyInstance)
+        {
+         CantFindItemErrorMessage(theEnv,"instance","<Dummy Instance>");
+         return NULL;
+        }
+      else if (((struct instance *) GetpValue(item))->garbage)
         {
          CantFindItemErrorMessage(theEnv,"instance",((struct instance *) GetpValue(item))->name->contents);
          return NULL;
