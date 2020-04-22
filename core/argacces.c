@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  09/20/17             */
+   /*            CLIPS Version 6.40  04/22/20             */
    /*                                                     */
    /*               ARGUMENT ACCESS MODULE                */
    /*******************************************************/
@@ -38,6 +38,9 @@
 /*            dependents functions are given a retracted     */
 /*            fact.                                          */
 /*                                                           */
+/*      6.32: Fixed crash bug when passing <Dummy Instance>  */
+/*            to a function.                                 */
+/*                                                           */
 /*      6.40: Added Env prefix to GetEvaluationError and     */
 /*            SetEvaluationError functions.                  */
 /*                                                           */
@@ -68,6 +71,7 @@
 #include "envrnmnt.h"
 #include "extnfunc.h"
 #include "factmngr.h"
+#include "inscom.h"
 #include "insfun.h"
 #include "prntutil.h"
 #include "router.h"
@@ -432,7 +436,12 @@ void *GetFactOrInstanceArgument(
 
    if (CVIsType(item,FACT_ADDRESS_BIT))
      {
-      if (item->factValue->garbage)
+      if (item->factValue == &FactData(theEnv)->DummyFact)
+        {
+         CantFindItemErrorMessage(theEnv,"fact","<Dummy Fact>",false);
+         return NULL;
+        }
+      else if (item->factValue->garbage)
         {
          FactRetractedErrorMessage(theEnv,item->factValue);
          return NULL;
@@ -443,7 +452,12 @@ void *GetFactOrInstanceArgument(
 
    else if (CVIsType(item,INSTANCE_ADDRESS_BIT))
      {
-      if (item->instanceValue->garbage)
+      if (item->instanceValue == &InstanceData(theEnv)->DummyInstance)
+        {
+         CantFindItemErrorMessage(theEnv,"instance","<Dummy Instance>",false);
+         return NULL;
+        }
+      else if (item->instanceValue->garbage)
         {
          CantFindItemErrorMessage(theEnv,"instance",item->instanceValue->name->contents,false);
          return NULL;
