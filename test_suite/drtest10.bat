@@ -673,7 +673,7 @@
   
 (deffacts hellos
    (hello))
-(clear) ; Source Ticket #56
+(clear) ; SourceForge Ticket #56
 
 (deftemplate maze
    (multislot open-list)
@@ -704,6 +704,83 @@
   (slot fct (type FACT-ADDRESS)))
 (assert (foo))   
 (timetag (fact-slot-value 1 fct))
+(clear) ; 2 variable comparison from right memory
+
+(deftemplate manifest
+   (slot origin)
+   (slot destination)) 
+
+(deftemplate shipzone
+    (slot zonename)
+    (multislot cities)
+    (slot city1)
+    (slot city2))
+
+(deffacts fact-data
+    (manifest (origin CHI) (destination WAS)) 
+    (manifest (origin HOU) (destination ATL)) 
+    (shipzone (cities CHI WAS BOS) (city1 CHI) (city2 WAS))
+    (shipzone (cities BOS HOU ATL)))
+
+(defclass MANIFEST
+   (is-a USER)
+   (slot origin)
+   (slot destination)) 
+
+(defclass SHIPZONE
+   (is-a USER)
+   (slot zonename)
+   (multislot cities)
+   (slot city1)
+   (slot city2))
+
+(definstances instance-data
+    (m1 of MANIFEST (origin CHI) (destination WAS)) 
+    (m2 of MANIFEST (origin HOU) (destination ATL)) 
+    (s1 of SHIPZONE (cities CHI WAS BOS) (city1 CHI) (city2 WAS))
+    (s2 of SHIPZONE (cities BOS HOU ATL)))
+
+(defrule city-group-f1
+    (manifest (origin ?x1) (destination ?x2))
+    (shipzone (city1 ?x3&?x1|?x2) (city2 ~?x3&?x1|?x2))
+    =>)
+
+(defrule city-group-f2
+    (manifest (origin ?x1) (destination ?x2))
+    (shipzone (cities $? ?x3&?x1|?x2 ~?x3&?x1|?x2))
+    =>)
+
+(defrule city-group-f3
+    (manifest (origin ?x1) (destination ?x2))
+    (shipzone (cities $? ?x3&?x1|?x2 ~?x3&?x1|?x2 $?))
+    =>)
+
+(defrule city-group-f4
+    (manifest (origin ?x1) (destination ?x2))
+    (shipzone (cities $? ?x3&?x1|?x2 $?) (city1 ~?x3&?x1|?x2))
+    =>)
+
+(defrule city-group-i1
+    (object (is-a MANIFEST) (origin ?x1) (destination ?x2))
+    (object (is-a SHIPZONE) (city1 ?x3&?x1|?x2) (city2 ~?x3&?x1|?x2))
+    =>)
+    
+(defrule city-group-i2 
+    (object (is-a MANIFEST) (origin ?x1) (destination ?x2))
+    (object (is-a SHIPZONE) (cities $? ?x3&?x1|?x2 ~?x3&?x1|?x2))
+    =>)
+
+(defrule city-group-i3
+    (object (is-a MANIFEST) (origin ?x1) (destination ?x2))
+    (object (is-a SHIPZONE) (cities $? ?x3&?x1|?x2 ~?x3&?x1|?x2 $?))
+    =>)
+    
+(defrule city-group-i4 
+    (object (is-a MANIFEST) (origin ?x1) (destination ?x2))
+    (object (is-a SHIPZONE) (cities $? ?x3&?x1|?x2 $?) (city1 ~?x3&?x1|?x2))
+    =>)
+(reset)
+(agenda)
 (clear) ; Error line count issue
 (load line_error_crlf.clp)
 (clear)

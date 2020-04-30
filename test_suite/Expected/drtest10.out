@@ -1204,7 +1204,7 @@ CLIPS>
 CLIPS>   
 (deffacts hellos
    (hello))
-CLIPS> (clear) ; Source Ticket #56
+CLIPS> (clear) ; SourceForge Ticket #56
 CLIPS> 
 (deftemplate maze
    (multislot open-list)
@@ -1241,6 +1241,94 @@ CLIPS> (assert (foo))
 CLIPS> (timetag (fact-slot-value 1 fct))
 [PRNTUTIL1] Unable to find fact <Dummy Fact>.
 -1
+CLIPS> (clear) ; 2 variable comparison from right memory
+CLIPS> 
+(deftemplate manifest
+   (slot origin)
+   (slot destination)) 
+CLIPS> 
+(deftemplate shipzone
+    (slot zonename)
+    (multislot cities)
+    (slot city1)
+    (slot city2))
+CLIPS> 
+(deffacts fact-data
+    (manifest (origin CHI) (destination WAS)) 
+    (manifest (origin HOU) (destination ATL)) 
+    (shipzone (cities CHI WAS BOS) (city1 CHI) (city2 WAS))
+    (shipzone (cities BOS HOU ATL)))
+CLIPS> 
+(defclass MANIFEST
+   (is-a USER)
+   (slot origin)
+   (slot destination)) 
+CLIPS> 
+(defclass SHIPZONE
+   (is-a USER)
+   (slot zonename)
+   (multislot cities)
+   (slot city1)
+   (slot city2))
+CLIPS> 
+(definstances instance-data
+    (m1 of MANIFEST (origin CHI) (destination WAS)) 
+    (m2 of MANIFEST (origin HOU) (destination ATL)) 
+    (s1 of SHIPZONE (cities CHI WAS BOS) (city1 CHI) (city2 WAS))
+    (s2 of SHIPZONE (cities BOS HOU ATL)))
+CLIPS> 
+(defrule city-group-f1
+    (manifest (origin ?x1) (destination ?x2))
+    (shipzone (city1 ?x3&?x1|?x2) (city2 ~?x3&?x1|?x2))
+    =>)
+CLIPS> 
+(defrule city-group-f2
+    (manifest (origin ?x1) (destination ?x2))
+    (shipzone (cities $? ?x3&?x1|?x2 ~?x3&?x1|?x2))
+    =>)
+CLIPS> 
+(defrule city-group-f3
+    (manifest (origin ?x1) (destination ?x2))
+    (shipzone (cities $? ?x3&?x1|?x2 ~?x3&?x1|?x2 $?))
+    =>)
+CLIPS> 
+(defrule city-group-f4
+    (manifest (origin ?x1) (destination ?x2))
+    (shipzone (cities $? ?x3&?x1|?x2 $?) (city1 ~?x3&?x1|?x2))
+    =>)
+CLIPS> 
+(defrule city-group-i1
+    (object (is-a MANIFEST) (origin ?x1) (destination ?x2))
+    (object (is-a SHIPZONE) (city1 ?x3&?x1|?x2) (city2 ~?x3&?x1|?x2))
+    =>)
+CLIPS>     
+(defrule city-group-i2 
+    (object (is-a MANIFEST) (origin ?x1) (destination ?x2))
+    (object (is-a SHIPZONE) (cities $? ?x3&?x1|?x2 ~?x3&?x1|?x2))
+    =>)
+CLIPS> 
+(defrule city-group-i3
+    (object (is-a MANIFEST) (origin ?x1) (destination ?x2))
+    (object (is-a SHIPZONE) (cities $? ?x3&?x1|?x2 ~?x3&?x1|?x2 $?))
+    =>)
+CLIPS>     
+(defrule city-group-i4 
+    (object (is-a MANIFEST) (origin ?x1) (destination ?x2))
+    (object (is-a SHIPZONE) (cities $? ?x3&?x1|?x2 $?) (city1 ~?x3&?x1|?x2))
+    =>)
+CLIPS> (reset)
+CLIPS> (agenda)
+0      city-group-f2: f-2,f-4
+0      city-group-f3: f-2,f-4
+0      city-group-f1: f-1,f-3
+0      city-group-f3: f-1,f-3
+0      city-group-f4: f-1,f-3
+0      city-group-i3: [m2],[s2]
+0      city-group-i2: [m2],[s2]
+0      city-group-i1: [m1],[s1]
+0      city-group-i4: [m1],[s1]
+0      city-group-i3: [m1],[s1]
+For a total of 10 activations.
 CLIPS> (clear) ; Error line count issue
 CLIPS> (load line_error_crlf.clp)
 %$

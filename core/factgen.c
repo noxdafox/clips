@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  12/07/17             */
+   /*            CLIPS Version 6.40  04/28/20             */
    /*                                                     */
    /*          FACT RETE FUNCTION GENERATION MODULE       */
    /*******************************************************/
@@ -25,6 +25,10 @@
 /*                                                           */
 /*            Increased maximum values for pattern/slot      */
 /*            indices.                                       */
+/*                                                           */
+/*      6.32: Join network fix for variable comparisons      */
+/*            where both variables are from the right        */
+/*            memory.                                        */
 /*                                                           */
 /*      6.40: Pragma once and other inclusion changes.       */
 /*                                                           */
@@ -1157,15 +1161,22 @@ struct expr *FactJNVariableComparison(
 
       hack1.slot1 = firstNode->slotNumber - 1;
 
+      hack1.p1rhs = true;
       if (nandJoin)
         { hack1.pattern1 = referringNode->joinDepth; }
       else
         { hack1.pattern1 = 0; }
 
-      hack1.p1rhs = true;
-      hack1.p2lhs = true;
-
-      hack1.pattern2 = referringNode->joinDepth;
+      if ((! nandJoin) && (selfNode->joinDepth == referringNode->joinDepth))
+        { 
+         hack1.p2rhs = true; 
+         hack1.pattern2 = 0;
+        }
+      else
+        { 
+         hack1.p2lhs = true; 
+         hack1.pattern2 = referringNode->joinDepth;
+        }
 
       if (referringNode->index == NO_INDEX) hack1.slot2 = 0;
       else hack1.slot2 = referringNode->slotNumber - 1;
@@ -1212,10 +1223,19 @@ struct expr *FactJNVariableComparison(
       else
         { hack2.pattern1 = 0; }
 
-      hack2.p1rhs = true;
-      hack2.p2lhs = true;
-
-      hack2.pattern2 = referringNode->joinDepth;
+      hack2.p1rhs = true;     
+      
+      if ((! nandJoin) && (selfNode->joinDepth == referringNode->joinDepth))
+        {
+         hack2.p2rhs = true;
+         hack2.pattern2 = 0;
+        }
+      else
+        {
+         hack2.p2lhs = true;
+         hack2.pattern2 = referringNode->joinDepth;
+        }
+      
       hack2.slot2 = referringNode->slotNumber - 1;
 
       if (firstNode->multiFieldsBefore == 0)
@@ -1264,7 +1284,10 @@ struct expr *FactJNVariableComparison(
       else
         { top->argList = FactGenGetvar(theEnv,selfNode,RHS); }
 
-      top->argList->nextArg = FactGenGetvar(theEnv,referringNode,LHS);
+      if ((! nandJoin) && (selfNode->joinDepth == referringNode->joinDepth))
+        { top->argList->nextArg = FactGenGetvar(theEnv,referringNode,RHS); }
+      else
+        { top->argList->nextArg = FactGenGetvar(theEnv,referringNode,LHS); }
      }
 
    /*======================================*/
