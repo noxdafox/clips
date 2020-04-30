@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*               CLIPS Version 6.30  08/16/14          */
+   /*               CLIPS Version 6.32  04/28/20          */
    /*                                                     */
    /*    INFERENCE ENGINE OBJECT PARSING ROUTINES MODULE  */
    /*******************************************************/
@@ -27,6 +27,10 @@
 /*                                                           */
 /*      6.30: Added support for hashed memories and other    */
 /*            join network changes.                          */
+/*                                                           */
+/*      6.32: Join network fix for variable comparisons      */
+/*            where both variables are from the right        */
+/*            memory.                                        */
 /*                                                           */
 /*************************************************************/
 /* =========================================
@@ -520,10 +524,18 @@ static EXPRESSION *GenerateSlotComparisonTest(
               { jhack1.firstPattern = 0; }
             
             jhack1.firstPatternRHS = TRUE;
-            jhack1.secondPatternLHS = TRUE;
-              
-            jhack1.secondPattern = (unsigned short) referringNode->joinDepth; 
             
+            if ((! isNand) && (selfNode->joinDepth == referringNode->joinDepth))
+              {
+               jhack1.secondPatternRHS = TRUE;
+               jhack1.secondPattern = 0;
+              }
+            else
+              {
+               jhack1.secondPatternLHS = TRUE;
+               jhack1.secondPattern = (unsigned short) referringNode->joinDepth;
+              }
+
             theExp = GenConstant(theEnv,OBJ_JN_CMP1,EnvAddBitMap(theEnv,(void *) &jhack1,
                                            (int) sizeof(struct ObjectCmpJoinSingleSlotVars1)));
            }
@@ -559,8 +571,17 @@ static EXPRESSION *GenerateSlotComparisonTest(
                  { jhack2.firstPattern = 0; }
                
                jhack2.firstPatternRHS = TRUE;
-               jhack2.secondPatternLHS = TRUE;
-               jhack2.secondPattern = (unsigned short) referringNode->joinDepth; 
+               
+               if ((! isNand) && (selfNode->joinDepth == referringNode->joinDepth))
+                 {
+                  jhack2.secondPatternRHS = TRUE;
+                  jhack2.secondPattern = 0;
+                 }
+               else
+                 {
+                  jhack2.secondPatternLHS = TRUE;
+                  jhack2.secondPattern = (unsigned short) referringNode->joinDepth;
+                 }
               }
               
             if (firstNode->multiFieldsBefore == 0)
@@ -583,9 +604,17 @@ static EXPRESSION *GenerateSlotComparisonTest(
                  { jhack2.secondPattern = 0; }
                  
                jhack2.secondPatternRHS = TRUE;
-               jhack2.firstPatternLHS = TRUE;
                
-               jhack2.firstPattern = (unsigned short) referringNode->joinDepth; 
+               if ((! isNand) && (selfNode->joinDepth == referringNode->joinDepth))
+                 {
+                  jhack2.firstPatternRHS = TRUE;
+                  jhack2.firstPattern = 0;
+                 }
+               else
+                 {
+                  jhack2.firstPatternLHS = TRUE;
+                  jhack2.firstPattern = (unsigned short) referringNode->joinDepth;
+                 }
               }
             
             if (referringNode->multiFieldsBefore == 0)
@@ -645,8 +674,17 @@ static EXPRESSION *GenerateSlotComparisonTest(
               { jhack3.firstPattern = 0; }
             
             jhack3.firstPatternRHS = TRUE;
-            jhack3.secondPatternLHS = TRUE;
-            jhack3.secondPattern = (unsigned short) referringNode->joinDepth; 
+            
+            if ((! isNand) && (selfNode->joinDepth == referringNode->joinDepth))
+              {
+               jhack3.secondPatternRHS = TRUE;
+               jhack3.secondPattern = 0;
+              }
+            else
+              {
+               jhack3.secondPatternLHS = TRUE;
+               jhack3.secondPattern = (unsigned short) referringNode->joinDepth;
+              }
 
             theExp = GenConstant(theEnv,OBJ_JN_CMP3,EnvAddBitMap(theEnv,(void *) &jhack3,
                                          (int) sizeof(struct ObjectCmpJoinSingleSlotVars3)));
@@ -674,7 +712,10 @@ static EXPRESSION *GenerateSlotComparisonTest(
       
       theExp->argList->nextArg = GenConstant(theEnv,0,NULL);
       
-      GenObjectGetVar(theEnv,joinTest,theExp->argList->nextArg,referringNode,LHS);
+      if ((! isNand) && (selfNode->joinDepth == referringNode->joinDepth))
+        { GenObjectGetVar(theEnv,joinTest,theExp->argList->nextArg,referringNode,RHS); }
+      else
+        { GenObjectGetVar(theEnv,joinTest,theExp->argList->nextArg,referringNode,LHS); }
      }
    return(theExp);
   }

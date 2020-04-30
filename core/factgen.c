@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*             CLIPS Version 6.32  04/28/20            */
    /*                                                     */
    /*          FACT RETE FUNCTION GENERATION MODULE       */
    /*******************************************************/
@@ -25,6 +25,10 @@
 /*                                                           */
 /*            Increased maximum values for pattern/slot      */
 /*            indices.                                       */
+/*                                                           */
+/*      6.32: Join network fix for variable comparisons      */
+/*            where both variables are from the right        */
+/*            memory.                                        */
 /*                                                           */
 /*************************************************************/
 
@@ -1142,17 +1146,24 @@ globle struct expr *FactJNVariableComparison(
         { firstNode = selfNode; }
       
       hack1.slot1 = (unsigned short) (firstNode->slotNumber - 1);
-        
+
+      hack1.p1rhs = TRUE;
       if (nandJoin)
         { hack1.pattern1 = (unsigned short) referringNode->joinDepth; }
       else
         { hack1.pattern1 = 0; }
         
-      hack1.p1rhs = TRUE;
-      hack1.p2lhs = TRUE;
+      if ((! nandJoin) && (selfNode->joinDepth == referringNode->joinDepth))
+        {
+         hack1.p2rhs = TRUE;
+         hack1.pattern2 = 0;
+        }
+      else
+        {
+         hack1.p2lhs = TRUE;
+         hack1.pattern2 = (unsigned short) referringNode->joinDepth;
+        }
 
-      hack1.pattern2 = (unsigned short) referringNode->joinDepth; 
-      
       if (referringNode->index < 0) hack1.slot2 = 0;
       else hack1.slot2 = (unsigned short) (referringNode->slotNumber - 1);
 
@@ -1197,9 +1208,18 @@ globle struct expr *FactJNVariableComparison(
         { hack2.pattern1 = 0; }
       
       hack2.p1rhs = TRUE;
-      hack2.p2lhs = TRUE;
-        
-      hack2.pattern2 = (unsigned short) referringNode->joinDepth; 
+      
+      if ((! nandJoin) && (selfNode->joinDepth == referringNode->joinDepth))
+        {
+         hack2.p2rhs = TRUE;
+         hack2.pattern2 = 0;
+        }
+      else
+        {
+         hack2.p2lhs = TRUE;
+         hack2.pattern2 = (unsigned short) referringNode->joinDepth;
+        }
+
       hack2.slot2 = (unsigned short) (referringNode->slotNumber - 1);
 
       if (firstNode->multiFieldsBefore == 0)
@@ -1247,8 +1267,11 @@ globle struct expr *FactJNVariableComparison(
         { top->argList = FactGenGetvar(theEnv,selfNode,NESTED_RHS); }
       else
         { top->argList = FactGenGetvar(theEnv,selfNode,RHS); }
-        
-      top->argList->nextArg = FactGenGetvar(theEnv,referringNode,LHS);
+
+      if ((! nandJoin) && (selfNode->joinDepth == referringNode->joinDepth))
+        { top->argList->nextArg = FactGenGetvar(theEnv,referringNode,RHS); }
+      else
+        { top->argList->nextArg = FactGenGetvar(theEnv,referringNode,LHS); }
      }
 
    /*======================================*/
