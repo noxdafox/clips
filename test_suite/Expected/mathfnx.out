@@ -836,7 +836,7 @@ CLIPS> (round -4)                         ; 10.6.2.12 : -4
 CLIPS> (round 3.6)                        ; 10.6.2.12 : 4
 4
 CLIPS> (round 3.5)                        ; 10.6.2.12 : 3
-3
+4
 CLIPS> (round 3.4)                        ; 10.6.2.12 : 3
 3
 CLIPS> (round -3.6)                       ; 10.6.2.12 : -4

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  09/09/19             */
+   /*            CLIPS Version 6.40  05/01/20             */
    /*                                                     */
    /*            EXTENDED MATH FUNCTIONS MODULE           */
    /*******************************************************/
@@ -53,6 +53,9 @@
 /*            clear-error functions.                         */
 /*                                                           */
 /*            Added atan2 function.                          */
+/*                                                           */
+/*            Round function rounds away from zero if its    */
+/*            argument is halfway between two integers.      */
 /*                                                           */
 /*************************************************************/
 
@@ -1143,7 +1146,7 @@ void RoundFunction(
    /*==============================*/
 
    if (CVIsType(returnValue,FLOAT_BIT))
-     { returnValue->integerValue = CreateInteger(theEnv,(long long) ceil(returnValue->floatValue->contents - 0.5)); }
+     { returnValue->integerValue = CreateInteger(theEnv,(long long) round(returnValue->floatValue->contents)); }
   }
 
 /*******************************************/
