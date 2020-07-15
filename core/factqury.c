@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  09/28/17             */
+   /*            CLIPS Version 6.40  07/14/20             */
    /*                                                     */
    /*                  FACT QUERY MODULE                  */
    /*******************************************************/
@@ -41,6 +41,9 @@
 /*                                                           */
 /*            Matching fact sets containing retracted facts  */
 /*            are pruned.                                    */
+/*                                                           */
+/*      6.32: Fixed garbage collection issue with return     */
+/*            value of delayed-do-for-all-facts.             */
 /*                                                           */
 /*      6.40: Added Env prefix to GetEvaluationError and     */
 /*            SetEvaluationError functions.                  */
@@ -595,7 +598,10 @@ void DelayedQueryDoForAllFacts(
    FactQueryData(theEnv)->QueryCore->soln_set = NULL;
    FactQueryData(theEnv)->QueryCore->soln_size = rcnt;
    FactQueryData(theEnv)->QueryCore->soln_cnt = 0;
+   FactQueryData(theEnv)->QueryCore->result = returnValue;
+   RetainUDFV(theEnv,FactQueryData(theEnv)->QueryCore->result);
    TestEntireChain(theEnv,qtemplates,0);
+   ReleaseUDFV(theEnv,FactQueryData(theEnv)->QueryCore->result);
    FactQueryData(theEnv)->AbortQuery = false;
    FactQueryData(theEnv)->QueryCore->action = GetFirstArgument()->nextArg;
 
@@ -617,6 +623,8 @@ void DelayedQueryDoForAllFacts(
    /* Perform the action. */
    /*=====================*/
 
+   RetainUDFV(theEnv,FactQueryData(theEnv)->QueryCore->result);
+
    for (theSet = FactQueryData(theEnv)->QueryCore->soln_set;
         theSet != NULL; )
      {
@@ -627,7 +635,9 @@ void DelayedQueryDoForAllFacts(
          FactQueryData(theEnv)->QueryCore->solns[i] = theSet->soln[i];
         }
         
+      ReleaseUDFV(theEnv,FactQueryData(theEnv)->QueryCore->result);
       EvaluateExpression(theEnv,FactQueryData(theEnv)->QueryCore->action,returnValue);
+      RetainUDFV(theEnv,FactQueryData(theEnv)->QueryCore->result);
 
       if (EvaluationData(theEnv)->HaltExecution || ProcedureFunctionData(theEnv)->BreakFlag || ProcedureFunctionData(theEnv)->ReturnFlag)
         { break; }
@@ -637,6 +647,8 @@ void DelayedQueryDoForAllFacts(
       
       nextSet: theSet = theSet->nxt;
      }
+     
+   ReleaseUDFV(theEnv,FactQueryData(theEnv)->QueryCore->result);
 
    /*==============================================================*/
    /* Decrement the busy count for all facts in the solution sets. */

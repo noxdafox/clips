@@ -1424,5 +1424,36 @@ CLIPS>
       $?after)))
 CLIPS> (reset)
 CLIPS> (run)
+CLIPS> (clear) ; SourceForge Ticket #61
+CLIPS> (defclass FOO (is-a USER))
+CLIPS> (deftemplate FOO)
+CLIPS> 
+(deffunction test1()
+  (bind ?ins (make-instance of FOO))
+  (delayed-do-for-all-instances ((?f FOO)) TRUE
+    (str-cat "abc" "def")))
+CLIPS> 
+(deffunction test2()
+  (assert(FOO))
+  (delayed-do-for-all-facts ((?f FOO)) TRUE
+    (str-cat "uvw" "xyz")))
+CLIPS> 
+(deffunction test3()
+  (bind ?ins (make-instance of FOO))
+  (do-for-all-instances ((?f FOO)) TRUE
+    (str-cat "abc" "def")))
+CLIPS> 
+(deffunction test4()
+  (assert(FOO))
+  (do-for-all-facts ((?f FOO)) TRUE
+    (str-cat "uvw" "xyz")))
+CLIPS> (test1)
+"abcdef"
+CLIPS> (test2)
+"uvwxyz"
+CLIPS> (test3)
+"abcdef"
+CLIPS> (test4)
+"uvwxyz"
 CLIPS> (clear)
 CLIPS> (dribble-off)

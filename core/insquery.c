@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  09/28/17             */
+   /*            CLIPS Version 6.40  07/14/20             */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -42,6 +42,9 @@
 /*                                                           */
 /*            Matching instance sets containing deleted      */
 /*            instances are pruned.                          */
+/*                                                           */
+/*      6.32: Fixed garbage collection issue with return     */
+/*            value of delayed-do-for-all-instances.         */
 /*                                                           */
 /*      6.40: Added Env prefix to GetEvaluationError and     */
 /*            SetEvaluationError functions.                  */
@@ -577,7 +580,10 @@ void DelayedQueryDoForAllInstances(
    InstanceQueryData(theEnv)->QueryCore->soln_set = NULL;
    InstanceQueryData(theEnv)->QueryCore->soln_size = rcnt;
    InstanceQueryData(theEnv)->QueryCore->soln_cnt = 0;
+   InstanceQueryData(theEnv)->QueryCore->result = returnValue;
+   RetainUDFV(theEnv,InstanceQueryData(theEnv)->QueryCore->result);
    TestEntireChain(theEnv,qclasses,0);
+   ReleaseUDFV(theEnv,InstanceQueryData(theEnv)->QueryCore->result);
    InstanceQueryData(theEnv)->AbortQuery = false;
    InstanceQueryData(theEnv)->QueryCore->action = GetFirstArgument()->nextArg;
 
@@ -598,6 +604,8 @@ void DelayedQueryDoForAllInstances(
    /*=====================*/
    /* Perform the action. */
    /*=====================*/
+   
+   RetainUDFV(theEnv,InstanceQueryData(theEnv)->QueryCore->result);
 
    for (theSet = InstanceQueryData(theEnv)->QueryCore->soln_set;
         theSet != NULL; )
@@ -609,7 +617,9 @@ void DelayedQueryDoForAllInstances(
          InstanceQueryData(theEnv)->QueryCore->solns[i] = theSet->soln[i];
         }
 
+      ReleaseUDFV(theEnv,InstanceQueryData(theEnv)->QueryCore->result);
       EvaluateExpression(theEnv,InstanceQueryData(theEnv)->QueryCore->action,returnValue);
+      RetainUDFV(theEnv,InstanceQueryData(theEnv)->QueryCore->result);
 
       if (EvaluationData(theEnv)->HaltExecution || ProcedureFunctionData(theEnv)->BreakFlag || ProcedureFunctionData(theEnv)->ReturnFlag)
         { break; }
@@ -619,6 +629,8 @@ void DelayedQueryDoForAllInstances(
       
       nextSet: theSet = theSet->nxt;
      }
+   
+   ReleaseUDFV(theEnv,InstanceQueryData(theEnv)->QueryCore->result);
 
    /*==================================================================*/
    /* Decrement the busy count for all instances in the solution sets. */
