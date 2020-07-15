@@ -587,10 +587,7 @@ globle void DelayedQueryDoForAllFacts(
    FactQueryData(theEnv)->QueryCore->soln_set = NULL;
    FactQueryData(theEnv)->QueryCore->soln_size = rcnt;
    FactQueryData(theEnv)->QueryCore->soln_cnt = 0;
-   FactQueryData(theEnv)->QueryCore->result = result;
-   ValueInstall(theEnv,FactQueryData(theEnv)->QueryCore->result);
    TestEntireChain(theEnv,qtemplates,0);
-   ValueDeinstall(theEnv,FactQueryData(theEnv)->QueryCore->result);
    FactQueryData(theEnv)->AbortQuery = FALSE;
    FactQueryData(theEnv)->QueryCore->action = GetFirstArgument()->nextArg;
 
@@ -614,8 +611,6 @@ globle void DelayedQueryDoForAllFacts(
    /*=====================*/
    /* Perform the action. */
    /*=====================*/
-   
-   ValueInstall(theEnv,FactQueryData(theEnv)->QueryCore->result);
 
    for (theSet = FactQueryData(theEnv)->QueryCore->soln_set;
         theSet != NULL; )
@@ -627,22 +622,18 @@ globle void DelayedQueryDoForAllFacts(
 
          FactQueryData(theEnv)->QueryCore->solns[i] = theSet->soln[i]; 
         }
-        
-      ValueDeinstall(theEnv,FactQueryData(theEnv)->QueryCore->result);
+ 
       EvaluateExpression(theEnv,FactQueryData(theEnv)->QueryCore->action,result);
-      ValueInstall(theEnv,FactQueryData(theEnv)->QueryCore->result);
-      
+         
       if (EvaluationData(theEnv)->HaltExecution || ProcedureFunctionData(theEnv)->BreakFlag || ProcedureFunctionData(theEnv)->ReturnFlag)
         { break; }
 
-      CleanCurrentGarbageFrame(theEnv,NULL);
+      CleanCurrentGarbageFrame(theEnv,result);
       CallPeriodicTasks(theEnv);
 
       nextSet: theSet = theSet->nxt;
      }
-     
-   ValueDeinstall(theEnv,FactQueryData(theEnv)->QueryCore->result);
-  
+
    /*==============================================================*/
    /* Decrement the busy count for all facts in the solution sets. */
    /*==============================================================*/

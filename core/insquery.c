@@ -565,10 +565,7 @@ globle void DelayedQueryDoForAllInstances(
    InstanceQueryData(theEnv)->QueryCore->soln_set = NULL;
    InstanceQueryData(theEnv)->QueryCore->soln_size = rcnt;
    InstanceQueryData(theEnv)->QueryCore->soln_cnt = 0;
-   InstanceQueryData(theEnv)->QueryCore->result = result;
-   ValueInstall(theEnv,InstanceQueryData(theEnv)->QueryCore->result);
    TestEntireChain(theEnv,qclasses,0);
-   ValueDeinstall(theEnv,InstanceQueryData(theEnv)->QueryCore->result);
    InstanceQueryData(theEnv)->AbortQuery = FALSE;
    InstanceQueryData(theEnv)->QueryCore->action = GetFirstArgument()->nextArg;
    
@@ -592,8 +589,6 @@ globle void DelayedQueryDoForAllInstances(
    /*=====================*/
    /* Perform the action. */
    /*=====================*/
-   
-   ValueInstall(theEnv,InstanceQueryData(theEnv)->QueryCore->result);
 
    for (theSet = InstanceQueryData(theEnv)->QueryCore->soln_set;
         theSet != NULL; )
@@ -605,21 +600,17 @@ globle void DelayedQueryDoForAllInstances(
          InstanceQueryData(theEnv)->QueryCore->solns[i] = theSet->soln[i]; 
         }
         
-      ValueDeinstall(theEnv,InstanceQueryData(theEnv)->QueryCore->result);
       EvaluateExpression(theEnv,InstanceQueryData(theEnv)->QueryCore->action,result);
-      ValueInstall(theEnv,InstanceQueryData(theEnv)->QueryCore->result);
-
+      
       if (EvaluationData(theEnv)->HaltExecution || ProcedureFunctionData(theEnv)->BreakFlag || ProcedureFunctionData(theEnv)->ReturnFlag)
         { break; }
 
-      CleanCurrentGarbageFrame(theEnv,NULL);
+      CleanCurrentGarbageFrame(theEnv,result);
       CallPeriodicTasks(theEnv);
       
       nextSet: theSet = theSet->nxt;
      }
-     
-   ValueDeinstall(theEnv,InstanceQueryData(theEnv)->QueryCore->result);
-  
+      
    /*==================================================================*/
    /* Decrement the busy count for all instances in the solution sets. */
    /*==================================================================*/
