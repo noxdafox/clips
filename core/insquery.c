@@ -580,10 +580,7 @@ void DelayedQueryDoForAllInstances(
    InstanceQueryData(theEnv)->QueryCore->soln_set = NULL;
    InstanceQueryData(theEnv)->QueryCore->soln_size = rcnt;
    InstanceQueryData(theEnv)->QueryCore->soln_cnt = 0;
-   InstanceQueryData(theEnv)->QueryCore->result = returnValue;
-   RetainUDFV(theEnv,InstanceQueryData(theEnv)->QueryCore->result);
    TestEntireChain(theEnv,qclasses,0);
-   ReleaseUDFV(theEnv,InstanceQueryData(theEnv)->QueryCore->result);
    InstanceQueryData(theEnv)->AbortQuery = false;
    InstanceQueryData(theEnv)->QueryCore->action = GetFirstArgument()->nextArg;
 
@@ -605,8 +602,6 @@ void DelayedQueryDoForAllInstances(
    /* Perform the action. */
    /*=====================*/
    
-   RetainUDFV(theEnv,InstanceQueryData(theEnv)->QueryCore->result);
-
    for (theSet = InstanceQueryData(theEnv)->QueryCore->soln_set;
         theSet != NULL; )
      {
@@ -617,21 +612,17 @@ void DelayedQueryDoForAllInstances(
          InstanceQueryData(theEnv)->QueryCore->solns[i] = theSet->soln[i];
         }
 
-      ReleaseUDFV(theEnv,InstanceQueryData(theEnv)->QueryCore->result);
       EvaluateExpression(theEnv,InstanceQueryData(theEnv)->QueryCore->action,returnValue);
-      RetainUDFV(theEnv,InstanceQueryData(theEnv)->QueryCore->result);
 
       if (EvaluationData(theEnv)->HaltExecution || ProcedureFunctionData(theEnv)->BreakFlag || ProcedureFunctionData(theEnv)->ReturnFlag)
         { break; }
 
-      CleanCurrentGarbageFrame(theEnv,NULL);
+      CleanCurrentGarbageFrame(theEnv,returnValue);
       CallPeriodicTasks(theEnv);
       
       nextSet: theSet = theSet->nxt;
      }
    
-   ReleaseUDFV(theEnv,InstanceQueryData(theEnv)->QueryCore->result);
-
    /*==================================================================*/
    /* Decrement the busy count for all instances in the solution sets. */
    /*==================================================================*/

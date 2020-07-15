@@ -598,10 +598,7 @@ void DelayedQueryDoForAllFacts(
    FactQueryData(theEnv)->QueryCore->soln_set = NULL;
    FactQueryData(theEnv)->QueryCore->soln_size = rcnt;
    FactQueryData(theEnv)->QueryCore->soln_cnt = 0;
-   FactQueryData(theEnv)->QueryCore->result = returnValue;
-   RetainUDFV(theEnv,FactQueryData(theEnv)->QueryCore->result);
    TestEntireChain(theEnv,qtemplates,0);
-   ReleaseUDFV(theEnv,FactQueryData(theEnv)->QueryCore->result);
    FactQueryData(theEnv)->AbortQuery = false;
    FactQueryData(theEnv)->QueryCore->action = GetFirstArgument()->nextArg;
 
@@ -623,8 +620,6 @@ void DelayedQueryDoForAllFacts(
    /* Perform the action. */
    /*=====================*/
 
-   RetainUDFV(theEnv,FactQueryData(theEnv)->QueryCore->result);
-
    for (theSet = FactQueryData(theEnv)->QueryCore->soln_set;
         theSet != NULL; )
      {
@@ -635,21 +630,17 @@ void DelayedQueryDoForAllFacts(
          FactQueryData(theEnv)->QueryCore->solns[i] = theSet->soln[i];
         }
         
-      ReleaseUDFV(theEnv,FactQueryData(theEnv)->QueryCore->result);
       EvaluateExpression(theEnv,FactQueryData(theEnv)->QueryCore->action,returnValue);
-      RetainUDFV(theEnv,FactQueryData(theEnv)->QueryCore->result);
 
       if (EvaluationData(theEnv)->HaltExecution || ProcedureFunctionData(theEnv)->BreakFlag || ProcedureFunctionData(theEnv)->ReturnFlag)
         { break; }
 
-      CleanCurrentGarbageFrame(theEnv,NULL);
+      CleanCurrentGarbageFrame(theEnv,returnValue);
       CallPeriodicTasks(theEnv);
       
       nextSet: theSet = theSet->nxt;
      }
      
-   ReleaseUDFV(theEnv,FactQueryData(theEnv)->QueryCore->result);
-
    /*==============================================================*/
    /* Decrement the busy count for all facts in the solution sets. */
    /*==============================================================*/
