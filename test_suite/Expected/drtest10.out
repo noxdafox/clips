@@ -1269,5 +1269,36 @@ CLIPS> (agenda)
 0      city-group-i4: [m1],[s1]
 0      city-group-i3: [m1],[s1]
 For a total of 10 activations.
+CLIPS> (clear) ; SourceForge Ticket #61
+CLIPS> (defclass FOO (is-a USER))
+CLIPS> (deftemplate FOO)
+CLIPS> 
+(deffunction test1()
+  (bind ?ins (make-instance of FOO))
+  (delayed-do-for-all-instances ((?f FOO)) TRUE
+    (str-cat "abc" "def")))
+CLIPS> 
+(deffunction test2()
+  (assert(FOO))
+  (delayed-do-for-all-facts ((?f FOO)) TRUE
+    (str-cat "uvw" "xyz")))
+CLIPS> 
+(deffunction test3()
+  (bind ?ins (make-instance of FOO))
+  (do-for-all-instances ((?f FOO)) TRUE
+    (str-cat "abc" "def")))
+CLIPS> 
+(deffunction test4()
+  (assert(FOO))
+  (do-for-all-facts ((?f FOO)) TRUE
+    (str-cat "uvw" "xyz")))
+CLIPS> (test1)
+"abcdef"
+CLIPS> (test2)
+"uvwxyz"
+CLIPS> (test3)
+"abcdef"
+CLIPS> (test4)
+"uvwxyz"
 CLIPS> (clear)
 CLIPS> (dribble-off)

@@ -737,4 +737,31 @@
     =>)
 (reset)
 (agenda)
+(clear) ; SourceForge Ticket #61
+(defclass FOO (is-a USER))
+(deftemplate FOO)
+
+(deffunction test1()
+  (bind ?ins (make-instance of FOO))
+  (delayed-do-for-all-instances ((?f FOO)) TRUE
+    (str-cat "abc" "def")))
+
+(deffunction test2()
+  (assert(FOO))
+  (delayed-do-for-all-facts ((?f FOO)) TRUE
+    (str-cat "uvw" "xyz")))
+
+(deffunction test3()
+  (bind ?ins (make-instance of FOO))
+  (do-for-all-instances ((?f FOO)) TRUE
+    (str-cat "abc" "def")))
+
+(deffunction test4()
+  (assert(FOO))
+  (do-for-all-facts ((?f FOO)) TRUE
+    (str-cat "uvw" "xyz")))
+(test1)
+(test2)
+(test3)
+(test4)
 (clear)
