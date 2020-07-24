@@ -66,7 +66,7 @@ ERROR:
 CLIPS> (deffunction weird ()
   (build "(deffunction weird ())"))
 CLIPS> (weird)
-[DFNXPSR4] Deffunction weird may not be redefined while it is executing.
+[DFFNXPSR4] Deffunction weird may not be redefined while it is executing.
 
 ERROR:
 (deffunction MAIN::weird

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*             CLIPS Version 6.32  07/23/20            */
    /*                                                     */
    /*                 SYMBOL BSAVE MODULE                 */
    /*******************************************************/
@@ -22,9 +22,11 @@
 /*                                                           */
 /*            Support for long long integers.                */
 /*                                                           */
+/*      6.32: Fixed _SYMBLBIN_SOURCE_ typo.                  */
+/*                                                           */
 /*************************************************************/
 
-#define _BSAVE_SOURCE_
+#define _SYMBLBIN_SOURCE_
 
 #include "setup.h"
 

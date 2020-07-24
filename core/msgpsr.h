@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*               CLIPS Version 6.30  08/16/14          */
+   /*               CLIPS Version 6.32  07/23/20          */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -37,6 +37,8 @@
 /*            Fixed linkage issue when BLOAD_AND_SAVE        */
 /*            compiler flag is set to 0.                     */
 /*                                                           */
+/*      6.32: Fixed _MSGPSR_SOURCE_ typo.                    */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_msgpsr
@@ -54,7 +56,7 @@
 #undef LOCALE
 #endif
 
-#ifdef _MSGCOM_SOURCE_
+#ifdef _MSGPSR_SOURCE_
 #define LOCALE
 #else
 #define LOCALE extern

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*               CLIPS Version 6.30  01/25/15          */
+   /*               CLIPS Version 6.32  07/23/20          */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -42,6 +42,8 @@
 /*            Changed find construct functionality so that   */
 /*            imported modules are search when locating a    */
 /*            named construct.                               */
+/*                                                           */
+/*      6.32: Fixed typo in error ID.                        */
 /*                                                           */
 /*************************************************************/
 
@@ -369,7 +371,7 @@ static intBool ValidDeffunctionName(
          =========================================== */
       if (((DEFFUNCTION *) theDeffunction)->executing)
         {
-         PrintErrorID(theEnv,"DFNXPSR",4,FALSE);
+         PrintErrorID(theEnv,"DFFNXPSR",4,FALSE);
          EnvPrintRouter(theEnv,WERROR,"Deffunction ");
          EnvPrintRouter(theEnv,WERROR,EnvGetDeffunctionName(theEnv,(void *) theDeffunction));
          EnvPrintRouter(theEnv,WERROR," may not be redefined while it is executing.\n");

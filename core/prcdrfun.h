@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*             CLIPS Version 6.32  07/23/20            */
    /*                                                     */
    /*          PROCEDURAL FUNCTIONS HEADER FILE           */
    /*******************************************************/
@@ -32,6 +32,8 @@
 /*                                                           */
 /*            Support for long long integers.                */
 /*                                                           */
+/*      6.32: Fixed _PRCDRFUN_SOURCE_ typo.                  */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_prcdrfun
@@ -46,7 +48,7 @@
 #undef LOCALE
 #endif
 
-#ifdef _PRCDRFUN_SOURCE
+#ifdef _PRCDRFUN_SOURCE_
 #define LOCALE
 #else
 #define LOCALE extern

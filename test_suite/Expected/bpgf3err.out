@@ -417,7 +417,7 @@ ERROR:
    (?a abc
 CLIPS> (deffunction foo () (build "(deffunction foo ())"))
 CLIPS> (foo)
-[DFNXPSR4] Deffunction foo may not be redefined while it is executing.
+[DFFNXPSR4] Deffunction foo may not be redefined while it is executing.
 
 ERROR:
 (deffunction MAIN::foo

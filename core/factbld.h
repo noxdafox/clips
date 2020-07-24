@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*             CLIPS Version 6.32  07/23/20            */
    /*                                                     */
    /*                FACT BUILD HEADER FILE               */
    /*******************************************************/
@@ -20,6 +20,8 @@
 /*                                                           */
 /*            Added support for hashed comparisons to        */
 /*            constants.                                     */
+/*                                                           */
+/*      6.32: Fixed _FACTBUILD_SOURCE_ typo.                 */
 /*                                                           */
 /*************************************************************/
 
@@ -52,7 +54,7 @@ struct factPatternNode
    struct factPatternNode *rightNode;
   };
 
-#ifdef _FACTBUILD_SOURCE_
+#ifdef _FACTBLD_SOURCE_
 #define LOCALE
 #else
 #define LOCALE extern
