@@ -772,9 +772,13 @@ public class RouterTextArea extends JTextArea
      {
       if (EventQueue.isDispatchThread())
         { 
+         removeCaretListener(this);
          caretUpdateAction(ce.getDot(), ce.getMark()); 
+         addCaretListener(this);
          return;
         }
+
+      removeCaretListener(this);
       try
         {
          SwingUtilities.invokeAndWait(
@@ -786,6 +790,7 @@ public class RouterTextArea extends JTextArea
         }
       catch (Exception e) 
         { e.printStackTrace(); }
+      addCaretListener(this);
      }
 
    /*********************/
