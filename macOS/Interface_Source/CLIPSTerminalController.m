@@ -1668,6 +1668,15 @@
     return returnArray;
    }
 
+/*******************************/
+/* textViewDidChangeSelection: */
+/*******************************/
+- (void) textViewDidChangeSelection: (NSNotification *) aNotification
+  {
+   if (! [textView balancingDisabled])
+     { [textView balanceParentheses]; }
+  }
+  
 /*%%%%%%%%%%%%%%%%*/
 /* Unused Methods */
 /*%%%%%%%%%%%%%%%%*/

@@ -9,6 +9,8 @@
 
 @implementation CLIPSTextView
 
+@synthesize balancingDisabled;
+
 /**************/
 /* mouseDown: */
 /**************/
@@ -17,6 +19,21 @@
    mouseDownDetected = YES;
 
    [super mouseDown: theEvent];
+  }
+  
+/******************/
+/* deleteForward: */
+/******************/
+- (void) deleteForward: (id) sender
+  {
+   /*===================================================*/
+   /* Process the forward delete against the unexecuted */
+   /* command being entered at the command prompt.      */
+   /*===================================================*/
+   
+   self->balancingDisabled = true;
+   [super deleteForward: sender];
+   self->balancingDisabled = false;
   }
 
 /******************/

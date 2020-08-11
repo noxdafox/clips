@@ -10,6 +10,7 @@
 @interface CLIPSTextView : NSTextView
   {
    BOOL mouseDownDetected;
+   BOOL balancingDisabled;
   }
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%*/
@@ -18,5 +19,7 @@
 
 - (void)               setMouseDownDetected: (BOOL) theValue;
 - (BOOL)               mouseDownDetected;
+
+@property (nonatomic, assign) BOOL balancingDisabled;
 
 @end

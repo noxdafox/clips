@@ -16,7 +16,7 @@
 
 @implementation CLIPSTerminalView
 
-@synthesize environment;
+@synthesize environment, balancingDisabled;
 
 /********************************/
 /* initWithFrame:textContainer: */
@@ -300,6 +300,12 @@
           
    selectionRange = [super selectedRange];
    
+   /*=============================================================*/
+   /* Don't balance if there are one or more characters selected. */
+   /*=============================================================*/
+
+   if (selectionRange.length != 0) return;
+
    /*======================*/
    /* Where is the cursor? */
    /*======================*/
@@ -472,16 +478,15 @@
    /*=======================================*/
    
    [super insertText: theText replacementRange: replacementRange];
-   
+/*   
    if (! routerPrint)
      {
-      [self balanceParentheses];
-      
       if (CommandCompleteAndNotEmpty(theEnvironment))
         {
          // TBD At this point lock command input.
         }
      }
+*/
   }
 
 /*************************************************************/
@@ -551,6 +556,116 @@
                                      To: theController->currentCommand->prev];
       }
    }
+
+/******************/
+/* deleteForward: */
+/******************/
+- (void) deleteForward: (id) sender
+  {
+   NSUInteger inputOffset = [self inputStringOffset];
+   NSUInteger textLength;
+   NSString *theTerminalText;
+   char *str;
+   BOOL disableBalancing;
+
+   /*====================================================*/
+   /* If the input buffer is empty, then there are no    */
+   /* characters to delete. Remove the current selection */
+   /* and move the cursor to the end of the terminal.    */
+   /*====================================================*/
+   
+   if (RouterData([environment environment])->CommandBufferInputCount <= 0)
+     {
+      NSRange theRange = { [[super string] length], 0 };
+      [super setSelectedRange: theRange];
+      return;
+     }
+
+   /*==========================================================*/
+   /* Is a running CLIPS function or program (such as the read */
+   /* function) waiting for character input from stdin. If so, */
+   /* move the cursor to the end of the terminal but don't     */
+   /* delete anything.                                         */
+   /*==========================================================*/
+   
+   if ([inputCharLock condition] == NEEDS_CHAR)
+     {
+      NSRange theRange = { [[super string] length], 0 };
+      [super setSelectedRange: theRange];
+      return;
+     }
+     
+   /*=================================*/
+   /* Retrieve the current selection. */
+   /*=================================*/
+          
+   NSRange selectionRange = [super selectedRange];
+   
+   /*========================*/
+   /* Determine the start of */
+   /* the current command.   */
+   /*========================*/
+   
+   theTerminalText = [self string];
+   textLength = [theTerminalText length];
+   NSUInteger inputStart = textLength - inputOffset;
+  
+   /*=============================================*/
+   /* If the selection contains any prior output, */
+   /* then remove the selection and move the      */
+   /* cursor to the end of the terminal.          */
+   /*=============================================*/
+    
+   if (selectionRange.location < inputStart)
+     {
+      NSRange theRange = { [[super string] length], 0 };
+      [super setSelectedRange: theRange];
+      return;
+     }
+   
+   /*=======================================*/
+   /* If the cursor is at the end of input, */
+   /* then deleting forward has no effect.  */
+   /*=======================================*/
+   
+   if ((selectionRange.location == textLength) && (selectionRange.length == 0))
+     { return; }
+     
+   /*============================================*/
+   /* Remove characters from the command string. */
+   /*============================================*/
+
+   NSString *theCommand, *preCommand, *postCommand;
+   
+   theCommand = [theTerminalText substringFromIndex: inputStart];
+   
+   preCommand = [theCommand substringToIndex: (selectionRange.location - inputStart)];
+
+   if (selectionRange.length == 0)
+     {
+      disableBalancing = true;
+      postCommand = [theCommand substringFromIndex: (selectionRange.location + selectionRange.length + 1 - inputStart)];
+     }
+   else
+     {
+      disableBalancing = false;
+      postCommand = [theCommand substringFromIndex: (selectionRange.location + selectionRange.length - inputStart)];
+     }
+
+   str = (char *) [preCommand UTF8String];
+   SetCommandString([environment environment],str);
+   str = (char *) [postCommand UTF8String];
+   AppendCommandString([environment environment],str);
+ 
+   /*===================================================*/
+   /* Process the forward delete against the unexecuted */
+   /* command being entered at the command prompt.      */
+   /*===================================================*/
+   
+   self->balancingDisabled = disableBalancing;
+   [super deleteForward: sender];
+   self->balancingDisabled = false;
+  }
 
 /*******************/
 /* deleteBackward: */
@@ -626,9 +741,13 @@
    /* input, then deleting has no effect.  */
    /*======================================*/
    
-   if ((selectionRange.location == inputStart) && selectionRange.length == 0)
+   if ((selectionRange.location == inputStart) && (selectionRange.length == 0))
      { return; }
  
+   /*============================================*/
+   /* Remove characters from the command string. */
+   /*============================================*/
+   
    NSString *theCommand, *preCommand, *postCommand;
    
    theCommand = [theTerminalText substringFromIndex: inputStart];
@@ -636,9 +755,7 @@
    if (selectionRange.length == 0)
      { preCommand = [theCommand substringToIndex: ((selectionRange.location - inputStart) - 1)]; }
    else
-     {
-      preCommand = [theCommand substringToIndex: (selectionRange.location - inputStart)];
-     }
+     { preCommand = [theCommand substringToIndex: (selectionRange.location - inputStart)]; }
    
    postCommand = [theCommand substringFromIndex: (selectionRange.location + selectionRange.length - inputStart)];
 
@@ -653,8 +770,6 @@
    /*==============================================*/
 
    [super deleteBackward: sender];
-   
-   [self balanceParentheses];
   }
   
 /***********************************************************/

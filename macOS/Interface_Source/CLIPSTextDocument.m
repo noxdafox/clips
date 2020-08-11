@@ -130,17 +130,14 @@
     
    if (! [[theValues valueForKey: @"editorBalanceParens"] boolValue]) 
      { return; } 
+      
+   /*================================================*/
+   /* A forward delete will not balance parentheses. */
+   /*================================================*/
    
-   /*=========================================================*/
-   /* Don't balance parentheses in response to a mouse click. */
-   /*=========================================================*/
+   if ([textView balancingDisabled])
+     { return;}
 
-   if ([textView mouseDownDetected] == YES)
-     { 
-      [textView setMouseDownDetected: NO]; 
-      return;
-     }
-     
    /*================================================*/
    /* Don't balance parentheses if there is no text. */
    /*================================================*/
@@ -153,7 +150,13 @@
    /*=================================*/
           
    selectionRange = [textView selectedRange];
-    
+
+   /*=============================================================*/
+   /* Don't balance if there are one or more characters selected. */
+   /*=============================================================*/
+
+   if (selectionRange.length != 0) return;
+   
    /*======================*/
    /* Where is the cursor? */
    /*======================*/
