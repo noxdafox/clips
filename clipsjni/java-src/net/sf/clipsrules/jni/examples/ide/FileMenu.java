@@ -329,7 +329,7 @@ public class FileMenu extends JMenu
    public void newTextFile(
      File theFile)
      {
-      TextFrame theFrame = new TextFrame(theFile);
+      TextFrame theFrame = new TextFrame(ide,theFile);
       
       theFrame.addInternalFrameListener(ide);
       

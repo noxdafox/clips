@@ -41,6 +41,7 @@ public class TextFrame extends JInternalFrame
    /* TextFrame */
    /*************/
    TextFrame(
+     CLIPSIDE theIDE,
      File theFile)
      {  
       super("",true,true,true,true);
@@ -72,14 +73,17 @@ public class TextFrame extends JInternalFrame
      
       this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);  
 
-      /*==========================*/
-      /* Create the status panel. */
-      /*==========================*/
-
-      JPanel statusPanel = new JPanel(); 
-      statusPanel.setPreferredSize(new Dimension(600,40));
+      /*====================*/
+      /* Add the Text menu. */
+      /*====================*/
       
-      this.getContentPane().add(statusPanel); 
+      JMenuBar menuBar = new JMenuBar();
+
+      JMenu jmText = new TextMenu(theIDE,this);
+
+      menuBar.add(jmText);
+ 
+      setJMenuBar(menuBar);
       
       /*=============================*/
       /* Create the text field area. */

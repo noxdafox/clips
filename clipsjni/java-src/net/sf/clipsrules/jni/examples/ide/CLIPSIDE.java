@@ -658,7 +658,7 @@ public class CLIPSIDE extends JFrame
       /* Text menu */
       /*===========*/
 
-      jmText = new TextMenu(this);
+      jmText = new TextMenu(this,null);
       jmb.add(jmText);
 
       /*==================*/

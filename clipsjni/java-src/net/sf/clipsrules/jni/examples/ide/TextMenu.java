@@ -43,7 +43,8 @@ public class TextMenu extends JMenu
    /* TextMenu */
    /************/
    TextMenu(
-     CLIPSIDE theIDE)
+     CLIPSIDE theIDE,
+     TextFrame theFrame)
      {  
       super("Text");
         
@@ -75,11 +76,11 @@ public class TextMenu extends JMenu
       /*=================*/
 
       jmiLoadSelection = new JMenuItem(loadSelectionAction);
-      jmiLoadSelection.setAccelerator(loadSelection);
+      if (theFrame == null) jmiLoadSelection.setAccelerator(loadSelection);
       add(jmiLoadSelection);
 
       jmiBatchSelection = new JMenuItem(batchSelectionAction);
-      jmiBatchSelection.setAccelerator(batchSelection);
+      if (theFrame == null) jmiBatchSelection.setAccelerator(batchSelection);
       add(jmiBatchSelection);
 
       jmiLoadBuffer = new JMenuItem(loadBufferAction);
@@ -88,7 +89,7 @@ public class TextMenu extends JMenu
       addSeparator();
 
       jmiBalance = new JMenuItem(balanceAction);
-      jmiBalance.setAccelerator(balance);
+      if (theFrame == null) jmiBalance.setAccelerator(balance);
       add(jmiBalance);
 
       jmiComment = new JMenuItem(commentAction);
@@ -96,6 +97,12 @@ public class TextMenu extends JMenu
 
       jmiUncomment = new JMenuItem(uncommentAction);
       add(jmiUncomment);
+      
+      /*=============================*/
+      /* Set the initial text frame. */
+      /*=============================*/
+      
+      textFrame = theFrame;
      }  
 
    /****************/
