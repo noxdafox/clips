@@ -17,6 +17,7 @@ using System.Windows.Shapes;
 using System.Threading;
 using System.Windows.Threading;
 using System.ComponentModel;
+using System.Drawing;
 
 using CLIPSNET;
 
@@ -68,9 +69,41 @@ namespace CLIPSIDE
             lastModuleRow = -1;
             lastEntity = null;
             lastEntityRow = -1;
+            SetFontFromPreferences();
            }
         }
-                
+                 
+      /**************************/
+      /* SetFontFromPreferences */
+      /**************************/
+      public void SetFontFromPreferences()
+        { 
+         if (ide == null) return;
+
+         TypeConverter fontConverter = TypeDescriptor.GetConverter(typeof(Font));
+         Font theFont = (Font) fontConverter.ConvertFromString(ide.GetPreferences().GetBrowserFont());
+
+         System.Windows.Media.FontFamily theFamily =  new System.Windows.Media.FontFamily(theFont.FontFamily.Name);
+         double theSize =  theFont.Size;
+         FontWeight theWeight = theFont.Bold ? FontWeights.Bold : FontWeights.Regular;
+         System.Windows.FontStyle theStyle = theFont.Italic ? FontStyles.Italic : FontStyles.Normal;
+
+         this.moduleDataGridView.FontFamily = theFamily;
+         this.moduleDataGridView.FontSize = theSize;
+         this.moduleDataGridView.FontWeight = theWeight;
+         this.moduleDataGridView.FontStyle = theStyle;
+            
+         this.entityDataGridView.FontFamily = theFamily;
+         this.entityDataGridView.FontSize = theSize;
+         this.entityDataGridView.FontWeight = theWeight;
+         this.entityDataGridView.FontStyle = theStyle;
+
+         this.slotDataGridView.FontFamily = theFamily;
+         this.slotDataGridView.FontSize = theSize;
+         this.slotDataGridView.FontWeight = theWeight;
+         this.slotDataGridView.FontStyle = theStyle;
+        }
+
       /*************/
       /* DetachIDE */
       /*************/

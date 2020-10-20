@@ -65,6 +65,8 @@
         <CommandBinding Command="local:IDECommands.CLIPSExpertSystemGroup" CanExecute="CLIPSExpertSystemGroup_CanExecute" Executed="CLIPSExpertSystemGroup_Executed" />
         <CommandBinding Command="local:IDECommands.SourceForgeForums" CanExecute="SourceForgeForums_CanExecute" Executed="SourceForgeForums_Executed" />
         <CommandBinding Command="local:IDECommands.StackOverflowQA" CanExecute="StackOverflowQA_CanExecute" Executed="StackOverflowQA_Executed" />
+        <CommandBinding Command="local:IDECommands.SetDialogFont" CanExecute="SetDialogFont_CanExecute" Executed="SetDialogFont_Executed" />
+        <CommandBinding Command="local:IDECommands.SetBrowserFont" CanExecute="SetBrowserFont_CanExecute" Executed="SetBrowserFont_Executed" />
     </Window.CommandBindings>
     <Grid x:Name ="mainGrid" Margin="0,1,0,-1">
 
@@ -86,6 +88,9 @@
                     <MenuItem Header="Cut" Command="ApplicationCommands.Cut"/>
                     <MenuItem Header="Copy" Command="ApplicationCommands.Copy"/>
                     <MenuItem Header="Paste" Command="ApplicationCommands.Paste"/>
+                    <Separator/>
+                    <MenuItem Header="Set Dialog Font..." Command="local:IDECommands.SetDialogFont"/>
+                    <MenuItem Header="Set Browser Font..." Command="local:IDECommands.SetBrowserFont"/>
                 </MenuItem>
                 <MenuItem Header="Environment">
                     <MenuItem Header="Clear" Command="local:IDECommands.Clear"/>

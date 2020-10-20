@@ -145,6 +145,20 @@ namespace CLIPSIDE
               { theBrowser.UpdateButtons(isExecuting); }
            }
         }
+      
+      /**********************/
+      /* UpdateBrowserFonts */
+      /**********************/
+      public void UpdateBrowserFonts()
+        {
+         lock(browsers)
+           {
+            if (browsers.Count == 0) return;
+
+            foreach(AgendaBrowser theBrowser in browsers)
+              { theBrowser.SetFontFromPreferences(); }
+           }
+        }
 
       /*******/
       /* ... */

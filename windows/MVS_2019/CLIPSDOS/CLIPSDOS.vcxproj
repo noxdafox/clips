@@ -76,6 +76,7 @@
     <ClCompile Include="..\Shared\Source\CLIPS\factbld.c" />
     <ClCompile Include="..\Shared\Source\CLIPS\factcmp.c" />
     <ClCompile Include="..\Shared\Source\CLIPS\factcom.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\factfile.c" />
     <ClCompile Include="..\Shared\Source\CLIPS\factfun.c" />
     <ClCompile Include="..\Shared\Source\CLIPS\factgen.c" />
     <ClCompile Include="..\Shared\Source\CLIPS\facthsh.c" />
@@ -248,6 +249,7 @@
     <ClInclude Include="..\Shared\Source\CLIPS\factbld.h" />
     <ClInclude Include="..\Shared\Source\CLIPS\factcmp.h" />
     <ClInclude Include="..\Shared\Source\CLIPS\factcom.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\factfile.h" />
     <ClInclude Include="..\Shared\Source\CLIPS\factfun.h" />
     <ClInclude Include="..\Shared\Source\CLIPS\factgen.h" />
     <ClInclude Include="..\Shared\Source\CLIPS\facthsh.h" />
@@ -365,30 +367,30 @@
     <ProjectGuid>{546AFA86-71A4-4233-9513-3D11E455FD1B}</ProjectGuid>
     <RootNamespace>DOSCLIPS</RootNamespace>
     <Keyword>Win32Proj</Keyword>
-    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -437,7 +439,7 @@
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN_MVC=1;_DEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <MinimalRebuild>true</MinimalRebuild>
+      <MinimalRebuild>false</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <PrecompiledHeader>

@@ -80,6 +80,7 @@
     <ClInclude Include="..\Shared\Source\CLIPS\factbld.h" />
     <ClInclude Include="..\Shared\Source\CLIPS\factcmp.h" />
     <ClInclude Include="..\Shared\Source\CLIPS\factcom.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\factfile.h" />
     <ClInclude Include="..\Shared\Source\CLIPS\factfun.h" />
     <ClInclude Include="..\Shared\Source\CLIPS\factgen.h" />
     <ClInclude Include="..\Shared\Source\CLIPS\facthsh.h" />
@@ -255,6 +256,7 @@
     <ClCompile Include="..\Shared\Source\CLIPS\factbld.c" />
     <ClCompile Include="..\Shared\Source\CLIPS\factcmp.c" />
     <ClCompile Include="..\Shared\Source\CLIPS\factcom.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\factfile.c" />
     <ClCompile Include="..\Shared\Source\CLIPS\factfun.c" />
     <ClCompile Include="..\Shared\Source\CLIPS\factgen.c" />
     <ClCompile Include="..\Shared\Source\CLIPS\facthsh.c" />
@@ -376,30 +378,30 @@
     <ProjectGuid>{E8474BAA-988C-4D8A-9B37-59C2F6A54E8B}</ProjectGuid>
     <RootNamespace>CLIPSWin32</RootNamespace>
     <Keyword>Win32Proj</Keyword>
-    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <CharacterSet>NotSet</CharacterSet>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <CharacterSet>NotSet</CharacterSet>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <CharacterSet>NotSet</CharacterSet>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <CharacterSet>NotSet</CharacterSet>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -449,7 +451,7 @@
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>..\Shared\Source\CLIPS;C:\Program Files\Java\jdk1.8.0_144\include;C:\Program Files\Java\jdk1.8.0_144\include\win32;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN_MVC=1;ALLOW_ENVIRONMENT_GLOBALS=0;_DEBUG;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <MinimalRebuild>true</MinimalRebuild>
+      <MinimalRebuild>false</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <PrecompiledHeader>

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.ComponentModel;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
@@ -14,6 +15,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Threading;
 using System.Windows.Threading;
+using System.Drawing;
 
 using CLIPSNET;
 
@@ -39,9 +41,36 @@ namespace CLIPSIDE
          if (ide != null)
            { 
             UpdateButtonsDriver(ide.dialog.GetExecuting());
+            SetFontFromPreferences();
            }
         }
         
+      /**************************/
+      /* SetFontFromPreferences */
+      /**************************/
+      public void SetFontFromPreferences()
+        {
+         if (ide == null) return;
+
+         TypeConverter fontConverter = TypeDescriptor.GetConverter(typeof(Font));
+         Font theFont = (Font) fontConverter.ConvertFromString(ide.GetPreferences().GetBrowserFont());
+
+         System.Windows.Media.FontFamily theFamily =  new System.Windows.Media.FontFamily(theFont.FontFamily.Name);
+         double theSize =  theFont.Size;
+         FontWeight theWeight = theFont.Bold ? FontWeights.Bold : FontWeights.Regular;
+         System.Windows.FontStyle theStyle = theFont.Italic ? FontStyles.Italic : FontStyles.Normal;
+
+         this.focusStackDataGridView.FontFamily = theFamily;
+         this.focusStackDataGridView.FontSize = theSize;
+         this.focusStackDataGridView.FontWeight = theWeight;
+         this.focusStackDataGridView.FontStyle = theStyle;
+            
+         this.activationDataGridView.FontFamily = theFamily;
+         this.activationDataGridView.FontSize = theSize;
+         this.activationDataGridView.FontWeight = theWeight;
+         this.activationDataGridView.FontStyle = theStyle;
+        }
+
       /****************/
       /* ResetClicked */
       /****************/

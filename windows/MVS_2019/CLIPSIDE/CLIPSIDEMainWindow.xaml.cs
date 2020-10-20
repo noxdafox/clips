@@ -7,8 +7,13 @@ using Microsoft.Win32;
 using System.Windows.Threading;
 using System.ComponentModel;
 using System.Collections.Generic;
+using System.Windows.Forms;
+using System.Windows.Media;
+using System.Drawing;
 
 using CLIPSNET;
+using System.Security.RightsManagement;
+using System.ComponentModel.Design.Serialization;
 
 namespace CLIPSIDE
   {
@@ -24,7 +29,7 @@ namespace CLIPSIDE
 
       public override PrimitiveValue Evaluate(List<PrimitiveValue> arguments)
         {
-         Application.Current.Dispatcher.Invoke(DispatcherPriority.Normal,
+         System.Windows.Application.Current.Dispatcher.Invoke(DispatcherPriority.Normal,
                                                new Action(delegate { mw.dialog.Clear(); }));
 
          return new VoidValue();
@@ -154,7 +159,20 @@ namespace CLIPSIDE
                              "StackOverflowQA", 
                              typeof(IDECommands)
                             );
+
+      public static readonly RoutedCommand SetDialogFont = 
+         new RoutedUICommand("SetDialogFont",
+                             "SetDialogFont", 
+                             typeof(IDECommands)
+                            );
+
+      public static readonly RoutedCommand SetBrowserFont = 
+         new RoutedUICommand("SetBrowserFont",
+                             "SetBrowserFont", 
+                             typeof(IDECommands)
+                            );
      }
+
 
   public partial class MainWindow : Window
      {
@@ -200,6 +218,14 @@ namespace CLIPSIDE
          agendaBrowserManager = new AgendaBrowserManager(this);
          factBrowserManager = new FactBrowserManager(this);
          instanceBrowserManager = new InstanceBrowserManager(this);
+         
+         TypeConverter converter = TypeDescriptor.GetConverter(typeof(Font));
+         Font restoredFont = (Font) converter.ConvertFromString(preferences.GetDialogFont());
+
+         this.dialog.FontFamily = new System.Windows.Media.FontFamily(restoredFont.FontFamily.Name);
+         this.dialog.FontSize = restoredFont.SizeInPoints;
+         this.dialog.FontWeight =  restoredFont.Bold ? FontWeights.Bold : FontWeights.Regular;
+         this.dialog.FontStyle = restoredFont.Italic ? FontStyles.Italic : FontStyles.Normal;
 
          IDEPeriodicCallback theCB = new IDEPeriodicCallback(this);
 
@@ -226,6 +252,10 @@ namespace CLIPSIDE
       private void IDEPeriodicTimer(object sender, EventArgs e)
         {
          this.dialog.GetEnvironment().EnablePeriodicFunctions(true);
+        }
+      public IDEPreferences GetPreferences()
+        { 
+         return preferences;
         }
 
       /*******************************/
@@ -292,7 +322,7 @@ namespace CLIPSIDE
       /****************/
       private void Quit_OnClick(object sender, RoutedEventArgs e)
         {
-         Application.Current.Shutdown();
+         System.Windows.Application.Current.Shutdown();
         }
 
       /*********************/
@@ -338,7 +368,7 @@ namespace CLIPSIDE
         object sender, 
         ExecutedRoutedEventArgs e)
         {
-         OpenFileDialog openFileDialog = new OpenFileDialog();
+         Microsoft.Win32.OpenFileDialog openFileDialog = new Microsoft.Win32.OpenFileDialog();
          
          openFileDialog.Filter = "Constructs Files (*.clp)|*.clp|All Files (*.*)|*.*";
 
@@ -379,7 +409,7 @@ namespace CLIPSIDE
         object sender, 
         ExecutedRoutedEventArgs e)
         {
-         OpenFileDialog openFileDialog = new OpenFileDialog();
+         Microsoft.Win32.OpenFileDialog openFileDialog = new Microsoft.Win32.OpenFileDialog();
          
          openFileDialog.Filter = "Batch Files (*.bat, *.tst)|*.bat;*.tst|All Files (*.*)|*.*";
 
@@ -891,6 +921,87 @@ namespace CLIPSIDE
          OpenURL("http://stackoverflow.com/questions/tagged/clips");
         }
 
+      /****************************/
+      /* SetDialogFont_CanExecute */
+      /****************************/
+      private void SetDialogFont_CanExecute(
+        object sender, 
+        CanExecuteRoutedEventArgs e)
+        {
+         e.CanExecute = true;
+        }
+
+      /**************************/      
+      /* SetDialogFont_Executed */
+      /**************************/      
+      private void SetDialogFont_Executed(
+        object sender, 
+        ExecutedRoutedEventArgs e)
+        {
+         TypeConverter fontConverter = TypeDescriptor.GetConverter(typeof(Font));
+         System.Windows.Forms.FontDialog fontDlg = new FontDialog(); 
+         
+         fontDlg.AllowScriptChange = false;
+         fontDlg.FixedPitchOnly = true;
+         fontDlg.ShowColor = false;  
+         fontDlg.ShowApply = false;  
+         fontDlg.ShowEffects = false;  
+         fontDlg.ShowHelp = false;  
+
+         Font theFont = (Font) fontConverter.ConvertFromString(preferences.GetDialogFont());
+         fontDlg.Font = theFont;
+
+         if (fontDlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+           {
+            this.dialog.FontFamily = new System.Windows.Media.FontFamily(fontDlg.Font.FontFamily.Name);
+            this.dialog.FontSize = fontDlg.Font.Size;
+            this.dialog.FontWeight = fontDlg.Font.Bold ? FontWeights.Bold : FontWeights.Regular;
+            this.dialog.FontStyle = fontDlg.Font.Italic ? FontStyles.Italic : FontStyles.Normal;
+
+            preferences.SaveDialogFont(fontConverter.ConvertToString(fontDlg.Font));
+           }
+        }
+                
+      /*****************************/
+      /* SetBrowserFont_CanExecute */
+      /*****************************/
+      private void SetBrowserFont_CanExecute(
+        object sender, 
+        CanExecuteRoutedEventArgs e)
+        {
+         e.CanExecute = true;
+        }
+
+      /***************************/      
+      /* SetBrowserFont_Executed */
+      /***************************/      
+      private void SetBrowserFont_Executed(
+        object sender, 
+        ExecutedRoutedEventArgs e)
+        {
+         TypeConverter fontConverter = TypeDescriptor.GetConverter(typeof(Font));
+         System.Windows.Forms.FontDialog fontDlg = new FontDialog(); 
+            
+         fontDlg.AllowScriptChange = false;
+         fontDlg.FixedPitchOnly = false;
+         fontDlg.ShowColor = false;  
+         fontDlg.ShowApply = false;  
+         fontDlg.ShowEffects = false;  
+         fontDlg.ShowHelp = false;  
+
+         Font theFont = (Font) fontConverter.ConvertFromString(preferences.GetBrowserFont());
+         fontDlg.Font = theFont;
+         
+         if (fontDlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+           {
+            preferences.SaveBrowserFont(fontConverter.ConvertToString(fontDlg.Font));
+
+            this.agendaBrowserManager.UpdateBrowserFonts();
+            this.factBrowserManager.UpdateBrowserFonts();
+            this.instanceBrowserManager.UpdateBrowserFonts();
+           }
+        }
+
       /***********/      
       /* OpenURL */
       /***********/      
@@ -904,11 +1015,11 @@ namespace CLIPSIDE
          catch (System.ComponentModel.Win32Exception noBrowser)
            {
             if (noBrowser.ErrorCode==-2147467259)
-              { MessageBox.Show(noBrowser.Message); }
+              { System.Windows.MessageBox.Show(noBrowser.Message); }
            }
          catch (System.Exception other)
            {
-            MessageBox.Show(other.Message);
+            System.Windows.MessageBox.Show(other.Message);
            }
         }
         

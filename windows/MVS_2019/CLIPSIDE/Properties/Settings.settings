@@ -5,5 +5,11 @@
     <Setting Name="currentDirectory" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
+    <Setting Name="dialogFont" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Consolas, 15.75pt</Value>
+    </Setting>
+    <Setting Name="browserFont" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Segoe UI, 12pt</Value>
+    </Setting>
   </Settings>
 </SettingsFile>
