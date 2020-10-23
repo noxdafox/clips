@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.31  06/05/15            */
+   /*             CLIPS Version 6.32  10/23/20            */
    /*                                                     */
    /*                    ENGINE MODULE                    */
    /*******************************************************/
@@ -60,6 +60,9 @@
 /*            Converted API macros to function calls.        */
 /*                                                           */
 /*      6.31: Fixed dangling construct issue.                */
+/*                                                           */
+/*      6.32: Fixed reset of error flags when run called     */
+/*            from embedded environment.                     */
 /*                                                           */
 /*************************************************************/
 
@@ -180,6 +183,14 @@ globle long long EnvRun(
    if (EngineData(theEnv)->AlreadyRunning) return(0);
    EngineData(theEnv)->AlreadyRunning = TRUE;
     
+   /*=========================================*/
+   /* Reset the halt execution and evaluation */
+   /* error flags in preparation for running. */
+   /*=========================================*/
+
+   if (UtilityData(theEnv)->CurrentGarbageFrame->topLevel) SetHaltExecution(theEnv,FALSE);
+   SetEvaluationError(theEnv,FALSE);
+
    /*========================================*/
    /* Set up the frame for tracking garbage. */
    /*========================================*/
@@ -213,9 +224,6 @@ globle long long EnvRun(
    /*=============================*/
    /* Set up execution variables. */
    /*=============================*/
-
-   if (UtilityData(theEnv)->CurrentGarbageFrame->topLevel) SetHaltExecution(theEnv,FALSE);
-   EngineData(theEnv)->HaltRules = FALSE;
 
 #if DEVELOPER
    EngineData(theEnv)->leftToRightComparisons = 0;
