@@ -157,21 +157,28 @@ namespace CLIPSIDE
             e.Handled = true;
             return;
            }     
-         else if ((e.Key == Key.Back) || (e.Key == Key.Delete))
+         else if (e.Key == Key.Back)
            {
-            ModifyCommand("",true);
+            ModifyCommand("",true,false);
             e.Handled = true;
             return;
            }
+         else if (e.Key == Key.Delete)
+           {
+            ModifyCommand("",false,true);
+            e.Handled = true;
+            return;
+           }    
+
          else if (e.Key == Key.Space)
            {
-            ModifyCommand(" ",false);
+            ModifyCommand(" ",false,false);
             e.Handled = true;
             return;
            }
          else if (e.Key == Key.Return)
            {
-            ModifyCommand("\r",false);
+            ModifyCommand("\r",false,false);
             CommandCheck();
             e.Handled = true;
             return;
@@ -191,7 +198,7 @@ namespace CLIPSIDE
             return;
            }
 
-         ModifyCommand(e.Text,false);
+         ModifyCommand(e.Text,false,false);
          CommandCheck();
          e.Handled = true;
         }
@@ -256,6 +263,7 @@ namespace CLIPSIDE
       /*****************/
       protected void ModifyCommand(
         String replaceString,
+        bool isBackspace,
         bool isDelete) 
         {
          int textLength = this.Text.Length;
@@ -271,9 +279,25 @@ namespace CLIPSIDE
          int left = this.SelectionStart;
          int right = left + this.SelectionLength;
 
-         if (isDelete && (left == right) && (left > lockedLength))
+         /*======================================*/
+         /* A backspace immediately to the right */
+         /* of the command prompt is ignored.    */
+         /*======================================*/
+
+         if (isBackspace && (left == right) && (left == lockedLength))
+           { return; }
+
+         /*===========================================*/
+         /* Adjust the left or right of the selection */
+         /* if backspace/delete is pressed and no     */
+         /* text is selected.                         */
+         /*===========================================*/
+         
+         if (isBackspace && (left == right) && (left > lockedLength))
            { left--; }
-       
+         else if (isDelete && (left == right) && (left > lockedLength) && (right < textLength))
+           { right++; }
+
          /*************************************************/
          /* If the selection falls within text that can't */
          /* be modified (the output from prior commands), */
@@ -784,7 +808,7 @@ namespace CLIPSIDE
            }
 
          this.Copy();
-         ModifyCommand("",true);
+         ModifyCommand("",true,false);
          e.Handled = true;
         } 
 
@@ -815,7 +839,7 @@ namespace CLIPSIDE
            }
 
          String clipboardText = e.SourceDataObject.GetData(DataFormats.UnicodeText) as string;
-         ModifyCommand(clipboardText, false);
+         ModifyCommand(clipboardText,false,false);
          e.CancelCommand();
         }
      }
