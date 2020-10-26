@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.31  01/29/18            */
+   /*             CLIPS Version 6.32  10/26/20            */
    /*                                                     */
    /*            EXTENDED MATH FUNCTIONS MODULE           */
    /*******************************************************/
@@ -36,7 +36,11 @@
 /*                                                           */
 /*      6.31: Fix for overflow error in div function.        */
 /*                                                           */
+/*      6.32: Added _EMATHFUN_SOURCE_ definition.            */
+/*                                                           */
 /*************************************************************/
+
+#define _EMATHFUN_SOURCE_
 
 #include "setup.h"
 #include "argacces.h"

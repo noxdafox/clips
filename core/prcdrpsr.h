@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*             CLIPS Version 6.32  10/26/20            */
    /*                                                     */
    /*       PROCEDURAL FUNCTIONS PARSER HEADER FILE       */
    /*******************************************************/
@@ -34,6 +34,8 @@
 /*            Fixed linkage issue when BLOAD_ONLY compiler   */
 /*            flag is set to 1.                              */
 /*                                                           */
+/*      6.32: Fixed _PRCDRPSR_SOURCE typo.                   */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_prcdrpsr
@@ -48,7 +50,7 @@
 #undef LOCALE
 #endif
 
-#ifdef _PRCDRPSR_SOURCE
+#ifdef _PRCDRPSR_SOURCE_
 #define LOCALE
 #else
 #define LOCALE extern
