@@ -523,6 +523,7 @@
     <ClInclude Include="..\Shared\Source\CLIPS\utility.h" />
     <ClInclude Include="..\Shared\Source\CLIPS\watch.h" />
     <ClInclude Include="..\Shared\Source\Integration\clipscpp.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="Source\Integration\CLIPSNET_Activation.h" />
     <ClInclude Include="Source\Integration\CLIPSNET_Agenda.h" />
     <ClInclude Include="Source\Integration\CLIPSNET_Environment.h" />
@@ -537,6 +538,9 @@
     <ClInclude Include="Source\Integration\CLIPSNET_SlotValue.h" />
     <ClInclude Include="Source\Integration\CLIPSNET_UserFunction.h" />
     <ClInclude Include="Source\Integration\CLIPSNET_Values.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="CLIPSCLRWrapper.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

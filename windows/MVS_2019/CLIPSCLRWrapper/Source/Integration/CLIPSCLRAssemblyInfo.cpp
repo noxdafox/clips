@@ -15,7 +15,7 @@ using namespace System::Security::Permissions;
 [assembly:AssemblyConfigurationAttribute(L"")];
 [assembly:AssemblyCompanyAttribute(L"")];
 [assembly:AssemblyProductAttribute(L"CLIPSCLRWrapper")];
-[assembly:AssemblyCopyrightAttribute(L"Copyright (c)  2015")];
+[assembly:AssemblyCopyrightAttribute(L"Copyright (c)  2020")];
 [assembly:AssemblyTrademarkAttribute(L"")];
 [assembly:AssemblyCultureAttribute(L"")];
 
