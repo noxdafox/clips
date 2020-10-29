@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  10/03/19             */
+   /*            CLIPS Version 6.40  10/28/20             */
    /*                                                     */
    /*                RULE COMMANDS MODULE                 */
    /*******************************************************/
@@ -52,6 +52,8 @@
 /*            activations listed were not correct if the     */
 /*            current module was different than the module   */
 /*            for the specified rule.                        */
+/*                                                           */
+/*      6.32: Fixed embedded reset of error flags.           */
 /*                                                           */
 /*      6.40: Added Env prefix to GetHaltExecution and       */
 /*            SetHaltExecution functions.                    */
@@ -351,7 +353,14 @@ void Matches(
    long long activations = 0;
    Activation *agendaPtr;
    Environment *theEnv = theDefrule->header.env;
-
+   
+   /*=====================================*/
+   /* If embedded, clear the error flags. */
+   /*=====================================*/
+   
+   if (EvaluationData(theEnv)->CurrentExpression == NULL)
+     { ResetErrorFlags(theEnv); }
+     
    /*==========================*/
    /* Set up the return value. */
    /*==========================*/

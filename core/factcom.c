@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  05/03/19             */
+   /*            CLIPS Version 6.40  10/28/20             */
    /*                                                     */
    /*                FACT COMMANDS MODULE                 */
    /*******************************************************/
@@ -55,6 +55,8 @@
 /*                                                           */
 /*            If embedded, LoadFacts cleans the current      */
 /*            garbage frame.                                 */
+/*                                                           */
+/*      6.32: Fixed embedded reset of error flags.           */
 /*                                                           */
 /*      6.40: Added Env prefix to GetEvaluationError and     */
 /*            SetEvaluationError functions.                  */
@@ -564,7 +566,14 @@ void Facts(
    unsigned long count = 0;
    Defmodule *oldModule;
    bool allModules = false;
-
+   
+   /*=====================================*/
+   /* If embedded, clear the error flags. */
+   /*=====================================*/
+   
+   if (EvaluationData(theEnv)->CurrentExpression == NULL)
+     { ResetErrorFlags(theEnv); }
+     
    /*==========================*/
    /* Save the current module. */
    /*==========================*/

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  02/19/20             */
+   /*            CLIPS Version 6.40  10/28/20             */
    /*                                                     */
    /*              CONSTRUCT COMMANDS MODULE              */
    /*******************************************************/
@@ -46,6 +46,8 @@
 /*                                                           */
 /*      6.31: Fixed use after free issue for deallocation    */
 /*            functions passed to DoForAllConstructs.        */
+/*                                                           */
+/*      6.32: Fixed embedded reset of error flags.           */
 /*                                                           */
 /*      6.40: Added Env prefix to GetHaltExecution and       */
 /*            SetHaltExecution functions.                    */
@@ -1125,7 +1127,14 @@ void ListConstruct(
    CLIPSLexeme *constructName;
    unsigned long count = 0;
    bool allModules = false;
-
+   
+   /*=====================================*/
+   /* If embedded, clear the error flags. */
+   /*=====================================*/
+   
+   if (EvaluationData(theEnv)->CurrentExpression == NULL)
+     { ResetErrorFlags(theEnv); }
+     
    /*==========================*/
    /* Save the current module. */
    /*==========================*/
