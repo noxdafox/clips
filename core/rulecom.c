@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.31  06/04/15            */
+   /*             CLIPS Version 6.32  10/28/20            */
    /*                                                     */
    /*                RULE COMMANDS MODULE                 */
    /*******************************************************/
@@ -52,6 +52,8 @@
 /*            activations listed were not correct if the     */
 /*            current module was different than the module   */
 /*            for the specified rule.                        */
+/*                                                           */
+/*      6.32: Fixed embedded reset of error flags.           */
 /*                                                           */
 /*************************************************************/
 
@@ -342,6 +344,12 @@ globle void EnvMatches(
    long long betaMatchCount = 0;
    long long activations = 0;
    ACTIVATION *agendaPtr;
+   
+   /*================================*/
+   /* Reset the halt execution flag. */
+   /*================================*/
+
+   if (UtilityData(theEnv)->CurrentGarbageFrame->topLevel) SetHaltExecution(theEnv,FALSE);
 
    /*==========================*/
    /* Set up the return value. */

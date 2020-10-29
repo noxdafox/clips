@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.31  05/09/19            */
+   /*             CLIPS Version 6.32  10/28/20            */
    /*                                                     */
    /*              DEFMODULE UTILITY MODULE               */
    /*******************************************************/
@@ -25,6 +25,8 @@
 /*            deprecation warnings.                          */
 /*                                                           */
 /*      6.31: Used strstr function to find module separator. */
+/*                                                           */
+/*      6.32: Fixed embedded reset of error flags.           */
 /*                                                           */
 /*************************************************************/
 
@@ -624,6 +626,13 @@ globle void ListItemsDriver(
    long count = 0;
    int allModules = FALSE;
    int doIt;
+   
+   /*===============================*/
+   /* Reset the halt execution flag */
+   /* in preparation for running.   */
+   /*===============================*/
+
+   if (UtilityData(theEnv)->CurrentGarbageFrame->topLevel) SetHaltExecution(theEnv,FALSE);
 
    /*==========================*/
    /* Save the current module. */

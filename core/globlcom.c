@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*             CLIPS Version 6.32  10/28/20            */
    /*                                                     */
    /*              DEFGLOBAL COMMANDS MODULE              */
    /*******************************************************/
@@ -29,6 +29,8 @@
 /*            deprecation warnings.                          */
 /*                                                           */
 /*            Converted API macros to function calls.        */
+/*                                                           */
+/*      6.32: Fixed embedded reset of error flags.           */
 /*                                                           */
 /*************************************************************/
 
@@ -201,6 +203,12 @@ globle void EnvShowDefglobals(
    struct constructHeader *constructPtr;
    int allModules = FALSE;
    struct defmoduleItemHeader *theModuleItem;
+   
+   /*================================*/
+   /* Reset the halt execution flag. */
+   /*================================*/
+
+   if (UtilityData(theEnv)->CurrentGarbageFrame->topLevel) SetHaltExecution(theEnv,FALSE);
 
    /*=======================================*/
    /* If the module specified is NULL, then */

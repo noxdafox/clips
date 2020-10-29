@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.31  05/16/15            */
+   /*             CLIPS Version 6.32  10/28/20            */
    /*                                                     */
    /*              CONSTRUCT COMMANDS MODULE              */
    /*******************************************************/
@@ -46,6 +46,8 @@
 /*                                                           */
 /*      6.31: Fixed use after free issue for deallocation    */
 /*            functions passed to DoForAllConstructs.        */
+/*                                                           */
+/*      6.32: Fixed embedded reset of error flags.           */
 /*                                                           */
 /*************************************************************/
 
@@ -1077,6 +1079,12 @@ globle void ListConstruct(
    SYMBOL_HN *constructName;
    long count = 0;
    int allModules = FALSE;
+   
+   /*================================*/
+   /* Reset the halt execution flag. */
+   /*================================*/
+
+   if (UtilityData(theEnv)->CurrentGarbageFrame->topLevel) SetHaltExecution(theEnv,FALSE);
 
    /*==========================*/
    /* Save the current module. */

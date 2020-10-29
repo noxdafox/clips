@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.32  10/23/20            */
+   /*             CLIPS Version 6.32  10/28/20            */
    /*                                                     */
    /*                    ENGINE MODULE                    */
    /*******************************************************/
@@ -61,8 +61,7 @@
 /*                                                           */
 /*      6.31: Fixed dangling construct issue.                */
 /*                                                           */
-/*      6.32: Fixed reset of error flags when run called     */
-/*            from embedded environment.                     */
+/*      6.32: Fixed embedded reset of error flags.           */
 /*                                                           */
 /*************************************************************/
 
@@ -183,13 +182,12 @@ globle long long EnvRun(
    if (EngineData(theEnv)->AlreadyRunning) return(0);
    EngineData(theEnv)->AlreadyRunning = TRUE;
     
-   /*=========================================*/
-   /* Reset the halt execution and evaluation */
-   /* error flags in preparation for running. */
-   /*=========================================*/
+   /*===============================*/
+   /* Reset the halt execution flag */
+   /* in preparation for running.   */
+   /*===============================*/
 
    if (UtilityData(theEnv)->CurrentGarbageFrame->topLevel) SetHaltExecution(theEnv,FALSE);
-   SetEvaluationError(theEnv,FALSE);
 
    /*========================================*/
    /* Set up the frame for tracking garbage. */
@@ -224,6 +222,8 @@ globle long long EnvRun(
    /*=============================*/
    /* Set up execution variables. */
    /*=============================*/
+
+   EngineData(theEnv)->HaltRules = FALSE;
 
 #if DEVELOPER
    EngineData(theEnv)->leftToRightComparisons = 0;

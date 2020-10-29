@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.31  03/22/19            */
+   /*             CLIPS Version 6.32  10/28/20            */
    /*                                                     */
    /*                FACT COMMANDS MODULE                 */
    /*******************************************************/
@@ -55,6 +55,8 @@
 /*                                                           */
 /*            If embedded, LoadFacts cleans the current      */
 /*            garbage frame.                                 */
+/*                                                           */
+/*      6.32: Fixed embedded reset of error flags.           */
 /*                                                           */
 /*************************************************************/
 
@@ -629,6 +631,13 @@ globle void EnvFacts(
    long count = 0;
    struct defmodule *oldModule, *theModule = (struct defmodule *) vTheModule;
    int allModules = FALSE;
+   
+   /*===============================*/
+   /* Reset the halt execution flag */
+   /* in preparation for running.   */
+   /*===============================*/
+
+   if (UtilityData(theEnv)->CurrentGarbageFrame->topLevel) SetHaltExecution(theEnv,FALSE);
 
    /*==========================*/
    /* Save the current module. */
