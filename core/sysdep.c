@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  04/04/19            */
+   /*             CLIPS Version 6.32  10/30/20            */
    /*                                                     */
    /*               SYSTEM DEPENDENT MODULE               */
    /*******************************************************/
@@ -76,6 +76,8 @@
 /*            deprecation warnings.                          */
 /*                                                           */
 /*      6.31: Compiler warning fix.                          */
+/*                                                           */
+/*      6.32: GenWrite returns number of bytes written.      */
 /*                                                           */
 /*************************************************************/
 
@@ -1451,17 +1453,17 @@ globle void GenCloseBinary(
 /* GenWrite: Generic routine for writing to a  */
 /*   file. No machine specific code as of yet. */
 /***********************************************/
-globle void GenWrite(
-  void *dataPtr,
-  size_t size,
-  FILE *fp)
+globle size_t GenWrite(
+    void *dataPtr,
+    size_t size,
+    FILE *fp)
   {
-   if (size == 0) return;
-#if UNIX_7
-   fwrite(dataPtr,size,1,fp);
-#else
-   fwrite(dataPtr,size,1,fp);
-#endif
+   if (size == 0) return 0;
+   
+   if (fwrite(dataPtr,size,1,fp) != 1)
+     { return 0; }
+
+   return size;
   }
 
 /*********************************************/

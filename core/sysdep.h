@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  02/04/15            */
+   /*             CLIPS Version 6.32  10/30/20            */
    /*                                                     */
    /*            SYSTEM DEPENDENT HEADER FILE             */
    /*******************************************************/
@@ -74,6 +74,8 @@
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
 /*                                                           */
+/*      6.32: GenWrite returns number of bytes written.      */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_sysdep
@@ -134,7 +136,7 @@
    LOCALE int                         genremove(const char *);
    LOCALE int                         genrename(const char *,const char *);
    LOCALE char                       *gengetcwd(char *,int);
-   LOCALE void                        GenWrite(void *,size_t,FILE *);
+   LOCALE size_t                      GenWrite(void *,size_t,FILE *);
    LOCALE int                       (*EnvSetBeforeOpenFunction(void *,int (*)(void *)))(void *);
    LOCALE int                       (*EnvSetAfterOpenFunction(void *,int (*)(void *)))(void *);
    LOCALE int                         gensprintf(char *,const char *,...);
