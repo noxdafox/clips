@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  05/03/19             */
+   /*            CLIPS Version 6.40  10/30/20             */
    /*                                                     */
    /*            SYSTEM DEPENDENT HEADER FILE             */
    /*******************************************************/
@@ -74,6 +74,8 @@
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
 /*                                                           */
+/*      6.32: GenWrite returns number of bytes written.      */
+/*                                                           */
 /*      6.40: Added genchdir function for changing the       */
 /*            current directory.                             */
 /*                                                           */
@@ -125,7 +127,7 @@
    bool                        genremove(Environment *,const char *);
    bool                        genrename(Environment *,const char *,const char *);
    char                       *gengetcwd(char *,int);
-   void                        GenWrite(void *,size_t,FILE *);
+   size_t                      GenWrite(void *,size_t,FILE *);
    int                       (*SetBeforeOpenFunction(Environment *,int (*)(Environment *)))(Environment *);
    int                       (*SetAfterOpenFunction(Environment *,int (*)(Environment *)))(Environment *);
    int                         gensprintf(char *,const char *,...);
