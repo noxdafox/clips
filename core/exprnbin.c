@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.31  05/09/19            */
+   /*             CLIPS Version 6.32  01/08/21            */
    /*                                                     */
    /*             EXPRESSION BSAVE/BLOAD MODULE           */
    /*******************************************************/
@@ -19,6 +19,8 @@
 /* Revision History:                                         */
 /*                                                           */
 /*      6.30: Changed integer type/precision.                */
+/*                                                           */
+/*      6.32: Bsave crash fix for external address type.     */
 /*                                                           */
 /*************************************************************/
 
@@ -212,7 +214,8 @@ static void UpdateExpression(
 #endif
 
       case EXTERNAL_ADDRESS:
-        ExpressionData(theEnv)->ExpressionArray[obji].value = NULL;
+        ExpressionData(theEnv)->ExpressionArray[obji].value = EnvAddExternalAddress(theEnv,NULL,0);
+        IncrementExternalAddressCount((EXTERNAL_ADDRESS_HN *) ExpressionData(theEnv)->ExpressionArray[obji].value);
         break;
 
       case RVOID:
@@ -279,10 +282,14 @@ globle void ClearBloadedExpressions(
 #endif
 
 #if OBJECT_SYSTEM
-         case INSTANCE_ADDRESS :
+         case INSTANCE_ADDRESS:
            EnvDecrementInstanceCount(theEnv,ExpressionData(theEnv)->ExpressionArray[i].value);
            break;
 #endif
+
+         case EXTERNAL_ADDRESS:
+           DecrementExternalAddressCount(theEnv,(EXTERNAL_ADDRESS_HN *) ExpressionData(theEnv)->ExpressionArray[i].value);
+           break;
 
          case RVOID:
            break;
