@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  11/01/16             */
+   /*            CLIPS Version 6.40  01/08/21             */
    /*                                                     */
    /*             EXPRESSION BSAVE/BLOAD MODULE           */
    /*******************************************************/
@@ -19,6 +19,8 @@
 /* Revision History:                                         */
 /*                                                           */
 /*      6.30: Changed integer type/precision.                */
+/*                                                           */
+/*      6.32: Bsave crash fix for external address type.     */
 /*                                                           */
 /*      6.40: Pragma once and other inclusion changes.       */
 /*                                                           */
@@ -215,7 +217,8 @@ static void UpdateExpression(
 #endif
 
       case EXTERNAL_ADDRESS_TYPE:
-        ExpressionData(theEnv)->ExpressionArray[obji].value = NULL;
+        ExpressionData(theEnv)->ExpressionArray[obji].value = CreateCExternalAddress(theEnv,NULL);
+        IncrementExternalAddressCount(ExpressionData(theEnv)->ExpressionArray[obji].value);
         break;
 
       case VOID_TYPE:
@@ -286,6 +289,10 @@ void ClearBloadedExpressions(
            ReleaseInstance((Instance *) ExpressionData(theEnv)->ExpressionArray[i].value);
            break;
 #endif
+
+         case EXTERNAL_ADDRESS_TYPE:
+           ReleaseExternalAddress(theEnv,ExpressionData(theEnv)->ExpressionArray[i].value);
+           break;
 
          case VOID_TYPE:
            break;

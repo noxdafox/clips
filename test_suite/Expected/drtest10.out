@@ -1455,5 +1455,88 @@ CLIPS> (test3)
 "abcdef"
 CLIPS> (test4)
 "uvwxyz"
+CLIPS> (clear) ; SourceForge Ticket #64
+CLIPS> 
+(deftemplate adrs
+   (slot ia (type INSTANCE-ADDRESS))
+   (slot fa (type FACT-ADDRESS))
+   (slot ea (type EXTERNAL-ADDRESS)))
+CLIPS> 
+(defclass ADRS (is-a USER)
+   (slot ia (type INSTANCE-ADDRESS))
+   (slot fa (type FACT-ADDRESS))
+   (slot ea (type EXTERNAL-ADDRESS)))
+CLIPS> 
+(deffacts start
+   (adrs))
+CLIPS>    
+(definstances start
+   ([adrs] of ADRS))
+CLIPS> (bsave "Temp//ea1.bin")
+[CSTRNBIN1] WARNING: Constraints are not saved with a binary image
+  when dynamic constraint checking is disabled.
+TRUE
+CLIPS> (set-dynamic-constraint-checking TRUE)
+FALSE
+CLIPS> (bsave "Temp//ea2.bin")
+TRUE
+CLIPS> (clear)
+CLIPS> (bload "Temp//ea1.bin")
+TRUE
+CLIPS> (assert (adrs))
+<Fact-1>
+CLIPS> (make-instance [adrs] of ADRS)
+[adrs]
+CLIPS> (ppfact 1)
+(adrs 
+   (ia nil) 
+   (fa nil) 
+   (ea nil))
+CLIPS> (send [adrs] print)
+[adrs] of ADRS
+(ia <Dummy Instance>)
+(fa <Dummy Fact>)
+(ea <Pointer-C-0x0>)
+CLIPS> (reset)
+CLIPS> (ppfact 1)
+(adrs 
+   (ia <Dummy Instance>) 
+   (fa <Dummy Fact>) 
+   (ea <Pointer-C-0x0>))
+CLIPS> (send [adrs] print)
+[adrs] of ADRS
+(ia <Dummy Instance>)
+(fa <Dummy Fact>)
+(ea <Pointer-C-0x0>)
+CLIPS> (clear)
+CLIPS> (bload "Temp//ea2.bin")
+TRUE
+CLIPS> (assert (adrs))
+<Fact-1>
+CLIPS> (make-instance [adrs] of ADRS)
+[adrs]
+CLIPS> (ppfact 1)
+(adrs 
+   (ia <Dummy Instance>) 
+   (fa <Dummy Fact>) 
+   (ea <Pointer-C-0x0>))
+CLIPS> (send [adrs] print)
+[adrs] of ADRS
+(ia <Dummy Instance>)
+(fa <Dummy Fact>)
+(ea <Pointer-C-0x0>)
+CLIPS> (reset)
+CLIPS> (ppfact 1)
+(adrs 
+   (ia <Dummy Instance>) 
+   (fa <Dummy Fact>) 
+   (ea <Pointer-C-0x0>))
+CLIPS> (send [adrs] print)
+[adrs] of ADRS
+(ia <Dummy Instance>)
+(fa <Dummy Fact>)
+(ea <Pointer-C-0x0>)
+CLIPS> (set-dynamic-constraint-checking FALSE)
+TRUE
 CLIPS> (clear)
 CLIPS> (dribble-off)

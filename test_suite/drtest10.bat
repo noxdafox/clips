@@ -878,4 +878,43 @@
 (test2)
 (test3)
 (test4)
+(clear) ; SourceForge Ticket #64
+
+(deftemplate adrs
+   (slot ia (type INSTANCE-ADDRESS))
+   (slot fa (type FACT-ADDRESS))
+   (slot ea (type EXTERNAL-ADDRESS)))
+
+(defclass ADRS (is-a USER)
+   (slot ia (type INSTANCE-ADDRESS))
+   (slot fa (type FACT-ADDRESS))
+   (slot ea (type EXTERNAL-ADDRESS)))
+
+(deffacts start
+   (adrs))
+   
+(definstances start
+   ([adrs] of ADRS))
+(bsave "Temp//ea1.bin")
+(set-dynamic-constraint-checking TRUE)
+(bsave "Temp//ea2.bin")
+(clear)
+(bload "Temp//ea1.bin")
+(assert (adrs))
+(make-instance [adrs] of ADRS)
+(ppfact 1)
+(send [adrs] print)
+(reset)
+(ppfact 1)
+(send [adrs] print)
+(clear)
+(bload "Temp//ea2.bin")
+(assert (adrs))
+(make-instance [adrs] of ADRS)
+(ppfact 1)
+(send [adrs] print)
+(reset)
+(ppfact 1)
+(send [adrs] print)
+(set-dynamic-constraint-checking FALSE)
 (clear)
