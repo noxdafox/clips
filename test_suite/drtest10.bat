@@ -917,4 +917,13 @@
 (ppfact 1)
 (send [adrs] print)
 (set-dynamic-constraint-checking FALSE)
+(clear) ; SourceForge Ticket #65
+(ppdefclass undefined nil)
+(ppdeftemplate undefined nil)
+(ppdefrule undefined nil)
+(ppdeffacts undefined nil)
+(ppdefinstances undefined nil)
+(ppdeffunction undefined nil)
+(ppdefgeneric undefined nil)
+(ppdefglobal undefined nil)
 (clear)

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  10/28/20             */
+   /*            CLIPS Version 6.40  01/11/21             */
    /*                                                     */
    /*              CONSTRUCT COMMANDS MODULE              */
    /*******************************************************/
@@ -425,7 +425,10 @@ void PPConstructCommand(
       ppForm = PPConstructNil(theEnv,constructName,constructClass);
       
       if (ppForm == NULL)
-        { CantFindItemErrorMessage(theEnv,constructClass->constructName,constructName,true); }
+        {
+         CantFindItemErrorMessage(theEnv,constructClass->constructName,constructName,true);
+         ppForm = "";
+        }
 
       returnValue->lexemeValue = CreateString(theEnv,ppForm);
       

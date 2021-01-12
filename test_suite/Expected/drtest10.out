@@ -1538,5 +1538,30 @@ CLIPS> (send [adrs] print)
 (ea <Pointer-C-0x0>)
 CLIPS> (set-dynamic-constraint-checking FALSE)
 TRUE
+CLIPS> (clear) ; SourceForge Ticket #65
+CLIPS> (ppdefclass undefined nil)
+[PRNTUTIL1] Unable to find defclass 'undefined'.
+""
+CLIPS> (ppdeftemplate undefined nil)
+[PRNTUTIL1] Unable to find deftemplate 'undefined'.
+""
+CLIPS> (ppdefrule undefined nil)
+[PRNTUTIL1] Unable to find defrule 'undefined'.
+""
+CLIPS> (ppdeffacts undefined nil)
+[PRNTUTIL1] Unable to find deffacts 'undefined'.
+""
+CLIPS> (ppdefinstances undefined nil)
+[PRNTUTIL1] Unable to find definstances 'undefined'.
+""
+CLIPS> (ppdeffunction undefined nil)
+[PRNTUTIL1] Unable to find deffunction 'undefined'.
+""
+CLIPS> (ppdefgeneric undefined nil)
+[PRNTUTIL1] Unable to find defgeneric 'undefined'.
+""
+CLIPS> (ppdefglobal undefined nil)
+[PRNTUTIL1] Unable to find defglobal 'undefined'.
+""
 CLIPS> (clear)
 CLIPS> (dribble-off)
