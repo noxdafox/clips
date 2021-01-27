@@ -3,6 +3,7 @@ package net.sf.clipsrules.jni.examples.ide;
 import java.awt.EventQueue;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.Font;
 
 import javax.swing.event.InternalFrameListener;
 import javax.swing.JDesktopPane;
@@ -41,9 +42,10 @@ public class FactBrowserManager implements ActionListener
    /*****************/
    /* createBrowser */
    /*****************/  
-   public void createBrowser()
+   public void createBrowser(
+     Font browserFont)
      {
-      EntityBrowserFrame frame = new EntityBrowserFrame(ENTITY_NAME,"Index","Template",entityCount++);
+      EntityBrowserFrame frame = new EntityBrowserFrame(ENTITY_NAME,"Index","Template",entityCount++,browserFont);
       frame.addInternalFrameListener(ide);
       frame.setActionTarget(this);
       browsers.add(frame);
@@ -130,7 +132,22 @@ public class FactBrowserManager implements ActionListener
          updateBrowser(theBrowser);
         }
      }
-     
+          
+   /**************************/
+   /* assignFontAllBrowsers: */
+   /**************************/
+   public void assignFontAllBrowsers(
+     Font theFont)
+     {
+      if (browsers.size() == 0) return;
+            
+      for (Iterator itr = browsers.iterator(); itr.hasNext(); ) 
+        { 
+         EntityBrowserFrame theBrowser = (EntityBrowserFrame) itr.next();
+         theBrowser.assignFont(theFont);
+        }
+     }
+          
    /************************/
    /* browserSelectionText */
    /************************/  

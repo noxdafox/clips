@@ -6,6 +6,7 @@ import java.awt.event.WindowEvent;
 import java.awt.print.PageFormat;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
+import java.awt.Font;
 
 import java.io.File;
 
@@ -329,7 +330,9 @@ public class FileMenu extends JMenu
    public void newTextFile(
      File theFile)
      {
-      TextFrame theFrame = new TextFrame(ide,theFile);
+      Font theFont = ide.getPreferences().getEditorFont();
+
+      TextFrame theFrame = new TextFrame(ide,theFile,theFont);
       
       theFrame.addInternalFrameListener(ide);
       

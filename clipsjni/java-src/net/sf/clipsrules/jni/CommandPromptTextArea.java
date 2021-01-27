@@ -49,14 +49,24 @@ public class CommandPromptTextArea extends RouterTextArea
    private boolean paused = false;
           
    private ReentrantReadWriteLock pauseLock = new ReentrantReadWriteLock();
-   
+
    /*************************/
    /* CommandPromptTextArea */
    /*************************/
    public CommandPromptTextArea(
      Environment theEnv) 
+     { 
+      this(theEnv,new Font("monospaced",Font.PLAIN,12));
+     }
+
+   /*************************/
+   /* CommandPromptTextArea */
+   /*************************/
+   public CommandPromptTextArea(
+     Environment theEnv,
+     Font theFont) 
      {  
-      super(theEnv);
+      super(theEnv,theFont);
       
       this.setPlainBorder();
       theEnv.printBanner();
@@ -98,7 +108,7 @@ public class CommandPromptTextArea extends RouterTextArea
       {
        return paused;
       }
-      
+
    /*******************************/
    /* addCommandExecutionListener */
    /*******************************/

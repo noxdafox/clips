@@ -240,7 +240,9 @@ public class CLIPSIDE extends JFrame
    public void createDialogWindow(
      Environment theEnvironment)
      {
-      dialogWindow = new DialogFrame(theEnvironment,preferences.getCurrentDirectory());
+      dialogWindow = new DialogFrame(theEnvironment,
+                                     preferences.getCurrentDirectory(),
+                                     preferences.getDialogFont());
       dialogWindow.addInternalFrameListener(this);
       
       placer.placeInternalFrame(dialogWindow);
@@ -267,7 +269,43 @@ public class CLIPSIDE extends JFrame
      {  
       CLIPSIDE ide = new CLIPSIDE();  
      } 
-   
+
+   /*********************/
+   /* assignBrowserFont */
+   /*********************/  
+   public void assignBrowserFont(
+     Font theFont)
+     {  
+      agendaBrowserManager.assignFontAllBrowsers(theFont);
+      factBrowserManager.assignFontAllBrowsers(theFont);
+      instanceBrowserManager.assignFontAllBrowsers(theFont);
+     }  
+
+   /********************/
+   /* assignEditorFont */
+   /********************/  
+   public void assignEditorFont(
+     Font theFont)
+     {
+      int i, count;
+                        
+      count = jmWindow.getItemCount();
+      for (i = 0; i < count; i++)
+        {
+         JCheckBoxMenuItem jmiWindow = (JCheckBoxMenuItem) jmWindow.getItem(i);
+         JInternalFrame theFrame = (JInternalFrame) jmiWindow.getClientProperty(windowProperty);
+
+         if (theFrame instanceof TextFrame)
+           { 
+            TextFrame theTextFrame = (TextFrame) theFrame;
+            theTextFrame.assignFont(theFont);
+           }
+        }
+         
+      if (constructInspector != null)
+        { constructInspector.setFont(theFont); }
+     }
+
    /*********************************/
    /* commandExecutionEventOccurred */
    /*********************************/  
@@ -324,11 +362,11 @@ public class CLIPSIDE extends JFrame
      ActionEvent ae) throws Exception 
      {     
       if (ae.getSource() == jmiAgendaBrowser)  
-        { agendaBrowserManager.createBrowser(); }
+        { agendaBrowserManager.createBrowser(preferences.getBrowserFont()); }
       else if (ae.getSource() == jmiFactBrowser)  
-        { factBrowserManager.createBrowser(); }
+        { factBrowserManager.createBrowser(preferences.getBrowserFont()); }
       else if (ae.getSource() == jmiInstanceBrowser)  
-        { instanceBrowserManager.createBrowser();  }
+        { instanceBrowserManager.createBrowser(preferences.getBrowserFont());  }
       else if (ae.getSource() == jmiConstructInspector)  
         { constructInspector(); }
       else if (ae.getActionCommand().equals(selectWindowAction))  
@@ -358,7 +396,7 @@ public class CLIPSIDE extends JFrame
            { theText = instanceBrowserManager.browserSelectionText(theEntityFrame); }
         }
       
-      constructInspector = new ConstructInspectorFrame();
+      constructInspector = new ConstructInspectorFrame(preferences.getEditorFont());
 
       constructInspector.setText(theText); 
 

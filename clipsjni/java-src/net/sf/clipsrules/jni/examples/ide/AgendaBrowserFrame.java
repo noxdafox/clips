@@ -12,6 +12,9 @@ import javax.swing.event.ListSelectionListener;
 import java.util.HashMap;
 import java.awt.EventQueue;
 import java.awt.AWTEvent;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
 
 import net.sf.clipsrules.jni.*;
 
@@ -45,9 +48,10 @@ public class AgendaBrowserFrame extends JInternalFrame
    /*****************/
    /* AgendaBrowser */
    /*****************/
-   AgendaBrowserFrame()
+   AgendaBrowserFrame(
+     Font browserFont)
      {      
-      this(new FocusStack(),new HashMap<Focus,Agenda>());
+      this(new FocusStack(),new HashMap<Focus,Agenda>(),browserFont);
      }
 
    /*****************/
@@ -55,10 +59,11 @@ public class AgendaBrowserFrame extends JInternalFrame
    /*****************/
    AgendaBrowserFrame(
      FocusStack theFocusStack,
-     HashMap<Focus,Agenda> theAgendaMap)
+     HashMap<Focus,Agenda> theAgendaMap,
+     Font browserFont)
      {  
       super("Agenda #" + agendaCount++,true,true,true,true);
-            
+
       /*===================================*/
       /* Create a new JFrame container and */
       /* assign a layout manager to it.    */
@@ -160,7 +165,13 @@ public class AgendaBrowserFrame extends JInternalFrame
       this.getContentPane().add(contentPane); 
       
       assignData(theFocusStack,theAgendaMap);
+            
+      /*===============*/
+      /* Set the font. */
+      /*===============*/
 
+      assignFont(browserFont);
+      
       /*====================*/
       /* Display the frame. */
       /*====================*/
@@ -168,6 +179,24 @@ public class AgendaBrowserFrame extends JInternalFrame
       this.pack();
      }  
  
+   /**************/
+   /* assignFont */
+   /**************/
+   public void assignFont(
+     Font browserFont)
+     {
+      FontMetrics metrics = focusStackTable.getFontMetrics(browserFont);
+      int theHeight = metrics.getHeight() + 2;
+            
+      focusStackTable.setFont(browserFont);
+      focusStackTable.setRowHeight(theHeight);
+      focusStackTable.getTableHeader().setFont(browserFont);
+      
+      activationTable.setFont(browserFont);
+      activationTable.setRowHeight(theHeight);
+      activationTable.getTableHeader().setFont(browserFont);
+     }
+     
    /*******************/
    /* setActionTarget */
    /*******************/

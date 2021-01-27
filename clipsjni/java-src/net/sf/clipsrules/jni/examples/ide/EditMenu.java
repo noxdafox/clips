@@ -2,10 +2,12 @@ package net.sf.clipsrules.jni.examples.ide;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.awt.Font;
 
 import java.io.File;
 
 import java.util.prefs.Preferences;
+import java.util.HashMap;
 
 import javax.swing.AbstractAction;
 import javax.swing.event.MenuEvent;
@@ -26,12 +28,14 @@ public class EditMenu extends JMenu
    private CutAction cutAction;
    private CopyAction copyAction;
    private PasteAction pasteAction;
+   private SetFontsAction setFontsAction;
    
    private JMenuItem jmiUndo;
    private JMenuItem jmiRedo;
    private JMenuItem jmiCut;
    private JMenuItem jmiCopy;
    private JMenuItem jmiPaste;
+   private JMenuItem jmiSetFonts;
 
    private CLIPSIDE ide;
 
@@ -67,6 +71,7 @@ public class EditMenu extends JMenu
       cutAction = new CutAction("Cut");
       copyAction = new CopyAction("Copy");
       pasteAction = new PasteAction("Paste");
+      setFontsAction = new SetFontsAction("Set Fonts...");
 
       /*=================*/
       /* Add menu items. */
@@ -93,6 +98,10 @@ public class EditMenu extends JMenu
       jmiPaste = new JMenuItem(pasteAction);
       jmiPaste.setAccelerator(paste);      
       this.add(jmiPaste);
+
+      this.addSeparator();
+      jmiSetFonts = new JMenuItem(setFontsAction);
+      this.add(jmiSetFonts);
      }
 
    /**************/
@@ -247,6 +256,57 @@ public class EditMenu extends JMenu
             TextFrame theTextFrame = (TextFrame) theFrame;
             theTextFrame.paste(); 
            }
+        }
+     }
+
+   /******************/
+   /* SetFontsAction */
+   /******************/
+   class SetFontsAction extends AbstractAction 
+     {
+      public SetFontsAction(
+        String text)
+        {
+         super(text);
+        }
+
+      @Override
+      public void actionPerformed(
+        ActionEvent e)
+        {
+         HashMap<String,Font> theFonts;
+         IDEPreferences preferences = ide.getPreferences();
+         Font dialogFont = preferences.getDialogFont();
+         Font editorFont = preferences.getEditorFont();
+         Font browserFont = preferences.getBrowserFont();
+
+         theFonts = new HashMap<String,Font>();
+         
+         theFonts.put("dialog",dialogFont);
+         theFonts.put("editor",editorFont);
+         theFonts.put("browser",browserFont);
+         
+         FontPreferencesDialog theDialog = new FontPreferencesDialog(ide,"Font Preferences",theFonts);
+         theDialog.showDialog(theFonts);         
+         
+         dialogFont = theFonts.get("dialog");
+         editorFont = theFonts.get("editor");
+         browserFont = theFonts.get("browser");
+         
+         preferences.setDialogFont(dialogFont);
+         preferences.saveDialogFont(dialogFont);
+         ide.getDialogWindow().setFont(dialogFont);
+         
+         preferences.setEditorFont(editorFont);
+         preferences.saveEditorFont(editorFont);
+         ide.assignEditorFont(editorFont);
+         
+         preferences.setBrowserFont(browserFont);
+         preferences.saveBrowserFont(browserFont);
+         ide.assignBrowserFont(browserFont);
+         
+         // TBD set the font for the editing windows
+         // TBD construct inspector
         }
      }
    

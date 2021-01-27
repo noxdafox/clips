@@ -47,7 +47,17 @@ public class RouterTextArea extends JTextArea
    /* RouterTextArea */
    /******************/
    public RouterTextArea(
-     Environment theEnv) 
+     Environment theEnv)
+     {
+      this(theEnv,new Font("monospaced",Font.PLAIN,12));
+     }
+
+   /******************/
+   /* RouterTextArea */
+   /******************/
+   public RouterTextArea(
+     Environment theEnv,
+     Font theFont) 
      {  
       clips = theEnv;
       
@@ -61,7 +71,7 @@ public class RouterTextArea extends JTextArea
                       BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.darkGray,3),
                                                          BorderFactory.createEmptyBorder(5,5,5,0)));
       
-      this.setFont(new Font("monospaced",Font.PLAIN,12));
+      this.setFont(theFont);
       
       routerName = "JTextAreaRouter" + TextAreaRouterNameIndex++;
       clips.addRouter(this);

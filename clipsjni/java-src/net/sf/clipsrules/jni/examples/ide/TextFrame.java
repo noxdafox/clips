@@ -42,7 +42,8 @@ public class TextFrame extends JInternalFrame
    /*************/
    TextFrame(
      CLIPSIDE theIDE,
-     File theFile)
+     File theFile,
+     Font theFont)
      {  
       super("",true,true,true,true);
       
@@ -94,7 +95,7 @@ public class TextFrame extends JInternalFrame
          textArea = new JTextArea(); 
          textAreaUndo = new TextUndoManager();
          textArea.setDocument(new TextUndoPlainDocument(textAreaUndo));
-         textArea.setFont(new Font("monospaced",Font.PLAIN,12));
+         textArea.setFont(theFont);
         }
       catch (Exception e)
         { 
@@ -132,10 +133,10 @@ public class TextFrame extends JInternalFrame
       
       textArea.getDocument().addDocumentListener(this);
 
-      /*===================================================*/
-      /* Override copy/paste for the CommandPromptTextArea */
-      /* so that we can define our own menu accelerators.  */
-      /*===================================================*/
+      /*===============================================*/
+      /* Override copy/paste for the JTextArea so that */
+      /* we can define our own menu accelerators.      */
+      /*===============================================*/
 
       KeyStroke cut = KeyStroke.getKeyStroke(KeyEvent.VK_X,KeyEvent.CTRL_MASK);
       KeyStroke copy = KeyStroke.getKeyStroke(KeyEvent.VK_C,KeyEvent.CTRL_MASK);
@@ -151,7 +152,16 @@ public class TextFrame extends JInternalFrame
 
       this.pack();
      }  
-   
+     
+   /**************/
+   /* assignFont */
+   /**************/
+   public void assignFont(
+     Font theFont)
+     {
+      textArea.setFont(theFont);
+     }
+     
    /**********************/
    /* balanceParentheses */
    /**********************/

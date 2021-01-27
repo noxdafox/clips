@@ -11,6 +11,9 @@ import javax.swing.event.ListSelectionListener;
 import java.util.HashMap;
 import java.awt.EventQueue;
 import java.awt.AWTEvent;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,7 +55,8 @@ public class EntityBrowserFrame extends JInternalFrame
      String theEntityName,
      String theIDName,
      String theConstructName,
-     int browserIndex)
+     int browserIndex,
+     Font browserFont)
      {      
       this(new ArrayList<Module>(),
            new ArrayList<FactInstance>(),
@@ -60,7 +64,8 @@ public class EntityBrowserFrame extends JInternalFrame
            theEntityName,
            theIDName,
            theConstructName,
-           browserIndex);
+           browserIndex,
+           browserFont);
      }
 
    /**********************/
@@ -73,7 +78,8 @@ public class EntityBrowserFrame extends JInternalFrame
      String theEntityName,
      String theIDName,
      String theConstructName,
-     int browserIndex)
+     int browserIndex,
+     Font browserFont)
      {  
       super(theEntityName + " Browser #" + browserIndex,true,true,true,true);
       entityName = theEntityName;
@@ -286,6 +292,12 @@ public class EntityBrowserFrame extends JInternalFrame
       lastEntityRow = -1;
 
       assignData(theModules,theEntities,theScopes);
+      
+      /*===============*/
+      /* Set the font. */
+      /*===============*/
+
+      assignFont(browserFont);
 
       /*====================*/
       /* Display the frame. */
@@ -293,6 +305,28 @@ public class EntityBrowserFrame extends JInternalFrame
 
       this.pack();
      }  
+
+   /**************/
+   /* assignFont */
+   /**************/
+   public void assignFont(
+     Font browserFont)
+     {
+      FontMetrics metrics = modulesTable.getFontMetrics(browserFont);
+      int theHeight = metrics.getHeight() + 2;
+
+      modulesTable.setFont(browserFont);
+      modulesTable.setRowHeight(theHeight);
+      modulesTable.getTableHeader().setFont(browserFont);
+      
+      entityTable.setFont(browserFont);
+      entityTable.setRowHeight(theHeight);
+      entityTable.getTableHeader().setFont(browserFont);
+      
+      slotsTable.setFont(browserFont);
+      slotsTable.setRowHeight(theHeight);
+      slotsTable.getTableHeader().setFont(browserFont);
+     }
      
    /*****************/
    /* getEntityName */

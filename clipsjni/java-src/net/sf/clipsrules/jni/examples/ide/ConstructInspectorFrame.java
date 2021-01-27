@@ -18,6 +18,15 @@ public class ConstructInspectorFrame extends JInternalFrame
    /***************************/
    ConstructInspectorFrame()
      {  
+      this(new Font("monospaced",Font.PLAIN,12));
+     }
+     
+   /***************************/
+   /* ConstructInspectorFrame */
+   /***************************/
+   ConstructInspectorFrame(
+     Font theFont)
+     {  
       super("Construct Inspector",true,true,false,false);
 
       /*===================================*/
@@ -51,7 +60,7 @@ public class ConstructInspectorFrame extends JInternalFrame
       this.getContentPane().add(inspectorPane); 
       
       textArea.setEditable(false);
-      textArea.setFont(new Font("monospaced",Font.PLAIN,12));
+      textArea.setFont(theFont);
       textArea.setText("(defrule hello\n   =>\n   (println \"Hello World!\"))");
             
       /*====================*/
@@ -60,6 +69,15 @@ public class ConstructInspectorFrame extends JInternalFrame
 
       this.pack();
      }  
+
+   /***********/
+   /* setFont */
+   /***********/
+   public void setFont(
+     Font theFont)
+     {   
+      textArea.setFont(theFont);
+     }
      
    /***********/
    /* setText */

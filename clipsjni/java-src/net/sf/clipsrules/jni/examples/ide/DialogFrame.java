@@ -29,7 +29,7 @@ public class DialogFrame extends JInternalFrame
    /***************/
    DialogFrame()
      {
-      this(new Environment(),null);
+      this(new Environment(),null,new Font("monospaced",Font.PLAIN,12));
      }
 
    /***************/
@@ -38,16 +38,17 @@ public class DialogFrame extends JInternalFrame
    DialogFrame(     
      Environment theEnv)
      {
-      this(theEnv,null);
+      this(theEnv,null,new Font("monospaced",Font.PLAIN,12));
      }
 
    /***************/
    /* DialogFrame */
    /***************/
    DialogFrame(
-     File currentDirectory)
+     File currentDirectory,
+     Font theFont)
      {
-      this(new Environment(),currentDirectory);
+      this(new Environment(),currentDirectory,theFont);
      }
 
    /***************/
@@ -55,7 +56,8 @@ public class DialogFrame extends JInternalFrame
    /***************/
    DialogFrame(
      Environment theEnv,
-     File currentDirectory)
+     File currentDirectory,
+     Font theFont)
      {  
       super("Dialog",true,false,true,true);
       
@@ -140,7 +142,7 @@ public class DialogFrame extends JInternalFrame
 
       try
         { 
-         commandTextArea = new CommandPromptTextArea(clips); 
+         commandTextArea = new CommandPromptTextArea(clips,theFont); 
          commandTextArea.addCommandExecutionListener(this); 
         }
       catch (Exception e)
@@ -377,6 +379,15 @@ public class DialogFrame extends JInternalFrame
    public void executeBatch()
      {
       commandTextArea.executeBatch();
+     }
+
+   /***********/
+   /* setFont */
+   /***********/  
+   public void setFont(
+     Font theFont)
+     {
+      commandTextArea.setFont(theFont);
      }
      
    /****************/
