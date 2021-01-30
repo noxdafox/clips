@@ -33,7 +33,7 @@ public class EntityBrowserFrame extends JInternalFrame
    private JSplitPane entitiesSlotsPane, contentPane;
    private JTextField searchField;
    private JCheckBox displayDefaultedValuesCheckBox; 
-   private List<Module> modules;
+   private List<net.sf.clipsrules.jni.Module> modules;
    private List<FactInstance> entities;
    private HashMap<Long,BitSet> scopes;
    private String entityName;
@@ -58,7 +58,7 @@ public class EntityBrowserFrame extends JInternalFrame
      int browserIndex,
      Font browserFont)
      {      
-      this(new ArrayList<Module>(),
+      this(new ArrayList<net.sf.clipsrules.jni.Module>(),
            new ArrayList<FactInstance>(),
            new HashMap<Long,BitSet>(),
            theEntityName,
@@ -72,7 +72,7 @@ public class EntityBrowserFrame extends JInternalFrame
    /* EntityBrowserFrame */
    /**********************/
    EntityBrowserFrame(
-     List<Module> theModules,
+     List<net.sf.clipsrules.jni.Module> theModules,
      List<FactInstance> theEntities,
      HashMap<Long,BitSet> theScopes,
      String theEntityName,
@@ -286,7 +286,7 @@ public class EntityBrowserFrame extends JInternalFrame
 
       this.getContentPane().add(contentPane); 
       
-	  lastModule = null;
+      lastModule = null;
       lastModuleRow = -1;
       lastEntity = null;
       lastEntityRow = -1;
@@ -349,7 +349,7 @@ public class EntityBrowserFrame extends JInternalFrame
    /* assignData */
    /**************/
    public void assignData(
-     List<Module> theModules,
+     List<net.sf.clipsrules.jni.Module> theModules,
      List<FactInstance> theEntities,
      HashMap<Long,BitSet> theScopes)
      {
@@ -387,7 +387,7 @@ public class EntityBrowserFrame extends JInternalFrame
          lastModuleRow = theRow;
          
          theRow = modulesTable.convertRowIndexToModel(theRow);
-         Module theModule = modules.get(theRow);
+         net.sf.clipsrules.jni.Module theModule = modules.get(theRow);
          lastModule = theModule.getModuleName();
         }
       else
@@ -434,7 +434,7 @@ public class EntityBrowserFrame extends JInternalFrame
          if (lastModuleRow < count)
            {
             theRow = modulesTable.convertRowIndexToModel(lastModuleRow);
-            Module theModule = modules.get(theRow);
+            net.sf.clipsrules.jni.Module theModule = modules.get(theRow);
                  
             if (theModule.getModuleName().equals(lastModule))       
               {
@@ -448,7 +448,7 @@ public class EntityBrowserFrame extends JInternalFrame
             for (i = 0; i < count; i++)
               {
                theRow = modulesTable.convertRowIndexToModel(i);
-               Module theModule = modules.get(theRow);
+               net.sf.clipsrules.jni.Module theModule = modules.get(theRow);
 
                if (theModule.getModuleName().equals(lastModule))       
                  {
@@ -495,7 +495,7 @@ public class EntityBrowserFrame extends JInternalFrame
             if (theEntity.getName().equals(lastEntity))
               {
                entityTable.setRowSelectionInterval(lastEntityRow,lastEntityRow);
-			   slotsModel.setItem(theEntity);
+               slotsModel.setItem(theEntity);
                found = true;
               }
            }
@@ -511,7 +511,7 @@ public class EntityBrowserFrame extends JInternalFrame
                  {
                   found = true;
                   entityTable.setRowSelectionInterval(i,i);
-				  slotsModel.setItem(theEntity);
+                  slotsModel.setItem(theEntity);
                   break;
                  }
               }
@@ -523,16 +523,16 @@ public class EntityBrowserFrame extends JInternalFrame
               {
                if (lastEntityRow < count)
                  { 
-				  theEntity = entities.get(lastEntityRow);
-				  entityTable.setRowSelectionInterval(lastEntityRow,lastEntityRow); 
-				  slotsModel.setItem(theEntity);
-				 }
+                  theEntity = entities.get(lastEntityRow);
+                  entityTable.setRowSelectionInterval(lastEntityRow,lastEntityRow); 
+                  slotsModel.setItem(theEntity);
+                 }
                else 
                  { 
-				  theEntity = entities.get(count-1);
-				  entityTable.setRowSelectionInterval(count-1,count-1); 
-				  slotsModel.setItem(theEntity);
-				 }
+                  theEntity = entities.get(count-1);
+                  entityTable.setRowSelectionInterval(count-1,count-1); 
+                  slotsModel.setItem(theEntity);
+                 }
               }
            }
         }

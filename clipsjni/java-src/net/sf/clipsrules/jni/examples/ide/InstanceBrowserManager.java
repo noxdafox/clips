@@ -20,7 +20,7 @@ import net.sf.clipsrules.jni.*;
 public class InstanceBrowserManager implements ActionListener
   {  
    private List<EntityBrowserFrame> browsers = new ArrayList<EntityBrowserFrame>();
-   private List<Module> modules;
+   private List<net.sf.clipsrules.jni.Module> modules;
    private List<FactInstance> entities;
    private HashMap<Long,BitSet> scopes;
    private CLIPSIDE ide;
@@ -34,7 +34,7 @@ public class InstanceBrowserManager implements ActionListener
      CLIPSIDE theIDE)
      {  
       ide = theIDE;
-      modules = new ArrayList<Module>();
+      modules = new ArrayList<net.sf.clipsrules.jni.Module>();
       entities = new ArrayList<FactInstance>();
       scopes = new HashMap<Long,BitSet>();
      }
