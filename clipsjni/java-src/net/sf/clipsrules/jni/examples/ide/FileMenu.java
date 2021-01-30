@@ -320,7 +320,7 @@ public class FileMenu extends JMenu
         ActionEvent e)
         {
          WindowEvent windowClosing = new WindowEvent(ide,WindowEvent.WINDOW_CLOSING);
-	     ide.dispatchEvent(windowClosing);
+         ide.dispatchEvent(windowClosing);
         }
      }
    

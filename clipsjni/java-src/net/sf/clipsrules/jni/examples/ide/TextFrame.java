@@ -240,9 +240,9 @@ public class TextFrame extends JInternalFrame
                /*============================================*/
 
                try
-		         { Thread.sleep(200); }
-		       catch (Exception e)
-		         { e.printStackTrace(); }
+                 { Thread.sleep(200); }
+               catch (Exception e)
+                 { e.printStackTrace(); }
 
                /*===========================*/
                /* Restore the selection and */
@@ -256,7 +256,7 @@ public class TextFrame extends JInternalFrame
                return;
               }
             else
-		      { nestingDepth--; }
+              { nestingDepth--; }
            }
          else if (characterToCheck == ')') 
            { nestingDepth++; }

@@ -44,17 +44,17 @@ public abstract class LexemeValue extends PrimitiveValue
    /***********/
    /* equals: */
    /***********/
-	@Override
-	public boolean equals(Object obj) 
-	  {
-	   if (this == obj) return true;
-	   if (obj == null) return false;
-	   if (this.getClass() != obj.getClass()) return false;
-	   
-	   LexemeValue lv = (LexemeValue) obj;
-	   if (this.value == null) return (lv.value == null);
-	   return this.value.equals(lv.value);
-      }
+   @Override
+   public boolean equals(Object obj) 
+     {
+      if (this == obj) return true;
+      if (obj == null) return false;
+      if (this.getClass() != obj.getClass()) return false;
+       
+      LexemeValue lv = (LexemeValue) obj;
+      if (this.value == null) return (lv.value == null);
+      return this.value.equals(lv.value);
+     }
    
    @Override
    public boolean isLexeme()

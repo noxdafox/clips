@@ -368,7 +368,7 @@ public class EntityBrowserFrame extends JInternalFrame
       else
         { 
          entityModel.setItems(entities); 
-		 slotsModel.setItem(null);
+         slotsModel.setItem(null);
         }
 
       restoreSelection();
@@ -420,7 +420,7 @@ public class EntityBrowserFrame extends JInternalFrame
       int i, count, theRow;
       boolean found;
       FactInstance theEntity;
-	
+    
       if (lastModuleRow == -1)
         {
          if (modulesTable.getRowCount() > 0)
@@ -477,10 +477,10 @@ public class EntityBrowserFrame extends JInternalFrame
         { 
          if (entityTable.getRowCount() > 0)
            { 
-		    theEntity = entities.get(0);
-		    entityTable.setRowSelectionInterval(0,0); 
-			slotsModel.setItem(theEntity);
-		   }
+            theEntity = entities.get(0);
+            entityTable.setRowSelectionInterval(0,0); 
+            slotsModel.setItem(theEntity);
+           }
         }
       else
         {
@@ -599,7 +599,7 @@ public class EntityBrowserFrame extends JInternalFrame
       entityModel.fireTableDataChanged();
       if (entityTable.getRowCount() != 0)
         { entityTable.setRowSelectionInterval(0,0); }
-	  else
+      else
         { slotsModel.setItem(null); }
      }
    

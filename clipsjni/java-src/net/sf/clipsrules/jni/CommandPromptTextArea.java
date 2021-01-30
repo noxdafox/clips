@@ -412,9 +412,9 @@ public class CommandPromptTextArea extends RouterTextArea
                /*============================================*/
                
                try
-		         { Thread.sleep(200); }
-		       catch (Exception e)
-		         { e.printStackTrace(); }
+                 { Thread.sleep(200); }
+               catch (Exception e)
+                 { e.printStackTrace(); }
 
                /*===========================*/
                /* Restore the selection and */
@@ -424,11 +424,11 @@ public class CommandPromptTextArea extends RouterTextArea
                this.setSelectionStart(selStart);
                this.setSelectionEnd(selEnd);
                this.getCaret().setVisible(true);
-		       
+               
                return;
               }
             else
-		      { nestingDepth--; }
+              { nestingDepth--; }
            }
          else if (characterToCheck == ')') 
            { nestingDepth++; }

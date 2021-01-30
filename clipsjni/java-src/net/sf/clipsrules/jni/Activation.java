@@ -70,27 +70,27 @@ public class Activation
    /***********/
    /* equals: */
    /***********/
-	@Override
-	public boolean equals(Object obj) 
-	  {
-	   if (this == obj) return true;
-	   if (obj == null) return false;
-	   if (this.getClass() != obj.getClass()) return false;
-	   
-	   Activation ca = (Activation) obj;
+   @Override
+   public boolean equals(Object obj) 
+     {
+      if (this == obj) return true;
+      if (obj == null) return false;
+      if (this.getClass() != obj.getClass()) return false;
+       
+      Activation ca = (Activation) obj;
 
-	   if (this.salience != ca.salience) return false;
+      if (this.salience != ca.salience) return false;
 
-	   if (this.ruleName == null) 
-	     { if (ca.ruleName != null) return false; }
-	   else
-	     { if (! this.ruleName.equals(ca.ruleName)) return false; }
+      if (this.ruleName == null) 
+        { if (ca.ruleName != null) return false; }
+      else
+        { if (! this.ruleName.equals(ca.ruleName)) return false; }
 
-	   if (this.basis == null) 
-	     { if (ca.basis != null) return false; }
-	   else
-	     { if (! this.basis.equals(ca.basis)) return false; }
-	   
-	   return true;
-      }
+      if (this.basis == null) 
+        { if (ca.basis != null) return false; }
+      else
+        { if (! this.basis.equals(ca.basis)) return false; }
+       
+      return true;
+     }
   }

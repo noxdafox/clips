@@ -51,17 +51,17 @@ public class MultifieldValue extends PrimitiveValue implements Iterable<Primitiv
    /***********/
    /* equals: */
    /***********/
-	@Override
-	public boolean equals(Object obj) 
-	  {
-	   if (this == obj) return true;
-	   if (obj == null) return false;
-	   if (this.getClass() != obj.getClass()) return false;
-	   
-	   MultifieldValue mv = (MultifieldValue) obj;
-	   if (this.value == null) return (mv.value == null);
-	   return this.value.equals(mv.value);
-      }
+   @Override
+   public boolean equals(Object obj) 
+     {
+      if (this == obj) return true;
+      if (obj == null) return false;
+      if (this.getClass() != obj.getClass()) return false;
+       
+      MultifieldValue mv = (MultifieldValue) obj;
+      if (this.value == null) return (mv.value == null);
+      return this.value.equals(mv.value);
+     }
 
    /********/
    /* get: */
