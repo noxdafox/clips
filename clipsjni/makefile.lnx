@@ -3,7 +3,7 @@
 # Ubuntu 16.04 LTS with OpenJDK 1.8.0_211
 # Debian 9.1 with OpenJDK 1.8.0_211
 # Fedora 26 with OpenJDK 1.8.0_211
-# CentOS 7 with OpenJDK 1.8.0_211
+# CentOS 7.5 with OpenJDK 1.8.0_252
 # Mint 18 with OpenJDK 1.8.0_211
 
 JNI_CP = net/sf/clipsrules/jni

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  01/08/21             */
+   /*            CLIPS Version 6.40  02/02/21             */
    /*                                                     */
    /*             EXPRESSION BSAVE/BLOAD MODULE           */
    /*******************************************************/
@@ -280,18 +280,18 @@ void ClearBloadedExpressions(
 
 #if DEFTEMPLATE_CONSTRUCT
          case FACT_ADDRESS_TYPE    :
-           ReleaseFact((Fact *) ExpressionData(theEnv)->ExpressionArray[i].value);
+           ReleaseFact(ExpressionData(theEnv)->ExpressionArray[i].factValue);
            break;
 #endif
 
 #if OBJECT_SYSTEM
          case INSTANCE_ADDRESS_TYPE :
-           ReleaseInstance((Instance *) ExpressionData(theEnv)->ExpressionArray[i].value);
+           ReleaseInstance(ExpressionData(theEnv)->ExpressionArray[i].instanceValue);
            break;
 #endif
 
          case EXTERNAL_ADDRESS_TYPE:
-           ReleaseExternalAddress(theEnv,ExpressionData(theEnv)->ExpressionArray[i].value);
+           ReleaseExternalAddress(theEnv,ExpressionData(theEnv)->ExpressionArray[i].externalAddressValue);
            break;
 
          case VOID_TYPE:
@@ -300,7 +300,7 @@ void ClearBloadedExpressions(
          default:
            if (EvaluationData(theEnv)->PrimitivesArray[ExpressionData(theEnv)->ExpressionArray[i].type] == NULL) break;
            if (EvaluationData(theEnv)->PrimitivesArray[ExpressionData(theEnv)->ExpressionArray[i].type]->bitMap)
-             { DecrementBitMapReferenceCount(theEnv,(CLIPSBitMap *) ExpressionData(theEnv)->ExpressionArray[i].value); }
+             { DecrementBitMapReferenceCount(theEnv,ExpressionData(theEnv)->ExpressionArray[i].bitMapValue); }
            break;
         }
      }

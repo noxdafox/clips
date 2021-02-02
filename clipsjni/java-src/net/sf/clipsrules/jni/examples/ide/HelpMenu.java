@@ -220,7 +220,7 @@ public class HelpMenu extends JMenu
    public void openOnlineDocumentation()
      {
       try
-        { openWebpage(new URL("http://www.clipsrules.net/?q=Documentation")); }
+        { openWebpage(new URL("http://www.clipsrules.net/Documentation.html")); }
       catch (Exception e)
         { e.printStackTrace(); }
      }
