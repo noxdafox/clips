@@ -100,7 +100,6 @@
          [theValues setValue: [panelFont fontName] forKey: @"editorTextFontName"];
          [theValues setValue: [NSNumber numberWithDouble: [panelFont pointSize]] forKey: @"editorTextFontSize"];
         }
-
      }
   }
 

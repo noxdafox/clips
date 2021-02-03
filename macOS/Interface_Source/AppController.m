@@ -535,7 +535,7 @@
 - (IBAction) showCLIPSDocumentation: (id) sender
   {
    [[NSWorkspace sharedWorkspace] 
-       openURL: [NSURL URLWithString: @"http://www.clipsrules.net/?q=Documentation"]];
+       openURL: [NSURL URLWithString: @"http://www.clipsrules.net/Documentation.html"]];
   }
 
 /*************************************************/
