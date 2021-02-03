@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  05/03/19            */
+   /*             CLIPS Version 6.40  02/03/21            */
    /*                                                     */
    /*                 UTILITY HEADER FILE                 */
    /*******************************************************/
@@ -186,7 +186,7 @@ struct utilityData
    bool                           RemoveCleanupFunction(Environment *,const char *);
    bool                           RemovePeriodicFunction(Environment *,const char *);
    char                          *CopyString(Environment *,const char *);
-   void                           DeleteString(Environment *,char *);
+   void                           DeleteString(Environment *,const char *);
    const char                    *AppendStrings(Environment *,const char *,const char *);
    const char                    *StringPrintForm(Environment *,const char *);
    char                          *AppendToString(Environment *,const char *,char *,size_t *,size_t *);

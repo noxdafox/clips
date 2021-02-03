@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  03/20/19            */
+   /*             CLIPS Version 6.40  02/03/21            */
    /*                                                     */
    /*                 FILE UTILITY MODULE                 */
    /*******************************************************/
@@ -774,11 +774,11 @@ bool RemoveBatch(
    /* Remove the entry from the list. */
    /*=================================*/
 
-   DeleteString(theEnv,(char *) FileCommandData(theEnv)->TopOfBatchList->fileName);
+   DeleteString(theEnv,FileCommandData(theEnv)->TopOfBatchList->fileName);
    bptr = FileCommandData(theEnv)->TopOfBatchList;
    FileCommandData(theEnv)->TopOfBatchList = FileCommandData(theEnv)->TopOfBatchList->next;
 
-   DeleteString(theEnv,(char *) bptr->logicalSource);
+   DeleteString(theEnv,bptr->logicalSource);
    rtn_struct(theEnv,batchEntry,bptr);
 
    /*========================================================*/

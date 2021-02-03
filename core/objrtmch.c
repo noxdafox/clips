@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  09/09/19             */
+   /*            CLIPS Version 6.40  02/03/21             */
    /*                                                     */
    /*          OBJECT PATTERN MATCHER MODULE              */
    /*******************************************************/
@@ -99,7 +99,7 @@
    static void                    ReturnObjectMatchAction(Environment *,OBJECT_MATCH_ACTION *);
    static void                    ProcessObjectMatchQueue(Environment *);
    static void                    MarkObjectPatternNetwork(Environment *,SLOT_BITMAP *);
-   static bool                    CompareSlotBitMaps(SLOT_BITMAP *,SLOT_BITMAP *);
+   static bool                    CompareSlotBitMaps(const SLOT_BITMAP *,const SLOT_BITMAP *);
    static void                    ObjectPatternMatch(Environment *,size_t,size_t,OBJECT_PATTERN_NODE *,struct multifieldMarker *);
    static void                    ProcessPatternNode(Environment *,size_t,size_t,OBJECT_PATTERN_NODE *,struct multifieldMarker *);
    static void                    CreateObjectAlphaMatch(Environment *,OBJECT_ALPHA_NODE *);
@@ -719,7 +719,7 @@ static void MarkObjectPatternNetwork(
       else if (alphaPtr->slotbmp != NULL)
         {
          if (CompareSlotBitMaps(slotNameIDs,
-               (SLOT_BITMAP *) alphaPtr->slotbmp->contents))
+               (const SLOT_BITMAP *) alphaPtr->slotbmp->contents))
            {
             alphaPtr->matchTimeTag = ObjectReteData(theEnv)->CurrentObjectMatchTimeTag;
             for (upper = alphaPtr->patternNode;
@@ -751,8 +751,8 @@ static void MarkObjectPatternNetwork(
   NOTES        : None
  ***************************************************/
 static bool CompareSlotBitMaps(
-  SLOT_BITMAP *smap1,
-  SLOT_BITMAP *smap2)
+  const SLOT_BITMAP *smap1,
+  const SLOT_BITMAP *smap2)
   {
    unsigned short i, maxByte;
 
@@ -1216,7 +1216,7 @@ static bool EvaluateObjectPatternTest(
       EvaluationData(theEnv)->CurrentExpression = oldArgument;
       if (rv)
         {
-         if (((struct ObjectCmpPNConstant *)
+         if (((const struct ObjectCmpPNConstant *)
                  networkTest->bitMapValue->contents)->pass)
            patternNode->blocked = true;
          return true;
@@ -1392,7 +1392,7 @@ static void ObjectRetractAction(
          if (alphaPtr->slotbmp != NULL)
            {
            if (CompareSlotBitMaps(slotNameIDs,
-                  (SLOT_BITMAP *) alphaPtr->slotbmp->contents))
+                  (const SLOT_BITMAP *) alphaPtr->slotbmp->contents))
               {
                ins->busy--;
                if (prvMatch == NULL)

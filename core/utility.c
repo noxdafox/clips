@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  05/03/19             */
+   /*            CLIPS Version 6.40  02/03/21             */
    /*                                                     */
    /*                   UTILITY MODULE                    */
    /*******************************************************/
@@ -522,10 +522,10 @@ char *CopyString(
 /*****************************************************************/
 void DeleteString(
   Environment *theEnv,
-  char *theString)
+  const char *theString)
   {
    if (theString != NULL)
-     { genfree(theEnv,theString,strlen(theString) + 1); }
+     { genfree(theEnv,(void *) theString,strlen(theString) + 1); }
   }
 
 /***********************************************************/

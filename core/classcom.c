@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  10/03/19             */
+   /*            CLIPS Version 6.40  02/03/21             */
    /*                                                     */
    /*                  CLASS COMMANDS MODULE              */
    /*******************************************************/
@@ -323,9 +323,9 @@ bool DefclassInScope(
   {
 #if DEFMODULE_CONSTRUCT
    unsigned long moduleID;
-   char *scopeMap;
+   const char *scopeMap;
 
-   scopeMap = (char *) theDefclass->scopeMap->contents;
+   scopeMap = (const char *) theDefclass->scopeMap->contents;
    if (theModule == NULL)
      { theModule = GetCurrentModule(theEnv); }
    moduleID = theModule->header.bsaveID;

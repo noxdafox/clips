@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  11/01/16             */
+   /*            CLIPS Version 6.40  02/03/21             */
    /*                                                     */
    /*          FACT RETE ACCESS FUNCTIONS MODULE          */
    /*******************************************************/
@@ -75,13 +75,13 @@ bool FactPNGetVar1(
    struct multifieldMarker *marks;
    Multifield *segmentPtr;
    size_t extent;
-   struct factGetVarPN1Call *hack;
+   const struct factGetVarPN1Call *hack;
 
    /*==========================================*/
    /* Retrieve the arguments for the function. */
    /*==========================================*/
 
-   hack = (struct factGetVarPN1Call *) ((CLIPSBitMap *) theValue)->contents;
+   hack = (const struct factGetVarPN1Call *) ((CLIPSBitMap *) theValue)->contents;
 
    /*=====================================================*/
    /* Get the pointer to the fact from the partial match. */
@@ -177,14 +177,14 @@ bool FactPNGetVar2(
   UDFValue *returnValue)
   {
    Fact *factPtr;
-   struct factGetVarPN2Call *hack;
+   const struct factGetVarPN2Call *hack;
    CLIPSValue *fieldPtr;
 
    /*==========================================*/
    /* Retrieve the arguments for the function. */
    /*==========================================*/
 
-   hack = (struct factGetVarPN2Call *) ((CLIPSBitMap *) theValue)->contents;
+   hack = (const struct factGetVarPN2Call *) ((CLIPSBitMap *) theValue)->contents;
 
    /*==============================*/
    /* Get the pointer to the fact. */
@@ -216,13 +216,13 @@ bool FactPNGetVar3(
    Fact *factPtr;
    Multifield *segmentPtr;
    CLIPSValue *fieldPtr;
-   struct factGetVarPN3Call *hack;
+   const struct factGetVarPN3Call *hack;
 
    /*==========================================*/
    /* Retrieve the arguments for the function. */
    /*==========================================*/
 
-   hack = (struct factGetVarPN3Call *) ((CLIPSBitMap *) theValue)->contents;
+   hack = (const struct factGetVarPN3Call *) ((CLIPSBitMap *) theValue)->contents;
 
    /*==============================*/
    /* Get the pointer to the fact. */
@@ -276,7 +276,7 @@ bool FactPNConstant1(
 #if MAC_XCD
 #pragma unused(returnValue)
 #endif
-   struct factConstantPN1Call *hack;
+   const struct factConstantPN1Call *hack;
    CLIPSValue *fieldPtr;
    struct expr *theConstant;
 
@@ -284,7 +284,7 @@ bool FactPNConstant1(
    /* Retrieve the arguments for the function. */
    /*==========================================*/
 
-   hack = (struct factConstantPN1Call *) ((CLIPSBitMap *) theValue)->contents;
+   hack = (const struct factConstantPN1Call *) ((CLIPSBitMap *) theValue)->contents;
 
    /*============================================*/
    /* Extract the value from the specified slot. */
@@ -326,7 +326,7 @@ bool FactPNConstant2(
 #if MAC_XCD
 #pragma unused(returnValue)
 #endif
-   struct factConstantPN2Call *hack;
+   const struct factConstantPN2Call *hack;
    CLIPSValue *fieldPtr;
    struct expr *theConstant;
    Multifield *segmentPtr;
@@ -335,7 +335,7 @@ bool FactPNConstant2(
    /* Retrieve the arguments for the function. */
    /*==========================================*/
 
-   hack = (struct factConstantPN2Call *) ((CLIPSBitMap *) theValue)->contents;
+   hack = (const struct factConstantPN2Call *) ((CLIPSBitMap *) theValue)->contents;
 
    /*==========================================================*/
    /* Extract the value from the specified slot. Note that the */
@@ -394,14 +394,14 @@ bool FactJNGetVar1(
    struct multifieldMarker *marks;
    Multifield *segmentPtr;
    size_t extent;
-   struct factGetVarJN1Call *hack;
+   const struct factGetVarJN1Call *hack;
    Multifield *theSlots = NULL;
 
    /*==========================================*/
    /* Retrieve the arguments for the function. */
    /*==========================================*/
 
-   hack = (struct factGetVarJN1Call *) ((CLIPSBitMap *) theValue)->contents;
+   hack = (const struct factGetVarJN1Call *) ((CLIPSBitMap *) theValue)->contents;
 
    /*=====================================================*/
    /* Get the pointer to the fact from the partial match. */
@@ -532,14 +532,14 @@ bool FactJNGetVar2(
   UDFValue *returnValue)
   {
    Fact *factPtr;
-   struct factGetVarJN2Call *hack;
+   const struct factGetVarJN2Call *hack;
    CLIPSValue *fieldPtr;
 
    /*==========================================*/
    /* Retrieve the arguments for the function. */
    /*==========================================*/
 
-   hack = (struct factGetVarJN2Call *) ((CLIPSBitMap *) theValue)->contents;
+   hack = (const struct factGetVarJN2Call *) ((CLIPSBitMap *) theValue)->contents;
 
    /*=====================================================*/
    /* Get the pointer to the fact from the partial match. */
@@ -584,13 +584,13 @@ bool FactJNGetVar3(
    Fact *factPtr;
    Multifield *segmentPtr;
    CLIPSValue *fieldPtr;
-   struct factGetVarJN3Call *hack;
+   const struct factGetVarJN3Call *hack;
 
    /*==========================================*/
    /* Retrieve the arguments for the function. */
    /*==========================================*/
 
-   hack = (struct factGetVarJN3Call *) ((CLIPSBitMap *) theValue)->contents;
+   hack = (const struct factGetVarJN3Call *) ((CLIPSBitMap *) theValue)->contents;
 
    /*=====================================================*/
    /* Get the pointer to the fact from the partial match. */
@@ -653,14 +653,14 @@ bool FactSlotLength(
   void *theValue,
   UDFValue *returnValue)
   {
-   struct factCheckLengthPNCall *hack;
+   const struct factCheckLengthPNCall *hack;
    Multifield *segmentPtr;
    size_t extraOffset = 0;
    struct multifieldMarker *tempMark;
 
    returnValue->value = FalseSymbol(theEnv);
 
-   hack = (struct factCheckLengthPNCall *) ((CLIPSBitMap *) theValue)->contents;
+   hack = (const struct factCheckLengthPNCall *) ((CLIPSBitMap *) theValue)->contents;
 
    for (tempMark = FactData(theEnv)->CurrentPatternMarks;
         tempMark != NULL;
@@ -696,13 +696,13 @@ bool FactJNCompVars1(
 #endif
    unsigned short p1, e1, p2, e2;
    Fact *fact1, *fact2;
-   struct factCompVarsJN1Call *hack;
+   const struct factCompVarsJN1Call *hack;
 
    /*=========================================*/
    /* Retrieve the arguments to the function. */
    /*=========================================*/
 
-   hack = (struct factCompVarsJN1Call *) ((CLIPSBitMap *) theValue)->contents;
+   hack = (const struct factCompVarsJN1Call *) ((CLIPSBitMap *) theValue)->contents;
 
    /*=================================================*/
    /* Extract the fact pointers for the two patterns. */
@@ -749,7 +749,7 @@ bool FactJNCompVars2(
 #endif
    unsigned short p1, s1, p2, s2;
    Fact *fact1, *fact2;
-   struct factCompVarsJN2Call *hack;
+   const struct factCompVarsJN2Call *hack;
    Multifield *segment;
    CLIPSValue *fieldPtr1, *fieldPtr2;
 
@@ -757,7 +757,7 @@ bool FactJNCompVars2(
    /* Retrieve the arguments to the function. */
    /*=========================================*/
 
-   hack = (struct factCompVarsJN2Call *) ((CLIPSBitMap *) theValue)->contents;
+   hack = (const struct factCompVarsJN2Call *) ((CLIPSBitMap *) theValue)->contents;
 
    /*=================================================*/
    /* Extract the fact pointers for the two patterns. */
@@ -824,13 +824,13 @@ bool FactPNCompVars1(
   {
    bool rv;
    CLIPSValue *fieldPtr1, *fieldPtr2;
-   struct factCompVarsPN1Call *hack;
+   const struct factCompVarsPN1Call *hack;
 
    /*========================================*/
    /* Extract the arguments to the function. */
    /*========================================*/
 
-   hack = (struct factCompVarsPN1Call *) ((CLIPSBitMap *) theValue)->contents;
+   hack = (const struct factCompVarsPN1Call *) ((CLIPSBitMap *) theValue)->contents;
    fieldPtr1 = &FactData(theEnv)->CurrentPatternFact->theProposition.contents[hack->field1];
    fieldPtr2 = &FactData(theEnv)->CurrentPatternFact->theProposition.contents[hack->field2];
 

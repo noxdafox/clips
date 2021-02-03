@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  10/01/16             */
+   /*            CLIPS Version 6.40  02/03/21             */
    /*                                                     */
    /*    INFERENCE ENGINE OBJECT ACCESS ROUTINES MODULE   */
    /*******************************************************/
@@ -115,8 +115,8 @@
    static bool                    JNSimpleCompareFunction3(Environment *,void *,UDFValue *);
    static void                    GetPatternObjectAndMarks(Environment *,unsigned short,bool,bool,Instance **,struct multifieldMarker **);
    static void                    GetObjectValueGeneral(Environment *,UDFValue *,Instance *,
-                                                        struct multifieldMarker *,struct ObjectMatchVar1 *);
-   static void                    GetObjectValueSimple(Environment *,UDFValue *,Instance *,struct ObjectMatchVar2 *);
+                                                        struct multifieldMarker *,const struct ObjectMatchVar1 *);
+   static void                    GetObjectValueSimple(Environment *,UDFValue *,Instance *,const struct ObjectMatchVar2 *);
    static size_t                  CalculateSlotField(struct multifieldMarker *,InstanceSlot *,size_t,size_t *);
    static void                    GetInsMultiSlotField(CLIPSValue *,Instance *,unsigned,unsigned,unsigned);
    static void                    DeallocateObjectReteData(Environment *);
@@ -330,13 +330,13 @@ bool ObjectCmpConstantFunction(
   void *theValue,
   UDFValue *theResult)
   {
-   struct ObjectCmpPNConstant *hack;
+   const struct ObjectCmpPNConstant *hack;
    UDFValue theVar;
    Expression *constantExp;
    bool rv;
    Multifield *theSegment;
 
-   hack = (struct ObjectCmpPNConstant *) ((CLIPSBitMap *) theValue)->contents;
+   hack = (const struct ObjectCmpPNConstant *) ((CLIPSBitMap *) theValue)->contents;
    if (hack->general)
      {
       EvaluateExpression(theEnv,GetFirstArgument(),&theVar);
@@ -425,11 +425,11 @@ static bool ObjectGetVarJNFunction1(
   void *theValue,
   UDFValue *theResult)
   {
-   struct ObjectMatchVar1 *hack;
+   const struct ObjectMatchVar1 *hack;
    Instance *theInstance;
    struct multifieldMarker *theMarks;
 
-   hack = (struct ObjectMatchVar1 *) ((CLIPSBitMap *) theValue)->contents;
+   hack = (const struct ObjectMatchVar1 *) ((CLIPSBitMap *) theValue)->contents;
    GetPatternObjectAndMarks(theEnv,hack->whichPattern,hack->lhs,hack->rhs,&theInstance,&theMarks);
    GetObjectValueGeneral(theEnv,theResult,theInstance,theMarks,hack);
    return true;
@@ -473,11 +473,11 @@ static bool ObjectGetVarJNFunction2(
   void *theValue,
   UDFValue *theResult)
   {
-   struct ObjectMatchVar2 *hack;
+   const struct ObjectMatchVar2 *hack;
    Instance *theInstance;
    struct multifieldMarker *theMarks;
 
-   hack = (struct ObjectMatchVar2 *) ((CLIPSBitMap *) theValue)->contents;
+   hack = (const struct ObjectMatchVar2 *) ((CLIPSBitMap *) theValue)->contents;
    GetPatternObjectAndMarks(theEnv,hack->whichPattern,hack->lhs,hack->rhs,&theInstance,&theMarks);
    GetObjectValueSimple(theEnv,theResult,theInstance,hack);
    return true;
@@ -522,9 +522,9 @@ static bool ObjectGetVarPNFunction1(
   void *theValue,
   UDFValue *theResult)
   {
-   struct ObjectMatchVar1 *hack;
+   const struct ObjectMatchVar1 *hack;
 
-   hack = (struct ObjectMatchVar1 *) ((CLIPSBitMap *) theValue)->contents;
+   hack = (const struct ObjectMatchVar1 *) ((CLIPSBitMap *) theValue)->contents;
    GetObjectValueGeneral(theEnv,theResult,ObjectReteData(theEnv)->CurrentPatternObject,ObjectReteData(theEnv)->CurrentPatternObjectMarks,hack);
    return true;
   }
@@ -565,9 +565,9 @@ static bool ObjectGetVarPNFunction2(
   void *theValue,
   UDFValue *theResult)
   {
-   struct ObjectMatchVar2 *hack;
+   const struct ObjectMatchVar2 *hack;
 
-   hack = (struct ObjectMatchVar2 *) ((CLIPSBitMap *) theValue)->contents;
+   hack = (const struct ObjectMatchVar2 *) ((CLIPSBitMap *) theValue)->contents;
    GetObjectValueSimple(theEnv,theResult,ObjectReteData(theEnv)->CurrentPatternObject,hack);
    return true;
   }
@@ -634,10 +634,10 @@ static bool SlotLengthTestFunction(
   void *theValue,
   UDFValue *theResult)
   {
-   struct ObjectMatchLength *hack;
+   const struct ObjectMatchLength *hack;
 
    theResult->value = FalseSymbol(theEnv);
-   hack = (struct ObjectMatchLength *) ((CLIPSBitMap *) theValue)->contents;
+   hack = (const struct ObjectMatchLength *) ((CLIPSBitMap *) theValue)->contents;
    if (ObjectReteData(theEnv)->CurrentObjectSlotLength < hack->minLength)
      return false;
    if (hack->exactly && (ObjectReteData(theEnv)->CurrentObjectSlotLength > hack->minLength))
@@ -676,11 +676,11 @@ static bool PNSimpleCompareFunction1(
   void *theValue,
   UDFValue *theResult)
   {
-   struct ObjectCmpPNSingleSlotVars1 *hack;
+   const struct ObjectCmpPNSingleSlotVars1 *hack;
    InstanceSlot *is1,*is2;
    bool rv;
 
-   hack = (struct ObjectCmpPNSingleSlotVars1 *) ((CLIPSBitMap *) theValue)->contents;
+   hack = (const struct ObjectCmpPNSingleSlotVars1 *) ((CLIPSBitMap *) theValue)->contents;
    is1 = GetInsSlot(ObjectReteData(theEnv)->CurrentPatternObject,hack->firstSlot);
    is2 = GetInsSlot(ObjectReteData(theEnv)->CurrentPatternObject,hack->secondSlot);
    if (is1->type != is2->type)
@@ -725,12 +725,12 @@ static bool PNSimpleCompareFunction2(
   void *theValue,
   UDFValue *theResult)
   {
-   struct ObjectCmpPNSingleSlotVars2 *hack;
+   const struct ObjectCmpPNSingleSlotVars2 *hack;
    bool rv;
    CLIPSValue f1;
    InstanceSlot *is2;
 
-   hack = (struct ObjectCmpPNSingleSlotVars2 *) ((CLIPSBitMap *) theValue)->contents;
+   hack = (const struct ObjectCmpPNSingleSlotVars2 *) ((CLIPSBitMap *) theValue)->contents;
    GetInsMultiSlotField(&f1,ObjectReteData(theEnv)->CurrentPatternObject,hack->firstSlot,
                         hack->fromBeginning,hack->offset);
    is2 = GetInsSlot(ObjectReteData(theEnv)->CurrentPatternObject,hack->secondSlot);
@@ -776,11 +776,11 @@ static bool PNSimpleCompareFunction3(
   void *theValue,
   UDFValue *theResult)
   {
-   struct ObjectCmpPNSingleSlotVars3 *hack;
+   const struct ObjectCmpPNSingleSlotVars3 *hack;
    bool rv;
    CLIPSValue f1, f2;
 
-   hack = (struct ObjectCmpPNSingleSlotVars3 *) ((CLIPSBitMap *) theValue)->contents;
+   hack = (const struct ObjectCmpPNSingleSlotVars3 *) ((CLIPSBitMap *) theValue)->contents;
    GetInsMultiSlotField(&f1,ObjectReteData(theEnv)->CurrentPatternObject,hack->firstSlot,
                         hack->firstFromBeginning,hack->firstOffset);
    GetInsMultiSlotField(&f2,ObjectReteData(theEnv)->CurrentPatternObject,hack->secondSlot,
@@ -829,11 +829,11 @@ static bool JNSimpleCompareFunction1(
   {
    Instance *ins1,*ins2;
    struct multifieldMarker *theMarks;
-   struct ObjectCmpJoinSingleSlotVars1 *hack;
+   const struct ObjectCmpJoinSingleSlotVars1 *hack;
    bool rv;
    InstanceSlot *is1,*is2;
 
-   hack = (struct ObjectCmpJoinSingleSlotVars1 *) ((CLIPSBitMap *) theValue)->contents;
+   hack = (const struct ObjectCmpJoinSingleSlotVars1 *) ((CLIPSBitMap *) theValue)->contents;
    GetPatternObjectAndMarks(theEnv,hack->firstPattern,hack->firstPatternLHS,hack->firstPatternRHS,&ins1,&theMarks);
    is1 = GetInsSlot(ins1,hack->firstSlot);
    GetPatternObjectAndMarks(theEnv,hack->secondPattern,hack->secondPatternLHS,hack->secondPatternRHS,&ins2,&theMarks);
@@ -886,12 +886,12 @@ static bool JNSimpleCompareFunction2(
   {
    Instance *ins1,*ins2;
    struct multifieldMarker *theMarks;
-   struct ObjectCmpJoinSingleSlotVars2 *hack;
+   const struct ObjectCmpJoinSingleSlotVars2 *hack;
    bool rv;
    CLIPSValue f1;
    InstanceSlot *is2;
 
-   hack = (struct ObjectCmpJoinSingleSlotVars2 *) ((CLIPSBitMap *) theValue)->contents;
+   hack = (const struct ObjectCmpJoinSingleSlotVars2 *) ((CLIPSBitMap *) theValue)->contents;
    GetPatternObjectAndMarks(theEnv,hack->firstPattern,hack->firstPatternLHS,hack->firstPatternRHS,&ins1,&theMarks);
    GetInsMultiSlotField(&f1,ins1,hack->firstSlot,
                         hack->fromBeginning,hack->offset);
@@ -945,11 +945,11 @@ static bool JNSimpleCompareFunction3(
   {
    Instance *ins1,*ins2;
    struct multifieldMarker *theMarks;
-   struct ObjectCmpJoinSingleSlotVars3 *hack;
+   const struct ObjectCmpJoinSingleSlotVars3 *hack;
    bool rv;
    CLIPSValue f1,f2;
 
-   hack = (struct ObjectCmpJoinSingleSlotVars3 *) ((CLIPSBitMap *) theValue)->contents;
+   hack = (const struct ObjectCmpJoinSingleSlotVars3 *) ((CLIPSBitMap *) theValue)->contents;
    GetPatternObjectAndMarks(theEnv,hack->firstPattern,hack->firstPatternLHS,hack->firstPatternRHS,&ins1,&theMarks);
    GetInsMultiSlotField(&f1,ins1,hack->firstSlot,
                         hack->firstFromBeginning,
@@ -1044,7 +1044,7 @@ static void GetObjectValueGeneral(
   UDFValue *returnValue,
   Instance *theInstance,
   struct multifieldMarker *theMarks,
-  struct ObjectMatchVar1 *matchVar)
+  const struct ObjectMatchVar1 *matchVar)
   {
    size_t field;
    size_t extent;
@@ -1142,7 +1142,7 @@ static void GetObjectValueSimple(
   Environment *theEnv,
   UDFValue *returnValue,
   Instance *theInstance,
-  struct ObjectMatchVar2 *matchVar)
+  const struct ObjectMatchVar2 *matchVar)
   {
    InstanceSlot **insSlot,*basisSlot;
    Multifield *segmentPtr;

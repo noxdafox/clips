@@ -1,6 +1,11 @@
 # CLIPS 6.4
 # Console and Library
-# macOS 10.12.6 with Darwin 16.7.0
+# macOS 10.15.7
+# Ubuntu 16.04 LTS 
+# Debian 9.1 
+# Fedora 26 
+# CentOS 7.5 
+# Mint 18 
 
 # The GNU Make Manual
 # http://www.gnu.org/software/make/manual/make.html
