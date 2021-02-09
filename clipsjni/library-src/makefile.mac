@@ -1,6 +1,6 @@
 # CLIPS 6.40
 # CLIPSJNI library
-# macOS 10.14.5 with Darwin 18.6.0 and Java 1.8.0_211
+# macOS 10.15.7 with Darwin 19.6.0 and JDK 1.8.0_211
 
 JAVA_HOME = /Library/Java/JavaVirtualMachines/jdk1.8.0_211.jdk/Contents/Home
 JAVA_INCLUDE = $(JAVA_HOME)/include

@@ -1,10 +1,10 @@
 # CLIPS 6.40
 # Linux CLIPSJNI jars
-# Ubuntu 16.04 LTS with OpenJDK 1.8.0_211
-# Debian 9.1 with OpenJDK 1.8.0_211
-# Fedora 26 with OpenJDK 1.8.0_211
+# Ubuntu 18.04 LTS with OpenJDK 11.0.7
+# Debian 9.5 with OpenJDK 1.8.0_275
+# Fedora 30 with OpenJDK 1.8.0_252
 # CentOS 7.5 with OpenJDK 1.8.0_252
-# Mint 18 with OpenJDK 1.8.0_211
+# Mint 19.2 with OpenJDK 11.0.7
 
 JNI_CP = net/sf/clipsrules/jni
 JNI_CLASS = net.sf.clipsrules.jni.Environment

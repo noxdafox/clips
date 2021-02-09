@@ -1,11 +1,11 @@
 # CLIPS 6.4
 # Console and Library
 # macOS 10.15.7
-# Ubuntu 16.04 LTS 
-# Debian 9.1 
-# Fedora 26 
+# Ubuntu 18.04 LTS 
+# Debian 9.5 
+# Fedora 30 
 # CentOS 7.5 
-# Mint 18 
+# Mint 19.2 
 
 # The GNU Make Manual
 # http://www.gnu.org/software/make/manual/make.html
