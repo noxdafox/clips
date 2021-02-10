@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/02/18             */
+   /*            CLIPS Version 6.40  02/09/21             */
    /*                                                     */
    /*         DEFMODULE BASIC COMMANDS HEADER FILE        */
    /*******************************************************/
@@ -54,7 +54,9 @@
 #include "constrct.h"
 #include "envrnmnt.h"
 #include "extnfunc.h"
+#if BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE
 #include "modulbin.h"
+#endif
 #include "modulcmp.h"
 #include "multifld.h"
 #include "prntutil.h"
