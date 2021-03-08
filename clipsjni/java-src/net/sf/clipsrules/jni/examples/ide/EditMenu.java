@@ -55,12 +55,12 @@ public class EditMenu extends JMenu
       /* Get KeyStrokes for accelerators. */
       /*==================================*/
 
-      KeyStroke undo = KeyStroke.getKeyStroke(KeyEvent.VK_Z,KeyEvent.CTRL_MASK);
-      KeyStroke redo = KeyStroke.getKeyStroke(KeyEvent.VK_Z,KeyEvent.CTRL_MASK | KeyEvent.SHIFT_MASK);
+      KeyStroke undo = KeyStroke.getKeyStroke(KeyEvent.VK_Z,KeyEvent.CTRL_DOWN_MASK);
+      KeyStroke redo = KeyStroke.getKeyStroke(KeyEvent.VK_Z,KeyEvent.CTRL_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK);
 
-      KeyStroke cut = KeyStroke.getKeyStroke(KeyEvent.VK_X,KeyEvent.CTRL_MASK);
-      KeyStroke copy = KeyStroke.getKeyStroke(KeyEvent.VK_C,KeyEvent.CTRL_MASK);
-      KeyStroke paste = KeyStroke.getKeyStroke(KeyEvent.VK_V,KeyEvent.CTRL_MASK);
+      KeyStroke cut = KeyStroke.getKeyStroke(KeyEvent.VK_X,KeyEvent.CTRL_DOWN_MASK);
+      KeyStroke copy = KeyStroke.getKeyStroke(KeyEvent.VK_C,KeyEvent.CTRL_DOWN_MASK);
+      KeyStroke paste = KeyStroke.getKeyStroke(KeyEvent.VK_V,KeyEvent.CTRL_DOWN_MASK);
 
       /*================*/
       /* Setup actions. */

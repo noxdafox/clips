@@ -56,9 +56,9 @@ public class TextMenu extends JMenu
       /* Get KeyStrokes for accelerators. */
       /*==================================*/
 
-      KeyStroke loadSelection = KeyStroke.getKeyStroke(KeyEvent.VK_K,KeyEvent.CTRL_MASK);
-      KeyStroke batchSelection = KeyStroke.getKeyStroke(KeyEvent.VK_K,KeyEvent.CTRL_MASK | KeyEvent.SHIFT_MASK);
-      KeyStroke balance = KeyStroke.getKeyStroke(KeyEvent.VK_B,KeyEvent.CTRL_MASK);
+      KeyStroke loadSelection = KeyStroke.getKeyStroke(KeyEvent.VK_K,KeyEvent.CTRL_DOWN_MASK);
+      KeyStroke batchSelection = KeyStroke.getKeyStroke(KeyEvent.VK_K,KeyEvent.CTRL_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK);
+      KeyStroke balance = KeyStroke.getKeyStroke(KeyEvent.VK_B,KeyEvent.CTRL_DOWN_MASK);
 
       /*================*/
       /* Setup actions. */

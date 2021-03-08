@@ -196,7 +196,7 @@ public class EntityBrowserFrame extends JInternalFrame
                 if (moduleIndex == -1) return true;
                 moduleIndex = modulesTable.convertRowIndexToModel(moduleIndex);
 
-                BitSet theBitSet = scopes.get(new Long(fi.getTypeAddress()));
+                BitSet theBitSet = scopes.get(Long.valueOf(fi.getTypeAddress()));
                 if (theBitSet.get(moduleIndex))
                   { 
                    if (fi.searchForString(searchField.getText()))

@@ -130,7 +130,7 @@ public class RouterTextArea extends JTextArea
         {
          byte theBytes [] = theString.getBytes("UTF-8");
          for (int i = 0; i < theBytes.length; i++)
-           { charList.add(new Byte(theBytes[i])); }
+           { charList.add(Byte.valueOf(theBytes[i])); }
         }
       catch (Exception e)
         { e.printStackTrace(); }
@@ -146,7 +146,7 @@ public class RouterTextArea extends JTextArea
    public synchronized int pushChar(
      int theChar) 
      {
-      charList.add(0,new Byte((byte) theChar));
+      charList.add(0,Byte.valueOf((byte) theChar));
       return theChar;
      }
      
@@ -196,7 +196,7 @@ public class RouterTextArea extends JTextArea
         {
          byte theBytes [] = charString.getBytes("UTF-8");
          for (int i = 0; i < theBytes.length; i++)
-           { charList.add(new Byte(theBytes[i])); }
+           { charList.add(Byte.valueOf(theBytes[i])); }
         }
       catch (Exception e)
         { e.printStackTrace(); }
@@ -493,8 +493,8 @@ public class RouterTextArea extends JTextArea
    @Override
    public void keyTyped(KeyEvent e) 
      {
-      if ((e.getModifiers() & 
-         (KeyEvent.ALT_MASK | KeyEvent.CTRL_MASK | KeyEvent.META_MASK)) != 0) 
+      if ((e.getModifiersEx() & 
+         (KeyEvent.ALT_DOWN_MASK | KeyEvent.CTRL_DOWN_MASK | KeyEvent.META_DOWN_MASK)) != 0) 
         { return; }
 
       char theChar = e.getKeyChar();

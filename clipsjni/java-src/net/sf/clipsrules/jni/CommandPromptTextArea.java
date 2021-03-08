@@ -160,7 +160,7 @@ public class CommandPromptTextArea extends RouterTextArea
          return;
         }
         
-      if ((e.getModifiers() & (KeyEvent.ALT_MASK | KeyEvent.CTRL_MASK | KeyEvent.META_MASK)) != 0) return;
+      if ((e.getModifiersEx() & (KeyEvent.ALT_DOWN_MASK | KeyEvent.CTRL_DOWN_MASK | KeyEvent.META_DOWN_MASK)) != 0) return;
 
       int kc = e.getKeyCode();
       
@@ -168,7 +168,7 @@ public class CommandPromptTextArea extends RouterTextArea
         { 
          if ((currentCommand + 1) < commandHistory.size())
            {
-            if ((e.getModifiers() & KeyEvent.SHIFT_MASK) != 0)
+            if ((e.getModifiersEx() & KeyEvent.SHIFT_DOWN_MASK) != 0)
               { switchCommand(currentCommand,commandHistory.size() - 1); }
             else
               { switchCommand(currentCommand,currentCommand + 1); }
@@ -179,7 +179,7 @@ public class CommandPromptTextArea extends RouterTextArea
         { 
          if (currentCommand != 0)
           {
-           if ((e.getModifiers() & KeyEvent.SHIFT_MASK) != 0)
+           if ((e.getModifiersEx() & KeyEvent.SHIFT_DOWN_MASK) != 0)
              { switchCommand(currentCommand,0); }
            else
              { switchCommand(currentCommand,currentCommand - 1); }
@@ -188,7 +188,7 @@ public class CommandPromptTextArea extends RouterTextArea
         } 
       else if (kc == KeyEvent.VK_ESCAPE)
         {
-         if ((e.getModifiers() & KeyEvent.SHIFT_MASK) == 0)
+         if ((e.getModifiersEx() & KeyEvent.SHIFT_DOWN_MASK) == 0)
            { this.getCaret().setDot(this.getText().length()); }
          else
            { this.getCaret().setDot(this.getText().length() - clips.getInputBuffer().length()); }
@@ -210,8 +210,8 @@ public class CommandPromptTextArea extends RouterTextArea
          return;
         }
 
-      if ((e.getModifiers() & 
-          (KeyEvent.ALT_MASK | KeyEvent.CTRL_MASK | KeyEvent.META_MASK)) != 0) 
+      if ((e.getModifiersEx() & 
+          (KeyEvent.ALT_DOWN_MASK | KeyEvent.CTRL_DOWN_MASK | KeyEvent.META_DOWN_MASK)) != 0) 
         { return; }
           
       char c = e.getKeyChar();

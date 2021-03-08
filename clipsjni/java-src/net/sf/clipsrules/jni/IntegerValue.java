@@ -7,7 +7,7 @@ public class IntegerValue extends NumberValue
    /*****************/
    public IntegerValue()
      {
-      super(new Long(0));
+      super(Long.valueOf(0));
      }
 
    /*****************/
@@ -16,7 +16,7 @@ public class IntegerValue extends NumberValue
    public IntegerValue(
      long value)
      {
-      super(new Long(value));
+      super(Long.valueOf(value));
      }
      
    /*****************/
