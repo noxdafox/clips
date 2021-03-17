@@ -176,7 +176,7 @@ clipsjni_glue.obj: clipsjni_glue.c clipsjni_glue.h \
   object.h multifld.h objrtmch.h classexm.h classfun.h classinf.h \
   classini.h classpsr.h defins.h inscom.h insfun.h insfile.h insmngr.h \
   msgcom.h msgpass.h clipsjni_data.h clipsjni_utilities.h
-  
+
 clipsjni_utilities.obj: clipsjni_utilities.c clipsjni_utilities.h \
   net_sf_clipsrules_jni_Environment.h \
   clips.h setup.h envrnmnt.h entities.h usrsetup.h argacces.h expressn.h \
