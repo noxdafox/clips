@@ -534,8 +534,7 @@ public class TextFrame extends JInternalFrame
    /*#######################*/
    /* CaretListener Methods */
    /*#######################*/
-   
-   public void caretUpdate​(CaretEvent e)
+   public void caretUpdate(CaretEvent e)
      {
       if (e.getDot() != e.getMark())
         { return; }
