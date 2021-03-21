@@ -838,7 +838,7 @@ namespace CLIPSIDE
         object sender, 
         ExecutedRoutedEventArgs e)
         {
-         OpenURL("http://www.clipsrules.net/?q=Documentation");
+         OpenURL("http://www.clipsrules.net/Documentation.html");
         }
         
       /*****************************/
