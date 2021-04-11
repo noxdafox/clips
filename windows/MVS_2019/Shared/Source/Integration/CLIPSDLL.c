@@ -18,6 +18,7 @@
 #include "factmngr.h"
 #include "fileutil.h"
 #include "inscom.h"
+#include "iofun.h"
 #include "prntutil.h"
 #include "router.h"
 #include "strngfun.h"
@@ -377,6 +378,13 @@ void __declspec(dllexport) __SetHaltRules(
   {
    SetHaltRules(theEnv,value);
   }
+
+void __declspec(dllexport) __SetFullCRLF(
+    Environment* theEnv,
+    bool value)
+{
+    SetFullCRLF(theEnv, value);
+}
 
 bool __declspec(dllexport) __GetEvaluationError(
   Environment *theEnv)

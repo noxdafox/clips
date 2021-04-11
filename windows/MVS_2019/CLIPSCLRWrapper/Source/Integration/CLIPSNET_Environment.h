@@ -131,6 +131,7 @@ namespace CLIPSNET
         void SetHaltCommandLoopBatch(bool);
         bool GetHaltRules();
         void SetHaltRules(bool);
+        void SetFullCRLF(bool);
         bool GetEvaluationError();
         void SetEvaluationError(bool);
         bool ChangeDirectory(String ^);

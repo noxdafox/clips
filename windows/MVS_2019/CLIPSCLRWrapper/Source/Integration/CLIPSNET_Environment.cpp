@@ -1238,6 +1238,14 @@ namespace CLIPSNET
       m_Env->SetHaltRules(value);
      }
 
+   /***************/
+   /* SetFullCRLF */
+   /***************/
+   void Environment::SetFullCRLF(bool value)
+   {
+       m_Env->SetFullCRLF(value);
+   }
+
    /********************/
    /* ChangeDirectory: */
    /********************/

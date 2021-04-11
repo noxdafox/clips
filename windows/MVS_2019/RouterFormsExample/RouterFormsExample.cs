@@ -40,11 +40,13 @@ namespace RouterFormsExample
          this.autoTextBox.AttachRouter(autoEnv);
          autoEnv.LoadFromResource("RouterFormsExample", "RouterFormsExample.auto.clp");
          autoEnv.LoadFromResource("RouterFormsExample", "RouterFormsExample.auto_en.clp");
+         autoEnv.SetFullCRLF(true);
 
          this.animalTextBox.AttachRouter(animalEnv);
          animalEnv.LoadFromResource("RouterFormsExample", "RouterFormsExample.bcengine.clp");
          animalEnv.LoadFromResource("RouterFormsExample", "RouterFormsExample.animal.clp");
          animalEnv.LoadFromResource("RouterFormsExample", "RouterFormsExample.animal_en.clp");
+         animalEnv.SetFullCRLF(true);
 
          autoBackgroundWorker.RunWorkerAsync();
          animalBackgroundWorker.RunWorkerAsync();

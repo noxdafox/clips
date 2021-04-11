@@ -88,6 +88,7 @@ class CLIPSCPPEnv
       void SetEvaluationError(bool);
       int GetHaltRules();
       void SetHaltRules(bool);
+      void SetFullCRLF(bool);
       int ChangeDirectory(char *);
       bool ValidWatchItem(char *);
       bool GetWatchItem(char *);

@@ -127,7 +127,6 @@
       <SubType>Designer</SubType>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="greetings.clp" />
     <EmbeddedResource Include="auto.clp" />
     <EmbeddedResource Include="auto_en.clp" />
     <EmbeddedResource Include="animal.clp" />

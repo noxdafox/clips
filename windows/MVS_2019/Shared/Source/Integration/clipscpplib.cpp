@@ -29,6 +29,7 @@ using std::string;
 #include "factmngr.h"
 #include "fileutil.h"
 #include "inscom.h"
+#include "iofun.h"
 #include "prntutil.h"
 #include "router.h"
 #include "strngfun.h"
@@ -458,6 +459,19 @@ void CLIPSCPPEnv::SetHaltRules(
     ::SetHaltRules(theEnv,value);
 #else
     __SetHaltRules(theEnv,value);
+#endif
+}
+
+/***************/
+/* SetFullCRLF */
+/***************/
+void CLIPSCPPEnv::SetFullCRLF(
+    bool value)
+{
+#ifndef CLIPS_DLL_WRAPPER
+    ::SetFullCRLF(theEnv, value);
+#else
+    __SetFullCRLF(theEnv, value);
 #endif
 }
 

@@ -66,6 +66,7 @@ GetSlotError DECLSPEC __DirectGetSlot(Instance *,const char *,CLIPSValue *);
 void DECLSPEC __SetHaltExecution(Environment *,bool);
 void DECLSPEC __SetHaltCommandLoopBatch(Environment *,bool);
 void DECLSPEC __SetHaltRules(Environment *,bool);
+void DECLSPEC __SetFullCRLF(Environment*, bool);
 void DECLSPEC __SetAgendaChanged(Environment *,bool);
 void DECLSPEC __SetFocusChanged(Environment *,bool);
 void DECLSPEC __SetFactListChanged(Environment *,bool);
