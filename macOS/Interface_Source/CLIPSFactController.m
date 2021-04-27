@@ -55,7 +55,7 @@
 
    [self setValue: [theDelegate mainEnvironment] forKey: @"environment"];
 
-   [self setValue: [NSNumber numberWithInt: 24] forKey: @"fontSize"];
+   [self setValue: [NSNumber numberWithInt: 10] forKey: @"fontSize"];
    [self setValue: [NSNumber numberWithInt: 13] forKey: @"rowHeight"];
    
    /*=====================================================*/
