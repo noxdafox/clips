@@ -1564,4 +1564,14 @@ CLIPS> (ppdefglobal undefined nil)
 [PRNTUTIL1] Unable to find defglobal 'undefined'.
 ""
 CLIPS> (clear)
+CLIPS> (defglobal ?*x* = (create$ 1 2 3 4))
+CLIPS> (defglobal ?*y* = (subseq$ ?*x* 2 3))
+CLIPS> (defglobal ?*z* = (subseq$ (create$ 1 2 3 4) 2 3))
+CLIPS> ?*x*
+(1 2 3 4)
+CLIPS> ?*y*
+(2 3)
+CLIPS> ?*z*
+(2 3)
+CLIPS> (clear)
 CLIPS> (dribble-off)

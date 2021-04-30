@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  10/18/16             */
+   /*            CLIPS Version 6.41  04/30/21             */
    /*                                                     */
    /*              DEFGLOBAL PARSER MODULE                */
    /*******************************************************/
@@ -44,6 +44,10 @@
 /*            UDF redesign.                                  */
 /*                                                           */
 /*            Eval support for run time and bload only.      */
+/*                                                           */
+/*      6.41: Normalized multifields intially assigned to    */
+/*            global variables so that subsequences of       */
+/*            larger multifields are correctly assigned.     */
 /*                                                           */
 /*************************************************************/
 
@@ -391,6 +395,7 @@ static void AddDefglobal(
    /* Copy the new values to the defglobal. */
    /*=======================================*/
 
+   NormalizeMultifield(theEnv,vPtr);
    if (vPtr->header->type != MULTIFIELD_TYPE)
      { defglobalPtr->current.value = vPtr->value; }
    else

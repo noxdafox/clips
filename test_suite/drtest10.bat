@@ -927,3 +927,10 @@
 (ppdefgeneric undefined nil)
 (ppdefglobal undefined nil)
 (clear)
+(defglobal ?*x* = (create$ 1 2 3 4))
+(defglobal ?*y* = (subseq$ ?*x* 2 3))
+(defglobal ?*z* = (subseq$ (create$ 1 2 3 4) 2 3))
+?*x*
+?*y*
+?*z*
+(clear)
