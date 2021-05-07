@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="17701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17703"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--View Controller-->
+        <scene sceneID="tne-QT-ifu">
+            <objects>
+                <viewController id="BYZ-38-t0r" customClass="ViewController" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <pickerView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="T2X-xg-MnG" userLabel="Answer Picker View">
+                                <rect key="frame" x="47" y="345" width="320" height="216"/>
+                                <connections>
+                                    <outlet property="dataSource" destination="BYZ-38-t0r" id="f0v-fK-kke"/>
+                                    <outlet property="delegate" destination="BYZ-38-t0r" id="OXf-pV-jbt"/>
+                                </connections>
+                            </pickerView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="9bo-bh-tKH" userLabel="Prev Button">
+                                <rect key="frame" x="84" y="569" width="46" height="41"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="24"/>
+                                <state key="normal" title="Prev"/>
+                                <connections>
+                                    <action selector="prevButtonAction:" destination="BYZ-38-t0r" eventType="touchUpInside" id="ZhF-1O-c1g"/>
+                                </connections>
+                            </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Display Text" textAlignment="center" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yqK-rw-jrf" userLabel="Display Label">
+                                <rect key="frame" x="15" y="286" width="384" height="29"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="24"/>
+                                <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="pfA-uE-dkq" userLabel="Next Button">
+                                <rect key="frame" x="282.5" y="569" width="49" height="41"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="24"/>
+                                <state key="normal" title="Next"/>
+                                <connections>
+                                    <action selector="nextButtonAction:" destination="BYZ-38-t0r" eventType="touchUpInside" id="mnD-eI-hHw"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="yqK-rw-jrf" secondAttribute="trailing" constant="15" id="5dm-Ba-Q0J"/>
+                            <constraint firstItem="9bo-bh-tKH" firstAttribute="centerX" secondItem="T2X-xg-MnG" secondAttribute="centerX" constant="-100" id="93r-H2-B1E"/>
+                            <constraint firstItem="T2X-xg-MnG" firstAttribute="centerY" secondItem="6Tk-OE-BBY" secondAttribute="centerY" id="HhG-3s-IAh"/>
+                            <constraint firstItem="pfA-uE-dkq" firstAttribute="centerX" secondItem="T2X-xg-MnG" secondAttribute="centerX" constant="100" id="epH-AO-zWn"/>
+                            <constraint firstItem="yqK-rw-jrf" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="15" id="llb-bc-7Re"/>
+                            <constraint firstItem="pfA-uE-dkq" firstAttribute="top" secondItem="T2X-xg-MnG" secondAttribute="bottom" constant="8" id="mMG-iq-6Sw"/>
+                            <constraint firstItem="T2X-xg-MnG" firstAttribute="centerX" secondItem="6Tk-OE-BBY" secondAttribute="centerX" id="n5i-rd-KTz"/>
+                            <constraint firstItem="T2X-xg-MnG" firstAttribute="top" secondItem="yqK-rw-jrf" secondAttribute="bottom" constant="30" id="qlO-TP-FOJ"/>
+                            <constraint firstItem="9bo-bh-tKH" firstAttribute="top" secondItem="T2X-xg-MnG" secondAttribute="bottom" constant="8" id="vo9-Tw-XkQ"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="answerPickerView" destination="T2X-xg-MnG" id="8Aq-qC-Jip"/>
+                        <outlet property="displayLabel" destination="yqK-rw-jrf" id="qoe-ng-QBl"/>
+                        <outlet property="nextButton" destination="pfA-uE-dkq" id="UxX-0l-c7i"/>
+                        <outlet property="prevButton" destination="9bo-bh-tKH" id="GEe-bI-W13"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="80" y="139"/>
+        </scene>
+    </scenes>
+    <resources>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
+</document>
