@@ -96,6 +96,8 @@
 /*                                                           */
 /*            Added flush, rewind, tell, and seek functions. */
 /*                                                           */
+/*      6.41: Added SYSTEM_FUNCTION compiler flag.           */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_sysdep
@@ -108,7 +110,9 @@
 #include <setjmp.h>
 
    double                      gentime(void);
+#if SYSTEM_FUNCTION
    int                         gensystem(Environment *,const char *);
+#endif
    bool                        GenOpenReadBinary(Environment *,const char *,const char *);
    void                        GetSeekCurBinary(Environment *,long);
    void                        GetSeekSetBinary(Environment *,long);

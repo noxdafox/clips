@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  10/30/20             */
+   /*            CLIPS Version 6.41  05/10/21             */
    /*                                                     */
    /*               SYSTEM DEPENDENT MODULE               */
    /*******************************************************/
@@ -113,6 +113,8 @@
 /*            work properly with file and directory names    */
 /*            containing unicode characters.                 */
 /*                                                           */
+/*      6.41: Added SYSTEM_FUNCTION compiler flag.           */
+/*                                                           */
 /*************************************************************/
 
 #include "setup.h"
@@ -216,6 +218,7 @@ double gentime()
 #endif
   }
 
+#if SYSTEM_FUNCTION
 /*****************************************************/
 /* gensystem: Generic routine for passing a string   */
 /*   representing a command to the operating system. */
@@ -226,6 +229,7 @@ int gensystem(
   {
    return system(commandBuffer);
   }
+#endif
 
 /*******************************************/
 /* gengetchar: Generic routine for getting */

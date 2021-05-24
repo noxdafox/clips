@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  04/20/20             */
+   /*            CLIPS Version 6.41  05/10/21             */
    /*                                                     */
    /*            MISCELLANEOUS FUNCTIONS MODULE           */
    /*******************************************************/
@@ -107,6 +107,8 @@
 /*                                                           */
 /*            Removed WINDOW_INTERFACE flag.                 */
 /*                                                           */
+/*      6.41: Added SYSTEM_FUNCTION compiler flag.           */
+/*                                                           */
 /*************************************************************/
 
 #include <stdio.h>
@@ -173,7 +175,9 @@ void MiscFunctionDefinitions(
    AddUDF(theEnv,"gensym*","y",0,0,NULL,GensymStarFunction,"GensymStarFunction",NULL);
    AddUDF(theEnv,"setgen","l",1,1,"l",SetgenFunction,"SetgenFunction",NULL);
 
+#if SYSTEM_FUNCTION
    AddUDF(theEnv,"system","ly",0,UNBOUNDED,"sy",SystemCommand,"SystemCommand",NULL);
+#endif
    AddUDF(theEnv,"length$","l",1,1,"m",LengthFunction,"LengthFunction",NULL);
    AddUDF(theEnv,"time","d",0,0,NULL,TimeFunction,"TimeFunction",NULL);
    AddUDF(theEnv,"local-time","m",0,0,NULL,LocalTimeFunction,"LocalTimeFunction",NULL);
@@ -1659,6 +1663,7 @@ void TimerFunction(
    returnValue->floatValue = CreateFloat(theEnv,gentime() - startTime);
   }
 
+#if SYSTEM_FUNCTION
 /***************************************/
 /* SystemCommand: H/L access routine   */
 /*   for the system function.          */
@@ -1705,6 +1710,7 @@ void SystemCommand(
    if (commandBuffer != NULL)
      { rm(theEnv,commandBuffer,bufferMaximum); }
   }
+#endif
 
 /****************************************/
 /* GetErrorFunction: H/L access routine */

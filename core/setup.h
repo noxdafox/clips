@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  04/20/20            */
+   /*             CLIPS Version 6.41  05/10/21            */
    /*                                                     */
    /*                  SETUP HEADER FILE                  */
    /*******************************************************/
@@ -91,6 +91,8 @@
 /*            WINDOW_INTERFACE flag no longer supported.     */
 /*                                                           */
 /*            Changed IBM flag to WINDOWS_OS.                */
+/*                                                           */
+/*      6.41: Added SYSTEM_FUNCTION compiler flag.           */
 /*                                                           */
 /*************************************************************/
 
@@ -433,6 +435,14 @@
 
 #ifndef PROFILING_FUNCTIONS
 #define PROFILING_FUNCTIONS 1
+#endif
+
+/******************************************************/
+/* SYSTEM_FUNCTION: Enables code for system function. */
+/******************************************************/
+
+#ifndef SYSTEM_FUNCTION
+#define SYSTEM_FUNCTION 1
 #endif
 
 /********************************************/
