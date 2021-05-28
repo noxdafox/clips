@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  04/03/19             */
+   /*            CLIPS Version 6.41  05/26/21             */
    /*                                                     */
    /*                 CLASS PARSER MODULE                 */
    /*******************************************************/
@@ -41,6 +41,8 @@
 /*            Static constraint checking is always enabled.   */
 /*                                                            */
 /*            UDF redesign.                                   */
+/*                                                            */
+/*      6.41: Fixed MEM_TABLE_SIZE=0 duplicate slot crash.    */
 /*                                                            */
 /**************************************************************/
 
@@ -497,13 +499,13 @@ static TEMP_SLOT_LINK *InsertSlot(
          if (stmp->desc->slotName == slot->slotName)
            {
             tmp->nxt = slist;
-            DeleteSlots(theEnv,tmp);
             PrintErrorID(theEnv,"CLSLTPSR",1,false);
             WriteString(theEnv,STDERR,"The '");
             WriteString(theEnv,STDERR,slot->slotName->name->contents);
             WriteString(theEnv,STDERR,"' slot for class '");
             WriteString(theEnv,STDERR,className);
             WriteString(theEnv,STDERR,"' is already specified.\n");
+            DeleteSlots(theEnv,tmp);
             return NULL;
            }
          sprv = stmp;

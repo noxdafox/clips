@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  10/11/17             */
+   /*            CLIPS Version 6.41  05/24/21             */
    /*                                                     */
    /*                    MEMORY MODULE                    */
    /*******************************************************/
@@ -48,6 +48,8 @@
 /*            data structures.                               */
 /*                                                           */
 /*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
+/*                                                           */
+/*      6.41: Fixed MEM_TABLE_SIZE=0 release-mem crash.      */
 /*                                                           */
 /*************************************************************/
 
@@ -265,11 +267,12 @@ long long ReleaseMem(
   Environment *theEnv,
   long long maximum)
   {
+   long long amount = 0;
+#if (MEM_TABLE_SIZE > 0)
    struct memoryPtr *tmpPtr, *memPtr;
    unsigned int i;
    long long returns = 0;
-   long long amount = 0;
-
+   
    for (i = (MEM_TABLE_SIZE - 1) ; i >= sizeof(char *) ; i--)
      {
       YieldTime(theEnv);
@@ -288,6 +291,7 @@ long long ReleaseMem(
       if ((amount > maximum) && (maximum > 0))
         { return amount; }
      }
+#endif
 
    return amount;
   }
