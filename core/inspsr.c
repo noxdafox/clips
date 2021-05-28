@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  10/18/16             */
+   /*            CLIPS Version 6.41  05/28/21             */
    /*                                                     */
    /*               INSTANCE PARSER MODULE                */
    /*******************************************************/
@@ -48,6 +48,9 @@
 /*            data structures.                               */
 /*                                                           */
 /*            Eval support for run time and bload only.      */
+/*                                                           */
+/*      6.41: Disallowed creation of instances when their    */
+/*            class is being redefined.                      */
 /*                                                           */
 /*************************************************************/
 
@@ -573,6 +576,15 @@ static bool ReplaceClassNameWithReference(
          WriteString(theEnv,STDERR,"'.\n");
          return false;
         }
+      if (theDefclass == DefclassData(theEnv)->RedefiningClass)
+        {
+         PrintErrorID(theEnv,"INSMNGR",17,false);
+         WriteString(theEnv,STDERR,"Cannot reference class '");
+         WriteString(theEnv,STDERR,theClassName);
+         WriteString(theEnv,STDERR,"' while it's being redefined.\n");
+         return false;
+        }
+        
       theExp->type = DEFCLASS_PTR;
       theExp->value = theDefclass;
 

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  05/16/18             */
+   /*            CLIPS Version 6.40  05/28/21             */
    /*                                                     */
    /*                  CLASS PARSER MODULE                */
    /*******************************************************/
@@ -51,6 +51,9 @@
 /*            Removed use of single-slot in class             */
 /*            definitions.                                    */
 /*                                                            */
+/*      6.41: Disallowed creation of instances when their    */
+/*            class is being redefined.                      */
+/*                                                           */
 /**************************************************************/
 
 /* =========================================
@@ -214,6 +217,8 @@ bool ParseDefclass(
       DeletePackedClassLinks(theEnv,sclasses,true);
       return true;
      }
+
+   DefclassData(theEnv)->RedefiningClass = cls;
    parseError = false;
    GetToken(theEnv,readSource,&DefclassData(theEnv)->ObjectParseToken);
    while (DefclassData(theEnv)->ObjectParseToken.tknType != RIGHT_PARENTHESIS_TOKEN)
@@ -288,6 +293,8 @@ bool ParseDefclass(
         }
       GetToken(theEnv,readSource,&DefclassData(theEnv)->ObjectParseToken);
      }
+
+   DefclassData(theEnv)->RedefiningClass = NULL;
 
    if ((DefclassData(theEnv)->ObjectParseToken.tknType != RIGHT_PARENTHESIS_TOKEN) ||
        (parseError == true))
