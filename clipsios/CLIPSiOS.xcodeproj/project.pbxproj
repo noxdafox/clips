@@ -1600,7 +1600,7 @@
 		B58B1CCF2640D935009A4897 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 1240;
+				LastUpgradeCheck = 1250;
 				TargetAttributes = {
 					B562D9952640EA7F00FF63FF = {
 						CreatedOnToolsVersion = 12.4;
@@ -1973,7 +1973,8 @@
 				DEVELOPMENT_TEAM = D57GN7T272;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
-					"$(inherited)",
+					"MAC_XCD=1",
+					"SYSTEM_FUNCTION=0",
 				);
 				INFOPLIST_FILE = Animal/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1993,6 +1994,10 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = D57GN7T272;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"MAC_XCD=1",
+					"SYSTEM_FUNCTION=0",
+				);
 				INFOPLIST_FILE = Animal/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2014,7 +2019,8 @@
 				DEVELOPMENT_TEAM = D57GN7T272;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
-					"$(inherited)",
+					"MAC_XCD=1",
+					"SYSTEM_FUNCTION=0",
 				);
 				INFOPLIST_FILE = Auto/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -2035,6 +2041,10 @@
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = NO;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = D57GN7T272;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"MAC_XCD=1",
+					"SYSTEM_FUNCTION=0",
+				);
 				INFOPLIST_FILE = Auto/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2173,13 +2183,18 @@
 		B58B1CE12640D935009A4897 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = D57GN7T272;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"MAC_XCD=1",
+					"SYSTEM_FUNCTION=0",
+				);
 				INFOPLIST_FILE = CLIPSiOS/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -2197,13 +2212,17 @@
 		B58B1CE22640D935009A4897 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = D57GN7T272;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"MAC_XCD=1",
+					"SYSTEM_FUNCTION=0",
+				);
 				INFOPLIST_FILE = CLIPSiOS/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -2228,7 +2247,8 @@
 				DEVELOPMENT_TEAM = D57GN7T272;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
-					"$(inherited)",
+					"MAC_XCD=1",
+					"SYSTEM_FUNCTION=0",
 				);
 				INFOPLIST_FILE = Wine/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -2249,6 +2269,10 @@
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = NO;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = D57GN7T272;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"MAC_XCD=1",
+					"SYSTEM_FUNCTION=0",
+				);
 				INFOPLIST_FILE = Wine/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
