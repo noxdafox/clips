@@ -123,7 +123,7 @@ namespace CLIPSNET
 		 void Exit(CLIPSCPPEnv *,bool);
 
       private:
-         msclr::gcroot<Router^> m_Router;
+		  msclr::gcroot<WeakReference^> m_Router;
      };
 
   };

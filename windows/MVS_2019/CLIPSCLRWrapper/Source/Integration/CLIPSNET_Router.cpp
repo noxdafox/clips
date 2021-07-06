@@ -27,7 +27,9 @@ namespace CLIPSNET
    CLIPSCPPRouterBridge::CLIPSCPPRouterBridge() {}
  
    CLIPSCPPRouterBridge::CLIPSCPPRouterBridge(msclr::gcroot<Router^> the_Router) 
-     { m_Router = the_Router; }
+     { 
+	  m_Router = gcnew WeakReference(the_Router,false); 
+     }
 
    CLIPSCPPRouterBridge::~CLIPSCPPRouterBridge() {}
 
@@ -36,8 +38,9 @@ namespace CLIPSNET
      const char *logicalName)
      {
       String ^ cliLogicalName = Environment::CharStarToString(logicalName);
-      
-      return m_Router->Query(cliLogicalName);
+	  Router ^ r = (Router ^) m_Router->Target;
+
+      return r->Query(cliLogicalName);
      }
 
    void CLIPSCPPRouterBridge::Write(
@@ -47,8 +50,9 @@ namespace CLIPSNET
      {
       String ^ cliLogicalName = Environment::CharStarToString(logicalName);
       String ^ cliPrintString = Environment::CharStarToString(printString);
+	  Router^ r = (Router^) m_Router->Target;
 
-      m_Router->Write(cliLogicalName,cliPrintString);
+      r->Write(cliLogicalName,cliPrintString);
      }
 
    int CLIPSCPPRouterBridge::Read(
@@ -56,8 +60,9 @@ namespace CLIPSNET
      const char *logicalName)
      {
       String ^ cliLogicalName = Environment::CharStarToString(logicalName);
+	  Router^ r = (Router^) m_Router->Target;
 
-      return m_Router->Read(cliLogicalName);
+      return r->Read(cliLogicalName);
      }
 
    int CLIPSCPPRouterBridge::Unread(
@@ -66,17 +71,20 @@ namespace CLIPSNET
      const char *logicalName)
      {
       String ^ cliLogicalName = Environment::CharStarToString(logicalName);
+	  Router^ r = (Router^) m_Router->Target;
 
-      return m_Router->Unread(cliLogicalName,theChar);
+      return r->Unread(cliLogicalName,theChar);
      }
 
    void CLIPSCPPRouterBridge::Exit(
      CLIPSCPPEnv *theCPPEnv,
      bool failure)
      {
-      m_Router->Exit(failure);
-     }
+	  Router^ r = (Router^) m_Router->Target;
 
+      r->Exit(failure);
+     }
+	   
    /*######################*/
    /* Router class methods */
    /*######################*/
