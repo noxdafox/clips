@@ -1383,5 +1383,41 @@ CLIPS> (send [adrs] print)
 (ea <Pointer-C-0x0>)
 CLIPS> (set-dynamic-constraint-checking FALSE)
 TRUE
+CLIPS> (clear) ; SourceForge Ticket #66
+CLIPS> 
+(defclass FOO 
+   (is-a USER)
+   (slot next (allowed-classes FOO) (default (make-instance [old] of FOO))))
+[PRNTUTIL1] Unable to find class FOO.
+
+ERROR:
+(defclass MAIN::FOO
+   (is-a USER)
+   (slot next
+      (allowed-classes FOO)
+      (default (make-instance [old] of FOO
+CLIPS> (clear)
+CLIPS> (defclass FOO (is-a USER))
+CLIPS> 
+(defclass FOO 
+   (is-a USER)
+   (slot next (allowed-classes FOO) (default (make-instance [old] of FOO))))
+CLIPS> (clear) ; CLIPSESG Issue 
+CLIPS> (defclass E (is-a USER) (slot se))
+CLIPS> (defclass F (is-a USER) (slot sf))
+CLIPS> (defclass G (is-a USER) (slot sg))
+CLIPS> 
+(defrule fail-fail-fail-fail
+  (object (is-a E) (se ?x))
+  (exists (and (exists (and (object (is-a F) (sf ?x))
+                            (object (is-a G) (sg ?x))))
+               (test (!= 2 2))))
+=>)
+CLIPS> (make-instance e1 of E (se 1))
+[e1]
+CLIPS> (make-instance e2 of E (se 2))
+[e2]
+CLIPS> (make-instance e1 of E (se 1))
+[e1]
 CLIPS> (clear)
 CLIPS> (dribble-off)
