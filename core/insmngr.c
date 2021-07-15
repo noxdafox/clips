@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  04/08/20             */
+   /*            CLIPS Version 6.41  07/12/21             */
    /*                                                     */
    /*          INSTANCE PRIMITIVE SUPPORT MODULE          */
    /*******************************************************/
@@ -44,6 +44,10 @@
 /*            is based on both the existence and             */
 /*            non-existence of an instance.                  */
 /*                                                           */
+/*      6.32: Fixed instance redefinition crash with rules   */      
+/*            in JNSimpleCompareFunction1 when deleted       */
+/*            instance slots are referenced.                 */
+/*                                                           */
 /*      6.40: Added Env prefix to GetEvaluationError and     */
 /*            SetEvaluationError functions.                  */
 /*                                                           */
@@ -72,6 +76,7 @@
 #include "drive.h"
 #include "objrtmch.h"
 #include "lgcldpnd.h"
+#include "objrtfnx.h"
 #endif
 
 #include "classcom.h"
@@ -530,6 +535,8 @@ UnmakeInstanceError QuashInstance(
    IGARBAGE *gptr;
 
 #if DEFRULE_CONSTRUCT
+   int syncFlag;
+   
    if (EngineData(theEnv)->JoinOperationInProgress && ins->cls->reactive)
      {
       PrintErrorID(theEnv,"INSMNGR",12,false);
@@ -564,6 +571,7 @@ UnmakeInstanceError QuashInstance(
 #endif
 
 #if DEFRULE_CONSTRUCT
+   syncFlag = ins->reteSynchronized;
    RemoveEntityDependencies(theEnv,(struct patternEntity *) ins);
 
    if (ins->cls->reactive)
@@ -607,13 +615,20 @@ UnmakeInstanceError QuashInstance(
       rule, don't bother deleting its slots yet, for
       they may still be needed by pattern variables
       ============================================== */
+      
 #if DEFRULE_CONSTRUCT
-   if ((iflag == 1)
-       && (ins->patternHeader.busyCount == 0))
+   if ((iflag == 1) && (ins->patternHeader.busyCount == 0))
+     {
+      if ((ObjectReteData(theEnv)->DelayObjectPatternMatching == false) ||
+          (syncFlag == false)) 
+        { RemoveInstanceData(theEnv,ins); }
+      else
+        { ins->dataRemovalDeferred = true; }
+     }
 #else
    if (iflag == 1)
+     { RemoveInstanceData(theEnv,ins); }
 #endif
-     RemoveInstanceData(theEnv,ins);
 
    if ((ins->busy == 0) &&
        (InstanceData(theEnv)->MaintainGarbageInstances == false)
@@ -732,6 +747,7 @@ static Instance *NewInstance(
    instance->partialMatchList = NULL;
    instance->basisSlots = NULL;
    instance->reteSynchronized = false;
+   instance->dataRemovalDeferred = false;
 #endif
    instance->patternHeader.header.type = INSTANCE_ADDRESS_TYPE;
    instance->busy = 0;

@@ -1,57 +1,61 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  02/03/21             */
+   /*            CLIPS Version 6.41  07/12/21             */
    /*                                                     */
    /*          OBJECT PATTERN MATCHER MODULE              */
    /*******************************************************/
 
-/**************************************************************/
-/* Purpose: RETE Network Interface for Objects                */
-/*                                                            */
-/* Principal Programmer(s):                                   */
-/*      Brian L. Dantes                                       */
-/*                                                            */
-/* Contributing Programmer(s):                                */
-/*                                                            */
-/* Revision History:                                          */
-/*                                                            */
-/*      6.23: Correction for FalseSymbol/TrueSymbol. DR0859   */
-/*                                                            */
-/*      6.24: Removed INCREMENTAL_RESET and                   */
-/*            LOGICAL_DEPENDENCIES compilation flags.         */
-/*                                                            */
-/*            Converted INSTANCE_PATTERN_MATCHING to          */
-/*            DEFRULE_CONSTRUCT.                              */
-/*                                                            */
-/*            Renamed BOOLEAN macro type to intBool.          */
-/*                                                            */
-/*      6.30: Modified the QueueObjectMatchAction function    */
-/*            so that instance retract actions always occur   */
-/*            before instance assert and modify actions.      */
-/*            This prevents the pattern matching process      */
-/*            from attempting the evaluation of a join        */
-/*            expression that accesses the slots of a         */
-/*            retracted instance.                             */
-/*                                                            */
-/*            Added support for hashed alpha memories.        */
-/*                                                            */
-/*            Support for long long integers.                 */
-/*                                                            */
-/*            Added support for hashed comparisons to         */
-/*            constants.                                      */
-/*                                                            */
+/*************************************************************/
+/* Purpose: RETE Network Interface for Objects               */
+/*                                                           */
+/* Principal Programmer(s):                                  */
+/*      Brian L. Dantes                                      */
+/*                                                           */
+/* Contributing Programmer(s):                               */
+/*                                                           */
+/* Revision History:                                         */
+/*                                                           */
+/*      6.23: Correction for FalseSymbol/TrueSymbol. DR0859  */
+/*                                                           */
+/*      6.24: Removed INCREMENTAL_RESET and                  */
+/*            LOGICAL_DEPENDENCIES compilation flags.        */
+/*                                                           */
+/*            Converted INSTANCE_PATTERN_MATCHING to         */
+/*            DEFRULE_CONSTRUCT.                             */
+/*                                                           */
+/*            Renamed BOOLEAN macro type to intBool.         */
+/*                                                           */
+/*      6.30: Modified the QueueObjectMatchAction function   */
+/*            so that instance retract actions always occur  */
+/*            before instance assert and modify actions.     */
+/*            This prevents the pattern matching process     */
+/*            from attempting the evaluation of a join       */
+/*            expression that accesses the slots of a        */
+/*            retracted instance.                            */
+/*                                                           */
+/*            Added support for hashed alpha memories.       */
+/*                                                           */
+/*            Support for long long integers.                */
+/*                                                           */
+/*            Added support for hashed comparisons to        */
+/*            constants.                                     */
+/*                                                           */
 /*      6.31: Optimization for marking relevant alpha nodes  */
 /*            in the object pattern network.                 */
 /*                                                           */
-/*      6.40: Added Env prefix to GetEvaluationError and      */
-/*            SetEvaluationError functions.                   */
-/*                                                            */
-/*            Added Env prefix to GetHaltExecution and        */
-/*            SetHaltExecution functions.                     */
-/*                                                            */
-/*            Pragma once and other inclusion changes.        */
-/*                                                            */
+/*      6.32: Fixed instance redefinition crash with rules   */      
+/*            in JNSimpleCompareFunction1 when deleted       */
+/*            instance slots are referenced.                 */
+/*                                                           */
+/*      6.40: Added Env prefix to GetEvaluationError and     */
+/*            SetEvaluationError functions.                  */
+/*                                                           */
+/*            Added Env prefix to GetHaltExecution and       */
+/*            SetHaltExecution functions.                    */
+/*                                                           */
+/*            Pragma once and other inclusion changes.       */
+/*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
 /*            Removed use of void pointers for specific      */
@@ -59,7 +63,10 @@
 /*                                                           */
 /*            UDF redesign.                                  */
 /*                                                           */
-/**************************************************************/
+/*      6.41: Added Env prefix to GetEvaluationError and     */
+/*            SetEvaluationError functions.                  */
+/*                                                           */
+/*************************************************************/
 /* =========================================
    *****************************************
                EXTERNAL DEFINITIONS
@@ -1436,6 +1443,13 @@ static void ObjectRetractAction(
          ins->patternHeader.dependents = saveDependents;
         }
      }
+     
+   if (ins->dataRemovalDeferred)
+     {
+      ins->dataRemovalDeferred = false;
+      RemoveInstanceData(theEnv,ins);
+     }
+     
    ins->reteSynchronized = true;
   }
 

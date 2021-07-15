@@ -933,4 +933,29 @@
 ?*x*
 ?*y*
 ?*z*
+(clear) ; SourceForge Ticket #66
+
+(defclass FOO 
+   (is-a USER)
+   (slot next (allowed-classes FOO) (default (make-instance [old] of FOO))))
+(clear)
+(defclass FOO (is-a USER))
+
+(defclass FOO 
+   (is-a USER)
+   (slot next (allowed-classes FOO) (default (make-instance [old] of FOO))))
+(clear) ; CLIPSESG Issue 
+(defclass E (is-a USER) (slot se))
+(defclass F (is-a USER) (slot sf))
+(defclass G (is-a USER) (slot sg))
+
+(defrule fail-fail-fail-fail
+  (object (is-a E) (se ?x))
+  (exists (and (exists (and (object (is-a F) (sf ?x))
+                            (object (is-a G) (sg ?x))))
+               (test (!= 2 2))))
+=>)
+(make-instance e1 of E (se 1))
+(make-instance e2 of E (se 2))
+(make-instance e1 of E (se 1))
 (clear)
