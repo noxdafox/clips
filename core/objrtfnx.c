@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*               CLIPS Version 6.32  07/27/21          */
+   /*               CLIPS Version 6.31  05/09/19          */
    /*                                                     */
    /*    INFERENCE ENGINE OBJECT ACCESS ROUTINES MODULE   */
    /*******************************************************/
@@ -33,9 +33,6 @@
 /*                                                           */
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
-/*                                                           */
-/*      6.32: Fixed issue with optimized join network        */
-/*            expression evaluation.                         */
 /*                                                           */
 /*************************************************************/
 /* =========================================
@@ -434,11 +431,7 @@ static intBool ObjectGetVarJNFunction1(
    hack = (struct ObjectMatchVar1 *) ValueToBitMap(theValue);
    GetPatternObjectAndMarks(theEnv,((int) hack->whichPattern),hack->lhs,hack->rhs,&theInstance,&theMarks);
    GetObjectValueGeneral(theEnv,theResult,theInstance,theMarks,hack);
-
-   if (theResult->value == EnvFalseSymbol(theEnv))
-     { return FALSE; }
-
-  return(TRUE);
+   return(TRUE);
   }
 
 static void PrintObjectGetVarJN2(
@@ -486,10 +479,6 @@ static intBool ObjectGetVarJNFunction2(
    hack = (struct ObjectMatchVar2 *) ValueToBitMap(theValue);
    GetPatternObjectAndMarks(theEnv,((int) hack->whichPattern),hack->lhs,hack->rhs,&theInstance,&theMarks);
    GetObjectValueSimple(theEnv,theResult,theInstance,hack);
-
-   if (theResult->value == EnvFalseSymbol(theEnv))
-     { return FALSE; }
-
    return(TRUE);
   }
 
@@ -579,10 +568,6 @@ static intBool ObjectGetVarPNFunction2(
 
    hack = (struct ObjectMatchVar2 *) ValueToBitMap(theValue);
    GetObjectValueSimple(theEnv,theResult,ObjectReteData(theEnv)->CurrentPatternObject,hack);
-
-   if (theResult->value == EnvFalseSymbol(theEnv))
-     { return FALSE; }
-
    return(TRUE);
   }
 
