@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*             CLIPS Version 6.32  07/23/21            */
    /*                                                     */
    /*          FACT RETE ACCESS FUNCTIONS MODULE          */
    /*******************************************************/
@@ -27,6 +27,9 @@
 /*            MAC_MCW, and IBM_TBC).                         */
 /*                                                           */
 /*            Support for hashing optimizations.             */
+/*                                                           */
+/*      6.32: Fixed issue with optimized join network        */
+/*            expression evaluation.                         */
 /*                                                           */
 /*************************************************************/
 
@@ -110,6 +113,9 @@ globle intBool FactPNGetVar1(
          SetpDOEnd(returnValue,((struct multifield *) fieldPtr->value)->multifieldLength);
         }
 
+      if (returnValue->value == EnvFalseSymbol(theEnv))
+        { return FALSE; }
+        
       return(TRUE);
      }
 
@@ -159,6 +165,9 @@ globle intBool FactPNGetVar1(
    returnValue->type = fieldPtr->type;
    returnValue->value = fieldPtr->value;
 
+   if (returnValue->value == EnvFalseSymbol(theEnv))
+     { return FALSE; }
+        
    return(TRUE);
   }
 
@@ -197,6 +206,9 @@ globle intBool FactPNGetVar2(
    returnValue->type = fieldPtr->type;
    returnValue->value = fieldPtr->value;
 
+   if (returnValue->value == EnvFalseSymbol(theEnv))
+     { return FALSE; }
+        
    return(TRUE);
   }
 
@@ -259,6 +271,9 @@ globle intBool FactPNGetVar3(
    returnValue->type = fieldPtr->type;
    returnValue->value = fieldPtr->value;
 
+   if (returnValue->value == EnvFalseSymbol(theEnv))
+     { return FALSE; }
+        
    return(TRUE);
   }
 
@@ -439,7 +454,10 @@ globle intBool FactJNGetVar1(
          SetpDOBegin(returnValue,1);
          SetpDOEnd(returnValue,((struct multifield *) fieldPtr->value)->multifieldLength);
         }
-
+        
+      if (returnValue->value == EnvFalseSymbol(theEnv))
+        { return FALSE; }
+        
       return(TRUE);
      }
 
@@ -460,7 +478,11 @@ globle intBool FactJNGetVar1(
      {
       returnValue->type = fieldPtr->type;
       returnValue->value = fieldPtr->value;
-      return(TRUE);
+      
+      if (returnValue->value == EnvFalseSymbol(theEnv))
+        { return FALSE; }
+        
+     return(TRUE);
      }
 
    /*==========================================================*/
@@ -496,6 +518,9 @@ globle intBool FactJNGetVar1(
    returnValue->type = fieldPtr->type;
    returnValue->value = fieldPtr->value;
 
+   if (returnValue->value == EnvFalseSymbol(theEnv))
+     { return FALSE; }
+        
    return(TRUE);
   }
 
@@ -543,6 +568,9 @@ globle intBool FactJNGetVar2(
    returnValue->type = fieldPtr->type;
    returnValue->value = fieldPtr->value;
 
+   if (returnValue->value == EnvFalseSymbol(theEnv))
+     { return FALSE; }
+        
    return(TRUE);
   }
 
@@ -613,7 +641,10 @@ globle intBool FactJNGetVar3(
 
    returnValue->type = fieldPtr->type;
    returnValue->value = fieldPtr->value;
-
+   
+   if (returnValue->value == EnvFalseSymbol(theEnv))
+     { return FALSE; }
+        
    return(TRUE);
   }
 
