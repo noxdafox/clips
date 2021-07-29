@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  09/03/18             */
+   /*            CLIPS Version 6.41  07/23/21             */
    /*                                                     */
    /*                  DEFGLOBAL MODULE                   */
    /*******************************************************/
@@ -42,6 +42,9 @@
 /*            Changed find construct functionality so that   */
 /*            imported modules are search when locating a    */
 /*            named construct.                               */
+/*                                                           */
+/*      6.32: Fixed issue with optimized join network        */
+/*            expression evaluation.                         */
 /*                                                           */
 /*      6.40: Added Env prefix to GetEvaluationError and     */
 /*            SetEvaluationError functions.                  */
@@ -628,7 +631,10 @@ static bool EntityGetDefglobalValue(
    /*=================================*/
 
    CLIPSToUDFValue(&theGlobal->current,vPtr);
-     
+   
+   if (vPtr->value == FalseSymbol(theEnv))
+     { return false; }
+
    return true;
   }
 
@@ -654,6 +660,9 @@ bool QGetDefglobalUDFValue(
       vPtr->range = theGlobal->current.multifieldValue->length;
      }
      
+   if (vPtr->value == FalseSymbol(theEnv))
+     { return false; }
+
    return true;
   }
 
