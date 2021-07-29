@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.41  07/23/21             */
+   /*            CLIPS Version 6.40  02/03/21             */
    /*                                                     */
    /*          FACT RETE ACCESS FUNCTIONS MODULE          */
    /*******************************************************/
@@ -27,9 +27,6 @@
 /*            MAC_MCW, and IBM_TBC).                         */
 /*                                                           */
 /*            Support for hashing optimizations.             */
-/*                                                           */
-/*      6.32: Fixed issue with optimized join network        */
-/*            expression evaluation.                         */
 /*                                                           */
 /*      6.40: Pragma once and other inclusion changes.       */
 /*                                                           */
@@ -117,12 +114,8 @@ bool FactPNGetVar1(
         {
          returnValue->begin = 0;
          returnValue->range = fieldPtr->multifieldValue->length;
-         return true;
         }
 
-      if (returnValue->value == FalseSymbol(theEnv))
-        { return false; }
-        
       return true;
      }
 
@@ -169,10 +162,7 @@ bool FactPNGetVar1(
    fieldPtr = &segmentPtr->contents[adjustedField];
 
    returnValue->value = fieldPtr->value;
-   
-   if (returnValue->value == FalseSymbol(theEnv))
-     { return false; }
-   
+
    return true;
   }
 
@@ -210,9 +200,6 @@ bool FactPNGetVar2(
 
    returnValue->value = fieldPtr->value;
 
-   if (returnValue->value == FalseSymbol(theEnv))
-     { return false; }
-     
    return true;
   }
 
@@ -272,10 +259,7 @@ bool FactPNGetVar3(
      { fieldPtr = &segmentPtr->contents[segmentPtr->length - (hack->endOffset + 1)]; }
 
    returnValue->value = fieldPtr->value;
-   
-   if (returnValue->value == FalseSymbol(theEnv))
-     { return false; }
-   
+
    return true;
   }
 
@@ -479,12 +463,8 @@ bool FactJNGetVar1(
         {
          returnValue->begin = 0;
          returnValue->range = fieldPtr->multifieldValue->length;
-         return true;
         }
-        
-      if (returnValue->value == FalseSymbol(theEnv))
-        { return false; }
-      
+
       return true;
      }
 
@@ -504,10 +484,6 @@ bool FactJNGetVar1(
    if (fieldPtr->header->type != MULTIFIELD_TYPE)
      {
       returnValue->value = fieldPtr->value;
-      
-      if (returnValue->value == FalseSymbol(theEnv))
-        { return false; }
-      
       return true;
      }
 
@@ -541,10 +517,7 @@ bool FactJNGetVar1(
    fieldPtr = &segmentPtr->contents[adjustedField];
 
    returnValue->value = fieldPtr->value;
-   
-   if (returnValue->value == FalseSymbol(theEnv))
-     { return false; }
-   
+
    return true;
   }
 
@@ -594,10 +567,7 @@ bool FactJNGetVar2(
      { fieldPtr = &factPtr->theProposition.contents[hack->whichSlot]; }
 
    returnValue->value = fieldPtr->value;
-   
-   if (returnValue->value == FalseSymbol(theEnv))
-     { return false; }
-   
+
    return true;
   }
 
@@ -670,10 +640,7 @@ bool FactJNGetVar3(
      { fieldPtr = &segmentPtr->contents[segmentPtr->length - (hack->endOffset + 1)]; }
 
    returnValue->value = fieldPtr->value;
-   
-   if (returnValue->value == FalseSymbol(theEnv))
-     { return false; }
-   
+
    return true;
   }
 
