@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  02/03/21             */
+   /*            CLIPS Version 6.41  07/27/21             */
    /*                                                     */
    /*    INFERENCE ENGINE OBJECT ACCESS ROUTINES MODULE   */
    /*******************************************************/
@@ -33,6 +33,9 @@
 /*                                                           */
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
+/*                                                           */
+/*      6.32: Fixed issue with optimized join network        */
+/*            expression evaluation.                         */
 /*                                                           */
 /*      6.40: Pragma once and other inclusion changes.       */
 /*                                                           */
@@ -432,6 +435,10 @@ static bool ObjectGetVarJNFunction1(
    hack = (const struct ObjectMatchVar1 *) ((CLIPSBitMap *) theValue)->contents;
    GetPatternObjectAndMarks(theEnv,hack->whichPattern,hack->lhs,hack->rhs,&theInstance,&theMarks);
    GetObjectValueGeneral(theEnv,theResult,theInstance,theMarks,hack);
+
+   if (theResult->value == FalseSymbol(theEnv))
+     { return false; }
+
    return true;
   }
 
@@ -480,6 +487,10 @@ static bool ObjectGetVarJNFunction2(
    hack = (const struct ObjectMatchVar2 *) ((CLIPSBitMap *) theValue)->contents;
    GetPatternObjectAndMarks(theEnv,hack->whichPattern,hack->lhs,hack->rhs,&theInstance,&theMarks);
    GetObjectValueSimple(theEnv,theResult,theInstance,hack);
+   
+   if (theResult->value == FalseSymbol(theEnv))
+     { return false; }
+ 
    return true;
   }
 
@@ -526,6 +537,9 @@ static bool ObjectGetVarPNFunction1(
 
    hack = (const struct ObjectMatchVar1 *) ((CLIPSBitMap *) theValue)->contents;
    GetObjectValueGeneral(theEnv,theResult,ObjectReteData(theEnv)->CurrentPatternObject,ObjectReteData(theEnv)->CurrentPatternObjectMarks,hack);
+
+   if (theResult->value == FalseSymbol(theEnv))
+     { return false; }
    return true;
   }
 
@@ -569,6 +583,10 @@ static bool ObjectGetVarPNFunction2(
 
    hack = (const struct ObjectMatchVar2 *) ((CLIPSBitMap *) theValue)->contents;
    GetObjectValueSimple(theEnv,theResult,ObjectReteData(theEnv)->CurrentPatternObject,hack);
+
+   if (theResult->value == FalseSymbol(theEnv))
+     { return false; }
+
    return true;
   }
 
