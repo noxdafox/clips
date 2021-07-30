@@ -25,6 +25,8 @@
    =>)
 (assert (factoid FALSE FALSE))
 (agenda)
+(assert (factoid "FALSE" "FALSE"))
+(agenda)
 (clear)
 
 (deftemplate factoid
@@ -40,6 +42,8 @@
    (test (and ?x ?y)) ; FactJNGetVar2
    =>)
 (assert (factoid (s1 FALSE) (s2 FALSE)))
+(agenda)
+(assert (factoid (s1 "FALSE") (s2 "FALSE")))
 (agenda)
 (clear)
 
@@ -81,5 +85,8 @@
    =>)
 (make-instance o1 of OBJOID1 (s1 FALSE) (s2 FALSE))
 (make-instance o2 of OBJOID2 (ms1 FALSE FALSE))
+(agenda)
+(make-instance o3 of OBJOID1 (s1 "FALSE") (s2 "FALSE"))
+(make-instance o4 of OBJOID2 (ms1 "FALSE" "FALSE"))
 (agenda)
 (clear)

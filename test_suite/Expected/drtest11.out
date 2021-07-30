@@ -29,6 +29,14 @@ CLIPS>
 CLIPS> (assert (factoid FALSE FALSE))
 <Fact-1>
 CLIPS> (agenda)
+CLIPS> (assert (factoid "FALSE" "FALSE"))
+<Fact-2>
+CLIPS> (agenda)
+0      rule-1: f-2
+0      rule-2: f-2
+0      rule-3: f-2
+0      rule-4: f-2
+For a total of 4 activations.
 CLIPS> (clear)
 CLIPS> 
 (deftemplate factoid
@@ -46,6 +54,12 @@ CLIPS>
 CLIPS> (assert (factoid (s1 FALSE) (s2 FALSE)))
 <Fact-1>
 CLIPS> (agenda)
+CLIPS> (assert (factoid (s1 "FALSE") (s2 "FALSE")))
+<Fact-2>
+CLIPS> (agenda)
+0      rule-1: f-2
+0      rule-2: f-2
+For a total of 2 activations.
 CLIPS> (clear)
 CLIPS> 
 (defclass OBJOID1
@@ -89,5 +103,15 @@ CLIPS> (make-instance o1 of OBJOID1 (s1 FALSE) (s2 FALSE))
 CLIPS> (make-instance o2 of OBJOID2 (ms1 FALSE FALSE))
 [o2]
 CLIPS> (agenda)
+CLIPS> (make-instance o3 of OBJOID1 (s1 "FALSE") (s2 "FALSE"))
+[o3]
+CLIPS> (make-instance o4 of OBJOID2 (ms1 "FALSE" "FALSE"))
+[o4]
+CLIPS> (agenda)
+0      rule-3: [o4]
+0      rule-4: [o4]
+0      rule-1: [o3]
+0      rule-2: [o3]
+For a total of 4 activations.
 CLIPS> (clear)
 CLIPS> (dribble-off)
