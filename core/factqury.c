@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  09/28/17             */
+   /*            CLIPS Version 6.40  07/14/20             */
    /*                                                     */
    /*                  FACT QUERY MODULE                  */
    /*******************************************************/
@@ -41,6 +41,9 @@
 /*                                                           */
 /*            Matching fact sets containing retracted facts  */
 /*            are pruned.                                    */
+/*                                                           */
+/*      6.32: Fixed garbage collection issue with return     */
+/*            value of delayed-do-for-all-facts.             */
 /*                                                           */
 /*      6.40: Added Env prefix to GetEvaluationError and     */
 /*            SetEvaluationError functions.                  */
@@ -632,12 +635,12 @@ void DelayedQueryDoForAllFacts(
       if (EvaluationData(theEnv)->HaltExecution || ProcedureFunctionData(theEnv)->BreakFlag || ProcedureFunctionData(theEnv)->ReturnFlag)
         { break; }
 
-      CleanCurrentGarbageFrame(theEnv,NULL);
+      CleanCurrentGarbageFrame(theEnv,returnValue);
       CallPeriodicTasks(theEnv);
       
       nextSet: theSet = theSet->nxt;
      }
-
+     
    /*==============================================================*/
    /* Decrement the busy count for all facts in the solution sets. */
    /*==============================================================*/

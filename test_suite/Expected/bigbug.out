@@ -5,7 +5,7 @@ TRUE
 CLIPS> (mem-used)
 52109 ;; Reference mem-used number
 CLIPS> (load-facts bigbug.fct)
-TRUE
+1
 CLIPS> (clear)
 CLIPS> (progn (release-mem) TRUE)
 TRUE

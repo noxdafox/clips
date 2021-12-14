@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/28/17             */
+   /*            CLIPS Version 6.40  10/03/19             */
    /*                                                     */
    /*                 RETE UTILITY MODULE                 */
    /*******************************************************/
@@ -1553,7 +1553,7 @@ unsigned long PrintBetaMemory(
   struct betaMemory *theMemory,
   bool indentFirst,
   const char *indentString,
-  int output)
+  Verbosity output)
   {
    struct partialMatch *listOfMatches;
    unsigned long b, count = 0;

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  11/13/17             */
+   /*            CLIPS Version 6.40  05/03/19             */
    /*                                                     */
    /*                COMMAND LINE MODULE                  */
    /*******************************************************/
@@ -1035,8 +1035,10 @@ bool RouteCommand(
 
    if (top == NULL)
      {
+#if (! RUN_TIME) && (! BLOAD_ONLY)
       SetWarningFileName(theEnv,NULL);
       SetErrorFileName(theEnv,NULL);
+#endif
       ConstructData(theEnv)->DanglingConstructs = danglingConstructs;
       return false;
      }
@@ -1053,8 +1055,10 @@ bool RouteCommand(
    ReturnExpression(theEnv,top);
    ConstructData(theEnv)->DanglingConstructs = danglingConstructs;
    
+#if (! RUN_TIME) && (! BLOAD_ONLY)
    SetWarningFileName(theEnv,NULL);
    SetErrorFileName(theEnv,NULL);
+#endif
 
    /*=================================================*/
    /* Print the return value of the function/command. */

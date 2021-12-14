@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  08/25/16            */
+   /*             CLIPS Version 6.40  07/23/20            */
    /*                                                     */
    /*          PROCEDURAL FUNCTIONS HEADER FILE           */
    /*******************************************************/
@@ -31,6 +31,8 @@
 /*            Changed garbage collection algorithm.          */
 /*                                                           */
 /*            Support for long long integers.                */
+/*                                                           */
+/*      6.32: Fixed _PRCDRFUN_SOURCE_ typo.                  */
 /*                                                           */
 /*      6.40: Removed LOCALE definition.                     */
 /*                                                           */

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  09/16/17             */
+   /*            CLIPS Version 6.40  02/19/20             */
    /*                                                     */
    /*          PROCEDURAL FUNCTIONS PARSER MODULE         */
    /*******************************************************/
@@ -652,7 +652,7 @@ static struct expr *BindParse(
    struct expr *texp;
    CONSTRAINT_RECORD *theConstraint = NULL;
 #if DEFGLOBAL_CONSTRUCT
-   Defglobal *theGlobal;
+   Defglobal *theGlobal = NULL;
    unsigned int count;
 #endif
 

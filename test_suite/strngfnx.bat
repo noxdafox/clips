@@ -152,3 +152,15 @@
 (str-length a)                     ; 10.4.10
 (str-length "abcd")                ; 10.4.10
 (str-length xyz)                   ; 10.4.10
+(str-replace)
+(str-replace "abcde")
+(str-replace "abcde" "bcd")
+(str-replace "abcde" "bcd" "xyz" "rst")
+(str-replace 7 "bcd" "xyz")
+(str-replace "abcde" 8.9 "xyz")
+(str-replace "abcde" "bcd" 8.9)
+(str-replace "abcde" "bcd" "xyz")
+(str-replace abcdefbcdgh bcd wxyz)
+(str-replace [abcdefbcdgh] [bcd] [xy])
+(str-replace "abcde" "" "xyz")
+(str-replace abcba a x)

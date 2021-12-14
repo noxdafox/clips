@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  10/18/16            */
+   /*             CLIPS Version 6.40  10/03/19            */
    /*                                                     */
    /*            CONSTRAINT CHECKING HEADER FILE          */
    /*******************************************************/
@@ -76,7 +76,7 @@ typedef enum
                                                                      CONSTRAINT_RECORD *);
    void                           ConstraintViolationErrorMessage(Environment *,const char *,const char *,bool,
                                                                   unsigned short,CLIPSLexeme *,unsigned short,
-                                                                  int,CONSTRAINT_RECORD *,bool);
+                                                                  ConstraintViolationType,CONSTRAINT_RECORD *,bool);
    ConstraintViolationType        ConstraintCheckValue(Environment *,int,void *,CONSTRAINT_RECORD *);
    ConstraintViolationType        ConstraintCheckDataObject(Environment *,UDFValue *,CONSTRAINT_RECORD *);
 #if (! BLOAD_ONLY) && (! RUN_TIME)

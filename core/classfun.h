@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  01/21/18            */
+   /*             CLIPS Version 6.41  05/28/21            */
    /*                                                     */
    /*             CLASS FUNCTIONS HEADER FILE             */
    /*******************************************************/
@@ -47,6 +47,9 @@
 /*            data structures.                               */
 /*                                                           */
 /*            Removed initial-object support.                */
+/*                                                           */
+/*      6.41: Disallowed creation of instances when their    */
+/*            class is being redefined.                      */
 /*                                                           */
 /*************************************************************/
 
@@ -144,6 +147,7 @@ struct defclassData
    struct token ObjectParseToken;
    ClassDefaultsMode ClassDefaultsModeValue;
    int newSlotID;
+   Defclass *RedefiningClass;
   };
 
 #define DefclassData(theEnv) ((struct defclassData *) GetEnvironmentData(theEnv,DEFCLASS_DATA))

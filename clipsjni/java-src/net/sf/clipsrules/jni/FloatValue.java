@@ -7,7 +7,7 @@ public class FloatValue extends NumberValue
    /***************/
    public FloatValue()
      {
-      super(new Double(0.0));
+      super(Double.valueOf(0.0));
      }
 
    /***************/
@@ -16,7 +16,7 @@ public class FloatValue extends NumberValue
    public FloatValue(
      double value)
      {
-      super(new Double(value));
+      super(Double.valueOf(value));
      }
 
    /***************/

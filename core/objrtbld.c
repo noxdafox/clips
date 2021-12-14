@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  02/09/18             */
+   /*            CLIPS Version 6.40  02/03/21             */
    /*                                                     */
    /*          OBJECT PATTERN MATCHER MODULE              */
    /*******************************************************/
@@ -155,12 +155,12 @@
    static struct lhsParseNode    *ParseSlotRestriction(Environment *,const char *,struct token *,CONSTRAINT_RECORD *,bool);
    static CLASS_BITMAP           *NewClassBitMap(Environment *,unsigned short,bool);
    static void                    InitializeClassBitMap(Environment *,CLASS_BITMAP *,bool);
-   static void                    DeleteIntermediateClassBitMap(Environment *,CLASS_BITMAP *);
+   static void                    DeleteIntermediateClassBitMap(Environment *,const CLASS_BITMAP *);
    static void                   *CopyClassBitMap(Environment *,void *);
    static void                    DeleteClassBitMap(Environment *,void *);
    static void                    MarkBitMapClassesBusy(Environment *,CLIPSBitMap *,int);
    static bool                    EmptyClassBitMap(CLASS_BITMAP *);
-   static bool                    IdenticalClassBitMap(CLASS_BITMAP *,CLASS_BITMAP *);
+   static bool                    IdenticalClassBitMap(const CLASS_BITMAP *,const CLASS_BITMAP *);
    static bool                    ProcessClassRestriction(Environment *,CLASS_BITMAP *,struct lhsParseNode **,bool);
    static CONSTRAINT_RECORD      *ProcessSlotRestriction(Environment *,CLASS_BITMAP *,CLIPSLexeme *,bool *);
    static void                    IntersectClassBitMaps(CLASS_BITMAP *,CLASS_BITMAP *);
@@ -177,10 +177,6 @@
 #endif
 
    static Expression             *ObjectMatchDelayParse(Environment *,Expression *,const char *);
-
-#if ! DEFINSTANCES_CONSTRUCT
-   static void                    ResetInitialObject(Environment *);
-#endif
 
 /* =========================================
    *****************************************
@@ -493,7 +489,8 @@ static bool ReorderAndAnalyzeObjectPattern(
   Environment *theEnv,
   struct lhsParseNode *topNode)
   {
-   CLASS_BITMAP *clsset,*tmpset;
+   const CLASS_BITMAP *clsset;
+   CLASS_BITMAP *tmpset;
    Expression *rexp,*tmpmin,*tmpmax;
    Defclass *cls;
    struct lhsParseNode *tmpNode,*subNode,*bitmap_node,*isa_node,*name_node;
@@ -515,7 +512,7 @@ static bool ReorderAndAnalyzeObjectPattern(
    /* ============================================
       Allocate a temporary set for marking classes
       ============================================ */
-   clsset = (CLASS_BITMAP *) ((CLIPSBitMap *) bitmap_node->userData)->contents;
+   clsset = (const CLASS_BITMAP *) ((CLIPSBitMap *) bitmap_node->userData)->contents;
    tmpset = NewClassBitMap(theEnv,clsset->maxid,false);
 
    /* ==========================================================
@@ -634,7 +631,7 @@ static bool ReorderAndAnalyzeObjectPattern(
         }
       clsset = PackClassBitMap(theEnv,tmpset);
       DeleteClassBitMap(theEnv,bitmap_node->userData);
-      bitmap_node->userData = AddBitMap(theEnv,clsset,ClassBitMapSize(clsset));
+      bitmap_node->userData = AddBitMap(theEnv,(void *) clsset,ClassBitMapSize(clsset));
       IncrementBitMapCount(bitmap_node->userData);
       DeleteIntermediateClassBitMap(theEnv,clsset);
      }
@@ -665,7 +662,7 @@ static struct patternNodeHeader *PlaceObjectPattern(
    CLIPSBitMap *newClassBitMap,*newSlotBitMap;
    struct expr *rightHash;
    unsigned int i;
-   CLASS_BITMAP *cbmp;
+   const CLASS_BITMAP *cbmp;
    Defclass *relevantDefclass;
    CLASS_ALPHA_LINK *newAlphaLink;
 
@@ -792,7 +789,7 @@ static struct patternNodeHeader *PlaceObjectPattern(
     * relevant to this alpha node, add it to that defclass'
     * relevant_terminal_alpha_nodes list
     */
-   cbmp = (CLASS_BITMAP *) newClassBitMap->contents;
+   cbmp = (const CLASS_BITMAP *) newClassBitMap->contents;
    for (i = 0; i <= cbmp->maxid; i++)
      {
       if (TestBitMap(cbmp->map,i))
@@ -1001,7 +998,7 @@ static OBJECT_PATTERN_NODE *CreateNewObjectPatternNode(
      {
       if ((curNode->networkTest == NULL) ? false :
           ((curNode->networkTest->type != OBJ_PN_CONSTANT) ? false :
-           ((struct ObjectCmpPNConstant *) curNode->networkTest->bitMapValue->contents)->pass))
+           ((const struct ObjectCmpPNConstant *) curNode->networkTest->bitMapValue->contents)->pass))
         break;
       prvNode = curNode;
       curNode = curNode->rightNode;
@@ -1080,12 +1077,12 @@ static void DetachObjectPattern(
    
    if (! ConstructData(theEnv)->ClearInProgress)
      {
-      CLASS_BITMAP *cbmp;
+      const CLASS_BITMAP *cbmp;
       unsigned int i;
       Defclass *relevantDefclass;
       CLASS_ALPHA_LINK *alphaLink, *lastAlpha;
 
-      cbmp = (CLASS_BITMAP *) alphaPtr->classbmp->contents;
+      cbmp = (const CLASS_BITMAP *) alphaPtr->classbmp->contents;
       for (i = 0; i <= cbmp->maxid; i++)
         {
          if (TestBitMap(cbmp->map,i))
@@ -1624,9 +1621,9 @@ static void InitializeClassBitMap(
  ********************************************/
 static void DeleteIntermediateClassBitMap(
   Environment *theEnv,
-  CLASS_BITMAP *bmp)
+  const CLASS_BITMAP *bmp)
   {
-   rm(theEnv,bmp,ClassBitMapSize(bmp));
+   rm(theEnv,(void *) bmp,ClassBitMapSize(bmp));
   }
 
 /******************************************************
@@ -1689,7 +1686,7 @@ static void MarkBitMapClassesBusy(
   CLIPSBitMap *bmphn,
   int offset)
   {
-   CLASS_BITMAP *bmp;
+   const CLASS_BITMAP *bmp;
    unsigned short i;
    Defclass *cls;
 
@@ -1699,7 +1696,7 @@ static void MarkBitMapClassesBusy(
       ==================================== */
    if (ConstructData(theEnv)->ClearInProgress)
      return;
-   bmp = (CLASS_BITMAP *) bmphn->contents;
+   bmp = (const CLASS_BITMAP *) bmphn->contents;
    for (i = 0 ; i <= bmp->maxid ; i++)
      if (TestBitMap(bmp->map,i))
        {
@@ -1745,8 +1742,8 @@ static bool EmptyClassBitMap(
   NOTES        : None
  ***************************************************/
 static bool IdenticalClassBitMap(
-  CLASS_BITMAP *cs1,
-  CLASS_BITMAP *cs2)
+  const CLASS_BITMAP *cs1,
+  const CLASS_BITMAP *cs2)
   {
    unsigned short i;
 

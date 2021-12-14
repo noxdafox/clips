@@ -10,14 +10,14 @@ CLIPS> (save-facts blah.tmp 7)
 [ARGACCES2] Function 'save-facts' expected argument #2 to be of type symbol.
 CLIPS> (save-facts blah.tmp hello)
 [ARGACCES2] Function 'save-facts' expected argument #2 to be of type symbol with value local or visible.
-FALSE
+-1
 CLIPS> (save-facts blah.tmp local bogus)
 [ARGACCES2] Function 'save-facts' expected argument #3 to be of type 'local deftemplate name'.
-FALSE
+-1
 CLIPS> (remove blah.tmp)
 TRUE
 CLIPS> (save-facts blah.tmp)
-TRUE
+0
 CLIPS> (load-facts)
 [ARGACCES1] Function 'load-facts' expected exactly 1 argument.
 CLIPS> (load-facts 7)
@@ -28,7 +28,34 @@ CLIPS> (remove blah.tmp)
 TRUE
 CLIPS> (load-facts blah.tmp)
 [ARGACCES3] Function 'load-facts' was unable to open file 'blah.tmp'.
-FALSE
+-1
+CLIPS> (bsave-facts)
+[ARGACCES1] Function 'bsave-facts' expected at least 1 argument.
+CLIPS> (bsave-facts 7)
+[ARGACCES2] Function 'bsave-facts' expected argument #1 to be of type symbol or string.
+CLIPS> (bsave-facts blah.tmp 7)
+[ARGACCES2] Function 'bsave-facts' expected argument #2 to be of type symbol.
+CLIPS> (bsave-facts blah.tmp hello)
+[ARGACCES2] Function 'bsave-facts' expected argument #2 to be of type symbol with value local or visible.
+-1
+CLIPS> (bsave-facts blah.tmp local bogus)
+[ARGACCES2] Function 'bsave-facts' expected argument #3 to be of type 'local deftemplate name'.
+-1
+CLIPS> (remove blah.tmp)
+TRUE
+CLIPS> (bsave-facts blah.tmp)
+0
+CLIPS> (bload-facts)
+[ARGACCES1] Function 'bload-facts' expected exactly 1 argument.
+CLIPS> (bload-facts 7)
+[ARGACCES2] Function 'bload-facts' expected argument #1 to be of type symbol or string.
+CLIPS> (bload-facts blah.tmp bogus)
+[ARGACCES1] Function 'bload-facts' expected exactly 1 argument.
+CLIPS> (remove blah.tmp)
+TRUE
+CLIPS> (bload-facts blah.tmp)
+[ARGACCES3] Function 'bload-facts' was unable to open file 'blah.tmp'.
+-1
 CLIPS> (clear) ; Test Saving and Reloading
 CLIPS> (load factsav.clp)
 +%%+%%%+%%+
@@ -66,9 +93,13 @@ f-2     (B (x 1))
 f-3     (B (x 2))
 For a total of 3 facts.
 CLIPS> (save-facts "Temp//fctsav1.fct" visible)
-TRUE
+3
 CLIPS> (save-facts "Temp//fctsav2.fct" local A)
-TRUE
+1
+CLIPS> (bsave-facts "Temp//fctsavb1.fct" visible)
+3
+CLIPS> (bsave-facts "Temp//fctsavb2.fct" local A)
+1
 CLIPS> (set-current-module BAR)
 MAIN
 CLIPS> (facts)
@@ -81,9 +112,13 @@ f-6     (D (x 1))
 f-7     (E (x 1))
 For a total of 7 facts.
 CLIPS> (save-facts "Temp//fctsav3.fct" local C)
-TRUE
+1
 CLIPS> (save-facts "Temp//fctsav4.fct" visible B E)
-TRUE
+3
+CLIPS> (bsave-facts "Temp//fctsavb3.fct" local C)
+1
+CLIPS> (bsave-facts "Temp//fctsavb4.fct" visible B E)
+3
 CLIPS> (set-current-module WOZ)
 BAR
 CLIPS> (facts)
@@ -93,9 +128,13 @@ f-9     (F (x 1))
 f-10    (G (x 2))
 For a total of 4 facts.
 CLIPS> (save-facts "Temp//fctsav5.fct" local)
-TRUE
+3
 CLIPS> (save-facts "Temp//fctsav6.fct" visible F G E)
-TRUE
+4
+CLIPS> (bsave-facts "Temp//fctsavb5.fct" local)
+3
+CLIPS> (bsave-facts "Temp//fctsavb6.fct" visible F G E)
+4
 CLIPS> (set-current-module FOO)
 WOZ
 CLIPS> (facts)
@@ -106,14 +145,18 @@ f-7     (E (x 1))
 f-9     (F (x 1))
 For a total of 5 facts.
 CLIPS> (save-facts "Temp//fctsav7.fct" local)
-TRUE
+0
 CLIPS> (save-facts "Temp//fctsav8.fct" visible)
-TRUE
+5
+CLIPS> (bsave-facts "Temp//fctsavb7.fct" local)
+0
+CLIPS> (bsave-facts "Temp//fctsavb8.fct" visible)
+5
 CLIPS> (reset)
 CLIPS> (set-current-module MAIN)
 MAIN
 CLIPS> (load-facts "Temp//fctsav1.fct")
-TRUE
+3
 CLIPS> (facts *)
 f-1     (A (x 1))
 f-2     (B (x 1))
@@ -121,7 +164,7 @@ f-3     (B (x 2))
 For a total of 3 facts.
 CLIPS> (retract *)
 CLIPS> (load-facts "Temp//fctsav2.fct")
-TRUE
+1
 CLIPS> (facts *)
 f-4     (A (x 1))
 For a total of 1 fact.
@@ -130,19 +173,19 @@ CLIPS> (load-facts "Temp//fctsav3.fct")
 
 [PRNTUTIL2] Syntax Error:  Check appropriate syntax for RHS patterns.
 Function load-facts encountered an error
-FALSE
+-1
 CLIPS> (facts *)
 CLIPS> (retract *)
 CLIPS> (set-current-module BAR)
 MAIN
 CLIPS> (load-facts "Temp//fctsav3.fct")
-TRUE
+1
 CLIPS> (facts *)
 f-5     (C (x 1))
 For a total of 1 fact.
 CLIPS> (retract *)
 CLIPS> (load-facts "Temp//fctsav4.fct")
-TRUE
+3
 CLIPS> (facts *)
 f-6     (B (x 1))
 f-7     (B (x 2))
@@ -152,7 +195,7 @@ CLIPS> (retract *)
 CLIPS> (set-current-module WOZ)
 BAR
 CLIPS> (load-facts "Temp//fctsav5.fct")
-TRUE
+3
 CLIPS> (facts *)
 f-9     (G (x 1))
 f-10    (F (x 1))
@@ -160,7 +203,7 @@ f-11    (G (x 2))
 For a total of 3 facts.
 CLIPS> (retract *)
 CLIPS> (load-facts "Temp//fctsav6.fct")
-TRUE
+4
 CLIPS> (facts *)
 f-12    (E (x 1))
 f-13    (G (x 1))
@@ -171,11 +214,11 @@ CLIPS> (retract *)
 CLIPS> (set-current-module FOO)
 WOZ
 CLIPS> (load-facts "Temp//fctsav7.fct")
-TRUE
+0
 CLIPS> (facts *)
 CLIPS> (retract *)
 CLIPS> (load-facts "Temp//fctsav8.fct")
-TRUE
+5
 CLIPS> (facts *)
 f-16    (A (x 1))
 f-17    (B (x 1))
@@ -184,4 +227,167 @@ f-19    (E (x 1))
 f-20    (F (x 1))
 For a total of 5 facts.
 CLIPS> (retract *)
+CLIPS> (set-current-module MAIN)
+FOO
+CLIPS> (bload-facts "Temp//fctsavb1.fct")
+3
+CLIPS> (facts *)
+f-21    (A (x 1))
+f-22    (B (x 1))
+f-23    (B (x 2))
+For a total of 3 facts.
+CLIPS> (retract *)
+CLIPS> (bload-facts "Temp//fctsavb2.fct")
+1
+CLIPS> (facts *)
+f-24    (A (x 1))
+For a total of 1 fact.
+CLIPS> (retract *)
+CLIPS> (bload-facts "Temp//fctsavb3.fct")
+[FACTFILE3] Function 'bload-facts' is unable to load fact of deftemplate 'C'
+-1
+CLIPS> (facts *)
+CLIPS> (retract *)
+CLIPS> (set-current-module BAR)
+MAIN
+CLIPS> (bload-facts "Temp//fctsavb3.fct")
+1
+CLIPS> (facts *)
+f-25    (C (x 1))
+For a total of 1 fact.
+CLIPS> (retract *)
+CLIPS> (bload-facts "Temp//fctsavb4.fct")
+3
+CLIPS> (facts *)
+f-26    (B (x 1))
+f-27    (B (x 2))
+f-28    (E (x 1))
+For a total of 3 facts.
+CLIPS> (retract *)
+CLIPS> (set-current-module WOZ)
+BAR
+CLIPS> (bload-facts "Temp//fctsavb5.fct")
+3
+CLIPS> (facts *)
+f-29    (G (x 1))
+f-30    (F (x 1))
+f-31    (G (x 2))
+For a total of 3 facts.
+CLIPS> (retract *)
+CLIPS> (bload-facts "Temp//fctsavb6.fct")
+4
+CLIPS> (facts *)
+f-32    (E (x 1))
+f-33    (G (x 1))
+f-34    (F (x 1))
+f-35    (G (x 2))
+For a total of 4 facts.
+CLIPS> (retract *)
+CLIPS> (set-current-module FOO)
+WOZ
+CLIPS> (bload-facts "Temp//fctsavb7.fct")
+0
+CLIPS> (facts *)
+CLIPS> (retract *)
+CLIPS> (bload-facts "Temp//fctsavb8.fct")
+5
+CLIPS> (facts *)
+f-36    (A (x 1))
+f-37    (B (x 1))
+f-38    (B (x 2))
+f-39    (E (x 1))
+f-40    (F (x 1))
+For a total of 5 facts.
+CLIPS> (retract *)
+CLIPS> (clear)
+CLIPS> 
+(deftemplate person 
+   (multislot name)
+   (multislot hobbies)
+   (slot age (type INTEGER))
+   (slot gender (allowed-values male female)))
+CLIPS> (assert (factoid))
+<Fact-1>
+CLIPS> (assert (types a "bc" [def] 1 2.3))
+<Fact-2>
+CLIPS> (assert (colors red green blue))
+<Fact-3>
+CLIPS> (assert (people frank sally joe))
+<Fact-4>
+CLIPS> (assert (person (name Roger Downs) (age 33) (gender male) (hobbies reading running)))
+<Fact-5>
+CLIPS> (assert (person (name Jenny Smith) (age 25) (gender female) (hobbies movies softball)))
+<Fact-6>
+CLIPS> (bsave-facts "Temp//fctsavb9.fct")
+6
+CLIPS> (clear)
+CLIPS> 
+(deftemplate person 
+   (multislot name)
+   (multislot hobbies)
+   (slot age (type INTEGER))
+   (slot gender (allowed-values male female)))
+CLIPS> (assert (people susan howard jane))
+<Fact-1>
+CLIPS> (bload-facts "Temp//fctsavb9.fct")
+6
+CLIPS> (facts)
+f-1     (people susan howard jane)
+f-2     (factoid)
+f-3     (types a "bc" [def] 1 2.3)
+f-4     (colors red green blue)
+f-5     (people frank sally joe)
+f-6     (person (name Roger Downs) (hobbies reading running) (age 33) (gender male))
+f-7     (person (name Jenny Smith) (hobbies movies softball) (age 25) (gender female))
+For a total of 7 facts.
+CLIPS> (clear)
+CLIPS> 
+(deftemplate stuff
+   (slot fa (type FACT-ADDRESS))
+   (slot ea (type EXTERNAL-ADDRESS))
+   (slot ia (type INSTANCE-ADDRESS)))
+CLIPS> (assert (stuff))
+<Fact-1>
+CLIPS> (facts)
+f-1     (stuff (fa <Dummy Fact>) (ea <Pointer-C-0x0>) (ia <Dummy Instance>))
+For a total of 1 fact.
+CLIPS> (defclass THING (is-a USER))
+CLIPS> (make-instance t1 of THING)
+[t1]
+CLIPS> (assert (stuff (fa (assert (colors red green blue))) (ia (instance-address [t1]))))
+<Fact-3>
+CLIPS> (facts)
+f-1     (stuff (fa <Dummy Fact>) (ea <Pointer-C-0x0>) (ia <Dummy Instance>))
+f-2     (colors red green blue)
+f-3     (stuff (fa <Fact-2>) (ea <Pointer-C-0x0>) (ia <Instance-t1>))
+For a total of 3 facts.
+CLIPS> (bsave-facts "Temp//fctsavb10.fct")
+3
+CLIPS> (reset)
+CLIPS> (bload-facts "Temp//fctsavb10.fct")
+3
+CLIPS> (facts)
+f-1     (stuff (fa <Dummy Fact>) (ea <Pointer-C-0x0>) (ia [Dummy Instance]))
+f-2     (colors red green blue)
+f-3     (stuff (fa <Dummy Fact>) (ea <Pointer-C-0x0>) (ia [t1]))
+For a total of 3 facts.
+CLIPS> (clear)
+CLIPS> (deftemplate cp (multislot v) (multislot a))
+CLIPS> 
+(assert (cp (v) (a))
+        (cp (v 1) (a x))
+        (cp (v 2 3) (a))
+        (cp (v) (a y z)))
+<Fact-4>
+CLIPS> (bsave-facts "Temp//fctsavb11.fct")
+4
+CLIPS> (reset)
+CLIPS> (bload-facts "Temp//fctsavb11.fct")
+4
+CLIPS> (facts)
+f-1     (cp (v) (a))
+f-2     (cp (v 1) (a x))
+f-3     (cp (v 2 3) (a))
+f-4     (cp (v) (a y z))
+For a total of 4 facts.
 CLIPS> (dribble-off)

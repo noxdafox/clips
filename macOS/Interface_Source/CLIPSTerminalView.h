@@ -14,6 +14,7 @@
    CLIPSEnvironment *__weak environment;
    IBOutlet id dialogWindow;
    BOOL routerPrint;
+   BOOL balancingDisabled;
    //BOOL waitingForChar;
    int charFound;
    char *inputBuffer;
@@ -31,5 +32,6 @@
 - (NSUInteger) inputStringOffset;
 
 @property (NS_NONATOMIC_IOSONLY, weak) CLIPSEnvironment *environment;
+@property (nonatomic, assign) BOOL balancingDisabled;
 
 @end

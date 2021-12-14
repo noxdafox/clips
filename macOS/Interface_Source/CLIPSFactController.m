@@ -31,7 +31,7 @@
 
    if (self)
      {
-      [self setValue: [NSNumber numberWithInt: 10] forKey: @"fontSize"]; 
+      [self setValue: [NSNumber numberWithInt: 10] forKey: @"fontSize"];
       [self setValue: [NSNumber numberWithInt: 13] forKey: @"rowHeight"];
       lastModuleRow = -1;
       lastModule = NULL;
@@ -55,8 +55,8 @@
 
    [self setValue: [theDelegate mainEnvironment] forKey: @"environment"];
 
-   [self setValue: [NSNumber numberWithInt: 10] forKey: @"fontSize"]; 
-   [self setValue: [NSNumber numberWithInt: 13] forKey: @"rowHeight"]; 
+   [self setValue: [NSNumber numberWithInt: 10] forKey: @"fontSize"];
+   [self setValue: [NSNumber numberWithInt: 13] forKey: @"rowHeight"];
    
    /*=====================================================*/
    /* Initialize with the last setting the user chose for */
@@ -70,13 +70,13 @@
    if ([[theValues valueForKey: @"factsDisplayDefaultedValues"] boolValue]) 
      { 
       [self setValue: nil forKey: @"slotFilter"]; 
-      [displayDefaultedValuesButton setState: NSOnState];
+      [displayDefaultedValuesButton setState: NSControlStateValueOn];
      }
    else
      {
       NSPredicate *predicate = [NSPredicate predicateWithFormat: @"slotDefault = TRUE"]; 
       [self setValue: predicate forKey: @"slotFilter"]; 
-      [displayDefaultedValuesButton setState: NSOffState];
+      [displayDefaultedValuesButton setState: NSControlStateValueOff];
      }
 
    /*=================================================*/

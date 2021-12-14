@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/02/18             */
+   /*            CLIPS Version 6.40  02/19/20             */
    /*                                                     */
    /*                OBJECT MESSAGE COMMANDS              */
    /*******************************************************/
@@ -590,7 +590,7 @@ void PPDefmessageHandlerCommand(
    const char *logicalName;
    Defclass *cls = NULL;
    unsigned mtype;
-   DefmessageHandler *hnd;
+   DefmessageHandler *hnd = NULL;
 
    if (! UDFFirstArgument(context,SYMBOL_BIT,&theArg))
      { return; }

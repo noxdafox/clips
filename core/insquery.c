@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  09/28/17             */
+   /*            CLIPS Version 6.40  07/14/20             */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -42,6 +42,9 @@
 /*                                                           */
 /*            Matching instance sets containing deleted      */
 /*            instances are pruned.                          */
+/*                                                           */
+/*      6.32: Fixed garbage collection issue with return     */
+/*            value of delayed-do-for-all-instances.         */
 /*                                                           */
 /*      6.40: Added Env prefix to GetEvaluationError and     */
 /*            SetEvaluationError functions.                  */
@@ -598,7 +601,7 @@ void DelayedQueryDoForAllInstances(
    /*=====================*/
    /* Perform the action. */
    /*=====================*/
-
+   
    for (theSet = InstanceQueryData(theEnv)->QueryCore->soln_set;
         theSet != NULL; )
      {
@@ -614,12 +617,12 @@ void DelayedQueryDoForAllInstances(
       if (EvaluationData(theEnv)->HaltExecution || ProcedureFunctionData(theEnv)->BreakFlag || ProcedureFunctionData(theEnv)->ReturnFlag)
         { break; }
 
-      CleanCurrentGarbageFrame(theEnv,NULL);
+      CleanCurrentGarbageFrame(theEnv,returnValue);
       CallPeriodicTasks(theEnv);
       
       nextSet: theSet = theSet->nxt;
      }
-
+   
    /*==================================================================*/
    /* Decrement the busy count for all instances in the solution sets. */
    /*==================================================================*/

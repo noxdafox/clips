@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  02/03/18             */
+   /*            CLIPS Version 6.40  04/08/20             */
    /*                                                     */
    /*                CLASS FUNCTIONS MODULE               */
    /*******************************************************/
@@ -44,6 +44,9 @@
 /*                                                           */
 /*            Optimization for marking relevant alpha nodes  */
 /*            in the object pattern network.                 */
+/*                                                           */
+/*            Changed allocation of multifield slot default  */
+/*            from ephemeral to explicit deallocation.       */
 /*                                                           */
 /*      6.40: Added Env prefix to GetEvaluationError and     */
 /*            SetEvaluationError functions.                  */
@@ -573,7 +576,9 @@ Defclass *NewClass(
    cls->nxtHash = NULL;
    cls->scopeMap = NULL;
    ClearBitString(cls->traversalRecord,TRAVERSAL_BYTES);
+#if DEFRULE_CONSTRUCT
    cls->relevant_terminal_alpha_nodes = NULL;
+#endif
    return(cls);
   }
 
@@ -752,8 +757,10 @@ void RemoveDefclass(
   {
    DefmessageHandler *hnd;
    unsigned long i;
+#if DEFRULE_CONSTRUCT
    CLASS_ALPHA_LINK *currentAlphaLink;
    CLASS_ALPHA_LINK *nextAlphaLink;
+#endif
 
    /* ====================================================
       Remove all of this class's superclasses' links to it
@@ -782,7 +789,12 @@ void RemoveDefclass(
          if (cls->slots[i].dynamicDefault)
            ReturnPackedExpression(theEnv,(Expression *) cls->slots[i].defaultValue);
          else
-           rtn_struct(theEnv,udfValue,cls->slots[i].defaultValue);
+           {
+            UDFValue *theValue = (UDFValue *) cls->slots[i].defaultValue;
+            if (theValue->header->type == MULTIFIELD_TYPE)
+              { ReturnMultifield(theEnv,theValue->multifieldValue); }
+            rtn_struct(theEnv,udfValue,theValue);
+           }
         }
       DeleteSlotName(theEnv,cls->slots[i].slotName);
       RemoveConstraint(theEnv,cls->slots[i].constraint);
@@ -814,6 +826,7 @@ void RemoveDefclass(
       rm(theEnv,cls->handlerOrderMap,(sizeof(unsigned) * cls->handlerCount));
      }
 
+#if DEFRULE_CONSTRUCT
    currentAlphaLink = cls->relevant_terminal_alpha_nodes;
    while (currentAlphaLink != NULL)
      {
@@ -822,6 +835,7 @@ void RemoveDefclass(
       currentAlphaLink = nextAlphaLink;
      }
    cls->relevant_terminal_alpha_nodes = NULL;
+#endif
 
    SetDefclassPPForm(theEnv,cls,NULL);
    DeassignClassID(theEnv,cls->id);
@@ -844,10 +858,12 @@ void DestroyDefclass(
   Defclass *cls)
   {
    long i;
+#if ! RUN_TIME
+#if DEFRULE_CONSTRUCT
    CLASS_ALPHA_LINK *currentAlphaLink;
    CLASS_ALPHA_LINK *nextAlphaLink;
+#endif
 
-#if ! RUN_TIME
    DefmessageHandler *hnd;
    DeletePackedClassLinks(theEnv,&cls->directSuperclasses,false);
    DeletePackedClassLinks(theEnv,&cls->allSuperclasses,false);
@@ -861,10 +877,20 @@ void DestroyDefclass(
          if (cls->slots[i].dynamicDefault)
            ReturnPackedExpression(theEnv,(Expression *) cls->slots[i].defaultValue);
          else
-           rtn_struct(theEnv,udfValue,cls->slots[i].defaultValue);
+           {
+            UDFValue *theValue = (UDFValue *) cls->slots[i].defaultValue;
+            if (theValue->header->type == MULTIFIELD_TYPE)
+              { ReturnMultifield(theEnv,theValue->multifieldValue); }
+            rtn_struct(theEnv,udfValue,theValue);
+           }
 #else
          if (cls->slots[i].dynamicDefault == 0)
-           rtn_struct(theEnv,udfValue,cls->slots[i].defaultValue);
+           {
+            UDFValue *theValue = (UDFValue *) cls->slots[i].defaultValue;
+            if (theValue->header->type == MULTIFIELD_TYPE)
+              { ReturnMultifield(theEnv,theValue->multifieldValue); }
+            rtn_struct(theEnv,udfValue,theValue);
+           }
 #endif
         }
      }
@@ -899,7 +925,8 @@ void DestroyDefclass(
       rm(theEnv,cls->handlers,(sizeof(DefmessageHandler) * cls->handlerCount));
       rm(theEnv,cls->handlerOrderMap,(sizeof(unsigned) * cls->handlerCount));
      }
-
+     
+#if DEFRULE_CONSTRUCT
    currentAlphaLink = cls->relevant_terminal_alpha_nodes;
    while (currentAlphaLink != NULL)
      {
@@ -908,6 +935,7 @@ void DestroyDefclass(
       currentAlphaLink = nextAlphaLink;
      }
    cls->relevant_terminal_alpha_nodes = NULL;
+#endif
 
    DestroyConstructHeader(theEnv,&cls->header);
 

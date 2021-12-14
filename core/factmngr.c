@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/02/18             */
+   /*            CLIPS Version 6.40  05/03/19             */
    /*                                                     */
    /*                 FACT MANAGER MODULE                 */
    /*******************************************************/
@@ -128,6 +128,7 @@
 #include "factbin.h"
 #include "factcmp.h"
 #include "factcom.h"
+#include "factfile.h"
 #include "factfun.h"
 #include "factmch.h"
 #include "factqury.h"
@@ -240,6 +241,7 @@ void InitializeFacts(
    /*=========================================*/
 
    FactCommandDefinitions(theEnv);
+   FactFileCommandDefinitions(theEnv);
    FactFunctionDefinitions(theEnv);
 
    /*==============================*/

@@ -46,17 +46,17 @@ public class FocusStack implements Iterable<Focus>
    /***********/
    /* equals: */
    /***********/
-	@Override
-	public boolean equals(Object obj) 
-	  {
-	   if (this == obj) return true;
-	   if (obj == null) return false;
-	   if (this.getClass() != obj.getClass()) return false;
-	   
-	   FocusStack cfs = (FocusStack) obj;
-	   if (this.stack == null) return (cfs.stack == null);
-	   return this.stack.equals(cfs.stack);
-      }
+   @Override
+   public boolean equals(Object obj) 
+     {
+      if (this == obj) return true;
+      if (obj == null) return false;
+      if (this.getClass() != obj.getClass()) return false;
+       
+      FocusStack cfs = (FocusStack) obj;
+      if (this.stack == null) return (cfs.stack == null);
+      return this.stack.equals(cfs.stack);
+     }
       
    /********/
    /* get: */

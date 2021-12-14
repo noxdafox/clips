@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  11/01/16             */
+   /*            CLIPS Version 6.40  02/03/21             */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -1163,7 +1163,7 @@ static bool RtnProcParam(
   {
    UDFValue *src;
 
-   src = &ProceduralPrimitiveData(theEnv)->ProcParamArray[*((int *) ((CLIPSBitMap *) value)->contents) - 1];
+   src = &ProceduralPrimitiveData(theEnv)->ProcParamArray[*((const int *) ((CLIPSBitMap *) value)->contents) - 1];
    returnValue->value = src->value;
    returnValue->begin = src->begin;
    returnValue->range = src->range;
@@ -1189,9 +1189,9 @@ static bool GetProcBind(
   UDFValue *returnValue)
   {
    UDFValue *src;
-   PACKED_PROC_VAR *pvar;
+   const PACKED_PROC_VAR *pvar;
 
-   pvar = (PACKED_PROC_VAR *) ((CLIPSBitMap *) value)->contents;
+   pvar = (const PACKED_PROC_VAR *) ((CLIPSBitMap *) value)->contents;
    src = &ProceduralPrimitiveData(theEnv)->LocalVarArray[pvar->first - 1];
    if (src->supplementalInfo == TrueSymbol(theEnv))
      {
@@ -1252,7 +1252,7 @@ static bool PutProcBind(
   {
    UDFValue *dst;
 
-   dst = &ProceduralPrimitiveData(theEnv)->LocalVarArray[*((int *) ((CLIPSBitMap *) value)->contents) - 1];
+   dst = &ProceduralPrimitiveData(theEnv)->LocalVarArray[*((const int *) ((CLIPSBitMap *) value)->contents) - 1];
    if (GetFirstArgument() == NULL)
      {
       if (dst->supplementalInfo == TrueSymbol(theEnv))
@@ -1295,7 +1295,7 @@ static bool RtnProcWild(
   void *value,
   UDFValue *returnValue)
   {
-   GrabProcWildargs(theEnv,returnValue,*(unsigned *) ((CLIPSBitMap *) value)->contents);
+   GrabProcWildargs(theEnv,returnValue,*(const unsigned *) ((CLIPSBitMap *) value)->contents);
    return true;
   }
 

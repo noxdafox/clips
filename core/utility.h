@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  11/15/17            */
+   /*             CLIPS Version 6.40  02/03/21            */
    /*                                                     */
    /*                 UTILITY HEADER FILE                 */
    /*******************************************************/
@@ -43,6 +43,9 @@
 /*                                                           */
 /*            Converted API macros to function calls.        */
 /*                                                           */
+/*      6.31: Added debugging code for checking the garbage  */
+/*            frame.                                         */
+/*                                                           */
 /*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
@@ -62,6 +65,9 @@
 /*            for garbage collection blocks.                 */
 /*                                                           */
 /*            Added StringBuilder functions.                 */
+/*                                                           */
+/*            Moved BufferedRead and FreeReadBuffer from     */
+/*            insfile.c to utility.c                         */
 /*                                                           */
 /*************************************************************/
 
@@ -160,6 +166,11 @@ struct utilityData
    struct trackedMemory *trackList;
    struct garbageFrame MasterGarbageFrame;
    struct garbageFrame *CurrentGarbageFrame;
+   size_t BinaryFileSize;
+   size_t BinaryFileOffset;
+   char *CurrentReadBuffer;
+   size_t CurrentReadBufferSize;
+   size_t CurrentReadBufferOffset;
   };
 
 #define UtilityData(theEnv) ((struct utilityData *) GetEnvironmentData(theEnv,UTILITY_DATA))
@@ -175,7 +186,7 @@ struct utilityData
    bool                           RemoveCleanupFunction(Environment *,const char *);
    bool                           RemovePeriodicFunction(Environment *,const char *);
    char                          *CopyString(Environment *,const char *);
-   void                           DeleteString(Environment *,char *);
+   void                           DeleteString(Environment *,const char *);
    const char                    *AppendStrings(Environment *,const char *,const char *);
    const char                    *StringPrintForm(Environment *,const char *);
    char                          *AppendToString(Environment *,const char *,char *,size_t *,size_t *);
@@ -219,6 +230,7 @@ struct utilityData
    void                           GCBlockStart(Environment *,GCBlock *);
    void                           GCBlockEnd(Environment *,GCBlock *);
    void                           GCBlockEndUDF(Environment *,GCBlock *,UDFValue *);
+   bool                           CurrentGarbageFrameIsDirty(Environment *);
    StringBuilder                 *CreateStringBuilder(Environment *,size_t);
    void                           SBDispose(StringBuilder *);
    void                           SBAppend(StringBuilder *,const char *);
@@ -228,6 +240,8 @@ struct utilityData
    void                           SBReset(StringBuilder *);
    char                          *SBCopy(StringBuilder *);
    void                          *GetPeriodicFunctionContext(Environment *,const char *);
+   void                           BufferedRead(Environment *,void *,size_t);
+   void                           FreeReadBuffer(Environment *);
 
 #endif /* _H_utility */
 

@@ -1,57 +1,61 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  02/03/18             */
+   /*            CLIPS Version 6.41  07/12/21             */
    /*                                                     */
    /*          OBJECT PATTERN MATCHER MODULE              */
    /*******************************************************/
 
-/**************************************************************/
-/* Purpose: RETE Network Interface for Objects                */
-/*                                                            */
-/* Principal Programmer(s):                                   */
-/*      Brian L. Dantes                                       */
-/*                                                            */
-/* Contributing Programmer(s):                                */
-/*                                                            */
-/* Revision History:                                          */
-/*                                                            */
-/*      6.23: Correction for FalseSymbol/TrueSymbol. DR0859   */
-/*                                                            */
-/*      6.24: Removed INCREMENTAL_RESET and                   */
-/*            LOGICAL_DEPENDENCIES compilation flags.         */
-/*                                                            */
-/*            Converted INSTANCE_PATTERN_MATCHING to          */
-/*            DEFRULE_CONSTRUCT.                              */
-/*                                                            */
-/*            Renamed BOOLEAN macro type to intBool.          */
-/*                                                            */
-/*      6.30: Modified the QueueObjectMatchAction function    */
-/*            so that instance retract actions always occur   */
-/*            before instance assert and modify actions.      */
-/*            This prevents the pattern matching process      */
-/*            from attempting the evaluation of a join        */
-/*            expression that accesses the slots of a         */
-/*            retracted instance.                             */
-/*                                                            */
-/*            Added support for hashed alpha memories.        */
-/*                                                            */
-/*            Support for long long integers.                 */
-/*                                                            */
-/*            Added support for hashed comparisons to         */
-/*            constants.                                      */
-/*                                                            */
+/*************************************************************/
+/* Purpose: RETE Network Interface for Objects               */
+/*                                                           */
+/* Principal Programmer(s):                                  */
+/*      Brian L. Dantes                                      */
+/*                                                           */
+/* Contributing Programmer(s):                               */
+/*                                                           */
+/* Revision History:                                         */
+/*                                                           */
+/*      6.23: Correction for FalseSymbol/TrueSymbol. DR0859  */
+/*                                                           */
+/*      6.24: Removed INCREMENTAL_RESET and                  */
+/*            LOGICAL_DEPENDENCIES compilation flags.        */
+/*                                                           */
+/*            Converted INSTANCE_PATTERN_MATCHING to         */
+/*            DEFRULE_CONSTRUCT.                             */
+/*                                                           */
+/*            Renamed BOOLEAN macro type to intBool.         */
+/*                                                           */
+/*      6.30: Modified the QueueObjectMatchAction function   */
+/*            so that instance retract actions always occur  */
+/*            before instance assert and modify actions.     */
+/*            This prevents the pattern matching process     */
+/*            from attempting the evaluation of a join       */
+/*            expression that accesses the slots of a        */
+/*            retracted instance.                            */
+/*                                                           */
+/*            Added support for hashed alpha memories.       */
+/*                                                           */
+/*            Support for long long integers.                */
+/*                                                           */
+/*            Added support for hashed comparisons to        */
+/*            constants.                                     */
+/*                                                           */
 /*      6.31: Optimization for marking relevant alpha nodes  */
 /*            in the object pattern network.                 */
 /*                                                           */
-/*      6.40: Added Env prefix to GetEvaluationError and      */
-/*            SetEvaluationError functions.                   */
-/*                                                            */
-/*            Added Env prefix to GetHaltExecution and        */
-/*            SetHaltExecution functions.                     */
-/*                                                            */
-/*            Pragma once and other inclusion changes.        */
-/*                                                            */
+/*      6.32: Fixed instance redefinition crash with rules   */      
+/*            in JNSimpleCompareFunction1 when deleted       */
+/*            instance slots are referenced.                 */
+/*                                                           */
+/*      6.40: Added Env prefix to GetEvaluationError and     */
+/*            SetEvaluationError functions.                  */
+/*                                                           */
+/*            Added Env prefix to GetHaltExecution and       */
+/*            SetHaltExecution functions.                    */
+/*                                                           */
+/*            Pragma once and other inclusion changes.       */
+/*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
 /*            Removed use of void pointers for specific      */
@@ -59,7 +63,10 @@
 /*                                                           */
 /*            UDF redesign.                                  */
 /*                                                           */
-/**************************************************************/
+/*      6.41: Added Env prefix to GetEvaluationError and     */
+/*            SetEvaluationError functions.                  */
+/*                                                           */
+/*************************************************************/
 /* =========================================
    *****************************************
                EXTERNAL DEFINITIONS
@@ -99,7 +106,7 @@
    static void                    ReturnObjectMatchAction(Environment *,OBJECT_MATCH_ACTION *);
    static void                    ProcessObjectMatchQueue(Environment *);
    static void                    MarkObjectPatternNetwork(Environment *,SLOT_BITMAP *);
-   static bool                    CompareSlotBitMaps(SLOT_BITMAP *,SLOT_BITMAP *);
+   static bool                    CompareSlotBitMaps(const SLOT_BITMAP *,const SLOT_BITMAP *);
    static void                    ObjectPatternMatch(Environment *,size_t,size_t,OBJECT_PATTERN_NODE *,struct multifieldMarker *);
    static void                    ProcessPatternNode(Environment *,size_t,size_t,OBJECT_PATTERN_NODE *,struct multifieldMarker *);
    static void                    CreateObjectAlphaMatch(Environment *,OBJECT_ALPHA_NODE *);
@@ -719,7 +726,7 @@ static void MarkObjectPatternNetwork(
       else if (alphaPtr->slotbmp != NULL)
         {
          if (CompareSlotBitMaps(slotNameIDs,
-               (SLOT_BITMAP *) alphaPtr->slotbmp->contents))
+               (const SLOT_BITMAP *) alphaPtr->slotbmp->contents))
            {
             alphaPtr->matchTimeTag = ObjectReteData(theEnv)->CurrentObjectMatchTimeTag;
             for (upper = alphaPtr->patternNode;
@@ -751,8 +758,8 @@ static void MarkObjectPatternNetwork(
   NOTES        : None
  ***************************************************/
 static bool CompareSlotBitMaps(
-  SLOT_BITMAP *smap1,
-  SLOT_BITMAP *smap2)
+  const SLOT_BITMAP *smap1,
+  const SLOT_BITMAP *smap2)
   {
    unsigned short i, maxByte;
 
@@ -1030,7 +1037,12 @@ static void ProcessPatternNode(
       objectSlotLength = ObjectReteData(theEnv)->CurrentObjectSlotLength;
       objectSlot = ObjectReteData(theEnv)->CurrentPatternObjectSlot;
       newMark->range = 0;
-      repeatCount = objectSlotLength + 2 - newMark->startPosition - patternNode->leaveFields;
+      
+      if ((objectSlotLength + 2) < (newMark->startPosition + patternNode->leaveFields))
+        { repeatCount = 0; }
+      else
+        { repeatCount = objectSlotLength + 2 - newMark->startPosition - patternNode->leaveFields; }
+        
       while (repeatCount > 0)
         {
          if (patternNode->selector)
@@ -1211,7 +1223,7 @@ static bool EvaluateObjectPatternTest(
       EvaluationData(theEnv)->CurrentExpression = oldArgument;
       if (rv)
         {
-         if (((struct ObjectCmpPNConstant *)
+         if (((const struct ObjectCmpPNConstant *)
                  networkTest->bitMapValue->contents)->pass)
            patternNode->blocked = true;
          return true;
@@ -1387,7 +1399,7 @@ static void ObjectRetractAction(
          if (alphaPtr->slotbmp != NULL)
            {
            if (CompareSlotBitMaps(slotNameIDs,
-                  (SLOT_BITMAP *) alphaPtr->slotbmp->contents))
+                  (const SLOT_BITMAP *) alphaPtr->slotbmp->contents))
               {
                ins->busy--;
                if (prvMatch == NULL)
@@ -1431,6 +1443,13 @@ static void ObjectRetractAction(
          ins->patternHeader.dependents = saveDependents;
         }
      }
+     
+   if (ins->dataRemovalDeferred)
+     {
+      ins->dataRemovalDeferred = false;
+      RemoveInstanceData(theEnv,ins);
+     }
+     
    ins->reteSynchronized = true;
   }
 

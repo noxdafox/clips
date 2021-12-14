@@ -1108,5 +1108,514 @@ CLIPS> (clear) ; SourceForge Ticket #49
 CLIPS> (::)
 
 [EXPRNPSR7] Missing module name for '::'.
+CLIPS> (clear) ; SourceForge Ticket #54 Extraneous Module Specifier
+CLIPS> (defmodule EXTRANEOUS::COMPUTE)
+
+[PRNTUTIL2] Syntax Error:  Check appropriate syntax for module specifier.
+
+ERROR:
+(defmodule EXTRANEOUS::COMPUTE
+CLIPS> (deftemplate MAIN::EXTRANEOUS::point)
+
+[PRNTUTIL2] Syntax Error:  Check appropriate syntax for module specifier.
+
+ERROR:
+(deftemplate MAIN::EXTRANEOUS::point
+CLIPS> (deffacts MAIN::EXTRANEOUS::points)
+
+[PRNTUTIL2] Syntax Error:  Check appropriate syntax for module specifier.
+
+ERROR:
+(deffacts MAIN::EXTRANEOUS::points
+CLIPS> (defrule MAIN::EXTRANEOUS::find-point =>)
+
+[PRNTUTIL2] Syntax Error:  Check appropriate syntax for module specifier.
+
+ERROR:
+(defrule MAIN::EXTRANEOUS::find-point
+CLIPS> (defclass MAIN::EXTRANEOUS::POINT (is-a USER))
+
+[PRNTUTIL2] Syntax Error:  Check appropriate syntax for module specifier.
+
+ERROR:
+(defclass MAIN::EXTRANEOUS::POINT
+CLIPS> (defclass MAIN::POINT (is-a USER))
+CLIPS> (defmessage-handler MAIN::EXTRANEOUS::POINT add-points ())
+
+[PRNTUTIL2] Syntax Error:  Check appropriate syntax for module specifier.
+
+ERROR:
+(defmessage-handler MAIN::EXTRANEOUS::POINT
+CLIPS> (definstances MAIN::EXTRANEOUS::points)
+
+[PRNTUTIL2] Syntax Error:  Check appropriate syntax for module specifier.
+
+ERROR:
+(definstances MAIN::EXTRANEOUS::points
+CLIPS> (deffunction MAIN::EXTRANEOUS::add-point (?x ?y))
+
+[PRNTUTIL2] Syntax Error:  Check appropriate syntax for module specifier.
+
+ERROR:
+(deffunction MAIN::EXTRANEOUS::add-point
+CLIPS> (defgeneric MAIN::EXTRANEOUS::add-point)
+
+[PRNTUTIL2] Syntax Error:  Check appropriate syntax for module specifier.
+
+ERROR:
+(defgeneric MAIN::EXTRANEOUS::add-point
+CLIPS> (defmethod MAIN::EXTRANEOUS::add-point ((?x FLOAT) (?y FLOAT)))
+
+[PRNTUTIL2] Syntax Error:  Check appropriate syntax for module specifier.
+
+ERROR:
+(defmethod MAIN::EXTRANEOUS::add-point
+CLIPS> (clear) ; bsave-instances external-address issue
+CLIPS> 
+(defclass EXPERIMENT 
+   (is-a USER)
+   (slot fa (type FACT-ADDRESS))
+   (slot ia (type INSTANCE-ADDRESS))
+   (slot ea (type EXTERNAL-ADDRESS)))
+CLIPS>    
+(make-instance e1 of EXPERIMENT
+   (fa (assert (b)))
+   (ia (instance-address(make-instance e2 of EXPERIMENT))))
+[e1]
+CLIPS> (bsave-instances "Temp//experiment.bins")
+2
+CLIPS> (reset)
+CLIPS> (bload-instances "Temp//experiment.bins")
+2
+CLIPS> (send [e1] print)
+[e1] of EXPERIMENT
+(fa <Dummy Fact>)
+(ia [e2])
+(ea <Pointer-C-0x0>)
+CLIPS> (send [e2] print)
+[e2] of EXPERIMENT
+(fa <Dummy Fact>)
+(ia [Dummy Instance])
+(ea <Pointer-C-0x0>)
+CLIPS> (clear) ; Local variables cannot be accessed bug
+CLIPS> 
+(deftemplate hello
+  (slot self (type FACT-ADDRESS)))
+CLIPS>   
+(deffacts hellos
+   (hello))
+CLIPS> (clear) ; SourceForge Ticket #56
+CLIPS> 
+(deftemplate maze
+   (multislot open-list)
+   (slot goal))
+CLIPS> 
+(defrule test-1
+   (maze (open-list)
+         (goal ?g&nil))
+   =>)
+CLIPS> 
+(defrule test-2
+   (maze (open-list) 
+         (goal ?g&:(eq ?g nil)))
+   =>)
+CLIPS> 
+(defrule test-3
+   (maze (open-list) 
+         (goal ~nil))
+   =>)
+CLIPS> (clear) ; SourceForge Ticket #58
+CLIPS> 
+(defclass FOO (is-a USER)
+  (slot ins (type INSTANCE-ADDRESS)))
+CLIPS> (make-instance [foo] of FOO)
+[foo]
+CLIPS> (timetag (send [foo] get-ins))
+[PRNTUTIL1] Unable to find instance <Dummy Instance>.
+-1
+CLIPS> 
+(deftemplate foo
+  (slot fct (type FACT-ADDRESS)))
+CLIPS> (assert (foo))   
+<Fact-1>
+CLIPS> (timetag (fact-slot-value 1 fct))
+[PRNTUTIL1] Unable to find fact <Dummy Fact>.
+-1
+CLIPS> (clear) ; 2 variable comparison from right memory
+CLIPS> 
+(deftemplate manifest
+   (slot origin)
+   (slot destination)) 
+CLIPS> 
+(deftemplate shipzone
+    (slot zonename)
+    (multislot cities)
+    (slot city1)
+    (slot city2))
+CLIPS> 
+(deffacts fact-data
+    (manifest (origin CHI) (destination WAS)) 
+    (manifest (origin HOU) (destination ATL)) 
+    (shipzone (cities CHI WAS BOS) (city1 CHI) (city2 WAS))
+    (shipzone (cities BOS HOU ATL)))
+CLIPS> 
+(defclass MANIFEST
+   (is-a USER)
+   (slot origin)
+   (slot destination)) 
+CLIPS> 
+(defclass SHIPZONE
+   (is-a USER)
+   (slot zonename)
+   (multislot cities)
+   (slot city1)
+   (slot city2))
+CLIPS> 
+(definstances instance-data
+    (m1 of MANIFEST (origin CHI) (destination WAS)) 
+    (m2 of MANIFEST (origin HOU) (destination ATL)) 
+    (s1 of SHIPZONE (cities CHI WAS BOS) (city1 CHI) (city2 WAS))
+    (s2 of SHIPZONE (cities BOS HOU ATL)))
+CLIPS> 
+(defrule city-group-f1
+    (manifest (origin ?x1) (destination ?x2))
+    (shipzone (city1 ?x3&?x1|?x2) (city2 ~?x3&?x1|?x2))
+    =>)
+CLIPS> 
+(defrule city-group-f2
+    (manifest (origin ?x1) (destination ?x2))
+    (shipzone (cities $? ?x3&?x1|?x2 ~?x3&?x1|?x2))
+    =>)
+CLIPS> 
+(defrule city-group-f3
+    (manifest (origin ?x1) (destination ?x2))
+    (shipzone (cities $? ?x3&?x1|?x2 ~?x3&?x1|?x2 $?))
+    =>)
+CLIPS> 
+(defrule city-group-f4
+    (manifest (origin ?x1) (destination ?x2))
+    (shipzone (cities $? ?x3&?x1|?x2 $?) (city1 ~?x3&?x1|?x2))
+    =>)
+CLIPS> 
+(defrule city-group-i1
+    (object (is-a MANIFEST) (origin ?x1) (destination ?x2))
+    (object (is-a SHIPZONE) (city1 ?x3&?x1|?x2) (city2 ~?x3&?x1|?x2))
+    =>)
+CLIPS>     
+(defrule city-group-i2 
+    (object (is-a MANIFEST) (origin ?x1) (destination ?x2))
+    (object (is-a SHIPZONE) (cities $? ?x3&?x1|?x2 ~?x3&?x1|?x2))
+    =>)
+CLIPS> 
+(defrule city-group-i3
+    (object (is-a MANIFEST) (origin ?x1) (destination ?x2))
+    (object (is-a SHIPZONE) (cities $? ?x3&?x1|?x2 ~?x3&?x1|?x2 $?))
+    =>)
+CLIPS>     
+(defrule city-group-i4 
+    (object (is-a MANIFEST) (origin ?x1) (destination ?x2))
+    (object (is-a SHIPZONE) (cities $? ?x3&?x1|?x2 $?) (city1 ~?x3&?x1|?x2))
+    =>)
+CLIPS> (reset)
+CLIPS> (agenda)
+0      city-group-f2: f-2,f-4
+0      city-group-f3: f-2,f-4
+0      city-group-f1: f-1,f-3
+0      city-group-f3: f-1,f-3
+0      city-group-f4: f-1,f-3
+0      city-group-i3: [m2],[s2]
+0      city-group-i2: [m2],[s2]
+0      city-group-i1: [m1],[s1]
+0      city-group-i4: [m1],[s1]
+0      city-group-i3: [m1],[s1]
+For a total of 10 activations.
+CLIPS> (clear) ; Error line count issue
+CLIPS> (load line_error_crlf.clp)
+%$
+[TMPLTDEF1] line_error_crlf.clp, Line 7: Invalid slot 'z' not defined in corresponding deftemplate 'point'.
+
+ERROR:
+(deffacts MAIN::points
+   (point (x 1) (y 2))
+   (point (x 3) (y 4) (z
+
+FALSE
+CLIPS> (clear)
+CLIPS> (load line_error_lf.clp)
+%$
+[TMPLTDEF1] line_error_lf.clp, Line 7: Invalid slot 'z' not defined in corresponding deftemplate 'point'.
+
+ERROR:
+(deffacts MAIN::points
+   (point (x 1) (y 2))
+   (point (x 3) (y 4) (z
+
+FALSE
+CLIPS> (clear) ; CLIPSESG https://groups.google.com/forum/#!topic/CLIPSESG/j4fmacgmAZY
+CLIPS> 
+(deftemplate example
+   (slot value
+      (type SYMBOL)
+      (allowed-symbols FALSE TRUE)))
+CLIPS> 
+(defrule attempt-to-construct-example
+   ?f <- (line ?line)
+   =>
+   (retract ?f)
+   (assert (example (value (eq ?line "")))))
+CLIPS> (clear) ; CLIPSESG https://groups.google.com/forum/#!topic/CLIPSESG/YaNnNF1xg5w
+CLIPS> 
+(defclass OAV
+   (is-a USER)
+   (slot object)
+   (slot attribute)
+   (multislot values))
+CLIPS> 
+(make-instance oav1 of OAV
+   (object Fred)
+   (attribute hobbies)
+   (values reading hiking chess))
+[oav1]
+CLIPS> (bsave-instances "Temp//drins.bin")
+1
+CLIPS> (reset)
+CLIPS> (bload-instances "Temp//drins.bin")
+1
+CLIPS> (send [oav1] print)
+[oav1] of OAV
+(object Fred)
+(attribute hobbies)
+(values reading hiking chess)
+CLIPS> (clear) ; Object pattern matching underflow
+CLIPS> 
+(deftemplate range
+   (slot start)
+   (slot finish))
+CLIPS>              
+(deftemplate sequence
+   (multislot elements))
+CLIPS> (defclass container
+   (is-a USER)
+   (multislot contents))
+CLIPS> 
+(deffacts defranges
+   (range (start 2) (finish 11))
+   (range (start 12) (finish 19)))
+CLIPS>           
+(deffacts defsequences
+   (sequence (elements 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19)))
+CLIPS> 
+(definstances containers
+   (of container 
+      (contents 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19))
+   (of container
+      (contents)))
+CLIPS> 
+(defrule eliminate-entire-range
+   (range (start ?start) 
+          (finish ?finish))
+   (sequence (elements ?start $? ?finish))
+   (object (is-a container)
+           (contents $?before ?start $? ?finish $?after)
+           (name ?name))
+   =>
+   (modify-instance ?name
+      (contents $?before 
+      $?after)))
+CLIPS> (reset)
+CLIPS> (run)
+CLIPS> (clear) ; SourceForge Ticket #61
+CLIPS> (defclass FOO (is-a USER))
+CLIPS> (deftemplate FOO)
+CLIPS> 
+(deffunction test1()
+  (bind ?ins (make-instance of FOO))
+  (delayed-do-for-all-instances ((?f FOO)) TRUE
+    (str-cat "abc" "def")))
+CLIPS> 
+(deffunction test2()
+  (assert(FOO))
+  (delayed-do-for-all-facts ((?f FOO)) TRUE
+    (str-cat "uvw" "xyz")))
+CLIPS> 
+(deffunction test3()
+  (bind ?ins (make-instance of FOO))
+  (do-for-all-instances ((?f FOO)) TRUE
+    (str-cat "abc" "def")))
+CLIPS> 
+(deffunction test4()
+  (assert(FOO))
+  (do-for-all-facts ((?f FOO)) TRUE
+    (str-cat "uvw" "xyz")))
+CLIPS> (test1)
+"abcdef"
+CLIPS> (test2)
+"uvwxyz"
+CLIPS> (test3)
+"abcdef"
+CLIPS> (test4)
+"uvwxyz"
+CLIPS> (clear) ; SourceForge Ticket #64
+CLIPS> 
+(deftemplate adrs
+   (slot ia (type INSTANCE-ADDRESS))
+   (slot fa (type FACT-ADDRESS))
+   (slot ea (type EXTERNAL-ADDRESS)))
+CLIPS> 
+(defclass ADRS (is-a USER)
+   (slot ia (type INSTANCE-ADDRESS))
+   (slot fa (type FACT-ADDRESS))
+   (slot ea (type EXTERNAL-ADDRESS)))
+CLIPS> 
+(deffacts start
+   (adrs))
+CLIPS>    
+(definstances start
+   ([adrs] of ADRS))
+CLIPS> (bsave "Temp//ea1.bin")
+[CSTRNBIN1] WARNING: Constraints are not saved with a binary image
+  when dynamic constraint checking is disabled.
+TRUE
+CLIPS> (set-dynamic-constraint-checking TRUE)
+FALSE
+CLIPS> (bsave "Temp//ea2.bin")
+TRUE
+CLIPS> (clear)
+CLIPS> (bload "Temp//ea1.bin")
+TRUE
+CLIPS> (assert (adrs))
+<Fact-1>
+CLIPS> (make-instance [adrs] of ADRS)
+[adrs]
+CLIPS> (ppfact 1)
+(adrs 
+   (ia nil) 
+   (fa nil) 
+   (ea nil))
+CLIPS> (send [adrs] print)
+[adrs] of ADRS
+(ia <Dummy Instance>)
+(fa <Dummy Fact>)
+(ea <Pointer-C-0x0>)
+CLIPS> (reset)
+CLIPS> (ppfact 1)
+(adrs 
+   (ia <Dummy Instance>) 
+   (fa <Dummy Fact>) 
+   (ea <Pointer-C-0x0>))
+CLIPS> (send [adrs] print)
+[adrs] of ADRS
+(ia <Dummy Instance>)
+(fa <Dummy Fact>)
+(ea <Pointer-C-0x0>)
+CLIPS> (clear)
+CLIPS> (bload "Temp//ea2.bin")
+TRUE
+CLIPS> (assert (adrs))
+<Fact-1>
+CLIPS> (make-instance [adrs] of ADRS)
+[adrs]
+CLIPS> (ppfact 1)
+(adrs 
+   (ia <Dummy Instance>) 
+   (fa <Dummy Fact>) 
+   (ea <Pointer-C-0x0>))
+CLIPS> (send [adrs] print)
+[adrs] of ADRS
+(ia <Dummy Instance>)
+(fa <Dummy Fact>)
+(ea <Pointer-C-0x0>)
+CLIPS> (reset)
+CLIPS> (ppfact 1)
+(adrs 
+   (ia <Dummy Instance>) 
+   (fa <Dummy Fact>) 
+   (ea <Pointer-C-0x0>))
+CLIPS> (send [adrs] print)
+[adrs] of ADRS
+(ia <Dummy Instance>)
+(fa <Dummy Fact>)
+(ea <Pointer-C-0x0>)
+CLIPS> (set-dynamic-constraint-checking FALSE)
+TRUE
+CLIPS> (clear) ; SourceForge Ticket #65
+CLIPS> (ppdefclass undefined nil)
+[PRNTUTIL1] Unable to find defclass 'undefined'.
+""
+CLIPS> (ppdeftemplate undefined nil)
+[PRNTUTIL1] Unable to find deftemplate 'undefined'.
+""
+CLIPS> (ppdefrule undefined nil)
+[PRNTUTIL1] Unable to find defrule 'undefined'.
+""
+CLIPS> (ppdeffacts undefined nil)
+[PRNTUTIL1] Unable to find deffacts 'undefined'.
+""
+CLIPS> (ppdefinstances undefined nil)
+[PRNTUTIL1] Unable to find definstances 'undefined'.
+""
+CLIPS> (ppdeffunction undefined nil)
+[PRNTUTIL1] Unable to find deffunction 'undefined'.
+""
+CLIPS> (ppdefgeneric undefined nil)
+[PRNTUTIL1] Unable to find defgeneric 'undefined'.
+""
+CLIPS> (ppdefglobal undefined nil)
+[PRNTUTIL1] Unable to find defglobal 'undefined'.
+""
+CLIPS> (clear)
+CLIPS> (defglobal ?*x* = (create$ 1 2 3 4))
+CLIPS> (defglobal ?*y* = (subseq$ ?*x* 2 3))
+CLIPS> (defglobal ?*z* = (subseq$ (create$ 1 2 3 4) 2 3))
+CLIPS> ?*x*
+(1 2 3 4)
+CLIPS> ?*y*
+(2 3)
+CLIPS> ?*z*
+(2 3)
+CLIPS> (clear) ; SourceForge Ticket #66
+CLIPS> 
+(defclass FOO 
+   (is-a USER)
+   (slot next (allowed-classes FOO) (default (make-instance [old] of FOO))))
+[PRNTUTIL1] Unable to find class 'FOO'.
+
+ERROR:
+(defclass MAIN::FOO
+   (is-a USER)
+   (slot next
+      (allowed-classes FOO)
+      (default (make-instance [old] of FOO
+CLIPS> (clear)
+CLIPS> (defclass FOO (is-a USER))
+CLIPS> 
+(defclass FOO 
+   (is-a USER)
+   (slot next (allowed-classes FOO) (default (make-instance [old] of FOO))))
+[INSMNGR17] Cannot reference class 'FOO' while it's being redefined.
+
+ERROR:
+(defclass MAIN::FOO
+   (is-a USER)
+   (slot next
+      (allowed-classes FOO)
+      (default (make-instance [old] of FOO
+CLIPS> (clear) ; CLIPSESG Issue 
+CLIPS> (defclass E (is-a USER) (slot se))
+CLIPS> (defclass F (is-a USER) (slot sf))
+CLIPS> (defclass G (is-a USER) (slot sg))
+CLIPS> 
+(defrule fail-fail-fail-fail
+  (object (is-a E) (se ?x))
+  (exists (and (exists (and (object (is-a F) (sf ?x))
+                            (object (is-a G) (sg ?x))))
+               (test (!= 2 2))))
+=>)
+CLIPS> (make-instance e1 of E (se 1))
+[e1]
+CLIPS> (make-instance e2 of E (se 2))
+[e2]
+CLIPS> (make-instance e1 of E (se 1))
+[e1]
 CLIPS> (clear)
 CLIPS> (dribble-off)

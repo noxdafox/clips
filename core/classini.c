@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/02/18             */
+   /*            CLIPS Version 6.40  04/03/19             */
    /*                                                     */
    /*               CLASS INITIALIZATION MODULE           */
    /*******************************************************/
@@ -43,6 +43,9 @@
 /*                                                            */
 /*      6.31: Optimization of slot ID creation previously    */
 /*            provided by NewSlotNameID function.            */
+/*                                                           */
+/*            Changed allocation of multifield slot default  */
+/*            from ephemeral to explicit deallocation.       */
 /*                                                           */
 /*      6.40: Pragma once and other inclusion changes.        */
 /*                                                            */
@@ -304,7 +307,10 @@ static void DeallocateDefclassData(
              {
               if ((cls->slots[i].defaultValue != NULL) && (cls->slots[i].dynamicDefault == 0))
                 {
-                 tmpexp = ((UDFValue *) cls->slots[i].defaultValue)->supplementalInfo;
+                 UDFValue *theValue = (UDFValue *) cls->slots[i].defaultValue;
+                 tmpexp = theValue->supplementalInfo;
+                 if (theValue->header->type == MULTIFIELD_TYPE)
+                   { ReturnMultifield(theEnv,theValue->multifieldValue); }
                  rtn_struct(theEnv,udfValue,cls->slots[i].defaultValue);
                  cls->slots[i].defaultValue = tmpexp;
                 }
@@ -378,8 +384,11 @@ void ObjectsRunTimeInitialize(
                  ===================================================================== */
               if ((cls->slots[i].defaultValue != NULL) && (cls->slots[i].dynamicDefault == 0))
                 {
-                 tmpexp = ((UDFValue *) cls->slots[i].defaultValue)->supplementalInfo;
-                 ReleaseUDFV(theEnv,(UDFValue *) cls->slots[i].defaultValue);
+                 UDFValue *theValue = (UDFValue *) cls->slots[i].defaultValue;
+                 tmpexp = theValue->supplementalInfo;
+                 ReleaseUDFV(theEnv,theValue);
+                 if (theValue->header->type == MULTIFIELD_TYPE)
+                   { ReturnMultifield(theEnv,theValue->multifieldValue); }
                  rtn_struct(theEnv,udfValue,cls->slots[i].defaultValue);
                  cls->slots[i].defaultValue = tmpexp;
                 }
@@ -432,7 +441,7 @@ void ObjectsRunTimeInitialize(
             tmpexp = cls->slots[i].defaultValue;
             cls->slots[i].defaultValue = get_struct(theEnv,udfValue);
             EvaluateAndStoreInDataObject(theEnv,cls->slots[i].multiple,(Expression *) tmpexp,
-                                         (UDFValue *) cls->slots[i].defaultValue,true);
+                                         (UDFValue *) cls->slots[i].defaultValue,false);
             RetainUDFV(theEnv,(UDFValue *) cls->slots[i].defaultValue);
             ((UDFValue *) cls->slots[i].defaultValue)->supplementalInfo = tmpexp;
            }

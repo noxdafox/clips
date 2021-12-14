@@ -1,0 +1,117 @@
+TRUE
+CLIPS> (batch "drtest11.bat")
+TRUE
+CLIPS> (clear)                   ; Optimized Rete Evaluator Issue
+CLIPS> 
+(defrule rule-1
+   (factoid ?x ?y&:(and ?x ?y)) ; FactPNGetVar3
+   =>)
+CLIPS> 
+(defrule rule-2
+   (factoid ?x ?y)
+   (test (and ?x ?y)) ; FactJNGetVar3
+   =>)
+CLIPS> 
+(defrule rule-3
+   (factoid $? ?x ?y&:(and ?x ?y) $?) ; FactPNGetVar1
+   =>)
+CLIPS> 
+(defrule rule-4
+   (factoid $? ?x ?y $?)
+   (test (and ?x ?y)) ; FactJNGetVar1
+   =>)
+CLIPS> (defglobal ?*z* = FALSE)
+CLIPS> 
+(defrule rule-5
+   (factoid ? ?)
+   (test (and ?*z* ?*z*))
+   =>)
+CLIPS> (assert (factoid FALSE FALSE))
+<Fact-1>
+CLIPS> (agenda)
+CLIPS> (assert (factoid "FALSE" "FALSE"))
+<Fact-2>
+CLIPS> (agenda)
+0      rule-1: f-2
+0      rule-2: f-2
+0      rule-3: f-2
+0      rule-4: f-2
+For a total of 4 activations.
+CLIPS> (clear)
+CLIPS> 
+(deftemplate factoid
+   (slot s1)
+   (slot s2))
+CLIPS> 
+(defrule rule-1
+   (factoid (s1 ?x) (s2 ?y&:(and ?x ?y))) ; FactPNGetVar2
+   =>)
+CLIPS> 
+(defrule rule-2
+   (factoid (s1 ?x) (s2 ?y))
+   (test (and ?x ?y)) ; FactJNGetVar2
+   =>)
+CLIPS> (assert (factoid (s1 FALSE) (s2 FALSE)))
+<Fact-1>
+CLIPS> (agenda)
+CLIPS> (assert (factoid (s1 "FALSE") (s2 "FALSE")))
+<Fact-2>
+CLIPS> (agenda)
+0      rule-1: f-2
+0      rule-2: f-2
+For a total of 2 activations.
+CLIPS> (clear)
+CLIPS> 
+(defclass OBJOID1
+   (is-a USER)
+   (slot s1)
+   (slot s2))
+CLIPS> 
+(defclass OBJOID2
+   (is-a USER)
+   (multislot ms1))
+CLIPS> 
+(defrule rule-1
+   (object 
+      (is-a OBJOID1)
+      (s1 ?x)
+      (s2 ?y&:(and ?x ?y))) ; ObjectGetVarPNFunction1
+   =>)
+CLIPS> 
+(defrule rule-2
+   (object 
+      (is-a OBJOID1)
+      (s1 ?x)
+      (s2 ?y))
+   (test (and ?x ?y)) ; ObjectGetVarJNFunction1
+   =>)
+CLIPS> 
+(defrule rule-3
+   (object 
+      (is-a OBJOID2)
+      (ms1 $? ?x ?y&:(and ?x ?y))) ; ObjectGetVarPNFunction2
+   =>)
+CLIPS>    
+(defrule rule-4
+   (object 
+      (is-a OBJOID2)
+      (ms1 $? ?x ?y))
+   (test (and ?x ?y)) ; ObjectGetVarJNFunction2
+   =>)
+CLIPS> (make-instance o1 of OBJOID1 (s1 FALSE) (s2 FALSE))
+[o1]
+CLIPS> (make-instance o2 of OBJOID2 (ms1 FALSE FALSE))
+[o2]
+CLIPS> (agenda)
+CLIPS> (make-instance o3 of OBJOID1 (s1 "FALSE") (s2 "FALSE"))
+[o3]
+CLIPS> (make-instance o4 of OBJOID2 (ms1 "FALSE" "FALSE"))
+[o4]
+CLIPS> (agenda)
+0      rule-3: [o4]
+0      rule-4: [o4]
+0      rule-1: [o3]
+0      rule-2: [o3]
+For a total of 4 activations.
+CLIPS> (clear)
+CLIPS> (dribble-off)

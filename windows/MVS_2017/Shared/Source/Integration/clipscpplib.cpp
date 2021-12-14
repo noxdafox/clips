@@ -16,7 +16,7 @@ using std::string;
 #include "constant.h"
 #include "entities.h"
 #include "router.h"
-#include "classexm.h "
+#include "classexm.h"
 #include "classfun.h"
 #include "classinf.h"
 #include "classpsr.h"
@@ -488,6 +488,9 @@ static void ConvertToCLIPSValue(
    {
     switch (theDO.GetCLIPSType())
       {
+       case CPP_UNKNOWN_TYPE:
+         break;
+         
        case CPP_VOID_TYPE:
        case CPP_SYMBOL_TYPE:
        case CPP_STRING_TYPE:
@@ -586,6 +589,10 @@ static void ConvertSingleFieldToCLIPSValue(
        case CPP_EXTERNAL_ADDRESS_TYPE:
          // TBD
          break;
+         
+       case CPP_MULTIFIELD_TYPE:
+       case CPP_UNKNOWN_TYPE:
+         break;
       }
 #else
     switch (theValue->GetCLIPSType())
@@ -645,6 +652,10 @@ static void ConvertSingleFieldToCLIPSValue(
 
        case CPP_EXTERNAL_ADDRESS_TYPE:
          // TBD
+         break;
+
+       case CPP_MULTIFIELD_TYPE:
+       case CPP_UNKNOWN_TYPE:
          break;
       }
 #endif
@@ -1778,11 +1789,6 @@ FloatValue *FloatValue::clone() const
 FactAddressValue::FactAddressValue(
   Fact *theFact) : theFactAddress(theFact)
   {
-#ifndef CLIPS_DLL_WRAPPER
-   RetainFact(theFact);
-#else
-   __RetainFact(theFact);
-#endif
   }
 
 /********************/
@@ -1797,6 +1803,25 @@ FactAddressValue::FactAddressValue( const FactAddressValue& v) : theFactAddress(
 /* ~FactAddressValue */
 /*********************/
 FactAddressValue::~FactAddressValue()
+  {   
+  }
+
+/**********/
+/* Retain */
+/**********/
+void FactAddressValue::Retain()
+  {
+#ifndef CLIPS_DLL_WRAPPER
+   RetainFact(theFactAddress);
+#else
+   __RetainFact(theFactAddress);
+#endif
+  }
+
+/***********/
+/* Release */
+/***********/
+void FactAddressValue::Release()
   {   
 #ifndef CLIPS_DLL_WRAPPER
    ::ReleaseFact(theFactAddress);
@@ -1821,23 +1846,8 @@ FactAddressValue& FactAddressValue::operator = (
   {
    if (this == &v) return *this;
 
-   if (theFactAddress != NULL)
-     { 
-#ifndef CLIPS_DLL_WRAPPER
-      ::ReleaseFact(theFactAddress);
-#else
-      __ReleaseFact(theFactAddress);
-#endif
-     }
-        
    theFactAddress = v.theFactAddress;
-     
-#ifndef CLIPS_DLL_WRAPPER
-   RetainFact(theFactAddress);
-#else
-   __RetainFact(theFactAddress);
-#endif
-   
+        
    return *this;
   }
 
@@ -1851,7 +1861,6 @@ long long FactAddressValue::GetFactIndex() const
 #else
    return __FactIndex(theFactAddress);
 #endif
-
   }
 
 /*********/
@@ -1910,11 +1919,6 @@ Fact *FactAddressValue::GetFactAddressValue()
 InstanceAddressValue::InstanceAddressValue(
   Instance *theInstance) : theInstanceAddress(theInstance)
   {
-#ifndef CLIPS_DLL_WRAPPER
-   RetainInstance(theInstance);
-#else
-   __RetainInstance(theInstance);
-#endif
   }
 
 /************************/
@@ -1929,6 +1933,25 @@ InstanceAddressValue::InstanceAddressValue( const InstanceAddressValue& v) : the
 /* ~InstanceAddressValue */
 /*************************/
 InstanceAddressValue::~InstanceAddressValue()
+  {   
+  }
+
+/**********/
+/* Retain */
+/**********/
+void InstanceAddressValue::Retain()
+  {
+#ifndef CLIPS_DLL_WRAPPER
+   RetainInstance(theInstanceAddress);
+#else
+   __RetainInstance(theInstanceAddress);
+#endif
+  }
+
+/***********/
+/* Release */
+/***********/
+void InstanceAddressValue::Release()
   {   
 #ifndef CLIPS_DLL_WRAPPER
    ::ReleaseInstance(theInstanceAddress);
@@ -2897,7 +2920,7 @@ std::string *CLIPSCPPSlotValue::GetSlotValue() // TBD Return string not pointer 
 /* GetFactScopes */
 /*****************/
 void CLIPSCPPEnv::GetFactScopes(
-  std::unordered_map<unsigned long long,vector<bool>>& scopes)
+  std::unordered_map<unsigned long long,vector<bool> >& scopes)
   {
    Defmodule *theModule;
    size_t moduleCount = 0, whichBit;
@@ -3135,7 +3158,7 @@ vector<CLIPSCPPFactInstance> *CLIPSCPPEnv::GetFactList()
 /* GetInstanceScopes */
 /*********************/
 void CLIPSCPPEnv::GetInstanceScopes(
-  std::unordered_map<unsigned long long,vector<bool>>& scopes)
+  std::unordered_map<unsigned long long,vector<bool> >& scopes)
   {
    Defmodule *theModule;
    size_t moduleCount = 0, whichBit;
@@ -3374,7 +3397,7 @@ DataObject CLIPSCPPUserFunction::Evaluate(
   CLIPSCPPEnv *theEnv,
   std::vector<DataObject> arguments)
   {
-   return DataObject(&VoidValue());
+   return DataObject(new VoidValue());
   }
 
 /*******************/
@@ -3384,7 +3407,7 @@ bool CLIPSCPPEnv::AddUserFunction(
   char *functionName,
   CLIPSCPPUserFunction *udf)
   {
-   return AddUserFunction(functionName,"*",0,UNBOUNDED,NULL,udf);
+   return AddUserFunction(functionName,(char *) "*",0,UNBOUNDED,NULL,udf);
   }
 
 /*******************/

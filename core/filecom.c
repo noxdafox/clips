@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  10/24/17            */
+   /*             CLIPS Version 6.40  02/03/21            */
    /*                                                     */
    /*                 FILE COMMANDS MODULE                */
    /*******************************************************/
@@ -148,8 +148,8 @@ static void DeallocateFileCommandData(
       else
         { rm(theEnv,(void *) theEntry->theString,strlen(theEntry->theString) + 1); }
 
-      DeleteString(theEnv,(char *) theEntry->fileName);
-      DeleteString(theEnv,(char *) theEntry->logicalSource);
+      DeleteString(theEnv,theEntry->fileName);
+      DeleteString(theEnv,theEntry->logicalSource);
       rtn_struct(theEnv,batchEntry,theEntry);
 
       theEntry = nextEntry;

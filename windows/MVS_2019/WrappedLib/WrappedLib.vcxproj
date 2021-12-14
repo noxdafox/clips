@@ -1,0 +1,509 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\Shared\Source\CLIPS\agenda.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\analysis.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\argacces.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\bload.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\bmathfun.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\bsave.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\classcom.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\classexm.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\classfun.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\classinf.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\classini.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\classpsr.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\clsltpsr.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\commline.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\conscomp.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\constrct.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\constrnt.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\crstrtgy.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\cstrcbin.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\cstrccom.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\cstrcpsr.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\cstrnbin.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\cstrnchk.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\cstrncmp.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\cstrnops.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\cstrnpsr.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\cstrnutl.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\default.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\defins.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\developr.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\dffctbin.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\dffctbsc.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\dffctcmp.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\dffctdef.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\dffctpsr.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\dffnxbin.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\dffnxcmp.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\dffnxexe.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\dffnxfun.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\dffnxpsr.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\dfinsbin.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\dfinscmp.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\drive.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\emathfun.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\engine.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\envrnbld.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\envrnmnt.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\evaluatn.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\expressn.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\exprnbin.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\exprnops.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\exprnpsr.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\extnfunc.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\factbin.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\factbld.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\factcmp.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\factcom.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\factfile.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\factfun.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\factgen.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\facthsh.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\factlhs.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\factmch.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\factmngr.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\factprt.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\factqpsr.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\factqury.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\factrete.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\factrhs.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\filecom.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\filertr.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\fileutil.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\generate.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\genrcbin.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\genrccmp.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\genrccom.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\genrcexe.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\genrcfun.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\genrcpsr.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\globlbin.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\globlbsc.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\globlcmp.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\globlcom.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\globldef.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\globlpsr.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\immthpsr.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\incrrset.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\inherpsr.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\inscom.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\insfile.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\insfun.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\insmngr.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\insmoddp.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\insmult.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\inspsr.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\insquery.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\insqypsr.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\iofun.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\lgcldpnd.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\memalloc.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\miscfun.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\modulbin.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\modulbsc.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\modulcmp.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\moduldef.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\modulpsr.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\modulutl.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\msgcom.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\msgfun.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\msgpass.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\msgpsr.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\multifld.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\multifun.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\objbin.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\objcmp.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\objrtbin.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\objrtbld.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\objrtcmp.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\objrtfnx.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\objrtgen.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\objrtmch.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\parsefun.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\pattern.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\pprint.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\prccode.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\prcdrfun.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\prcdrpsr.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\prdctfun.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\prntutil.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\proflfun.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\reorder.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\reteutil.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\retract.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\router.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\rulebin.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\rulebld.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\rulebsc.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\rulecmp.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\rulecom.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\rulecstr.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\ruledef.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\ruledlt.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\rulelhs.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\rulepsr.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\scanner.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\sortfun.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\strngfun.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\strngrtr.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\symblbin.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\symblcmp.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\symbol.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\sysdep.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\textpro.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\tmpltbin.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\tmpltbsc.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\tmpltcmp.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\tmpltdef.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\tmpltfun.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\tmpltlhs.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\tmpltpsr.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\tmpltrhs.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\tmpltutl.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\userdata.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\userfunctions.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\utility.c" />
+    <ClCompile Include="..\Shared\Source\CLIPS\watch.c" />
+    <ClCompile Include="..\Shared\Source\Integration\clipscpplib.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\Shared\Source\CLIPS\agenda.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\analysis.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\argacces.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\bload.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\bmathfun.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\bsave.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\classcom.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\classexm.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\classfun.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\classinf.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\classini.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\classpsr.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\clips.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\clsltpsr.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\commline.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\conscomp.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\constant.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\constrct.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\constrnt.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\crstrtgy.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\cstrcbin.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\cstrccmp.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\cstrccom.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\cstrcpsr.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\cstrnbin.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\cstrnchk.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\cstrncmp.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\cstrnops.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\cstrnpsr.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\cstrnutl.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\default.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\defins.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\developr.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\dffctbin.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\dffctbsc.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\dffctcmp.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\dffctdef.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\dffctpsr.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\dffnxbin.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\dffnxcmp.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\dffnxexe.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\dffnxfun.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\dffnxpsr.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\dfinsbin.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\dfinscmp.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\drive.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\emathfun.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\engine.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\entities.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\envrnbld.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\envrnmnt.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\evaluatn.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\expressn.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\exprnbin.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\exprnops.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\exprnpsr.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\extnfunc.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\factbin.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\factbld.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\factcmp.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\factcom.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\factfile.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\factfun.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\factgen.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\facthsh.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\factlhs.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\factmch.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\factmngr.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\factprt.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\factqpsr.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\factqury.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\factrete.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\factrhs.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\filecom.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\filertr.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\fileutil.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\generate.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\genrcbin.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\genrccmp.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\genrccom.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\genrcexe.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\genrcfun.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\genrcpsr.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\globlbin.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\globlbsc.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\globlcmp.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\globlcom.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\globldef.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\globlpsr.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\immthpsr.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\incrrset.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\inherpsr.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\inscom.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\insfile.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\insfun.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\insmngr.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\insmoddp.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\insmult.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\inspsr.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\insquery.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\insqypsr.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\iofun.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\lgcldpnd.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\match.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\memalloc.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\miscfun.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\modulbin.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\modulbsc.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\modulcmp.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\moduldef.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\modulpsr.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\modulutl.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\msgcom.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\msgfun.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\msgpass.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\msgpsr.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\multifld.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\multifun.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\network.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\objbin.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\objcmp.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\object.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\objrtbin.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\objrtbld.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\objrtcmp.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\objrtfnx.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\objrtgen.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\objrtmch.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\parsefun.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\pattern.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\pprint.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\prccode.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\prcdrfun.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\prcdrpsr.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\prdctfun.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\prntutil.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\proflfun.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\reorder.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\reteutil.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\retract.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\router.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\rulebin.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\rulebld.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\rulebsc.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\rulecmp.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\rulecom.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\rulecstr.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\ruledef.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\ruledlt.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\rulelhs.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\rulepsr.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\scanner.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\setup.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\sortfun.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\strngfun.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\strngrtr.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\symblbin.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\symblcmp.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\symbol.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\sysdep.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\textpro.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\tmpltbin.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\tmpltbsc.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\tmpltcmp.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\tmpltdef.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\tmpltfun.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\tmpltlhs.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\tmpltpsr.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\tmpltrhs.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\tmpltutl.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\userdata.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\usrsetup.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\utility.h" />
+    <ClInclude Include="..\Shared\Source\CLIPS\watch.h" />
+    <ClInclude Include="..\Shared\Source\Integration\clipscpp.h" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectName>WrappedLib</ProjectName>
+    <ProjectGuid>{B398F700-8AD7-4600-9707-717707059C1E}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v142</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v142</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v142</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v142</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Libraries\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Intermediate\$(Platform)\$(Configuration)\$(TargetName)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Intermediate\$(Platform)\$(Configuration)\$(TargetName)\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Libraries\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Intermediate\$(Platform)\$(Configuration)\$(TargetName)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Intermediate\$(Platform)\$(Configuration)\$(TargetName)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <OutDir>Libraries\$(Platform)\$(Configuration)\</OutDir>
+    <TargetName>$(ProjectName)</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <OutDir>Libraries\$(Platform)\$(Configuration)\</OutDir>
+    <TargetName>$(ProjectName)</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <TargetName>$(ProjectName)</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <TargetName>$(ProjectName)</TargetName>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>..\Shared\Source\CLIPS;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN_MVC=1;WIN32;_DEBUG;_LIB;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>false</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <CompileAs>CompileAsCpp</CompileAs>
+    </ClCompile>
+    <Lib>
+      <OutputFile>$(OutDir)$(ProjectName).lib</OutputFile>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>..\Shared\Source\CLIPS;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN_MVC=1;_DEBUG;_LIB;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <CompileAs>CompileAsCpp</CompileAs>
+    </ClCompile>
+    <Lib>
+      <OutputFile>$(OutDir)$(ProjectName).lib</OutputFile>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>..\Shared\Source\CLIPS;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN_MVC=1;NDEBUG;_LIB;_CRT_SECURE_NO_DEPRECATE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <CallingConvention>Cdecl</CallingConvention>
+      <CompileAs>CompileAsCpp</CompileAs>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+    </ClCompile>
+    <Lib>
+      <OutputFile>$(OutDir)$(ProjectName).lib</OutputFile>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>..\Shared\Source\CLIPS;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN_MVC=1;NDEBUG;_LIB;_CRT_SECURE_NO_DEPRECATE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <CallingConvention>Cdecl</CallingConvention>
+      <CompileAs>CompileAsCpp</CompileAs>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+    </ClCompile>
+    <Lib>
+      <OutputFile>$(OutDir)$(ProjectName).lib</OutputFile>
+    </Lib>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

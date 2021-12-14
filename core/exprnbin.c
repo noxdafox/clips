@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  11/01/16             */
+   /*            CLIPS Version 6.40  02/02/21             */
    /*                                                     */
    /*             EXPRESSION BSAVE/BLOAD MODULE           */
    /*******************************************************/
@@ -19,6 +19,8 @@
 /* Revision History:                                         */
 /*                                                           */
 /*      6.30: Changed integer type/precision.                */
+/*                                                           */
+/*      6.32: Bsave crash fix for external address type.     */
 /*                                                           */
 /*      6.40: Pragma once and other inclusion changes.       */
 /*                                                           */
@@ -215,7 +217,8 @@ static void UpdateExpression(
 #endif
 
       case EXTERNAL_ADDRESS_TYPE:
-        ExpressionData(theEnv)->ExpressionArray[obji].value = NULL;
+        ExpressionData(theEnv)->ExpressionArray[obji].value = CreateCExternalAddress(theEnv,NULL);
+        IncrementExternalAddressCount(ExpressionData(theEnv)->ExpressionArray[obji].value);
         break;
 
       case VOID_TYPE:
@@ -277,15 +280,19 @@ void ClearBloadedExpressions(
 
 #if DEFTEMPLATE_CONSTRUCT
          case FACT_ADDRESS_TYPE    :
-           ReleaseFact((Fact *) ExpressionData(theEnv)->ExpressionArray[i].value);
+           ReleaseFact(ExpressionData(theEnv)->ExpressionArray[i].factValue);
            break;
 #endif
 
 #if OBJECT_SYSTEM
          case INSTANCE_ADDRESS_TYPE :
-           ReleaseInstance((Instance *) ExpressionData(theEnv)->ExpressionArray[i].value);
+           ReleaseInstance(ExpressionData(theEnv)->ExpressionArray[i].instanceValue);
            break;
 #endif
+
+         case EXTERNAL_ADDRESS_TYPE:
+           ReleaseExternalAddress(theEnv,ExpressionData(theEnv)->ExpressionArray[i].externalAddressValue);
+           break;
 
          case VOID_TYPE:
            break;
@@ -293,7 +300,7 @@ void ClearBloadedExpressions(
          default:
            if (EvaluationData(theEnv)->PrimitivesArray[ExpressionData(theEnv)->ExpressionArray[i].type] == NULL) break;
            if (EvaluationData(theEnv)->PrimitivesArray[ExpressionData(theEnv)->ExpressionArray[i].type]->bitMap)
-             { DecrementBitMapReferenceCount(theEnv,(CLIPSBitMap *) ExpressionData(theEnv)->ExpressionArray[i].value); }
+             { DecrementBitMapReferenceCount(theEnv,ExpressionData(theEnv)->ExpressionArray[i].bitMapValue); }
            break;
         }
      }

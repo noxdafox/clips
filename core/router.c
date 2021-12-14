@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  11/01/16             */
+   /*            CLIPS Version 6.40  03/20/19             */
    /*                                                     */
    /*                  I/O ROUTER MODULE                  */
    /*******************************************************/
@@ -34,6 +34,9 @@
 /*            deprecation warnings.                          */
 /*                                                           */
 /*            Converted API macros to function calls.        */
+/*                                                           */
+/*      6.31: Fixed line count issue when using Windows      */
+/*            line endings in Unix.                          */
 /*                                                           */
 /*      6.40: Added InputBufferCount function.               */
 /*                                                           */
@@ -243,7 +246,7 @@ int ReadRouter(
      {
       inchar = getc(RouterData(theEnv)->FastLoadFilePtr);
 
-      if ((inchar == '\r') || (inchar == '\n'))
+      if (inchar == '\n')
         {
          if (((char *) RouterData(theEnv)->FastLoadFilePtr) == RouterData(theEnv)->LineCountRouter)
            { IncrementLineCount(theEnv); }
@@ -269,7 +272,7 @@ int ReadRouter(
 
       if (inchar == '\0') return(EOF);
 
-      if ((inchar == '\r') || (inchar == '\n'))
+      if (inchar == '\n')
         {
          if (RouterData(theEnv)->FastCharGetRouter == RouterData(theEnv)->LineCountRouter)
            { IncrementLineCount(theEnv); }
@@ -290,7 +293,7 @@ int ReadRouter(
         {
          inchar = (*currentPtr->readCallback)(theEnv,logicalName,currentPtr->context);
 
-         if ((inchar == '\r') || (inchar == '\n'))
+         if (inchar == '\n')
            {
             if ((RouterData(theEnv)->LineCountRouter != NULL) &&
                 (strcmp(logicalName,RouterData(theEnv)->LineCountRouter) == 0))
@@ -329,7 +332,7 @@ int UnreadRouter(
 
    if (((char *) RouterData(theEnv)->FastLoadFilePtr) == logicalName)
      {
-      if ((ch == '\r') || (ch == '\n'))
+      if (ch == '\n')
         {
          if (((char *) RouterData(theEnv)->FastLoadFilePtr) == RouterData(theEnv)->LineCountRouter)
            { DecrementLineCount(theEnv); }
@@ -347,7 +350,7 @@ int UnreadRouter(
 
    if (RouterData(theEnv)->FastCharGetRouter == logicalName)
      {
-      if ((ch == '\r') || (ch == '\n'))
+      if (ch == '\n')
         {
          if (RouterData(theEnv)->FastCharGetRouter == RouterData(theEnv)->LineCountRouter)
            { DecrementLineCount(theEnv); }
@@ -367,7 +370,7 @@ int UnreadRouter(
      {
       if ((currentPtr->unreadCallback != NULL) ? QueryRouter(theEnv,logicalName,currentPtr) : false)
         {
-         if ((ch == '\r') || (ch == '\n'))
+         if (ch == '\n')
            {
             if ((RouterData(theEnv)->LineCountRouter != NULL) &&
                 (strcmp(logicalName,RouterData(theEnv)->LineCountRouter) == 0))

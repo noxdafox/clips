@@ -98,7 +98,7 @@ public class HelpMenu extends JMenu
                   
          add(Box.createRigidArea(new Dimension(0,18)));
 
-         name = new JLabel("Public Domain Release, August 2018");
+         name = new JLabel("Public Domain Release, February 2021");
          name.setAlignmentX(0.5f);
          font = new Font(font.getFontName(),Font.PLAIN,12);
          name.setFont(font);
@@ -220,7 +220,7 @@ public class HelpMenu extends JMenu
    public void openOnlineDocumentation()
      {
       try
-        { openWebpage(new URL("http://www.clipsrules.net/?q=Documentation")); }
+        { openWebpage(new URL("http://www.clipsrules.net/Documentation.html")); }
       catch (Exception e)
         { e.printStackTrace(); }
      }

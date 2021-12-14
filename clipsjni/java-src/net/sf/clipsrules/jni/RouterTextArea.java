@@ -47,7 +47,17 @@ public class RouterTextArea extends JTextArea
    /* RouterTextArea */
    /******************/
    public RouterTextArea(
-     Environment theEnv) 
+     Environment theEnv)
+     {
+      this(theEnv,new Font("monospaced",Font.PLAIN,12));
+     }
+
+   /******************/
+   /* RouterTextArea */
+   /******************/
+   public RouterTextArea(
+     Environment theEnv,
+     Font theFont) 
      {  
       clips = theEnv;
       
@@ -61,7 +71,7 @@ public class RouterTextArea extends JTextArea
                       BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.darkGray,3),
                                                          BorderFactory.createEmptyBorder(5,5,5,0)));
       
-      this.setFont(new Font("monospaced",Font.PLAIN,12));
+      this.setFont(theFont);
       
       routerName = "JTextAreaRouter" + TextAreaRouterNameIndex++;
       clips.addRouter(this);
@@ -120,7 +130,7 @@ public class RouterTextArea extends JTextArea
         {
          byte theBytes [] = theString.getBytes("UTF-8");
          for (int i = 0; i < theBytes.length; i++)
-           { charList.add(new Byte(theBytes[i])); }
+           { charList.add(Byte.valueOf(theBytes[i])); }
         }
       catch (Exception e)
         { e.printStackTrace(); }
@@ -136,7 +146,7 @@ public class RouterTextArea extends JTextArea
    public synchronized int pushChar(
      int theChar) 
      {
-      charList.add(0,new Byte((byte) theChar));
+      charList.add(0,Byte.valueOf((byte) theChar));
       return theChar;
      }
      
@@ -186,7 +196,7 @@ public class RouterTextArea extends JTextArea
         {
          byte theBytes [] = charString.getBytes("UTF-8");
          for (int i = 0; i < theBytes.length; i++)
-           { charList.add(new Byte(theBytes[i])); }
+           { charList.add(Byte.valueOf(theBytes[i])); }
         }
       catch (Exception e)
         { e.printStackTrace(); }
@@ -483,8 +493,8 @@ public class RouterTextArea extends JTextArea
    @Override
    public void keyTyped(KeyEvent e) 
      {
-      if ((e.getModifiers() & 
-         (KeyEvent.ALT_MASK | KeyEvent.CTRL_MASK | KeyEvent.META_MASK)) != 0) 
+      if ((e.getModifiersEx() & 
+         (KeyEvent.ALT_DOWN_MASK | KeyEvent.CTRL_DOWN_MASK | KeyEvent.META_DOWN_MASK)) != 0) 
         { return; }
 
       char theChar = e.getKeyChar();
@@ -772,9 +782,13 @@ public class RouterTextArea extends JTextArea
      {
       if (EventQueue.isDispatchThread())
         { 
+         removeCaretListener(this);
          caretUpdateAction(ce.getDot(), ce.getMark()); 
+         addCaretListener(this);
          return;
         }
+
+      removeCaretListener(this);
       try
         {
          SwingUtilities.invokeAndWait(
@@ -786,6 +800,7 @@ public class RouterTextArea extends JTextArea
         }
       catch (Exception e) 
         { e.printStackTrace(); }
+      addCaretListener(this);
      }
 
    /*********************/

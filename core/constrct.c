@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  11/10/17             */
+   /*            CLIPS Version 6.40  07/23/20             */
    /*                                                     */
    /*                  CONSTRUCT MODULE                   */
    /*******************************************************/
@@ -54,6 +54,9 @@
 /*                                                           */
 /*      6.31: Error flags reset before Clear processed when  */
 /*            called from embedded controller.               */
+/*                                                           */
+/*      6.32: Fixed incorrect size issue with deallocation   */
+/*            of WarningString and ErrorString.              */
 /*                                                           */
 /*      6.40: Added Env prefix to GetHaltExecution and       */
 /*            SetHaltExecution functions.                    */
@@ -142,10 +145,10 @@ static void DeallocateConstructData(
 
 #if (! RUN_TIME) && (! BLOAD_ONLY)
    if (ConstructData(theEnv)->ErrorString != NULL)
-     { genfree(theEnv,ConstructData(theEnv)->ErrorString,sizeof(ConstructData(theEnv)->ErrorString) + 1); }
+     { genfree(theEnv,ConstructData(theEnv)->ErrorString,strlen(ConstructData(theEnv)->ErrorString) + 1); }
 
    if (ConstructData(theEnv)->WarningString != NULL)
-     { genfree(theEnv,ConstructData(theEnv)->WarningString,sizeof(ConstructData(theEnv)->WarningString) + 1); }
+     { genfree(theEnv,ConstructData(theEnv)->WarningString,strlen(ConstructData(theEnv)->WarningString) + 1); }
 
    ConstructData(theEnv)->ErrorString = NULL;
    ConstructData(theEnv)->WarningString = NULL;
@@ -526,6 +529,7 @@ void Reset(
      {
       ConstructData(theEnv)->ResetReadyInProgress = false;
       ConstructData(theEnv)->ResetInProgress = false;
+      GCBlockEnd(theEnv,&gcb);
       return;
      }
    ConstructData(theEnv)->ResetReadyInProgress = false;
@@ -545,12 +549,23 @@ void Reset(
 
    SetCurrentModule(theEnv,FindDefmodule(theEnv,"MAIN"));
 
-   /*===========================================*/
-   /* Perform periodic cleanup if the reset was */
-   /* issued from an embedded controller.       */
-   /*===========================================*/
-
+   /*================================*/
+   /* Restore the old garbage frame. */
+   /*================================*/
+   
    GCBlockEnd(theEnv,&gcb);
+   
+   /*===============================================*/
+   /* If embedded, clean the topmost garbage frame. */
+   /*===============================================*/
+
+   if (EvaluationData(theEnv)->CurrentExpression == NULL)
+     { CleanCurrentGarbageFrame(theEnv,NULL); }
+
+   /*======================*/
+   /* Call periodic tasks. */
+   /*======================*/
+   
    CallPeriodicTasks(theEnv);
 
    /*===================================*/
@@ -684,6 +699,18 @@ bool Clear(
    /*================================*/
    
    GCBlockEnd(theEnv,&gcb);
+   
+   /*=======================================*/
+   /* If embedded, clean the garbage frame. */
+   /*=======================================*/
+
+   if (EvaluationData(theEnv)->CurrentExpression == NULL)
+     { CleanCurrentGarbageFrame(theEnv,NULL); }
+
+   /*======================*/
+   /* Call periodic tasks. */
+   /*======================*/
+   
    CallPeriodicTasks(theEnv);
 
    /*===========================*/

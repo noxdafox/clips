@@ -6,6 +6,7 @@ import java.awt.event.WindowEvent;
 import java.awt.print.PageFormat;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
+import java.awt.Font;
 
 import java.io.File;
 
@@ -64,12 +65,12 @@ public class FileMenu extends JMenu
       /* Get KeyStrokes for accelerators. */
       /*==================================*/
 
-      KeyStroke newDoc = KeyStroke.getKeyStroke(KeyEvent.VK_N,KeyEvent.CTRL_MASK);
-      KeyStroke openDoc = KeyStroke.getKeyStroke(KeyEvent.VK_O,KeyEvent.CTRL_MASK);
-      KeyStroke closeDoc = KeyStroke.getKeyStroke(KeyEvent.VK_W,KeyEvent.CTRL_MASK);
-      KeyStroke saveDoc = KeyStroke.getKeyStroke(KeyEvent.VK_S,KeyEvent.CTRL_MASK);
-      KeyStroke saveAsDoc = KeyStroke.getKeyStroke(KeyEvent.VK_S,KeyEvent.CTRL_MASK | KeyEvent.SHIFT_MASK);
-      KeyStroke quitIDE = KeyStroke.getKeyStroke(KeyEvent.VK_Q,KeyEvent.CTRL_MASK);
+      KeyStroke newDoc = KeyStroke.getKeyStroke(KeyEvent.VK_N,KeyEvent.CTRL_DOWN_MASK);
+      KeyStroke openDoc = KeyStroke.getKeyStroke(KeyEvent.VK_O,KeyEvent.CTRL_DOWN_MASK);
+      KeyStroke closeDoc = KeyStroke.getKeyStroke(KeyEvent.VK_W,KeyEvent.CTRL_DOWN_MASK);
+      KeyStroke saveDoc = KeyStroke.getKeyStroke(KeyEvent.VK_S,KeyEvent.CTRL_DOWN_MASK);
+      KeyStroke saveAsDoc = KeyStroke.getKeyStroke(KeyEvent.VK_S,KeyEvent.CTRL_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK);
+      KeyStroke quitIDE = KeyStroke.getKeyStroke(KeyEvent.VK_Q,KeyEvent.CTRL_DOWN_MASK);
 
       /*================*/
       /* Setup actions. */
@@ -319,7 +320,7 @@ public class FileMenu extends JMenu
         ActionEvent e)
         {
          WindowEvent windowClosing = new WindowEvent(ide,WindowEvent.WINDOW_CLOSING);
-	     ide.dispatchEvent(windowClosing);
+         ide.dispatchEvent(windowClosing);
         }
      }
    
@@ -329,7 +330,9 @@ public class FileMenu extends JMenu
    public void newTextFile(
      File theFile)
      {
-      TextFrame theFrame = new TextFrame(theFile);
+      Font theFont = ide.getPreferences().getEditorFont();
+
+      TextFrame theFrame = new TextFrame(ide,theFile,theFont);
       
       theFrame.addInternalFrameListener(ide);
       

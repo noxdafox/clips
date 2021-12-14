@@ -9,20 +9,20 @@ class ModuleTableModel extends AbstractTableModel
   {
    private String[] columnNames = { "Module" };
 
-   private List<Module> modules;
+   private List<net.sf.clipsrules.jni.Module> modules;
 
    public ModuleTableModel() 
      {
      }
    
    public ModuleTableModel(
-     List<Module> theModules) 
+     List<net.sf.clipsrules.jni.Module> theModules) 
      {
       modules = theModules;
      }
 
    public void setModules(
-     List<Module> theModules) 
+     List<net.sf.clipsrules.jni.Module> theModules) 
      {
       modules = theModules;
       this.fireTableDataChanged();

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  08/25/16            */
+   /*             CLIPS Version 6.40  05/03/19            */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -64,14 +64,6 @@ struct instanceFileData
   {
    const char *InstanceBinaryPrefixID;
    const char *InstanceBinaryVersionID;
-   size_t BinaryInstanceFileSize;
-
-#if BLOAD_INSTANCES
-   size_t BinaryInstanceFileOffset;
-   char *CurrentReadBuffer;
-   size_t CurrentReadBufferSize;
-   size_t CurrentReadBufferOffset;
-#endif
   };
 
 #define InstanceFileData(theEnv) ((struct instanceFileData *) GetEnvironmentData(theEnv,INSTANCE_FILE_DATA))

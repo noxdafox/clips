@@ -363,8 +363,8 @@ class AnimalDemo implements ActionListener
         {
          String assertCommand = "(assert " + factString + ")";
          clips.eval(assertCommand);
-		}
-		
+        }
+        
       runAnimal();
      }
      

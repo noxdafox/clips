@@ -1,10 +1,10 @@
 # CLIPS 6.40
 # Linux CLIPSJNI jars
-# Ubuntu 16.04 LTS with OpenJDK 1.8.0_131
-# Debian 9.1 with OpenJDK 1.8.0_141
-# Fedora 26 with OpenJDK 1.8.0_141
-# CentOS 7 with OpenJDK 1.8.0_141
-# Mint 18 with OpenJDK 1.8.0_131
+# Ubuntu 18.04 LTS with OpenJDK 11.0.7
+# Debian 9.5 with OpenJDK 1.8.0_275
+# Fedora 30 with OpenJDK 1.8.0_252
+# CentOS 7.5 with OpenJDK 1.8.0_252
+# Mint 19.2 with OpenJDK 11.0.7
 
 JNI_CP = net/sf/clipsrules/jni
 JNI_CLASS = net.sf.clipsrules.jni.Environment
@@ -111,6 +111,10 @@ IDE_FILES = \
 	$(IDE_SRC)/FactInstanceTableModel.java \
 	$(IDE_SRC)/FileMenu.java \
 	$(IDE_SRC)/FocusStackTableModel.java \
+	$(IDE_SRC)/FontDialog.java \
+	$(IDE_SRC)/FontPreferencesDialog.java \
+	$(IDE_SRC)/FontProperties.java \
+	$(IDE_SRC)/FontSample.java \
 	$(IDE_SRC)/FramePlacer.java \
 	$(IDE_SRC)/HelpMenu.java \
 	$(IDE_SRC)/IDEPreferences.java \

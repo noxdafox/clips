@@ -1,6 +1,7 @@
 package net.sf.clipsrules.jni.examples.ide;
 
 import javax.swing.*;
+import javax.swing.event.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.*;
@@ -23,11 +24,12 @@ import javax.swing.text.AbstractDocument;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.PlainDocument;
+import javax.swing.text.DefaultCaret;
 
 import javax.swing.BorderFactory;
 
 public class TextFrame extends JInternalFrame 
-                    implements DocumentListener, KeyListener
+                    implements DocumentListener, CaretListener
   {
    private JTextArea textArea;
    private static int untitledCount = 1;
@@ -39,7 +41,9 @@ public class TextFrame extends JInternalFrame
    /* TextFrame */
    /*************/
    TextFrame(
-     File theFile)
+     CLIPSIDE theIDE,
+     File theFile,
+     Font theFont)
      {  
       super("",true,true,true,true);
       
@@ -70,14 +74,17 @@ public class TextFrame extends JInternalFrame
      
       this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);  
 
-      /*==========================*/
-      /* Create the status panel. */
-      /*==========================*/
-
-      JPanel statusPanel = new JPanel(); 
-      statusPanel.setPreferredSize(new Dimension(600,40));
+      /*====================*/
+      /* Add the Text menu. */
+      /*====================*/
       
-      this.getContentPane().add(statusPanel); 
+      JMenuBar menuBar = new JMenuBar();
+
+      JMenu jmText = new TextMenu(theIDE,this);
+
+      menuBar.add(jmText);
+ 
+      setJMenuBar(menuBar);
       
       /*=============================*/
       /* Create the text field area. */
@@ -88,7 +95,7 @@ public class TextFrame extends JInternalFrame
          textArea = new JTextArea(); 
          textAreaUndo = new TextUndoManager();
          textArea.setDocument(new TextUndoPlainDocument(textAreaUndo));
-         textArea.setFont(new Font("monospaced",Font.PLAIN,12));
+         textArea.setFont(theFont);
         }
       catch (Exception e)
         { 
@@ -97,8 +104,7 @@ public class TextFrame extends JInternalFrame
         }       
         
       textArea.setBorder(BorderFactory.createEmptyBorder(5,5,5,0));
-      //textArea.addKeyListener(this);
-      setUpKeys();
+      textArea.addCaretListener(this);
 
       /*=======================================*/
       /* Put the text area into a scroll pane. */
@@ -127,14 +133,14 @@ public class TextFrame extends JInternalFrame
       
       textArea.getDocument().addDocumentListener(this);
 
-      /*===================================================*/
-      /* Override copy/paste for the CommandPromptTextArea */
-      /* so that we can define our own menu accelerators.  */
-      /*===================================================*/
+      /*===============================================*/
+      /* Override copy/paste for the JTextArea so that */
+      /* we can define our own menu accelerators.      */
+      /*===============================================*/
 
-      KeyStroke cut = KeyStroke.getKeyStroke(KeyEvent.VK_X,KeyEvent.CTRL_MASK);
-      KeyStroke copy = KeyStroke.getKeyStroke(KeyEvent.VK_C,KeyEvent.CTRL_MASK);
-      KeyStroke paste = KeyStroke.getKeyStroke(KeyEvent.VK_V,KeyEvent.CTRL_MASK);
+      KeyStroke cut = KeyStroke.getKeyStroke(KeyEvent.VK_X,KeyEvent.CTRL_DOWN_MASK);
+      KeyStroke copy = KeyStroke.getKeyStroke(KeyEvent.VK_C,KeyEvent.CTRL_DOWN_MASK);
+      KeyStroke paste = KeyStroke.getKeyStroke(KeyEvent.VK_V,KeyEvent.CTRL_DOWN_MASK);
       InputMap map = textArea.getInputMap();
       map.put(cut,"none");
       map.put(copy,"none");
@@ -147,47 +153,67 @@ public class TextFrame extends JInternalFrame
       this.pack();
      }  
      
-   /*************/
-   /* setUpKeys */
-   /*************/
-   public void setUpKeys()
+   /**************/
+   /* assignFont */
+   /**************/
+   public void assignFont(
+     Font theFont)
      {
-      int condition = WHEN_FOCUSED;  
-
-      InputMap inputMap = textArea.getInputMap(condition);
-      ActionMap actionMap = textArea.getActionMap();
-      
-      KeyStroke rparenStroke = KeyStroke.getKeyStroke(')');
-      
-      inputMap.put(rparenStroke,rparenStroke.toString());
-
-      actionMap.put(rparenStroke.toString(), new AbstractAction() 
-        {
-         @Override
-         public void actionPerformed(ActionEvent ae)
-           {
-            MatchParenthesis();
-            textArea.replaceRange(")",textArea.getSelectionStart(),textArea.getSelectionEnd());
-           }
-      });
+      textArea.setFont(theFont);
      }
-
-   /********************/
-   /* MatchParenthesis */
-   /********************/
-   public void MatchParenthesis() 
+     
+   /**********************/
+   /* balanceParentheses */
+   /**********************/
+   public void balanceParentheses() 
      {
-      int nestingDepth = 0;
-      char characterToCheck;
+      /*=================================*/
+      /* Retrieve the current selection. */
+      /*=================================*/
+          
       int selStart = textArea.getSelectionStart();
       int selEnd = textArea.getSelectionEnd();
+
+      /*======================*/
+      /* Where is the cursor? */
+      /*======================*/
+    
       int cursorLocation = Math.min(textArea.getCaret().getDot(),
                                     textArea.getCaret().getMark());
-                                       
-      while ((cursorLocation--) > 0)
+   
+      if (cursorLocation == 0) return;
+   
+      cursorLocation--;
+      
+      /*===============================================*/
+      /* What is the character at the cursor location? */
+      /*===============================================*/
+    
+      char characterToCheck = textArea.getText().charAt(cursorLocation);
+      
+      /*======================================*/
+      /* We only balance a right parenthesis. */
+      /*======================================*/
+   
+      if (characterToCheck != ')') return;
+
+      /*======================================================================*/
+      /* The nesting depth will start at zero. Each time a ')' is encountered */
+      /* the nesting depth is incremented by one and each time a '(' is       */
+      /* encountered the nesting depth is decremented by one. If a '(' is     */
+      /* encountered when the nesting depth is zero (the starting value), the */
+      /* matching parenthesis has been found.                                 */
+      /*======================================================================*/
+   
+      int nestingDepth = 0;
+
+      /*==================================================*/
+      /* Start looking for the matching left parenthesis. */
+      /*==================================================*/
+
+      while (cursorLocation-- != 0) 
         {
-         characterToCheck = textArea.getText().charAt(cursorLocation);
-            
+         characterToCheck = this.textArea.getText().charAt(cursorLocation);
          if (characterToCheck == '(') 
            {
             if (nestingDepth == 0) 
@@ -212,32 +238,31 @@ public class TextFrame extends JInternalFrame
                /* Pause momentarily so the selected matching */
                /* parenthesis can be observed.               */
                /*============================================*/
-    
+
                try
-	             { Thread.sleep(200); }
-	           catch (Exception ex)
-	             { ex.printStackTrace(); }
+                 { Thread.sleep(200); }
+               catch (Exception e)
+                 { e.printStackTrace(); }
 
                /*===========================*/
                /* Restore the selection and */
                /* make the caret visible.   */
                /*===========================*/
-              
+
                textArea.setSelectionStart(selStart);
                textArea.setSelectionEnd(selEnd);
                textArea.getCaret().setVisible(true);
-	      	   return;
-	          }
+
+               return;
+              }
             else
-	          { nestingDepth--; }
-	       }
+              { nestingDepth--; }
+           }
          else if (characterToCheck == ')') 
            { nestingDepth++; }
         }
-           
-      Toolkit.getDefaultToolkit().beep();                                
-     }    
-       
+     }
+
    /***************/
    /* readContent */
    /***************/
@@ -505,46 +530,20 @@ public class TextFrame extends JInternalFrame
      {      
       changed = true;
      }
-     
-   /*#####################*/
-   /* KeyListener Methods */
-   /*#####################*/
    
-   /**************/
-   /* keyPressed */
-   /**************/     
-   @Override
-   public void keyPressed(KeyEvent e) 
+   /*#######################*/
+   /* CaretListener Methods */
+   /*#######################*/
+   public void caretUpdate(CaretEvent e)
      {
-     }
-
-   /***************/
-   /* keyReleased */
-   /***************/     
-   @Override
-   public void keyReleased(KeyEvent e) 
-     { 
-     }
-
-   /************/
-   /* keyTyped */
-   /************/
-   @Override
-   public void keyTyped(KeyEvent e) 
-     {
-      if ((e.getModifiers() & 
-          (KeyEvent.ALT_MASK | KeyEvent.CTRL_MASK | KeyEvent.META_MASK)) != 0) 
+      if (e.getDot() != e.getMark())
         { return; }
-          
-      if (e.getKeyChar() == '\n')
-        {
-         return;
-        }
-
-      if (e.getKeyChar() == ')') 
-        { MatchParenthesis(); }    
+        
+      textArea.removeCaretListener(this);
+      balanceParentheses();
+      textArea.addCaretListener(this);
      }
-     
+  
    /*##################*/
    /* TextCompoundEdit */
    /*##################*/

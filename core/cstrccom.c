@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/02/18             */
+   /*            CLIPS Version 6.40  01/11/21             */
    /*                                                     */
    /*              CONSTRUCT COMMANDS MODULE              */
    /*******************************************************/
@@ -46,6 +46,8 @@
 /*                                                           */
 /*      6.31: Fixed use after free issue for deallocation    */
 /*            functions passed to DoForAllConstructs.        */
+/*                                                           */
+/*      6.32: Fixed embedded reset of error flags.           */
 /*                                                           */
 /*      6.40: Added Env prefix to GetHaltExecution and       */
 /*            SetHaltExecution functions.                    */
@@ -239,7 +241,7 @@ ConstructHeader *FindNamedConstructInModule(
   Construct *constructClass)
   {
    ConstructHeader *theConstruct;
-   CLIPSLexeme *findValue;
+   CLIPSLexeme *findValue = NULL;
 
    /*==========================*/
    /* Save the current module. */
@@ -423,7 +425,10 @@ void PPConstructCommand(
       ppForm = PPConstructNil(theEnv,constructName,constructClass);
       
       if (ppForm == NULL)
-        { CantFindItemErrorMessage(theEnv,constructClass->constructName,constructName,true); }
+        {
+         CantFindItemErrorMessage(theEnv,constructClass->constructName,constructName,true);
+         ppForm = "";
+        }
 
       returnValue->lexemeValue = CreateString(theEnv,ppForm);
       
@@ -1125,7 +1130,14 @@ void ListConstruct(
    CLIPSLexeme *constructName;
    unsigned long count = 0;
    bool allModules = false;
-
+   
+   /*=====================================*/
+   /* If embedded, clear the error flags. */
+   /*=====================================*/
+   
+   if (EvaluationData(theEnv)->CurrentExpression == NULL)
+     { ResetErrorFlags(theEnv); }
+     
    /*==========================*/
    /* Save the current module. */
    /*==========================*/
@@ -1543,7 +1555,7 @@ static bool ConstructWatchSupport(
   ConstructSetWatchFunction *setWatchFunc)
   {
    Defmodule *theModule;
-   ConstructHeader *theConstruct;
+   ConstructHeader *theConstruct = NULL;
    UDFValue constructName;
    unsigned int argIndex = 2;
 

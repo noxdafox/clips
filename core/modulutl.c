@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  01/14/18             */
+   /*            CLIPS Version 6.40  10/28/20             */
    /*                                                     */
    /*              DEFMODULE UTILITY MODULE               */
    /*******************************************************/
@@ -25,6 +25,11 @@
 /*            deprecation warnings.                          */
 /*                                                           */
 /*      6.31: Used strstr function to find module separator. */
+/*                                                           */
+/*            Disallowed use of extraneous module            */
+/*            specifiers in a construct name.                */
+/*                                                           */
+/*      6.32: Fixed embedded reset of error flags.           */
 /*                                                           */
 /*      6.40: Added Env prefix to GetHaltExecution and       */
 /*            SetHaltExecution functions.                    */
@@ -638,6 +643,13 @@ void ListItemsDriver(
    unsigned long count = 0;
    bool allModules = false;
    bool doIt;
+   
+   /*=====================================*/
+   /* If embedded, clear the error flags. */
+   /*=====================================*/
+   
+   if (EvaluationData(theEnv)->CurrentExpression == NULL)
+     { ResetErrorFlags(theEnv); }
 
    /*==========================*/
    /* Save the current module. */
@@ -886,6 +898,12 @@ CLIPSLexeme *GetConstructNameAndComment(
       if (name == NULL)
         {
          SyntaxErrorMessage(theEnv,"construct name");
+         return NULL;
+        }
+        
+      if (FindModuleSeparator(name->contents) != 0)
+        {
+         SyntaxErrorMessage(theEnv,"module specifier");
          return NULL;
         }
      }

@@ -42,15 +42,15 @@ public class Focus
    /***********/
    /* equals: */
    /***********/
-	@Override
-	public boolean equals(Object obj) 
-	  {
-	   if (this == obj) return true;
-	   if (obj == null) return false;
-	   if (this.getClass() != obj.getClass()) return false;
-	   
-	   Focus cf = (Focus) obj;
-	   if (this.moduleName == null) return (cf.moduleName == null);
-	   return this.moduleName.equals(cf.moduleName);
-      }
+   @Override
+   public boolean equals(Object obj) 
+     {
+      if (this == obj) return true;
+      if (obj == null) return false;
+      if (this.getClass() != obj.getClass()) return false;
+      
+      Focus cf = (Focus) obj;
+      if (this.moduleName == null) return (cf.moduleName == null);
+      return this.moduleName.equals(cf.moduleName);
+     }
   }

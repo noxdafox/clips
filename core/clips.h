@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  06/28/16             */
+   /*            CLIPS Version 6.40  11/17/19             */
    /*                                                     */
    /*                   API HEADER FILE                   */
    /*******************************************************/
@@ -58,6 +58,7 @@
 #include "expressn.h"
 #include "exprnpsr.h"
 #include "evaluatn.h"
+#include "miscfun.h"
 #include "constrct.h"
 #include "utility.h"
 #include "watch.h"
@@ -91,6 +92,7 @@
 #include "tmpltbsc.h"
 #include "tmpltfun.h"
 #include "factcom.h"
+#include "factfile.h"
 #include "factfun.h"
 #include "factmngr.h"
 #include "facthsh.h"

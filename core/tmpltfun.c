@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  09/20/17             */
+   /*            CLIPS Version 6.40  10/03/19             */
    /*                                                     */
    /*             DEFTEMPLATE FUNCTIONS MODULE            */
    /*******************************************************/
@@ -984,7 +984,7 @@ void DeftemplateSlotDefaultPFunction(
   {
    Deftemplate *theDeftemplate;
    CLIPSLexeme *slotName;
-   int defaultType;
+   DefaultType defaultType;
 
    /*===================================================*/
    /* Retrieve the deftemplate and slot name arguments. */

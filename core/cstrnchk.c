@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  10/18/16             */
+   /*            CLIPS Version 6.40  10/03/19             */
    /*                                                     */
    /*             CONSTRAINT CHECKING MODULE              */
    /*******************************************************/
@@ -101,7 +101,7 @@ static bool CheckFunctionReturnType(
      { if (functionReturnType & VOID_BIT) return true; }
 
    if (constraints->symbolsAllowed)
-     { if (functionReturnType & SYMBOL_BIT) return true; }
+     { if (functionReturnType & (SYMBOL_BIT | BOOLEAN_BIT)) return true; }
 
    if (constraints->stringsAllowed)
      { if (functionReturnType & STRING_BIT) return true; }
@@ -533,7 +533,7 @@ void ConstraintViolationErrorMessage(
   unsigned short thePattern,
   CLIPSLexeme *theSlot,
   unsigned short theField,
-  int violationType,
+  ConstraintViolationType violationType,
   CONSTRAINT_RECORD *theConstraint,
   bool printPrelude)
   {

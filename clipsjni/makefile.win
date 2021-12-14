@@ -1,3 +1,7 @@
+# CLIPS 6.40
+# CLIPSJNI jars
+# Windows 10 with Java 1.8.0_211
+
 JNI_CP = net\sf\clipsrules\jni
 JNI_CLASS = net.sf.clipsrules.jni.Environment
 JNI_BIN = bin\clipsjni
@@ -103,6 +107,10 @@ IDE_FILES = \
 	$(IDE_SRC)\FactInstanceTableModel.java \
 	$(IDE_SRC)\FileMenu.java \
 	$(IDE_SRC)\FocusStackTableModel.java \
+	$(IDE_SRC)\FontDialog.java \
+	$(IDE_SRC)\FontPreferencesDialog.java \
+	$(IDE_SRC)\FontProperties.java \
+	$(IDE_SRC)\FontSample.java \
 	$(IDE_SRC)\FramePlacer.java \
 	$(IDE_SRC)\HelpMenu.java \
 	$(IDE_SRC)\IDEPreferences.java \

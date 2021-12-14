@@ -319,4 +319,28 @@ CLIPS> (str-length "abcd")                ; 10.4.10
 4
 CLIPS> (str-length xyz)                   ; 10.4.10
 3
+CLIPS> (str-replace)
+[ARGACCES1] Function 'str-replace' expected exactly 3 arguments.
+CLIPS> (str-replace "abcde")
+[ARGACCES1] Function 'str-replace' expected exactly 3 arguments.
+CLIPS> (str-replace "abcde" "bcd")
+[ARGACCES1] Function 'str-replace' expected exactly 3 arguments.
+CLIPS> (str-replace "abcde" "bcd" "xyz" "rst")
+[ARGACCES1] Function 'str-replace' expected exactly 3 arguments.
+CLIPS> (str-replace 7 "bcd" "xyz")
+[ARGACCES2] Function 'str-replace' expected argument #1 to be of type symbol, string, or instance name.
+CLIPS> (str-replace "abcde" 8.9 "xyz")
+[ARGACCES2] Function 'str-replace' expected argument #2 to be of type symbol, string, or instance name.
+CLIPS> (str-replace "abcde" "bcd" 8.9)
+[ARGACCES2] Function 'str-replace' expected argument #3 to be of type symbol, string, or instance name.
+CLIPS> (str-replace "abcde" "bcd" "xyz")
+"axyze"
+CLIPS> (str-replace abcdefbcdgh bcd wxyz)
+awxyzefwxyzgh
+CLIPS> (str-replace [abcdefbcdgh] [bcd] [xy])
+[axyefxygh]
+CLIPS> (str-replace "abcde" "" "xyz")
+"abcde"
+CLIPS> (str-replace abcba a x)
+xbcbx
 CLIPS> (dribble-off)

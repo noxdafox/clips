@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="17701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17703"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--View Controller-->
+        <scene sceneID="tne-QT-ifu">
+            <objects>
+                <viewController id="BYZ-38-t0r" customClass="ViewController" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <pickerView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="iWh-Qn-BPe" userLabel="Answer Picker View">
+                                <rect key="frame" x="47" y="345" width="320" height="216"/>
+                                <connections>
+                                    <outlet property="dataSource" destination="BYZ-38-t0r" id="1HG-oV-1ax"/>
+                                    <outlet property="delegate" destination="BYZ-38-t0r" id="el9-Kw-Nqz"/>
+                                </connections>
+                            </pickerView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="QuT-PR-cpN" userLabel="Next Button">
+                                <rect key="frame" x="282.5" y="569" width="49" height="41"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="24"/>
+                                <state key="normal" title="Next"/>
+                                <connections>
+                                    <action selector="nextButtonAction:" destination="BYZ-38-t0r" eventType="touchUpInside" id="tFG-79-QHi"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Zap-ef-v6m" userLabel="Prev Button">
+                                <rect key="frame" x="84" y="569" width="46" height="41"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="24"/>
+                                <state key="normal" title="Prev"/>
+                                <connections>
+                                    <action selector="prevButtonAction:" destination="BYZ-38-t0r" eventType="touchUpInside" id="E3p-IP-2D4"/>
+                                </connections>
+                            </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Display Text" textAlignment="center" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="efc-Gj-utt" userLabel="Display Label">
+                                <rect key="frame" x="15" y="286" width="384" height="29"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="24"/>
+                                <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="efc-Gj-utt" secondAttribute="trailing" constant="15" id="7y2-WW-aUA"/>
+                            <constraint firstItem="iWh-Qn-BPe" firstAttribute="top" secondItem="efc-Gj-utt" secondAttribute="bottom" constant="30" id="BLp-HI-3LC"/>
+                            <constraint firstItem="iWh-Qn-BPe" firstAttribute="centerX" secondItem="6Tk-OE-BBY" secondAttribute="centerX" id="K6e-63-fTb"/>
+                            <constraint firstItem="iWh-Qn-BPe" firstAttribute="centerY" secondItem="6Tk-OE-BBY" secondAttribute="centerY" id="O8A-3n-PqB"/>
+                            <constraint firstItem="QuT-PR-cpN" firstAttribute="centerX" secondItem="iWh-Qn-BPe" secondAttribute="centerX" constant="100" id="dlh-YR-H5K"/>
+                            <constraint firstItem="QuT-PR-cpN" firstAttribute="top" secondItem="iWh-Qn-BPe" secondAttribute="bottom" constant="8" id="jBq-dl-YFy"/>
+                            <constraint firstItem="efc-Gj-utt" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="15" id="mEm-xs-aDP"/>
+                            <constraint firstItem="Zap-ef-v6m" firstAttribute="top" secondItem="iWh-Qn-BPe" secondAttribute="bottom" constant="8" id="nzY-zh-aDw"/>
+                            <constraint firstItem="Zap-ef-v6m" firstAttribute="centerX" secondItem="iWh-Qn-BPe" secondAttribute="centerX" constant="-100" id="pys-pC-Shr"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="answerPickerView" destination="iWh-Qn-BPe" id="Uki-Tr-0E5"/>
+                        <outlet property="displayLabel" destination="efc-Gj-utt" id="YcI-m8-gdc"/>
+                        <outlet property="nextButton" destination="QuT-PR-cpN" id="vhl-Jf-OQM"/>
+                        <outlet property="prevButton" destination="Zap-ef-v6m" id="5TH-MC-UCU"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="80" y="139"/>
+        </scene>
+    </scenes>
+    <resources>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
+</document>

@@ -1,9 +1,9 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  10/01/16             */
+   /*            CLIPS Version 6.40  07/23/20             */
    /*                                                     */
-   /*                 SYMBOL_TYPE BSAVE MODULE                 */
+   /*                 SYMBOL BSAVE MODULE                 */
    /*******************************************************/
 
 /*************************************************************/
@@ -21,6 +21,8 @@
 /*      6.30: Changed integer type/precision.                */
 /*                                                           */
 /*            Support for long long integers.                */
+/*                                                           */
+/*      6.32: Fixed _SYMBLBIN_SOURCE_ typo.                  */
 /*                                                           */
 /*      6.40: Pragma once and other inclusion changes.       */
 /*                                                           */

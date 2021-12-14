@@ -291,7 +291,7 @@ CLIPS> (defmodule BAR)
 CLIPS> (assert (bar))
 <Fact-2>
 CLIPS> (save-facts "Temp//bug.tmp")
-TRUE
+1
 CLIPS> (bsave "Temp//bug.bin")
 TRUE
 CLIPS> (bload "Temp//bug.bin")
@@ -299,7 +299,7 @@ TRUE
 CLIPS> (load-facts "Temp//bug.tmp") 
 [FACTRHS1] Implied deftemplate 'bar' cannot be created with binary load in effect.
 Function load-facts encountered an error
-FALSE
+-1
 CLIPS> (facts)
 CLIPS> (clear) ;; Case 20
 CLIPS> 

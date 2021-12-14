@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  11/01/16             */
+   /*            CLIPS Version 6.40  04/08/20             */
    /*                                                     */
    /*                   DEVELOPER MODULE                  */
    /*******************************************************/
@@ -467,7 +467,7 @@ static void PrintOPNLevel(
   {
    CLASS_BITMAP *cbmp;
    SLOT_BITMAP *sbmp;
-   unsigned i;
+   unsigned short i;
    OBJECT_PATTERN_NODE *uptr;
    OBJECT_ALPHA_NODE *alphaPtr;
 
@@ -550,7 +550,7 @@ void InstanceTableUsageCommand(
   UDFValue *returnValue)
   {
    unsigned long i;
-   int instanceCounts[COUNT_SIZE];
+   unsigned long long instanceCounts[COUNT_SIZE];
    Instance *ins;
    unsigned long instanceCount, totalInstanceCount = 0;
 

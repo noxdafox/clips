@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*               CLIPS Version 6.40  02/03/18          */
+   /*               CLIPS Version 6.41  07/12/21          */
    /*                                                     */
    /*                OBJECT SYSTEM DEFINITIONS            */
    /*******************************************************/
@@ -23,6 +23,10 @@
 /*                                                           */
 /*      6.31: Optimization for marking relevant alpha nodes  */
 /*            in the object pattern network.                 */
+/*                                                           */
+/*      6.32: Fixed instance redefinition crash with rules   */      
+/*            in JNSimpleCompareFunction1 when deleted       */
+/*            instance slots are referenced.                 */
 /*                                                           */
 /*      6.40: Pragma once and other inclusion changes.       */
 /*                                                           */
@@ -121,7 +125,7 @@ struct defclass
     * iterate through every single terminal alpha for every single modification
     * to an instance of a defclass.
     */
-#if DEFRULE_CONSTRUCT
+#if DEFRULE_CONSTRUCT && OBJECT_SYSTEM
    CLASS_ALPHA_LINK *relevant_terminal_alpha_nodes;
 #endif
 
@@ -206,6 +210,7 @@ struct instance
    unsigned initSlotsCalled      : 1;
    unsigned initializeInProgress : 1;
    unsigned reteSynchronized     : 1;
+   unsigned dataRemovalDeferred  : 1;
    CLIPSLexeme *name;
    unsigned hashTableIndex;
    unsigned busy;

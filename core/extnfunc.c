@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  10/24/17             */
+   /*            CLIPS Version 6.40  02/19/20             */
    /*                                                     */
    /*               EXTERNAL FUNCTION MODULE              */
    /*******************************************************/
@@ -156,6 +156,7 @@ AddUDFError AddUDF(
   {
    unsigned returnTypeBits;
    size_t i;
+   const char *validTypeChars = "bdefilmnsyv*;";
 
    if ((minArgs != UNBOUNDED) && (minArgs > maxArgs))
      { return AUE_MIN_EXCEEDS_MAX_ERROR; }
@@ -164,7 +165,7 @@ AddUDFError AddUDF(
      {
       for (i = 0; argumentTypes[i] != EOS; i++)
         {
-         if (strchr("bdefilmnsyv*;",argumentTypes[i]) == NULL)
+         if (strchr(validTypeChars,argumentTypes[i]) == NULL)
            { return AUE_INVALID_ARGUMENT_TYPE_ERROR; }
         }
      }
@@ -173,7 +174,7 @@ AddUDFError AddUDF(
      {
       for (i = 0; returnTypes[i] != EOS; i++)
         {
-         if (strchr("bdefilmnsyv*;",returnTypes[i]) == NULL)
+         if (strchr(validTypeChars,returnTypes[i]) == NULL)
            { return AUE_INVALID_RETURN_TYPE_ERROR; }
         }
 
@@ -971,8 +972,7 @@ void PrintTypesString(
    typeCount = 0;
    if (expectedType & INTEGER_BIT) typeCount++;
    if (expectedType & FLOAT_BIT) typeCount++;
-   if (expectedType & BOOLEAN_BIT) typeCount++;
-   if (expectedType & SYMBOL_BIT) typeCount++;
+   if (expectedType & (SYMBOL_BIT | BOOLEAN_BIT)) typeCount++;
    if (expectedType & STRING_BIT) typeCount++;
    if (expectedType & INSTANCE_NAME_BIT) typeCount++;
    if (expectedType & INSTANCE_ADDRESS_BIT) typeCount++;
@@ -987,11 +987,10 @@ void PrintTypesString(
     if (expectedType & FLOAT_BIT)
      { PrintType(theEnv,logicalName,typeCount,&typesPrinted,"float"); }
 
-   if (expectedType & BOOLEAN_BIT)
-     { PrintType(theEnv,logicalName,typeCount,&typesPrinted,"boolean"); }
-
    if (expectedType & SYMBOL_BIT)
      { PrintType(theEnv,logicalName,typeCount,&typesPrinted,"symbol"); }
+   else if (expectedType & BOOLEAN_BIT)
+     { PrintType(theEnv,logicalName,typeCount,&typesPrinted,"boolean"); }
 
    if (expectedType & STRING_BIT)
      { PrintType(theEnv,logicalName,typeCount,&typesPrinted,"string"); }

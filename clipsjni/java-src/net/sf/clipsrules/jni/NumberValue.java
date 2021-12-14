@@ -10,7 +10,7 @@ public abstract class NumberValue extends PrimitiveValue
    protected NumberValue(Number value) 
      {
       this.value = value;
-	 }
+     }
 
    /*************/
    /* getValue: */
@@ -76,17 +76,17 @@ public abstract class NumberValue extends PrimitiveValue
    /***********/
    /* equals: */
    /***********/
-	@Override
-	public boolean equals(Object obj) 
-	  {
-	   if (this == obj) return true;
-	   if (obj == null) return false;
-	   if (this.getClass() != obj.getClass()) return false;
-	   
-	   NumberValue nv = (NumberValue) obj;
-	   if (this.value == null) return (nv.value == null);
-	   return this.value.equals(nv.value);
-      }
+   @Override
+   public boolean equals(Object obj) 
+     {
+      if (this == obj) return true;
+      if (obj == null) return false;
+      if (this.getClass() != obj.getClass()) return false;
+       
+      NumberValue nv = (NumberValue) obj;
+      if (this.value == null) return (nv.value == null);
+      return this.value.equals(nv.value);
+     }
       
    @Override
    public boolean isNumber()

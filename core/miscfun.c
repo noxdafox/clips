@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/10/18             */
+   /*            CLIPS Version 6.41  05/10/21             */
    /*                                                     */
    /*            MISCELLANEOUS FUNCTIONS MODULE           */
    /*******************************************************/
@@ -105,6 +105,10 @@
 /*            Function operating system returns MAC-OS       */
 /*            instead of MAC-OS-X.                           */
 /*                                                           */
+/*            Removed WINDOW_INTERFACE flag.                 */
+/*                                                           */
+/*      6.41: Added SYSTEM_FUNCTION compiler flag.           */
+/*                                                           */
 /*************************************************************/
 
 #include <stdio.h>
@@ -171,7 +175,9 @@ void MiscFunctionDefinitions(
    AddUDF(theEnv,"gensym*","y",0,0,NULL,GensymStarFunction,"GensymStarFunction",NULL);
    AddUDF(theEnv,"setgen","l",1,1,"l",SetgenFunction,"SetgenFunction",NULL);
 
+#if SYSTEM_FUNCTION
    AddUDF(theEnv,"system","ly",0,UNBOUNDED,"sy",SystemCommand,"SystemCommand",NULL);
+#endif
    AddUDF(theEnv,"length$","l",1,1,"m",LengthFunction,"LengthFunction",NULL);
    AddUDF(theEnv,"time","d",0,0,NULL,TimeFunction,"TimeFunction",NULL);
    AddUDF(theEnv,"local-time","m",0,0,NULL,LocalTimeFunction,"LocalTimeFunction",NULL);
@@ -831,13 +837,6 @@ WriteString(theEnv,STDOUT,"Debugging function package is ");
   WriteString(theEnv,STDOUT,"OFF\n");
 #endif
 
-WriteString(theEnv,STDOUT,"Window Interface flag is ");
-#if WINDOW_INTERFACE
-   WriteString(theEnv,STDOUT,"ON\n");
-#else
-   WriteString(theEnv,STDOUT,"OFF\n");
-#endif
-
 WriteString(theEnv,STDOUT,"Developer flag is ");
 #if DEVELOPER
    WriteString(theEnv,STDOUT,"ON\n");
@@ -874,9 +873,7 @@ void OperatingSystemFunction(
    returnValue->lexemeValue = CreateSymbol(theEnv,"DARWIN");
 #elif MAC_XCD
    returnValue->lexemeValue = CreateSymbol(theEnv,"MAC-OS");
-#elif IBM && (! WINDOW_INTERFACE)
-   returnValue->lexemeValue = CreateSymbol(theEnv,"DOS");
-#elif IBM && WINDOW_INTERFACE
+#elif WINDOWS_OS
    returnValue->lexemeValue = CreateSymbol(theEnv,"WINDOWS");
 #else
    returnValue->lexemeValue = CreateSymbol(theEnv,"UNKNOWN");
@@ -1666,6 +1663,7 @@ void TimerFunction(
    returnValue->floatValue = CreateFloat(theEnv,gentime() - startTime);
   }
 
+#if SYSTEM_FUNCTION
 /***************************************/
 /* SystemCommand: H/L access routine   */
 /*   for the system function.          */
@@ -1712,6 +1710,7 @@ void SystemCommand(
    if (commandBuffer != NULL)
      { rm(theEnv,commandBuffer,bufferMaximum); }
   }
+#endif
 
 /****************************************/
 /* GetErrorFunction: H/L access routine */

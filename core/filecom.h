@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  11/01/16            */
+   /*             CLIPS Version 6.40  04/04/19            */
    /*                                                     */
    /*              FILE COMMANDS HEADER FILE              */
    /*******************************************************/
@@ -38,6 +38,10 @@
 /*                                                           */
 /*            Fixed linkage issue when BLOAD_ONLY compiler   */
 /*            flag is set to 1.                              */
+/*                                                           */
+/*      6.31: Fixed error in AppendDribble for older         */
+/*            compilers not allowing variable definition     */
+/*            within for statement.                          */
 /*                                                           */
 /*      6.40: Removed LOCALE definition.                     */
 /*                                                           */

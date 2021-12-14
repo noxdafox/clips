@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  08/25/16            */
+   /*             CLIPS Version 6.40  05/03/19            */
    /*                                                     */
    /*               FACT COMMANDS HEADER FILE             */
    /*******************************************************/
@@ -61,6 +61,8 @@
 
 #define _H_factcom
 
+#if DEFTEMPLATE_CONSTRUCT
+
 #include "evaluatn.h"
 
    void                           FactCommandDefinitions(Environment *);
@@ -71,14 +73,8 @@
    void                           Facts(Environment *,const char *,Defmodule *,long long,long long,long long);
    void                           SetFactDuplicationCommand(Environment *,UDFContext *,UDFValue *);
    void                           GetFactDuplicationCommand(Environment *,UDFContext *,UDFValue *);
-   void                           SaveFactsCommand(Environment *,UDFContext *,UDFValue *);
-   void                           LoadFactsCommand(Environment *,UDFContext *,UDFValue *);
-   bool                           SaveFacts(Environment *,const char *,SaveScope);
-   bool                           SaveFactsDriver(Environment *,const char *,SaveScope,struct expr *);
-   bool                           LoadFacts(Environment *,const char *);
-   bool                           LoadFactsFromString(Environment *,const char *,size_t);
    void                           FactIndexFunction(Environment *,UDFContext *,UDFValue *);
 
+#endif /* DEFTEMPLATE_CONSTRUCT */
+
 #endif /* _H_factcom */
-
-

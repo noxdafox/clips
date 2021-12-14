@@ -11,6 +11,9 @@ import javax.swing.event.ListSelectionListener;
 import java.util.HashMap;
 import java.awt.EventQueue;
 import java.awt.AWTEvent;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +33,7 @@ public class EntityBrowserFrame extends JInternalFrame
    private JSplitPane entitiesSlotsPane, contentPane;
    private JTextField searchField;
    private JCheckBox displayDefaultedValuesCheckBox; 
-   private List<Module> modules;
+   private List<net.sf.clipsrules.jni.Module> modules;
    private List<FactInstance> entities;
    private HashMap<Long,BitSet> scopes;
    private String entityName;
@@ -52,28 +55,31 @@ public class EntityBrowserFrame extends JInternalFrame
      String theEntityName,
      String theIDName,
      String theConstructName,
-     int browserIndex)
+     int browserIndex,
+     Font browserFont)
      {      
-      this(new ArrayList<Module>(),
+      this(new ArrayList<net.sf.clipsrules.jni.Module>(),
            new ArrayList<FactInstance>(),
            new HashMap<Long,BitSet>(),
            theEntityName,
            theIDName,
            theConstructName,
-           browserIndex);
+           browserIndex,
+           browserFont);
      }
 
    /**********************/
    /* EntityBrowserFrame */
    /**********************/
    EntityBrowserFrame(
-     List<Module> theModules,
+     List<net.sf.clipsrules.jni.Module> theModules,
      List<FactInstance> theEntities,
      HashMap<Long,BitSet> theScopes,
      String theEntityName,
      String theIDName,
      String theConstructName,
-     int browserIndex)
+     int browserIndex,
+     Font browserFont)
      {  
       super(theEntityName + " Browser #" + browserIndex,true,true,true,true);
       entityName = theEntityName;
@@ -190,7 +196,7 @@ public class EntityBrowserFrame extends JInternalFrame
                 if (moduleIndex == -1) return true;
                 moduleIndex = modulesTable.convertRowIndexToModel(moduleIndex);
 
-                BitSet theBitSet = scopes.get(new Long(fi.getTypeAddress()));
+                BitSet theBitSet = scopes.get(Long.valueOf(fi.getTypeAddress()));
                 if (theBitSet.get(moduleIndex))
                   { 
                    if (fi.searchForString(searchField.getText()))
@@ -280,12 +286,18 @@ public class EntityBrowserFrame extends JInternalFrame
 
       this.getContentPane().add(contentPane); 
       
-	  lastModule = null;
+      lastModule = null;
       lastModuleRow = -1;
       lastEntity = null;
       lastEntityRow = -1;
 
       assignData(theModules,theEntities,theScopes);
+      
+      /*===============*/
+      /* Set the font. */
+      /*===============*/
+
+      assignFont(browserFont);
 
       /*====================*/
       /* Display the frame. */
@@ -293,6 +305,28 @@ public class EntityBrowserFrame extends JInternalFrame
 
       this.pack();
      }  
+
+   /**************/
+   /* assignFont */
+   /**************/
+   public void assignFont(
+     Font browserFont)
+     {
+      FontMetrics metrics = modulesTable.getFontMetrics(browserFont);
+      int theHeight = metrics.getHeight() + 2;
+
+      modulesTable.setFont(browserFont);
+      modulesTable.setRowHeight(theHeight);
+      modulesTable.getTableHeader().setFont(browserFont);
+      
+      entityTable.setFont(browserFont);
+      entityTable.setRowHeight(theHeight);
+      entityTable.getTableHeader().setFont(browserFont);
+      
+      slotsTable.setFont(browserFont);
+      slotsTable.setRowHeight(theHeight);
+      slotsTable.getTableHeader().setFont(browserFont);
+     }
      
    /*****************/
    /* getEntityName */
@@ -315,7 +349,7 @@ public class EntityBrowserFrame extends JInternalFrame
    /* assignData */
    /**************/
    public void assignData(
-     List<Module> theModules,
+     List<net.sf.clipsrules.jni.Module> theModules,
      List<FactInstance> theEntities,
      HashMap<Long,BitSet> theScopes)
      {
@@ -334,7 +368,7 @@ public class EntityBrowserFrame extends JInternalFrame
       else
         { 
          entityModel.setItems(entities); 
-		 slotsModel.setItem(null);
+         slotsModel.setItem(null);
         }
 
       restoreSelection();
@@ -353,7 +387,7 @@ public class EntityBrowserFrame extends JInternalFrame
          lastModuleRow = theRow;
          
          theRow = modulesTable.convertRowIndexToModel(theRow);
-         Module theModule = modules.get(theRow);
+         net.sf.clipsrules.jni.Module theModule = modules.get(theRow);
          lastModule = theModule.getModuleName();
         }
       else
@@ -386,7 +420,7 @@ public class EntityBrowserFrame extends JInternalFrame
       int i, count, theRow;
       boolean found;
       FactInstance theEntity;
-	
+    
       if (lastModuleRow == -1)
         {
          if (modulesTable.getRowCount() > 0)
@@ -400,7 +434,7 @@ public class EntityBrowserFrame extends JInternalFrame
          if (lastModuleRow < count)
            {
             theRow = modulesTable.convertRowIndexToModel(lastModuleRow);
-            Module theModule = modules.get(theRow);
+            net.sf.clipsrules.jni.Module theModule = modules.get(theRow);
                  
             if (theModule.getModuleName().equals(lastModule))       
               {
@@ -414,7 +448,7 @@ public class EntityBrowserFrame extends JInternalFrame
             for (i = 0; i < count; i++)
               {
                theRow = modulesTable.convertRowIndexToModel(i);
-               Module theModule = modules.get(theRow);
+               net.sf.clipsrules.jni.Module theModule = modules.get(theRow);
 
                if (theModule.getModuleName().equals(lastModule))       
                  {
@@ -443,10 +477,10 @@ public class EntityBrowserFrame extends JInternalFrame
         { 
          if (entityTable.getRowCount() > 0)
            { 
-		    theEntity = entities.get(0);
-		    entityTable.setRowSelectionInterval(0,0); 
-			slotsModel.setItem(theEntity);
-		   }
+            theEntity = entities.get(0);
+            entityTable.setRowSelectionInterval(0,0); 
+            slotsModel.setItem(theEntity);
+           }
         }
       else
         {
@@ -461,7 +495,7 @@ public class EntityBrowserFrame extends JInternalFrame
             if (theEntity.getName().equals(lastEntity))
               {
                entityTable.setRowSelectionInterval(lastEntityRow,lastEntityRow);
-			   slotsModel.setItem(theEntity);
+               slotsModel.setItem(theEntity);
                found = true;
               }
            }
@@ -477,7 +511,7 @@ public class EntityBrowserFrame extends JInternalFrame
                  {
                   found = true;
                   entityTable.setRowSelectionInterval(i,i);
-				  slotsModel.setItem(theEntity);
+                  slotsModel.setItem(theEntity);
                   break;
                  }
               }
@@ -489,16 +523,16 @@ public class EntityBrowserFrame extends JInternalFrame
               {
                if (lastEntityRow < count)
                  { 
-				  theEntity = entities.get(lastEntityRow);
-				  entityTable.setRowSelectionInterval(lastEntityRow,lastEntityRow); 
-				  slotsModel.setItem(theEntity);
-				 }
+                  theEntity = entities.get(lastEntityRow);
+                  entityTable.setRowSelectionInterval(lastEntityRow,lastEntityRow); 
+                  slotsModel.setItem(theEntity);
+                 }
                else 
                  { 
-				  theEntity = entities.get(count-1);
-				  entityTable.setRowSelectionInterval(count-1,count-1); 
-				  slotsModel.setItem(theEntity);
-				 }
+                  theEntity = entities.get(count-1);
+                  entityTable.setRowSelectionInterval(count-1,count-1); 
+                  slotsModel.setItem(theEntity);
+                 }
               }
            }
         }
@@ -565,7 +599,7 @@ public class EntityBrowserFrame extends JInternalFrame
       entityModel.fireTableDataChanged();
       if (entityTable.getRowCount() != 0)
         { entityTable.setRowSelectionInterval(0,0); }
-	  else
+      else
         { slotsModel.setItem(null); }
      }
    

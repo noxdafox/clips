@@ -46,17 +46,17 @@ public class Agenda implements Iterable<Activation>
    /***********/
    /* equals: */
    /***********/
-	@Override
-	public boolean equals(Object obj) 
-	  {
-	   if (this == obj) return true;
-	   if (obj == null) return false;
-	   if (this.getClass() != obj.getClass()) return false;
-	   
-	   Agenda ca = (Agenda) obj;
-	   if (this.activations == null) return (ca.activations == null);
-	   return this.activations.equals(ca.activations);
-      }
+   @Override
+   public boolean equals(Object obj) 
+     {
+      if (this == obj) return true;
+      if (obj == null) return false;
+      if (this.getClass() != obj.getClass()) return false;
+       
+      Agenda ca = (Agenda) obj;
+      if (this.activations == null) return (ca.activations == null);
+      return this.activations.equals(ca.activations);
+     }
       
    /********/
    /* get: */

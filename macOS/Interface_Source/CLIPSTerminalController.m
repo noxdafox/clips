@@ -436,7 +436,7 @@
    
    if (! [[environment executionLock] tryLock]) 
      {
-      if ([pauseButton state] == NSOffState)
+      if ([pauseButton state] == NSControlStateValueOff)
         { [executionIndicator startAnimation: nil]; }
       [pauseButton setEnabled: YES];   
       return;
@@ -876,7 +876,7 @@
 /******************/
 - (IBAction) pauseContinue: (id) sender
   {
-   if ([sender state] == NSOnState)
+   if ([sender state] == NSControlStateValueOn)
      {
       [executionIndicator setDisplayedWhenStopped: YES];
       [executionIndicator stopAnimation: nil];  
@@ -1668,6 +1668,15 @@
     return returnArray;
    }
 
+/*******************************/
+/* textViewDidChangeSelection: */
+/*******************************/
+- (void) textViewDidChangeSelection: (NSNotification *) aNotification
+  {
+   if (! [textView balancingDisabled])
+     { [textView balanceParentheses]; }
+  }
+  
 /*%%%%%%%%%%%%%%%%*/
 /* Unused Methods */
 /*%%%%%%%%%%%%%%%%*/

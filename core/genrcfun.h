@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  11/01/16            */
+   /*             CLIPS Version 6.40  02/20/20            */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -162,7 +162,7 @@ struct defgenericData
    bool                           MethodsExecuting(Defgeneric *);
 #endif
 #if ! OBJECT_SYSTEM
-   bool                           SubsumeType(int,int);
+   bool                           SubsumeType(long long,long long);
 #endif
 
    unsigned short                 FindMethodByIndex(Defgeneric *,unsigned short);
@@ -176,7 +176,7 @@ struct defgenericData
    unsigned short                 CheckMethodExists(Environment *,const char *,Defgeneric *,unsigned short);
 
 #if ! OBJECT_SYSTEM
-   const char                    *TypeName(Environment *,int);
+   const char                    *TypeName(Environment *,long long);
 #endif
 
    void                           PrintGenericName(Environment *,const char *,Defgeneric *);

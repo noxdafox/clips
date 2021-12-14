@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  11/19/17            */
+   /*             CLIPS Version 6.40  02/03/21            */
    /*                                                     */
    /*                 FILE UTILITY MODULE                 */
    /*******************************************************/
@@ -23,6 +23,9 @@
 /*      6.31: Fixed error in AppendDribble for older         */
 /*            compilers not allowing variable definition     */
 /*            within for statement.                          */
+/*                                                           */
+/*            Fixed line count issue when using Windows      */
+/*            line endings in Unix.                          */
 /*                                                           */
 /*      6.40: Split from filecom.c                           */
 /*                                                           */
@@ -519,7 +522,7 @@ int LLGetcBatch(
    /* Increment the line counter. */
    /*=============================*/
 
-   if (((char) rv == '\r') || ((char) rv == '\n'))
+   if ((char) rv == '\n')
      { IncrementLineCount(theEnv); }
 
    /*=====================================================*/
@@ -771,11 +774,11 @@ bool RemoveBatch(
    /* Remove the entry from the list. */
    /*=================================*/
 
-   DeleteString(theEnv,(char *) FileCommandData(theEnv)->TopOfBatchList->fileName);
+   DeleteString(theEnv,FileCommandData(theEnv)->TopOfBatchList->fileName);
    bptr = FileCommandData(theEnv)->TopOfBatchList;
    FileCommandData(theEnv)->TopOfBatchList = FileCommandData(theEnv)->TopOfBatchList->next;
 
-   DeleteString(theEnv,(char *) bptr->logicalSource);
+   DeleteString(theEnv,bptr->logicalSource);
    rtn_struct(theEnv,batchEntry,bptr);
 
    /*========================================================*/
@@ -964,7 +967,7 @@ bool BatchStar(
 #endif
         }
 
-      if ((inchar == '\r') || (inchar == '\n'))
+      if (inchar == '\n')
         { IncrementLineCount(theEnv); }
      }
 

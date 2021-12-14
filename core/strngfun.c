@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/05/18             */
+   /*            CLIPS Version 6.40  08/27/19             */
    /*                                                     */
    /*            STRING_TYPE FUNCTIONS MODULE             */
    /*******************************************************/
@@ -76,6 +76,8 @@
 /*            The eval and build functions generate an       */
 /*            error if extraneous input is encountered.      */
 /*                                                           */
+/*            Added str-replace function.                    */
+/*                                                           */
 /*************************************************************/
 
 #include "setup.h"
@@ -137,6 +139,7 @@ void StringFunctionDefinitions(
    AddUDF(theEnv,"eval","*",1,1,"sy",EvalFunction,"EvalFunction",NULL);
    AddUDF(theEnv,"build","b",1,1,"sy",BuildFunction,"BuildFunction",NULL);
    AddUDF(theEnv,"string-to-field","*",1,1,"syn",StringToFieldFunction,"StringToFieldFunction",NULL);
+   AddUDF(theEnv,"str-replace","syn",3,3,"syn",StrReplaceFunction,"StrReplaceFunction",NULL);
 #else
 #if MAC_XCD
 #pragma unused(theEnv)
@@ -690,6 +693,100 @@ void StringToField(
      { returnValue->value = CreateSymbol(theEnv,theToken.printForm); }
   }
 
+/******************************************/
+/* StrReplaceFunction: H/L access routine */
+/*   for the str-replace function.        */
+/******************************************/
+void StrReplaceFunction(
+  Environment *theEnv,
+  UDFContext *context,
+  UDFValue *returnValue)
+  {
+   UDFValue initial, find, replace;
+   size_t findLength, replaceLength;
+   size_t returnLength;
+   const char *traverse, *found;
+   const char *initialString, *findString, *replaceString;
+   char *returnString, *target;
+   
+   /*========================================*/
+   /* The first three arguments should be of */
+   /* type symbol, string, or instance name. */
+   /*========================================*/
+
+   if (! UDFFirstArgument(context,LEXEME_BITS | INSTANCE_NAME_BIT,&initial))
+     { return; }
+
+   if (! UDFNextArgument(context,LEXEME_BITS | INSTANCE_NAME_BIT,&find))
+     { return; }
+
+   if (! UDFNextArgument(context,LEXEME_BITS | INSTANCE_NAME_BIT,&replace))
+     { return; }
+
+   initialString = initial.lexemeValue->contents;
+   findString = find.lexemeValue->contents;
+   replaceString = replace.lexemeValue->contents;
+   
+   /*===================================================*/
+   /* If the find string is empty, return the original. */
+   /*===================================================*/
+   
+   findLength = strlen(findString);
+   if (findLength == 0)
+     {
+      returnValue->lexemeValue = initial.lexemeValue;
+      return;
+     }
+   
+   /*====================================*/
+   /* Determine the number of characters */
+   /* needed for the return value.       */
+   /*====================================*/
+   
+   replaceLength = strlen(replaceString);
+   returnLength = strlen(initialString) + 1;
+   if (findLength != replaceLength)
+     {
+      traverse = initialString;
+      while ((traverse = strstr(traverse,findString)) != NULL)
+        {
+         traverse += findLength;
+         returnLength += (replaceLength - findLength);
+        }
+     }
+   
+   returnString = (char *) gm2(theEnv,(sizeof(char) * returnLength));
+
+   /*================================*/
+   /* Copy values to the new string. */
+   /*================================*/
+
+   traverse = initialString;
+   target = returnString;
+   while ((found = strstr(traverse,findString)) != NULL)
+     {
+      strncpy(target,traverse,found - traverse);
+      target += (found - traverse);
+      strcpy(target,replaceString);
+      target += replaceLength;
+      traverse = found + findLength;
+     }
+   strcpy(target,traverse);
+   
+   /*==========================*/
+   /* Create the return value. */
+   /*==========================*/
+   
+   if (initial.header->type == STRING_TYPE)
+     { returnValue->value = CreateString(theEnv,returnString); }
+   else if (initial.header->type == SYMBOL_TYPE)
+     { returnValue->value = CreateSymbol(theEnv,returnString); }
+   else
+     { returnValue->value = CreateInstanceName(theEnv,returnString); }
+
+   rm(theEnv,returnString,sizeof(char) * returnLength);
+  }
+
 /**************************************/
 /* EvalFunction: H/L access routine   */
 /*   for the eval function.           */
@@ -1015,6 +1112,13 @@ BuildError Build(
    /*===================================*/
    
    GCBlockEnd(theEnv,&gcb);
+
+   /*===============================================*/
+   /* If embedded, clean the topmost garbage frame. */
+   /*===============================================*/
+   
+   if (EvaluationData(theEnv)->CurrentExpression == NULL)
+     { CleanCurrentGarbageFrame(theEnv,NULL); }
 
    /*===================================*/
    /* Throw error for extraneous input. */

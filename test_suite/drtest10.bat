@@ -638,4 +638,324 @@
 (bind ?*crash* (rest$ ?*crash*))
 (clear) ; SourceForge Ticket #49
 (::)
+(clear) ; SourceForge Ticket #54 Extraneous Module Specifier
+(defmodule EXTRANEOUS::COMPUTE)
+(deftemplate MAIN::EXTRANEOUS::point)
+(deffacts MAIN::EXTRANEOUS::points)
+(defrule MAIN::EXTRANEOUS::find-point =>)
+(defclass MAIN::EXTRANEOUS::POINT (is-a USER))
+(defclass MAIN::POINT (is-a USER))
+(defmessage-handler MAIN::EXTRANEOUS::POINT add-points ())
+(definstances MAIN::EXTRANEOUS::points)
+(deffunction MAIN::EXTRANEOUS::add-point (?x ?y))
+(defgeneric MAIN::EXTRANEOUS::add-point)
+(defmethod MAIN::EXTRANEOUS::add-point ((?x FLOAT) (?y FLOAT)))
+(clear) ; bsave-instances external-address issue
+
+(defclass EXPERIMENT 
+   (is-a USER)
+   (slot fa (type FACT-ADDRESS))
+   (slot ia (type INSTANCE-ADDRESS))
+   (slot ea (type EXTERNAL-ADDRESS)))
+   
+(make-instance e1 of EXPERIMENT
+   (fa (assert (b)))
+   (ia (instance-address(make-instance e2 of EXPERIMENT))))
+(bsave-instances "Temp//experiment.bins")
+(reset)
+(bload-instances "Temp//experiment.bins")
+(send [e1] print)
+(send [e2] print)
+(clear) ; Local variables cannot be accessed bug
+
+(deftemplate hello
+  (slot self (type FACT-ADDRESS)))
+  
+(deffacts hellos
+   (hello))
+(clear) ; SourceForge Ticket #56
+
+(deftemplate maze
+   (multislot open-list)
+   (slot goal))
+
+(defrule test-1
+   (maze (open-list)
+         (goal ?g&nil))
+   =>)
+
+(defrule test-2
+   (maze (open-list) 
+         (goal ?g&:(eq ?g nil)))
+   =>)
+
+(defrule test-3
+   (maze (open-list) 
+         (goal ~nil))
+   =>)
+(clear) ; SourceForge Ticket #58
+
+(defclass FOO (is-a USER)
+  (slot ins (type INSTANCE-ADDRESS)))
+(make-instance [foo] of FOO)
+(timetag (send [foo] get-ins))
+
+(deftemplate foo
+  (slot fct (type FACT-ADDRESS)))
+(assert (foo))   
+(timetag (fact-slot-value 1 fct))
+(clear) ; 2 variable comparison from right memory
+
+(deftemplate manifest
+   (slot origin)
+   (slot destination)) 
+
+(deftemplate shipzone
+    (slot zonename)
+    (multislot cities)
+    (slot city1)
+    (slot city2))
+
+(deffacts fact-data
+    (manifest (origin CHI) (destination WAS)) 
+    (manifest (origin HOU) (destination ATL)) 
+    (shipzone (cities CHI WAS BOS) (city1 CHI) (city2 WAS))
+    (shipzone (cities BOS HOU ATL)))
+
+(defclass MANIFEST
+   (is-a USER)
+   (slot origin)
+   (slot destination)) 
+
+(defclass SHIPZONE
+   (is-a USER)
+   (slot zonename)
+   (multislot cities)
+   (slot city1)
+   (slot city2))
+
+(definstances instance-data
+    (m1 of MANIFEST (origin CHI) (destination WAS)) 
+    (m2 of MANIFEST (origin HOU) (destination ATL)) 
+    (s1 of SHIPZONE (cities CHI WAS BOS) (city1 CHI) (city2 WAS))
+    (s2 of SHIPZONE (cities BOS HOU ATL)))
+
+(defrule city-group-f1
+    (manifest (origin ?x1) (destination ?x2))
+    (shipzone (city1 ?x3&?x1|?x2) (city2 ~?x3&?x1|?x2))
+    =>)
+
+(defrule city-group-f2
+    (manifest (origin ?x1) (destination ?x2))
+    (shipzone (cities $? ?x3&?x1|?x2 ~?x3&?x1|?x2))
+    =>)
+
+(defrule city-group-f3
+    (manifest (origin ?x1) (destination ?x2))
+    (shipzone (cities $? ?x3&?x1|?x2 ~?x3&?x1|?x2 $?))
+    =>)
+
+(defrule city-group-f4
+    (manifest (origin ?x1) (destination ?x2))
+    (shipzone (cities $? ?x3&?x1|?x2 $?) (city1 ~?x3&?x1|?x2))
+    =>)
+
+(defrule city-group-i1
+    (object (is-a MANIFEST) (origin ?x1) (destination ?x2))
+    (object (is-a SHIPZONE) (city1 ?x3&?x1|?x2) (city2 ~?x3&?x1|?x2))
+    =>)
+    
+(defrule city-group-i2 
+    (object (is-a MANIFEST) (origin ?x1) (destination ?x2))
+    (object (is-a SHIPZONE) (cities $? ?x3&?x1|?x2 ~?x3&?x1|?x2))
+    =>)
+
+(defrule city-group-i3
+    (object (is-a MANIFEST) (origin ?x1) (destination ?x2))
+    (object (is-a SHIPZONE) (cities $? ?x3&?x1|?x2 ~?x3&?x1|?x2 $?))
+    =>)
+    
+(defrule city-group-i4 
+    (object (is-a MANIFEST) (origin ?x1) (destination ?x2))
+    (object (is-a SHIPZONE) (cities $? ?x3&?x1|?x2 $?) (city1 ~?x3&?x1|?x2))
+    =>)
+(reset)
+(agenda)
+(clear) ; Error line count issue
+(load line_error_crlf.clp)
+(clear)
+(load line_error_lf.clp)
+(clear) ; CLIPSESG https://groups.google.com/forum/#!topic/CLIPSESG/j4fmacgmAZY
+
+(deftemplate example
+   (slot value
+      (type SYMBOL)
+      (allowed-symbols FALSE TRUE)))
+
+(defrule attempt-to-construct-example
+   ?f <- (line ?line)
+   =>
+   (retract ?f)
+   (assert (example (value (eq ?line "")))))
+(clear) ; CLIPSESG https://groups.google.com/forum/#!topic/CLIPSESG/YaNnNF1xg5w
+
+(defclass OAV
+   (is-a USER)
+   (slot object)
+   (slot attribute)
+   (multislot values))
+
+(make-instance oav1 of OAV
+   (object Fred)
+   (attribute hobbies)
+   (values reading hiking chess))
+(bsave-instances "Temp//drins.bin")
+(reset)
+(bload-instances "Temp//drins.bin")
+(send [oav1] print)
+(clear) ; Object pattern matching underflow
+
+(deftemplate range
+   (slot start)
+   (slot finish))
+             
+(deftemplate sequence
+   (multislot elements))
+(defclass container
+   (is-a USER)
+   (multislot contents))
+
+(deffacts defranges
+   (range (start 2) (finish 11))
+   (range (start 12) (finish 19)))
+          
+(deffacts defsequences
+   (sequence (elements 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19)))
+
+(definstances containers
+   (of container 
+      (contents 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19))
+   (of container
+      (contents)))
+
+(defrule eliminate-entire-range
+   (range (start ?start) 
+          (finish ?finish))
+   (sequence (elements ?start $? ?finish))
+   (object (is-a container)
+           (contents $?before ?start $? ?finish $?after)
+           (name ?name))
+   =>
+   (modify-instance ?name
+      (contents $?before 
+      $?after)))
+(reset)
+(run)
+(clear) ; SourceForge Ticket #61
+(defclass FOO (is-a USER))
+(deftemplate FOO)
+
+(deffunction test1()
+  (bind ?ins (make-instance of FOO))
+  (delayed-do-for-all-instances ((?f FOO)) TRUE
+    (str-cat "abc" "def")))
+
+(deffunction test2()
+  (assert(FOO))
+  (delayed-do-for-all-facts ((?f FOO)) TRUE
+    (str-cat "uvw" "xyz")))
+
+(deffunction test3()
+  (bind ?ins (make-instance of FOO))
+  (do-for-all-instances ((?f FOO)) TRUE
+    (str-cat "abc" "def")))
+
+(deffunction test4()
+  (assert(FOO))
+  (do-for-all-facts ((?f FOO)) TRUE
+    (str-cat "uvw" "xyz")))
+(test1)
+(test2)
+(test3)
+(test4)
+(clear) ; SourceForge Ticket #64
+
+(deftemplate adrs
+   (slot ia (type INSTANCE-ADDRESS))
+   (slot fa (type FACT-ADDRESS))
+   (slot ea (type EXTERNAL-ADDRESS)))
+
+(defclass ADRS (is-a USER)
+   (slot ia (type INSTANCE-ADDRESS))
+   (slot fa (type FACT-ADDRESS))
+   (slot ea (type EXTERNAL-ADDRESS)))
+
+(deffacts start
+   (adrs))
+   
+(definstances start
+   ([adrs] of ADRS))
+(bsave "Temp//ea1.bin")
+(set-dynamic-constraint-checking TRUE)
+(bsave "Temp//ea2.bin")
+(clear)
+(bload "Temp//ea1.bin")
+(assert (adrs))
+(make-instance [adrs] of ADRS)
+(ppfact 1)
+(send [adrs] print)
+(reset)
+(ppfact 1)
+(send [adrs] print)
+(clear)
+(bload "Temp//ea2.bin")
+(assert (adrs))
+(make-instance [adrs] of ADRS)
+(ppfact 1)
+(send [adrs] print)
+(reset)
+(ppfact 1)
+(send [adrs] print)
+(set-dynamic-constraint-checking FALSE)
+(clear) ; SourceForge Ticket #65
+(ppdefclass undefined nil)
+(ppdeftemplate undefined nil)
+(ppdefrule undefined nil)
+(ppdeffacts undefined nil)
+(ppdefinstances undefined nil)
+(ppdeffunction undefined nil)
+(ppdefgeneric undefined nil)
+(ppdefglobal undefined nil)
+(clear)
+(defglobal ?*x* = (create$ 1 2 3 4))
+(defglobal ?*y* = (subseq$ ?*x* 2 3))
+(defglobal ?*z* = (subseq$ (create$ 1 2 3 4) 2 3))
+?*x*
+?*y*
+?*z*
+(clear) ; SourceForge Ticket #66
+
+(defclass FOO 
+   (is-a USER)
+   (slot next (allowed-classes FOO) (default (make-instance [old] of FOO))))
+(clear)
+(defclass FOO (is-a USER))
+
+(defclass FOO 
+   (is-a USER)
+   (slot next (allowed-classes FOO) (default (make-instance [old] of FOO))))
+(clear) ; CLIPSESG Issue 
+(defclass E (is-a USER) (slot se))
+(defclass F (is-a USER) (slot sf))
+(defclass G (is-a USER) (slot sg))
+
+(defrule fail-fail-fail-fail
+  (object (is-a E) (se ?x))
+  (exists (and (exists (and (object (is-a F) (sf ?x))
+                            (object (is-a G) (sg ?x))))
+               (test (!= 2 2))))
+=>)
+(make-instance e1 of E (se 1))
+(make-instance e2 of E (se 2))
+(make-instance e1 of E (se 1))
 (clear)

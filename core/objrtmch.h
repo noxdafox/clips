@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  02/03/18            */
+   /*             CLIPS Version 6.40  05/03/19            */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -131,7 +131,7 @@ struct classAlphaLink
   {
    OBJECT_ALPHA_NODE *alphaNode;
    struct classAlphaLink *next;
-   long bsaveID;
+   unsigned long bsaveID;
   };
 
 typedef struct objectMatchAction

@@ -43,7 +43,8 @@ public class TextMenu extends JMenu
    /* TextMenu */
    /************/
    TextMenu(
-     CLIPSIDE theIDE)
+     CLIPSIDE theIDE,
+     TextFrame theFrame)
      {  
       super("Text");
         
@@ -55,9 +56,9 @@ public class TextMenu extends JMenu
       /* Get KeyStrokes for accelerators. */
       /*==================================*/
 
-      KeyStroke loadSelection = KeyStroke.getKeyStroke(KeyEvent.VK_K,KeyEvent.CTRL_MASK);
-      KeyStroke batchSelection = KeyStroke.getKeyStroke(KeyEvent.VK_K,KeyEvent.CTRL_MASK | KeyEvent.SHIFT_MASK);
-      KeyStroke balance = KeyStroke.getKeyStroke(KeyEvent.VK_B,KeyEvent.CTRL_MASK);
+      KeyStroke loadSelection = KeyStroke.getKeyStroke(KeyEvent.VK_K,KeyEvent.CTRL_DOWN_MASK);
+      KeyStroke batchSelection = KeyStroke.getKeyStroke(KeyEvent.VK_K,KeyEvent.CTRL_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK);
+      KeyStroke balance = KeyStroke.getKeyStroke(KeyEvent.VK_B,KeyEvent.CTRL_DOWN_MASK);
 
       /*================*/
       /* Setup actions. */
@@ -75,11 +76,11 @@ public class TextMenu extends JMenu
       /*=================*/
 
       jmiLoadSelection = new JMenuItem(loadSelectionAction);
-      jmiLoadSelection.setAccelerator(loadSelection);
+      if (theFrame == null) jmiLoadSelection.setAccelerator(loadSelection);
       add(jmiLoadSelection);
 
       jmiBatchSelection = new JMenuItem(batchSelectionAction);
-      jmiBatchSelection.setAccelerator(batchSelection);
+      if (theFrame == null) jmiBatchSelection.setAccelerator(batchSelection);
       add(jmiBatchSelection);
 
       jmiLoadBuffer = new JMenuItem(loadBufferAction);
@@ -88,7 +89,7 @@ public class TextMenu extends JMenu
       addSeparator();
 
       jmiBalance = new JMenuItem(balanceAction);
-      jmiBalance.setAccelerator(balance);
+      if (theFrame == null) jmiBalance.setAccelerator(balance);
       add(jmiBalance);
 
       jmiComment = new JMenuItem(commentAction);
@@ -96,6 +97,12 @@ public class TextMenu extends JMenu
 
       jmiUncomment = new JMenuItem(uncommentAction);
       add(jmiUncomment);
+      
+      /*=============================*/
+      /* Set the initial text frame. */
+      /*=============================*/
+      
+      textFrame = theFrame;
      }  
 
    /****************/

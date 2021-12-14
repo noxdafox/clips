@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  11/07/17             */
+   /*            CLIPS Version 6.40  02/03/21             */
    /*                                                     */
    /*             OBJECT MESSAGE DISPATCH CODE            */
    /*******************************************************/
@@ -650,13 +650,13 @@ bool HandlerSlotGetFunction(
   void *theValue,
   UDFValue *theResult)
   {
-   HANDLER_SLOT_REFERENCE *theReference;
+   const HANDLER_SLOT_REFERENCE *theReference;
    Defclass *theDefclass;
    Instance *theInstance;
    InstanceSlot *sp;
    unsigned instanceSlotIndex;
 
-   theReference = (HANDLER_SLOT_REFERENCE *) ((CLIPSBitMap *) theValue)->contents;
+   theReference = (const HANDLER_SLOT_REFERENCE *) ((CLIPSBitMap *) theValue)->contents;
    theInstance = ProceduralPrimitiveData(theEnv)->ProcParamArray[0].instanceValue;
    theDefclass = DefclassData(theEnv)->ClassIDMap[theReference->classID];
 
@@ -774,14 +774,14 @@ bool HandlerSlotPutFunction(
   void *theValue,
   UDFValue *theResult)
   {
-   HANDLER_SLOT_REFERENCE *theReference;
+   const HANDLER_SLOT_REFERENCE *theReference;
    Defclass *theDefclass;
    Instance *theInstance;
    InstanceSlot *sp;
    unsigned instanceSlotIndex;
    UDFValue theSetVal;
 
-   theReference = (HANDLER_SLOT_REFERENCE *) ((CLIPSBitMap *) theValue)->contents;
+   theReference = (const HANDLER_SLOT_REFERENCE *) ((CLIPSBitMap *) theValue)->contents;
    theInstance = ProceduralPrimitiveData(theEnv)->ProcParamArray[0].instanceValue;
    theDefclass = DefclassData(theEnv)->ClassIDMap[theReference->classID];
 

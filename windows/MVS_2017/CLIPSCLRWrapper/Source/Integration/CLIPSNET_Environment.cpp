@@ -394,6 +394,7 @@ namespace CLIPSNET
    FactAddressValue ^ Environment::AssertString(
      String ^ factString)
      {
+      FactAddressValue ^ fav;
       if (factString == nullptr)
         { throw gcnew System::ArgumentNullException("factString"); }
 
@@ -415,7 +416,11 @@ namespace CLIPSNET
 
       if (frv == NULL) return nullptr;
       
-      return gcnew FactAddressValue(frv);
+      fav = gcnew FactAddressValue(frv);
+
+      delete frv;
+
+      return fav;
      }
 
    /****************/
@@ -424,6 +429,8 @@ namespace CLIPSNET
    InstanceAddressValue ^ Environment::MakeInstance(
      String ^ instanceString)
      {
+      InstanceAddressValue ^ iav;
+
       if (instanceString == nullptr)
         { throw gcnew System::ArgumentNullException("instanceString"); }
               
@@ -444,8 +451,12 @@ namespace CLIPSNET
       CaptureEnd(commandCapture,true);
 
       if (irv == NULL) return nullptr;
-      
-      return gcnew InstanceAddressValue(irv);
+
+      iav = gcnew InstanceAddressValue(irv);
+
+      delete irv;
+
+      return iav;
      }
 
    /************/

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/30/16            */
+   /*             CLIPS Version 6.40  10/03/19            */
    /*                                                     */
    /*              RETE UTILITY HEADER FILE               */
    /*******************************************************/
@@ -62,6 +62,7 @@
 #include "evaluatn.h"
 #include "match.h"
 #include "network.h"
+#include "rulecom.h"
 
 #define NETWORK_ASSERT  0
 #define NETWORK_RETRACT 1
@@ -102,7 +103,7 @@
    void                           MarkRuleJoins(struct joinNode *,bool);
    void                           AddBlockedLink(struct partialMatch *,struct partialMatch *);
    void                           RemoveBlockedLink(struct partialMatch *);
-   unsigned long                  PrintBetaMemory(Environment *,const char *,struct betaMemory *,bool,const char *,int);
+   unsigned long                  PrintBetaMemory(Environment *,const char *,struct betaMemory *,bool,const char *,Verbosity);
 
 #endif /* _H_reteutil */
 
